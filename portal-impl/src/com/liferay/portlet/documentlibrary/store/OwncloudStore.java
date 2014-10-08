@@ -10,8 +10,22 @@ public class OwncloudStore extends BaseStore {
 	@Override
 	public String[] getFileNames(long companyId, long repositoryId)
 			throws SystemException {
-		// TODO Auto-generated method stub
-		return null;
+		/*
+		 * String password = PrincipalThreadLocal.getPassword(); // TODO: Tests
+		 * this: String userName = PrincipalThreadLocal.getName();
+		 * 
+		 * Sardine sardine = SardineFactory.begin();
+		 * sardine.setCredentials(userName, password);
+		 * 
+		 * ArrayList<String> ret = new ArrayList<String>();
+		 * 
+		 * try { for (DavResource dr : sardine
+		 * .list("http://localhost/owncloud/remote.php/webdav/")) {
+		 * ret.add(dr.getPath()); } } catch (IOException e) { throw new
+		 * SystemException(e); }
+		 * 
+		 * return ret.toArray(new String[ret.size()]);
+		 */return null;
 	}
 
 	@Override
