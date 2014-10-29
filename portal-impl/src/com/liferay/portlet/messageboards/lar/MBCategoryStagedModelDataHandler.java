@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,15 +14,13 @@
 
 package com.liferay.portlet.messageboards.lar;
 
-import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.lar.BaseStagedModelDataHandler;
 import com.liferay.portal.kernel.lar.ExportImportPathUtil;
 import com.liferay.portal.kernel.lar.PortletDataContext;
 import com.liferay.portal.kernel.lar.StagedModelDataHandlerUtil;
-import com.liferay.portal.kernel.lar.StagedModelModifiedDateComparator;
 import com.liferay.portal.kernel.trash.TrashHandler;
-import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.service.ServiceContext;
@@ -30,7 +28,6 @@ import com.liferay.portlet.messageboards.model.MBCategory;
 import com.liferay.portlet.messageboards.model.MBCategoryConstants;
 import com.liferay.portlet.messageboards.service.MBCategoryLocalServiceUtil;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -44,37 +41,15 @@ public class MBCategoryStagedModelDataHandler
 	@Override
 	public void deleteStagedModel(
 			String uuid, long groupId, String className, String extraData)
-		throws PortalException {
+		throws PortalException, SystemException {
 
-		MBCategory category = fetchStagedModelByUuidAndGroupId(uuid, groupId);
+		MBCategory category =
+			MBCategoryLocalServiceUtil.fetchMBCategoryByUuidAndGroupId(
+				uuid, groupId);
 
 		if (category != null) {
 			MBCategoryLocalServiceUtil.deleteCategory(category);
 		}
-	}
-
-	@Override
-	public MBCategory fetchStagedModelByUuidAndCompanyId(
-		String uuid, long companyId) {
-
-		List<MBCategory> categories =
-			MBCategoryLocalServiceUtil.getMBCategoriesByUuidAndCompanyId(
-				uuid, companyId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-				new StagedModelModifiedDateComparator<MBCategory>());
-
-		if (ListUtil.isEmpty(categories)) {
-			return null;
-		}
-
-		return categories.get(0);
-	}
-
-	@Override
-	public MBCategory fetchStagedModelByUuidAndGroupId(
-		String uuid, long groupId) {
-
-		return MBCategoryLocalServiceUtil.fetchMBCategoryByUuidAndGroupId(
-			uuid, groupId);
 	}
 
 	@Override
@@ -121,6 +96,14 @@ public class MBCategoryStagedModelDataHandler
 
 		long userId = portletDataContext.getUserId(category.getUserUuid());
 
+		Map<Long, Long> categoryIds =
+			(Map<Long, Long>)portletDataContext.getNewPrimaryKeysMap(
+				MBCategory.class);
+
+		long parentCategoryId = MapUtil.getLong(
+			categoryIds, category.getParentCategoryId(),
+			category.getParentCategoryId());
+
 		String emailAddress = null;
 		String inProtocol = null;
 		String inServerName = null;
@@ -141,13 +124,19 @@ public class MBCategoryStagedModelDataHandler
 
 		// Parent category
 
-		Map<Long, Long> categoryIds =
-			(Map<Long, Long>)portletDataContext.getNewPrimaryKeysMap(
-				MBCategory.class);
+		if ((parentCategoryId !=
+				MBCategoryConstants.DEFAULT_PARENT_CATEGORY_ID) &&
+			(parentCategoryId != MBCategoryConstants.DISCUSSION_CATEGORY_ID) &&
+			(parentCategoryId == category.getParentCategoryId())) {
 
-		long parentCategoryId = MapUtil.getLong(
-			categoryIds, category.getParentCategoryId(),
-			category.getParentCategoryId());
+			StagedModelDataHandlerUtil.importReferenceStagedModel(
+				portletDataContext, category, MBCategory.class,
+				parentCategoryId);
+
+			parentCategoryId = MapUtil.getLong(
+				categoryIds, category.getParentCategoryId(),
+				category.getParentCategoryId());
+		}
 
 		ServiceContext serviceContext = portletDataContext.createServiceContext(
 			category);
@@ -155,8 +144,9 @@ public class MBCategoryStagedModelDataHandler
 		MBCategory importedCategory = null;
 
 		if (portletDataContext.isDataStrategyMirror()) {
-			MBCategory existingCategory = fetchStagedModelByUuidAndGroupId(
-				category.getUuid(), portletDataContext.getScopeGroupId());
+			MBCategory existingCategory =
+				MBCategoryLocalServiceUtil.fetchMBCategoryByUuidAndGroupId(
+					category.getUuid(), portletDataContext.getScopeGroupId());
 
 			if (existingCategory == null) {
 				serviceContext.setUuid(category.getUuid());
@@ -202,8 +192,9 @@ public class MBCategoryStagedModelDataHandler
 
 		long userId = portletDataContext.getUserId(category.getUserUuid());
 
-		MBCategory existingCategory = fetchStagedModelByUuidAndGroupId(
-			category.getUuid(), portletDataContext.getScopeGroupId());
+		MBCategory existingCategory =
+			MBCategoryLocalServiceUtil.fetchMBCategoryByUuidAndGroupId(
+				category.getUuid(), portletDataContext.getScopeGroupId());
 
 		if ((existingCategory == null) || !existingCategory.isInTrash()) {
 			return;

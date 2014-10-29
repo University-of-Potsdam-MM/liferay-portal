@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -42,6 +42,24 @@ public class SocialActivityInterpreterLocalServiceUtil {
 	 */
 
 	/**
+	* Returns the Spring bean ID for this bean.
+	*
+	* @return the Spring bean ID for this bean
+	*/
+	public static java.lang.String getBeanIdentifier() {
+		return getService().getBeanIdentifier();
+	}
+
+	/**
+	* Sets the Spring bean ID for this bean.
+	*
+	* @param beanIdentifier the Spring bean ID for this bean
+	*/
+	public static void setBeanIdentifier(java.lang.String beanIdentifier) {
+		getService().setBeanIdentifier(beanIdentifier);
+	}
+
+	/**
 	* Adds the activity interpreter to the list of available interpreters.
 	*
 	* @param activityInterpreter the activity interpreter
@@ -71,19 +89,9 @@ public class SocialActivityInterpreterLocalServiceUtil {
 	}
 
 	/**
-	* Returns the Spring bean ID for this bean.
-	*
-	* @return the Spring bean ID for this bean
-	*/
-	public static java.lang.String getBeanIdentifier() {
-		return getService().getBeanIdentifier();
-	}
-
-	/**
 	* @deprecated As of 6.2.0, replaced by {@link #interpret(String,
 	SocialActivity, ServiceContext)}
 	*/
-	@Deprecated
 	public static com.liferay.portlet.social.model.SocialActivityFeedEntry interpret(
 		com.liferay.portlet.social.model.SocialActivity activity,
 		com.liferay.portal.theme.ThemeDisplay themeDisplay) {
@@ -100,9 +108,7 @@ public class SocialActivityInterpreterLocalServiceUtil {
 	* asset type of the activity.
 	* </p>
 	*
-	* @param selector the context in which the activity interpreter is used
 	* @param activity the activity to be translated to human readable form
-	* @param serviceContext the service context to be applied
 	* @return the activity feed that is a human readable form of the activity
 	record or <code>null</code> if a compatible interpreter is not
 	found
@@ -121,17 +127,9 @@ public class SocialActivityInterpreterLocalServiceUtil {
 		return getService().interpret(selector, activitySet, serviceContext);
 	}
 
-	/**
-	* Sets the Spring bean ID for this bean.
-	*
-	* @param beanIdentifier the Spring bean ID for this bean
-	*/
-	public static void setBeanIdentifier(java.lang.String beanIdentifier) {
-		getService().setBeanIdentifier(beanIdentifier);
-	}
-
 	public static void updateActivitySet(long activityId)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		getService().updateActivitySet(activityId);
 	}
 
@@ -149,7 +147,6 @@ public class SocialActivityInterpreterLocalServiceUtil {
 	/**
 	 * @deprecated As of 6.2.0
 	 */
-	@Deprecated
 	public void setService(SocialActivityInterpreterLocalService service) {
 	}
 

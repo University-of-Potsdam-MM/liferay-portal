@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -19,6 +19,7 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.HashCode;
 import com.liferay.portal.kernel.util.HashCodeFactoryUtil;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 
@@ -28,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.management.MBeanInfo;
+import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
 /**
@@ -36,21 +38,21 @@ import javax.management.ObjectName;
 public class MBean implements Serializable {
 
 	public MBean(ObjectName objectName) {
-		_objectName = objectName;
+		this(objectName.getDomain(), objectName.getKeyPropertyListString());
 
-		_domainName = objectName.getDomain();
-		_mBeanName = objectName.getKeyPropertyListString();
-		_loaded = false;
-		_mBeanInfo = null;
+		_objectName = objectName;
 	}
 
 	public MBean(ObjectName objectName, MBeanInfo mBeanInfo) {
-		_objectName = objectName;
-		_mBeanInfo = mBeanInfo;
-
 		_domainName = objectName.getDomain();
 		_mBeanName = objectName.getKeyPropertyListString();
+		_mBeanInfo = mBeanInfo;
 		_loaded = true;
+	}
+
+	public MBean(String domainName, String mBeanName) {
+		_domainName = domainName;
+		_mBeanName = mBeanName;
 	}
 
 	@Override
@@ -86,7 +88,12 @@ public class MBean implements Serializable {
 		return _mBeanName;
 	}
 
-	public ObjectName getObjectName() {
+	public ObjectName getObjectName() throws MalformedObjectNameException {
+		if (_objectName == null) {
+			_objectName = new ObjectName(
+				_domainName.concat(StringPool.COLON).concat(_mBeanName));
+		}
+
 		return _objectName;
 	}
 
@@ -127,11 +134,11 @@ public class MBean implements Serializable {
 
 	private static Log _log = LogFactoryUtil.getLog(MBean.class);
 
-	private final String _domainName;
-	private final boolean _loaded;
-	private final MBeanInfo _mBeanInfo;
-	private final String _mBeanName;
-	private final ObjectName _objectName;
+	private String _domainName;
+	private boolean _loaded;
+	private MBeanInfo _mBeanInfo;
+	private String _mBeanName;
+	private ObjectName _objectName;
 	private List<String> _path;
 
 }

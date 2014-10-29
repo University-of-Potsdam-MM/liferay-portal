@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portlet.blogs.service.impl;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.model.Group;
@@ -36,12 +37,16 @@ public class BlogsStatsUserLocalServiceImpl
 	extends BlogsStatsUserLocalServiceBaseImpl {
 
 	@Override
-	public void deleteStatsUser(BlogsStatsUser statsUsers) {
+	public void deleteStatsUser(BlogsStatsUser statsUsers)
+		throws SystemException {
+
 		blogsStatsUserPersistence.remove(statsUsers);
 	}
 
 	@Override
-	public void deleteStatsUser(long statsUserId) throws PortalException {
+	public void deleteStatsUser(long statsUserId)
+		throws PortalException, SystemException {
+
 		BlogsStatsUser statsUsers = blogsStatsUserPersistence.findByPrimaryKey(
 			statsUserId);
 
@@ -49,7 +54,7 @@ public class BlogsStatsUserLocalServiceImpl
 	}
 
 	@Override
-	public void deleteStatsUserByGroupId(long groupId) {
+	public void deleteStatsUserByGroupId(long groupId) throws SystemException {
 		List<BlogsStatsUser> statsUsers =
 			blogsStatsUserPersistence.findByGroupId(groupId);
 
@@ -59,7 +64,7 @@ public class BlogsStatsUserLocalServiceImpl
 	}
 
 	@Override
-	public void deleteStatsUserByUserId(long userId) {
+	public void deleteStatsUserByUserId(long userId) throws SystemException {
 		List<BlogsStatsUser> statsUsers =
 			blogsStatsUserPersistence.findByUserId(userId);
 
@@ -70,7 +75,8 @@ public class BlogsStatsUserLocalServiceImpl
 
 	@Override
 	public List<BlogsStatsUser> getCompanyStatsUsers(
-		long companyId, int start, int end) {
+			long companyId, int start, int end)
+		throws SystemException {
 
 		return blogsStatsUserPersistence.findByC_NotE(
 			companyId, 0, start, end, new StatsUserLastPostDateComparator());
@@ -78,21 +84,24 @@ public class BlogsStatsUserLocalServiceImpl
 
 	@Override
 	public List<BlogsStatsUser> getCompanyStatsUsers(
-		long companyId, int start, int end,
-		OrderByComparator<BlogsStatsUser> obc) {
+			long companyId, int start, int end, OrderByComparator obc)
+		throws SystemException {
 
 		return blogsStatsUserPersistence.findByC_NotE(
 			companyId, 0, start, end, obc);
 	}
 
 	@Override
-	public int getCompanyStatsUsersCount(long companyId) {
+	public int getCompanyStatsUsersCount(long companyId)
+		throws SystemException {
+
 		return blogsStatsUserPersistence.countByC_NotE(companyId, 0);
 	}
 
 	@Override
 	public List<BlogsStatsUser> getGroupsStatsUsers(
-		long companyId, long groupId, int start, int end) {
+			long companyId, long groupId, int start, int end)
+		throws SystemException {
 
 		return blogsStatsUserFinder.findByGroupIds(
 			companyId, groupId, start, end);
@@ -100,7 +109,8 @@ public class BlogsStatsUserLocalServiceImpl
 
 	@Override
 	public List<BlogsStatsUser> getGroupStatsUsers(
-		long groupId, int start, int end) {
+			long groupId, int start, int end)
+		throws SystemException {
 
 		return blogsStatsUserPersistence.findByG_NotE(
 			groupId, 0, start, end, new StatsUserLastPostDateComparator());
@@ -108,21 +118,22 @@ public class BlogsStatsUserLocalServiceImpl
 
 	@Override
 	public List<BlogsStatsUser> getGroupStatsUsers(
-		long groupId, int start, int end,
-		OrderByComparator<BlogsStatsUser> obc) {
+			long groupId, int start, int end, OrderByComparator obc)
+		throws SystemException {
 
 		return blogsStatsUserPersistence.findByG_NotE(
 			groupId, 0, start, end, obc);
 	}
 
 	@Override
-	public int getGroupStatsUsersCount(long groupId) {
+	public int getGroupStatsUsersCount(long groupId) throws SystemException {
 		return blogsStatsUserPersistence.countByG_NotE(groupId, 0);
 	}
 
 	@Override
 	public List<BlogsStatsUser> getOrganizationStatsUsers(
-		long organizationId, int start, int end) {
+			long organizationId, int start, int end)
+		throws SystemException {
 
 		return blogsStatsUserFinder.findByOrganizationId(
 			organizationId, start, end, new StatsUserLastPostDateComparator());
@@ -130,21 +141,23 @@ public class BlogsStatsUserLocalServiceImpl
 
 	@Override
 	public List<BlogsStatsUser> getOrganizationStatsUsers(
-		long organizationId, int start, int end,
-		OrderByComparator<BlogsStatsUser> obc) {
+			long organizationId, int start, int end, OrderByComparator obc)
+		throws SystemException {
 
 		return blogsStatsUserFinder.findByOrganizationId(
 			organizationId, start, end, obc);
 	}
 
 	@Override
-	public int getOrganizationStatsUsersCount(long organizationId) {
+	public int getOrganizationStatsUsersCount(long organizationId)
+		throws SystemException {
+
 		return blogsStatsUserFinder.countByOrganizationId(organizationId);
 	}
 
 	@Override
 	public BlogsStatsUser getStatsUser(long groupId, long userId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		BlogsStatsUser statsUser = blogsStatsUserPersistence.fetchByG_U(
 			groupId, userId);
@@ -168,14 +181,14 @@ public class BlogsStatsUserLocalServiceImpl
 
 	@Override
 	public void updateStatsUser(long groupId, long userId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		updateStatsUser(groupId, userId, null);
 	}
 
 	@Override
 	public void updateStatsUser(long groupId, long userId, Date displayDate)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Date now = new Date();
 

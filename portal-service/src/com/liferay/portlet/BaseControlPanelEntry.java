@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portlet;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.LayoutConstants;
@@ -63,7 +64,6 @@ public abstract class BaseControlPanelEntry implements ControlPanelEntry {
 	 *             #hasAccessPermission} to determine if a portlet should be
 	 *             displayed in the Control Panel.</p>
 	 */
-	@Deprecated
 	@Override
 	public boolean isVisible(
 			PermissionChecker permissionChecker, Portlet portlet)
@@ -83,7 +83,6 @@ public abstract class BaseControlPanelEntry implements ControlPanelEntry {
 	 *             #hasAccessPermission} to determine if a portlet should be
 	 *             displayed in the Control Panel.</p>
 	 */
-	@Deprecated
 	@Override
 	public boolean isVisible(
 			Portlet portlet, String category, ThemeDisplay themeDisplay)
@@ -123,7 +122,7 @@ public abstract class BaseControlPanelEntry implements ControlPanelEntry {
 
 	protected boolean hasAccessPermissionExplicitlyGranted(
 			PermissionChecker permissionChecker, Group group, Portlet portlet)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		if (permissionChecker.isCompanyAdmin()) {
 			return true;

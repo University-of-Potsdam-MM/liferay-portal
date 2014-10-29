@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -34,7 +34,7 @@ long ruleGroupId = BeanParamUtil.getLong(ruleGroup, request, "ruleGroupId");
 String title = StringPool.BLANK;
 
 if (ruleGroup != null) {
-	title = LanguageUtil.format(request, "new-classification-rule-for-x", ruleGroup.getName(locale), false);
+	title = LanguageUtil.format(pageContext, "new-classification-rule-for-x", ruleGroup.getName(locale), false);
 
 	if (rule != null) {
 		title = rule.getName(locale) + " (" + ruleGroup.getName(locale) + ")";
@@ -73,7 +73,7 @@ Collection<String> ruleHandlerTypes = RuleGroupProcessorUtil.getRuleHandlerTypes
 	<aui:model-context bean="<%= rule %>" model="<%= MDRRule.class %>" />
 
 	<c:if test='<%= !PluginPackageUtil.isInstalled("wurfl-web") %>'>
-		<div class="alert alert-warning">
+		<div class="alert alert-block">
 			<liferay-ui:message key="there-is-no-device-recognition-provider-installed" />
 		</div>
 	</c:if>
@@ -137,7 +137,7 @@ Collection<String> ruleHandlerTypes = RuleGroupProcessorUtil.getRuleHandlerTypes
 			{
 				data: {
 					<portlet:namespace />ruleId: <%= ruleId %>,
-					<portlet:namespace />type: typeNode.val()
+					<portlet:namespace />type: typeNode.val(),
 				},
 				on: {
 					success: function(event, id, obj) {

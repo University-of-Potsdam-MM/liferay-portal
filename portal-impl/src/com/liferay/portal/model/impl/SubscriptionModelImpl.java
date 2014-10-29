@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,10 +14,8 @@
 
 package com.liferay.portal.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
-import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.StringBundler;
@@ -26,9 +24,7 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.CacheModel;
 import com.liferay.portal.model.Subscription;
 import com.liferay.portal.model.SubscriptionModel;
-import com.liferay.portal.model.User;
 import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.service.UserLocalServiceUtil;
 import com.liferay.portal.util.PortalUtil;
 
 import com.liferay.portlet.expando.model.ExpandoBridge;
@@ -55,7 +51,6 @@ import java.util.Map;
  * @see com.liferay.portal.model.SubscriptionModel
  * @generated
  */
-@ProviderType
 public class SubscriptionModelImpl extends BaseModelImpl<Subscription>
 	implements SubscriptionModel {
 	/*
@@ -65,7 +60,6 @@ public class SubscriptionModelImpl extends BaseModelImpl<Subscription>
 	 */
 	public static final String TABLE_NAME = "Subscription";
 	public static final Object[][] TABLE_COLUMNS = {
-			{ "mvccVersion", Types.BIGINT },
 			{ "subscriptionId", Types.BIGINT },
 			{ "companyId", Types.BIGINT },
 			{ "userId", Types.BIGINT },
@@ -76,7 +70,7 @@ public class SubscriptionModelImpl extends BaseModelImpl<Subscription>
 			{ "classPK", Types.BIGINT },
 			{ "frequency", Types.VARCHAR }
 		};
-	public static final String TABLE_SQL_CREATE = "create table Subscription (mvccVersion LONG default 0,subscriptionId LONG not null primary key,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,classNameId LONG,classPK LONG,frequency VARCHAR(75) null)";
+	public static final String TABLE_SQL_CREATE = "create table Subscription (subscriptionId LONG not null primary key,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,classNameId LONG,classPK LONG,frequency VARCHAR(75) null)";
 	public static final String TABLE_SQL_DROP = "drop table Subscription";
 	public static final String ORDER_BY_JPQL = " ORDER BY subscription.subscriptionId ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY Subscription.subscriptionId ASC";
@@ -92,11 +86,11 @@ public class SubscriptionModelImpl extends BaseModelImpl<Subscription>
 	public static final boolean COLUMN_BITMASK_ENABLED = GetterUtil.getBoolean(com.liferay.portal.util.PropsUtil.get(
 				"value.object.column.bitmask.enabled.com.liferay.portal.model.Subscription"),
 			true);
-	public static final long CLASSNAMEID_COLUMN_BITMASK = 1L;
-	public static final long CLASSPK_COLUMN_BITMASK = 2L;
-	public static final long COMPANYID_COLUMN_BITMASK = 4L;
-	public static final long USERID_COLUMN_BITMASK = 8L;
-	public static final long SUBSCRIPTIONID_COLUMN_BITMASK = 16L;
+	public static long CLASSNAMEID_COLUMN_BITMASK = 1L;
+	public static long CLASSPK_COLUMN_BITMASK = 2L;
+	public static long COMPANYID_COLUMN_BITMASK = 4L;
+	public static long USERID_COLUMN_BITMASK = 8L;
+	public static long SUBSCRIPTIONID_COLUMN_BITMASK = 16L;
 	public static final long LOCK_EXPIRATION_TIME = GetterUtil.getLong(com.liferay.portal.util.PropsUtil.get(
 				"lock.expiration.time.com.liferay.portal.model.Subscription"));
 
@@ -137,7 +131,6 @@ public class SubscriptionModelImpl extends BaseModelImpl<Subscription>
 	public Map<String, Object> getModelAttributes() {
 		Map<String, Object> attributes = new HashMap<String, Object>();
 
-		attributes.put("mvccVersion", getMvccVersion());
 		attributes.put("subscriptionId", getSubscriptionId());
 		attributes.put("companyId", getCompanyId());
 		attributes.put("userId", getUserId());
@@ -148,20 +141,11 @@ public class SubscriptionModelImpl extends BaseModelImpl<Subscription>
 		attributes.put("classPK", getClassPK());
 		attributes.put("frequency", getFrequency());
 
-		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
-		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
-
 		return attributes;
 	}
 
 	@Override
 	public void setModelAttributes(Map<String, Object> attributes) {
-		Long mvccVersion = (Long)attributes.get("mvccVersion");
-
-		if (mvccVersion != null) {
-			setMvccVersion(mvccVersion);
-		}
-
 		Long subscriptionId = (Long)attributes.get("subscriptionId");
 
 		if (subscriptionId != null) {
@@ -218,16 +202,6 @@ public class SubscriptionModelImpl extends BaseModelImpl<Subscription>
 	}
 
 	@Override
-	public long getMvccVersion() {
-		return _mvccVersion;
-	}
-
-	@Override
-	public void setMvccVersion(long mvccVersion) {
-		_mvccVersion = mvccVersion;
-	}
-
-	@Override
 	public long getSubscriptionId() {
 		return _subscriptionId;
 	}
@@ -278,19 +252,13 @@ public class SubscriptionModelImpl extends BaseModelImpl<Subscription>
 	}
 
 	@Override
-	public String getUserUuid() {
-		try {
-			User user = UserLocalServiceUtil.getUserById(getUserId());
-
-			return user.getUuid();
-		}
-		catch (PortalException pe) {
-			return StringPool.BLANK;
-		}
+	public String getUserUuid() throws SystemException {
+		return PortalUtil.getUserValue(getUserId(), "uuid", _userUuid);
 	}
 
 	@Override
 	public void setUserUuid(String userUuid) {
+		_userUuid = userUuid;
 	}
 
 	public long getOriginalUserId() {
@@ -442,7 +410,6 @@ public class SubscriptionModelImpl extends BaseModelImpl<Subscription>
 	public Object clone() {
 		SubscriptionImpl subscriptionImpl = new SubscriptionImpl();
 
-		subscriptionImpl.setMvccVersion(getMvccVersion());
 		subscriptionImpl.setSubscriptionId(getSubscriptionId());
 		subscriptionImpl.setCompanyId(getCompanyId());
 		subscriptionImpl.setUserId(getUserId());
@@ -501,16 +468,6 @@ public class SubscriptionModelImpl extends BaseModelImpl<Subscription>
 	}
 
 	@Override
-	public boolean isEntityCacheEnabled() {
-		return ENTITY_CACHE_ENABLED;
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return FINDER_CACHE_ENABLED;
-	}
-
-	@Override
 	public void resetOriginalValues() {
 		SubscriptionModelImpl subscriptionModelImpl = this;
 
@@ -536,8 +493,6 @@ public class SubscriptionModelImpl extends BaseModelImpl<Subscription>
 	@Override
 	public CacheModel<Subscription> toCacheModel() {
 		SubscriptionCacheModel subscriptionCacheModel = new SubscriptionCacheModel();
-
-		subscriptionCacheModel.mvccVersion = getMvccVersion();
 
 		subscriptionCacheModel.subscriptionId = getSubscriptionId();
 
@@ -588,11 +543,9 @@ public class SubscriptionModelImpl extends BaseModelImpl<Subscription>
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(21);
+		StringBundler sb = new StringBundler(19);
 
-		sb.append("{mvccVersion=");
-		sb.append(getMvccVersion());
-		sb.append(", subscriptionId=");
+		sb.append("{subscriptionId=");
 		sb.append(getSubscriptionId());
 		sb.append(", companyId=");
 		sb.append(getCompanyId());
@@ -617,16 +570,12 @@ public class SubscriptionModelImpl extends BaseModelImpl<Subscription>
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(34);
+		StringBundler sb = new StringBundler(31);
 
 		sb.append("<model><model-name>");
 		sb.append("com.liferay.portal.model.Subscription");
 		sb.append("</model-name>");
 
-		sb.append(
-			"<column><column-name>mvccVersion</column-name><column-value><![CDATA[");
-		sb.append(getMvccVersion());
-		sb.append("]]></column-value></column>");
 		sb.append(
 			"<column><column-name>subscriptionId</column-name><column-value><![CDATA[");
 		sb.append(getSubscriptionId());
@@ -669,16 +618,16 @@ public class SubscriptionModelImpl extends BaseModelImpl<Subscription>
 		return sb.toString();
 	}
 
-	private static final ClassLoader _classLoader = Subscription.class.getClassLoader();
-	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
+	private static ClassLoader _classLoader = Subscription.class.getClassLoader();
+	private static Class<?>[] _escapedModelInterfaces = new Class[] {
 			Subscription.class
 		};
-	private long _mvccVersion;
 	private long _subscriptionId;
 	private long _companyId;
 	private long _originalCompanyId;
 	private boolean _setOriginalCompanyId;
 	private long _userId;
+	private String _userUuid;
 	private long _originalUserId;
 	private boolean _setOriginalUserId;
 	private String _userName;

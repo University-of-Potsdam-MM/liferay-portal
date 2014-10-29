@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -33,16 +33,11 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class ETagFilter extends BasePortalFilter {
 
-	public static final String SKIP_FILTER =
-		ETagFilter.class.getName() + "SKIP_FILTER";
-
 	@Override
 	public boolean isFilterEnabled(
 		HttpServletRequest request, HttpServletResponse response) {
 
-		if (ParamUtil.getBoolean(request, _ETAG, true) &&
-			!isAlreadyFiltered(request)) {
-
+		if (ParamUtil.getBoolean(request, _ETAG, true)) {
 			return true;
 		}
 		else {
@@ -50,16 +45,7 @@ public class ETagFilter extends BasePortalFilter {
 		}
 	}
 
-	protected boolean isAlreadyFiltered(HttpServletRequest request) {
-		if (request.getAttribute(SKIP_FILTER) != null) {
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
-
-	protected boolean isEligibleForETag(int status) {
+	protected boolean isEligibleForEtag(int status) {
 		if ((status >= HttpServletResponse.SC_OK) &&
 			(status < HttpServletResponse.SC_MULTIPLE_CHOICES)) {
 
@@ -76,8 +62,6 @@ public class ETagFilter extends BasePortalFilter {
 			FilterChain filterChain)
 		throws Exception {
 
-		request.setAttribute(SKIP_FILTER, Boolean.TRUE);
-
 		RestrictedByteBufferCacheServletResponse
 			restrictedByteBufferCacheServletResponse =
 				new RestrictedByteBufferCacheServletResponse(
@@ -91,7 +75,7 @@ public class ETagFilter extends BasePortalFilter {
 			ByteBuffer byteBuffer =
 				restrictedByteBufferCacheServletResponse.getByteBuffer();
 
-			if (!isEligibleForETag(
+			if (!isEligibleForEtag(
 					restrictedByteBufferCacheServletResponse.getStatus()) ||
 				!ETagUtil.processETag(request, response, byteBuffer)) {
 

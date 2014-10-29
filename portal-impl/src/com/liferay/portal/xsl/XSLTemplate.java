@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -23,7 +23,6 @@ import com.liferay.portal.kernel.template.TemplateResource;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.template.TemplateContextHelper;
-import com.liferay.portal.util.PropsValues;
 
 import java.io.Writer;
 
@@ -38,9 +37,7 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import javax.xml.XMLConstants;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
@@ -68,74 +65,7 @@ public class XSLTemplate implements Template {
 		_errorTemplateResource = errorTemplateResource;
 		_templateContextHelper = templateContextHelper;
 
-		_transformerFactory = TransformerFactory.newInstance();
-
-		try {
-			_transformerFactory.setFeature(
-				XMLConstants.FEATURE_SECURE_PROCESSING,
-				PropsValues.XSL_TEMPLATE_SECURE_PROCESSING_ENABLED);
-		}
-		catch (TransformerConfigurationException tce) {
-		}
-
 		_context = new HashMap<String, Object>();
-	}
-
-	@Override
-	public void doProcessTemplate(Writer writer) throws Exception {
-		String languageId = null;
-
-		XSLURIResolver xslURIResolver =
-			_xslTemplateResource.getXSLURIResolver();
-
-		if (xslURIResolver != null) {
-			languageId = xslURIResolver.getLanguageId();
-		}
-
-		Locale locale = LocaleUtil.fromLanguageId(languageId);
-
-		XSLErrorListener xslErrorListener = new XSLErrorListener(locale);
-
-		_transformerFactory.setErrorListener(xslErrorListener);
-
-		_transformerFactory.setURIResolver(xslURIResolver);
-
-		_xmlStreamSource = new StreamSource(
-			_xslTemplateResource.getXMLReader());
-
-		Transformer transformer = null;
-
-		if (_errorTemplateResource == null) {
-			try {
-				transformer = _getTransformer(
-					_transformerFactory, _xslTemplateResource);
-
-				transformer.transform(
-					_xmlStreamSource, new StreamResult(writer));
-
-				return;
-			}
-			catch (Exception e) {
-				throw new TemplateException(
-					"Unable to process XSL template " +
-						_xslTemplateResource.getTemplateId(),
-					e);
-			}
-		}
-
-		UnsyncStringWriter unsyncStringWriter = new UnsyncStringWriter();
-
-		transformer = _getTransformer(
-			_transformerFactory, _xslTemplateResource);
-
-		transformer.setParameter(TemplateConstants.WRITER, unsyncStringWriter);
-
-		transformer.transform(
-			_xmlStreamSource, new StreamResult(unsyncStringWriter));
-
-		StringBundler sb = unsyncStringWriter.getStringBundler();
-
-		sb.writeTo(writer);
 	}
 
 	@Override
@@ -157,18 +87,69 @@ public class XSLTemplate implements Template {
 
 	@Override
 	public void processTemplate(Writer writer) throws TemplateException {
+		TransformerFactory transformerFactory =
+			TransformerFactory.newInstance();
+
+		String languageId = null;
+
+		XSLURIResolver xslURIResolver =
+			_xslTemplateResource.getXSLURIResolver();
+
+		if (xslURIResolver != null) {
+			languageId = xslURIResolver.getLanguageId();
+		}
+
+		Locale locale = LocaleUtil.fromLanguageId(languageId);
+
+		XSLErrorListener xslErrorListener = new XSLErrorListener(locale);
+
+		transformerFactory.setErrorListener(xslErrorListener);
+
+		transformerFactory.setURIResolver(xslURIResolver);
+
+		StreamSource xmlSource = new StreamSource(
+			_xslTemplateResource.getXMLReader());
+
+		Transformer transformer = null;
+
+		if (_errorTemplateResource == null) {
+			try {
+				transformer = _getTransformer(
+					transformerFactory, _xslTemplateResource);
+
+				transformer.transform(xmlSource, new StreamResult(writer));
+
+				return;
+			}
+			catch (Exception e) {
+				throw new TemplateException(
+					"Unable to process XSL template " +
+						_xslTemplateResource.getTemplateId(),
+					e);
+			}
+		}
+
 		try {
-			doProcessTemplate(writer);
+			UnsyncStringWriter unsyncStringWriter = new UnsyncStringWriter();
+
+			transformer = _getTransformer(
+				transformerFactory, _xslTemplateResource);
+
+			transformer.setParameter(
+				TemplateConstants.WRITER, unsyncStringWriter);
+
+			transformer.transform(
+				xmlSource, new StreamResult(unsyncStringWriter));
+
+			StringBundler sb = unsyncStringWriter.getStringBundler();
+
+			sb.writeTo(writer);
 		}
 		catch (Exception e1) {
 			Transformer errorTransformer = _getTransformer(
-				_transformerFactory, _errorTemplateResource);
+				transformerFactory, _errorTemplateResource);
 
 			errorTransformer.setParameter(TemplateConstants.WRITER, writer);
-
-			XSLErrorListener xslErrorListener =
-				(XSLErrorListener)_transformerFactory.getErrorListener();
-
 			errorTransformer.setParameter(
 				"exception", xslErrorListener.getMessageAndLocation());
 
@@ -188,8 +169,7 @@ public class XSLTemplate implements Template {
 			}
 
 			try {
-				errorTransformer.transform(
-					_xmlStreamSource, new StreamResult(writer));
+				errorTransformer.transform(xmlSource, new StreamResult(writer));
 			}
 			catch (Exception e2) {
 				throw new TemplateException(
@@ -245,8 +225,6 @@ public class XSLTemplate implements Template {
 	private Map<String, Object> _context;
 	private TemplateResource _errorTemplateResource;
 	private TemplateContextHelper _templateContextHelper;
-	private TransformerFactory _transformerFactory;
-	private StreamSource _xmlStreamSource;
 	private XSLTemplateResource _xslTemplateResource;
 
 	private class TransformerPrivilegedExceptionAction

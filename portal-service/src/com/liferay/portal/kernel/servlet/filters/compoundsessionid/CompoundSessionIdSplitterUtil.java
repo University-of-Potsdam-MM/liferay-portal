@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -22,7 +22,7 @@ import com.liferay.portal.kernel.util.Validator;
 
 /**
  * <p>
- * See https://issues.liferay.com/browse/LPS-18587.
+ * See http://issues.liferay.com/browse/LPS-18587.
  * </p>
  *
  * @author Michael C. Han
@@ -31,19 +31,19 @@ import com.liferay.portal.kernel.util.Validator;
 public class CompoundSessionIdSplitterUtil {
 
 	public static String getSessionIdDelimiter() {
-		return _SESSION_ID_DELIMITER;
+		return _sessionIdDelimiter;
 	}
 
 	public static boolean hasSessionDelimiter() {
-		return _HAS_SESSION_DELIMITER;
+		return _hasSessionDelimiter;
 	}
 
 	public static String parseSessionId(String sessionId) {
-		if (!_HAS_SESSION_DELIMITER) {
+		if (!_hasSessionDelimiter) {
 			return sessionId;
 		}
 
-		int pos = sessionId.indexOf(_SESSION_ID_DELIMITER);
+		int pos = sessionId.indexOf(_sessionIdDelimiter);
 
 		if (pos == -1) {
 			return sessionId;
@@ -52,9 +52,8 @@ public class CompoundSessionIdSplitterUtil {
 		return sessionId.substring(0, pos);
 	}
 
-	private static final boolean _HAS_SESSION_DELIMITER;
-
-	private static final String _SESSION_ID_DELIMITER;
+	private static final boolean _hasSessionDelimiter;
+	private static final String _sessionIdDelimiter;
 
 	static {
 		String sessionIdDelimiter = PropsUtil.get(
@@ -66,12 +65,12 @@ public class CompoundSessionIdSplitterUtil {
 		}
 
 		if (Validator.isNotNull(sessionIdDelimiter)) {
-			_HAS_SESSION_DELIMITER = true;
-			_SESSION_ID_DELIMITER = sessionIdDelimiter;
+			_hasSessionDelimiter = true;
+			_sessionIdDelimiter = sessionIdDelimiter;
 		}
 		else {
-			_HAS_SESSION_DELIMITER = false;
-			_SESSION_ID_DELIMITER = StringPool.BLANK;
+			_hasSessionDelimiter = false;
+			_sessionIdDelimiter = StringPool.BLANK;
 		}
 	}
 

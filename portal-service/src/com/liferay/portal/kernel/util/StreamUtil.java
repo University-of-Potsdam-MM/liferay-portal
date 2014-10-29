@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,24 +14,21 @@
 
 package com.liferay.portal.kernel.util;
 
-import com.liferay.portal.kernel.io.unsync.UnsyncFilterInputStream;
-import com.liferay.portal.kernel.io.unsync.UnsyncFilterOutputStream;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 
-import java.io.Closeable;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import java.nio.channels.Channel;
 import java.nio.channels.FileChannel;
 
 /**
  * @author Brian Wing Shun Chan
  * @author Raymond Augé
- * @author Shuyang Zhou
  */
 public class StreamUtil {
 
@@ -41,41 +38,66 @@ public class StreamUtil {
 	public static final boolean FORCE_TIO = GetterUtil.getBoolean(
 		System.getProperty(StreamUtil.class.getName() + ".force.tio"));
 
-	public static void cleanUp(boolean quite, Closeable... closeables) {
-		IOException ioException = null;
-
-		for (Closeable closeable : closeables) {
-			if (closeable != null) {
-				try {
-					closeable.close();
-				}
-				catch (IOException ioe) {
-					if (ioException == null) {
-						ioException = ioe;
-					}
-					else {
-						ioException.addSuppressed(ioe);
-					}
-				}
+	public static void cleanUp(Channel channel) {
+		try {
+			if (channel != null) {
+				channel.close();
 			}
 		}
-
-		if (ioException == null) {
-			return;
-		}
-
-		if (quite) {
+		catch (Exception e) {
 			if (_log.isWarnEnabled()) {
-				_log.warn(ioException, ioException);
+				_log.warn(e, e);
 			}
-		}
-		else {
-			ReflectionUtil.throwException(ioException);
 		}
 	}
 
-	public static void cleanUp(Closeable... closeables) {
-		cleanUp(true, closeables);
+	public static void cleanUp(Channel inputChannel, Channel outputChannel) {
+		cleanUp(inputChannel);
+		cleanUp(outputChannel);
+	}
+
+	public static void cleanUp(InputStream inputStream) {
+		try {
+			if (inputStream != null) {
+				inputStream.close();
+			}
+		}
+		catch (Exception e) {
+			if (_log.isWarnEnabled()) {
+				_log.warn(e, e);
+			}
+		}
+	}
+
+	public static void cleanUp(
+		InputStream inputStream, OutputStream outputStream) {
+
+		cleanUp(outputStream);
+		cleanUp(inputStream);
+	}
+
+	public static void cleanUp(OutputStream outputStream) {
+		try {
+			if (outputStream != null) {
+				outputStream.flush();
+			}
+		}
+		catch (Exception e) {
+			if (_log.isWarnEnabled()) {
+				_log.warn(e, e);
+			}
+		}
+
+		try {
+			if (outputStream != null) {
+				outputStream.close();
+			}
+		}
+		catch (Exception e) {
+			if (_log.isWarnEnabled()) {
+				_log.warn(e, e);
+			}
+		}
 	}
 
 	public static void transfer(
@@ -143,7 +165,7 @@ public class StreamUtil {
 		}
 		finally {
 			if (cleanUp) {
-				cleanUp(false, inputStream, outputStream);
+				cleanUp(inputStream, outputStream);
 			}
 		}
 	}
@@ -155,34 +177,6 @@ public class StreamUtil {
 		transfer(inputStream, outputStream, BUFFER_SIZE, true, length);
 	}
 
-	public static InputStream uncloseable(InputStream inputStream) {
-		if (inputStream == null) {
-			return null;
-		}
-
-		return new UnsyncFilterInputStream(inputStream) {
-
-			@Override
-			public void close() {
-			}
-
-		};
-	}
-
-	public static OutputStream uncloseable(OutputStream outputStream) {
-		if (outputStream == null) {
-			return null;
-		}
-
-		return new UnsyncFilterOutputStream(outputStream) {
-
-			@Override
-			public void close() {
-			}
-
-		};
-	}
-
 	protected static void transferByteArray(
 			InputStream inputStream, OutputStream outputStream, int bufferSize,
 			long length)
@@ -190,9 +184,9 @@ public class StreamUtil {
 
 		byte[] bytes = new byte[bufferSize];
 
-		if (length > 0) {
-			long remainingLength = length;
+		long remainingLength = length;
 
+		if (remainingLength > 0) {
 			while (remainingLength > 0) {
 				int readBytes = inputStream.read(
 					bytes, 0, (int)Math.min(remainingLength, bufferSize));

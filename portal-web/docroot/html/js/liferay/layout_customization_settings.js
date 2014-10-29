@@ -42,7 +42,7 @@ AUI.add(
 								{
 									defaultFn: function(event) {
 										columns.each(
-											function(item, index) {
+											function(item, index, collection) {
 												var overlayMask = item.getData('customizationControls');
 
 												if (overlayMask) {
@@ -131,7 +131,11 @@ AUI.add(
 							p_v_l_s_g_id: themeDisplay.getSiteGroupId()
 						};
 
-						data[checkbox.attr('name')] = checkbox.attr('checked');
+						var checkboxName = checkbox.attr('name');
+
+						checkboxName = checkboxName.replace('Checkbox', '');
+
+						data[checkboxName] = checkbox.attr('checked');
 
 						A.io.request(
 							themeDisplay.getPathMain() + '/portal/update_layout',
@@ -166,7 +170,7 @@ AUI.add(
 						var columns = A.all('.portlet-column');
 
 						columns.each(
-							function(item, index) {
+							function(item, index, collection) {
 								var overlayMask = item.getData('customizationControls');
 
 								if (!overlayMask) {
@@ -186,7 +190,7 @@ AUI.add(
 						var columns = A.all('.portlet-column');
 
 						columns.each(
-							function(item, index) {
+							function(item, index, collection) {
 								var overlayMask = item.getData('customizationControls');
 
 								if (overlayMask) {

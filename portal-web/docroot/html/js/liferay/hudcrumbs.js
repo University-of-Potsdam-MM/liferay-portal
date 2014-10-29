@@ -1,11 +1,11 @@
 AUI.add(
 	'liferay-hudcrumbs',
 	function(A) {
-		var Lang = A.Lang;
+		var Lang = A.Lang,
 
-		var NAME = 'hudcrumbs';
+			getClassName = A.ClassNameManager.getClassName,
 
-		var getClassName = A.ClassNameManager.getClassName;
+			NAME = 'hudcrumbs';
 
 		var Hudcrumbs = A.Component.create(
 			{
@@ -14,15 +14,12 @@ AUI.add(
 						value: null
 					},
 					hostMidpoint: {
-						validator: Lang.isNumber,
 						value: 0
 					},
-					scrollDelay: {
-						validator: Lang.isNumber,
-						value: 50
+					top: {
+						value: 0
 					},
 					width: {
-						validtor: Lang.isNumber,
 						value: 0
 					}
 				},
@@ -58,27 +55,12 @@ AUI.add(
 
 						instance._calculateDimensions();
 
-						instance._onScrollTask = A.debounce(instance._onScroll, instance.get('scrollDelay'), instance);
-
-						win.on('scroll', instance._onScrollTask);
-						win.on('windowresize', instance._calculateDimensions, instance);
+						win.on('scroll', instance._onScroll, instance);
+						win.on('resize', instance._calculateDimensions, instance);
 
 						body.append(hudcrumbs);
 
 						Liferay.on('dockbar:pinned', instance._calculateDimensions, instance);
-						Liferay.on('surfaceStartNavigate', instance._onStartNavigate, instance);
-					},
-
-					destructor: function() {
-						var instance = this;
-
-						Liferay.detach('surfaceStartNavigate', instance._onStartNavigate);
-						Liferay.detach('dockbar:pinned', instance._calculateDimensions);
-
-						var win = instance._win;
-
-						win.detach('scroll', instance._onScrollTask);
-						win.detach('windowresize', instance._calculateDimensions);
 					},
 
 					_calculateDimensions: function(event) {
@@ -113,12 +95,6 @@ AUI.add(
 						}
 
 						instance.lastAction = action;
-					},
-
-					_onStartNavigate: function(event) {
-						var instance = this;
-
-						instance.get('clone').hide();
 					}
 				}
 			}
@@ -128,6 +104,6 @@ AUI.add(
 	},
 	'',
 	{
-		requires: ['aui-base', 'aui-debounce', 'event-resize']
+		requires: ['aui-base', 'aui-component', 'plugin']
 	}
 );

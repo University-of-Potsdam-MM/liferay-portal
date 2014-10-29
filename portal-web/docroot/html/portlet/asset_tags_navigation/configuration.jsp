@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -16,16 +16,18 @@
 
 <%@ include file="/html/portlet/asset_tags_navigation/init.jsp" %>
 
-<liferay-portlet:actionURL portletConfiguration="true" var="configurationActionURL" />
+<%
+String redirect = ParamUtil.getString(request, "redirect");
+%>
 
-<liferay-portlet:renderURL portletConfiguration="true" var="configurationRenderURL" />
+<liferay-portlet:actionURL portletConfiguration="true" var="configurationURL" />
 
-<aui:form action="<%= configurationActionURL %>" method="post" name="fm">
+<aui:form action="<%= configurationURL %>" method="post" name="fm">
 	<aui:input name="<%= Constants.CMD %>" type="hidden" value="<%= Constants.UPDATE %>" />
-	<aui:input name="redirect" type="hidden" value="<%= configurationRenderURL %>" />
+	<aui:input name="redirect" type="hidden" value="<%= redirect %>" />
 
 	<aui:fieldset>
-		<ul class="lfr-tree list-unstyled">
+		<ul class="lfr-tree unstyled">
 			<li class="tree-item">
 				<aui:input label="show-unused-tags" name="preferences--showZeroAssetCount--" type="checkbox" value="<%= showZeroAssetCount %>" />
 			</li>
@@ -33,13 +35,13 @@
 			<li class="tree-item">
 				<aui:input name="preferences--showAssetCount--" type="checkbox" value="<%= showAssetCount %>" />
 
-				<ul class="hide lfr-tree list-unstyled" id="<portlet:namespace />assetCountOptions">
+				<ul class="lfr-tree hide unstyled" id="<portlet:namespace />assetCountOptions">
 					<li class="tree-item">
 						<aui:select helpMessage="asset-type-asset-count-help" label="asset-type" name="preferences--classNameId--">
 							<aui:option label="any" value="<%= classNameId == 0 %>" />
 
 							<%
-							List<AssetRendererFactory> assetRendererFactories = ListUtil.sort(AssetRendererFactoryRegistryUtil.getAssetRendererFactories(company.getCompanyId()), new AssetRendererFactoryTypeNameComparator(locale));
+							List<AssetRendererFactory> assetRendererFactories = AssetRendererFactoryRegistryUtil.getAssetRendererFactories(company.getCompanyId());
 
 							for (AssetRendererFactory assetRendererFactory : assetRendererFactories) {
 							%>
@@ -56,7 +58,7 @@
 			</li>
 
 			<li class="tree-item">
-				<ul class="lfr-tree list-unstyled" id="<portlet:namespace />displayTemplateSettings">
+				<ul class="lfr-tree unstyled" id="<portlet:namespace />displayTemplateSettings">
 					<div class="display-template">
 
 						<%
@@ -73,7 +75,7 @@
 							displayStyle="<%= displayStyle %>"
 							displayStyleGroupId="<%= displayStyleGroupId %>"
 							displayStyles="<%= displayStyles %>"
-							refreshURL="<%= configurationRenderURL %>"
+							refreshURL="<%= currentURL %>"
 						/>
 					</div>
 				</ul>
@@ -91,7 +93,7 @@
 </aui:form>
 
 <aui:script use="aui-base">
-	var showAssetCount = A.one('#<portlet:namespace />showAssetCount');
+	var showAssetCount = A.one('#<portlet:namespace />showAssetCountCheckbox');
 
 	function showHiddenFields() {
 		var assetCountOptions = A.one('#<portlet:namespace />assetCountOptions');

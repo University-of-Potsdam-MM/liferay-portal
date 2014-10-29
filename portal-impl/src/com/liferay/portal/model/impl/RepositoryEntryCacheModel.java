@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,12 +14,9 @@
 
 package com.liferay.portal.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.CacheModel;
-import com.liferay.portal.model.MVCCModel;
 import com.liferay.portal.model.RepositoryEntry;
 
 import java.io.Externalizable;
@@ -36,26 +33,13 @@ import java.util.Date;
  * @see RepositoryEntry
  * @generated
  */
-@ProviderType
 public class RepositoryEntryCacheModel implements CacheModel<RepositoryEntry>,
-	Externalizable, MVCCModel {
-	@Override
-	public long getMvccVersion() {
-		return mvccVersion;
-	}
-
-	@Override
-	public void setMvccVersion(long mvccVersion) {
-		this.mvccVersion = mvccVersion;
-	}
-
+	Externalizable {
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(25);
+		StringBundler sb = new StringBundler(23);
 
-		sb.append("{mvccVersion=");
-		sb.append(mvccVersion);
-		sb.append(", uuid=");
+		sb.append("{uuid=");
 		sb.append(uuid);
 		sb.append(", repositoryEntryId=");
 		sb.append(repositoryEntryId);
@@ -85,8 +69,6 @@ public class RepositoryEntryCacheModel implements CacheModel<RepositoryEntry>,
 	@Override
 	public RepositoryEntry toEntityModel() {
 		RepositoryEntryImpl repositoryEntryImpl = new RepositoryEntryImpl();
-
-		repositoryEntryImpl.setMvccVersion(mvccVersion);
 
 		if (uuid == null) {
 			repositoryEntryImpl.setUuid(StringPool.BLANK);
@@ -139,7 +121,6 @@ public class RepositoryEntryCacheModel implements CacheModel<RepositoryEntry>,
 
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
-		mvccVersion = objectInput.readLong();
 		uuid = objectInput.readUTF();
 		repositoryEntryId = objectInput.readLong();
 		groupId = objectInput.readLong();
@@ -156,8 +137,6 @@ public class RepositoryEntryCacheModel implements CacheModel<RepositoryEntry>,
 	@Override
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
-		objectOutput.writeLong(mvccVersion);
-
 		if (uuid == null) {
 			objectOutput.writeUTF(StringPool.BLANK);
 		}
@@ -191,7 +170,6 @@ public class RepositoryEntryCacheModel implements CacheModel<RepositoryEntry>,
 		objectOutput.writeBoolean(manualCheckInRequired);
 	}
 
-	public long mvccVersion;
 	public String uuid;
 	public long repositoryEntryId;
 	public long groupId;

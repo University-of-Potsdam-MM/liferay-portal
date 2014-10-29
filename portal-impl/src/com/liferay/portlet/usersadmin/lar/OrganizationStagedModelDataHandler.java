@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portlet.usersadmin.lar;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.lar.BaseStagedModelDataHandler;
 import com.liferay.portal.kernel.lar.ExportImportPathUtil;
 import com.liferay.portal.kernel.lar.PortletDataContext;
@@ -60,24 +61,17 @@ public class OrganizationStagedModelDataHandler
 	@Override
 	public void deleteStagedModel(
 			String uuid, long groupId, String className, String extraData)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Group group = GroupLocalServiceUtil.getGroup(groupId);
 
-		Organization organization = fetchStagedModelByUuidAndCompanyId(
-			uuid, group.getCompanyId());
+		Organization organization =
+			OrganizationLocalServiceUtil.fetchOrganizationByUuidAndCompanyId(
+				uuid, group.getCompanyId());
 
 		if (organization != null) {
 			OrganizationLocalServiceUtil.deleteOrganization(organization);
 		}
-	}
-
-	@Override
-	public Organization fetchStagedModelByUuidAndCompanyId(
-		String uuid, long companyId) {
-
-		return OrganizationLocalServiceUtil.fetchOrganizationByUuidAndCompanyId(
-			uuid, companyId);
 	}
 
 	@Override
@@ -137,6 +131,14 @@ public class OrganizationStagedModelDataHandler
 
 		long userId = portletDataContext.getUserId(organization.getUserUuid());
 
+		if (organization.getParentOrganizationId() !=
+				OrganizationConstants.DEFAULT_PARENT_ORGANIZATION_ID) {
+
+			StagedModelDataHandlerUtil.importReferenceStagedModel(
+				portletDataContext, organization, Organization.class,
+				organization.getParentOrganizationId());
+		}
+
 		Map<Long, Long> organizationIds =
 			(Map<Long, Long>)portletDataContext.getNewPrimaryKeysMap(
 				Organization.class);
@@ -150,8 +152,9 @@ public class OrganizationStagedModelDataHandler
 
 		serviceContext.setUserId(userId);
 
-		Organization existingOrganization = fetchStagedModelByUuidAndCompanyId(
-			organization.getUuid(), portletDataContext.getGroupId());
+		Organization existingOrganization =
+			OrganizationLocalServiceUtil.fetchOrganizationByUuidAndCompanyId(
+				organization.getUuid(), portletDataContext.getCompanyId());
 
 		if (existingOrganization == null) {
 			existingOrganization =
@@ -179,8 +182,7 @@ public class OrganizationStagedModelDataHandler
 					parentOrganizationId, organization.getName(),
 					organization.getType(), organization.getRegionId(),
 					organization.getCountryId(), organization.getStatusId(),
-					organization.getComments(), true, null, false,
-					serviceContext);
+					organization.getComments(), false, serviceContext);
 		}
 
 		importAddresses(portletDataContext, organization, importedOrganization);
@@ -198,7 +200,7 @@ public class OrganizationStagedModelDataHandler
 
 	protected void exportAddresses(
 			PortletDataContext portletDataContext, Organization organization)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		List<Address> addresses = AddressLocalServiceUtil.getAddresses(
 			organization.getCompanyId(), organization.getModelClassName(),
@@ -213,7 +215,7 @@ public class OrganizationStagedModelDataHandler
 
 	protected void exportEmailAddresses(
 			PortletDataContext portletDataContext, Organization organization)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		List<EmailAddress> emailAddresses =
 			EmailAddressLocalServiceUtil.getEmailAddresses(
@@ -228,7 +230,8 @@ public class OrganizationStagedModelDataHandler
 	}
 
 	protected void exportOrgLabors(
-		PortletDataContext portletDataContext, Organization organization) {
+			PortletDataContext portletDataContext, Organization organization)
+		throws SystemException {
 
 		List<OrgLabor> orgLabors = OrgLaborLocalServiceUtil.getOrgLabors(
 			organization.getOrganizationId());
@@ -241,7 +244,7 @@ public class OrganizationStagedModelDataHandler
 
 	protected void exportPasswordPolicyRel(
 			PortletDataContext portletDataContext, Organization organization)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		PasswordPolicyRel passwordPolicyRel =
 			PasswordPolicyRelLocalServiceUtil.fetchPasswordPolicyRel(
@@ -262,7 +265,7 @@ public class OrganizationStagedModelDataHandler
 
 	protected void exportPhones(
 			PortletDataContext portletDataContext, Organization organization)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		List<Phone> phones = PhoneLocalServiceUtil.getPhones(
 			organization.getCompanyId(), organization.getModelClassName(),
@@ -277,7 +280,7 @@ public class OrganizationStagedModelDataHandler
 
 	protected void exportWebsites(
 			PortletDataContext portletDataContext, Organization organization)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		List<Website> websites = WebsiteLocalServiceUtil.getWebsites(
 			organization.getCompanyId(), organization.getModelClassName(),
@@ -293,7 +296,7 @@ public class OrganizationStagedModelDataHandler
 	protected void importAddresses(
 			PortletDataContext portletDataContext, Organization organization,
 			Organization importedOrganization)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		List<Element> addressElements =
 			portletDataContext.getReferenceDataElements(
@@ -332,7 +335,7 @@ public class OrganizationStagedModelDataHandler
 	protected void importEmailAddresses(
 			PortletDataContext portletDataContext, Organization organization,
 			Organization importedOrganization)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		List<Element> emailAddressElements =
 			portletDataContext.getReferenceDataElements(
@@ -374,7 +377,7 @@ public class OrganizationStagedModelDataHandler
 	protected void importOrgLabors(
 			PortletDataContext portletDataContext, Organization organization,
 			Organization importedOrganization)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		String path = ExportImportPathUtil.getModelPath(
 			organization, OrgLabor.class.getSimpleName());
@@ -393,7 +396,7 @@ public class OrganizationStagedModelDataHandler
 	protected void importPasswordPolicyRel(
 			PortletDataContext portletDataContext, Organization organization,
 			Organization importedOrganization)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		List<Element> passwordPolicyElements =
 			portletDataContext.getReferenceDataElements(
@@ -430,7 +433,7 @@ public class OrganizationStagedModelDataHandler
 	protected void importPhones(
 			PortletDataContext portletDataContext, Organization organization,
 			Organization importedOrganization)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		List<Element> phoneElements =
 			portletDataContext.getReferenceDataElements(
@@ -465,15 +468,10 @@ public class OrganizationStagedModelDataHandler
 			importedOrganization.getOrganizationId(), phones);
 	}
 
-	@Override
-	protected void importReferenceStagedModels(
-		PortletDataContext portletDataContext, Organization organization) {
-	}
-
 	protected void importWebsites(
 			PortletDataContext portletDataContext, Organization organization,
 			Organization importedOrganization)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		List<Element> websiteElements =
 			portletDataContext.getReferenceDataElements(
@@ -506,6 +504,22 @@ public class OrganizationStagedModelDataHandler
 		UsersAdminUtil.updateWebsites(
 			Organization.class.getName(),
 			importedOrganization.getOrganizationId(), websites);
+	}
+
+	@Override
+	protected boolean validateMissingReference(
+			String uuid, long companyId, long groupId)
+		throws Exception {
+
+		Organization organization =
+			OrganizationLocalServiceUtil.fetchOrganizationByUuidAndCompanyId(
+				uuid, companyId);
+
+		if (organization == null) {
+			return false;
+		}
+
+		return true;
 	}
 
 }

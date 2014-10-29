@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,15 +14,13 @@
 
 package com.liferay.portlet.journal.lar;
 
-import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.lar.BaseStagedModelDataHandler;
 import com.liferay.portal.kernel.lar.ExportImportPathUtil;
 import com.liferay.portal.kernel.lar.PortletDataContext;
 import com.liferay.portal.kernel.lar.StagedModelDataHandlerUtil;
-import com.liferay.portal.kernel.lar.StagedModelModifiedDateComparator;
 import com.liferay.portal.kernel.trash.TrashHandler;
-import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.service.ServiceContext;
@@ -30,7 +28,6 @@ import com.liferay.portlet.journal.model.JournalFolder;
 import com.liferay.portlet.journal.model.JournalFolderConstants;
 import com.liferay.portlet.journal.service.JournalFolderLocalServiceUtil;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -44,37 +41,15 @@ public class JournalFolderStagedModelDataHandler
 	@Override
 	public void deleteStagedModel(
 			String uuid, long groupId, String className, String extraData)
-		throws PortalException {
+		throws PortalException, SystemException {
 
-		JournalFolder folder = fetchStagedModelByUuidAndGroupId(uuid, groupId);
+		JournalFolder folder =
+			JournalFolderLocalServiceUtil.fetchJournalFolderByUuidAndGroupId(
+				uuid, groupId);
 
 		if (folder != null) {
 			JournalFolderLocalServiceUtil.deleteFolder(folder);
 		}
-	}
-
-	@Override
-	public JournalFolder fetchStagedModelByUuidAndCompanyId(
-		String uuid, long companyId) {
-
-		List<JournalFolder> folders =
-			JournalFolderLocalServiceUtil.getJournalFoldersByUuidAndCompanyId(
-				uuid, companyId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-				new StagedModelModifiedDateComparator<JournalFolder>());
-
-		if (ListUtil.isEmpty(folders)) {
-			return null;
-		}
-
-		return folders.get(0);
-	}
-
-	@Override
-	public JournalFolder fetchStagedModelByUuidAndGroupId(
-		String uuid, long groupId) {
-
-		return JournalFolderLocalServiceUtil.fetchJournalFolderByUuidAndGroupId(
-			uuid, groupId);
 	}
 
 	@Override
@@ -113,6 +88,14 @@ public class JournalFolderStagedModelDataHandler
 
 		long userId = portletDataContext.getUserId(folder.getUserUuid());
 
+		if (folder.getParentFolderId() !=
+				JournalFolderConstants.DEFAULT_PARENT_FOLDER_ID) {
+
+			StagedModelDataHandlerUtil.importReferenceStagedModel(
+				portletDataContext, folder, JournalFolder.class,
+				folder.getParentFolderId());
+		}
+
 		Map<Long, Long> folderIds =
 			(Map<Long, Long>)portletDataContext.getNewPrimaryKeysMap(
 				JournalFolder.class);
@@ -128,8 +111,10 @@ public class JournalFolderStagedModelDataHandler
 		long groupId = portletDataContext.getScopeGroupId();
 
 		if (portletDataContext.isDataStrategyMirror()) {
-			JournalFolder existingFolder = fetchStagedModelByUuidAndGroupId(
-				folder.getUuid(), groupId);
+			JournalFolder existingFolder =
+				JournalFolderLocalServiceUtil.
+					fetchJournalFolderByUuidAndGroupId(
+						folder.getUuid(), groupId);
 
 			if (existingFolder == null) {
 				serviceContext.setUuid(folder.getUuid());
@@ -161,8 +146,9 @@ public class JournalFolderStagedModelDataHandler
 
 		long userId = portletDataContext.getUserId(folder.getUserUuid());
 
-		JournalFolder existingFolder = fetchStagedModelByUuidAndGroupId(
-			folder.getUuid(), portletDataContext.getScopeGroupId());
+		JournalFolder existingFolder =
+			JournalFolderLocalServiceUtil.fetchJournalFolderByUuidAndGroupId(
+				folder.getUuid(), portletDataContext.getScopeGroupId());
 
 		if ((existingFolder == null) || !existingFolder.isInTrash()) {
 			return;

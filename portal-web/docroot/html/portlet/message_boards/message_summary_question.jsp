@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -36,14 +36,15 @@ MBMessage message = (MBMessage)objArray[0];
 <div class="summary">
 
 	<%
-	String msgBody = StringUtil.shorten(message.getBody(), 250);
+	String msgBody = message.getBody();
 
 	if (message.isFormatBBCode()) {
-		msgBody = MBUtil.getBBCodeHTML(msgBody, themeDisplay.getPathThemeImages());
+		msgBody = BBCodeTranslatorUtil.getHTML(msgBody);
+		msgBody = StringUtil.replace(msgBody, "@theme_images_path@/emoticons", themeDisplay.getPathThemeImages() + "/emoticons");
 	}
 	%>
 
-	<%= msgBody %>
+	<%= StringUtil.shorten(msgBody, 250) %>
 </div>
 
 <div class="tags">

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -37,8 +37,7 @@ import java.io.Serializable;
  * @generated
  */
 @ProviderType
-public interface ResourceTypePermissionModel extends BaseModel<ResourceTypePermission>,
-	MVCCModel {
+public interface ResourceTypePermissionModel extends BaseModel<ResourceTypePermission> {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -58,22 +57,6 @@ public interface ResourceTypePermissionModel extends BaseModel<ResourceTypePermi
 	 * @param primaryKey the primary key of this resource type permission
 	 */
 	public void setPrimaryKey(long primaryKey);
-
-	/**
-	 * Returns the mvcc version of this resource type permission.
-	 *
-	 * @return the mvcc version of this resource type permission
-	 */
-	@Override
-	public long getMvccVersion();
-
-	/**
-	 * Sets the mvcc version of this resource type permission.
-	 *
-	 * @param mvccVersion the mvcc version of this resource type permission
-	 */
-	@Override
-	public void setMvccVersion(long mvccVersion);
 
 	/**
 	 * Returns the resource type permission ID of this resource type permission.

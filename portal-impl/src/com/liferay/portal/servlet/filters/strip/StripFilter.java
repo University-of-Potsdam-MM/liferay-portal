@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -35,9 +35,9 @@ import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.minifier.MinifierUtil;
 import com.liferay.portal.servlet.filters.BasePortalFilter;
 import com.liferay.portal.servlet.filters.dynamiccss.DynamicCSSUtil;
+import com.liferay.portal.util.MinifierUtil;
 import com.liferay.portal.util.PropsValues;
 
 import java.io.Writer;
@@ -295,8 +295,7 @@ public class StripFilter extends BasePortalFilter {
 				if (PropsValues.STRIP_CSS_SASS_ENABLED) {
 					try {
 						content = DynamicCSSUtil.parseSass(
-							_servletContext, request, request.getRequestURI(),
-							content);
+							_servletContext, request, null, content);
 					}
 					catch (ScriptingException se) {
 						_log.error("Unable to parse SASS on CSS " + key, se);
@@ -430,8 +429,7 @@ public class StripFilter extends BasePortalFilter {
 	}
 
 	protected void processJavaScript(
-			String resourceName, CharBuffer charBuffer, Writer writer,
-			char[] openTag)
+			CharBuffer charBuffer, Writer writer, char[] openTag)
 		throws Exception {
 
 		int endPos = openTag.length + 1;
@@ -533,8 +531,7 @@ public class StripFilter extends BasePortalFilter {
 			minifiedContent = _minifierCache.get(key);
 
 			if (minifiedContent == null) {
-				minifiedContent = MinifierUtil.minifyJavaScript(
-					resourceName, content);
+				minifiedContent = MinifierUtil.minifyJavaScript(content);
 
 				boolean skipCache = false;
 
@@ -672,11 +669,7 @@ public class StripFilter extends BasePortalFilter {
 					continue;
 				}
 				else if (hasMarker(charBuffer, _MARKER_SCRIPT_OPEN)) {
-					StringBuffer requestURL = request.getRequestURL();
-
-					processJavaScript(
-						requestURL.toString(), charBuffer, writer,
-						_MARKER_SCRIPT_OPEN);
+					processJavaScript(charBuffer, writer, _MARKER_SCRIPT_OPEN);
 
 					continue;
 				}

@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -39,7 +39,7 @@ if (end > total) {
 
 if (rowChecker != null) {
 	if (headerNames != null) {
-		headerNames.add(0, rowChecker.getAllRowsCheckBox(request));
+		headerNames.add(0, rowChecker.getAllRowsCheckBox());
 
 		normalizedHeaderNames.add(0, "rowChecker");
 	}
@@ -55,17 +55,19 @@ if (iteratorURL != null) {
 	url = HttpUtil.removeParameter(url, namespace + searchContainer.getOrderByTypeParam());
 }
 
-JSONArray primaryKeysJSONArray = JSONFactoryUtil.createJSONArray();
+List<String> primaryKeys = new ArrayList<String>();
+
+int sortColumnIndex = -1;
 %>
 
 <c:if test="<%= resultRows.isEmpty() && (emptyResultsMessage != null) %>">
 	<div class="alert alert-info">
-		<%= LanguageUtil.get(request, emptyResultsMessage) %>
+		<%= LanguageUtil.get(pageContext, emptyResultsMessage) %>
 	</div>
 </c:if>
 
 <div class="lfr-search-container <%= resultRows.isEmpty() ? "hide" : StringPool.BLANK %>">
-	<c:if test="<%= PropsValues.SEARCH_CONTAINER_SHOW_PAGINATION_TOP && (resultRows.size() > PropsValues.SEARCH_CONTAINER_SHOW_PAGINATION_TOP_DELTA) && paginate %>">
+	<c:if test="<%= PropsValues.SEARCH_CONTAINER_SHOW_PAGINATION_TOP && (resultRows.size() > 10) && paginate %>">
 		<div class="taglib-search-iterator-page-iterator-top">
 			<liferay-ui:search-paginator id='<%= id + "PageIteratorTop" %>' searchContainer="<%= searchContainer %>" type="<%= type %>" />
 		</div>
@@ -121,11 +123,13 @@ JSONArray primaryKeysJSONArray = JSONFactoryUtil.createJSONArray();
 					}
 
 					if (orderCurrentHeader) {
-						cssClass += " table-sorted";
+						cssClass += " table-sortable-column table-sorted";
 
 						if (HtmlUtil.escapeAttribute(orderByType).equals("desc")) {
 							cssClass += " table-sorted-desc";
 						}
+
+						sortColumnIndex = i;
 
 						if (orderByType.equals("asc")) {
 							orderByType = "desc";
@@ -177,7 +181,7 @@ JSONArray primaryKeysJSONArray = JSONFactoryUtil.createJSONArray();
 							String headerNameValue = null;
 
 							if ((rowChecker == null) || (i > 0)) {
-								headerNameValue = LanguageUtil.get(request, HtmlUtil.escape(headerName));
+								headerNameValue = LanguageUtil.get(pageContext, HtmlUtil.escape(headerName));
 							}
 							else {
 								headerNameValue = headerName;
@@ -213,7 +217,7 @@ JSONArray primaryKeysJSONArray = JSONFactoryUtil.createJSONArray();
 		<c:if test="<%= resultRows.isEmpty() && (emptyResultsMessage != null) %>">
 			<tr>
 				<td class="table-cell">
-					<%= LanguageUtil.get(request, emptyResultsMessage) %>
+					<%= LanguageUtil.get(pageContext, emptyResultsMessage) %>
 				</td>
 			</tr>
 		</c:if>
@@ -222,9 +226,9 @@ JSONArray primaryKeysJSONArray = JSONFactoryUtil.createJSONArray();
 		boolean allRowsIsChecked = true;
 
 		for (int i = 0; i < resultRows.size(); i++) {
-			com.liferay.portal.kernel.dao.search.ResultRow row = (com.liferay.portal.kernel.dao.search.ResultRow)resultRows.get(i);
+			ResultRow row = (ResultRow)resultRows.get(i);
 
-			primaryKeysJSONArray.put(row.getPrimaryKey());
+			primaryKeys.add(HtmlUtil.escape(row.getPrimaryKey()));
 
 			request.setAttribute(WebKeys.SEARCH_CONTAINER_RESULT_ROW, row);
 
@@ -261,7 +265,7 @@ JSONArray primaryKeysJSONArray = JSONFactoryUtil.createJSONArray();
 
 			<%
 			for (int j = 0; j < entries.size(); j++) {
-				com.liferay.portal.kernel.dao.search.SearchEntry entry = (com.liferay.portal.kernel.dao.search.SearchEntry)entries.get(j);
+				SearchEntry entry = (SearchEntry)entries.get(j);
 
 				String normalizedHeaderName = null;
 
@@ -288,12 +292,16 @@ JSONArray primaryKeysJSONArray = JSONFactoryUtil.createJSONArray();
 				else if ((j + 1) == entries.size()) {
 					columnClassName += " last";
 				}
+
+				if (j == sortColumnIndex) {
+					columnClassName += " table-sortable-column";
+				}
 			%>
 
-				<td class="table-cell <%= columnClassName %> text-<%= entry.getAlign() %> text-<%= entry.getValign() %>" colspan="<%= entry.getColspan() %>">
+				<td class="table-cell <%= columnClassName %>">
 
 					<%
-					entry.print(pageContext.getOut(), request, response);
+					entry.print(pageContext);
 					%>
 
 				</td>
@@ -305,9 +313,6 @@ JSONArray primaryKeysJSONArray = JSONFactoryUtil.createJSONArray();
 			</tr>
 
 		<%
-			request.removeAttribute(WebKeys.SEARCH_CONTAINER_RESULT_ROW);
-			request.removeAttribute(WebKeys.SEARCH_CONTAINER_RESULT_ROW_ENTRY);
-
 			request.removeAttribute("liferay-ui:search-container-row:rowId");
 		}
 		%>
@@ -346,10 +351,10 @@ JSONArray primaryKeysJSONArray = JSONFactoryUtil.createJSONArray();
 </c:if>
 
 <c:if test="<%= Validator.isNotNull(id) %>">
-	<input id="<%= namespace + id %>PrimaryKeys" name="<%= namespace + id %>PrimaryKeys" type="hidden" value="" />
+	<input id="<%= namespace + id %>PrimaryKeys" name="<%= namespace + id %>PrimaryKeys" type="hidden" value="<%= StringUtil.merge(primaryKeys) %>" />
 
 	<aui:script use="liferay-search-container">
-		var searchContainer = new Liferay.SearchContainer(
+		new Liferay.SearchContainer(
 			{
 				classNameHover: '<%= _CLASS_NAME_HOVER %>',
 				hover: <%= searchContainer.isHover() %>,
@@ -360,8 +365,6 @@ JSONArray primaryKeysJSONArray = JSONFactoryUtil.createJSONArray();
 				rowClassNameBodyHover: '<%= _ROW_CLASS_NAME_BODY %>'
 			}
 		).render();
-
-		searchContainer.updateDataStore(<%= primaryKeysJSONArray.toString() %>);
 	</aui:script>
 </c:if>
 

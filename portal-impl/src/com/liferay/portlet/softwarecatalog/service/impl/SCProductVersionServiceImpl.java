@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portlet.softwarecatalog.service.impl;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.security.permission.ActionKeys;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portlet.softwarecatalog.model.SCProductVersion;
@@ -36,7 +37,7 @@ public class SCProductVersionServiceImpl
 			String downloadPageURL, String directDownloadURL,
 			boolean testDirectDownloadURL, boolean repoStoreArtifact,
 			long[] frameworkVersionIds, ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		SCProductEntryPermission.check(
 			getPermissionChecker(), productEntryId, ActionKeys.UPDATE);
@@ -49,7 +50,7 @@ public class SCProductVersionServiceImpl
 
 	@Override
 	public void deleteProductVersion(long productVersionId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		SCProductVersion productVersion =
 			scProductVersionLocalService.getProductVersion(productVersionId);
@@ -63,7 +64,7 @@ public class SCProductVersionServiceImpl
 
 	@Override
 	public SCProductVersion getProductVersion(long productVersionId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		SCProductVersion productVersion =
 			scProductVersionLocalService.getProductVersion(productVersionId);
@@ -78,7 +79,7 @@ public class SCProductVersionServiceImpl
 	@Override
 	public List<SCProductVersion> getProductVersions(
 			long productEntryId, int start, int end)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		SCProductEntryPermission.check(
 			getPermissionChecker(), productEntryId, ActionKeys.VIEW);
@@ -89,7 +90,7 @@ public class SCProductVersionServiceImpl
 
 	@Override
 	public int getProductVersionsCount(long productEntryId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		SCProductEntryPermission.check(
 			getPermissionChecker(), productEntryId, ActionKeys.VIEW);
@@ -104,7 +105,7 @@ public class SCProductVersionServiceImpl
 			String downloadPageURL, String directDownloadURL,
 			boolean testDirectDownloadURL, boolean repoStoreArtifact,
 			long[] frameworkVersionIds)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		SCProductVersion productVersion =
 			scProductVersionLocalService.getProductVersion(productVersionId);

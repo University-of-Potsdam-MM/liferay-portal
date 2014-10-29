@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -17,9 +17,9 @@ package com.liferay.portal.increment;
 import com.liferay.portal.kernel.cache.key.CacheKeyGenerator;
 import com.liferay.portal.kernel.cache.key.CacheKeyGeneratorUtil;
 import com.liferay.portal.kernel.increment.BufferedIncrement;
+import com.liferay.portal.kernel.increment.BufferedIncrementThreadLocal;
 import com.liferay.portal.kernel.increment.Increment;
 import com.liferay.portal.kernel.increment.IncrementFactory;
-import com.liferay.portal.kernel.transaction.TransactionCommitCallbackRegistryUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.spring.aop.AnnotationChainableMethodAdvice;
 
@@ -29,7 +29,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
 import java.util.Map;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -47,7 +46,9 @@ public class BufferedIncrementAdvice
 	public Object before(MethodInvocation methodInvocation) throws Throwable {
 		BufferedIncrement bufferedIncrement = findAnnotation(methodInvocation);
 
-		if (bufferedIncrement == _nullBufferedIncrement) {
+		if (!BufferedIncrementThreadLocal.isEnabled() ||
+			(bufferedIncrement == _nullBufferedIncrement)) {
+
 			return null;
 		}
 
@@ -103,24 +104,10 @@ public class BufferedIncrementAdvice
 		Increment<?> increment = IncrementFactory.createIncrement(
 			bufferedIncrement.incrementClass(), value);
 
-		final BufferedIncrementProcessor callbackBufferedIncrementProcessor =
-			bufferedIncrementProcessor;
-
-		final BufferedIncreasableEntry bufferedIncreasableEntry =
+		BufferedIncreasableEntry bufferedIncreasableEntry =
 			new BufferedIncreasableEntry(methodInvocation, batchKey, increment);
 
-		TransactionCommitCallbackRegistryUtil.registerCallback(
-			new Callable<Void>() {
-
-				@Override
-				public Void call() throws Exception {
-					callbackBufferedIncrementProcessor.process(
-						bufferedIncreasableEntry);
-
-					return null;
-				}
-
-			});
+		bufferedIncrementProcessor.process(bufferedIncreasableEntry);
 
 		return nullResult;
 	}

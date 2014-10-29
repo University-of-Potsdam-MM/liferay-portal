@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,8 +14,11 @@
 
 package com.liferay.portlet.usersadmin.util;
 
+import com.liferay.portal.NoSuchOrganizationException;
+import com.liferay.portal.NoSuchUserGroupException;
 import com.liferay.portal.kernel.configuration.Filter;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.Hits;
@@ -29,6 +32,8 @@ import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.Tuple;
+import com.liferay.portal.kernel.util.UniqueList;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.Address;
 import com.liferay.portal.model.EmailAddress;
@@ -42,12 +47,10 @@ import com.liferay.portal.model.User;
 import com.liferay.portal.model.UserGroup;
 import com.liferay.portal.model.UserGroupRole;
 import com.liferay.portal.model.Website;
-import com.liferay.portal.security.auth.PrincipalThreadLocal;
 import com.liferay.portal.security.membershippolicy.OrganizationMembershipPolicyUtil;
 import com.liferay.portal.security.membershippolicy.SiteMembershipPolicyUtil;
 import com.liferay.portal.security.permission.ActionKeys;
 import com.liferay.portal.security.permission.PermissionChecker;
-import com.liferay.portal.security.permission.PermissionThreadLocal;
 import com.liferay.portal.service.AddressLocalServiceUtil;
 import com.liferay.portal.service.AddressServiceUtil;
 import com.liferay.portal.service.EmailAddressLocalServiceUtil;
@@ -70,7 +73,6 @@ import com.liferay.portal.service.permission.OrganizationPermissionUtil;
 import com.liferay.portal.service.permission.RolePermissionUtil;
 import com.liferay.portal.service.permission.UserGroupPermissionUtil;
 import com.liferay.portal.service.permission.UserGroupRolePermissionUtil;
-import com.liferay.portal.service.permission.UserPermissionUtil;
 import com.liferay.portal.service.persistence.UserGroupRolePK;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.PropsUtil;
@@ -147,7 +149,7 @@ public class UsersAdminImpl implements UsersAdmin {
 
 	@Override
 	public long[] addRequiredRoles(long userId, long[] roleIds)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		User user = UserLocalServiceUtil.getUser(userId);
 
@@ -156,7 +158,7 @@ public class UsersAdminImpl implements UsersAdmin {
 
 	@Override
 	public long[] addRequiredRoles(User user, long[] roleIds)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		if (user.isDefaultUser()) {
 			return removeRequiredRoles(user, roleIds);
@@ -188,7 +190,7 @@ public class UsersAdminImpl implements UsersAdmin {
 	@Override
 	public List<Role> filterGroupRoles(
 			PermissionChecker permissionChecker, long groupId, List<Role> roles)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		List<Role> filteredGroupRoles = ListUtil.copy(roles);
 
@@ -232,7 +234,7 @@ public class UsersAdminImpl implements UsersAdmin {
 		Group group = GroupLocalServiceUtil.getGroup(groupId);
 
 		if (GroupPermissionUtil.contains(
-				permissionChecker, group, ActionKeys.ASSIGN_USER_ROLES) ||
+				permissionChecker, groupId, ActionKeys.ASSIGN_USER_ROLES) ||
 			OrganizationPermissionUtil.contains(
 				permissionChecker, group.getOrganizationId(),
 				ActionKeys.ASSIGN_USER_ROLES)) {
@@ -259,7 +261,7 @@ public class UsersAdminImpl implements UsersAdmin {
 	@Override
 	public List<Group> filterGroups(
 			PermissionChecker permissionChecker, List<Group> groups)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		if (permissionChecker.isCompanyAdmin()) {
 			return groups;
@@ -273,7 +275,8 @@ public class UsersAdminImpl implements UsersAdmin {
 			Group group = itr.next();
 
 			if (!GroupPermissionUtil.contains(
-					permissionChecker, group, ActionKeys.ASSIGN_MEMBERS)) {
+					permissionChecker, group.getGroupId(),
+					ActionKeys.ASSIGN_MEMBERS)) {
 
 				itr.remove();
 			}
@@ -286,7 +289,7 @@ public class UsersAdminImpl implements UsersAdmin {
 	public List<Organization> filterOrganizations(
 			PermissionChecker permissionChecker,
 			List<Organization> organizations)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		if (permissionChecker.isCompanyAdmin()) {
 			return organizations;
@@ -300,7 +303,7 @@ public class UsersAdminImpl implements UsersAdmin {
 			Organization organization = itr.next();
 
 			if (!OrganizationPermissionUtil.contains(
-					permissionChecker, organization,
+					permissionChecker, organization.getOrganizationId(),
 					ActionKeys.ASSIGN_MEMBERS)) {
 
 				itr.remove();
@@ -356,7 +359,7 @@ public class UsersAdminImpl implements UsersAdmin {
 	@Override
 	public long[] filterUnsetGroupUserIds(
 			PermissionChecker permissionChecker, long groupId, long[] userIds)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		long[] filteredUserIds = userIds;
 
@@ -375,7 +378,7 @@ public class UsersAdminImpl implements UsersAdmin {
 	public long[] filterUnsetOrganizationUserIds(
 			PermissionChecker permissionChecker, long organizationId,
 			long[] userIds)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		long[] filteredUserIds = userIds;
 
@@ -394,7 +397,7 @@ public class UsersAdminImpl implements UsersAdmin {
 	public List<UserGroupRole> filterUserGroupRoles(
 			PermissionChecker permissionChecker,
 			List<UserGroupRole> userGroupRoles)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		List<UserGroupRole> filteredUserGroupRoles = ListUtil.copy(
 			userGroupRoles);
@@ -599,7 +602,7 @@ public class UsersAdminImpl implements UsersAdmin {
 	}
 
 	@Override
-	public OrderByComparator<Group> getGroupOrderByComparator(
+	public OrderByComparator getGroupOrderByComparator(
 		String orderByCol, String orderByType) {
 
 		boolean orderByAsc = false;
@@ -608,7 +611,7 @@ public class UsersAdminImpl implements UsersAdmin {
 			orderByAsc = true;
 		}
 
-		OrderByComparator<Group> orderByComparator = null;
+		OrderByComparator orderByComparator = null;
 
 		if (orderByCol.equals("name")) {
 			orderByComparator = new GroupNameComparator(orderByAsc);
@@ -641,7 +644,7 @@ public class UsersAdminImpl implements UsersAdmin {
 	}
 
 	@Override
-	public OrderByComparator<Organization> getOrganizationOrderByComparator(
+	public OrderByComparator getOrganizationOrderByComparator(
 		String orderByCol, String orderByType) {
 
 		boolean orderByAsc = false;
@@ -650,7 +653,7 @@ public class UsersAdminImpl implements UsersAdmin {
 			orderByAsc = true;
 		}
 
-		OrderByComparator<Organization> orderByComparator = null;
+		OrderByComparator orderByComparator = null;
 
 		if (orderByCol.equals("name")) {
 			orderByComparator = new OrganizationNameComparator(orderByAsc);
@@ -666,23 +669,27 @@ public class UsersAdminImpl implements UsersAdmin {
 	}
 
 	@Override
-	public List<Organization> getOrganizations(Hits hits)
-		throws PortalException {
+	public Tuple getOrganizations(Hits hits)
+		throws PortalException, SystemException {
+
+		List<Organization> organizations = new ArrayList<Organization>();
+		boolean corruptIndex = false;
 
 		List<Document> documents = hits.toList();
-
-		List<Organization> organizations = new ArrayList<Organization>(
-			documents.size());
 
 		for (Document document : documents) {
 			long organizationId = GetterUtil.getLong(
 				document.get(Field.ORGANIZATION_ID));
 
-			Organization organization =
-				OrganizationLocalServiceUtil.fetchOrganization(organizationId);
+			try {
+				Organization organization =
+					OrganizationLocalServiceUtil.getOrganization(
+						organizationId);
 
-			if (organization == null) {
-				organizations = null;
+				organizations.add(organization);
+			}
+			catch (NoSuchOrganizationException nsoe) {
+				corruptIndex = true;
 
 				Indexer indexer = IndexerRegistryUtil.getIndexer(
 					Organization.class);
@@ -692,12 +699,9 @@ public class UsersAdminImpl implements UsersAdmin {
 
 				indexer.delete(companyId, document.getUID());
 			}
-			else if (organizations != null) {
-				organizations.add(organization);
-			}
 		}
 
-		return organizations;
+		return new Tuple(organizations, corruptIndex);
 	}
 
 	@Override
@@ -830,7 +834,7 @@ public class UsersAdminImpl implements UsersAdmin {
 	}
 
 	@Override
-	public OrderByComparator<Role> getRoleOrderByComparator(
+	public OrderByComparator getRoleOrderByComparator(
 		String orderByCol, String orderByType) {
 
 		boolean orderByAsc = false;
@@ -839,7 +843,7 @@ public class UsersAdminImpl implements UsersAdmin {
 			orderByAsc = true;
 		}
 
-		OrderByComparator<Role> orderByComparator = null;
+		OrderByComparator orderByComparator = null;
 
 		if (orderByCol.equals("name")) {
 			orderByComparator = new RoleNameComparator(orderByAsc);
@@ -858,7 +862,7 @@ public class UsersAdminImpl implements UsersAdmin {
 	}
 
 	@Override
-	public OrderByComparator<UserGroup> getUserGroupOrderByComparator(
+	public OrderByComparator getUserGroupOrderByComparator(
 		String orderByCol, String orderByType) {
 
 		boolean orderByAsc = false;
@@ -867,7 +871,7 @@ public class UsersAdminImpl implements UsersAdmin {
 			orderByAsc = true;
 		}
 
-		OrderByComparator<UserGroup> orderByComparator = null;
+		OrderByComparator orderByComparator = null;
 
 		if (orderByCol.equals("name")) {
 			orderByComparator = new UserGroupNameComparator(orderByAsc);
@@ -884,46 +888,66 @@ public class UsersAdminImpl implements UsersAdmin {
 
 	@Override
 	public List<UserGroupRole> getUserGroupRoles(PortletRequest portletRequest)
-		throws PortalException {
+		throws PortalException, SystemException {
+
+		List<UserGroupRole> userGroupRoles = new UniqueList<UserGroupRole>();
+
+		long[] groupRolesRoleIds = StringUtil.split(
+			ParamUtil.getString(portletRequest, "groupRolesRoleIds"), 0L);
+		long[] groupRolesGroupIds = StringUtil.split(
+			ParamUtil.getString(portletRequest, "groupRolesGroupIds"), 0L);
+
+		if (groupRolesGroupIds.length != groupRolesRoleIds.length) {
+			return userGroupRoles;
+		}
 
 		User user = PortalUtil.getSelectedUser(portletRequest);
 
-		if (user == null) {
-			return Collections.emptyList();
+		long userId = 0;
+
+		if (user != null) {
+			userId = user.getUserId();
 		}
 
-		Set<UserGroupRole> userGroupRoles =
-			new HashSet<UserGroupRole>(
-				UserGroupRoleLocalServiceUtil.getUserGroupRoles(
-					user.getUserId()));
+		for (int i = 0; i < groupRolesGroupIds.length; i++) {
+			if ((groupRolesGroupIds[i] == 0) || (groupRolesRoleIds[i] == 0)) {
+				continue;
+			}
 
-		userGroupRoles.addAll(
-			getUserGroupRoles(
-				portletRequest, user, "addGroupRolesGroupIds",
-				"addGroupRolesRoleIds"));
-		userGroupRoles.removeAll(
-			getUserGroupRoles(
-				portletRequest, user, "deleteGroupRolesGroupIds",
-				"deleteGroupRolesRoleIds"));
+			UserGroupRolePK userGroupRolePK = new UserGroupRolePK(
+				userId, groupRolesGroupIds[i], groupRolesRoleIds[i]);
 
-		return new ArrayList<UserGroupRole>(userGroupRoles);
+			UserGroupRole userGroupRole =
+				UserGroupRoleLocalServiceUtil.createUserGroupRole(
+					userGroupRolePK);
+
+			userGroupRoles.add(userGroupRole);
+		}
+
+		return userGroupRoles;
 	}
 
 	@Override
-	public List<UserGroup> getUserGroups(Hits hits) throws PortalException {
-		List<Document> documents = hits.toList();
+	public Tuple getUserGroups(Hits hits)
+		throws PortalException, SystemException {
 
-		List<UserGroup> userGroups = new ArrayList<UserGroup>(documents.size());
+		List<UserGroup> userGroups = new ArrayList<UserGroup>();
+		boolean corruptIndex = false;
+
+		List<Document> documents = hits.toList();
 
 		for (Document document : documents) {
 			long userGroupId = GetterUtil.getLong(
 				document.get(Field.USER_GROUP_ID));
 
-			UserGroup userGroup = UserGroupLocalServiceUtil.fetchUserGroup(
-				userGroupId);
+			try {
+				UserGroup userGroup = UserGroupLocalServiceUtil.getUserGroup(
+					userGroupId);
 
-			if (userGroup == null) {
-				userGroups = null;
+				userGroups.add(userGroup);
+			}
+			catch (NoSuchUserGroupException nsuge) {
+				corruptIndex = true;
 
 				Indexer indexer = IndexerRegistryUtil.getIndexer(
 					UserGroup.class);
@@ -933,16 +957,13 @@ public class UsersAdminImpl implements UsersAdmin {
 
 				indexer.delete(companyId, document.getUID());
 			}
-			else if (userGroups != null) {
-				userGroups.add(userGroup);
-			}
 		}
 
-		return userGroups;
+		return new Tuple(userGroups, corruptIndex);
 	}
 
 	@Override
-	public OrderByComparator<User> getUserOrderByComparator(
+	public OrderByComparator getUserOrderByComparator(
 		String orderByCol, String orderByType) {
 
 		boolean orderByAsc = false;
@@ -951,7 +972,7 @@ public class UsersAdminImpl implements UsersAdmin {
 			orderByAsc = true;
 		}
 
-		OrderByComparator<User> orderByComparator = null;
+		OrderByComparator orderByComparator = null;
 
 		if (orderByCol.equals("email-address")) {
 			orderByComparator = new UserEmailAddressComparator(orderByAsc);
@@ -976,18 +997,22 @@ public class UsersAdminImpl implements UsersAdmin {
 	}
 
 	@Override
-	public List<User> getUsers(Hits hits) throws PortalException {
-		List<Document> documents = hits.toList();
+	public Tuple getUsers(Hits hits) throws PortalException, SystemException {
+		List<User> users = new ArrayList<User>();
+		boolean corruptIndex = false;
 
-		List<User> users = new ArrayList<User>(documents.size());
+		List<Document> documents = hits.toList();
 
 		for (Document document : documents) {
 			long userId = GetterUtil.getLong(document.get(Field.USER_ID));
 
 			User user = UserLocalServiceUtil.fetchUser(userId);
 
-			if (user == null) {
-				users = null;
+			if (user != null) {
+				users.add(user);
+			}
+			else {
+				corruptIndex = true;
 
 				Indexer indexer = IndexerRegistryUtil.getIndexer(User.class);
 
@@ -996,12 +1021,9 @@ public class UsersAdminImpl implements UsersAdmin {
 
 				indexer.delete(companyId, document.getUID());
 			}
-			else if (users != null) {
-				users.add(user);
-			}
 		}
 
-		return users;
+		return new Tuple(users, corruptIndex);
 	}
 
 	@Override
@@ -1061,71 +1083,47 @@ public class UsersAdminImpl implements UsersAdmin {
 
 	/**
 	 * @deprecated As of 6.2.0, replaced by {@link
-	 *             #hasUpdateFieldPermission(PermissionChecker, User, User,
-	 *             String)}
+	 *             #hasUpdateFieldPermission(User, String)}
 	 */
-	@Deprecated
 	@Override
 	public boolean hasUpdateEmailAddress(
 			PermissionChecker permissionChecker, User user)
-		throws PortalException {
+		throws PortalException, SystemException {
 
-		return hasUpdateFieldPermission(
-			permissionChecker, null, user, "emailAddress");
+		return hasUpdateFieldPermission(user, "emailAddress");
 	}
 
 	@Override
-	public boolean hasUpdateFieldPermission(
-			PermissionChecker permissionChecker, User updatingUser,
-			User updatedUser, String field)
-		throws PortalException {
+	public boolean hasUpdateFieldPermission(User user, String field)
+		throws PortalException, SystemException {
 
-		if (updatedUser == null) {
-			return true;
-		}
-
-		if (updatingUser == null) {
-			long updatingUserId = PrincipalThreadLocal.getUserId();
-
-			if (updatingUserId > 0) {
-				updatingUser = UserLocalServiceUtil.fetchUserById(
-					updatingUserId);
-			}
-		}
-
-		if ((updatingUser != null) && !updatingUser.equals(updatedUser) &&
-			UserPermissionUtil.contains(
-				permissionChecker, updatingUser.getUserId(),
-				ActionKeys.UPDATE_USER)) {
-
+		if (user == null) {
 			return true;
 		}
 
 		for (String userType : PropsValues.FIELD_EDITABLE_USER_TYPES) {
-			if (userType.equals("user-with-mx") && updatedUser.hasCompanyMx()) {
+			if (userType.equals("user-with-mx") && user.hasCompanyMx()) {
 				return true;
 			}
 
-			if (userType.equals("user-without-mx") &&
-				!updatedUser.hasCompanyMx()) {
-
+			if (userType.equals("user-without-mx") && !user.hasCompanyMx()) {
 				return true;
 			}
 		}
 
 		for (String roleName : PropsValues.FIELD_EDITABLE_ROLES) {
 			Role role = RoleLocalServiceUtil.fetchRole(
-				updatedUser.getCompanyId(), roleName);
+				user.getCompanyId(), roleName);
 
 			if ((role != null) &&
 				RoleLocalServiceUtil.hasUserRole(
-					updatedUser.getUserId(), role.getRoleId())) {
+					user.getUserId(), role.getRoleId())) {
 
 				return true;
 			}
 		}
 
-		String emailAddress = updatedUser.getEmailAddress();
+		String emailAddress = user.getEmailAddress();
 
 		for (String domainName : PropsValues.FIELD_EDITABLE_DOMAINS) {
 			if (emailAddress.endsWith(domainName)) {
@@ -1147,38 +1145,19 @@ public class UsersAdminImpl implements UsersAdmin {
 
 	/**
 	 * @deprecated As of 6.2.0, replaced by {@link
-	 *             #hasUpdateFieldPermission(PermissionChecker, User, User,
-	 *             String)}
+	 *             #hasUpdateFieldPermission(User, String)}
 	 */
-	@Deprecated
-	@Override
-	public boolean hasUpdateFieldPermission(User user, String field)
-		throws PortalException {
-
-		PermissionChecker permissionChecker =
-			PermissionThreadLocal.getPermissionChecker();
-
-		return hasUpdateFieldPermission(permissionChecker, null, user, field);
-	}
-
-	/**
-	 * @deprecated As of 6.2.0, replaced by {@link
-	 *             #hasUpdateFieldPermission(PermissionChecker, User, User,
-	 *             String)}
-	 */
-	@Deprecated
 	@Override
 	public boolean hasUpdateScreenName(
 			PermissionChecker permissionChecker, User user)
-		throws PortalException {
+		throws PortalException, SystemException {
 
-		return hasUpdateFieldPermission(
-			permissionChecker, null, user, "screenName");
+		return hasUpdateFieldPermission(user, "screenName");
 	}
 
 	@Override
 	public long[] removeRequiredRoles(long userId, long[] roleIds)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		User user = UserLocalServiceUtil.getUser(userId);
 
@@ -1187,7 +1166,7 @@ public class UsersAdminImpl implements UsersAdmin {
 
 	@Override
 	public long[] removeRequiredRoles(User user, long[] roleIds)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Role role = RoleLocalServiceUtil.getRole(
 			user.getCompanyId(), RoleConstants.USER);
@@ -1200,7 +1179,7 @@ public class UsersAdminImpl implements UsersAdmin {
 	@Override
 	public void updateAddresses(
 			String className, long classPK, List<Address> addresses)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Set<Long> addressIds = new HashSet<Long>();
 
@@ -1247,7 +1226,7 @@ public class UsersAdminImpl implements UsersAdmin {
 	@Override
 	public void updateEmailAddresses(
 			String className, long classPK, List<EmailAddress> emailAddresses)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Set<Long> emailAddressIds = new HashSet<Long>();
 
@@ -1286,7 +1265,7 @@ public class UsersAdminImpl implements UsersAdmin {
 
 	@Override
 	public void updateOrgLabors(long classPK, List<OrgLabor> orgLabors)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Set<Long> orgLaborsIds = new HashSet<Long>();
 
@@ -1338,7 +1317,7 @@ public class UsersAdminImpl implements UsersAdmin {
 
 	@Override
 	public void updatePhones(String className, long classPK, List<Phone> phones)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Set<Long> phoneIds = new HashSet<Long>();
 
@@ -1377,7 +1356,7 @@ public class UsersAdminImpl implements UsersAdmin {
 	@Override
 	public void updateWebsites(
 			String className, long classPK, List<Website> websites)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Set<Long> websiteIds = new HashSet<Long>();
 
@@ -1410,45 +1389,6 @@ public class UsersAdminImpl implements UsersAdmin {
 				WebsiteServiceUtil.deleteWebsite(website.getWebsiteId());
 			}
 		}
-	}
-
-	protected Set<UserGroupRole> getUserGroupRoles(
-		PortletRequest portletRequest, User user, String groupIdsParam,
-		String roleIdsParam) {
-
-		Set<UserGroupRole> userGroupRoles = new HashSet<UserGroupRole>();
-
-		long[] groupRolesGroupIds = StringUtil.split(
-			ParamUtil.getString(portletRequest, groupIdsParam), 0L);
-		long[] groupRolesRoleIds = StringUtil.split(
-			ParamUtil.getString(portletRequest, roleIdsParam), 0L);
-
-		if (groupRolesGroupIds.length != groupRolesRoleIds.length) {
-			return userGroupRoles;
-		}
-
-		long userId = 0;
-
-		if (user != null) {
-			userId = user.getUserId();
-		}
-
-		for (int i = 0; i < groupRolesGroupIds.length; i++) {
-			if ((groupRolesGroupIds[i] == 0) || (groupRolesRoleIds[i] == 0)) {
-				continue;
-			}
-
-			UserGroupRolePK userGroupRolePK = new UserGroupRolePK(
-				userId, groupRolesGroupIds[i], groupRolesRoleIds[i]);
-
-			UserGroupRole userGroupRole =
-				UserGroupRoleLocalServiceUtil.createUserGroupRole(
-					userGroupRolePK);
-
-			userGroupRoles.add(userGroupRole);
-		}
-
-		return userGroupRoles;
 	}
 
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -19,7 +19,6 @@ import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.lar.StagedModelType;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.FileVersion;
-import com.liferay.portal.kernel.repository.model.RepositoryModelOperation;
 import com.liferay.portlet.expando.model.ExpandoBridge;
 
 import java.io.InputStream;
@@ -67,13 +66,6 @@ public class FileVersionProxyBean
 	}
 
 	@Override
-	public void execute(RepositoryModelOperation repositoryModelOperation)
-		throws PortalException {
-
-		repositoryModelOperation.execute(this);
-	}
-
-	@Override
 	public Map<String, Serializable> getAttributes() {
 		return _fileVersion.getAttributes();
 	}
@@ -90,7 +82,7 @@ public class FileVersionProxyBean
 
 	@Override
 	public InputStream getContentStream(boolean incrementCounter)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return _fileVersion.getContentStream(incrementCounter);
 	}
@@ -124,7 +116,7 @@ public class FileVersionProxyBean
 	}
 
 	@Override
-	public FileEntry getFileEntry() throws PortalException {
+	public FileEntry getFileEntry() throws PortalException, SystemException {
 		FileEntry fileEntry = _fileVersion.getFileEntry();
 
 		return newFileEntryProxyBean(fileEntry);
@@ -133,11 +125,6 @@ public class FileVersionProxyBean
 	@Override
 	public long getFileEntryId() {
 		return _fileVersion.getFileEntryId();
-	}
-
-	@Override
-	public String getFileName() {
-		return _fileVersion.getFileName();
 	}
 
 	@Override
@@ -221,7 +208,7 @@ public class FileVersionProxyBean
 	}
 
 	@Override
-	public String getStatusByUserUuid() {
+	public String getStatusByUserUuid() throws SystemException {
 		return _fileVersion.getStatusByUserUuid();
 	}
 
@@ -246,7 +233,7 @@ public class FileVersionProxyBean
 	}
 
 	@Override
-	public String getUserUuid() {
+	public String getUserUuid() throws SystemException {
 		return _fileVersion.getUserUuid();
 	}
 

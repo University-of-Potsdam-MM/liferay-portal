@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -20,9 +20,8 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.messaging.DestinationNames;
 import com.liferay.portal.kernel.process.ClassPathUtil;
 import com.liferay.portal.kernel.process.ProcessCallable;
-import com.liferay.portal.kernel.process.ProcessChannel;
 import com.liferay.portal.kernel.process.ProcessException;
-import com.liferay.portal.kernel.process.ProcessExecutorUtil;
+import com.liferay.portal.kernel.process.ProcessExecutor;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.FileVersion;
 import com.liferay.portal.kernel.util.FileUtil;
@@ -350,9 +349,13 @@ public class AudioProcessorImpl
 			return;
 		}
 
-		StopWatch stopWatch = new StopWatch();
+		StopWatch stopWatch = null;
 
-		stopWatch.start();
+		if (_log.isInfoEnabled()) {
+			stopWatch = new StopWatch();
+
+			stopWatch.start();
+		}
 
 		try {
 			if (PropsValues.DL_FILE_ENTRY_PREVIEW_FORK_PROCESS_ENABLED) {
@@ -366,13 +369,8 @@ public class AudioProcessorImpl
 						PropsUtil.getProperties(
 							PropsKeys.DL_FILE_ENTRY_PREVIEW_AUDIO, false));
 
-				ProcessChannel<String> processChannel =
-					ProcessExecutorUtil.execute(
-						ClassPathUtil.getPortalProcessConfig(),
-						processCallable);
-
-				Future<String> future =
-					processChannel.getProcessNoticeableFuture();
+				Future<String> future = ProcessExecutor.execute(
+					ClassPathUtil.getPortalClassPath(), processCallable);
 
 				String processIdentity = String.valueOf(
 					fileVersion.getFileVersionId());

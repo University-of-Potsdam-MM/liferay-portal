@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -13,8 +13,6 @@
  */
 
 package com.liferay.portlet.shopping.model.impl;
-
-import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -49,7 +47,6 @@ import java.util.Map;
  * @see com.liferay.portlet.shopping.model.ShoppingItemPriceModel
  * @generated
  */
-@ProviderType
 public class ShoppingItemPriceModelImpl extends BaseModelImpl<ShoppingItemPrice>
 	implements ShoppingItemPriceModel {
 	/*
@@ -86,8 +83,8 @@ public class ShoppingItemPriceModelImpl extends BaseModelImpl<ShoppingItemPrice>
 	public static final boolean COLUMN_BITMASK_ENABLED = GetterUtil.getBoolean(com.liferay.portal.util.PropsUtil.get(
 				"value.object.column.bitmask.enabled.com.liferay.portlet.shopping.model.ShoppingItemPrice"),
 			true);
-	public static final long ITEMID_COLUMN_BITMASK = 1L;
-	public static final long ITEMPRICEID_COLUMN_BITMASK = 2L;
+	public static long ITEMID_COLUMN_BITMASK = 1L;
+	public static long ITEMPRICEID_COLUMN_BITMASK = 2L;
 	public static final long LOCK_EXPIRATION_TIME = GetterUtil.getLong(com.liferay.portal.util.PropsUtil.get(
 				"lock.expiration.time.com.liferay.portlet.shopping.model.ShoppingItemPrice"));
 
@@ -138,9 +135,6 @@ public class ShoppingItemPriceModelImpl extends BaseModelImpl<ShoppingItemPrice>
 		attributes.put("shipping", getShipping());
 		attributes.put("useShippingFormula", getUseShippingFormula());
 		attributes.put("status", getStatus());
-
-		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
-		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
 
 		return attributes;
 	}
@@ -443,16 +437,6 @@ public class ShoppingItemPriceModelImpl extends BaseModelImpl<ShoppingItemPrice>
 	}
 
 	@Override
-	public boolean isEntityCacheEnabled() {
-		return ENTITY_CACHE_ENABLED;
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return FINDER_CACHE_ENABLED;
-	}
-
-	@Override
 	public void resetOriginalValues() {
 		ShoppingItemPriceModelImpl shoppingItemPriceModelImpl = this;
 
@@ -573,8 +557,8 @@ public class ShoppingItemPriceModelImpl extends BaseModelImpl<ShoppingItemPrice>
 		return sb.toString();
 	}
 
-	private static final ClassLoader _classLoader = ShoppingItemPrice.class.getClassLoader();
-	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
+	private static ClassLoader _classLoader = ShoppingItemPrice.class.getClassLoader();
+	private static Class<?>[] _escapedModelInterfaces = new Class[] {
 			ShoppingItemPrice.class
 		};
 	private long _itemPriceId;

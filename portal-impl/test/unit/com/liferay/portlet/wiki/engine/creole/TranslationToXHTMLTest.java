@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -21,7 +21,7 @@ import com.liferay.portal.parsers.creole.ast.WikiPageNode;
 import com.liferay.portal.parsers.creole.parser.Creole10Lexer;
 import com.liferay.portal.parsers.creole.parser.Creole10Parser;
 import com.liferay.portal.parsers.creole.visitor.impl.XhtmlTranslationVisitor;
-import com.liferay.portal.util.HtmlImpl;
+import com.liferay.portal.test.mockito.ReturnArgumentCalledAnswer;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,27 +30,46 @@ import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import org.mockito.Mockito;
+
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 /**
  * @author Miguel Pastor
  * @author Manuel de la Peña
  */
-public class TranslationToXHTMLTest {
+@PrepareForTest(HtmlUtil.class)
+@RunWith(PowerMockRunner.class)
+public class TranslationToXHTMLTest extends PowerMockito {
 
 	@Before
 	public void setUp() {
-		HtmlUtil htmlUtil = new HtmlUtil();
+		mockStatic(HtmlUtil.class);
 
-		htmlUtil.setHtml(new HtmlImpl());
+		when(
+			HtmlUtil.escape(Mockito.anyString())
+		).then(
+			new ReturnArgumentCalledAnswer<String>(0)
+		);
+	}
+
+	@After
+	public void tearDown() {
+		verifyStatic();
 	}
 
 	@Test
 	public void testEscapedEscapedCharacter() {
 		Assert.assertEquals(
-			"<p>~&#034;~ is escaped&#034; </p>", translate("escape-2.creole"));
+			"<p>~\"~ is escaped\" </p>", translate("escape-2.creole"));
 	}
 
 	@Test
@@ -71,8 +90,8 @@ public class TranslationToXHTMLTest {
 	@Test
 	public void testInterwikiFlickr() {
 		Assert.assertEquals(
-			"<p><a href=\"http://www.flickr.com/search/?w=all&amp;m=text" +
-				"&amp;q=Liferay\">Liferay</a> </p>",
+			"<p><a href=\"http://www.flickr.com/search/?w=all&m=text" +
+				"&q=Liferay\">Liferay</a> </p>",
 			translate("interwikiflickr.creole"));
 	}
 
@@ -440,27 +459,6 @@ public class TranslationToXHTMLTest {
 	}
 
 	@Test
-	public void testParseLinkFtp() {
-		Assert.assertEquals(
-			"<p><a href=\"ftp://liferay.com\">Liferay</a> </p>",
-			translate("link-12.creole"));
-	}
-
-	@Test
-	public void testParseLinkHttp() {
-		Assert.assertEquals(
-			"<p><a href=\"http://liferay.com\">Liferay</a> </p>",
-			translate("link-10.creole"));
-	}
-
-	@Test
-	public void testParseLinkHttps() {
-		Assert.assertEquals(
-			"<p><a href=\"https://liferay.com\">Liferay</a> </p>",
-			translate("link-11.creole"));
-	}
-
-	@Test
 	public void testParseLinkInListItem() {
 		Assert.assertEquals(
 			"<ul><li><a href=\"l\">a</a></li></ul>",
@@ -480,20 +478,6 @@ public class TranslationToXHTMLTest {
 		Assert.assertEquals(
 			"<ul><li>This is an item with a link <a href=\"l\">a</a></li></ul>",
 			translate("list-11.creole"));
-	}
-
-	@Test
-	public void testParseLinkMailTo() {
-		Assert.assertEquals(
-			"<p><a href=\"mailto:liferay@liferay.com\">Liferay Mail</a> </p>",
-			translate("link-13.creole"));
-	}
-
-	@Test
-	public void testParseLinkMMS() {
-		Assert.assertEquals(
-			"<p><a href=\"mms://liferay.com/file\">Liferay File</a> </p>",
-			translate("link-14.creole"));
 	}
 
 	@Test

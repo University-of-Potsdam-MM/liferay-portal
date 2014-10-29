@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -19,7 +19,9 @@ import com.liferay.portal.kernel.backgroundtask.BackgroundTaskResult;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTaskStatus;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTaskStatusRegistryUtil;
 import com.liferay.portal.kernel.backgroundtask.BaseBackgroundTaskExecutor;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.lar.MissingReference;
 import com.liferay.portal.kernel.lar.MissingReferences;
@@ -30,7 +32,6 @@ import com.liferay.portal.service.BackgroundTaskLocalServiceUtil;
 
 import java.io.Serializable;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -62,33 +63,28 @@ public abstract class BaseStagingBackgroundTaskExecutor
 		backgroundTaskStatus.clearAttributes();
 	}
 
-	protected void markBackgroundTask(
-		long backgroundTaskId, String backgroundTaskState) {
-
-		BackgroundTask backgroundTask =
-			BackgroundTaskLocalServiceUtil.fetchBackgroundTask(
-				backgroundTaskId);
-
-		if ((backgroundTask == null) || Validator.isNull(backgroundTaskState)) {
-			return;
-		}
+	protected BackgroundTask markBackgroundTask(
+			BackgroundTask backgroundTask, String backgroundTaskState)
+		throws SystemException {
 
 		Map<String, Serializable> taskContextMap =
 			backgroundTask.getTaskContextMap();
 
-		if (taskContextMap == null) {
-			taskContextMap = new HashMap<String, Serializable>();
+		if (Validator.isNull(backgroundTaskState)) {
+			return backgroundTask;
 		}
 
 		taskContextMap.put(backgroundTaskState, Boolean.TRUE);
 
-		backgroundTask.setTaskContextMap(taskContextMap);
+		backgroundTask.setTaskContext(
+			JSONFactoryUtil.serialize(taskContextMap));
 
-		BackgroundTaskLocalServiceUtil.updateBackgroundTask(backgroundTask);
+		return BackgroundTaskLocalServiceUtil.updateBackgroundTask(
+			backgroundTask);
 	}
 
 	protected BackgroundTaskResult processMissingReferences(
-		long backgroundTaskId, MissingReferences missingReferences) {
+		BackgroundTask backgroundTask, MissingReferences missingReferences) {
 
 		BackgroundTaskResult backgroundTaskResult = new BackgroundTaskResult(
 			BackgroundTaskConstants.STATUS_SUCCESSFUL);
@@ -98,10 +94,6 @@ public abstract class BaseStagingBackgroundTaskExecutor
 
 		if ((weakMissingReferences != null) &&
 			!weakMissingReferences.isEmpty()) {
-
-			BackgroundTask backgroundTask =
-				BackgroundTaskLocalServiceUtil.fetchBackgroundTask(
-					backgroundTaskId);
 
 			JSONArray jsonArray = StagingUtil.getWarningMessagesJSONArray(
 				getLocale(backgroundTask), weakMissingReferences,

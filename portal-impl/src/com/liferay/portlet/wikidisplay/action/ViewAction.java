@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,7 +18,6 @@ import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.struts.PortletAction;
 import com.liferay.portal.theme.ThemeDisplay;
@@ -59,25 +58,28 @@ public class ViewAction extends PortletAction {
 			ThemeDisplay themeDisplay =
 				(ThemeDisplay)renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
 
+			long nodeId = GetterUtil.getLong(
+				portletPreferences.getValue("nodeId", StringPool.BLANK));
 			String title = ParamUtil.getString(
 				renderRequest, "title",
 				portletPreferences.getValue(
 					"title", WikiPageConstants.FRONT_PAGE));
 			double version = ParamUtil.getDouble(renderRequest, "version");
 
-			WikiNode node = getNode(renderRequest);
+			WikiNode node = WikiNodeServiceUtil.getNode(nodeId);
 
 			if (node.getGroupId() != themeDisplay.getScopeGroupId()) {
-				throw new NoSuchNodeException(
-					"{nodeId=" + node.getNodeId() + "}");
+				throw new NoSuchNodeException();
 			}
 
-			WikiPage page = WikiPageServiceUtil.fetchPage(
-				node.getNodeId(), title, version);
+			WikiPage page = null;
 
-			if ((page == null) || page.isInTrash()) {
+			try {
+				page = WikiPageServiceUtil.getPage(nodeId, title, version);
+			}
+			catch (NoSuchPageException nspe) {
 				page = WikiPageServiceUtil.getPage(
-					node.getNodeId(), WikiPageConstants.FRONT_PAGE);
+					nodeId, WikiPageConstants.FRONT_PAGE);
 			}
 
 			renderRequest.setAttribute(WebKeys.WIKI_NODE, node);
@@ -95,26 +97,6 @@ public class ViewAction extends PortletAction {
 			SessionErrors.add(renderRequest, pe.getClass());
 
 			return actionMapping.findForward("portlet.wiki_display.error");
-		}
-	}
-
-	protected WikiNode getNode(RenderRequest renderRequest) throws Exception {
-		PortletPreferences portletPreferences = renderRequest.getPreferences();
-
-		ThemeDisplay themeDisplay = (ThemeDisplay)renderRequest.getAttribute(
-			WebKeys.THEME_DISPLAY);
-
-		String nodeName = ParamUtil.getString(renderRequest, "nodeName");
-
-		if (Validator.isNotNull(nodeName)) {
-			return WikiNodeServiceUtil.getNode(
-				themeDisplay.getScopeGroupId(), nodeName);
-		}
-		else {
-			long nodeId = GetterUtil.getLong(
-				portletPreferences.getValue("nodeId", StringPool.BLANK));
-
-			return WikiNodeServiceUtil.getNode(nodeId);
 		}
 	}
 

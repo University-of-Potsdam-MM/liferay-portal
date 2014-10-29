@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -21,11 +21,20 @@ String closeRedirect = ParamUtil.getString(request, "closeRedirect");
 
 Group selGroup = (Group)request.getAttribute(WebKeys.GROUP);
 
-Group group = layoutsAdminDisplayContext.getGroup();
+Group group = (Group)request.getAttribute("edit_pages.jsp-group");
+Group liveGroup = (Group)request.getAttribute("edit_pages.jsp-liveGroup");
 
-Layout selLayout = layoutsAdminDisplayContext.getSelLayout();
+long groupId = ((Long)request.getAttribute("edit_pages.jsp-groupId")).longValue();
+long liveGroupId = ((Long)request.getAttribute("edit_pages.jsp-liveGroupId")).longValue();
+long stagingGroupId = ((Long)request.getAttribute("edit_pages.jsp-stagingGroupId")).longValue();
 
-PortletURL redirectURL = layoutsAdminDisplayContext.getRedirectURL();
+Layout selLayout = (Layout)request.getAttribute("edit_pages.jsp-selLayout");
+long selPlid = ((Long)request.getAttribute("edit_pages.jsp-selPlid")).longValue();
+long layoutId = ((Long)request.getAttribute("edit_pages.jsp-layoutId")).longValue();
+boolean privateLayout = ((Boolean)request.getAttribute("edit_pages.jsp-privateLayout")).booleanValue();
+
+PortletURL portletURL = (PortletURL)request.getAttribute("edit_pages.jsp-portletURL");
+PortletURL redirectURL = (PortletURL)request.getAttribute("edit_pages.jsp-redirectURL");
 
 long refererPlid = ParamUtil.getLong(request, "refererPlid", LayoutConstants.DEFAULT_PLID);
 
@@ -106,24 +115,22 @@ boolean showAddAction = ParamUtil.getBoolean(request, "showAddAction", true);
 	</div>
 </c:if>
 
-<c:if test="<%= !group.isLayoutPrototype() && (selLayout != null) %>">
-	<aui:nav-bar>
-		<aui:nav cssClass="navbar-nav" id="layoutsNav">
-			<c:if test="<%= LayoutPermissionUtil.contains(permissionChecker, selLayout, ActionKeys.ADD_LAYOUT) && showAddAction %>">
-				<aui:nav-item data-value="add-child-page" iconCssClass="icon-plus" label="add-child-page" />
-			</c:if>
-			<c:if test="<%= LayoutPermissionUtil.contains(permissionChecker, selLayout, ActionKeys.PERMISSIONS) %>">
-				<aui:nav-item data-value="permissions" iconCssClass="icon-lock" label="permissions" />
-			</c:if>
-			<c:if test="<%= LayoutPermissionUtil.contains(permissionChecker, selLayout, ActionKeys.DELETE) %>">
-				<aui:nav-item data-value="delete" iconCssClass="icon-remove" label="delete" />
-			</c:if>
-			<c:if test="<%= LayoutPermissionUtil.contains(permissionChecker, selLayout, ActionKeys.UPDATE) %>">
-				<aui:nav-item data-value="copy-applications" iconCssClass="icon-list-alt" label="copy-applications" />
-			</c:if>
-		</aui:nav>
-	</aui:nav-bar>
-</c:if>
+<aui:nav-bar>
+	<aui:nav id="layoutsNav">
+		<c:if test="<%= LayoutPermissionUtil.contains(permissionChecker, selPlid, ActionKeys.ADD_LAYOUT) && showAddAction %>">
+			<aui:nav-item data-value="add-child-page" iconCssClass="icon-plus" label="add-child-page" />
+		</c:if>
+		<c:if test="<%= LayoutPermissionUtil.contains(permissionChecker, selPlid, ActionKeys.PERMISSIONS) %>">
+			<aui:nav-item data-value="permissions" iconCssClass="icon-lock" label="permissions" />
+		</c:if>
+		<c:if test="<%= LayoutPermissionUtil.contains(permissionChecker, selPlid, ActionKeys.DELETE) %>">
+			<aui:nav-item data-value="delete" iconCssClass="icon-remove" label="delete" />
+		</c:if>
+		<c:if test="<%= LayoutPermissionUtil.contains(permissionChecker, selLayout, ActionKeys.UPDATE) %>">
+			<aui:nav-item data-value="copy-applications" iconCssClass="icon-list-alt" label="copy-applications" />
+		</c:if>
+	</aui:nav>
+</aui:nav-bar>
 
 <portlet:actionURL var="editLayoutURL">
 	<portlet:param name="struts_action" value="/layouts_admin/edit_layouts" />
@@ -131,14 +138,14 @@ boolean showAddAction = ParamUtil.getBoolean(request, "showAddAction", true);
 
 <aui:form action='<%= HttpUtil.addParameter(editLayoutURL, "refererPlid", plid) %>' cssClass="edit-layout-form" enctype="multipart/form-data" method="post" name="fm" onSubmit='<%= "event.preventDefault(); " + liferayPortletResponse.getNamespace() + "saveLayout();" %>'>
 	<aui:input name="<%= Constants.CMD %>" type="hidden" />
-	<aui:input name="redirect" type="hidden" value='<%= HttpUtil.addParameter(redirectURL.toString(), liferayPortletResponse.getNamespace() + "selPlid", layoutsAdminDisplayContext.getSelPlid()) %>' />
+	<aui:input name="redirect" type="hidden" value='<%= HttpUtil.addParameter(redirectURL.toString(), liferayPortletResponse.getNamespace() + "selPlid", selPlid) %>' />
 	<aui:input name="closeRedirect" type="hidden" value="<%= closeRedirect %>" />
 	<aui:input name="groupId" type="hidden" value="<%= selGroup.getGroupId() %>" />
-	<aui:input name="liveGroupId" type="hidden" value="<%= layoutsAdminDisplayContext.getLiveGroupId() %>" />
-	<aui:input name="stagingGroupId" type="hidden" value="<%= layoutsAdminDisplayContext.getStagingGroupId() %>" />
-	<aui:input name="selPlid" type="hidden" value="<%= layoutsAdminDisplayContext.getSelPlid() %>" />
-	<aui:input name="privateLayout" type="hidden" value="<%= layoutsAdminDisplayContext.isPrivateLayout() %>" />
-	<aui:input name="layoutId" type="hidden" value="<%= layoutsAdminDisplayContext.getLayoutId() %>" />
+	<aui:input name="liveGroupId" type="hidden" value="<%= liveGroupId %>" />
+	<aui:input name="stagingGroupId" type="hidden" value="<%= stagingGroupId %>" />
+	<aui:input name="selPlid" type="hidden" value="<%= selPlid %>" />
+	<aui:input name="privateLayout" type="hidden" value="<%= privateLayout %>" />
+	<aui:input name="layoutId" type="hidden" value="<%= layoutId %>" />
 	<aui:input name="<%= PortletDataHandlerKeys.SELECTED_LAYOUTS %>" type="hidden" />
 
 	<c:if test="<%= layoutRevision != null && !incomplete %>">
@@ -147,7 +154,7 @@ boolean showAddAction = ParamUtil.getBoolean(request, "showAddAction", true);
 
 	<c:choose>
 		<c:when test="<%= incomplete %>">
-			<liferay-ui:message arguments="<%= new Object[] {HtmlUtil.escape(selLayout.getName(locale)), HtmlUtil.escape(layoutSetBranchName)} %>" key="the-page-x-is-not-enabled-in-x,-but-is-available-in-other-pages-variations" translateArguments="<%= false %>" />
+			<liferay-ui:message arguments="<%= new Object[] {HtmlUtil.escape(selLayout.getName(locale)), HtmlUtil.escape(layoutSetBranchName)} %>" key="the-page-x-is-not-enabled-in-x,-but-is-available-in-other-pages-variations" />
 
 			<aui:input name="incompleteLayoutRevisionId" type="hidden" value="<%= layoutRevision.getLayoutRevisionId() %>" />
 
@@ -158,7 +165,7 @@ boolean showAddAction = ParamUtil.getBoolean(request, "showAddAction", true);
 			%>
 
 			<aui:button-row>
-				<aui:button name="enableLayout" onClick="<%= taglibEnableOnClick %>" value='<%= LanguageUtil.format(request, "enable-in-x", HtmlUtil.escape(layoutSetBranchName), false) %>' />
+				<aui:button name="enableLayout" onClick="<%= taglibEnableOnClick %>" value='<%= LanguageUtil.format(pageContext, "enable-in-x", HtmlUtil.escape(layoutSetBranchName)) %>' />
 
 				<aui:button name="deleteLayout" onClick="<%= taglibDeleteOnClick %>" value="delete-in-all-pages-variations" />
 			</aui:button-row>
@@ -170,16 +177,24 @@ boolean showAddAction = ParamUtil.getBoolean(request, "showAddAction", true);
 
 					<%@ include file="/html/portlet/layouts_admin/error_remote_export_exception.jspf" %>
 
-					<div class="alert alert-warning">
+					<div class="alert alert-block">
 						<liferay-ui:message key="the-staging-environment-is-activated-changes-have-to-be-published-to-make-them-available-to-end-users" />
 					</div>
 				</c:if>
 
 				<c:if test="<%= selGroup.hasLocalOrRemoteStagingGroup() && !selGroup.isStagingGroup() %>">
-					<div class="alert alert-warning">
+					<div class="alert alert-block">
 						<liferay-ui:message key="changes-are-immediately-available-to-end-users" />
 					</div>
 				</c:if>
+
+				<liferay-security:permissionsURL
+					modelResource="<%= Layout.class.getName() %>"
+					modelResourceDescription="<%= selLayout.getName(locale) %>"
+					resourcePrimKey="<%= String.valueOf(selLayout.getPlid()) %>"
+					var="permissionURL"
+					windowState="<%= LiferayWindowState.POP_UP.toString() %>"
+				/>
 
 				<%
 				Group selLayoutGroup = selLayout.getGroup();
@@ -187,25 +202,25 @@ boolean showAddAction = ParamUtil.getBoolean(request, "showAddAction", true);
 
 				<c:choose>
 					<c:when test="<%= !SitesUtil.isLayoutUpdateable(selLayout) %>">
-						<div class="alert alert-warning">
+						<div class="alert alert-block">
 							<liferay-ui:message key="this-page-cannot-be-modified-because-it-is-associated-to-a-site-template-does-not-allow-modifications-to-it" />
 						</div>
 					</c:when>
 					<c:when test="<%= !SitesUtil.isLayoutDeleteable(selLayout) %>">
-						<div class="alert alert-warning">
+						<div class="alert alert-block">
 							<liferay-ui:message key="this-page-cannot-be-deleted-and-cannot-have-child-pages-because-it-is-associated-to-a-site-template" />
 						</div>
 					</c:when>
 				</c:choose>
 
-				<c:if test="<%= (selLayout.getGroupId() != layoutsAdminDisplayContext.getGroupId()) && (selLayoutGroup.isUserGroup()) %>">
+				<c:if test="<%= (selLayout.getGroupId() != groupId) && (selLayoutGroup.isUserGroup()) %>">
 
 					<%
 					UserGroup userGroup = UserGroupLocalServiceUtil.getUserGroup(selLayoutGroup.getClassPK());
 					%>
 
-					<div class="alert alert-warning">
-						<liferay-ui:message arguments="<%= HtmlUtil.escape(userGroup.getName()) %>" key="this-page-cannot-be-modified-because-it-belongs-to-the-user-group-x" translateArguments="<%= false %>" />
+					<div class="alert alert-block">
+						<liferay-ui:message arguments="<%= HtmlUtil.escape(userGroup.getName()) %>" key="this-page-cannot-be-modified-because-it-belongs-to-the-user-group-x" />
 					</div>
 				</c:if>
 
@@ -218,10 +233,6 @@ boolean showAddAction = ParamUtil.getBoolean(request, "showAddAction", true);
 
 						var dataValue = target.ancestor('li').attr('data-value') || target.attr('data-value');
 
-						processDataValue(dataValue);
-					};
-
-					var processDataValue = function(dataValue) {
 						if (dataValue === 'add-child-page') {
 							content = A.one('#<portlet:namespace />addLayout');
 
@@ -233,7 +244,7 @@ boolean showAddAction = ParamUtil.getBoolean(request, "showAddAction", true);
 											cssClass: 'lfr-add-dialog',
 											width: 600
 										},
-										title: '<%= UnicodeLanguageUtil.get(request, "add-child-page") %>'
+										title: '<%= UnicodeLanguageUtil.get(pageContext, "add-child-page") %>'
 									}
 								);
 							}
@@ -254,20 +265,19 @@ boolean showAddAction = ParamUtil.getBoolean(request, "showAddAction", true);
 							Liferay.Util.focusFormField(content.one('input:text'));
 						}
 						else if (dataValue === 'permissions') {
+							<liferay-security:permissionsURL
+								modelResource="<%= Layout.class.getName() %>"
+								modelResourceDescription="<%= selLayout.getName(locale) %>"
+								resourcePrimKey="<%= String.valueOf(selLayout.getPlid()) %>"
+								var="permissionURL"
+								windowState="<%= LiferayWindowState.POP_UP.toString() %>"
+							/>
+
 							Liferay.Util.openWindow(
 								{
 									cache: false,
-									id: '<portlet:namespace /><%= HtmlUtil.escapeJS(selLayout.getFriendlyURL().substring(1)) %>_permissions',
-									title: '<%= UnicodeLanguageUtil.get(request, "permissions") %>',
-
-									<liferay-security:permissionsURL
-										modelResource="<%= Layout.class.getName() %>"
-										modelResourceDescription="<%= selLayout.getName(locale) %>"
-										resourcePrimKey="<%= String.valueOf(selLayout.getPlid()) %>"
-										var="permissionURL"
-										windowState="<%= LiferayWindowState.POP_UP.toString() %>"
-									/>
-
+									id: '<portlet:namespace /><%= selLayout.getFriendlyURL().substring(1) %>_permissions',
+									title: '<%= UnicodeLanguageUtil.get(pageContext, "permissions") %>',
 									uri: '<%= permissionURL %>'
 								}
 							);
@@ -283,7 +293,7 @@ boolean showAddAction = ParamUtil.getBoolean(request, "showAddAction", true);
 									dialog: {
 										bodyContent: content.show()
 									},
-									title: '<%= UnicodeLanguageUtil.get(request, "copy-applications") %>'
+									title: '<%= UnicodeLanguageUtil.get(pageContext, "copy-applications") %>'
 								}
 							);
 
@@ -311,22 +321,16 @@ boolean showAddAction = ParamUtil.getBoolean(request, "showAddAction", true);
 					};
 
 					A.one('#<portlet:namespace />layoutsNav').delegate('click', clickHandler, 'li a');
-
-					<c:if test='<%= layout.isTypeControlPanel() && (SessionMessages.get(liferayPortletRequest, portletDisplay.getId() + "addError") != null) %>'>
-						processDataValue('add-page');
-					</c:if>
 				</aui:script>
 			</c:if>
 
-			<c:if test="<%= !selGroup.hasLocalOrRemoteStagingGroup() || selGroup.isStagingGroup() %>">
-				<liferay-ui:form-navigator
-					categoryNames="<%= _CATEGORY_NAMES %>"
-					categorySections="<%= categorySections %>"
-					displayStyle="<%= displayStyle %>"
-					jspPath="/html/portlet/layouts_admin/layout/"
-					showButtons="<%= (selLayout.getGroupId() == layoutsAdminDisplayContext.getGroupId()) && SitesUtil.isLayoutUpdateable(selLayout) && LayoutPermissionUtil.contains(permissionChecker, selLayout, ActionKeys.UPDATE) %>"
-				/>
-			</c:if>
+			<liferay-ui:form-navigator
+				categoryNames="<%= _CATEGORY_NAMES %>"
+				categorySections="<%= categorySections %>"
+				displayStyle="<%= displayStyle %>"
+				jspPath="/html/portlet/layouts_admin/layout/"
+				showButtons="<%= (selLayout.getGroupId() == groupId) && SitesUtil.isLayoutUpdateable(selLayout) && LayoutPermissionUtil.contains(permissionChecker, selPlid, ActionKeys.UPDATE) %>"
+			/>
 		</c:otherwise>
 	</c:choose>
 </aui:form>
@@ -341,7 +345,7 @@ boolean showAddAction = ParamUtil.getBoolean(request, "showAddAction", true);
 			action = action || '<%= Constants.UPDATE %>';
 
 			if (action == '<%= Constants.DELETE %>') {
-				if (!confirm('<%= UnicodeLanguageUtil.get(request, "are-you-sure-you-want-to-delete-the-selected-page") %>')) {
+				if (!confirm('<%= UnicodeLanguageUtil.get(pageContext, "are-you-sure-you-want-to-delete-the-selected-page") %>')) {
 					return false;
 				}
 

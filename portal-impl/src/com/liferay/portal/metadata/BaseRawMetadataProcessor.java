@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portal.metadata;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.metadata.RawMetadataProcessor;
@@ -44,7 +45,6 @@ import org.apache.tika.metadata.Property;
 import org.apache.tika.metadata.TIFF;
 import org.apache.tika.metadata.TikaMetadataKeys;
 import org.apache.tika.metadata.TikaMimeKeys;
-import org.apache.tika.metadata.XMPDM;
 
 /**
  * @author Alexander Chow
@@ -59,7 +59,7 @@ public abstract class BaseRawMetadataProcessor implements RawMetadataProcessor {
 	@Override
 	public Map<String, Fields> getRawMetadataMap(
 			String extension, String mimeType, File file)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Metadata metadata = extractMetadata(extension, mimeType, file);
 
@@ -69,7 +69,7 @@ public abstract class BaseRawMetadataProcessor implements RawMetadataProcessor {
 	@Override
 	public Map<String, Fields> getRawMetadataMap(
 			String extension, String mimeType, InputStream inputStream)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Metadata metadata = extractMetadata(extension, mimeType, inputStream);
 
@@ -131,11 +131,11 @@ public abstract class BaseRawMetadataProcessor implements RawMetadataProcessor {
 
 	protected abstract Metadata extractMetadata(
 			String extension, String mimeType, File file)
-		throws PortalException;
+		throws PortalException, SystemException;
 
 	protected abstract Metadata extractMetadata(
 			String extension, String mimeType, InputStream inputStream)
-		throws PortalException;
+		throws PortalException, SystemException;
 
 	protected Object getFieldValue(Metadata metadata, Field field) {
 		Object fieldValue = null;
@@ -194,7 +194,7 @@ public abstract class BaseRawMetadataProcessor implements RawMetadataProcessor {
 		_addFields(XMPDM.class, fields);
 
 		_fields.put(
-			TIKA_RAW_METADATA, fields.toArray(new Field[fields.size()]));
+			"TIKARAWMETADATA", fields.toArray(new Field[fields.size()]));
 	}
 
 }

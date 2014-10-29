@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -22,9 +22,7 @@ String className = (String)request.getAttribute("edit_message.jsp-className");
 Integer depth = (Integer)request.getAttribute("edit_message.jsp-depth");
 Boolean editable = (Boolean)request.getAttribute("edit_message.jsp-editable");
 MBMessage message = (MBMessage)request.getAttribute("edit_message.jsp-message");
-Boolean showDeletedAttachmentsFileEntries = (Boolean)request.getAttribute("edit-message.jsp-showDeletedAttachmentsFileEntries");
 Boolean showPermanentLink = (Boolean)request.getAttribute("edit-message.jsp-showPermanentLink");
-Boolean showRecentPosts = (Boolean)request.getAttribute("edit-message.jsp-showRecentPosts");
 MBThread thread = (MBThread)request.getAttribute("edit_message.jsp-thread");
 %>
 
@@ -40,7 +38,7 @@ MBThread thread = (MBThread)request.getAttribute("edit_message.jsp-thread");
 				</c:when>
 				<c:otherwise>
 					<liferay-ui:user-display
-						displayStyle="2"
+						displayStyle="<%= 2 %>"
 						userId="<%= message.getUserId() %>"
 						userName="<%= HtmlUtil.escape(message.getUserName()) %>"
 					>
@@ -49,7 +47,7 @@ MBThread thread = (MBThread)request.getAttribute("edit_message.jsp-thread");
 						MBStatsUser statsUser = MBStatsUserLocalServiceUtil.getStatsUser(scopeGroupId, message.getUserId());
 
 						int posts = statsUser.getMessageCount();
-						String[] ranks = MBUtil.getUserRank(mbSettings, themeDisplay.getLanguageId(), statsUser);
+						String[] ranks = MBUtil.getUserRank(portletPreferences, themeDisplay.getLanguageId(), statsUser);
 						%>
 
 						<c:if test="<%= Validator.isNotNull(ranks[1]) %>">
@@ -70,21 +68,19 @@ MBThread thread = (MBThread)request.getAttribute("edit_message.jsp-thread");
 							<span><liferay-ui:message key="join-date" />:</span> <%= dateFormatDate.format(userDisplay.getCreateDate()) %>
 						</div>
 
-						<c:if test="<%= showRecentPosts %>">
-							<portlet:renderURL var="recentPostsURL">
-								<portlet:param name="struts_action" value="/message_boards/view" />
-								<portlet:param name="topLink" value="recent-posts" />
-								<portlet:param name="groupThreadsUserId" value="<%= String.valueOf(userDisplay.getUserId()) %>" />
-							</portlet:renderURL>
+						<portlet:renderURL var="recentPostsURL">
+							<portlet:param name="struts_action" value="/message_boards/view" />
+							<portlet:param name="topLink" value="recent-posts" />
+							<portlet:param name="groupThreadsUserId" value="<%= String.valueOf(userDisplay.getUserId()) %>" />
+						</portlet:renderURL>
 
-							<liferay-ui:icon
-								iconCssClass="icon-search"
-								label="<%= true %>"
-								message="recent-posts"
-								method="get"
-								url="<%= recentPostsURL.toString() %>"
-							/>
-						</c:if>
+						<liferay-ui:icon
+							image="view"
+							label="<%= true %>"
+							message="recent-posts"
+							method="get"
+							url="<%= recentPostsURL.toString() %>"
+						/>
 
 						<c:if test="<%= (userDisplay != null) && (user.getUserId() != userDisplay.getUserId()) && !PortalUtil.isGroupAdmin(userDisplay, scopeGroupId) && MBPermission.contains(permissionChecker, scopeGroupId, ActionKeys.BAN_USER) %>">
 							<br />
@@ -99,7 +95,7 @@ MBThread thread = (MBThread)request.getAttribute("edit_message.jsp-thread");
 									</portlet:actionURL>
 
 									<liferay-ui:icon
-										iconCssClass="icon-ok-sign"
+										image="../message_boards/unban_user"
 										label="<%= true %>"
 										message="unban-this-user"
 										url="<%= unbanUserURL.toString() %>"
@@ -114,7 +110,7 @@ MBThread thread = (MBThread)request.getAttribute("edit_message.jsp-thread");
 									</portlet:actionURL>
 
 									<liferay-ui:icon
-										iconCssClass="icon-ban-circle"
+										image="../message_boards/ban_user"
 										label="<%= true %>"
 										message="ban-this-user"
 										url="<%= banUserURL.toString() %>"
@@ -127,7 +123,7 @@ MBThread thread = (MBThread)request.getAttribute("edit_message.jsp-thread");
 			</c:choose>
 		</td>
 		<td class="lfr-top">
-			<div class="float-container thread-top">
+			<div class="thread-top float-container">
 				<div class="subject">
 					<c:choose>
 						<c:when test="<%= showPermanentLink %>">
@@ -154,7 +150,7 @@ MBThread thread = (MBThread)request.getAttribute("edit_message.jsp-thread");
 
 					<div class="answer <%= !message.isRoot() && message.isAnswer() ? "" : "hide" %>" id="<portlet:namespace />deleteAnswerFlag_<%= message.getMessageId() %>">
 						<liferay-ui:icon
-							iconCssClass="icon-check"
+							image="checked"
 							label="<%= true %>"
 							message="answer"
 						/>
@@ -189,10 +185,10 @@ MBThread thread = (MBThread)request.getAttribute("edit_message.jsp-thread");
 						parentMessageURL.setParameter("struts_action", "/message_boards/view_message");
 						parentMessageURL.setParameter("messageId", String.valueOf(parentMessage.getMessageId()));
 
-						String author = parentMessage.isAnonymous() ? LanguageUtil.get(request, "anonymous") : HtmlUtil.escape(PortalUtil.getUserName(parentMessage.getUserId(), parentMessage.getUserName()));
+						String author = parentMessage.isAnonymous() ? LanguageUtil.get(pageContext, "anonymous") : HtmlUtil.escape(PortalUtil.getUserName(parentMessage.getUserId(), parentMessage.getUserName()));
 						%>
 
-						<%= LanguageUtil.format(request, "posted-as-a-reply-to", author, false) %>
+						<%= LanguageUtil.format(pageContext, "posted-as-a-reply-to", author) %>
 					</c:if>
 				</div>
 
@@ -210,7 +206,7 @@ MBThread thread = (MBThread)request.getAttribute("edit_message.jsp-thread");
 					%>
 
 					<c:if test="<%= showAnswerFlag || hasReplyPermission %>">
-						<ul class="edit-controls list-unstyled">
+						<ul class="edit-controls unstyled">
 							<li class="<%= showAnswerFlag ? "" : "hide" %>" id="<portlet:namespace />addAnswerFlag_<%= message.getMessageId() %>">
 
 								<%
@@ -218,7 +214,7 @@ MBThread thread = (MBThread)request.getAttribute("edit_message.jsp-thread");
 								%>
 
 								<liferay-ui:icon
-									iconCssClass="icon-check"
+									image="checked"
 									label="<%= true %>"
 									message="mark-as-an-answer"
 									url="<%= taglibMarkAsAnswerURL %>"
@@ -236,9 +232,8 @@ MBThread thread = (MBThread)request.getAttribute("edit_message.jsp-thread");
 									</portlet:renderURL>
 
 									<liferay-ui:icon
-										iconCssClass="icon-reply"
+										image="reply"
 										label="<%= true %>"
-										message="reply"
 										url="<%= replyURL %>"
 									/>
 								</li>
@@ -253,7 +248,7 @@ MBThread thread = (MBThread)request.getAttribute("edit_message.jsp-thread");
 									</portlet:renderURL>
 
 									<liferay-ui:icon
-										iconCssClass="icon-quote-left"
+										image="quote"
 										label="<%= true %>"
 										message="reply-with-quote"
 										url="<%= quoteURL %>"
@@ -266,7 +261,7 @@ MBThread thread = (MBThread)request.getAttribute("edit_message.jsp-thread");
 									%>
 
 									<liferay-ui:icon
-										iconCssClass="icon-long-arrow-down"
+										image="bottom"
 										label="<%= true %>"
 										message="quick-reply"
 										url="<%= taglibQuickReplyURL %>"
@@ -284,7 +279,8 @@ MBThread thread = (MBThread)request.getAttribute("edit_message.jsp-thread");
 				String msgBody = message.getBody();
 
 				if (message.isFormatBBCode()) {
-					msgBody = MBUtil.getBBCodeHTML(msgBody, themeDisplay.getPathThemeImages());
+					msgBody = BBCodeTranslatorUtil.getHTML(msgBody);
+					msgBody = StringUtil.replace(msgBody, "@theme_images_path@/emoticons", themeDisplay.getPathThemeImages() + "/emoticons");
 				}
 				%>
 
@@ -320,7 +316,7 @@ MBThread thread = (MBThread)request.getAttribute("edit_message.jsp-thread");
 							%>
 
 									<div>
-										<img alt="<liferay-ui:message escapeAttribute="<%= true %>" key="attachment" />" src="<%= PortletFileRepositoryUtil.getPortletFileEntryURL(themeDisplay, fileEntry, StringPool.BLANK) %>" />
+										<img alt="<liferay-ui:message key="attachment" />" src="<%= themeDisplay.getPathMain() %>/message_boards/get_message_attachment?messageId=<%= message.getMessageId() %>&attachment=<%= HttpUtil.encodeURL(fileEntry.getTitle()) %>" />
 									</div>
 
 									<br />
@@ -345,17 +341,13 @@ MBThread thread = (MBThread)request.getAttribute("edit_message.jsp-thread");
 										sb.append(StringPool.OPEN_PARENTHESIS);
 										sb.append(TextFormatter.formatStorageSize(fileEntry.getSize(), locale));
 										sb.append(StringPool.CLOSE_PARENTHESIS);
-
-										AssetRendererFactory assetRendererFactory = AssetRendererFactoryRegistryUtil.getAssetRendererFactoryByClassName(DLFileEntry.class.getName());
-
-										AssetRenderer assetRenderer = assetRendererFactory.getAssetRenderer(fileEntry.getFileEntryId());
 										%>
 
 										<liferay-ui:icon
-											iconCssClass="<%= assetRenderer.getIconCssClass() %>"
+											image='<%= "../file_system/small/" + DLUtil.getFileIcon(fileEntry.getExtension()) %>'
 											label="<%= true %>"
 											message="<%= sb.toString() %>"
-											url="<%= PortletFileRepositoryUtil.getDownloadPortletFileEntryURL(themeDisplay, fileEntry, StringPool.BLANK) %>"
+											url="<%= PortletFileRepositoryUtil.getPortletFileEntryURL(themeDisplay, fileEntry, StringPool.BLANK) %>"
 										/>
 									</li>
 
@@ -363,7 +355,7 @@ MBThread thread = (MBThread)request.getAttribute("edit_message.jsp-thread");
 								}
 								%>
 
-								<c:if test="<%= showDeletedAttachmentsFileEntries && (deletedAttachmentsFileEntriesCount > 0) && TrashUtil.isTrashEnabled(scopeGroupId) && MBMessagePermission.contains(permissionChecker, message, ActionKeys.UPDATE) %>">
+								<c:if test="<%= (deletedAttachmentsFileEntriesCount > 0) && TrashUtil.isTrashEnabled(scopeGroupId) && MBMessagePermission.contains(permissionChecker, message, ActionKeys.UPDATE) %>">
 									<li class="message-attachment">
 										<portlet:renderURL var="viewTrashAttachmentsURL">
 											<portlet:param name="struts_action" value="/message_boards/view_deleted_message_attachments" />
@@ -372,9 +364,9 @@ MBThread thread = (MBThread)request.getAttribute("edit_message.jsp-thread");
 										</portlet:renderURL>
 
 										<liferay-ui:icon
-											iconCssClass="icon-paperclip"
+											image="delete_attachment"
 											label="<%= true %>"
-											message='<%= LanguageUtil.format(request, (deletedAttachmentsFileEntriesCount == 1) ? "x-recently-removed-attachment" : "x-recently-removed-attachments", deletedAttachmentsFileEntriesCount, false) %>'
+											message='<%= LanguageUtil.format(pageContext, (deletedAttachmentsFileEntriesCount == 1) ? "x-recently-removed-attachment" : "x-recently-removed-attachments", deletedAttachmentsFileEntriesCount) %>'
 											url="<%= viewTrashAttachmentsURL %>"
 										/>
 									</li>
@@ -416,7 +408,7 @@ MBThread thread = (MBThread)request.getAttribute("edit_message.jsp-thread");
 					/>
 				</div>
 
-				<ul class="edit-controls list-unstyled">
+				<ul class="edit-controls unstyled">
 					<li>
 
 						<%
@@ -424,9 +416,8 @@ MBThread thread = (MBThread)request.getAttribute("edit_message.jsp-thread");
 						%>
 
 						<liferay-ui:icon
-							iconCssClass="icon-long-arrow-up"
+							image="top"
 							label="<%= true %>"
-							message="top"
 							url="<%= topHREF %>"
 						/>
 					</li>
@@ -440,9 +431,8 @@ MBThread thread = (MBThread)request.getAttribute("edit_message.jsp-thread");
 							</portlet:renderURL>
 
 							<liferay-ui:icon
-								iconCssClass="icon-edit"
+								image="edit"
 								label="<%= true %>"
-								message="edit"
 								url="<%= editURL %>"
 							/>
 						</li>
@@ -459,9 +449,8 @@ MBThread thread = (MBThread)request.getAttribute("edit_message.jsp-thread");
 							/>
 
 							<liferay-ui:icon
-								iconCssClass="icon-lock"
+								image="permissions"
 								label="<%= true %>"
-								message="permissions"
 								method="get"
 								url="<%= permissionsURL %>"
 								useDialog="<%= true %>"
@@ -479,7 +468,7 @@ MBThread thread = (MBThread)request.getAttribute("edit_message.jsp-thread");
 							</portlet:renderURL>
 
 							<liferay-ui:icon
-								iconCssClass="icon-unlink"
+								image="unlink"
 								label="<%= true %>"
 								message="split-thread"
 								url="<%= splitThreadURL %>"

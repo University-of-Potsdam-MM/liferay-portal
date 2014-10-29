@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,7 +15,9 @@
 package com.liferay.portlet.documentlibrary.service.impl;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.service.ServiceContext;
+import com.liferay.portal.util.PortalUtil;
 import com.liferay.portlet.documentlibrary.model.DLFileEntryMetadata;
 import com.liferay.portlet.documentlibrary.model.DLFileEntryType;
 import com.liferay.portlet.documentlibrary.service.base.DLFileEntryMetadataLocalServiceBaseImpl;
@@ -35,7 +37,7 @@ public class DLFileEntryMetadataLocalServiceImpl
 
 	@Override
 	public void deleteFileEntryMetadata(long fileEntryId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		List<DLFileEntryMetadata> fileEntryMetadatas =
 			dlFileEntryMetadataPersistence.findByFileEntryId(fileEntryId);
@@ -47,7 +49,7 @@ public class DLFileEntryMetadataLocalServiceImpl
 
 	@Override
 	public void deleteFileVersionFileEntryMetadata(long fileVersionId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		List<DLFileEntryMetadata> fileEntryMetadatas =
 			dlFileEntryMetadataPersistence.findByFileVersionId(fileVersionId);
@@ -58,8 +60,8 @@ public class DLFileEntryMetadataLocalServiceImpl
 	}
 
 	@Override
-	public DLFileEntryMetadata fetchFileEntryMetadata(
-		long fileEntryMetadataId) {
+	public DLFileEntryMetadata fetchFileEntryMetadata(long fileEntryMetadataId)
+		throws SystemException {
 
 		return dlFileEntryMetadataPersistence.fetchByPrimaryKey(
 			fileEntryMetadataId);
@@ -67,7 +69,8 @@ public class DLFileEntryMetadataLocalServiceImpl
 
 	@Override
 	public DLFileEntryMetadata fetchFileEntryMetadata(
-		long ddmStructureId, long fileVersionId) {
+			long ddmStructureId, long fileVersionId)
+		throws SystemException {
 
 		return dlFileEntryMetadataPersistence.fetchByD_F(
 			ddmStructureId, fileVersionId);
@@ -75,7 +78,7 @@ public class DLFileEntryMetadataLocalServiceImpl
 
 	@Override
 	public DLFileEntryMetadata getFileEntryMetadata(long fileEntryMetadataId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return dlFileEntryMetadataPersistence.findByPrimaryKey(
 			fileEntryMetadataId);
@@ -84,7 +87,7 @@ public class DLFileEntryMetadataLocalServiceImpl
 	@Override
 	public DLFileEntryMetadata getFileEntryMetadata(
 			long ddmStructureId, long fileVersionId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return dlFileEntryMetadataPersistence.findByD_F(
 			ddmStructureId, fileVersionId);
@@ -94,24 +97,26 @@ public class DLFileEntryMetadataLocalServiceImpl
 	 * @deprecated As of 6.2.0, replaced by {@link
 	 *             #getFileVersionFileEntryMetadatasCount(long)}
 	 */
-	@Deprecated
 	@Override
-	public long getFileEntryMetadataCount(
-		long fileEntryId, long fileVersionId) {
+	public long getFileEntryMetadataCount(long fileEntryId, long fileVersionId)
+		throws SystemException {
 
 		return getFileVersionFileEntryMetadatasCount(fileVersionId);
 	}
 
 	@Override
 	public List<DLFileEntryMetadata> getFileVersionFileEntryMetadatas(
-		long fileVersionId) {
+			long fileVersionId)
+		throws SystemException {
 
 		return dlFileEntryMetadataPersistence.findByFileVersionId(
 			fileVersionId);
 	}
 
 	@Override
-	public long getFileVersionFileEntryMetadatasCount(long fileVersionId) {
+	public long getFileVersionFileEntryMetadatasCount(long fileVersionId)
+		throws SystemException {
+
 		return dlFileEntryMetadataPersistence.countByFileVersionId(
 			fileVersionId);
 	}
@@ -121,7 +126,7 @@ public class DLFileEntryMetadataLocalServiceImpl
 			long companyId, List<DDMStructure> ddmStructures,
 			long fileEntryTypeId, long fileEntryId, long fileVersionId,
 			Map<String, Fields> fieldsMap, ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		for (DDMStructure ddmStructure : ddmStructures) {
 			Fields fields = fieldsMap.get(ddmStructure.getStructureKey());
@@ -138,7 +143,7 @@ public class DLFileEntryMetadataLocalServiceImpl
 	public void updateFileEntryMetadata(
 			long fileEntryTypeId, long fileEntryId, long fileVersionId,
 			Map<String, Fields> fieldsMap, ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		DLFileEntryType fileEntryType =
 			dlFileEntryTypeLocalService.getFileEntryType(fileEntryTypeId);
@@ -152,7 +157,7 @@ public class DLFileEntryMetadataLocalServiceImpl
 
 	protected void deleteFileEntryMetadata(
 			DLFileEntryMetadata fileEntryMetadata)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		// FileEntry metadata
 
@@ -172,7 +177,7 @@ public class DLFileEntryMetadataLocalServiceImpl
 			long companyId, DDMStructure ddmStructure, long fileEntryTypeId,
 			long fileEntryId, long fileVersionId, Fields fields,
 			ServiceContext serviceContext)
-		throws StorageException {
+		throws StorageException, SystemException {
 
 		DLFileEntryMetadata fileEntryMetadata =
 			dlFileEntryMetadataPersistence.fetchByD_F(
@@ -207,7 +212,7 @@ public class DLFileEntryMetadataLocalServiceImpl
 
 			// Dynamic data mapping structure link
 
-			long classNameId = classNameLocalService.getClassNameId(
+			long classNameId = PortalUtil.getClassNameId(
 				DLFileEntryMetadata.class);
 
 			ddmStructureLinkLocalService.addStructureLink(

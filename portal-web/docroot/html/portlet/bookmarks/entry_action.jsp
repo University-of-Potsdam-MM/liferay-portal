@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -22,7 +22,6 @@ ResultRow row = (ResultRow)request.getAttribute(WebKeys.SEARCH_CONTAINER_RESULT_
 BookmarksEntry entry = null;
 
 String cssClass = StringPool.BLANK;
-String listGroupItemCssClass = StringPool.BLANK;
 
 boolean view = false;
 
@@ -41,14 +40,13 @@ if (row != null) {
 else {
 	entry = (BookmarksEntry)request.getAttribute("view_entry.jsp-entry");
 
-	cssClass = "list-group nav";
-	listGroupItemCssClass = "list-group-item";
+	cssClass = "nav nav-list unstyled well";
 
 	view = true;
 }
 %>
 
-<liferay-ui:icon-menu cssClass="<%= cssClass %>" icon="<%= StringPool.BLANK %>" message="<%= StringPool.BLANK %>" showExpanded="<%= view %>" showWhenSingleIcon="<%= view %>">
+<liferay-ui:icon-menu cssClass="<%= cssClass %>" showExpanded="<%= view %>" showWhenSingleIcon="<%= view %>">
 	<c:if test="<%= BookmarksEntryPermission.contains(permissionChecker, entry, ActionKeys.UPDATE) %>">
 		<portlet:renderURL var="editURL">
 			<portlet:param name="struts_action" value="/bookmarks/edit_entry" />
@@ -58,9 +56,7 @@ else {
 		</portlet:renderURL>
 
 		<liferay-ui:icon
-			cssClass="<%= listGroupItemCssClass %>"
-			iconCssClass="icon-edit"
-			message="edit"
+			image="edit"
 			url="<%= editURL %>"
 		/>
 	</c:if>
@@ -75,16 +71,14 @@ else {
 		/>
 
 		<liferay-ui:icon
-			cssClass="<%= listGroupItemCssClass %>"
-			iconCssClass="icon-lock"
-			message="permissions"
+			image="permissions"
 			method="get"
 			url="<%= permissionsURL %>"
 			useDialog="<%= true %>"
 		/>
 	</c:if>
 
-	<c:if test="<%= BookmarksEntryPermission.contains(permissionChecker, entry, ActionKeys.SUBSCRIBE) && (bookmarksSettings.isEmailEntryAddedEnabled() || bookmarksSettings.isEmailEntryUpdatedEnabled()) %>">
+	<c:if test="<%= BookmarksEntryPermission.contains(permissionChecker, entry, ActionKeys.SUBSCRIBE) && (BookmarksUtil.getEmailEntryAddedEnabled(portletPreferences) || BookmarksUtil.getEmailEntryUpdatedEnabled(portletPreferences)) %>">
 		<c:choose>
 			<c:when test="<%= SubscriptionLocalServiceUtil.isSubscribed(user.getCompanyId(), user.getUserId(), BookmarksEntry.class.getName(), entry.getEntryId()) %>">
 				<portlet:actionURL var="unsubscribeURL">
@@ -95,9 +89,7 @@ else {
 				</portlet:actionURL>
 
 				<liferay-ui:icon
-					cssClass="<%= listGroupItemCssClass %>"
-					iconCssClass="icon-remove-sign"
-					message="unsubscribe"
+					image="unsubscribe"
 					url="<%= unsubscribeURL %>"
 				/>
 			</c:when>
@@ -110,9 +102,7 @@ else {
 				</portlet:actionURL>
 
 				<liferay-ui:icon
-					cssClass="<%= listGroupItemCssClass %>"
-					iconCssClass="icon-ok-sign"
-					message="subscribe"
+					image="subscribe"
 					url="<%= subscribeURL %>"
 				/>
 			</c:otherwise>
@@ -133,7 +123,6 @@ else {
 		</portlet:actionURL>
 
 		<liferay-ui:icon-delete
-			cssClass="<%= listGroupItemCssClass %>"
 			trash="<%= TrashUtil.isTrashEnabled(scopeGroupId) %>"
 			url="<%= deleteURL %>"
 		/>

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-<!DOCTYPE service-builder PUBLIC "-//Liferay//DTD Service Builder 7.0.0//EN" "http://www.liferay.com/dtd/liferay-service-builder_7_0_0.dtd">
+<!DOCTYPE service-builder PUBLIC "-//Liferay//DTD Service Builder 6.2.0//EN" "http://www.liferay.com/dtd/liferay-service-builder_6_2_0.dtd">
 
-<service-builder package-path="com.liferay.portlet.documentlibrary" auto-import-default-references="false">
+<service-builder package-path="com.liferay.portlet.documentlibrary">
 	<namespace>DL</namespace>
 	<entity name="DLApp" local-service="true" remote-service="true">
 
@@ -11,11 +11,6 @@
 		<reference package-path="com.liferay.portal" entity="Repository" />
 		<reference package-path="com.liferay.portal" entity="RepositoryEntry" />
 		<reference package-path="com.liferay.portal" entity="Subscription" />
-		<reference package-path="com.liferay.portlet.documentlibrary" entity="DLAppHelper" />
-		<reference package-path="com.liferay.portlet.documentlibrary" entity="DLFileEntryMetadata" />
-		<reference package-path="com.liferay.portlet.documentlibrary" entity="DLFileRank" />
-		<reference package-path="com.liferay.portlet.documentlibrary" entity="DLFileShortcut" />
-		<reference package-path="com.liferay.portlet.documentlibrary" entity="DLFolder" />
 
 		<!-- Transactions -->
 
@@ -30,7 +25,6 @@
 		<reference package-path="com.liferay.portal" entity="Layout" />
 		<reference package-path="com.liferay.portal" entity="Lock" />
 		<reference package-path="com.liferay.portal" entity="PortletPreferences" />
-		<reference package-path="com.liferay.portal" entity="Repository" />
 		<reference package-path="com.liferay.portal" entity="Subscription" />
 		<reference package-path="com.liferay.portal" entity="WebDAVProps" />
 		<reference package-path="com.liferay.portal" entity="WorkflowInstanceLink" />
@@ -38,14 +32,6 @@
 		<reference package-path="com.liferay.portlet.asset" entity="AssetEntry" />
 		<reference package-path="com.liferay.portlet.asset" entity="AssetLink" />
 		<reference package-path="com.liferay.portlet.asset" entity="AssetTag" />
-		<reference package-path="com.liferay.portlet.documentlibrary" entity="DLApp" />
-		<reference package-path="com.liferay.portlet.documentlibrary" entity="DLFileEntry" />
-		<reference package-path="com.liferay.portlet.documentlibrary" entity="DLFileEntryType" />
-		<reference package-path="com.liferay.portlet.documentlibrary" entity="DLFileRank" />
-		<reference package-path="com.liferay.portlet.documentlibrary" entity="DLFileShortcut" />
-		<reference package-path="com.liferay.portlet.documentlibrary" entity="DLFileVersion" />
-		<reference package-path="com.liferay.portlet.documentlibrary" entity="DLFolder" />
-		<reference package-path="com.liferay.portlet.documentlibrary" entity="DLSyncEvent" />
 		<reference package-path="com.liferay.portlet.expando" entity="ExpandoValue" />
 		<reference package-path="com.liferay.portlet.messageboards" entity="MBDiscussion" />
 		<reference package-path="com.liferay.portlet.messageboards" entity="MBMessage" />
@@ -132,7 +118,6 @@
 		<column name="folderId" type="long" />
 		<column name="treePath" type="String" />
 		<column name="name" type="String" />
-		<column name="fileName" type="String" />
 		<column name="extension" type="String" />
 		<column name="mimeType" type="String" />
 		<column name="title" type="String" />
@@ -163,14 +148,15 @@
 		<finder name="CompanyId" return-type="Collection">
 			<finder-column name="companyId" />
 		</finder>
-		<finder name="RepositoryId" return-type="Collection">
-			<finder-column name="repositoryId" />
-		</finder>
 		<finder name="MimeType" return-type="Collection">
 			<finder-column name="mimeType" />
 		</finder>
 		<finder name="FileEntryTypeId" return-type="Collection">
 			<finder-column name="fileEntryTypeId" />
+		</finder>
+		<finder name="F_N" return-type="Collection">
+			<finder-column name="folderId" />
+			<finder-column name="name" />
 		</finder>
 		<finder name="G_U" return-type="Collection">
 			<finder-column name="groupId" />
@@ -179,10 +165,6 @@
 		<finder name="G_F" return-type="Collection">
 			<finder-column name="groupId" />
 			<finder-column name="folderId" arrayable-operator="OR" />
-		</finder>
-		<finder name="F_N" return-type="Collection">
-			<finder-column name="folderId" />
-			<finder-column name="name" />
 		</finder>
 		<finder name="G_U_F" return-type="Collection">
 			<finder-column name="groupId" />
@@ -193,11 +175,6 @@
 			<finder-column name="groupId" />
 			<finder-column name="folderId" />
 			<finder-column name="name" />
-		</finder>
-		<finder name="G_F_FN" return-type="DLFileEntry" unique="true">
-			<finder-column name="groupId" />
-			<finder-column name="folderId" />
-			<finder-column name="fileName" />
 		</finder>
 		<finder name="G_F_T" return-type="DLFileEntry" unique="true">
 			<finder-column name="groupId" />
@@ -212,24 +189,16 @@
 
 		<!-- References -->
 
-		<reference package-path="com.liferay.portal" entity="ClassName" />
 		<reference package-path="com.liferay.portal" entity="Group" />
 		<reference package-path="com.liferay.portal" entity="Image" />
 		<reference package-path="com.liferay.portal" entity="Lock" />
 		<reference package-path="com.liferay.portal" entity="Repository" />
-		<reference package-path="com.liferay.portal" entity="Resource" />
-		<reference package-path="com.liferay.portal" entity="User" />
 		<reference package-path="com.liferay.portal" entity="WebDAVProps" />
 		<reference package-path="com.liferay.portal" entity="WorkflowInstanceLink" />
 		<reference package-path="com.liferay.portlet.asset" entity="AssetCategory" />
 		<reference package-path="com.liferay.portlet.asset" entity="AssetEntry" />
 		<reference package-path="com.liferay.portlet.asset" entity="AssetLink" />
 		<reference package-path="com.liferay.portlet.asset" entity="AssetTag" />
-		<reference package-path="com.liferay.portlet.documentlibrary" entity="DLAppHelper" />
-		<reference package-path="com.liferay.portlet.documentlibrary" entity="DLFileEntryMetadata" />
-		<reference package-path="com.liferay.portlet.documentlibrary" entity="DLFileEntryType" />
-		<reference package-path="com.liferay.portlet.documentlibrary" entity="DLFileVersion" />
-		<reference package-path="com.liferay.portlet.documentlibrary" entity="DLFolder" />
 		<reference package-path="com.liferay.portlet.dynamicdatamapping" entity="DDMStructure" />
 		<reference package-path="com.liferay.portlet.expando" entity="ExpandoRow" />
 		<reference package-path="com.liferay.portlet.expando" entity="ExpandoTable" />
@@ -271,8 +240,6 @@
 
 		<!-- References -->
 
-		<reference package-path="com.liferay.portal" entity="ClassName" />
-		<reference package-path="com.liferay.portlet.documentlibrary" entity="DLFileEntryType" />
 		<reference package-path="com.liferay.portlet.dynamicdatamapping" entity="DDMStructureLink" />
 	</entity>
 	<entity name="DLFileEntryType" human-name="document library file entry type" uuid="true" local-service="true" remote-service="true">
@@ -316,15 +283,8 @@
 
 		<!-- References -->
 
-		<reference package-path="com.liferay.portal" entity="ClassName" />
-		<reference package-path="com.liferay.portal" entity="Resource" />
-		<reference package-path="com.liferay.portal" entity="User" />
 		<reference package-path="com.liferay.portal" entity="WorkflowDefinitionLink" />
 		<reference package-path="com.liferay.portal" entity="WorkflowInstanceLink" />
-		<reference package-path="com.liferay.portlet.documentlibrary" entity="DLAppHelper" />
-		<reference package-path="com.liferay.portlet.documentlibrary" entity="DLFileEntry" />
-		<reference package-path="com.liferay.portlet.documentlibrary" entity="DLFileVersion" />
-		<reference package-path="com.liferay.portlet.documentlibrary" entity="DLFolder" />
 		<reference package-path="com.liferay.portlet.dynamicdatamapping" entity="DDMStructure" />
 	</entity>
 	<entity name="DLFileRank" human-name="document library file rank" local-service="true" remote-service="false">
@@ -371,7 +331,7 @@
 			<finder-column name="userId" />
 			<finder-column name="active" />
 		</finder>
-		<finder name="C_U_F" return-type="DLFileRank">
+		<finder name="C_U_F" return-type="DLFileRank" unique="true">
 			<finder-column name="companyId" />
 			<finder-column name="userId" />
 			<finder-column name="fileEntryId" />
@@ -380,7 +340,6 @@
 		<!-- References -->
 
 		<reference package-path="com.liferay.portal" entity="Layout" />
-		<reference package-path="com.liferay.portlet.documentlibrary" entity="DLFolder" />
 	</entity>
 	<entity name="DLFileShortcut" human-name="document library file shortcut" uuid="true" local-service="true" remote-service="true" trash-enabled="true">
 
@@ -442,14 +401,9 @@
 
 		<!-- References -->
 
-		<reference package-path="com.liferay.portal" entity="Resource" />
-		<reference package-path="com.liferay.portal" entity="User" />
 		<reference package-path="com.liferay.portlet.asset" entity="AssetEntry" />
 		<reference package-path="com.liferay.portlet.asset" entity="AssetTag" />
-		<reference package-path="com.liferay.portlet.documentlibrary" entity="DLApp" />
-		<reference package-path="com.liferay.portlet.documentlibrary" entity="DLFolder" />
 		<reference package-path="com.liferay.portlet.trash" entity="TrashEntry" />
-		<reference package-path="com.liferay.portlet.trash" entity="TrashVersion" />
 	</entity>
 	<entity name="DLFileVersion" human-name="document library file version" uuid="true" local-service="true" remote-service="true">
 
@@ -475,7 +429,6 @@
 		<column name="folderId" type="long" />
 		<column name="fileEntryId" type="long" />
 		<column name="treePath" type="String" />
-		<column name="fileName" type="String" />
 		<column name="extension" type="String" />
 		<column name="mimeType" type="String" />
 		<column name="title" type="String" />
@@ -532,11 +485,6 @@
 			<finder-column name="title" />
 			<finder-column name="version" />
 		</finder>
-
-		<!-- References -->
-
-		<reference package-path="com.liferay.portlet.documentlibrary" entity="DLFileEntry" />
-		<reference package-path="com.liferay.portlet.documentlibrary" entity="DLFolder" />
 	</entity>
 	<entity name="DLFolder" human-name="document library folder" uuid="true" local-service="true" remote-service="true" trash-enabled="true">
 
@@ -592,7 +540,7 @@
 		<finder name="CompanyId" return-type="Collection">
 			<finder-column name="companyId" />
 		</finder>
-		<finder name="RepositoryId" return-type="Collection">
+		<finder name="RepositoryId" return-type="DLFolder">
 			<finder-column name="repositoryId" />
 		</finder>
 		<finder name="G_P" return-type="Collection">
@@ -603,21 +551,7 @@
 			<finder-column name="companyId" />
 			<finder-column name="status" comparator="!=" />
 		</finder>
-		<finder name="R_M" return-type="DLFolder">
-			<finder-column name="repositoryId" />
-			<finder-column name="mountPoint" />
-		</finder>
 		<finder name="P_N" return-type="Collection">
-			<finder-column name="parentFolderId" />
-			<finder-column name="name" />
-		</finder>
-		<finder name="G_M_P" return-type="Collection">
-			<finder-column name="groupId" />
-			<finder-column name="mountPoint" />
-			<finder-column name="parentFolderId" />
-		</finder>
-		<finder name="G_P_N" return-type="DLFolder" unique="true">
-			<finder-column name="groupId" />
 			<finder-column name="parentFolderId" />
 			<finder-column name="name" />
 		</finder>
@@ -626,6 +560,11 @@
 			<finder-column name="companyId" />
 			<finder-column name="parentFolderId" />
 			<finder-column name="status" comparator="!=" />
+		</finder>
+		<finder name="G_P_N" return-type="DLFolder" unique="true">
+			<finder-column name="groupId" />
+			<finder-column name="parentFolderId" />
+			<finder-column name="name" />
 		</finder>
 		<finder name="G_M_P_H" return-type="Collection">
 			<finder-column name="groupId" />
@@ -651,18 +590,10 @@
 
 		<reference package-path="com.liferay.portal" entity="Group" />
 		<reference package-path="com.liferay.portal" entity="Lock" />
-		<reference package-path="com.liferay.portal" entity="Repository" />
-		<reference package-path="com.liferay.portal" entity="Resource" />
-		<reference package-path="com.liferay.portal" entity="User" />
 		<reference package-path="com.liferay.portal" entity="WebDAVProps" />
 		<reference package-path="com.liferay.portal" entity="WorkflowDefinitionLink" />
 		<reference package-path="com.liferay.portal" entity="WorkflowInstanceLink" />
 		<reference package-path="com.liferay.portlet.asset" entity="AssetEntry" />
-		<reference package-path="com.liferay.portlet.documentlibrary" entity="DLAppHelper" />
-		<reference package-path="com.liferay.portlet.documentlibrary" entity="DLFileEntry" />
-		<reference package-path="com.liferay.portlet.documentlibrary" entity="DLFileEntryType" />
-		<reference package-path="com.liferay.portlet.documentlibrary" entity="DLFileShortcut" />
-		<reference package-path="com.liferay.portlet.documentlibrary" entity="DLFileVersion" />
 		<reference package-path="com.liferay.portlet.expando" entity="ExpandoRow" />
 		<reference package-path="com.liferay.portlet.trash" entity="TrashEntry" />
 	</entity>
@@ -713,12 +644,10 @@
 		<exception>ImageSize</exception>
 		<exception>InvalidFileEntryType</exception>
 		<exception>InvalidFileVersion</exception>
-		<exception>InvalidFolder</exception>
 		<exception>NoSuchDirectory</exception>
 		<exception>NoSuchFile</exception>
 		<exception>NoSuchMetadataSet</exception>
 		<exception>RepositoryName</exception>
-		<exception>RequiredFileEntryType</exception>
 		<exception>SourceFileName</exception>
 	</exceptions>
 </service-builder>

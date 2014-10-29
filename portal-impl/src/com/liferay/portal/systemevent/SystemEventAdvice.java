@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -54,7 +54,7 @@ public class SystemEventAdvice
 			return;
 		}
 
-		if (!isValid(methodInvocation, _PHASE_AFTER_RETURNING)) {
+		if (!isValid(methodInvocation, PHASE_AFTER_RETURNING)) {
 			return;
 		}
 
@@ -120,7 +120,7 @@ public class SystemEventAdvice
 		}
 
 		if (systemEvent.action() != SystemEventConstants.ACTION_NONE) {
-			if (!isValid(methodInvocation, _PHASE_BEFORE)) {
+			if (!isValid(methodInvocation, PHASE_BEFORE)) {
 				return null;
 			}
 
@@ -149,7 +149,7 @@ public class SystemEventAdvice
 			return;
 		}
 
-		if (!isValid(methodInvocation, _PHASE_DURING_FINALLY)) {
+		if (!isValid(methodInvocation, PHASE_DURING_FINALLY)) {
 			return;
 		}
 
@@ -233,24 +233,29 @@ public class SystemEventAdvice
 	}
 
 	protected String getUuid(ClassedModel classedModel) throws Exception {
+		String uuid = null;
+
 		if (classedModel instanceof StagedModel) {
 			StagedModel stagedModel = (StagedModel)classedModel;
 
-			return stagedModel.getUuid();
+			uuid = stagedModel.getUuid();
 		}
-
-		Method getUuidMethod = null;
-
-		try {
+		else {
 			Class<?> modelClass = classedModel.getClass();
 
-			getUuidMethod = modelClass.getMethod("getUuid", new Class[0]);
-		}
-		catch (Exception e) {
-			return StringPool.BLANK;
+			Method getUuidMethod = modelClass.getMethod(
+				"getUuid", new Class[0]);
+
+			if (getUuidMethod != null) {
+				uuid = (String)getUuidMethod.invoke(
+					classedModel, new Object[0]);
+			}
+			else {
+				uuid = StringPool.BLANK;
+			}
 		}
 
-		return (String)getUuidMethod.invoke(classedModel, new Object[0]);
+		return uuid;
 	}
 
 	protected boolean isValid(MethodInvocation methodInvocation, int phase) {
@@ -259,7 +264,7 @@ public class SystemEventAdvice
 		Class<?>[] parameterTypes = method.getParameterTypes();
 
 		if (parameterTypes.length == 0) {
-			if (_log.isDebugEnabled() && (phase == _PHASE_BEFORE)) {
+			if (_log.isDebugEnabled() && (phase == PHASE_BEFORE)) {
 				_log.debug(
 					"The method " + methodInvocation +
 						" must have at least one parameter");
@@ -271,7 +276,7 @@ public class SystemEventAdvice
 		Class<?> parameterType = parameterTypes[0];
 
 		if (!ClassedModel.class.isAssignableFrom(parameterType)) {
-			if (_log.isDebugEnabled() && (phase == _PHASE_BEFORE)) {
+			if (_log.isDebugEnabled() && (phase == PHASE_BEFORE)) {
 				_log.debug(
 					"The first parameter of " + methodInvocation +
 						" must implement ClassedModel");
@@ -285,7 +290,7 @@ public class SystemEventAdvice
 		ClassedModel classedModel = (ClassedModel)arguments[0];
 
 		if (!(classedModel.getPrimaryKeyObj() instanceof Long)) {
-			if (_log.isDebugEnabled() && (phase == _PHASE_BEFORE)) {
+			if (_log.isDebugEnabled() && (phase == PHASE_BEFORE)) {
 				_log.debug(
 					"The first parameter of " + methodInvocation +
 						" must be a long");
@@ -294,7 +299,7 @@ public class SystemEventAdvice
 			return false;
 		}
 
-		if (phase != _PHASE_AFTER_RETURNING) {
+		if (phase != PHASE_AFTER_RETURNING) {
 			return true;
 		}
 
@@ -319,11 +324,11 @@ public class SystemEventAdvice
 		return true;
 	}
 
-	private static final int _PHASE_AFTER_RETURNING = 1;
+	private static final int PHASE_AFTER_RETURNING = 1;
 
-	private static final int _PHASE_BEFORE = 0;
+	private static final int PHASE_BEFORE = 0;
 
-	private static final int _PHASE_DURING_FINALLY = 2;
+	private static final int PHASE_DURING_FINALLY = 2;
 
 	private static Log _log = LogFactoryUtil.getLog(SystemEventAdvice.class);
 

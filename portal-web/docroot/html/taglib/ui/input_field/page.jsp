@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -62,8 +62,8 @@ if (hints != null) {
 
 			boolean value = BeanPropertiesUtil.getBooleanSilent(bean, field, defaultBoolean);
 
-			if (!ignoreRequestValue && Validator.isNotNull(ParamUtil.getString(request, "checkboxNames"))) {
-				value = Validator.isNotNull(ParamUtil.getString(request, fieldParam));
+			if (!ignoreRequestValue) {
+				value = ParamUtil.getBoolean(request, fieldParam, value);
 			}
 			%>
 
@@ -199,8 +199,6 @@ if (hints != null) {
 				}
 			}
 
-			cssClass += " form-group form-group-inline";
-
 			boolean showTime = true;
 
 			if (hints != null) {
@@ -250,7 +248,7 @@ if (hints != null) {
 				</div>
 
 				<aui:script use="aui-base">
-					var checkbox = A.one('#<portlet:namespace /><%= formName + fieldParam %>');
+					var checkbox = A.one('#<portlet:namespace /><%= formName + fieldParam %>Checkbox');
 
 					checkbox.once(
 						['click', 'mouseover'],
@@ -262,18 +260,18 @@ if (hints != null) {
 					checkbox.on(
 						['click', 'mouseover'],
 						function(event) {
-							var checked = document.getElementById('<portlet:namespace /><%= formName + fieldParam %>').checked;
+							var checked = document.getElementById('<portlet:namespace /><%= formName + fieldParam %>Checkbox').checked;
 
-							document.<portlet:namespace /><%= formName %>['<portlet:namespace /><%= fieldParam %>'].disabled = checked;
-							document.<portlet:namespace /><%= formName %>['<portlet:namespace /><%= fieldParam %>Month'].disabled = checked;
-							document.<portlet:namespace /><%= formName %>['<portlet:namespace /><%= fieldParam %>Day'].disabled = checked;
-							document.<portlet:namespace /><%= formName %>['<portlet:namespace /><%= fieldParam %>Year'].disabled = checked;
+							document.<portlet:namespace /><%= formName %>["<portlet:namespace /><%= fieldParam %>"].disabled = checked;
+							document.<portlet:namespace /><%= formName %>["<portlet:namespace /><%= fieldParam %>Month"].disabled = checked;
+							document.<portlet:namespace /><%= formName %>["<portlet:namespace /><%= fieldParam %>Day"].disabled = checked;
+							document.<portlet:namespace /><%= formName %>["<portlet:namespace /><%= fieldParam %>Year"].disabled = checked;
 
 							<c:if test="<%= showTime %>">
-								document.<portlet:namespace /><%= formName %>['<portlet:namespace /><%= fieldParam %>Time'].disabled = checked;
-								document.<portlet:namespace /><%= formName %>['<portlet:namespace /><%= fieldParam %>Hour'].disabled = checked;
-								document.<portlet:namespace /><%= formName %>['<portlet:namespace /><%= fieldParam %>Minute'].disabled = checked;
-								document.<portlet:namespace /><%= formName %>['<portlet:namespace /><%= fieldParam %>AmPm'].disabled = checked;
+								document.<portlet:namespace /><%= formName %>["<portlet:namespace /><%= fieldParam %>Time"].disabled = checked;
+								document.<portlet:namespace /><%= formName %>["<portlet:namespace /><%= fieldParam %>Hour"].disabled = checked;
+								document.<portlet:namespace /><%= formName %>["<portlet:namespace /><%= fieldParam %>Minute"].disabled = checked;
+								document.<portlet:namespace /><%= formName %>["<portlet:namespace /><%= fieldParam %>AmPm"].disabled = checked;
 							</c:if>
 						}
 					);
@@ -349,6 +347,7 @@ if (hints != null) {
 
 			boolean checkTab = false;
 			String displayHeight = ModelHintsConstants.TEXT_DISPLAY_HEIGHT;
+			String displayWidth = ModelHintsConstants.TEXT_DISPLAY_WIDTH;
 			boolean editor = false;
 			String maxLength = ModelHintsConstants.TEXT_MAX_LENGTH;
 			boolean secret = false;
@@ -358,6 +357,7 @@ if (hints != null) {
 				autoSize = GetterUtil.getBoolean(hints.get("autoSize"), autoSize);
 				checkTab = GetterUtil.getBoolean(hints.get("check-tab"), checkTab);
 				displayHeight = GetterUtil.getString(hints.get("display-height"), displayHeight);
+				displayWidth = GetterUtil.getString(hints.get("display-width"), displayWidth);
 				editor = GetterUtil.getBoolean(hints.get("editor"), editor);
 				maxLength = GetterUtil.getString(hints.get("max-length"), maxLength);
 				secret = GetterUtil.getBoolean(hints.get("secret"), secret);
@@ -366,12 +366,6 @@ if (hints != null) {
 
 			if (autoSize) {
 				displayHeight = "auto";
-			}
-
-			cssClass += " form-control";
-
-			if (editor) {
-				cssClass += " lfr-input-editor";
 			}
 
 			boolean localized = ModelHintsUtil.isLocalized(model, field);
@@ -391,6 +385,11 @@ if (hints != null) {
 				if (Validator.isNotNull(bean)) {
 					xml = BeanPropertiesUtil.getString(bean, field);
 				}
+				else {
+					Map<Locale, String> localizationMap = LocalizationUtil.getLocalizationMap(portletRequest, field);
+
+					xml = LocalizationUtil.updateLocalization(localizationMap, xml, field, defaultLanguageId);
+				}
 			}
 			%>
 
@@ -400,30 +399,29 @@ if (hints != null) {
 						<c:when test="<%= localized %>">
 							<liferay-ui:input-localized
 								autoFocus="<%= autoFocus %>"
-								availableLocales="<%= availableLocales %>"
-								cssClass="<%= cssClass %>"
+								cssClass='<%= cssClass + " lfr-input-text" %>'
 								defaultLanguageId="<%= defaultLanguageId %>"
 								disabled="<%= disabled %>"
+								displayWidth="<%= displayWidth %>"
 								formName="<%= formName %>"
 								id="<%= id %>"
 								ignoreRequestValue="<%= ignoreRequestValue %>"
 								languageId="<%= languageId %>"
 								maxLength="<%= maxLength %>"
 								name="<%= fieldParam %>"
-								style='<%= (upperCase ? "text-transform: uppercase;" : "" ) %>'
+								style='<%= "max-width: " + displayWidth + (Validator.isDigit(displayWidth) ? "px" : "") + "; " + (upperCase ? "text-transform: uppercase;" : "" ) %>'
 								type="editor"
 								xml="<%= xml %>"
 							/>
 						</c:when>
 						<c:otherwise>
-							<liferay-ui:input-editor
-								contents="<%= value %>"
-								contentsLanguageId="<%= languageId %>"
-								cssClass="<%= cssClass %>"
-								editorImpl="ckeditor"
-								name="<%= fieldParam %>"
-								toolbarSet="simple"
-							/>
+							<liferay-ui:input-editor cssClass='<%= cssClass + \" lfr-input-text\" %>' editorImpl="ckeditor" initMethod='<%= fieldParam + \"InitEditor\" %>' name="<%= fieldParam %>" toolbarSet="simple" />
+
+							<aui:script>
+								function <portlet:namespace /><%= fieldParam %>InitEditor() {
+									return "<%= UnicodeFormatter.toString(value) %>";
+								}
+							</aui:script>
 						</c:otherwise>
 					</c:choose>
 				</c:when>
@@ -441,52 +439,20 @@ if (hints != null) {
 
 					<c:choose>
 						<c:when test="<%= localized %>">
-							<liferay-ui:input-localized
-								autoFocus="<%= autoFocus %>"
-								availableLocales="<%= availableLocales %>"
-								cssClass='<%= cssClass + " lfr-input-text" %>'
-								defaultLanguageId="<%= defaultLanguageId %>"
-								disabled="<%= disabled %>"
-								formName="<%= formName %>"
-								id="<%= id %>"
-								ignoreRequestValue="<%= ignoreRequestValue %>"
-								languageId="<%= languageId %>"
-								maxLength="<%= maxLength %>"
-								name="<%= fieldParam %>"
-								style='<%= (upperCase ? "text-transform: uppercase;" : "" ) %>'
-								xml="<%= xml %>"
-							/>
+							<liferay-ui:input-localized autoFocus="<%= autoFocus %>" availableLocales="<%= availableLocales %>" cssClass='<%= cssClass + " lfr-input-text" %>' defaultLanguageId="<%= defaultLanguageId %>" disabled="<%= disabled %>" displayWidth="<%= displayWidth %>" formName="<%= formName %>" id="<%= id %>" ignoreRequestValue="<%= ignoreRequestValue %>" languageId="<%= languageId %>" maxLength="<%= maxLength %>" name="<%= fieldParam %>" style='<%= "max-width: " + displayWidth + (Validator.isDigit(displayWidth) ? "px" : "") + "; " + (upperCase ? "text-transform: uppercase;" : "" ) %>' xml="<%= xml %>" />
 						</c:when>
 						<c:otherwise>
-							<input class="<%= cssClass + " lfr-input-text" %>" <%= disabled ? "disabled=\"disabled\"" : "" %> id="<%= namespace %><%= id %>" name="<%= namespace %><%= fieldParam %>" <%= Validator.isNotNull(placeholder) ? "placeholder=\"" + LanguageUtil.get(request, placeholder) + "\"" : StringPool.BLANK %> style="<%= upperCase ? "text-transform: uppercase;" : "" %>" type="<%= secret ? "password" : "text" %>" value="<%= autoEscape ? HtmlUtil.escape(value) : value %>" />
+							<input class="<%= cssClass + " lfr-input-text" %>" <%= disabled ? "disabled=\"disabled\"" : "" %> id="<%= namespace %><%= id %>" name="<%= namespace %><%= fieldParam %>" <%= Validator.isNotNull(placeholder) ? "placeholder=\"" + LanguageUtil.get(pageContext, placeholder) + "\"" : StringPool.BLANK %> style="max-width: <%= displayWidth %><%= Validator.isDigit(displayWidth) ? "px" : "" %>; <%= upperCase ? "text-transform: uppercase;" : "" %>" type="<%= secret ? "password" : "text" %>" value="<%= autoEscape ? HtmlUtil.escape(value) : value %>" />
 						</c:otherwise>
 					</c:choose>
 				</c:when>
 				<c:otherwise>
 					<c:choose>
 						<c:when test="<%= localized %>">
-							<liferay-ui:input-localized
-								autoFocus="<%= autoFocus %>"
-								autoSize="<%= autoSize %>"
-								availableLocales="<%= availableLocales %>"
-								cssClass='<%= cssClass + " lfr-input-text" %>'
-								defaultLanguageId="<%= defaultLanguageId %>"
-								disabled="<%= disabled %>"
-								formName="<%= formName %>"
-								id="<%= id %>"
-								ignoreRequestValue="<%= ignoreRequestValue %>"
-								languageId="<%= languageId %>"
-								maxLength="<%= maxLength %>"
-								name="<%= fieldParam %>"
-								onKeyDown='<%= (checkTab ? "Liferay.Util.checkTab(this); " : "") + "Liferay.Util.disableEsc();" %>'
-								style='<%= !autoSize ? "height: " + displayHeight + (Validator.isDigit(displayHeight) ? "px" : StringPool.BLANK) + ";" : StringPool.BLANK %>'
-								type="textarea"
-								wrap="soft"
-								xml="<%= xml %>"
-							/>
+							<liferay-ui:input-localized autoFocus="<%= autoFocus %>" autoSize="<%= autoSize %>" availableLocales="<%= availableLocales %>" cssClass='<%= cssClass + " lfr-input-text" %>' defaultLanguageId="<%= defaultLanguageId %>" disabled="<%= disabled %>" displayWidth="<%= displayWidth %>" formName="<%= formName %>" id="<%= id %>" ignoreRequestValue="<%= ignoreRequestValue %>" languageId="<%= languageId %>" maxLength="<%= maxLength %>" name="<%= fieldParam %>" onKeyDown='<%= (checkTab ? "Liferay.Util.checkTab(this); " : "") + "Liferay.Util.disableEsc();" %>' style='<%= !autoSize ? "height: " + displayHeight + (Validator.isDigit(displayHeight) ? "px" : StringPool.BLANK) + ";" : StringPool.BLANK + "max-width: " + displayWidth + (Validator.isDigit(displayWidth) ? "px" : "") +";" %>' type="textarea" wrap="soft" xml="<%= xml %>" />
 						</c:when>
 						<c:otherwise>
-							<textarea class="<%= cssClass + " lfr-textarea" %>" <%= disabled ? "disabled=\"disabled\"" : "" %> id="<%= namespace %><%= id %>" name="<%= namespace %><%= fieldParam %>" <%= Validator.isNotNull(placeholder) ? "placeholder=\"" + LanguageUtil.get(request, placeholder) + "\"" : StringPool.BLANK %> style="<%= !autoSize ? "height: " + displayHeight + (Validator.isDigit(displayHeight) ? "px" : StringPool.BLANK) + ";" : StringPool.BLANK %>" onKeyDown="<%= checkTab ? "Liferay.Util.checkTab(this); " : "" %> Liferay.Util.disableEsc();" wrap="soft"><%= autoEscape ? HtmlUtil.escape(value) : value %></textarea>
+							<textarea class="<%= cssClass + " lfr-textarea" %>" <%= disabled ? "disabled=\"disabled\"" : "" %> id="<%= namespace %><%= id %>" name="<%= namespace %><%= fieldParam %>" <%= Validator.isNotNull(placeholder) ? "placeholder=\"" + LanguageUtil.get(pageContext, placeholder) + "\"" : StringPool.BLANK %> style="<%= !autoSize ? "height: " + displayHeight + (Validator.isDigit(displayHeight) ? "px" : StringPool.BLANK) + ";" : StringPool.BLANK %> max-width: <%= displayWidth %><%= Validator.isDigit(displayWidth) ? "px" : "" %>;" wrap="soft" onKeyDown="<%= checkTab ? "Liferay.Util.checkTab(this); " : "" %> Liferay.Util.disableEsc();"><%= autoEscape ? HtmlUtil.escape(value) : value %></textarea>
 						</c:otherwise>
 					</c:choose>
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portlet.expando.service.impl;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.security.permission.ActionKeys;
 import com.liferay.portal.service.permission.PortletPermissionUtil;
 import com.liferay.portal.util.PortletKeys;
@@ -29,7 +30,7 @@ public class ExpandoColumnServiceImpl extends ExpandoColumnServiceBaseImpl {
 
 	@Override
 	public ExpandoColumn addColumn(long tableId, String name, int type)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		PortletPermissionUtil.check(
 			getPermissionChecker(), PortletKeys.EXPANDO,
@@ -41,7 +42,7 @@ public class ExpandoColumnServiceImpl extends ExpandoColumnServiceBaseImpl {
 	@Override
 	public ExpandoColumn addColumn(
 			long tableId, String name, int type, Object defaultData)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		PortletPermissionUtil.check(
 			getPermissionChecker(), PortletKeys.EXPANDO,
@@ -52,7 +53,9 @@ public class ExpandoColumnServiceImpl extends ExpandoColumnServiceBaseImpl {
 	}
 
 	@Override
-	public void deleteColumn(long columnId) throws PortalException {
+	public void deleteColumn(long columnId)
+		throws PortalException, SystemException {
+
 		ExpandoColumnPermissionUtil.check(
 			getPermissionChecker(), columnId, ActionKeys.DELETE);
 
@@ -61,7 +64,7 @@ public class ExpandoColumnServiceImpl extends ExpandoColumnServiceBaseImpl {
 
 	@Override
 	public ExpandoColumn updateColumn(long columnId, String name, int type)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		ExpandoColumnPermissionUtil.check(
 			getPermissionChecker(), columnId, ActionKeys.UPDATE);
@@ -72,7 +75,7 @@ public class ExpandoColumnServiceImpl extends ExpandoColumnServiceBaseImpl {
 	@Override
 	public ExpandoColumn updateColumn(
 			long columnId, String name, int type, Object defaultData)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		ExpandoColumnPermissionUtil.check(
 			getPermissionChecker(), columnId, ActionKeys.UPDATE);
@@ -83,7 +86,7 @@ public class ExpandoColumnServiceImpl extends ExpandoColumnServiceBaseImpl {
 
 	@Override
 	public ExpandoColumn updateTypeSettings(long columnId, String typeSettings)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		ExpandoColumnPermissionUtil.check(
 			getPermissionChecker(), columnId, ActionKeys.UPDATE);

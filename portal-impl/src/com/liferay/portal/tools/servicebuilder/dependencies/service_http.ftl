@@ -4,8 +4,6 @@ package ${packagePath}.service.http;
 	import ${packagePath}.service.${entity.name}ServiceUtil;
 </#if>
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.MethodHandler;
@@ -44,12 +42,6 @@ import com.liferay.portal.service.http.TunnelUtil;
 </#if>
  * @generated
  */
-
-<#if classDeprecated>
-	@Deprecated
-</#if>
-
-@ProviderType
 public class ${entity.name}ServiceHttp {
 
 	<#assign hasMethods = false>
@@ -68,18 +60,23 @@ public class ${entity.name}ServiceHttp {
 			</#list>
 
 			)
+			throws
 
-			<#if method.exceptions?size gt 0>
-				throws
+			<#if !method.exceptions?seq_contains("com.liferay.portal.kernel.exception.SystemException")>
+				com.liferay.portal.kernel.exception.SystemException
 
-				<#list method.exceptions as exception>
-					${exception.value}
-
-					<#if exception_has_next>
-						,
-					</#if>
-				</#list>
+				<#if method.exceptions?size gt 0>
+					,
+				</#if>
 			</#if>
+
+			<#list method.exceptions as exception>
+				${exception.value}
+
+				<#if exception_has_next>
+					,
+				</#if>
+			</#list>
 
 			{
 				try {

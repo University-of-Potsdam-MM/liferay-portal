@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -13,8 +13,6 @@
  */
 
 package com.liferay.portlet.documentlibrary.service.http;
-
-import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -53,13 +51,13 @@ import com.liferay.portlet.documentlibrary.service.DLFileShortcutServiceUtil;
  * @see com.liferay.portlet.documentlibrary.service.DLFileShortcutServiceUtil
  * @generated
  */
-@ProviderType
 public class DLFileShortcutServiceHttp {
 	public static com.liferay.portlet.documentlibrary.model.DLFileShortcut addFileShortcut(
 		HttpPrincipal httpPrincipal, long groupId, long folderId,
 		long toFileEntryId,
 		com.liferay.portal.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(DLFileShortcutServiceUtil.class,
 					"addFileShortcut", _addFileShortcutParameterTypes0);
@@ -77,6 +75,10 @@ public class DLFileShortcutServiceHttp {
 					throw (com.liferay.portal.kernel.exception.PortalException)e;
 				}
 
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
+				}
+
 				throw new com.liferay.portal.kernel.exception.SystemException(e);
 			}
 
@@ -91,7 +93,8 @@ public class DLFileShortcutServiceHttp {
 
 	public static void deleteFileShortcut(HttpPrincipal httpPrincipal,
 		long fileShortcutId)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(DLFileShortcutServiceUtil.class,
 					"deleteFileShortcut", _deleteFileShortcutParameterTypes1);
@@ -107,6 +110,10 @@ public class DLFileShortcutServiceHttp {
 					throw (com.liferay.portal.kernel.exception.PortalException)e;
 				}
 
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
+				}
+
 				throw new com.liferay.portal.kernel.exception.SystemException(e);
 			}
 		}
@@ -119,7 +126,8 @@ public class DLFileShortcutServiceHttp {
 
 	public static com.liferay.portlet.documentlibrary.model.DLFileShortcut getFileShortcut(
 		HttpPrincipal httpPrincipal, long fileShortcutId)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(DLFileShortcutServiceUtil.class,
 					"getFileShortcut", _getFileShortcutParameterTypes2);
@@ -135,6 +143,10 @@ public class DLFileShortcutServiceHttp {
 			catch (Exception e) {
 				if (e instanceof com.liferay.portal.kernel.exception.PortalException) {
 					throw (com.liferay.portal.kernel.exception.PortalException)e;
+				}
+
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
 				}
 
 				throw new com.liferay.portal.kernel.exception.SystemException(e);
@@ -153,7 +165,8 @@ public class DLFileShortcutServiceHttp {
 		HttpPrincipal httpPrincipal, long fileShortcutId, long folderId,
 		long toFileEntryId,
 		com.liferay.portal.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(DLFileShortcutServiceUtil.class,
 					"updateFileShortcut", _updateFileShortcutParameterTypes3);
@@ -169,6 +182,10 @@ public class DLFileShortcutServiceHttp {
 			catch (Exception e) {
 				if (e instanceof com.liferay.portal.kernel.exception.PortalException) {
 					throw (com.liferay.portal.kernel.exception.PortalException)e;
+				}
+
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
 				}
 
 				throw new com.liferay.portal.kernel.exception.SystemException(e);

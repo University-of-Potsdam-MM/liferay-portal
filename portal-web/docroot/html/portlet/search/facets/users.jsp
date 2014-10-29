@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -26,29 +26,31 @@ int maxTerms = dataJSONObject.getInt("maxTerms", 10);
 boolean showAssetCount = dataJSONObject.getBoolean("showAssetCount", true);
 %>
 
-<div class="<%= cssClass %>" data-facetFieldName="<%= HtmlUtil.escapeAttribute(facet.getFieldId()) %>" id="<%= randomNamespace %>facet">
-	<aui:input name="<%= HtmlUtil.escapeAttribute(facet.getFieldId()) %>" type="hidden" value="<%= fieldParam %>" />
+<div class="<%= cssClass %>" data-facetFieldName="<%= facet.getFieldId() %>" id="<%= randomNamespace %>facet">
+	<aui:input name="<%= facet.getFieldId() %>" type="hidden" value="<%= fieldParam %>" />
 
 	<ul class="nav nav-pills nav-stacked users">
 		<li class="facet-value default <%= Validator.isNull(fieldParam) ? "active" : StringPool.BLANK %>">
-			<a data-value="" href="javascript:;"><aui:icon image="user" /> <liferay-ui:message key="any" /> <liferay-ui:message key="<%= HtmlUtil.escape(facetConfiguration.getLabel()) %>" /></a>
+			<a data-value="" href="javascript:;"><aui:icon image="user" /> <liferay-ui:message key="any" /> <liferay-ui:message key="<%= facetConfiguration.getLabel() %>" /></a>
 		</li>
 
 		<%
-		String userName = GetterUtil.getString(fieldParam);
+		long userId = GetterUtil.getLong(fieldParam);
 
 		for (int i = 0; i < termCollectors.size(); i++) {
 			TermCollector termCollector = termCollectors.get(i);
 
-			String curUserName = GetterUtil.getString(termCollector.getTerm());
+			long curUserId = GetterUtil.getLong(termCollector.getTerm());
+
+			User curUser = UserLocalServiceUtil.getUser(curUserId);
 		%>
 
-			<c:if test="<%= userName.equals(curUserName) %>">
+			<c:if test="<%= userId == curUserId %>">
 				<aui:script use="liferay-token-list">
 					Liferay.Search.tokenList.add(
 						{
-							clearFields: '<%= renderResponse.getNamespace() + HtmlUtil.escapeJS(facet.getFieldId()) %>',
-							text: '<%= HtmlUtil.escapeJS(curUserName) %>'
+							clearFields: '<%= renderResponse.getNamespace() + facet.getFieldId() %>',
+							text: '<%= HtmlUtil.escapeJS(curUser.getFullName()) %>'
 						}
 					);
 				</aui:script>
@@ -60,9 +62,9 @@ boolean showAssetCount = dataJSONObject.getBoolean("showAssetCount", true);
 			}
 			%>
 
-			<li class="facet-value <%= userName.equals(curUserName) ? "active" : StringPool.BLANK %>">
-				<a data-value="<%= curUserName %>" href="javascript:;">
-					<%= HtmlUtil.escape(curUserName) %>
+			<li class="facet-value <%= (userId == curUserId) ? "active" : StringPool.BLANK %>">
+				<a data-value="<%= curUserId %>" href="javascript:;">
+					<%= HtmlUtil.escape(curUser.getFullName()) %>
 
 					<c:if test="<%= showAssetCount %>">
 						<span class="badge badge-info frequency"><%= termCollector.getFrequency() %></span>

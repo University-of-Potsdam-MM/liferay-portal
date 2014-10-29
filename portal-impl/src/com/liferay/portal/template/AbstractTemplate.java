@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -81,19 +81,6 @@ public abstract class AbstractTemplate implements Template {
 	}
 
 	@Override
-	public void doProcessTemplate(Writer writer) throws Exception {
-		UnsyncStringWriter unsyncStringWriter = new UnsyncStringWriter();
-
-		put(TemplateConstants.WRITER, unsyncStringWriter);
-
-		processTemplate(templateResource, unsyncStringWriter);
-
-		StringBundler sb = unsyncStringWriter.getStringBundler();
-
-		sb.writeTo(writer);
-	}
-
-	@Override
 	public Object get(String key) {
 		if (key == null) {
 			return null;
@@ -133,7 +120,15 @@ public abstract class AbstractTemplate implements Template {
 		Writer oldWriter = (Writer)get(TemplateConstants.WRITER);
 
 		try {
-			doProcessTemplate(writer);
+			UnsyncStringWriter unsyncStringWriter = new UnsyncStringWriter();
+
+			put(TemplateConstants.WRITER, unsyncStringWriter);
+
+			processTemplate(templateResource, unsyncStringWriter);
+
+			StringBundler sb = unsyncStringWriter.getStringBundler();
+
+			sb.writeTo(writer);
 		}
 		catch (Exception e) {
 			put(TemplateConstants.WRITER, writer);

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -19,11 +19,10 @@ import com.liferay.portal.kernel.cache.SingleVMPoolUtil;
 import com.liferay.portal.kernel.configuration.Filter;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
+import com.liferay.portal.kernel.util.UniqueList;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author Eduardo Lundgren
@@ -40,8 +39,8 @@ public class JavaScriptBundleUtil {
 		if (fileNames == null) {
 			List<String> fileNamesList = new ArrayList<String>();
 
-			Set<String> dependencies = _getDependencies(
-				bundleId, new LinkedHashSet<String>());
+			List<String> dependencies = _getDependencies(
+				bundleId, new UniqueList<String>());
 
 			for (String dependency : dependencies) {
 				String[] dependencyFileNames = PropsUtil.getArray(dependency);
@@ -59,8 +58,8 @@ public class JavaScriptBundleUtil {
 		return fileNames;
 	}
 
-	private static Set<String> _getDependencies(
-		String bundleId, Set<String> dependencies) {
+	private static List<String> _getDependencies(
+		String bundleId, List<String> dependencies) {
 
 		if (!ArrayUtil.contains(PropsValues.JAVASCRIPT_BUNDLE_IDS, bundleId)) {
 			return dependencies;

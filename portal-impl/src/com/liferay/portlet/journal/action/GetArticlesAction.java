@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -156,8 +156,7 @@ public class GetArticlesAction extends Action {
 		String orderByType = ParamUtil.getString(request, "orderByType");
 		boolean orderByAsc = orderByType.equals("asc");
 
-		OrderByComparator<JournalArticle> obc =
-			new ArticleModifiedDateComparator(orderByAsc);
+		OrderByComparator obc = new ArticleModifiedDateComparator(orderByAsc);
 
 		if (orderByCol.equals("display-date")) {
 			obc = new ArticleDisplayDateComparator(orderByAsc);

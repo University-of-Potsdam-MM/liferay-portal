@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portal.service.permission;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.model.LayoutBranch;
 import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.security.permission.PermissionChecker;
@@ -40,7 +41,7 @@ public class LayoutBranchPermissionImpl implements LayoutBranchPermission {
 	public void check(
 			PermissionChecker permissionChecker, long layoutBranchId,
 			String actionId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		if (!contains(permissionChecker, layoutBranchId, actionId)) {
 			throw new PrincipalException();
@@ -61,7 +62,7 @@ public class LayoutBranchPermissionImpl implements LayoutBranchPermission {
 	public boolean contains(
 			PermissionChecker permissionChecker, long layoutBranchId,
 			String actionId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		LayoutBranch layoutBranch =
 			LayoutBranchLocalServiceUtil.getLayoutBranch(layoutBranchId);

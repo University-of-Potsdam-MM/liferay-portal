@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,11 +14,10 @@
 
 package com.liferay.portal.kernel.resiliency.spi.agent;
 
-import com.liferay.portal.kernel.process.local.LocalProcessLauncher;
+import com.liferay.portal.kernel.process.ProcessExecutor;
 import com.liferay.portal.kernel.resiliency.spi.MockSPI;
 import com.liferay.portal.kernel.resiliency.spi.SPI;
 import com.liferay.portal.kernel.resiliency.spi.SPIUtil;
-import com.liferay.portal.kernel.test.CaptureHandler;
 import com.liferay.portal.kernel.test.CodeCoverageAssertor;
 import com.liferay.portal.kernel.test.JDKLoggerTestUtil;
 import com.liferay.portal.kernel.util.StringPool;
@@ -77,7 +76,7 @@ public class AcceptorServletTest {
 		);
 
 		ConcurrentMap<String, Object> attributes =
-			LocalProcessLauncher.ProcessContext.getAttributes();
+			ProcessExecutor.ProcessContext.getAttributes();
 
 		SPI spi = new MockSPI() {
 
@@ -177,73 +176,62 @@ public class AcceptorServletTest {
 		Assert.assertNull(_recordSPIAgent._exception);
 		Assert.assertTrue(_mockHttpSession.isInvalid());
 
-		CaptureHandler captureHandler = null;
+		// IOException on prepare request
+
+		_recordSPIAgent.setIOExceptionOnPrepareRequest(true);
+
+		List<LogRecord> logRecords = JDKLoggerTestUtil.configureJDKLogger(
+			AcceptorServlet.class.getName(), Level.SEVERE);
 
 		try {
+			acceptorServlet.service(
+				mockHttpServletRequest, mockHttpServletResponse);
 
-			// IOException on prepare request
-
-			_recordSPIAgent.setIOExceptionOnPrepareRequest(true);
-
-			captureHandler = JDKLoggerTestUtil.configureJDKLogger(
-				AcceptorServlet.class.getName(), Level.SEVERE);
-
-			List<LogRecord> logRecords = captureHandler.getLogRecords();
-
-			try {
-				acceptorServlet.service(
-					mockHttpServletRequest, mockHttpServletResponse);
-
-				Assert.fail();
-			}
-			catch (IOException ioe) {
-				Assert.assertEquals(
-					"IOException on prepare request", ioe.getMessage());
-			}
-
-			Assert.assertEquals(1, logRecords.size());
-
-			LogRecord logRecord = logRecords.get(0);
-
-			Throwable throwable = logRecord.getThrown();
-
-			Assert.assertSame(IOException.class, throwable.getClass());
-			Assert.assertEquals(
-				"IOException on prepare request", throwable.getMessage());
-
-			// RuntimeException on prepare request
-
-			_recordSPIAgent.setIOExceptionOnPrepareRequest(false);
-			_recordSPIAgent.setRuntimeExceptionOnPrepareRequest(true);
-
-			logRecords = captureHandler.resetLogLevel(Level.SEVERE);
-
-			try {
-				acceptorServlet.service(
-					mockHttpServletRequest, mockHttpServletResponse);
-
-				Assert.fail();
-			}
-			catch (RuntimeException re) {
-				Assert.assertEquals(
-					"RuntimeException on prepare request", re.getMessage());
-			}
-
-			Assert.assertEquals(1, logRecords.size());
-
-			logRecord = logRecords.get(0);
-
-			throwable = logRecord.getThrown();
-
-			Assert.assertSame(RuntimeException.class, throwable.getClass());
-			Assert.assertEquals(
-				"RuntimeException on prepare request", throwable.getMessage());
+			Assert.fail();
 		}
-		finally {
-			if (captureHandler != null) {
-				captureHandler.close();
-			}
+		catch (IOException ioe) {
+			Assert.assertEquals(
+				"IOException on prepare request", ioe.getMessage());
 		}
+
+		Assert.assertEquals(1, logRecords.size());
+
+		LogRecord logRecord = logRecords.get(0);
+
+		Throwable throwable = logRecord.getThrown();
+
+		Assert.assertSame(IOException.class, throwable.getClass());
+		Assert.assertEquals(
+			"IOException on prepare request", throwable.getMessage());
+
+		// RuntimeException on prepare request
+
+		_recordSPIAgent.setIOExceptionOnPrepareRequest(false);
+		_recordSPIAgent.setRuntimeExceptionOnPrepareRequest(true);
+
+		logRecords = JDKLoggerTestUtil.configureJDKLogger(
+			AcceptorServlet.class.getName(), Level.SEVERE);
+
+		try {
+			acceptorServlet.service(
+				mockHttpServletRequest, mockHttpServletResponse);
+
+			Assert.fail();
+		}
+		catch (RuntimeException re) {
+			Assert.assertEquals(
+				"RuntimeException on prepare request", re.getMessage());
+		}
+
+		Assert.assertEquals(1, logRecords.size());
+
+		logRecord = logRecords.get(0);
+
+		throwable = logRecord.getThrown();
+
+		Assert.assertSame(RuntimeException.class, throwable.getClass());
+		Assert.assertEquals(
+			"RuntimeException on prepare request", throwable.getMessage());
 
 		// Unable to forward
 

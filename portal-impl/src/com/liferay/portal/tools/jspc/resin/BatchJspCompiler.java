@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -40,10 +40,10 @@ public class BatchJspCompiler {
 	}
 
 	public BatchJspCompiler(String appDir, String classDir) {
-		_appDir = appDir;
-		_classDir = classDir;
-
 		try {
+			_appDir = appDir;
+			_classDir = classDir;
+
 			DirectoryScanner ds = new DirectoryScanner();
 
 			ds.setBasedir(appDir);
@@ -89,9 +89,9 @@ public class BatchJspCompiler {
 		}
 	}
 
-	private static final FileImpl _fileUtil = FileImpl.getInstance();
+	private static FileImpl _fileUtil = FileImpl.getInstance();
 
-	private final String _appDir;
-	private final String _classDir;
+	private String _appDir;
+	private String _classDir;
 
 }

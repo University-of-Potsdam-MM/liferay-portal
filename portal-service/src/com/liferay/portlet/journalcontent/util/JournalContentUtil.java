@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,7 +14,6 @@
 
 package com.liferay.portlet.journalcontent.util;
 
-import com.liferay.portal.kernel.portlet.PortletRequestModel;
 import com.liferay.portal.kernel.security.pacl.permission.PortalRuntimePermission;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portlet.journal.model.JournalArticleDisplay;
@@ -36,29 +35,19 @@ public class JournalContentUtil {
 
 	public static String getContent(
 		long groupId, String articleId, String viewMode, String languageId,
-		PortletRequestModel portletRequestModel) {
+		String xmlRequest) {
 
 		return getJournalContent().getContent(
-			groupId, articleId, viewMode, languageId, portletRequestModel);
+			groupId, articleId, viewMode, languageId, xmlRequest);
 	}
 
 	public static String getContent(
 		long groupId, String articleId, String ddmTemplateKey, String viewMode,
-		String languageId, PortletRequestModel portletRequestModel) {
+		String languageId, String xmlRequest) {
 
 		return getJournalContent().getContent(
 			groupId, articleId, ddmTemplateKey, viewMode, languageId,
-			portletRequestModel);
-	}
-
-	public static String getContent(
-		long groupId, String articleId, String ddmTemplateKey, String viewMode,
-		String languageId, PortletRequestModel portletRequestModel,
-		ThemeDisplay themeDisplay) {
-
-		return getJournalContent().getContent(
-			groupId, articleId, ddmTemplateKey, viewMode, languageId,
-			portletRequestModel, themeDisplay);
+			xmlRequest);
 	}
 
 	public static String getContent(
@@ -68,6 +57,15 @@ public class JournalContentUtil {
 		return getJournalContent().getContent(
 			groupId, articleId, ddmTemplateKey, viewMode, languageId,
 			themeDisplay);
+	}
+
+	public static String getContent(
+		long groupId, String articleId, String ddmTemplateKey, String viewMode,
+		String languageId, ThemeDisplay themeDisplay, String xmlRequest) {
+
+		return getJournalContent().getContent(
+			groupId, articleId, ddmTemplateKey, viewMode, languageId,
+			themeDisplay, xmlRequest);
 	}
 
 	public static String getContent(
@@ -80,47 +78,29 @@ public class JournalContentUtil {
 
 	public static JournalArticleDisplay getDisplay(
 		long groupId, String articleId, double version, String ddmTemplateKey,
-		String viewMode, String languageId, int page,
-		PortletRequestModel portletRequestModel, ThemeDisplay themeDisplay) {
+		String viewMode, String languageId, ThemeDisplay themeDisplay, int page,
+		String xmlRequest) {
 
 		return getJournalContent().getDisplay(
 			groupId, articleId, version, ddmTemplateKey, viewMode, languageId,
-			page, portletRequestModel, themeDisplay);
+			themeDisplay, page, xmlRequest);
 	}
 
 	public static JournalArticleDisplay getDisplay(
 		long groupId, String articleId, String viewMode, String languageId,
-		int page, ThemeDisplay themeDisplay) {
+		String xmlRequest) {
 
 		return getJournalContent().getDisplay(
-			groupId, articleId, viewMode, languageId, page, themeDisplay);
-	}
-
-	public static JournalArticleDisplay getDisplay(
-		long groupId, String articleId, String viewMode, String languageId,
-		PortletRequestModel portletRequestModel) {
-
-		return getJournalContent().getDisplay(
-			groupId, articleId, viewMode, languageId, portletRequestModel);
+			groupId, articleId, viewMode, languageId, xmlRequest);
 	}
 
 	public static JournalArticleDisplay getDisplay(
 		long groupId, String articleId, String ddmTemplateKey, String viewMode,
-		String languageId, int page, PortletRequestModel portletRequestModel,
-		ThemeDisplay themeDisplay) {
-
-		return getJournalContent().getDisplay(
-			groupId, articleId, ddmTemplateKey, viewMode, languageId, page,
-			portletRequestModel, themeDisplay);
-	}
-
-	public static JournalArticleDisplay getDisplay(
-		long groupId, String articleId, String ddmTemplateKey, String viewMode,
-		String languageId, PortletRequestModel portletRequestModel) {
+		String languageId, String xmlRequest) {
 
 		return getJournalContent().getDisplay(
 			groupId, articleId, ddmTemplateKey, viewMode, languageId,
-			portletRequestModel);
+			xmlRequest);
 	}
 
 	public static JournalArticleDisplay getDisplay(
@@ -133,11 +113,29 @@ public class JournalContentUtil {
 	}
 
 	public static JournalArticleDisplay getDisplay(
+		long groupId, String articleId, String ddmTemplateKey, String viewMode,
+		String languageId, ThemeDisplay themeDisplay, int page,
+		String xmlRequest) {
+
+		return getJournalContent().getDisplay(
+			groupId, articleId, ddmTemplateKey, viewMode, languageId,
+			themeDisplay, page, xmlRequest);
+	}
+
+	public static JournalArticleDisplay getDisplay(
 		long groupId, String articleId, String viewMode, String languageId,
 		ThemeDisplay themeDisplay) {
 
 		return getJournalContent().getDisplay(
 			groupId, articleId, viewMode, languageId, themeDisplay);
+	}
+
+	public static JournalArticleDisplay getDisplay(
+		long groupId, String articleId, String viewMode, String languageId,
+		ThemeDisplay themeDisplay, int page) {
+
+		return getJournalContent().getDisplay(
+			groupId, articleId, viewMode, languageId, themeDisplay, page);
 	}
 
 	public static JournalContent getJournalContent() {

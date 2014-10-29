@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -33,32 +33,43 @@ DDMStructure ddmStructure = null;
 String ddmStructureName = StringPool.BLANK;
 
 if (Validator.isNotNull(structureId)) {
-	ddmStructure = DDMStructureLocalServiceUtil.fetchStructure(themeDisplay.getSiteGroupId(), PortalUtil.getClassNameId(JournalArticle.class), structureId, true);
+	try {
+		ddmStructure = DDMStructureLocalServiceUtil.getStructure(themeDisplay.getSiteGroupId(), PortalUtil.getClassNameId(JournalArticle.class), structureId, true);
 
-	if (ddmStructure != null) {
 		ddmStructureName = ddmStructure.getName(locale);
+	}
+	catch (NoSuchStructureException nsse) {
 	}
 }
 
 List<DDMTemplate> ddmTemplates = new ArrayList<DDMTemplate>();
 
 if (ddmStructure != null) {
-	ddmTemplates = DDMTemplateLocalServiceUtil.getTemplates(themeDisplay.getScopeGroupId(), PortalUtil.getClassNameId(DDMStructure.class), ddmStructure.getStructureId(), true);
+	ddmTemplates.addAll(DDMTemplateLocalServiceUtil.getTemplates(themeDisplay.getCompanyGroupId(), PortalUtil.getClassNameId(DDMStructure.class), ddmStructure.getStructureId()));
+	ddmTemplates.addAll(DDMTemplateLocalServiceUtil.getTemplates(themeDisplay.getSiteGroupId(), PortalUtil.getClassNameId(DDMStructure.class), ddmStructure.getStructureId()));
 }
 
 String templateId = BeanParamUtil.getString(feed, request, "templateId");
 
 if ((ddmStructure == null) && Validator.isNotNull(templateId)) {
-	DDMTemplate ddmTemplate = DDMTemplateLocalServiceUtil.fetchTemplate(themeDisplay.getSiteGroupId(), PortalUtil.getClassNameId(DDMStructure.class), templateId, true);
+	DDMTemplate ddmTemplate = null;
+
+	try {
+		ddmTemplate = DDMTemplateLocalServiceUtil.getTemplate(themeDisplay.getSiteGroupId(), PortalUtil.getClassNameId(DDMStructure.class), templateId, true);
+	}
+	catch (NoSuchTemplateException nste) {
+	}
 
 	if (ddmTemplate != null) {
-		ddmStructure = DDMStructureLocalServiceUtil.fetchStructure(ddmTemplate.getClassPK());
+		try {
+			ddmStructure = DDMStructureLocalServiceUtil.getStructure(ddmTemplate.getClassPK());
 
-		if (ddmStructure != null) {
 			structureId = ddmStructure.getStructureKey();
 			ddmStructureName = ddmStructure.getName(locale);
 
 			ddmTemplates = DDMTemplateLocalServiceUtil.getTemplates(themeDisplay.getSiteGroupId(), PortalUtil.getClassNameId(DDMStructure.class), ddmTemplate.getClassPK());
+		}
+		catch (NoSuchStructureException nsse) {
 		}
 	}
 }
@@ -134,11 +145,13 @@ if (feed != null) {
 				</c:choose>
 			</c:when>
 			<c:otherwise>
-				<aui:input name="id" type="resource" value="<%= feedId %>" />
+				<aui:field-wrapper label="id">
+					<liferay-ui:input-resource url="<%= feedId %>" />
+				</aui:field-wrapper>
 			</c:otherwise>
 		</c:choose>
 
-		<aui:input autoFocus="<%= ((feed != null) && !PropsValues.JOURNAL_FEED_FORCE_AUTOGENERATE_ID && (windowState.equals(WindowState.MAXIMIZED)) || windowState.equals(LiferayWindowState.POP_UP)) %>" cssClass="lfr-input-text-container" name="name" />
+		<aui:input autoFocus="<%= ((feed != null) && !PropsValues.JOURNAL_FEED_FORCE_AUTOGENERATE_ID && windowState.equals(WindowState.MAXIMIZED)) %>" cssClass="lfr-input-text-container" name="name" />
 
 		<aui:input cssClass="lfr-textarea-container" name="description" />
 
@@ -153,7 +166,9 @@ if (feed != null) {
 				</aui:field-wrapper>
 			</c:when>
 			<c:otherwise>
-				<aui:input name="url" type="resource" value="<%= feedURL.toString() %>" />
+				<aui:field-wrapper label="url">
+					<liferay-ui:input-resource url="<%= feedURL.toString() %>" />
+				</aui:field-wrapper>
 			</c:otherwise>
 		</c:choose>
 	</aui:fieldset>
@@ -175,22 +190,24 @@ if (feed != null) {
 
 				</aui:select>
 
-				<div class="form-group">
-					<aui:input name="structureId" required="<%= true %>" type="hidden" value="<%= structureId %>" />
+				<aui:field-wrapper label="structure">
+					<aui:input name="structureId" type="hidden" value="<%= structureId %>" />
 
-					<aui:input name="structure" type="resource" value="<%= ddmStructureName %>" />
+					<div class="input-append">
+						<liferay-ui:input-resource url="<%= ddmStructureName %>" />
 
-					<aui:button name="selectStructureButton" onClick='<%= renderResponse.getNamespace() + "openStructureSelector();" %>' value="select" />
+						<aui:button name="selectStructureButton" onClick='<%= renderResponse.getNamespace() + "openStructureSelector();" %>' value="select" />
 
-					<aui:button disabled="<%= Validator.isNull(structureId) %>" name="removeStructureButton" onClick='<%= renderResponse.getNamespace() + "removeStructure();" %>' value="remove" />
-				</div>
+						<aui:button disabled="<%= Validator.isNull(structureId) %>" name="removeStructureButton" onClick='<%= renderResponse.getNamespace() + "removeStructure();" %>' value="remove" />
+					</div>
+				</aui:field-wrapper>
 
-				<c:choose>
-					<c:when test="<%= ddmTemplates.isEmpty() %>">
-						<aui:input name="templateId" type="hidden" value="<%= templateId %>" />
-					</c:when>
-					<c:otherwise>
-						<aui:field-wrapper label="template">
+				<aui:field-wrapper label="template">
+					<c:choose>
+						<c:when test="<%= ddmTemplates.isEmpty() %>">
+							<aui:input name="templateId" type="hidden" value="<%= templateId %>" />
+						</c:when>
+						<c:otherwise>
 							<liferay-ui:table-iterator
 								list="<%= ddmTemplates %>"
 								listType="com.liferay.portlet.dynamicdatamapping.model.DDMTemplate"
@@ -211,12 +228,12 @@ if (feed != null) {
 								<c:if test="<%= tableIteratorObj.isSmallImage() %>">
 									<br />
 
-									<img alt="" hspace="0" src="<%= HtmlUtil.escapeAttribute(tableIteratorObj.getTemplateImageURL(themeDisplay)) %>" vspace="0" />
+									<img border="0" hspace="0" src="<%= Validator.isNotNull(tableIteratorObj.getSmallImageURL()) ? tableIteratorObj.getSmallImageURL() : themeDisplay.getPathImage() + "/journal/template?img_id=" + tableIteratorObj.getSmallImageId() + "&t=" + WebServerServletTokenUtil.getToken(tableIteratorObj.getSmallImageId()) %>" vspace="0" />
 								</c:if>
 							</liferay-ui:table-iterator>
-						</aui:field-wrapper>
-					</c:otherwise>
-				</c:choose>
+						</c:otherwise>
+					</c:choose>
+				</aui:field-wrapper>
 			</aui:fieldset>
 		</liferay-ui:panel>
 
@@ -234,7 +251,7 @@ if (feed != null) {
 							for (DDMTemplate curTemplate : ddmTemplates) {
 							%>
 
-								<aui:option data-contentField="<%= JournalFeedConstants.RENDERED_WEB_CONTENT %>" label='<%= LanguageUtil.format(request, "use-template-x", HtmlUtil.escape(curTemplate.getName(locale)), false) %>' selected="<%= rendererTemplateId.equals(curTemplate.getTemplateKey()) %>" value="<%= curTemplate.getTemplateKey() %>" />
+								<aui:option data-contentField="<%= JournalFeedConstants.RENDERED_WEB_CONTENT %>" label='<%= LanguageUtil.format(pageContext, "use-template-x", HtmlUtil.escape(curTemplate.getName(locale))) %>' selected="<%= rendererTemplateId.equals(curTemplate.getTemplateKey()) %>" value="<%= curTemplate.getTemplateKey() %>" />
 
 							<%
 							}
@@ -247,7 +264,7 @@ if (feed != null) {
 						<optgroup label="<liferay-ui:message key="structure-fields" />">
 
 							<%
-							Document doc = SAXReaderUtil.read(ddmStructure.getDefinition());
+							Document doc = SAXReaderUtil.read(ddmStructure.getXsd());
 
 							XPath xpathSelector = SAXReaderUtil.createXPath("//dynamic-element");
 
@@ -262,7 +279,7 @@ if (feed != null) {
 								if (!elType.equals("boolean") && !elType.equals("list") && !elType.equals("multi-list")) {
 							%>
 
-									<aui:option label='<%= TextFormatter.format(elName, TextFormatter.J) + "(" + LanguageUtil.get(request, elType) + ")" %>' selected="<%= contentField.equals(elName) %>" value="<%= elName %>" />
+									<aui:option label='<%= TextFormatter.format(elName, TextFormatter.J) + "(" + LanguageUtil.get(pageContext, elType) + ")" %>' selected="<%= contentField.equals(elName) %>" value="<%= elName %>" />
 
 							<%
 								}
@@ -321,7 +338,7 @@ if (feed != null) {
 			<c:if test="<%= feed != null %>">
 
 				<%
-				String taglibPreviewButton = "Liferay.Util.openWindow({id:'" + renderResponse.getNamespace() + "preview', title: '" + UnicodeLanguageUtil.get(request, "feed") + "', uri: '" + feedURL + "'});";
+				String taglibPreviewButton = "Liferay.Util.openWindow({id:'" + renderResponse.getNamespace() + "preview', title: '" + UnicodeLanguageUtil.get(pageContext, "feed") + "', uri: '" + feedURL + "'});";
 				%>
 
 				<aui:button onClick="<%= taglibPreviewButton %>" value="preview" />
@@ -343,24 +360,22 @@ if (feed != null) {
 				},
 				eventName: '<portlet:namespace />selectStructure',
 				groupId: <%= themeDisplay.getSiteGroupId() %>,
-				refererPortletName: '<%= PortletKeys.JOURNAL %>',
 
 				<%
 				Portlet portlet = PortletLocalServiceUtil.getPortletById(portletDisplay.getId());
 				%>
 
+				refererPortletName: '<%= PortletKeys.JOURNAL %>',
 				refererWebDAVToken: '<%= portlet.getWebDAVStorageToken() %>',
-
-				showAncestorScopes: true,
 				struts_action: '/dynamic_data_mapping/select_structure',
-				title: '<%= UnicodeLanguageUtil.get(request, "structures") %>'
+				title: '<%= UnicodeLanguageUtil.get(pageContext, "structures") %>'
 			},
 			function(event) {
-				if (confirm('<%= UnicodeLanguageUtil.get(request, "selecting-a-new-structure-will-change-the-available-templates-and-available-feed-item-content") %>') && (document.<portlet:namespace />fm.<portlet:namespace />structureId.value != event.structurekey)) {
+				if (confirm('<%= UnicodeLanguageUtil.get(pageContext, "selecting-a-new-structure-will-change-the-available-templates-and-available-feed-item-content") %>') && (document.<portlet:namespace />fm.<portlet:namespace />structureId.value != event.structurekey)) {
 					document.<portlet:namespace />fm.<portlet:namespace />structureId.value = event.ddmstructurekey;
-					document.<portlet:namespace />fm.<portlet:namespace />templateId.value = '';
-					document.<portlet:namespace />fm.<portlet:namespace />rendererTemplateId.value = '';
-					document.<portlet:namespace />fm.<portlet:namespace />contentField.value = '<%= JournalFeedConstants.WEB_CONTENT_DESCRIPTION %>';
+					document.<portlet:namespace />fm.<portlet:namespace />templateId.value = "";
+					document.<portlet:namespace />fm.<portlet:namespace />rendererTemplateId.value = "";
+					document.<portlet:namespace />fm.<portlet:namespace />contentField.value = "<%= JournalFeedConstants.WEB_CONTENT_DESCRIPTION %>";
 
 					submitForm(document.<portlet:namespace />fm);
 				}
@@ -369,16 +384,16 @@ if (feed != null) {
 	}
 
 	function <portlet:namespace />removeStructure() {
-		document.<portlet:namespace />fm.<portlet:namespace />structureId.value = '';
-		document.<portlet:namespace />fm.<portlet:namespace />templateId.value = '';
-		document.<portlet:namespace />fm.<portlet:namespace />rendererTemplateId.value = '';
-		document.<portlet:namespace />fm.<portlet:namespace />contentField.value = '<%= JournalFeedConstants.WEB_CONTENT_DESCRIPTION %>';
+		document.<portlet:namespace />fm.<portlet:namespace />structureId.value = "";
+		document.<portlet:namespace />fm.<portlet:namespace />templateId.value = "";
+		document.<portlet:namespace />fm.<portlet:namespace />rendererTemplateId.value = "";
+		document.<portlet:namespace />fm.<portlet:namespace />contentField.value = "<%= JournalFeedConstants.WEB_CONTENT_DESCRIPTION %>";
 
 		submitForm(document.<portlet:namespace />fm);
 	}
 
 	function <portlet:namespace />saveFeed() {
-		document.<portlet:namespace />fm.<portlet:namespace /><%= Constants.CMD %>.value = '<%= feed == null ? Constants.ADD : Constants.UPDATE %>';
+		document.<portlet:namespace />fm.<portlet:namespace /><%= Constants.CMD %>.value = "<%= feed == null ? Constants.ADD : Constants.UPDATE %>";
 
 		<c:if test="<%= feed == null %>">
 			document.<portlet:namespace />fm.<portlet:namespace />feedId.value = document.<portlet:namespace />fm.<portlet:namespace />newFeedId.value;
@@ -392,7 +407,7 @@ if (feed != null) {
 	}
 
 	function <portlet:namespace />selectTemplate(structureId, templateId, dialog) {
-		if (confirm('<%= UnicodeLanguageUtil.get(request, "selecting-a-template-will-change-the-structure,-available-input-fields,-and-available-templates") %>')) {
+		if (confirm('<%= UnicodeLanguageUtil.get(pageContext, "selecting-a-template-will-change-the-structure,-available-input-fields,-and-available-templates") %>')) {
 			document.<portlet:namespace />fm.<portlet:namespace />structureId.value = structureId;
 			document.<portlet:namespace />fm.<portlet:namespace />templateId.value = templateId;
 
@@ -404,10 +419,10 @@ if (feed != null) {
 		}
 	}
 
-	Liferay.Util.disableToggleBoxes('<portlet:namespace />autoFeedId','<portlet:namespace />newFeedId', true);
+	Liferay.Util.disableToggleBoxes('<portlet:namespace />autoFeedIdCheckbox','<portlet:namespace />newFeedId', true);
 </aui:script>
 
-<aui:script use="aui-base,aui-selector">
+<aui:script use="aui-base">
 	var feedItemContentSelector = A.one('select#<portlet:namespace />contentFieldSelector');
 
 	var changeFeedItemContent = function() {

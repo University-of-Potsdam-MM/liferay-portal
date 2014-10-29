@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -36,7 +36,7 @@ import java.io.Serializable;
  * @generated
  */
 @ProviderType
-public interface OrgLaborModel extends BaseModel<OrgLabor>, MVCCModel {
+public interface OrgLaborModel extends BaseModel<OrgLabor> {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -56,22 +56,6 @@ public interface OrgLaborModel extends BaseModel<OrgLabor>, MVCCModel {
 	 * @param primaryKey the primary key of this org labor
 	 */
 	public void setPrimaryKey(long primaryKey);
-
-	/**
-	 * Returns the mvcc version of this org labor.
-	 *
-	 * @return the mvcc version of this org labor
-	 */
-	@Override
-	public long getMvccVersion();
-
-	/**
-	 * Sets the mvcc version of this org labor.
-	 *
-	 * @param mvccVersion the mvcc version of this org labor
-	 */
-	@Override
-	public void setMvccVersion(long mvccVersion);
 
 	/**
 	 * Returns the org labor ID of this org labor.

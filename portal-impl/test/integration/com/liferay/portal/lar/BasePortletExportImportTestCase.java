@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -16,7 +16,7 @@ package com.liferay.portal.lar;
 
 import com.liferay.portal.LocaleException;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.lar.ExportImportClassedModelUtil;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.lar.PortletDataHandler;
 import com.liferay.portal.kernel.lar.PortletDataHandlerKeys;
 import com.liferay.portal.kernel.template.TemplateHandler;
@@ -24,28 +24,25 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.Portlet;
 import com.liferay.portal.model.StagedModel;
 import com.liferay.portal.service.GroupLocalServiceUtil;
 import com.liferay.portal.service.LayoutLocalServiceUtil;
 import com.liferay.portal.service.PortletLocalServiceUtil;
+import com.liferay.portal.service.ServiceTestUtil;
+import com.liferay.portal.util.GroupTestUtil;
+import com.liferay.portal.util.LayoutTestUtil;
 import com.liferay.portal.util.PortalUtil;
-import com.liferay.portal.util.test.GroupTestUtil;
-import com.liferay.portal.util.test.LayoutTestUtil;
-import com.liferay.portal.util.test.RandomTestUtil;
-import com.liferay.portal.util.test.TestPropsValues;
-import com.liferay.portlet.PortletPreferencesFactoryUtil;
+import com.liferay.portal.util.TestPropsValues;
 import com.liferay.portlet.asset.model.AssetEntry;
 import com.liferay.portlet.asset.model.AssetLink;
 import com.liferay.portlet.asset.service.AssetEntryLocalServiceUtil;
 import com.liferay.portlet.asset.service.AssetLinkLocalServiceUtil;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
-import com.liferay.portlet.dynamicdatamapping.util.test.DDMTemplateTestUtil;
+import com.liferay.portlet.dynamicdatamapping.util.DDMTemplateTestUtil;
 import com.liferay.portlet.portletdisplaytemplate.util.PortletDisplayTemplate;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -61,8 +58,7 @@ import org.junit.Test;
 /**
  * @author Juan Fernández
  */
-public abstract class BasePortletExportImportTestCase
-	extends BaseExportImportTestCase {
+public class BasePortletExportImportTestCase extends BaseExportImportTestCase {
 
 	public String getNamespace() {
 		return null;
@@ -79,8 +75,12 @@ public abstract class BasePortletExportImportTestCase
 		StagedModel relatedStagedModel1 = addStagedModel(group.getGroupId());
 		StagedModel relatedStagedModel2 = addStagedModel(group.getGroupId());
 
-		addAssetLink(stagedModel, relatedStagedModel1, 1);
-		addAssetLink(stagedModel, relatedStagedModel2, 2);
+		addAssetLink(
+			group.getGroupId(), getStagedModelUuid(stagedModel),
+			getStagedModelUuid(relatedStagedModel1), 1);
+		addAssetLink(
+			group.getGroupId(), getStagedModelUuid(stagedModel),
+			getStagedModelUuid(relatedStagedModel2), 2);
 
 		exportImportPortlet(getPortletId());
 
@@ -89,7 +89,7 @@ public abstract class BasePortletExportImportTestCase
 
 		Assert.assertNotNull(importedStagedModel);
 
-		validateImportedLinks(stagedModel, importedStagedModel);
+		validateImportedLinks(getStagedModelUuid(stagedModel));
 	}
 
 	@Test
@@ -192,52 +192,15 @@ public abstract class BasePortletExportImportTestCase
 			false);
 	}
 
-	@Test
-	public void testUpdateLastPublishDate() throws Exception {
-		StagedModel stagedModel = addStagedModel(group.getGroupId());
-
-		if (stagedModel == null) {
-			return;
-		}
-
-		LayoutTestUtil.addPortletToLayout(
-			TestPropsValues.getUserId(), layout, getPortletId(), "column-1",
-			new HashMap<String, String[]>());
-
-		Map<String, String[]> exportParameterMap =
-			new LinkedHashMap<String, String[]>();
-
-		exportParameterMap.put(
-			PortletDataHandlerKeys.UPDATE_LAST_PUBLISH_DATE,
-			new String[] {String.valueOf(true)});
-
-		Map<String, String[]> importParameterMap =
-			new LinkedHashMap<String, String[]>();
-
-		Date startDate = new Date(System.currentTimeMillis() - Time.HOUR);
-		Date endDate = new Date();
-
-		exportImportPortlet(
-			getPortletId(), exportParameterMap, importParameterMap, startDate,
-			endDate);
-
-		PortletPreferences portletPreferences =
-			PortletPreferencesFactoryUtil.getStrictPortletSetup(
-				layout, getPortletId());
-
-		long lastPublishDate = GetterUtil.getLong(
-			portletPreferences.getValue("last-publish-date", StringPool.BLANK));
-
-		Assert.assertEquals(endDate.getTime(), lastPublishDate);
-	}
-
 	protected AssetLink addAssetLink(
-			StagedModel sourceStagedModel, StagedModel targetStagedModel,
-			int weight)
-		throws PortalException {
+			long groupId, String sourceStagedModelUuid,
+			String targetStagedModelUuid, int weight)
+		throws PortalException, SystemException {
 
-		AssetEntry originAssetEntry = getAssetEntry(sourceStagedModel);
-		AssetEntry targetAssetEntry = getAssetEntry(targetStagedModel);
+		AssetEntry originAssetEntry = AssetEntryLocalServiceUtil.getEntry(
+			groupId, sourceStagedModelUuid);
+		AssetEntry targetAssetEntry = AssetEntryLocalServiceUtil.getEntry(
+			groupId, targetStagedModelUuid);
 
 		return AssetLinkLocalServiceUtil.addLink(
 			TestPropsValues.getUserId(), originAssetEntry.getEntryId(),
@@ -257,42 +220,23 @@ public abstract class BasePortletExportImportTestCase
 	}
 
 	protected void exportImportPortlet(
-			String portletId, Map<String, String[]> exportParameterMap,
-			Map<String, String[]> importParameterMap)
-		throws Exception {
-
-		exportImportPortlet(
-			portletId, exportParameterMap, importParameterMap, null, null);
-	}
-
-	protected void exportImportPortlet(
-			String portletId, Map<String, String[]> exportParameterMap,
-			Map<String, String[]> importParameterMap, Date startDate,
-			Date endDate)
-		throws Exception {
+		String portletId, Map<String, String[]> exportParameterMap,
+		Map<String, String[]> importParameterMap) throws Exception {
 
 		MapUtil.merge(getExportParameterMap(), exportParameterMap);
 
 		larFile = LayoutLocalServiceUtil.exportPortletInfoAsFile(
 			layout.getPlid(), layout.getGroupId(), portletId,
-			exportParameterMap, startDate, endDate);
+			exportParameterMap, null, null);
 
 		importedLayout = LayoutTestUtil.addLayout(
-			importedGroup.getGroupId(), RandomTestUtil.randomString());
+			importedGroup.getGroupId(), ServiceTestUtil.randomString());
 
 		MapUtil.merge(getImportParameterMap(), importParameterMap);
 
 		LayoutLocalServiceUtil.importPortletInfo(
 			TestPropsValues.getUserId(), importedLayout.getPlid(),
 			importedGroup.getGroupId(), portletId, importParameterMap, larFile);
-	}
-
-	protected AssetEntry getAssetEntry(StagedModel stagedModel)
-		throws PortalException {
-
-		return AssetEntryLocalServiceUtil.getEntry(
-			ExportImportClassedModelUtil.getClassName(stagedModel),
-			ExportImportClassedModelUtil.getClassPK(stagedModel));
 	}
 
 	protected PortletPreferences getImportedPortletPreferences(
@@ -423,16 +367,17 @@ public abstract class BasePortletExportImportTestCase
 			expectedDisplayStyleGroupId, importedDisplayStyleGroupId);
 	}
 
-	protected void validateImportedLinks(
-			StagedModel originalStagedModel, StagedModel importedStagedModel)
-		throws PortalException {
+	protected void validateImportedLinks(String uuid)
+		throws PortalException, SystemException {
 
-		AssetEntry originalAssetEntry = getAssetEntry(originalStagedModel);
+		AssetEntry originalAssetEntry = AssetEntryLocalServiceUtil.getEntry(
+			group.getGroupId(), uuid);
 
 		List<AssetLink> originalAssetLinks = AssetLinkLocalServiceUtil.getLinks(
 			originalAssetEntry.getEntryId());
 
-		AssetEntry importedAssetEntry = getAssetEntry(importedStagedModel);
+		AssetEntry importedAssetEntry =  AssetEntryLocalServiceUtil.getEntry(
+			importedGroup.getGroupId(), uuid);
 
 		List<AssetLink> importedAssetLinks = AssetLinkLocalServiceUtil.getLinks(
 			importedAssetEntry.getEntryId());

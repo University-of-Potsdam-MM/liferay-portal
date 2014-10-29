@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-<!DOCTYPE service-builder PUBLIC "-//Liferay//DTD Service Builder 7.0.0//EN" "http://www.liferay.com/dtd/liferay-service-builder_7_0_0.dtd">
+<!DOCTYPE service-builder PUBLIC "-//Liferay//DTD Service Builder 6.2.0//EN" "http://www.liferay.com/dtd/liferay-service-builder_6_2_0.dtd">
 
-<service-builder package-path="com.liferay.portlet.shopping" auto-import-default-references="false">
+<service-builder package-path="com.liferay.portlet.shopping">
 	<namespace>Shopping</namespace>
 	<entity name="ShoppingCart" local-service="true" remote-service="false">
 
@@ -40,12 +40,6 @@
 			<finder-column name="groupId" />
 			<finder-column name="userId" />
 		</finder>
-
-		<!-- References -->
-
-		<reference package-path="com.liferay.portal" entity="User" />
-		<reference package-path="com.liferay.portlet.shopping" entity="ShoppingCoupon" />
-		<reference package-path="com.liferay.portlet.shopping" entity="ShoppingItem" />
 	</entity>
 	<entity name="ShoppingCategory" local-service="true" remote-service="true">
 
@@ -87,16 +81,6 @@
 			<finder-column name="groupId" />
 			<finder-column name="parentCategoryId" />
 		</finder>
-		<finder name="G_N" return-type="ShoppingCategory">
-			<finder-column name="groupId" />
-			<finder-column name="name" />
-		</finder>
-
-		<!-- References -->
-
-		<reference package-path="com.liferay.portal" entity="Resource" />
-		<reference package-path="com.liferay.portal" entity="User" />
-		<reference package-path="com.liferay.portlet.shopping" entity="ShoppingItem" />
 	</entity>
 	<entity name="ShoppingCoupon" local-service="true" remote-service="true">
 
@@ -144,12 +128,6 @@
 		<finder name="Code" return-type="ShoppingCoupon" unique="true">
 			<finder-column name="code" />
 		</finder>
-
-		<!-- References -->
-
-		<reference package-path="com.liferay.portal" entity="User" />
-		<reference package-path="com.liferay.portlet.shopping" entity="ShoppingCategory" />
-		<reference package-path="com.liferay.portlet.shopping" entity="ShoppingItem" />
 	</entity>
 	<entity name="ShoppingItem" local-service="true" remote-service="true">
 
@@ -228,11 +206,6 @@
 		<!-- References -->
 
 		<reference package-path="com.liferay.portal" entity="Image" />
-		<reference package-path="com.liferay.portal" entity="Resource" />
-		<reference package-path="com.liferay.portal" entity="User" />
-		<reference package-path="com.liferay.portlet.shopping" entity="ShoppingCategory" />
-		<reference package-path="com.liferay.portlet.shopping" entity="ShoppingItemField" />
-		<reference package-path="com.liferay.portlet.shopping" entity="ShoppingItemPrice" />
 	</entity>
 	<entity name="ShoppingItemField" local-service="true" remote-service="false">
 
@@ -290,10 +263,6 @@
 		<finder name="ItemId" return-type="Collection">
 			<finder-column name="itemId" />
 		</finder>
-
-		<!-- References -->
-
-		<reference package-path="com.liferay.portlet.shopping" entity="ShoppingItem" />
 	</entity>
 	<entity name="ShoppingOrder" local-service="true" remote-service="true">
 
@@ -388,11 +357,7 @@
 		<reference package-path="com.liferay.mail" entity="Mail" />
 		<reference package-path="com.liferay.portal" entity="Company" />
 		<reference package-path="com.liferay.portal" entity="Subscription" />
-		<reference package-path="com.liferay.portal" entity="User" />
 		<reference package-path="com.liferay.portlet.messageboards" entity="MBMessage" />
-		<reference package-path="com.liferay.portlet.shopping" entity="ShoppingItem" />
-		<reference package-path="com.liferay.portlet.shopping" entity="ShoppingItemField" />
-		<reference package-path="com.liferay.portlet.shopping" entity="ShoppingOrderItem" />
 	</entity>
 	<entity name="ShoppingOrderItem" local-service="true" remote-service="false">
 
@@ -452,7 +417,6 @@
 		<exception>CouponName</exception>
 		<exception>CouponStartDate</exception>
 		<exception>DuplicateCouponCode</exception>
-		<exception>DuplicateItemFieldName</exception>
 		<exception>DuplicateItemSKU</exception>
 		<exception>ItemLargeImageName</exception>
 		<exception>ItemLargeImageSize</exception>

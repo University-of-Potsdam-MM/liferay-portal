@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -13,8 +13,6 @@
  */
 
 package com.liferay.portlet.asset.model.impl;
-
-import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -52,7 +50,6 @@ import java.util.Map;
  * @see com.liferay.portlet.asset.model.AssetTagStatsModel
  * @generated
  */
-@ProviderType
 public class AssetTagStatsModelImpl extends BaseModelImpl<AssetTagStats>
 	implements AssetTagStatsModel {
 	/*
@@ -83,9 +80,9 @@ public class AssetTagStatsModelImpl extends BaseModelImpl<AssetTagStats>
 	public static final boolean COLUMN_BITMASK_ENABLED = GetterUtil.getBoolean(com.liferay.portal.util.PropsUtil.get(
 				"value.object.column.bitmask.enabled.com.liferay.portlet.asset.model.AssetTagStats"),
 			true);
-	public static final long CLASSNAMEID_COLUMN_BITMASK = 1L;
-	public static final long TAGID_COLUMN_BITMASK = 2L;
-	public static final long ASSETCOUNT_COLUMN_BITMASK = 4L;
+	public static long CLASSNAMEID_COLUMN_BITMASK = 1L;
+	public static long TAGID_COLUMN_BITMASK = 2L;
+	public static long ASSETCOUNT_COLUMN_BITMASK = 4L;
 	public static final long LOCK_EXPIRATION_TIME = GetterUtil.getLong(com.liferay.portal.util.PropsUtil.get(
 				"lock.expiration.time.com.liferay.portlet.asset.model.AssetTagStats"));
 
@@ -130,9 +127,6 @@ public class AssetTagStatsModelImpl extends BaseModelImpl<AssetTagStats>
 		attributes.put("tagId", getTagId());
 		attributes.put("classNameId", getClassNameId());
 		attributes.put("assetCount", getAssetCount());
-
-		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
-		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
 
 		return attributes;
 	}
@@ -342,16 +336,6 @@ public class AssetTagStatsModelImpl extends BaseModelImpl<AssetTagStats>
 	}
 
 	@Override
-	public boolean isEntityCacheEnabled() {
-		return ENTITY_CACHE_ENABLED;
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return FINDER_CACHE_ENABLED;
-	}
-
-	@Override
 	public void resetOriginalValues() {
 		AssetTagStatsModelImpl assetTagStatsModelImpl = this;
 
@@ -428,8 +412,8 @@ public class AssetTagStatsModelImpl extends BaseModelImpl<AssetTagStats>
 		return sb.toString();
 	}
 
-	private static final ClassLoader _classLoader = AssetTagStats.class.getClassLoader();
-	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
+	private static ClassLoader _classLoader = AssetTagStats.class.getClassLoader();
+	private static Class<?>[] _escapedModelInterfaces = new Class[] {
 			AssetTagStats.class
 		};
 	private long _tagStatsId;

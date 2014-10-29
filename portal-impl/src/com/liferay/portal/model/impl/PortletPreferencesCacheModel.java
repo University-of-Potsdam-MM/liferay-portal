@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,12 +14,9 @@
 
 package com.liferay.portal.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.CacheModel;
-import com.liferay.portal.model.MVCCModel;
 import com.liferay.portal.model.PortletPreferences;
 
 import java.io.Externalizable;
@@ -34,26 +31,13 @@ import java.io.ObjectOutput;
  * @see PortletPreferences
  * @generated
  */
-@ProviderType
 public class PortletPreferencesCacheModel implements CacheModel<PortletPreferences>,
-	Externalizable, MVCCModel {
-	@Override
-	public long getMvccVersion() {
-		return mvccVersion;
-	}
-
-	@Override
-	public void setMvccVersion(long mvccVersion) {
-		this.mvccVersion = mvccVersion;
-	}
-
+	Externalizable {
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(15);
+		StringBundler sb = new StringBundler(13);
 
-		sb.append("{mvccVersion=");
-		sb.append(mvccVersion);
-		sb.append(", portletPreferencesId=");
+		sb.append("{portletPreferencesId=");
 		sb.append(portletPreferencesId);
 		sb.append(", ownerId=");
 		sb.append(ownerId);
@@ -74,7 +58,6 @@ public class PortletPreferencesCacheModel implements CacheModel<PortletPreferenc
 	public PortletPreferences toEntityModel() {
 		PortletPreferencesImpl portletPreferencesImpl = new PortletPreferencesImpl();
 
-		portletPreferencesImpl.setMvccVersion(mvccVersion);
 		portletPreferencesImpl.setPortletPreferencesId(portletPreferencesId);
 		portletPreferencesImpl.setOwnerId(ownerId);
 		portletPreferencesImpl.setOwnerType(ownerType);
@@ -101,7 +84,6 @@ public class PortletPreferencesCacheModel implements CacheModel<PortletPreferenc
 
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
-		mvccVersion = objectInput.readLong();
 		portletPreferencesId = objectInput.readLong();
 		ownerId = objectInput.readLong();
 		ownerType = objectInput.readInt();
@@ -113,7 +95,6 @@ public class PortletPreferencesCacheModel implements CacheModel<PortletPreferenc
 	@Override
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
-		objectOutput.writeLong(mvccVersion);
 		objectOutput.writeLong(portletPreferencesId);
 		objectOutput.writeLong(ownerId);
 		objectOutput.writeInt(ownerType);
@@ -134,7 +115,6 @@ public class PortletPreferencesCacheModel implements CacheModel<PortletPreferenc
 		}
 	}
 
-	public long mvccVersion;
 	public long portletPreferencesId;
 	public long ownerId;
 	public int ownerType;

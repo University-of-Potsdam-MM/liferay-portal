@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -109,35 +109,35 @@ public class ManifestHelperTask extends Task {
 			return;
 		}
 
-		try (Analyzer analyzer = new Analyzer()) {
-			analyzer.setBase(project.getBaseDir());
+		Analyzer analyzer = new Analyzer();
 
-			File classesDir = new File(project.getBaseDir(), "classes");
+		analyzer.setBase(project.getBaseDir());
 
-			analyzer.setJar(classesDir);
+		File classesDir = new File(project.getBaseDir(), "classes");
 
-			File file = new File(project.getBaseDir(), "bnd.bnd");
+		analyzer.setJar(classesDir);
 
-			if (file.exists()) {
-				analyzer.setProperties(file);
-			}
-			else {
-				analyzer.setProperty(Constants.EXPORT_PACKAGE, "*");
-				analyzer.setProperty(
-					Constants.IMPORT_PACKAGE, "*;resolution:=optional");
-			}
+		File file = new File(project.getBaseDir(), "bnd.bnd");
 
-			Manifest manifest = analyzer.calcManifest();
-
-			Attributes attributes = manifest.getMainAttributes();
-
-			project.setProperty(
-				"export.packages",
-				attributes.getValue(Constants.EXPORT_PACKAGE));
-			project.setProperty(
-				"import.packages",
-				attributes.getValue(Constants.IMPORT_PACKAGE));
+		if (file.exists()) {
+			analyzer.setProperties(file);
 		}
+		else {
+			analyzer.setProperty(Constants.EXPORT_PACKAGE, "*");
+			analyzer.setProperty(
+				Constants.IMPORT_PACKAGE, "*;resolution:=optional");
+		}
+
+		Manifest manifest = analyzer.calcManifest();
+
+		Attributes attributes = manifest.getMainAttributes();
+
+		project.setProperty(
+			"export.packages", attributes.getValue(Constants.EXPORT_PACKAGE));
+		project.setProperty(
+			"import.packages", attributes.getValue(Constants.IMPORT_PACKAGE));
+
+		analyzer.close();
 	}
 
 	protected String execute(String command) throws Exception {

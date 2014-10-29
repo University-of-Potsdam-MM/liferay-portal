@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -45,9 +45,11 @@ public interface SCProductScreenshotPersistence extends BasePersistence<SCProduc
 	*
 	* @param productEntryId the product entry ID
 	* @return the matching s c product screenshots
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portlet.softwarecatalog.model.SCProductScreenshot> findByProductEntryId(
-		long productEntryId);
+		long productEntryId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns a range of all the s c product screenshots where productEntryId = &#63;.
@@ -60,9 +62,11 @@ public interface SCProductScreenshotPersistence extends BasePersistence<SCProduc
 	* @param start the lower bound of the range of s c product screenshots
 	* @param end the upper bound of the range of s c product screenshots (not inclusive)
 	* @return the range of matching s c product screenshots
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portlet.softwarecatalog.model.SCProductScreenshot> findByProductEntryId(
-		long productEntryId, int start, int end);
+		long productEntryId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns an ordered range of all the s c product screenshots where productEntryId = &#63;.
@@ -76,10 +80,12 @@ public interface SCProductScreenshotPersistence extends BasePersistence<SCProduc
 	* @param end the upper bound of the range of s c product screenshots (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching s c product screenshots
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portlet.softwarecatalog.model.SCProductScreenshot> findByProductEntryId(
 		long productEntryId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.softwarecatalog.model.SCProductScreenshot> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the first s c product screenshot in the ordered set where productEntryId = &#63;.
@@ -88,11 +94,13 @@ public interface SCProductScreenshotPersistence extends BasePersistence<SCProduc
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching s c product screenshot
 	* @throws com.liferay.portlet.softwarecatalog.NoSuchProductScreenshotException if a matching s c product screenshot could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.softwarecatalog.model.SCProductScreenshot findByProductEntryId_First(
 		long productEntryId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.softwarecatalog.model.SCProductScreenshot> orderByComparator)
-		throws com.liferay.portlet.softwarecatalog.NoSuchProductScreenshotException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.softwarecatalog.NoSuchProductScreenshotException;
 
 	/**
 	* Returns the first s c product screenshot in the ordered set where productEntryId = &#63;.
@@ -100,10 +108,12 @@ public interface SCProductScreenshotPersistence extends BasePersistence<SCProduc
 	* @param productEntryId the product entry ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching s c product screenshot, or <code>null</code> if a matching s c product screenshot could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.softwarecatalog.model.SCProductScreenshot fetchByProductEntryId_First(
 		long productEntryId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.softwarecatalog.model.SCProductScreenshot> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the last s c product screenshot in the ordered set where productEntryId = &#63;.
@@ -112,11 +122,13 @@ public interface SCProductScreenshotPersistence extends BasePersistence<SCProduc
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching s c product screenshot
 	* @throws com.liferay.portlet.softwarecatalog.NoSuchProductScreenshotException if a matching s c product screenshot could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.softwarecatalog.model.SCProductScreenshot findByProductEntryId_Last(
 		long productEntryId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.softwarecatalog.model.SCProductScreenshot> orderByComparator)
-		throws com.liferay.portlet.softwarecatalog.NoSuchProductScreenshotException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.softwarecatalog.NoSuchProductScreenshotException;
 
 	/**
 	* Returns the last s c product screenshot in the ordered set where productEntryId = &#63;.
@@ -124,10 +136,12 @@ public interface SCProductScreenshotPersistence extends BasePersistence<SCProduc
 	* @param productEntryId the product entry ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching s c product screenshot, or <code>null</code> if a matching s c product screenshot could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.softwarecatalog.model.SCProductScreenshot fetchByProductEntryId_Last(
 		long productEntryId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.softwarecatalog.model.SCProductScreenshot> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the s c product screenshots before and after the current s c product screenshot in the ordered set where productEntryId = &#63;.
@@ -137,26 +151,32 @@ public interface SCProductScreenshotPersistence extends BasePersistence<SCProduc
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next s c product screenshot
 	* @throws com.liferay.portlet.softwarecatalog.NoSuchProductScreenshotException if a s c product screenshot with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.softwarecatalog.model.SCProductScreenshot[] findByProductEntryId_PrevAndNext(
 		long productScreenshotId, long productEntryId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.softwarecatalog.model.SCProductScreenshot> orderByComparator)
-		throws com.liferay.portlet.softwarecatalog.NoSuchProductScreenshotException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.softwarecatalog.NoSuchProductScreenshotException;
 
 	/**
 	* Removes all the s c product screenshots where productEntryId = &#63; from the database.
 	*
 	* @param productEntryId the product entry ID
+	* @throws SystemException if a system exception occurred
 	*/
-	public void removeByProductEntryId(long productEntryId);
+	public void removeByProductEntryId(long productEntryId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of s c product screenshots where productEntryId = &#63;.
 	*
 	* @param productEntryId the product entry ID
 	* @return the number of matching s c product screenshots
+	* @throws SystemException if a system exception occurred
 	*/
-	public int countByProductEntryId(long productEntryId);
+	public int countByProductEntryId(long productEntryId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the s c product screenshot where thumbnailId = &#63; or throws a {@link com.liferay.portlet.softwarecatalog.NoSuchProductScreenshotException} if it could not be found.
@@ -164,19 +184,23 @@ public interface SCProductScreenshotPersistence extends BasePersistence<SCProduc
 	* @param thumbnailId the thumbnail ID
 	* @return the matching s c product screenshot
 	* @throws com.liferay.portlet.softwarecatalog.NoSuchProductScreenshotException if a matching s c product screenshot could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.softwarecatalog.model.SCProductScreenshot findByThumbnailId(
 		long thumbnailId)
-		throws com.liferay.portlet.softwarecatalog.NoSuchProductScreenshotException;
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.softwarecatalog.NoSuchProductScreenshotException;
 
 	/**
 	* Returns the s c product screenshot where thumbnailId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	*
 	* @param thumbnailId the thumbnail ID
 	* @return the matching s c product screenshot, or <code>null</code> if a matching s c product screenshot could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.softwarecatalog.model.SCProductScreenshot fetchByThumbnailId(
-		long thumbnailId);
+		long thumbnailId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the s c product screenshot where thumbnailId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
@@ -184,27 +208,33 @@ public interface SCProductScreenshotPersistence extends BasePersistence<SCProduc
 	* @param thumbnailId the thumbnail ID
 	* @param retrieveFromCache whether to use the finder cache
 	* @return the matching s c product screenshot, or <code>null</code> if a matching s c product screenshot could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.softwarecatalog.model.SCProductScreenshot fetchByThumbnailId(
-		long thumbnailId, boolean retrieveFromCache);
+		long thumbnailId, boolean retrieveFromCache)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Removes the s c product screenshot where thumbnailId = &#63; from the database.
 	*
 	* @param thumbnailId the thumbnail ID
 	* @return the s c product screenshot that was removed
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.softwarecatalog.model.SCProductScreenshot removeByThumbnailId(
 		long thumbnailId)
-		throws com.liferay.portlet.softwarecatalog.NoSuchProductScreenshotException;
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.softwarecatalog.NoSuchProductScreenshotException;
 
 	/**
 	* Returns the number of s c product screenshots where thumbnailId = &#63;.
 	*
 	* @param thumbnailId the thumbnail ID
 	* @return the number of matching s c product screenshots
+	* @throws SystemException if a system exception occurred
 	*/
-	public int countByThumbnailId(long thumbnailId);
+	public int countByThumbnailId(long thumbnailId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the s c product screenshot where fullImageId = &#63; or throws a {@link com.liferay.portlet.softwarecatalog.NoSuchProductScreenshotException} if it could not be found.
@@ -212,19 +242,23 @@ public interface SCProductScreenshotPersistence extends BasePersistence<SCProduc
 	* @param fullImageId the full image ID
 	* @return the matching s c product screenshot
 	* @throws com.liferay.portlet.softwarecatalog.NoSuchProductScreenshotException if a matching s c product screenshot could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.softwarecatalog.model.SCProductScreenshot findByFullImageId(
 		long fullImageId)
-		throws com.liferay.portlet.softwarecatalog.NoSuchProductScreenshotException;
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.softwarecatalog.NoSuchProductScreenshotException;
 
 	/**
 	* Returns the s c product screenshot where fullImageId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	*
 	* @param fullImageId the full image ID
 	* @return the matching s c product screenshot, or <code>null</code> if a matching s c product screenshot could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.softwarecatalog.model.SCProductScreenshot fetchByFullImageId(
-		long fullImageId);
+		long fullImageId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the s c product screenshot where fullImageId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
@@ -232,27 +266,33 @@ public interface SCProductScreenshotPersistence extends BasePersistence<SCProduc
 	* @param fullImageId the full image ID
 	* @param retrieveFromCache whether to use the finder cache
 	* @return the matching s c product screenshot, or <code>null</code> if a matching s c product screenshot could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.softwarecatalog.model.SCProductScreenshot fetchByFullImageId(
-		long fullImageId, boolean retrieveFromCache);
+		long fullImageId, boolean retrieveFromCache)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Removes the s c product screenshot where fullImageId = &#63; from the database.
 	*
 	* @param fullImageId the full image ID
 	* @return the s c product screenshot that was removed
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.softwarecatalog.model.SCProductScreenshot removeByFullImageId(
 		long fullImageId)
-		throws com.liferay.portlet.softwarecatalog.NoSuchProductScreenshotException;
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.softwarecatalog.NoSuchProductScreenshotException;
 
 	/**
 	* Returns the number of s c product screenshots where fullImageId = &#63;.
 	*
 	* @param fullImageId the full image ID
 	* @return the number of matching s c product screenshots
+	* @throws SystemException if a system exception occurred
 	*/
-	public int countByFullImageId(long fullImageId);
+	public int countByFullImageId(long fullImageId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the s c product screenshot where productEntryId = &#63; and priority = &#63; or throws a {@link com.liferay.portlet.softwarecatalog.NoSuchProductScreenshotException} if it could not be found.
@@ -261,10 +301,12 @@ public interface SCProductScreenshotPersistence extends BasePersistence<SCProduc
 	* @param priority the priority
 	* @return the matching s c product screenshot
 	* @throws com.liferay.portlet.softwarecatalog.NoSuchProductScreenshotException if a matching s c product screenshot could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.softwarecatalog.model.SCProductScreenshot findByP_P(
 		long productEntryId, int priority)
-		throws com.liferay.portlet.softwarecatalog.NoSuchProductScreenshotException;
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.softwarecatalog.NoSuchProductScreenshotException;
 
 	/**
 	* Returns the s c product screenshot where productEntryId = &#63; and priority = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
@@ -272,9 +314,11 @@ public interface SCProductScreenshotPersistence extends BasePersistence<SCProduc
 	* @param productEntryId the product entry ID
 	* @param priority the priority
 	* @return the matching s c product screenshot, or <code>null</code> if a matching s c product screenshot could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.softwarecatalog.model.SCProductScreenshot fetchByP_P(
-		long productEntryId, int priority);
+		long productEntryId, int priority)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the s c product screenshot where productEntryId = &#63; and priority = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
@@ -283,9 +327,11 @@ public interface SCProductScreenshotPersistence extends BasePersistence<SCProduc
 	* @param priority the priority
 	* @param retrieveFromCache whether to use the finder cache
 	* @return the matching s c product screenshot, or <code>null</code> if a matching s c product screenshot could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.softwarecatalog.model.SCProductScreenshot fetchByP_P(
-		long productEntryId, int priority, boolean retrieveFromCache);
+		long productEntryId, int priority, boolean retrieveFromCache)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Removes the s c product screenshot where productEntryId = &#63; and priority = &#63; from the database.
@@ -293,10 +339,12 @@ public interface SCProductScreenshotPersistence extends BasePersistence<SCProduc
 	* @param productEntryId the product entry ID
 	* @param priority the priority
 	* @return the s c product screenshot that was removed
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.softwarecatalog.model.SCProductScreenshot removeByP_P(
 		long productEntryId, int priority)
-		throws com.liferay.portlet.softwarecatalog.NoSuchProductScreenshotException;
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.softwarecatalog.NoSuchProductScreenshotException;
 
 	/**
 	* Returns the number of s c product screenshots where productEntryId = &#63; and priority = &#63;.
@@ -304,8 +352,10 @@ public interface SCProductScreenshotPersistence extends BasePersistence<SCProduc
 	* @param productEntryId the product entry ID
 	* @param priority the priority
 	* @return the number of matching s c product screenshots
+	* @throws SystemException if a system exception occurred
 	*/
-	public int countByP_P(long productEntryId, int priority);
+	public int countByP_P(long productEntryId, int priority)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Caches the s c product screenshot in the entity cache if it is enabled.
@@ -338,13 +388,16 @@ public interface SCProductScreenshotPersistence extends BasePersistence<SCProduc
 	* @param productScreenshotId the primary key of the s c product screenshot
 	* @return the s c product screenshot that was removed
 	* @throws com.liferay.portlet.softwarecatalog.NoSuchProductScreenshotException if a s c product screenshot with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.softwarecatalog.model.SCProductScreenshot remove(
 		long productScreenshotId)
-		throws com.liferay.portlet.softwarecatalog.NoSuchProductScreenshotException;
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.softwarecatalog.NoSuchProductScreenshotException;
 
 	public com.liferay.portlet.softwarecatalog.model.SCProductScreenshot updateImpl(
-		com.liferay.portlet.softwarecatalog.model.SCProductScreenshot scProductScreenshot);
+		com.liferay.portlet.softwarecatalog.model.SCProductScreenshot scProductScreenshot)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the s c product screenshot with the primary key or throws a {@link com.liferay.portlet.softwarecatalog.NoSuchProductScreenshotException} if it could not be found.
@@ -352,30 +405,32 @@ public interface SCProductScreenshotPersistence extends BasePersistence<SCProduc
 	* @param productScreenshotId the primary key of the s c product screenshot
 	* @return the s c product screenshot
 	* @throws com.liferay.portlet.softwarecatalog.NoSuchProductScreenshotException if a s c product screenshot with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.softwarecatalog.model.SCProductScreenshot findByPrimaryKey(
 		long productScreenshotId)
-		throws com.liferay.portlet.softwarecatalog.NoSuchProductScreenshotException;
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.softwarecatalog.NoSuchProductScreenshotException;
 
 	/**
 	* Returns the s c product screenshot with the primary key or returns <code>null</code> if it could not be found.
 	*
 	* @param productScreenshotId the primary key of the s c product screenshot
 	* @return the s c product screenshot, or <code>null</code> if a s c product screenshot with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.softwarecatalog.model.SCProductScreenshot fetchByPrimaryKey(
-		long productScreenshotId);
-
-	@Override
-	public java.util.Map<java.io.Serializable, com.liferay.portlet.softwarecatalog.model.SCProductScreenshot> fetchByPrimaryKeys(
-		java.util.Set<java.io.Serializable> primaryKeys);
+		long productScreenshotId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns all the s c product screenshots.
 	*
 	* @return the s c product screenshots
+	* @throws SystemException if a system exception occurred
 	*/
-	public java.util.List<com.liferay.portlet.softwarecatalog.model.SCProductScreenshot> findAll();
+	public java.util.List<com.liferay.portlet.softwarecatalog.model.SCProductScreenshot> findAll()
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns a range of all the s c product screenshots.
@@ -387,9 +442,11 @@ public interface SCProductScreenshotPersistence extends BasePersistence<SCProduc
 	* @param start the lower bound of the range of s c product screenshots
 	* @param end the upper bound of the range of s c product screenshots (not inclusive)
 	* @return the range of s c product screenshots
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portlet.softwarecatalog.model.SCProductScreenshot> findAll(
-		int start, int end);
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns an ordered range of all the s c product screenshots.
@@ -402,20 +459,27 @@ public interface SCProductScreenshotPersistence extends BasePersistence<SCProduc
 	* @param end the upper bound of the range of s c product screenshots (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of s c product screenshots
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portlet.softwarecatalog.model.SCProductScreenshot> findAll(
 		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.softwarecatalog.model.SCProductScreenshot> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Removes all the s c product screenshots from the database.
+	*
+	* @throws SystemException if a system exception occurred
 	*/
-	public void removeAll();
+	public void removeAll()
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of s c product screenshots.
 	*
 	* @return the number of s c product screenshots
+	* @throws SystemException if a system exception occurred
 	*/
-	public int countAll();
+	public int countAll()
+		throws com.liferay.portal.kernel.exception.SystemException;
 }

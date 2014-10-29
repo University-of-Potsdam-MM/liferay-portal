@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -115,79 +115,44 @@ public class ExpandoValueWrapper implements ExpandoValue,
 		}
 	}
 
+	/**
+	* Returns the primary key of this expando value.
+	*
+	* @return the primary key of this expando value
+	*/
 	@Override
-	public java.lang.Object clone() {
-		return new ExpandoValueWrapper((ExpandoValue)_expandoValue.clone());
-	}
-
-	@Override
-	public int compareTo(
-		com.liferay.portlet.expando.model.ExpandoValue expandoValue) {
-		return _expandoValue.compareTo(expandoValue);
-	}
-
-	@Override
-	public java.util.List<java.util.Locale> getAvailableLocales()
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _expandoValue.getAvailableLocales();
-	}
-
-	@Override
-	public boolean getBoolean()
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _expandoValue.getBoolean();
-	}
-
-	@Override
-	public boolean[] getBooleanArray()
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _expandoValue.getBooleanArray();
+	public long getPrimaryKey() {
+		return _expandoValue.getPrimaryKey();
 	}
 
 	/**
-	* Returns the fully qualified class name of this expando value.
+	* Sets the primary key of this expando value.
 	*
-	* @return the fully qualified class name of this expando value
+	* @param primaryKey the primary key of this expando value
 	*/
 	@Override
-	public java.lang.String getClassName() {
-		return _expandoValue.getClassName();
+	public void setPrimaryKey(long primaryKey) {
+		_expandoValue.setPrimaryKey(primaryKey);
 	}
 
 	/**
-	* Returns the class name ID of this expando value.
+	* Returns the value ID of this expando value.
 	*
-	* @return the class name ID of this expando value
+	* @return the value ID of this expando value
 	*/
 	@Override
-	public long getClassNameId() {
-		return _expandoValue.getClassNameId();
+	public long getValueId() {
+		return _expandoValue.getValueId();
 	}
 
 	/**
-	* Returns the class p k of this expando value.
+	* Sets the value ID of this expando value.
 	*
-	* @return the class p k of this expando value
+	* @param valueId the value ID of this expando value
 	*/
 	@Override
-	public long getClassPK() {
-		return _expandoValue.getClassPK();
-	}
-
-	@Override
-	public com.liferay.portlet.expando.model.ExpandoColumn getColumn()
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _expandoValue.getColumn();
-	}
-
-	/**
-	* Returns the column ID of this expando value.
-	*
-	* @return the column ID of this expando value
-	*/
-	@Override
-	public long getColumnId() {
-		return _expandoValue.getColumnId();
+	public void setValueId(long valueId) {
+		_expandoValue.setValueId(valueId);
 	}
 
 	/**
@@ -201,175 +166,13 @@ public class ExpandoValueWrapper implements ExpandoValue,
 	}
 
 	/**
-	* Returns the data of this expando value.
+	* Sets the company ID of this expando value.
 	*
-	* @return the data of this expando value
+	* @param companyId the company ID of this expando value
 	*/
 	@Override
-	public java.lang.String getData() {
-		return _expandoValue.getData();
-	}
-
-	@Override
-	public java.util.Date getDate()
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _expandoValue.getDate();
-	}
-
-	@Override
-	public java.util.Date[] getDateArray()
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _expandoValue.getDateArray();
-	}
-
-	@Override
-	public java.util.Locale getDefaultLocale()
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _expandoValue.getDefaultLocale();
-	}
-
-	@Override
-	public double getDouble()
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _expandoValue.getDouble();
-	}
-
-	@Override
-	public double[] getDoubleArray()
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _expandoValue.getDoubleArray();
-	}
-
-	@Override
-	public com.liferay.portlet.expando.model.ExpandoBridge getExpandoBridge() {
-		return _expandoValue.getExpandoBridge();
-	}
-
-	@Override
-	public float getFloat()
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _expandoValue.getFloat();
-	}
-
-	@Override
-	public float[] getFloatArray()
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _expandoValue.getFloatArray();
-	}
-
-	@Override
-	public int getInteger()
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _expandoValue.getInteger();
-	}
-
-	@Override
-	public int[] getIntegerArray()
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _expandoValue.getIntegerArray();
-	}
-
-	@Override
-	public long getLong()
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _expandoValue.getLong();
-	}
-
-	@Override
-	public long[] getLongArray()
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _expandoValue.getLongArray();
-	}
-
-	@Override
-	public java.lang.Number getNumber()
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _expandoValue.getNumber();
-	}
-
-	@Override
-	public java.lang.Number[] getNumberArray()
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _expandoValue.getNumberArray();
-	}
-
-	/**
-	* Returns the primary key of this expando value.
-	*
-	* @return the primary key of this expando value
-	*/
-	@Override
-	public long getPrimaryKey() {
-		return _expandoValue.getPrimaryKey();
-	}
-
-	@Override
-	public java.io.Serializable getPrimaryKeyObj() {
-		return _expandoValue.getPrimaryKeyObj();
-	}
-
-	/**
-	* Returns the row ID of this expando value.
-	*
-	* @return the row ID of this expando value
-	*/
-	@Override
-	public long getRowId() {
-		return _expandoValue.getRowId();
-	}
-
-	@Override
-	public java.io.Serializable getSerializable()
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _expandoValue.getSerializable();
-	}
-
-	@Override
-	public short getShort()
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _expandoValue.getShort();
-	}
-
-	@Override
-	public short[] getShortArray()
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _expandoValue.getShortArray();
-	}
-
-	@Override
-	public java.lang.String getString()
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _expandoValue.getString();
-	}
-
-	@Override
-	public java.lang.String getString(java.util.Locale locale)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _expandoValue.getString(locale);
-	}
-
-	@Override
-	public java.lang.String[] getStringArray()
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _expandoValue.getStringArray();
-	}
-
-	@Override
-	public java.lang.String[] getStringArray(java.util.Locale locale)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _expandoValue.getStringArray(locale);
-	}
-
-	@Override
-	public java.util.Map<java.util.Locale, java.lang.String[]> getStringArrayMap()
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _expandoValue.getStringArrayMap();
-	}
-
-	@Override
-	public java.util.Map<java.util.Locale, java.lang.String> getStringMap()
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _expandoValue.getStringMap();
+	public void setCompanyId(long companyId) {
+		_expandoValue.setCompanyId(companyId);
 	}
 
 	/**
@@ -383,86 +186,23 @@ public class ExpandoValueWrapper implements ExpandoValue,
 	}
 
 	/**
-	* Returns the value ID of this expando value.
+	* Sets the table ID of this expando value.
 	*
-	* @return the value ID of this expando value
+	* @param tableId the table ID of this expando value
 	*/
 	@Override
-	public long getValueId() {
-		return _expandoValue.getValueId();
-	}
-
-	@Override
-	public int hashCode() {
-		return _expandoValue.hashCode();
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _expandoValue.isCachedModel();
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _expandoValue.isEscapedModel();
-	}
-
-	@Override
-	public boolean isNew() {
-		return _expandoValue.isNew();
-	}
-
-	@Override
-	public void persist() {
-		_expandoValue.persist();
-	}
-
-	@Override
-	public void setBoolean(boolean data)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_expandoValue.setBoolean(data);
-	}
-
-	@Override
-	public void setBooleanArray(boolean[] data)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_expandoValue.setBooleanArray(data);
-	}
-
-	@Override
-	public void setCachedModel(boolean cachedModel) {
-		_expandoValue.setCachedModel(cachedModel);
-	}
-
-	@Override
-	public void setClassName(java.lang.String className) {
-		_expandoValue.setClassName(className);
+	public void setTableId(long tableId) {
+		_expandoValue.setTableId(tableId);
 	}
 
 	/**
-	* Sets the class name ID of this expando value.
+	* Returns the column ID of this expando value.
 	*
-	* @param classNameId the class name ID of this expando value
+	* @return the column ID of this expando value
 	*/
 	@Override
-	public void setClassNameId(long classNameId) {
-		_expandoValue.setClassNameId(classNameId);
-	}
-
-	/**
-	* Sets the class p k of this expando value.
-	*
-	* @param classPK the class p k of this expando value
-	*/
-	@Override
-	public void setClassPK(long classPK) {
-		_expandoValue.setClassPK(classPK);
-	}
-
-	@Override
-	public void setColumn(
-		com.liferay.portlet.expando.model.ExpandoColumn column) {
-		_expandoValue.setColumn(column);
+	public long getColumnId() {
+		return _expandoValue.getColumnId();
 	}
 
 	/**
@@ -476,13 +216,88 @@ public class ExpandoValueWrapper implements ExpandoValue,
 	}
 
 	/**
-	* Sets the company ID of this expando value.
+	* Returns the row ID of this expando value.
 	*
-	* @param companyId the company ID of this expando value
+	* @return the row ID of this expando value
 	*/
 	@Override
-	public void setCompanyId(long companyId) {
-		_expandoValue.setCompanyId(companyId);
+	public long getRowId() {
+		return _expandoValue.getRowId();
+	}
+
+	/**
+	* Sets the row ID of this expando value.
+	*
+	* @param rowId the row ID of this expando value
+	*/
+	@Override
+	public void setRowId(long rowId) {
+		_expandoValue.setRowId(rowId);
+	}
+
+	/**
+	* Returns the fully qualified class name of this expando value.
+	*
+	* @return the fully qualified class name of this expando value
+	*/
+	@Override
+	public java.lang.String getClassName() {
+		return _expandoValue.getClassName();
+	}
+
+	@Override
+	public void setClassName(java.lang.String className) {
+		_expandoValue.setClassName(className);
+	}
+
+	/**
+	* Returns the class name ID of this expando value.
+	*
+	* @return the class name ID of this expando value
+	*/
+	@Override
+	public long getClassNameId() {
+		return _expandoValue.getClassNameId();
+	}
+
+	/**
+	* Sets the class name ID of this expando value.
+	*
+	* @param classNameId the class name ID of this expando value
+	*/
+	@Override
+	public void setClassNameId(long classNameId) {
+		_expandoValue.setClassNameId(classNameId);
+	}
+
+	/**
+	* Returns the class p k of this expando value.
+	*
+	* @return the class p k of this expando value
+	*/
+	@Override
+	public long getClassPK() {
+		return _expandoValue.getClassPK();
+	}
+
+	/**
+	* Sets the class p k of this expando value.
+	*
+	* @param classPK the class p k of this expando value
+	*/
+	@Override
+	public void setClassPK(long classPK) {
+		_expandoValue.setClassPK(classPK);
+	}
+
+	/**
+	* Returns the data of this expando value.
+	*
+	* @return the data of this expando value
+	*/
+	@Override
+	public java.lang.String getData() {
+		return _expandoValue.getData();
 	}
 
 	/**
@@ -496,27 +311,43 @@ public class ExpandoValueWrapper implements ExpandoValue,
 	}
 
 	@Override
-	public void setDate(java.util.Date data)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_expandoValue.setDate(data);
+	public boolean isNew() {
+		return _expandoValue.isNew();
 	}
 
 	@Override
-	public void setDateArray(java.util.Date[] data)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_expandoValue.setDateArray(data);
+	public void setNew(boolean n) {
+		_expandoValue.setNew(n);
 	}
 
 	@Override
-	public void setDouble(double data)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_expandoValue.setDouble(data);
+	public boolean isCachedModel() {
+		return _expandoValue.isCachedModel();
 	}
 
 	@Override
-	public void setDoubleArray(double[] data)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_expandoValue.setDoubleArray(data);
+	public void setCachedModel(boolean cachedModel) {
+		_expandoValue.setCachedModel(cachedModel);
+	}
+
+	@Override
+	public boolean isEscapedModel() {
+		return _expandoValue.isEscapedModel();
+	}
+
+	@Override
+	public java.io.Serializable getPrimaryKeyObj() {
+		return _expandoValue.getPrimaryKeyObj();
+	}
+
+	@Override
+	public void setPrimaryKeyObj(java.io.Serializable primaryKeyObj) {
+		_expandoValue.setPrimaryKeyObj(primaryKeyObj);
+	}
+
+	@Override
+	public com.liferay.portlet.expando.model.ExpandoBridge getExpandoBridge() {
+		return _expandoValue.getExpandoBridge();
 	}
 
 	@Override
@@ -538,155 +369,19 @@ public class ExpandoValueWrapper implements ExpandoValue,
 	}
 
 	@Override
-	public void setFloat(float data)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_expandoValue.setFloat(data);
+	public java.lang.Object clone() {
+		return new ExpandoValueWrapper((ExpandoValue)_expandoValue.clone());
 	}
 
 	@Override
-	public void setFloatArray(float[] data)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_expandoValue.setFloatArray(data);
+	public int compareTo(
+		com.liferay.portlet.expando.model.ExpandoValue expandoValue) {
+		return _expandoValue.compareTo(expandoValue);
 	}
 
 	@Override
-	public void setInteger(int data)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_expandoValue.setInteger(data);
-	}
-
-	@Override
-	public void setIntegerArray(int[] data)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_expandoValue.setIntegerArray(data);
-	}
-
-	@Override
-	public void setLong(long data)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_expandoValue.setLong(data);
-	}
-
-	@Override
-	public void setLongArray(long[] data)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_expandoValue.setLongArray(data);
-	}
-
-	@Override
-	public void setNew(boolean n) {
-		_expandoValue.setNew(n);
-	}
-
-	@Override
-	public void setNumber(java.lang.Number data)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_expandoValue.setNumber(data);
-	}
-
-	@Override
-	public void setNumberArray(java.lang.Number[] data)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_expandoValue.setNumberArray(data);
-	}
-
-	/**
-	* Sets the primary key of this expando value.
-	*
-	* @param primaryKey the primary key of this expando value
-	*/
-	@Override
-	public void setPrimaryKey(long primaryKey) {
-		_expandoValue.setPrimaryKey(primaryKey);
-	}
-
-	@Override
-	public void setPrimaryKeyObj(java.io.Serializable primaryKeyObj) {
-		_expandoValue.setPrimaryKeyObj(primaryKeyObj);
-	}
-
-	/**
-	* Sets the row ID of this expando value.
-	*
-	* @param rowId the row ID of this expando value
-	*/
-	@Override
-	public void setRowId(long rowId) {
-		_expandoValue.setRowId(rowId);
-	}
-
-	@Override
-	public void setShort(short data)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_expandoValue.setShort(data);
-	}
-
-	@Override
-	public void setShortArray(short[] data)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_expandoValue.setShortArray(data);
-	}
-
-	@Override
-	public void setString(java.lang.String data)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_expandoValue.setString(data);
-	}
-
-	@Override
-	public void setString(java.lang.String data, java.util.Locale locale,
-		java.util.Locale defaultLocale)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_expandoValue.setString(data, locale, defaultLocale);
-	}
-
-	@Override
-	public void setStringArray(java.lang.String[] data)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_expandoValue.setStringArray(data);
-	}
-
-	@Override
-	public void setStringArray(java.lang.String[] data,
-		java.util.Locale locale, java.util.Locale defaultLocale)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_expandoValue.setStringArray(data, locale, defaultLocale);
-	}
-
-	@Override
-	public void setStringArrayMap(
-		java.util.Map<java.util.Locale, java.lang.String[]> dataMap,
-		java.util.Locale defaultLocale)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_expandoValue.setStringArrayMap(dataMap, defaultLocale);
-	}
-
-	@Override
-	public void setStringMap(
-		java.util.Map<java.util.Locale, java.lang.String> dataMap,
-		java.util.Locale defaultLocale)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_expandoValue.setStringMap(dataMap, defaultLocale);
-	}
-
-	/**
-	* Sets the table ID of this expando value.
-	*
-	* @param tableId the table ID of this expando value
-	*/
-	@Override
-	public void setTableId(long tableId) {
-		_expandoValue.setTableId(tableId);
-	}
-
-	/**
-	* Sets the value ID of this expando value.
-	*
-	* @param valueId the value ID of this expando value
-	*/
-	@Override
-	public void setValueId(long valueId) {
-		_expandoValue.setValueId(valueId);
+	public int hashCode() {
+		return _expandoValue.hashCode();
 	}
 
 	@Override
@@ -700,18 +395,372 @@ public class ExpandoValueWrapper implements ExpandoValue,
 	}
 
 	@Override
-	public java.lang.String toString() {
-		return _expandoValue.toString();
-	}
-
-	@Override
 	public com.liferay.portlet.expando.model.ExpandoValue toUnescapedModel() {
 		return new ExpandoValueWrapper(_expandoValue.toUnescapedModel());
 	}
 
 	@Override
+	public java.lang.String toString() {
+		return _expandoValue.toString();
+	}
+
+	@Override
 	public java.lang.String toXmlString() {
 		return _expandoValue.toXmlString();
+	}
+
+	@Override
+	public void persist()
+		throws com.liferay.portal.kernel.exception.SystemException {
+		_expandoValue.persist();
+	}
+
+	@Override
+	public java.util.List<java.util.Locale> getAvailableLocales()
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _expandoValue.getAvailableLocales();
+	}
+
+	@Override
+	public boolean getBoolean()
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _expandoValue.getBoolean();
+	}
+
+	@Override
+	public boolean[] getBooleanArray()
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _expandoValue.getBooleanArray();
+	}
+
+	@Override
+	public com.liferay.portlet.expando.model.ExpandoColumn getColumn()
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _expandoValue.getColumn();
+	}
+
+	@Override
+	public java.util.Date getDate()
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _expandoValue.getDate();
+	}
+
+	@Override
+	public java.util.Date[] getDateArray()
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _expandoValue.getDateArray();
+	}
+
+	@Override
+	public java.util.Locale getDefaultLocale()
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _expandoValue.getDefaultLocale();
+	}
+
+	@Override
+	public double getDouble()
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _expandoValue.getDouble();
+	}
+
+	@Override
+	public double[] getDoubleArray()
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _expandoValue.getDoubleArray();
+	}
+
+	@Override
+	public float getFloat()
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _expandoValue.getFloat();
+	}
+
+	@Override
+	public float[] getFloatArray()
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _expandoValue.getFloatArray();
+	}
+
+	@Override
+	public int getInteger()
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _expandoValue.getInteger();
+	}
+
+	@Override
+	public int[] getIntegerArray()
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _expandoValue.getIntegerArray();
+	}
+
+	@Override
+	public long getLong()
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _expandoValue.getLong();
+	}
+
+	@Override
+	public long[] getLongArray()
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _expandoValue.getLongArray();
+	}
+
+	@Override
+	public java.lang.Number getNumber()
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _expandoValue.getNumber();
+	}
+
+	@Override
+	public java.lang.Number[] getNumberArray()
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _expandoValue.getNumberArray();
+	}
+
+	@Override
+	public java.io.Serializable getSerializable()
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _expandoValue.getSerializable();
+	}
+
+	@Override
+	public short getShort()
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _expandoValue.getShort();
+	}
+
+	@Override
+	public short[] getShortArray()
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _expandoValue.getShortArray();
+	}
+
+	@Override
+	public java.lang.String getString()
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _expandoValue.getString();
+	}
+
+	@Override
+	public java.lang.String getString(java.util.Locale locale)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _expandoValue.getString(locale);
+	}
+
+	@Override
+	public java.lang.String[] getStringArray()
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _expandoValue.getStringArray();
+	}
+
+	@Override
+	public java.lang.String[] getStringArray(java.util.Locale locale)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _expandoValue.getStringArray(locale);
+	}
+
+	@Override
+	public java.util.Map<java.util.Locale, java.lang.String[]> getStringArrayMap()
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _expandoValue.getStringArrayMap();
+	}
+
+	@Override
+	public java.util.Map<java.util.Locale, java.lang.String> getStringMap()
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _expandoValue.getStringMap();
+	}
+
+	@Override
+	public void setBoolean(boolean data)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		_expandoValue.setBoolean(data);
+	}
+
+	@Override
+	public void setBooleanArray(boolean[] data)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		_expandoValue.setBooleanArray(data);
+	}
+
+	@Override
+	public void setColumn(
+		com.liferay.portlet.expando.model.ExpandoColumn column) {
+		_expandoValue.setColumn(column);
+	}
+
+	@Override
+	public void setDate(java.util.Date data)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		_expandoValue.setDate(data);
+	}
+
+	@Override
+	public void setDateArray(java.util.Date[] data)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		_expandoValue.setDateArray(data);
+	}
+
+	@Override
+	public void setDouble(double data)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		_expandoValue.setDouble(data);
+	}
+
+	@Override
+	public void setDoubleArray(double[] data)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		_expandoValue.setDoubleArray(data);
+	}
+
+	@Override
+	public void setFloat(float data)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		_expandoValue.setFloat(data);
+	}
+
+	@Override
+	public void setFloatArray(float[] data)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		_expandoValue.setFloatArray(data);
+	}
+
+	@Override
+	public void setInteger(int data)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		_expandoValue.setInteger(data);
+	}
+
+	@Override
+	public void setIntegerArray(int[] data)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		_expandoValue.setIntegerArray(data);
+	}
+
+	@Override
+	public void setLong(long data)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		_expandoValue.setLong(data);
+	}
+
+	@Override
+	public void setLongArray(long[] data)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		_expandoValue.setLongArray(data);
+	}
+
+	@Override
+	public void setNumber(java.lang.Number data)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		_expandoValue.setNumber(data);
+	}
+
+	@Override
+	public void setNumberArray(java.lang.Number[] data)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		_expandoValue.setNumberArray(data);
+	}
+
+	@Override
+	public void setShort(short data)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		_expandoValue.setShort(data);
+	}
+
+	@Override
+	public void setShortArray(short[] data)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		_expandoValue.setShortArray(data);
+	}
+
+	@Override
+	public void setString(java.lang.String data)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		_expandoValue.setString(data);
+	}
+
+	@Override
+	public void setString(java.lang.String data, java.util.Locale locale,
+		java.util.Locale defaultLocale)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		_expandoValue.setString(data, locale, defaultLocale);
+	}
+
+	@Override
+	public void setStringArray(java.lang.String[] data)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		_expandoValue.setStringArray(data);
+	}
+
+	@Override
+	public void setStringArray(java.lang.String[] data,
+		java.util.Locale locale, java.util.Locale defaultLocale)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		_expandoValue.setStringArray(data, locale, defaultLocale);
+	}
+
+	@Override
+	public void setStringArrayMap(
+		java.util.Map<java.util.Locale, java.lang.String[]> dataMap,
+		java.util.Locale defaultLocale)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		_expandoValue.setStringArrayMap(dataMap, defaultLocale);
+	}
+
+	@Override
+	public void setStringMap(
+		java.util.Map<java.util.Locale, java.lang.String> dataMap,
+		java.util.Locale defaultLocale)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		_expandoValue.setStringMap(dataMap, defaultLocale);
 	}
 
 	@Override
@@ -736,7 +785,6 @@ public class ExpandoValueWrapper implements ExpandoValue,
 	/**
 	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedModel}
 	 */
-	@Deprecated
 	public ExpandoValue getWrappedExpandoValue() {
 		return _expandoValue;
 	}
@@ -747,19 +795,9 @@ public class ExpandoValueWrapper implements ExpandoValue,
 	}
 
 	@Override
-	public boolean isEntityCacheEnabled() {
-		return _expandoValue.isEntityCacheEnabled();
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return _expandoValue.isFinderCacheEnabled();
-	}
-
-	@Override
 	public void resetOriginalValues() {
 		_expandoValue.resetOriginalValues();
 	}
 
-	private final ExpandoValue _expandoValue;
+	private ExpandoValue _expandoValue;
 }

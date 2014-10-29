@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -16,7 +16,6 @@ package com.liferay.portlet.passwordpoliciesadmin.util;
 
 import com.liferay.portal.kernel.security.pacl.DoPrivileged;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portal.model.PasswordPolicy;
 import com.liferay.portal.util.comparator.PasswordPolicyDescriptionComparator;
 import com.liferay.portal.util.comparator.PasswordPolicyNameComparator;
 
@@ -27,7 +26,7 @@ import com.liferay.portal.util.comparator.PasswordPolicyNameComparator;
 public class PasswordPoliciesAdminImpl implements PasswordPoliciesAdmin {
 
 	@Override
-	public OrderByComparator<PasswordPolicy> getPasswordPolicyOrderByComparator(
+	public OrderByComparator getPasswordPolicyOrderByComparator(
 		String orderByCol, String orderByType) {
 
 		boolean orderByAsc = false;
@@ -36,7 +35,7 @@ public class PasswordPoliciesAdminImpl implements PasswordPoliciesAdmin {
 			orderByAsc = true;
 		}
 
-		OrderByComparator<PasswordPolicy> orderByComparator = null;
+		OrderByComparator orderByComparator = null;
 
 		if (orderByCol.equals("name")) {
 			orderByComparator = new PasswordPolicyNameComparator(orderByAsc);

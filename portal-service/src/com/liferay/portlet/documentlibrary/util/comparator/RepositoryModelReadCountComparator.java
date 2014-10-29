@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -26,8 +26,7 @@ import com.liferay.portlet.documentlibrary.service.DLFileEntryLocalServiceUtil;
  * @author Brian Wing Shun Chan
  * @author Alexander Chow
  */
-public class RepositoryModelReadCountComparator<T>
-	extends OrderByComparator<T> {
+public class RepositoryModelReadCountComparator extends OrderByComparator {
 
 	public static final String ORDER_BY_ASC = "readCount ASC";
 
@@ -44,9 +43,9 @@ public class RepositoryModelReadCountComparator<T>
 	}
 
 	@Override
-	public int compare(T t1, T t2) {
-		Long readCount1 = getReadCount(t1);
-		Long readCount2 = getReadCount(t2);
+	public int compare(Object obj1, Object obj2) {
+		Long readCount1 = getReadCount(obj1);
+		Long readCount2 = getReadCount(obj2);
 
 		int value = readCount1.compareTo(readCount2);
 

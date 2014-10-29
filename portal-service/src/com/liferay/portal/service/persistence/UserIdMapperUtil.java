@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,6 +18,7 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.bean.PortalBeanLocatorUtil;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ReferenceRegistry;
 import com.liferay.portal.model.UserIdMapper;
@@ -62,7 +63,8 @@ public class UserIdMapperUtil {
 	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#countWithDynamicQuery(DynamicQuery)
 	 */
-	public static long countWithDynamicQuery(DynamicQuery dynamicQuery) {
+	public static long countWithDynamicQuery(DynamicQuery dynamicQuery)
+		throws SystemException {
 		return getPersistence().countWithDynamicQuery(dynamicQuery);
 	}
 
@@ -70,7 +72,7 @@ public class UserIdMapperUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#findWithDynamicQuery(DynamicQuery)
 	 */
 	public static List<UserIdMapper> findWithDynamicQuery(
-		DynamicQuery dynamicQuery) {
+		DynamicQuery dynamicQuery) throws SystemException {
 		return getPersistence().findWithDynamicQuery(dynamicQuery);
 	}
 
@@ -78,7 +80,8 @@ public class UserIdMapperUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#findWithDynamicQuery(DynamicQuery, int, int)
 	 */
 	public static List<UserIdMapper> findWithDynamicQuery(
-		DynamicQuery dynamicQuery, int start, int end) {
+		DynamicQuery dynamicQuery, int start, int end)
+		throws SystemException {
 		return getPersistence().findWithDynamicQuery(dynamicQuery, start, end);
 	}
 
@@ -87,7 +90,7 @@ public class UserIdMapperUtil {
 	 */
 	public static List<UserIdMapper> findWithDynamicQuery(
 		DynamicQuery dynamicQuery, int start, int end,
-		OrderByComparator<UserIdMapper> orderByComparator) {
+		OrderByComparator orderByComparator) throws SystemException {
 		return getPersistence()
 				   .findWithDynamicQuery(dynamicQuery, start, end,
 			orderByComparator);
@@ -96,7 +99,8 @@ public class UserIdMapperUtil {
 	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel)
 	 */
-	public static UserIdMapper update(UserIdMapper userIdMapper) {
+	public static UserIdMapper update(UserIdMapper userIdMapper)
+		throws SystemException {
 		return getPersistence().update(userIdMapper);
 	}
 
@@ -104,7 +108,7 @@ public class UserIdMapperUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, ServiceContext)
 	 */
 	public static UserIdMapper update(UserIdMapper userIdMapper,
-		ServiceContext serviceContext) {
+		ServiceContext serviceContext) throws SystemException {
 		return getPersistence().update(userIdMapper, serviceContext);
 	}
 
@@ -113,9 +117,10 @@ public class UserIdMapperUtil {
 	*
 	* @param userId the user ID
 	* @return the matching user ID mappers
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portal.model.UserIdMapper> findByUserId(
-		long userId) {
+		long userId) throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByUserId(userId);
 	}
 
@@ -130,9 +135,11 @@ public class UserIdMapperUtil {
 	* @param start the lower bound of the range of user ID mappers
 	* @param end the upper bound of the range of user ID mappers (not inclusive)
 	* @return the range of matching user ID mappers
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portal.model.UserIdMapper> findByUserId(
-		long userId, int start, int end) {
+		long userId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByUserId(userId, start, end);
 	}
 
@@ -148,10 +155,12 @@ public class UserIdMapperUtil {
 	* @param end the upper bound of the range of user ID mappers (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching user ID mappers
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portal.model.UserIdMapper> findByUserId(
 		long userId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.UserIdMapper> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByUserId(userId, start, end, orderByComparator);
 	}
@@ -163,11 +172,13 @@ public class UserIdMapperUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching user ID mapper
 	* @throws com.liferay.portal.NoSuchUserIdMapperException if a matching user ID mapper could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserIdMapper findByUserId_First(
 		long userId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.UserIdMapper> orderByComparator)
-		throws com.liferay.portal.NoSuchUserIdMapperException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchUserIdMapperException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByUserId_First(userId, orderByComparator);
 	}
 
@@ -177,10 +188,12 @@ public class UserIdMapperUtil {
 	* @param userId the user ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching user ID mapper, or <code>null</code> if a matching user ID mapper could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserIdMapper fetchByUserId_First(
 		long userId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.UserIdMapper> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByUserId_First(userId, orderByComparator);
 	}
 
@@ -191,11 +204,13 @@ public class UserIdMapperUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching user ID mapper
 	* @throws com.liferay.portal.NoSuchUserIdMapperException if a matching user ID mapper could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserIdMapper findByUserId_Last(
 		long userId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.UserIdMapper> orderByComparator)
-		throws com.liferay.portal.NoSuchUserIdMapperException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchUserIdMapperException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByUserId_Last(userId, orderByComparator);
 	}
 
@@ -205,10 +220,12 @@ public class UserIdMapperUtil {
 	* @param userId the user ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching user ID mapper, or <code>null</code> if a matching user ID mapper could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserIdMapper fetchByUserId_Last(
 		long userId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.UserIdMapper> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByUserId_Last(userId, orderByComparator);
 	}
 
@@ -220,11 +237,13 @@ public class UserIdMapperUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next user ID mapper
 	* @throws com.liferay.portal.NoSuchUserIdMapperException if a user ID mapper with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserIdMapper[] findByUserId_PrevAndNext(
 		long userIdMapperId, long userId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.UserIdMapper> orderByComparator)
-		throws com.liferay.portal.NoSuchUserIdMapperException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchUserIdMapperException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByUserId_PrevAndNext(userIdMapperId, userId,
 			orderByComparator);
@@ -234,8 +253,10 @@ public class UserIdMapperUtil {
 	* Removes all the user ID mappers where userId = &#63; from the database.
 	*
 	* @param userId the user ID
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByUserId(long userId) {
+	public static void removeByUserId(long userId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeByUserId(userId);
 	}
 
@@ -244,8 +265,10 @@ public class UserIdMapperUtil {
 	*
 	* @param userId the user ID
 	* @return the number of matching user ID mappers
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByUserId(long userId) {
+	public static int countByUserId(long userId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByUserId(userId);
 	}
 
@@ -256,10 +279,12 @@ public class UserIdMapperUtil {
 	* @param type the type
 	* @return the matching user ID mapper
 	* @throws com.liferay.portal.NoSuchUserIdMapperException if a matching user ID mapper could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserIdMapper findByU_T(long userId,
 		java.lang.String type)
-		throws com.liferay.portal.NoSuchUserIdMapperException {
+		throws com.liferay.portal.NoSuchUserIdMapperException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByU_T(userId, type);
 	}
 
@@ -269,9 +294,11 @@ public class UserIdMapperUtil {
 	* @param userId the user ID
 	* @param type the type
 	* @return the matching user ID mapper, or <code>null</code> if a matching user ID mapper could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserIdMapper fetchByU_T(
-		long userId, java.lang.String type) {
+		long userId, java.lang.String type)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByU_T(userId, type);
 	}
 
@@ -282,9 +309,11 @@ public class UserIdMapperUtil {
 	* @param type the type
 	* @param retrieveFromCache whether to use the finder cache
 	* @return the matching user ID mapper, or <code>null</code> if a matching user ID mapper could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserIdMapper fetchByU_T(
-		long userId, java.lang.String type, boolean retrieveFromCache) {
+		long userId, java.lang.String type, boolean retrieveFromCache)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByU_T(userId, type, retrieveFromCache);
 	}
 
@@ -294,10 +323,12 @@ public class UserIdMapperUtil {
 	* @param userId the user ID
 	* @param type the type
 	* @return the user ID mapper that was removed
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserIdMapper removeByU_T(
 		long userId, java.lang.String type)
-		throws com.liferay.portal.NoSuchUserIdMapperException {
+		throws com.liferay.portal.NoSuchUserIdMapperException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().removeByU_T(userId, type);
 	}
 
@@ -307,8 +338,10 @@ public class UserIdMapperUtil {
 	* @param userId the user ID
 	* @param type the type
 	* @return the number of matching user ID mappers
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByU_T(long userId, java.lang.String type) {
+	public static int countByU_T(long userId, java.lang.String type)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByU_T(userId, type);
 	}
 
@@ -319,10 +352,12 @@ public class UserIdMapperUtil {
 	* @param externalUserId the external user ID
 	* @return the matching user ID mapper
 	* @throws com.liferay.portal.NoSuchUserIdMapperException if a matching user ID mapper could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserIdMapper findByT_E(
 		java.lang.String type, java.lang.String externalUserId)
-		throws com.liferay.portal.NoSuchUserIdMapperException {
+		throws com.liferay.portal.NoSuchUserIdMapperException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByT_E(type, externalUserId);
 	}
 
@@ -332,9 +367,11 @@ public class UserIdMapperUtil {
 	* @param type the type
 	* @param externalUserId the external user ID
 	* @return the matching user ID mapper, or <code>null</code> if a matching user ID mapper could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserIdMapper fetchByT_E(
-		java.lang.String type, java.lang.String externalUserId) {
+		java.lang.String type, java.lang.String externalUserId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByT_E(type, externalUserId);
 	}
 
@@ -345,10 +382,12 @@ public class UserIdMapperUtil {
 	* @param externalUserId the external user ID
 	* @param retrieveFromCache whether to use the finder cache
 	* @return the matching user ID mapper, or <code>null</code> if a matching user ID mapper could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserIdMapper fetchByT_E(
 		java.lang.String type, java.lang.String externalUserId,
-		boolean retrieveFromCache) {
+		boolean retrieveFromCache)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByT_E(type, externalUserId, retrieveFromCache);
 	}
@@ -359,10 +398,12 @@ public class UserIdMapperUtil {
 	* @param type the type
 	* @param externalUserId the external user ID
 	* @return the user ID mapper that was removed
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserIdMapper removeByT_E(
 		java.lang.String type, java.lang.String externalUserId)
-		throws com.liferay.portal.NoSuchUserIdMapperException {
+		throws com.liferay.portal.NoSuchUserIdMapperException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().removeByT_E(type, externalUserId);
 	}
 
@@ -372,9 +413,11 @@ public class UserIdMapperUtil {
 	* @param type the type
 	* @param externalUserId the external user ID
 	* @return the number of matching user ID mappers
+	* @throws SystemException if a system exception occurred
 	*/
 	public static int countByT_E(java.lang.String type,
-		java.lang.String externalUserId) {
+		java.lang.String externalUserId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByT_E(type, externalUserId);
 	}
 
@@ -415,15 +458,18 @@ public class UserIdMapperUtil {
 	* @param userIdMapperId the primary key of the user ID mapper
 	* @return the user ID mapper that was removed
 	* @throws com.liferay.portal.NoSuchUserIdMapperException if a user ID mapper with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserIdMapper remove(
 		long userIdMapperId)
-		throws com.liferay.portal.NoSuchUserIdMapperException {
+		throws com.liferay.portal.NoSuchUserIdMapperException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().remove(userIdMapperId);
 	}
 
 	public static com.liferay.portal.model.UserIdMapper updateImpl(
-		com.liferay.portal.model.UserIdMapper userIdMapper) {
+		com.liferay.portal.model.UserIdMapper userIdMapper)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().updateImpl(userIdMapper);
 	}
 
@@ -433,10 +479,12 @@ public class UserIdMapperUtil {
 	* @param userIdMapperId the primary key of the user ID mapper
 	* @return the user ID mapper
 	* @throws com.liferay.portal.NoSuchUserIdMapperException if a user ID mapper with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserIdMapper findByPrimaryKey(
 		long userIdMapperId)
-		throws com.liferay.portal.NoSuchUserIdMapperException {
+		throws com.liferay.portal.NoSuchUserIdMapperException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByPrimaryKey(userIdMapperId);
 	}
 
@@ -445,23 +493,22 @@ public class UserIdMapperUtil {
 	*
 	* @param userIdMapperId the primary key of the user ID mapper
 	* @return the user ID mapper, or <code>null</code> if a user ID mapper with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserIdMapper fetchByPrimaryKey(
-		long userIdMapperId) {
+		long userIdMapperId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByPrimaryKey(userIdMapperId);
-	}
-
-	public static java.util.Map<java.io.Serializable, com.liferay.portal.model.UserIdMapper> fetchByPrimaryKeys(
-		java.util.Set<java.io.Serializable> primaryKeys) {
-		return getPersistence().fetchByPrimaryKeys(primaryKeys);
 	}
 
 	/**
 	* Returns all the user ID mappers.
 	*
 	* @return the user ID mappers
+	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portal.model.UserIdMapper> findAll() {
+	public static java.util.List<com.liferay.portal.model.UserIdMapper> findAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll();
 	}
 
@@ -475,9 +522,11 @@ public class UserIdMapperUtil {
 	* @param start the lower bound of the range of user ID mappers
 	* @param end the upper bound of the range of user ID mappers (not inclusive)
 	* @return the range of user ID mappers
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portal.model.UserIdMapper> findAll(
-		int start, int end) {
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll(start, end);
 	}
 
@@ -492,17 +541,22 @@ public class UserIdMapperUtil {
 	* @param end the upper bound of the range of user ID mappers (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of user ID mappers
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portal.model.UserIdMapper> findAll(
 		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.UserIdMapper> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll(start, end, orderByComparator);
 	}
 
 	/**
 	* Removes all the user ID mappers from the database.
+	*
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeAll() {
+	public static void removeAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeAll();
 	}
 
@@ -510,8 +564,10 @@ public class UserIdMapperUtil {
 	* Returns the number of user ID mappers.
 	*
 	* @return the number of user ID mappers
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countAll() {
+	public static int countAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countAll();
 	}
 
@@ -529,7 +585,6 @@ public class UserIdMapperUtil {
 	/**
 	 * @deprecated As of 6.2.0
 	 */
-	@Deprecated
 	public void setPersistence(UserIdMapperPersistence persistence) {
 	}
 

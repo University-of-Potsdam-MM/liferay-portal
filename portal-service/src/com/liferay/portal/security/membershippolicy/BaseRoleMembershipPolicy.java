@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -16,8 +16,9 @@ package com.liferay.portal.security.membershippolicy;
 
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.model.Role;
-import com.liferay.portal.service.RoleLocalServiceUtil;
+import com.liferay.portal.service.persistence.RoleActionableDynamicQuery;
 
 /**
  * @author Roberto Díaz
@@ -28,7 +29,7 @@ public abstract class BaseRoleMembershipPolicy implements RoleMembershipPolicy {
 	@Override
 	@SuppressWarnings("unused")
 	public boolean isRoleAllowed(long userId, long roleId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		try {
 			checkRoles(new long[] {userId}, new long[] {roleId}, null);
@@ -43,7 +44,7 @@ public abstract class BaseRoleMembershipPolicy implements RoleMembershipPolicy {
 	@Override
 	@SuppressWarnings("unused")
 	public boolean isRoleRequired(long userId, long roleId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		try {
 			checkRoles(new long[] {userId}, null, new long[] {roleId});
@@ -56,29 +57,28 @@ public abstract class BaseRoleMembershipPolicy implements RoleMembershipPolicy {
 	}
 
 	@Override
-	public void verifyPolicy() throws PortalException {
+	public void verifyPolicy() throws PortalException, SystemException {
 		ActionableDynamicQuery actionableDynamicQuery =
-			RoleLocalServiceUtil.getActionableDynamicQuery();
+			new RoleActionableDynamicQuery() {
 
-		actionableDynamicQuery.setPerformActionMethod(
-			new ActionableDynamicQuery.PerformActionMethod() {
+			@Override
+			protected void performAction(Object object)
+				throws PortalException, SystemException {
 
-				@Override
-				public void performAction(Object object)
-					throws PortalException {
+				Role role = (Role)object;
 
-					Role role = (Role)object;
+				verifyPolicy(role);
+			}
 
-					verifyPolicy(role);
-				}
-
-			});
+		};
 
 		actionableDynamicQuery.performActions();
 	}
 
 	@Override
-	public void verifyPolicy(Role role) throws PortalException {
+	public void verifyPolicy(Role role)
+		throws PortalException, SystemException {
+
 		verifyPolicy(role, null, null);
 	}
 

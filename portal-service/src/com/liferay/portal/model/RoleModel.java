@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,6 +18,7 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.LocaleException;
 import com.liferay.portal.kernel.bean.AutoEscape;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.service.ServiceContext;
 
 import com.liferay.portlet.expando.model.ExpandoBridge;
@@ -42,8 +43,8 @@ import java.util.Map;
  * @generated
  */
 @ProviderType
-public interface RoleModel extends AttachedModel, BaseModel<Role>, LocalizedModel,
-	MVCCModel, StagedAuditedModel {
+public interface RoleModel extends AttachedModel, BaseModel<Role>,
+	StagedAuditedModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -63,22 +64,6 @@ public interface RoleModel extends AttachedModel, BaseModel<Role>, LocalizedMode
 	 * @param primaryKey the primary key of this role
 	 */
 	public void setPrimaryKey(long primaryKey);
-
-	/**
-	 * Returns the mvcc version of this role.
-	 *
-	 * @return the mvcc version of this role
-	 */
-	@Override
-	public long getMvccVersion();
-
-	/**
-	 * Sets the mvcc version of this role.
-	 *
-	 * @param mvccVersion the mvcc version of this role
-	 */
-	@Override
-	public void setMvccVersion(long mvccVersion);
 
 	/**
 	 * Returns the uuid of this role.
@@ -147,9 +132,10 @@ public interface RoleModel extends AttachedModel, BaseModel<Role>, LocalizedMode
 	 * Returns the user uuid of this role.
 	 *
 	 * @return the user uuid of this role
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public String getUserUuid();
+	public String getUserUuid() throws SystemException;
 
 	/**
 	 * Sets the user uuid of this role.
@@ -527,16 +513,12 @@ public interface RoleModel extends AttachedModel, BaseModel<Role>, LocalizedMode
 	@Override
 	public void setExpandoBridgeAttributes(ServiceContext serviceContext);
 
-	@Override
 	public String[] getAvailableLanguageIds();
 
-	@Override
 	public String getDefaultLanguageId();
 
-	@Override
 	public void prepareLocalizedFieldsForImport() throws LocaleException;
 
-	@Override
 	public void prepareLocalizedFieldsForImport(Locale defaultImportLocale)
 		throws LocaleException;
 

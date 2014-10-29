@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -27,8 +27,7 @@ import java.util.Date;
 /**
  * @author Alexander Chow
  */
-public class RepositoryModelCreateDateComparator<T>
-	extends OrderByComparator<T> {
+public class RepositoryModelCreateDateComparator extends OrderByComparator {
 
 	public static final String ORDER_BY_ASC = "createDate ASC";
 
@@ -45,9 +44,9 @@ public class RepositoryModelCreateDateComparator<T>
 	}
 
 	@Override
-	public int compare(T t1, T t2 ) {
-		Date createDate1 = getCreateDate(t1);
-		Date createDate2 = getCreateDate(t2);
+	public int compare(Object obj1, Object obj2) {
+		Date createDate1 = getCreateDate(obj1);
+		Date createDate2 = getCreateDate(obj2);
 
 		int value = DateUtil.compareTo(createDate1, createDate2);
 

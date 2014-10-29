@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -13,8 +13,6 @@
  */
 
 package com.liferay.portlet.dynamicdatalists.service.http;
-
-import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -53,7 +51,6 @@ import com.liferay.portlet.dynamicdatalists.service.DDLRecordSetServiceUtil;
  * @see com.liferay.portlet.dynamicdatalists.service.DDLRecordSetServiceUtil
  * @generated
  */
-@ProviderType
 public class DDLRecordSetServiceHttp {
 	public static com.liferay.portlet.dynamicdatalists.model.DDLRecordSet addRecordSet(
 		HttpPrincipal httpPrincipal, long groupId, long ddmStructureId,
@@ -62,7 +59,8 @@ public class DDLRecordSetServiceHttp {
 		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
 		int minDisplayRows, int scope,
 		com.liferay.portal.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(DDLRecordSetServiceUtil.class,
 					"addRecordSet", _addRecordSetParameterTypes0);
@@ -81,6 +79,10 @@ public class DDLRecordSetServiceHttp {
 					throw (com.liferay.portal.kernel.exception.PortalException)e;
 				}
 
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
+				}
+
 				throw new com.liferay.portal.kernel.exception.SystemException(e);
 			}
 
@@ -95,7 +97,8 @@ public class DDLRecordSetServiceHttp {
 
 	public static void deleteRecordSet(HttpPrincipal httpPrincipal,
 		long recordSetId)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(DDLRecordSetServiceUtil.class,
 					"deleteRecordSet", _deleteRecordSetParameterTypes1);
@@ -111,6 +114,10 @@ public class DDLRecordSetServiceHttp {
 					throw (com.liferay.portal.kernel.exception.PortalException)e;
 				}
 
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
+				}
+
 				throw new com.liferay.portal.kernel.exception.SystemException(e);
 			}
 		}
@@ -123,7 +130,8 @@ public class DDLRecordSetServiceHttp {
 
 	public static com.liferay.portlet.dynamicdatalists.model.DDLRecordSet getRecordSet(
 		HttpPrincipal httpPrincipal, long recordSetId)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(DDLRecordSetServiceUtil.class,
 					"getRecordSet", _getRecordSetParameterTypes2);
@@ -141,6 +149,10 @@ public class DDLRecordSetServiceHttp {
 					throw (com.liferay.portal.kernel.exception.PortalException)e;
 				}
 
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
+				}
+
 				throw new com.liferay.portal.kernel.exception.SystemException(e);
 			}
 
@@ -156,7 +168,8 @@ public class DDLRecordSetServiceHttp {
 	public static java.util.List<com.liferay.portlet.dynamicdatalists.model.DDLRecordSet> search(
 		HttpPrincipal httpPrincipal, long companyId, long groupId,
 		java.lang.String keywords, int scope, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.dynamicdatalists.model.DDLRecordSet> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(DDLRecordSetServiceUtil.class,
 					"search", _searchParameterTypes3);
@@ -171,6 +184,10 @@ public class DDLRecordSetServiceHttp {
 				returnObj = TunnelUtil.invoke(httpPrincipal, methodHandler);
 			}
 			catch (Exception e) {
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
+				}
+
 				throw new com.liferay.portal.kernel.exception.SystemException(e);
 			}
 
@@ -187,7 +204,8 @@ public class DDLRecordSetServiceHttp {
 		HttpPrincipal httpPrincipal, long companyId, long groupId,
 		java.lang.String name, java.lang.String description, int scope,
 		boolean andOperator, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.dynamicdatalists.model.DDLRecordSet> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(DDLRecordSetServiceUtil.class,
 					"search", _searchParameterTypes4);
@@ -202,6 +220,10 @@ public class DDLRecordSetServiceHttp {
 				returnObj = TunnelUtil.invoke(httpPrincipal, methodHandler);
 			}
 			catch (Exception e) {
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
+				}
+
 				throw new com.liferay.portal.kernel.exception.SystemException(e);
 			}
 
@@ -215,7 +237,8 @@ public class DDLRecordSetServiceHttp {
 	}
 
 	public static int searchCount(HttpPrincipal httpPrincipal, long companyId,
-		long groupId, java.lang.String keywords, int scope) {
+		long groupId, java.lang.String keywords, int scope)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(DDLRecordSetServiceUtil.class,
 					"searchCount", _searchCountParameterTypes5);
@@ -229,6 +252,10 @@ public class DDLRecordSetServiceHttp {
 				returnObj = TunnelUtil.invoke(httpPrincipal, methodHandler);
 			}
 			catch (Exception e) {
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
+				}
+
 				throw new com.liferay.portal.kernel.exception.SystemException(e);
 			}
 
@@ -243,7 +270,8 @@ public class DDLRecordSetServiceHttp {
 
 	public static int searchCount(HttpPrincipal httpPrincipal, long companyId,
 		long groupId, java.lang.String name, java.lang.String description,
-		int scope, boolean andOperator) {
+		int scope, boolean andOperator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(DDLRecordSetServiceUtil.class,
 					"searchCount", _searchCountParameterTypes6);
@@ -257,6 +285,10 @@ public class DDLRecordSetServiceHttp {
 				returnObj = TunnelUtil.invoke(httpPrincipal, methodHandler);
 			}
 			catch (Exception e) {
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
+				}
+
 				throw new com.liferay.portal.kernel.exception.SystemException(e);
 			}
 
@@ -272,7 +304,8 @@ public class DDLRecordSetServiceHttp {
 	public static com.liferay.portlet.dynamicdatalists.model.DDLRecordSet updateMinDisplayRows(
 		HttpPrincipal httpPrincipal, long recordSetId, int minDisplayRows,
 		com.liferay.portal.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(DDLRecordSetServiceUtil.class,
 					"updateMinDisplayRows", _updateMinDisplayRowsParameterTypes7);
@@ -288,6 +321,10 @@ public class DDLRecordSetServiceHttp {
 			catch (Exception e) {
 				if (e instanceof com.liferay.portal.kernel.exception.PortalException) {
 					throw (com.liferay.portal.kernel.exception.PortalException)e;
+				}
+
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
 				}
 
 				throw new com.liferay.portal.kernel.exception.SystemException(e);
@@ -308,7 +345,8 @@ public class DDLRecordSetServiceHttp {
 		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
 		int minDisplayRows,
 		com.liferay.portal.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(DDLRecordSetServiceUtil.class,
 					"updateRecordSet", _updateRecordSetParameterTypes8);
@@ -325,6 +363,10 @@ public class DDLRecordSetServiceHttp {
 			catch (Exception e) {
 				if (e instanceof com.liferay.portal.kernel.exception.PortalException) {
 					throw (com.liferay.portal.kernel.exception.PortalException)e;
+				}
+
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
 				}
 
 				throw new com.liferay.portal.kernel.exception.SystemException(e);
@@ -346,7 +388,8 @@ public class DDLRecordSetServiceHttp {
 		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
 		int minDisplayRows,
 		com.liferay.portal.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(DDLRecordSetServiceUtil.class,
 					"updateRecordSet", _updateRecordSetParameterTypes9);
@@ -363,6 +406,10 @@ public class DDLRecordSetServiceHttp {
 			catch (Exception e) {
 				if (e instanceof com.liferay.portal.kernel.exception.PortalException) {
 					throw (com.liferay.portal.kernel.exception.PortalException)e;
+				}
+
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
 				}
 
 				throw new com.liferay.portal.kernel.exception.SystemException(e);

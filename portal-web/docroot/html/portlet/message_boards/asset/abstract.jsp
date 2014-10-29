@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -21,11 +21,12 @@ int abstractLength = (Integer)request.getAttribute(WebKeys.ASSET_PUBLISHER_ABSTR
 
 MBMessage message = (MBMessage)request.getAttribute(WebKeys.MESSAGE_BOARDS_MESSAGE);
 
-String summary = message.getBody();
+String summary = StringUtil.shorten(message.getBody(), abstractLength);
 
 if (message.isFormatBBCode()) {
-	summary = MBUtil.getBBCodeHTML(summary, themeDisplay.getPathThemeImages());
+	summary = BBCodeTranslatorUtil.getHTML(summary);
+	summary = StringUtil.replace(summary, "@theme_images_path@/emoticons", themeDisplay.getPathThemeImages() + "/emoticons");
 }
 %>
 
-<%= StringUtil.shorten(HtmlUtil.stripHtml(summary), abstractLength) %>
+<%= summary %>

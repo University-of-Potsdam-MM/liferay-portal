@@ -1,13 +1,12 @@
-@import "compass";
-@import "mixins";
-
 .portlet-asset-publisher, .portlet-message-boards, .portlet-trash {
-	.category-buttons, .category-subscriptions {
+	.category-buttons {
 		clear: both;
 		margin-bottom: 1em;
 	}
 
 	.category-subscriptions {
+		clear: both;
+		margin-bottom: 1em;
 		overflow: hidden;
 	}
 
@@ -19,7 +18,7 @@
 	.quote {
 		background: #FFF url(@theme_image_path@/message_boards/quoteleft.png) left top no-repeat;
 		border: 1px solid #777;
-		padding: 5px 0 0 5px;
+		padding: 5px 0px 0px 5px;
 	}
 
 	.quote-content {
@@ -29,7 +28,7 @@
 
 	.quote-title {
 		font-weight: bold;
-		padding: 5px 0 5px 0;
+		padding: 5px 0px 5px 0px;
 	}
 
 	.title {
@@ -53,7 +52,7 @@
 			font-size: 1em;
 		}
 
-		ul, .deleted-input {
+		ul {
 			list-style: none;
 		}
 
@@ -62,6 +61,7 @@
 		}
 
 		.deleted-input {
+			list-style: none;
 			margin-left: -2em;
 			padding: 0;
 		}
@@ -74,6 +74,7 @@
 	.message-container {
 		border: 1px solid #CCC;
 		margin: 5px 0 0 0;
+		overflow: auto;
 
 		table {
 			border-collapse: collapse;
@@ -87,22 +88,15 @@
 		td {
 			border-width: 0;
 		}
-
-		.user-info {
-			border-right: 1px solid #CCC;
-			padding: 5px;
-		}
-	}
-
-	.thread-bottom, .thread-top {
-		padding: 3px 5px;
 	}
 
 	.thread-top {
-		border-bottom: 1px solid #EEE;
+		border-bottom: 1px solid #CCC;
+		padding: 3px 5px;
 	}
 
 	.thread-bottom {
+		padding: 3px 5px;
 		vertical-align: bottom;
 	}
 
@@ -115,7 +109,7 @@
 		width: 150px;
 	}
 
-	.edit-controls li, .subject {
+	.subject {
 		float: left;
 	}
 
@@ -123,6 +117,7 @@
 		float: right;
 
 		li {
+			float: left;
 			margin-right: 10px;
 		}
 	}
@@ -139,10 +134,6 @@
 	.message-container .user-info {
 		border-right: 1px solid #CCC;
 		padding: 5px;
-
-		.user-name {
-			@include hyphens;
-		}
 	}
 
 	.clear {
@@ -153,7 +144,11 @@
 		margin-bottom: 1em;
 	}
 
-	.message-boards-panels, .statistics-panel {
+	.message-boards-panels {
+		border-width: 0;
+	}
+
+	.statistics-panel {
 		border-width: 0;
 	}
 
@@ -173,8 +168,8 @@
 	}
 
 	.views {
-		clear: both;
 		color: #999;
+		clear: both;
 		float: left;
 		padding: 5px 0;
 		text-align: center;
@@ -203,16 +198,14 @@
 		width: 48px;
 	}
 
-	.answered, .unanswered {
-		color: #FFF;
-	}
-
 	.answered {
 		background-color: #5BA018;
+		color: #FFF;
 	}
 
 	.unanswered {
 		background-color: #CF4937;
+		color: #FFF;
 	}
 
 	.count {
@@ -235,7 +228,7 @@
 		padding: 3px 5px;
 	}
 
-	.thread-navigation, .thread-priority {
+	.thread-navigation {
 		float: left;
 	}
 
@@ -249,6 +242,7 @@
 
 	.thread-priority {
 		border-width: 0;
+		float: left;
 	}
 
 	.message-container .thread-message-view, .thread-view {
@@ -294,27 +288,13 @@
 		}
 	}
 
-	.category-description, .category-title {
-		display: block;
-	}
-
-	.category-description {
-		@include hyphens;
-	}
-
-	.category-title {
-		@include ellipsis;
-
-		font-weight: bold;
-	}
-
 	.subcategories {
 		text-decoration: underline;
 	}
 
 	.taglib-flags {
 		float: left;
-		margin: 10px 0 0 20px;
+		margin-left: 20px;
 	}
 
 	.threads-panel {
@@ -380,97 +360,6 @@
 	.search-root-entry {
 		color: #999;
 		float: right;
-	}
-
-	@include respond-to(phone, tablet) {
-		.message-container {
-			table, tbody, td, th, thead, tr {
-				display: block;
-			}
-
-			thead tr {
-				left: -9999px;
-				position: absolute;
-				top: -9999px;
-			}
-
-			td {
-				position: relative;
-
-				&:before {
-					left: 6px;
-					padding-right: 10px;
-					position: absolute;
-					top: 6px;
-					white-space: nowrap;
-					width: 45%;
-				}
-			}
-
-			.thread-bottom, td.user-info {
-				border-width: 0;
-			}
-
-			.thread-bottom {
-				&:after {
-					clear: both;
-					content: '';
-					display: block;
-					height: 0;
-					visibility: hidden;
-				}
-
-				br {
-					display: none;
-				}
-
-				.edit-controls {
-					margin-bottom: 0;
-				}
-			}
-
-			.thread-message-view {
-				min-width: 0;
-			}
-
-			.edit-controls li, .taglib-ratings, .taglib-user-display > a, .taglib-user-display .user-details {
-				display: inline-block;
-			}
-
-			.taglib-user-display {
-				> a {
-					margin-right: 1em;
-				}
-
-				.user-details {
-					margin: 0 1em 0 0;
-				}
-
-				.avatar {
-					float: left;
-				}
-
-				.user-name {
-					text-align: left;
-				}
-			}
-
-			td.user-info {
-				padding: 0;
-				width: auto;
-			}
-
-			.thumbs, .taglib-flags {
-				margin-bottom: 0;
-				margin-top: 0;
-			}
-		}
-
-		.thread-controls {
-			border-width: 0;
-			margin: 0;
-			padding: 0;
-		}
 	}
 }
 

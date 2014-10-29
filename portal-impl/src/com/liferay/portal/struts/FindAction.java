@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -20,7 +20,6 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
-import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.model.Group;
@@ -29,7 +28,6 @@ import com.liferay.portal.model.LayoutConstants;
 import com.liferay.portal.model.LayoutTypePortlet;
 import com.liferay.portal.model.PortletConstants;
 import com.liferay.portal.model.impl.VirtualLayout;
-import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.security.permission.ActionKeys;
 import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portal.service.GroupLocalServiceUtil;
@@ -76,6 +74,7 @@ public abstract class FindAction extends Action {
 			WebKeys.THEME_DISPLAY);
 
 		try {
+			long plid = ParamUtil.getLong(request, "p_l_id");
 			long primaryKey = ParamUtil.getLong(
 				request, getPrimaryKeyParameterName());
 
@@ -84,11 +83,7 @@ public abstract class FindAction extends Action {
 
 			if (primaryKey > 0) {
 				try {
-					long overrideGroupId = getGroupId(primaryKey);
-
-					if (overrideGroupId > 0) {
-						groupId = overrideGroupId;
-					}
+					groupId = getGroupId(primaryKey);
 				}
 				catch (Exception e) {
 					if (_log.isDebugEnabled()) {
@@ -98,15 +93,11 @@ public abstract class FindAction extends Action {
 			}
 
 			Object[] plidAndPortletId = getPlidAndPortletId(
-				themeDisplay, groupId, themeDisplay.getPlid(), _portletIds);
+				themeDisplay, groupId, plid, _portletIds);
 
-			long plid = (Long)plidAndPortletId[0];
+			plid = (Long)plidAndPortletId[0];
 
-			Layout layout = setTargetLayout(request, groupId, plid);
-
-			LayoutPermissionUtil.check(
-				themeDisplay.getPermissionChecker(), layout, true,
-				ActionKeys.VIEW);
+			setTargetGroup(request, groupId, plid);
 
 			String portletId = (String)plidAndPortletId[1];
 
@@ -153,12 +144,8 @@ public abstract class FindAction extends Action {
 			String noSuchEntryRedirect = ParamUtil.getString(
 				request, "noSuchEntryRedirect");
 
-			noSuchEntryRedirect = PortalUtil.escapeRedirect(
-				noSuchEntryRedirect);
-
 			if (Validator.isNotNull(noSuchEntryRedirect) &&
-				(e instanceof NoSuchLayoutException ||
-				 e instanceof PrincipalException)) {
+				(e instanceof NoSuchLayoutException)) {
 
 				response.sendRedirect(noSuchEntryRedirect);
 			}
@@ -250,21 +237,7 @@ public abstract class FindAction extends Action {
 			return plidAndPortletId;
 		}
 
-		StringBundler sb = new StringBundler(portletIds.length * 2 + 5);
-
-		sb.append("{groupId=");
-		sb.append(groupId);
-		sb.append(", plid=");
-		sb.append(plid);
-
-		for (String portletId : portletIds) {
-			sb.append(", portletId=");
-			sb.append(portletId);
-		}
-
-		sb.append("}");
-
-		throw new NoSuchLayoutException(sb.toString());
+		throw new NoSuchLayoutException();
 	}
 
 	protected static String getPortletId(
@@ -280,35 +253,6 @@ public abstract class FindAction extends Action {
 		}
 
 		return portletId;
-	}
-
-	protected static Layout setTargetLayout(
-			HttpServletRequest request, long groupId, long plid)
-		throws Exception {
-
-		ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
-			WebKeys.THEME_DISPLAY);
-
-		PermissionChecker permissionChecker =
-			themeDisplay.getPermissionChecker();
-
-		Group group = GroupLocalServiceUtil.getGroup(groupId);
-		Layout layout = LayoutLocalServiceUtil.getLayout(plid);
-
-		if ((groupId == layout.getGroupId()) ||
-			(group.getParentGroupId() == layout.getGroupId()) ||
-			(layout.isPrivateLayout() &&
-			 !SitesUtil.isUserGroupLayoutSetViewable(
-				permissionChecker, layout.getGroup()))) {
-
-			return layout;
-		}
-
-		layout = new VirtualLayout(layout, group);
-
-		request.setAttribute(WebKeys.LAYOUT, layout);
-
-		return layout;
 	}
 
 	protected abstract long getGroupId(long primaryKey) throws Exception;
@@ -333,6 +277,33 @@ public abstract class FindAction extends Action {
 
 		portletURL.setParameter(
 			getPrimaryKeyParameterName(), String.valueOf(primaryKey));
+	}
+
+	protected void setTargetGroup(
+			HttpServletRequest request, long groupId, long plid)
+		throws Exception {
+
+		ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
+			WebKeys.THEME_DISPLAY);
+
+		PermissionChecker permissionChecker =
+			themeDisplay.getPermissionChecker();
+
+		Layout layout = LayoutLocalServiceUtil.getLayout(plid);
+
+		if ((groupId == layout.getGroupId()) ||
+			(layout.isPrivateLayout() &&
+			 !SitesUtil.isUserGroupLayoutSetViewable(
+				permissionChecker, layout.getGroup()))) {
+
+			return;
+		}
+
+		Group targetGroup = GroupLocalServiceUtil.getGroup(groupId);
+
+		layout = new VirtualLayout(layout, targetGroup);
+
+		request.setAttribute(WebKeys.LAYOUT, layout);
 	}
 
 	private static Log _log = LogFactoryUtil.getLog(FindAction.class);

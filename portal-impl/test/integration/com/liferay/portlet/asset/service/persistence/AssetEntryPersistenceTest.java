@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,6 +14,7 @@
 
 package com.liferay.portlet.asset.service.persistence;
 
+import com.liferay.portal.kernel.bean.PortalBeanLocatorUtil;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
@@ -22,78 +23,69 @@ import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.template.TemplateException;
-import com.liferay.portal.kernel.template.TemplateManagerUtil;
 import com.liferay.portal.kernel.test.AssertUtils;
-import com.liferay.portal.kernel.transaction.Propagation;
+import com.liferay.portal.kernel.test.ExecutionTestListeners;
 import com.liferay.portal.kernel.util.IntegerWrapper;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.OrderByComparatorFactoryUtil;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.test.TransactionalTestRule;
-import com.liferay.portal.test.runners.PersistenceIntegrationJUnitTestRunner;
-import com.liferay.portal.tools.DBUpgrader;
+import com.liferay.portal.service.ServiceTestUtil;
+import com.liferay.portal.service.persistence.BasePersistence;
+import com.liferay.portal.service.persistence.PersistenceExecutionTestListener;
+import com.liferay.portal.test.LiferayPersistenceIntegrationJUnitTestRunner;
+import com.liferay.portal.test.persistence.TransactionalPersistenceAdvice;
 import com.liferay.portal.util.PropsValues;
-import com.liferay.portal.util.test.RandomTestUtil;
 
 import com.liferay.portlet.asset.NoSuchEntryException;
 import com.liferay.portlet.asset.model.AssetEntry;
 import com.liferay.portlet.asset.model.impl.AssetEntryModelImpl;
-import com.liferay.portlet.asset.service.AssetEntryLocalServiceUtil;
 
 import org.junit.After;
 import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
 import org.junit.Test;
 
 import org.junit.runner.RunWith;
 
 import java.io.Serializable;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 /**
- * @generated
+ * @author Brian Wing Shun Chan
  */
-@RunWith(PersistenceIntegrationJUnitTestRunner.class)
+@ExecutionTestListeners(listeners =  {
+	PersistenceExecutionTestListener.class})
+@RunWith(LiferayPersistenceIntegrationJUnitTestRunner.class)
 public class AssetEntryPersistenceTest {
-	@ClassRule
-	public static TransactionalTestRule transactionalTestRule = new TransactionalTestRule(Propagation.REQUIRED);
-
-	@BeforeClass
-	public static void setupClass() throws TemplateException {
-		try {
-			DBUpgrader.upgrade();
-		}
-		catch (Exception e) {
-			_log.error(e, e);
-		}
-
-		TemplateManagerUtil.init();
-	}
-
 	@After
 	public void tearDown() throws Exception {
-		Iterator<AssetEntry> iterator = _assetEntries.iterator();
+		Map<Serializable, BasePersistence<?>> basePersistences = _transactionalPersistenceAdvice.getBasePersistences();
 
-		while (iterator.hasNext()) {
-			_persistence.remove(iterator.next());
+		Set<Serializable> primaryKeys = basePersistences.keySet();
 
-			iterator.remove();
+		for (Serializable primaryKey : primaryKeys) {
+			BasePersistence<?> basePersistence = basePersistences.get(primaryKey);
+
+			try {
+				basePersistence.remove(primaryKey);
+			}
+			catch (Exception e) {
+				if (_log.isDebugEnabled()) {
+					_log.debug("The model with primary key " + primaryKey +
+						" was already deleted");
+				}
+			}
 		}
+
+		_transactionalPersistenceAdvice.reset();
 	}
 
 	@Test
 	public void testCreate() throws Exception {
-		long pk = RandomTestUtil.nextLong();
+		long pk = ServiceTestUtil.nextLong();
 
 		AssetEntry assetEntry = _persistence.create(pk);
 
@@ -120,61 +112,61 @@ public class AssetEntryPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
+		long pk = ServiceTestUtil.nextLong();
 
 		AssetEntry newAssetEntry = _persistence.create(pk);
 
-		newAssetEntry.setGroupId(RandomTestUtil.nextLong());
+		newAssetEntry.setGroupId(ServiceTestUtil.nextLong());
 
-		newAssetEntry.setCompanyId(RandomTestUtil.nextLong());
+		newAssetEntry.setCompanyId(ServiceTestUtil.nextLong());
 
-		newAssetEntry.setUserId(RandomTestUtil.nextLong());
+		newAssetEntry.setUserId(ServiceTestUtil.nextLong());
 
-		newAssetEntry.setUserName(RandomTestUtil.randomString());
+		newAssetEntry.setUserName(ServiceTestUtil.randomString());
 
-		newAssetEntry.setCreateDate(RandomTestUtil.nextDate());
+		newAssetEntry.setCreateDate(ServiceTestUtil.nextDate());
 
-		newAssetEntry.setModifiedDate(RandomTestUtil.nextDate());
+		newAssetEntry.setModifiedDate(ServiceTestUtil.nextDate());
 
-		newAssetEntry.setClassNameId(RandomTestUtil.nextLong());
+		newAssetEntry.setClassNameId(ServiceTestUtil.nextLong());
 
-		newAssetEntry.setClassPK(RandomTestUtil.nextLong());
+		newAssetEntry.setClassPK(ServiceTestUtil.nextLong());
 
-		newAssetEntry.setClassUuid(RandomTestUtil.randomString());
+		newAssetEntry.setClassUuid(ServiceTestUtil.randomString());
 
-		newAssetEntry.setClassTypeId(RandomTestUtil.nextLong());
+		newAssetEntry.setClassTypeId(ServiceTestUtil.nextLong());
 
-		newAssetEntry.setVisible(RandomTestUtil.randomBoolean());
+		newAssetEntry.setVisible(ServiceTestUtil.randomBoolean());
 
-		newAssetEntry.setStartDate(RandomTestUtil.nextDate());
+		newAssetEntry.setStartDate(ServiceTestUtil.nextDate());
 
-		newAssetEntry.setEndDate(RandomTestUtil.nextDate());
+		newAssetEntry.setEndDate(ServiceTestUtil.nextDate());
 
-		newAssetEntry.setPublishDate(RandomTestUtil.nextDate());
+		newAssetEntry.setPublishDate(ServiceTestUtil.nextDate());
 
-		newAssetEntry.setExpirationDate(RandomTestUtil.nextDate());
+		newAssetEntry.setExpirationDate(ServiceTestUtil.nextDate());
 
-		newAssetEntry.setMimeType(RandomTestUtil.randomString());
+		newAssetEntry.setMimeType(ServiceTestUtil.randomString());
 
-		newAssetEntry.setTitle(RandomTestUtil.randomString());
+		newAssetEntry.setTitle(ServiceTestUtil.randomString());
 
-		newAssetEntry.setDescription(RandomTestUtil.randomString());
+		newAssetEntry.setDescription(ServiceTestUtil.randomString());
 
-		newAssetEntry.setSummary(RandomTestUtil.randomString());
+		newAssetEntry.setSummary(ServiceTestUtil.randomString());
 
-		newAssetEntry.setUrl(RandomTestUtil.randomString());
+		newAssetEntry.setUrl(ServiceTestUtil.randomString());
 
-		newAssetEntry.setLayoutUuid(RandomTestUtil.randomString());
+		newAssetEntry.setLayoutUuid(ServiceTestUtil.randomString());
 
-		newAssetEntry.setHeight(RandomTestUtil.nextInt());
+		newAssetEntry.setHeight(ServiceTestUtil.nextInt());
 
-		newAssetEntry.setWidth(RandomTestUtil.nextInt());
+		newAssetEntry.setWidth(ServiceTestUtil.nextInt());
 
-		newAssetEntry.setPriority(RandomTestUtil.nextDouble());
+		newAssetEntry.setPriority(ServiceTestUtil.nextDouble());
 
-		newAssetEntry.setViewCount(RandomTestUtil.nextInt());
+		newAssetEntry.setViewCount(ServiceTestUtil.nextInt());
 
-		_assetEntries.add(_persistence.update(newAssetEntry));
+		_persistence.update(newAssetEntry);
 
 		AssetEntry existingAssetEntry = _persistence.findByPrimaryKey(newAssetEntry.getPrimaryKey());
 
@@ -238,107 +230,6 @@ public class AssetEntryPersistenceTest {
 	}
 
 	@Test
-	public void testCountByGroupId() {
-		try {
-			_persistence.countByGroupId(RandomTestUtil.nextLong());
-
-			_persistence.countByGroupId(0L);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByCompanyId() {
-		try {
-			_persistence.countByCompanyId(RandomTestUtil.nextLong());
-
-			_persistence.countByCompanyId(0L);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByVisible() {
-		try {
-			_persistence.countByVisible(RandomTestUtil.randomBoolean());
-
-			_persistence.countByVisible(RandomTestUtil.randomBoolean());
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByPublishDate() {
-		try {
-			_persistence.countByPublishDate(RandomTestUtil.nextDate());
-
-			_persistence.countByPublishDate(RandomTestUtil.nextDate());
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByExpirationDate() {
-		try {
-			_persistence.countByExpirationDate(RandomTestUtil.nextDate());
-
-			_persistence.countByExpirationDate(RandomTestUtil.nextDate());
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByLayoutUuid() {
-		try {
-			_persistence.countByLayoutUuid(StringPool.BLANK);
-
-			_persistence.countByLayoutUuid(StringPool.NULL);
-
-			_persistence.countByLayoutUuid((String)null);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByG_CU() {
-		try {
-			_persistence.countByG_CU(RandomTestUtil.nextLong(), StringPool.BLANK);
-
-			_persistence.countByG_CU(0L, StringPool.NULL);
-
-			_persistence.countByG_CU(0L, (String)null);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByC_C() {
-		try {
-			_persistence.countByC_C(RandomTestUtil.nextLong(),
-				RandomTestUtil.nextLong());
-
-			_persistence.countByC_C(0L, 0L);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
 	public void testFindByPrimaryKeyExisting() throws Exception {
 		AssetEntry newAssetEntry = addAssetEntry();
 
@@ -349,7 +240,7 @@ public class AssetEntryPersistenceTest {
 
 	@Test
 	public void testFindByPrimaryKeyMissing() throws Exception {
-		long pk = RandomTestUtil.nextLong();
+		long pk = ServiceTestUtil.nextLong();
 
 		try {
 			_persistence.findByPrimaryKey(pk);
@@ -371,7 +262,7 @@ public class AssetEntryPersistenceTest {
 		}
 	}
 
-	protected OrderByComparator<AssetEntry> getOrderByComparator() {
+	protected OrderByComparator getOrderByComparator() {
 		return OrderByComparatorFactoryUtil.create("AssetEntry", "entryId",
 			true, "groupId", true, "companyId", true, "userId", true,
 			"userName", true, "createDate", true, "modifiedDate", true,
@@ -394,7 +285,7 @@ public class AssetEntryPersistenceTest {
 
 	@Test
 	public void testFetchByPrimaryKeyMissing() throws Exception {
-		long pk = RandomTestUtil.nextLong();
+		long pk = ServiceTestUtil.nextLong();
 
 		AssetEntry missingAssetEntry = _persistence.fetchByPrimaryKey(pk);
 
@@ -402,103 +293,19 @@ public class AssetEntryPersistenceTest {
 	}
 
 	@Test
-	public void testFetchByPrimaryKeysWithMultiplePrimaryKeysWhereAllPrimaryKeysExist()
-		throws Exception {
-		AssetEntry newAssetEntry1 = addAssetEntry();
-		AssetEntry newAssetEntry2 = addAssetEntry();
-
-		Set<Serializable> primaryKeys = new HashSet<Serializable>();
-
-		primaryKeys.add(newAssetEntry1.getPrimaryKey());
-		primaryKeys.add(newAssetEntry2.getPrimaryKey());
-
-		Map<Serializable, AssetEntry> assetEntries = _persistence.fetchByPrimaryKeys(primaryKeys);
-
-		Assert.assertEquals(2, assetEntries.size());
-		Assert.assertEquals(newAssetEntry1,
-			assetEntries.get(newAssetEntry1.getPrimaryKey()));
-		Assert.assertEquals(newAssetEntry2,
-			assetEntries.get(newAssetEntry2.getPrimaryKey()));
-	}
-
-	@Test
-	public void testFetchByPrimaryKeysWithMultiplePrimaryKeysWhereNoPrimaryKeysExist()
-		throws Exception {
-		long pk1 = RandomTestUtil.nextLong();
-
-		long pk2 = RandomTestUtil.nextLong();
-
-		Set<Serializable> primaryKeys = new HashSet<Serializable>();
-
-		primaryKeys.add(pk1);
-		primaryKeys.add(pk2);
-
-		Map<Serializable, AssetEntry> assetEntries = _persistence.fetchByPrimaryKeys(primaryKeys);
-
-		Assert.assertTrue(assetEntries.isEmpty());
-	}
-
-	@Test
-	public void testFetchByPrimaryKeysWithMultiplePrimaryKeysWhereSomePrimaryKeysExist()
-		throws Exception {
-		AssetEntry newAssetEntry = addAssetEntry();
-
-		long pk = RandomTestUtil.nextLong();
-
-		Set<Serializable> primaryKeys = new HashSet<Serializable>();
-
-		primaryKeys.add(newAssetEntry.getPrimaryKey());
-		primaryKeys.add(pk);
-
-		Map<Serializable, AssetEntry> assetEntries = _persistence.fetchByPrimaryKeys(primaryKeys);
-
-		Assert.assertEquals(1, assetEntries.size());
-		Assert.assertEquals(newAssetEntry,
-			assetEntries.get(newAssetEntry.getPrimaryKey()));
-	}
-
-	@Test
-	public void testFetchByPrimaryKeysWithNoPrimaryKeys()
-		throws Exception {
-		Set<Serializable> primaryKeys = new HashSet<Serializable>();
-
-		Map<Serializable, AssetEntry> assetEntries = _persistence.fetchByPrimaryKeys(primaryKeys);
-
-		Assert.assertTrue(assetEntries.isEmpty());
-	}
-
-	@Test
-	public void testFetchByPrimaryKeysWithOnePrimaryKey()
-		throws Exception {
-		AssetEntry newAssetEntry = addAssetEntry();
-
-		Set<Serializable> primaryKeys = new HashSet<Serializable>();
-
-		primaryKeys.add(newAssetEntry.getPrimaryKey());
-
-		Map<Serializable, AssetEntry> assetEntries = _persistence.fetchByPrimaryKeys(primaryKeys);
-
-		Assert.assertEquals(1, assetEntries.size());
-		Assert.assertEquals(newAssetEntry,
-			assetEntries.get(newAssetEntry.getPrimaryKey()));
-	}
-
-	@Test
 	public void testActionableDynamicQuery() throws Exception {
 		final IntegerWrapper count = new IntegerWrapper();
 
-		ActionableDynamicQuery actionableDynamicQuery = AssetEntryLocalServiceUtil.getActionableDynamicQuery();
-
-		actionableDynamicQuery.setPerformActionMethod(new ActionableDynamicQuery.PerformActionMethod() {
+		ActionableDynamicQuery actionableDynamicQuery = new AssetEntryActionableDynamicQuery() {
 				@Override
-				public void performAction(Object object) {
+				protected void performAction(Object object) {
 					AssetEntry assetEntry = (AssetEntry)object;
 
 					Assert.assertNotNull(assetEntry);
 
 					count.increment();
 				}
-			});
+			};
 
 		actionableDynamicQuery.performActions();
 
@@ -531,7 +338,7 @@ public class AssetEntryPersistenceTest {
 				AssetEntry.class.getClassLoader());
 
 		dynamicQuery.add(RestrictionsFactoryUtil.eq("entryId",
-				RandomTestUtil.nextLong()));
+				ServiceTestUtil.nextLong()));
 
 		List<AssetEntry> result = _persistence.findWithDynamicQuery(dynamicQuery);
 
@@ -570,7 +377,7 @@ public class AssetEntryPersistenceTest {
 		dynamicQuery.setProjection(ProjectionFactoryUtil.property("entryId"));
 
 		dynamicQuery.add(RestrictionsFactoryUtil.in("entryId",
-				new Object[] { RandomTestUtil.nextLong() }));
+				new Object[] { ServiceTestUtil.nextLong() }));
 
 		List<Object> result = _persistence.findWithDynamicQuery(dynamicQuery);
 
@@ -602,66 +409,66 @@ public class AssetEntryPersistenceTest {
 	}
 
 	protected AssetEntry addAssetEntry() throws Exception {
-		long pk = RandomTestUtil.nextLong();
+		long pk = ServiceTestUtil.nextLong();
 
 		AssetEntry assetEntry = _persistence.create(pk);
 
-		assetEntry.setGroupId(RandomTestUtil.nextLong());
+		assetEntry.setGroupId(ServiceTestUtil.nextLong());
 
-		assetEntry.setCompanyId(RandomTestUtil.nextLong());
+		assetEntry.setCompanyId(ServiceTestUtil.nextLong());
 
-		assetEntry.setUserId(RandomTestUtil.nextLong());
+		assetEntry.setUserId(ServiceTestUtil.nextLong());
 
-		assetEntry.setUserName(RandomTestUtil.randomString());
+		assetEntry.setUserName(ServiceTestUtil.randomString());
 
-		assetEntry.setCreateDate(RandomTestUtil.nextDate());
+		assetEntry.setCreateDate(ServiceTestUtil.nextDate());
 
-		assetEntry.setModifiedDate(RandomTestUtil.nextDate());
+		assetEntry.setModifiedDate(ServiceTestUtil.nextDate());
 
-		assetEntry.setClassNameId(RandomTestUtil.nextLong());
+		assetEntry.setClassNameId(ServiceTestUtil.nextLong());
 
-		assetEntry.setClassPK(RandomTestUtil.nextLong());
+		assetEntry.setClassPK(ServiceTestUtil.nextLong());
 
-		assetEntry.setClassUuid(RandomTestUtil.randomString());
+		assetEntry.setClassUuid(ServiceTestUtil.randomString());
 
-		assetEntry.setClassTypeId(RandomTestUtil.nextLong());
+		assetEntry.setClassTypeId(ServiceTestUtil.nextLong());
 
-		assetEntry.setVisible(RandomTestUtil.randomBoolean());
+		assetEntry.setVisible(ServiceTestUtil.randomBoolean());
 
-		assetEntry.setStartDate(RandomTestUtil.nextDate());
+		assetEntry.setStartDate(ServiceTestUtil.nextDate());
 
-		assetEntry.setEndDate(RandomTestUtil.nextDate());
+		assetEntry.setEndDate(ServiceTestUtil.nextDate());
 
-		assetEntry.setPublishDate(RandomTestUtil.nextDate());
+		assetEntry.setPublishDate(ServiceTestUtil.nextDate());
 
-		assetEntry.setExpirationDate(RandomTestUtil.nextDate());
+		assetEntry.setExpirationDate(ServiceTestUtil.nextDate());
 
-		assetEntry.setMimeType(RandomTestUtil.randomString());
+		assetEntry.setMimeType(ServiceTestUtil.randomString());
 
-		assetEntry.setTitle(RandomTestUtil.randomString());
+		assetEntry.setTitle(ServiceTestUtil.randomString());
 
-		assetEntry.setDescription(RandomTestUtil.randomString());
+		assetEntry.setDescription(ServiceTestUtil.randomString());
 
-		assetEntry.setSummary(RandomTestUtil.randomString());
+		assetEntry.setSummary(ServiceTestUtil.randomString());
 
-		assetEntry.setUrl(RandomTestUtil.randomString());
+		assetEntry.setUrl(ServiceTestUtil.randomString());
 
-		assetEntry.setLayoutUuid(RandomTestUtil.randomString());
+		assetEntry.setLayoutUuid(ServiceTestUtil.randomString());
 
-		assetEntry.setHeight(RandomTestUtil.nextInt());
+		assetEntry.setHeight(ServiceTestUtil.nextInt());
 
-		assetEntry.setWidth(RandomTestUtil.nextInt());
+		assetEntry.setWidth(ServiceTestUtil.nextInt());
 
-		assetEntry.setPriority(RandomTestUtil.nextDouble());
+		assetEntry.setPriority(ServiceTestUtil.nextDouble());
 
-		assetEntry.setViewCount(RandomTestUtil.nextInt());
+		assetEntry.setViewCount(ServiceTestUtil.nextInt());
 
-		_assetEntries.add(_persistence.update(assetEntry));
+		_persistence.update(assetEntry);
 
 		return assetEntry;
 	}
 
 	private static Log _log = LogFactoryUtil.getLog(AssetEntryPersistenceTest.class);
-	private List<AssetEntry> _assetEntries = new ArrayList<AssetEntry>();
-	private AssetEntryPersistence _persistence = AssetEntryUtil.getPersistence();
+	private AssetEntryPersistence _persistence = (AssetEntryPersistence)PortalBeanLocatorUtil.locate(AssetEntryPersistence.class.getName());
+	private TransactionalPersistenceAdvice _transactionalPersistenceAdvice = (TransactionalPersistenceAdvice)PortalBeanLocatorUtil.locate(TransactionalPersistenceAdvice.class.getName());
 }

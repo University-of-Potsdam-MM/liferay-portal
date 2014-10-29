@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -43,13 +43,12 @@ if (!ckEditorConfigFileName.equals("ckconfig.jsp")) {
 
 boolean hideImageResizing = ParamUtil.getBoolean(request, "hideImageResizing");
 
-boolean allowBrowseDocuments = GetterUtil.getBoolean((String)request.getAttribute("liferay-ui:input-editor:allowBrowseDocuments"));
 Map<String, String> configParamsMap = (Map<String, String>)request.getAttribute("liferay-ui:input-editor:configParams");
 Map<String, String> fileBrowserParamsMap = (Map<String, String>)request.getAttribute("liferay-ui:input-editor:fileBrowserParams");
 
 String configParams = marshallParams(configParamsMap);
+String fileBrowserParams = marshallParams(fileBrowserParamsMap);
 
-String contents = (String)request.getAttribute("liferay-ui:input-editor:contents");
 String contentsLanguageId = (String)request.getAttribute("liferay-ui:input-editor:contentsLanguageId");
 String cssClass = GetterUtil.getString((String)request.getAttribute("liferay-ui:input-editor:cssClass"));
 String cssClasses = GetterUtil.getString((String)request.getAttribute("liferay-ui:input-editor:cssClasses"));
@@ -114,7 +113,7 @@ if (!inlineEdit) {
 
 		<script src="<%= HtmlUtil.escape(PortalUtil.getStaticResourceURL(request, themeDisplay.getCDNHost() + themeDisplay.getPathJavaScript() + "/editor/ckeditor/ckeditor.js", javaScriptLastModified)) %>" type="text/javascript"></script>
 
-		<c:if test="<%= inlineEdit && Validator.isNotNull(inlineEditSaveURL) %>">
+		<c:if test="<%= inlineEdit && (inlineEditSaveURL != null) %>">
 			<script src="<%= HtmlUtil.escape(PortalUtil.getStaticResourceURL(request, themeDisplay.getCDNHost() + themeDisplay.getPathJavaScript() + "/editor/ckeditor/main.js", javaScriptLastModified)) %>" type="text/javascript"></script>
 		</c:if>
 
@@ -137,28 +136,10 @@ if (!inlineEdit) {
 		},
 
 		getCkData: function() {
-			var data;
+			var data = CKEDITOR.instances['<%= name %>'].getData();
 
-			if (!window['<%= name %>'].instanceReady) {
-				<c:choose>
-					<c:when test="<%= contents != null %>">
-						data = '<%= UnicodeFormatter.toString(contents) %>';
-					</c:when>
-					<c:otherwise>
-						data = '';
-
-						if (window['<%= HtmlUtil.escapeJS(namespace + initMethod) %>']) {
-							data = window['<%= HtmlUtil.escapeJS(namespace + initMethod) %>']();
-						}
-					</c:otherwise>
-				</c:choose>
-			}
-			else {
-				data = CKEDITOR.instances['<%= name %>'].getData();
-
-				if (CKEDITOR.env.gecko && (CKEDITOR.tools.trim(data) == '<br />')) {
-					data = '';
-				}
+			if (CKEDITOR.env.gecko && (CKEDITOR.tools.trim(data) == '<br />')) {
+				data = '';
 			}
 
 			return data;
@@ -172,11 +153,9 @@ if (!inlineEdit) {
 			return window['<%= name %>'].getCkData();
 		},
 
-		instanceReady: false,
-
 		<c:if test="<%= Validator.isNotNull(onBlurMethod) %>">
 			onBlurCallback: function() {
-				window['<%= HtmlUtil.escapeJS(onBlurMethod) %>'](CKEDITOR.instances['<%= name %>']);
+				<%= HtmlUtil.escapeJS(onBlurMethod) %>(CKEDITOR.instances['<%= name %>']);
 			},
 		</c:if>
 
@@ -186,7 +165,7 @@ if (!inlineEdit) {
 				var dirty = ckEditor.checkDirty();
 
 				if (dirty) {
-					window['<%= HtmlUtil.escapeJS(onChangeMethod) %>'](window['<%= name %>'].getText());
+					<%= HtmlUtil.escapeJS(onChangeMethod) %>(window['<%= name %>'].getText());
 
 					ckEditor.resetDirty();
 				}
@@ -195,14 +174,12 @@ if (!inlineEdit) {
 
 		<c:if test="<%= Validator.isNotNull(onFocusMethod) %>">
 			onFocusCallback: function() {
-				window['<%= HtmlUtil.escapeJS(onFocusMethod) %>'](CKEDITOR.instances['<%= name %>']);
+				<%= HtmlUtil.escapeJS(onFocusMethod) %>(CKEDITOR.instances['<%= name %>']);
 			},
 		</c:if>
 
 		setHTML: function(value) {
 			CKEDITOR.instances['<%= name %>'].setData(value);
-
-			window['<%= name %>']._setStyles();
 		}
 	};
 </aui:script>
@@ -210,12 +187,12 @@ if (!inlineEdit) {
 <%
 String textareaName = name;
 
-String modules = "aui-node-base";
+String modules = StringPool.BLANK;
 
-if (inlineEdit && Validator.isNotNull(inlineEditSaveURL)) {
+if (inlineEdit && (inlineEditSaveURL != null)) {
 	textareaName = name + "_original";
 
-	modules += ",inline-editor-ckeditor";
+	modules = "inline-editor-ckeditor";
 }
 %>
 
@@ -230,84 +207,8 @@ if (inlineEdit && Validator.isNotNull(inlineEditSaveURL)) {
 </script>
 
 <aui:script use="<%= modules %>">
-	var addAUIClass = function(iframe) {
-		if (iframe) {
-			var iframeWin = iframe.getDOM().contentWindow;
-
-			if (iframeWin) {
-				var iframeDoc = iframeWin.document.documentElement;
-
-				A.one(iframeDoc).addClass('aui');
-			}
-		}
-	};
-
-	window['<%= name %>']._setStyles = function() {
-		var ckEditor = A.one('#cke_<%= name %>');
-
-		if (ckEditor) {
-			var iframe = ckEditor.one('iframe');
-
-			addAUIClass(iframe);
-
-			var ckePanelDelegate = Liferay.Data['<%= name %>Handle'];
-
-			if (!ckePanelDelegate) {
-				var ckePanelDelegate = ckEditor.delegate(
-					'click',
-					function(event) {
-						var panelFrame = A.one('.cke_combopanel .cke_panel_frame');
-
-						addAUIClass(panelFrame);
-
-						ckePanelDelegate.detach();
-
-						Liferay.Data['<%= name %>Handle'] = null;
-					},
-					'.cke_combo'
-				);
-
-				Liferay.Data['<%= name %>Handle'] = ckePanelDelegate;
-			}
-		}
-	};
-
-	<c:if test="<%= inlineEdit && Validator.isNotNull(inlineEditSaveURL) %>">
-		var inlineEditor;
-
-		Liferay.on(
-			'toggleControls',
-			function(event) {
-				if (event.src === 'ui') {
-					var ckEditor = CKEDITOR.instances['<%= name %>'];
-
-					if (event.enabled && !ckEditor) {
-						createEditor();
-					}
-					else if (ckEditor) {
-						inlineEditor.destroy();
-						ckEditor.destroy();
-
-						ckEditor = null;
-
-						var editorNode = A.one('#<%= name %>');
-
-						editorNode.removeAttribute('contenteditable');
-						editorNode.removeClass('lfr-editable');
-					}
-				}
-			}
-		);
-	</c:if>
-
-	var createEditor = function() {
+	(function() {
 		var Util = Liferay.Util;
-
-		var editorNode = A.one('#<%= name %>');
-
-		editorNode.setAttribute('contenteditable', true);
-
-		editorNode.addClass('lfr-editable');
 
 		function getToolbarSet(toolbarSet) {
 			if (Util.isPhone()) {
@@ -321,26 +222,32 @@ if (inlineEdit && Validator.isNotNull(inlineEditSaveURL)) {
 		}
 
 		function initData() {
-			<c:if test="<%= Validator.isNotNull(initMethod) && !(inlineEdit && Validator.isNotNull(inlineEditSaveURL)) %>">
+			<c:if test="<%= Validator.isNotNull(initMethod) && !(inlineEdit && (inlineEditSaveURL != null)) %>">
 				ckEditor.setData(
-					<c:choose>
-						<c:when test="<%= (contents != null) %>">
-							'<%= UnicodeFormatter.toString(contents) %>',
-						</c:when>
-						<c:otherwise>
-							window['<%= HtmlUtil.escapeJS(namespace + initMethod) %>'](),
-						</c:otherwise>
-					</c:choose>
+					<%= HtmlUtil.escapeJS(namespace + initMethod) %>(),
 					function() {
 						ckEditor.resetDirty();
 					}
 				);
 			</c:if>
-
-			window['<%= name %>']._setStyles();
-
-			window['<%= name %>'].instanceReady = true;
 		}
+
+		<%
+		StringBundler sb = new StringBundler(10);
+
+		sb.append(mainPath);
+		sb.append("/portal/fckeditor?p_l_id=");
+		sb.append(plid);
+		sb.append("&p_p_id=");
+		sb.append(HttpUtil.encodeURL(portletId));
+		sb.append("&doAsUserId=");
+		sb.append(HttpUtil.encodeURL(doAsUserId));
+		sb.append("&doAsGroupId=");
+		sb.append(HttpUtil.encodeURL(String.valueOf(doAsGroupId)));
+		sb.append(fileBrowserParams);
+
+		String connectorURL = HttpUtil.encodeURL(sb.toString());
+		%>
 
 		<c:choose>
 			<c:when test="<%= inlineEdit %>">
@@ -353,58 +260,17 @@ if (inlineEdit && Validator.isNotNull(inlineEditSaveURL)) {
 
 			'<%= name %>',
 			{
-				customConfig: '<%= PortalUtil.getPathContext() %>/html/js/editor/ckeditor/<%= HtmlUtil.escapeJS(ckEditorConfigFileName) %>?p_p_id=<%= HttpUtil.encodeURL(portletId) %>&p_main_path=<%= HttpUtil.encodeURL(mainPath) %>&contentsLanguageId=<%= HttpUtil.encodeURL(contentsLanguageId) %>&colorSchemeCssClass=<%= HttpUtil.encodeURL(themeDisplay.getColorScheme().getCssClass()) %>&cssClasses=<%= HttpUtil.encodeURL(cssClasses) %>&cssPath=<%= HttpUtil.encodeURL(themeDisplay.getPathThemeCss()) %>&doAsGroupId=<%= HttpUtil.encodeURL(String.valueOf(doAsGroupId)) %>&doAsUserId=<%= HttpUtil.encodeURL(doAsUserId) %>&imagesPath=<%= HttpUtil.encodeURL(themeDisplay.getPathThemeImages()) %>&inlineEdit=<%= inlineEdit %><%= configParams %>&languageId=<%= HttpUtil.encodeURL(LocaleUtil.toLanguageId(locale)) %>&name=<%= name %>&resizable=<%= resizable %>',
-
-				<c:choose>
-					<c:when test="<%= allowBrowseDocuments %>">
-						<liferay-portlet:renderURL portletName="<%= PortletKeys.DOCUMENT_SELECTOR %>" varImpl="documentSelectorURL" windowState="<%= LiferayWindowState.POP_UP.toString() %>">
-							<portlet:param name="struts_action" value="/document_selector/view" />
-							<portlet:param name="groupId" value="<%= String.valueOf(scopeGroupId) %>" />
-							<portlet:param name="eventName" value='<%= name + "selectDocument" %>' />
-							<portlet:param name="showGroupsSelector" value="true" />
-						</liferay-portlet:renderURL>
-
-						<%
-						if (fileBrowserParamsMap != null) {
-							for (Map.Entry<String, String> entry : fileBrowserParamsMap.entrySet()) {
-								documentSelectorURL.setParameter(entry.getKey(), entry.getValue());
-							}
-						}
-						%>
-
-						filebrowserBrowseUrl: '<%= documentSelectorURL %>',
-						filebrowserImageBrowseUrl: '<%= documentSelectorURL %>&Type=image',
-						filebrowserImageBrowseLinkUrl: '<%= documentSelectorURL %>&Type=image',
-						filebrowserFlashBrowseUrl: '<%= documentSelectorURL %>&Type=flash',
-					</c:when>
-					<c:otherwise>
-						filebrowserBrowseUrl: '',
-						filebrowserImageBrowseUrl: '',
-						filebrowserImageBrowseLinkUrl: '',
-						filebrowserFlashBrowseUrl: '',
-					</c:otherwise>
-				</c:choose>
-
+				customConfig: '<%= PortalUtil.getPathContext() %>/html/js/editor/ckeditor/<%= HtmlUtil.escapeJS(ckEditorConfigFileName) %>?p_l_id=<%= plid %>&p_p_id=<%= HttpUtil.encodeURL(portletId) %>&p_main_path=<%= HttpUtil.encodeURL(mainPath) %>&doAsUserId=<%= HttpUtil.encodeURL(doAsUserId) %>&doAsGroupId=<%= HttpUtil.encodeURL(String.valueOf(doAsGroupId)) %>&contentsLanguageId=<%= HttpUtil.encodeURL(Validator.isNotNull(contentsLanguageId) ? contentsLanguageId : LocaleUtil.toLanguageId(locale)) %>&cssPath=<%= HttpUtil.encodeURL(themeDisplay.getPathThemeCss()) %>&cssClasses=<%= HttpUtil.encodeURL(cssClasses) %>&imagesPath=<%= HttpUtil.encodeURL(themeDisplay.getPathThemeImages()) %>&languageId=<%= HttpUtil.encodeURL(LocaleUtil.toLanguageId(locale)) %>&resizable=<%= resizable %>&inlineEdit=<%= inlineEdit %><%= configParams %>',
+				filebrowserBrowseUrl: '<%= PortalUtil.getPathContext() %>/html/js/editor/ckeditor/editor/filemanager/browser/liferay/browser.html?Connector=<%= connectorURL %><%= fileBrowserParams %>',
 				filebrowserUploadUrl: null,
 				toolbar: getToolbarSet('<%= TextFormatter.format(HtmlUtil.escapeJS(toolbarSet), TextFormatter.M) %>')
 			}
 		);
 
-		Liferay.on(
-			'<%= name %>selectDocument',
-			function(event) {
-				CKEDITOR.tools.callFunction(event.ckeditorfuncnum, event.url);
-			}
-		);
-
-		if (window['<%= name %>Config']) {
-			window['<%= name %>Config']();
-		}
-
 		var ckEditor = CKEDITOR.instances['<%= name %>'];
 
-		<c:if test="<%= inlineEdit && (Validator.isNotNull(inlineEditSaveURL)) %>">
-			inlineEditor = new Liferay.CKEditorInline(
+		<c:if test="<%= inlineEdit && (inlineEditSaveURL != null) %>">
+			new Liferay.CKEditorInline(
 				{
 					editor: ckEditor,
 					editorName: '<%= name %>',
@@ -453,7 +319,7 @@ if (inlineEdit && Validator.isNotNull(inlineEditSaveURL)) {
 				</c:if>
 
 				<c:if test="<%= Validator.isNotNull(onChangeMethod) %>">
-					var contentChangeHandle = setInterval(
+					setInterval(
 						function() {
 							try {
 								window['<%= name %>'].onChangeCallback();
@@ -463,50 +329,14 @@ if (inlineEdit && Validator.isNotNull(inlineEditSaveURL)) {
 						},
 						300
 					);
-
-					var clearContentChangeHandle = function(event) {
-						if (event.portletId === '<%= portletId %>') {
-							clearInterval(contentChangeHandle);
-
-							Liferay.detach('destroyPortlet', clearContentChangeHandle);
-						}
-					};
-
-					Liferay.on('destroyPortlet', clearContentChangeHandle);
 				</c:if>
 
 				<c:if test="<%= Validator.isNotNull(onFocusMethod) %>">
 					CKEDITOR.instances['<%= name %>'].on('focus', window['<%= name %>'].onFocusCallback);
 				</c:if>
 
-				var destroyInstance = function(event) {
-					if (event.portletId === '<%= portletId %>') {
-						try {
-							var ckeditorInstances = window.CKEDITOR.instances;
-
-							A.Object.each(
-								ckeditorInstances,
-								function(value, key) {
-									var inst = ckeditorInstances[key];
-
-									delete ckeditorInstances[key];
-
-									inst.destroy();
-								}
-							);
-						}
-						catch (error) {
-						}
-
-						Liferay.detach('destroyPortlet', destroyInstance);
-					}
-				};
-
-				Liferay.on('destroyPortlet', destroyInstance);
 			}
 		);
-
-		ckEditor.on('dataReady', window['<%= name %>']._setStyles);
 
 		<%
 		if (toolbarSet.equals("creole")) {
@@ -576,47 +406,21 @@ if (inlineEdit && Validator.isNotNull(inlineEditSaveURL)) {
 		}
 		%>
 
-	};
-
-	<%
-	String toogleControlsStatus = GetterUtil.getString(SessionClicks.get(request, "liferay_toggle_controls", "visible"));
-	%>
-
-	<c:if test='<%= (inlineEdit && toogleControlsStatus.equals("visible")) || !inlineEdit %>'>;
-		createEditor();
-	</c:if>
-
-	CKEDITOR.scriptLoader.loadScripts = function(scripts, success, failure) {
-		scripts = A.Array.filter(
-			scripts,
-			function(item) {
-				return !A.one('script[src=' + item + ']');
-			}
-		);
-
-		if (scripts.length) {
-			CKEDITOR.scriptLoader.load(scripts, success, failure);
-		}
-		else {
-			success();
-		}
-	};
+	})();
 
 </aui:script>
 
 <%!
 public String marshallParams(Map<String, String> params) {
-	if (params == null) {
-		return StringPool.BLANK;
-	}
+	StringBundler sb = new StringBundler();
 
-	StringBundler sb = new StringBundler(4 * params.size());
-
-	for (Map.Entry<String, String> configParam : params.entrySet()) {
-		sb.append(StringPool.AMPERSAND);
-		sb.append(configParam.getKey());
-		sb.append(StringPool.EQUAL);
-		sb.append(HttpUtil.encodeURL(configParam.getValue()));
+	if (params != null) {
+		for (Map.Entry<String, String> configParam : params.entrySet()) {
+			sb.append(StringPool.AMPERSAND);
+			sb.append(configParam.getKey());
+			sb.append(StringPool.EQUAL);
+			sb.append(HttpUtil.encodeURL(configParam.getValue()));
+		}
 	}
 
 	return sb.toString();

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -45,7 +45,7 @@ import com.liferay.portal.util.PropsValues;
 public class PortalServiceImpl extends PortalServiceBaseImpl {
 
 	@Override
-	public String getAutoDeployDirectory() {
+	public String getAutoDeployDirectory() throws SystemException {
 		return PrefsPropsUtil.getString(
 			PropsKeys.AUTO_DEPLOY_DEPLOY_DIR,
 			PropsValues.AUTO_DEPLOY_DEPLOY_DIR);
@@ -58,20 +58,25 @@ public class PortalServiceImpl extends PortalServiceBaseImpl {
 	}
 
 	@Override
-	public void testAddClassName_Rollback(String classNameValue) {
+	public void testAddClassName_Rollback(String classNameValue)
+		throws SystemException {
+
 		addClassName(classNameValue);
 
 		throw new SystemException();
 	}
 
 	@Override
-	public void testAddClassName_Success(String classNameValue) {
+	public void testAddClassName_Success(String classNameValue)
+		throws SystemException {
+
 		addClassName(classNameValue);
 	}
 
 	@Override
 	public void testAddClassNameAndTestTransactionPortletBar_PortalRollback(
-		String transactionPortletBarText) {
+			String transactionPortletBarText)
+		throws SystemException {
 
 		addClassName(PortalService.class.getName());
 
@@ -82,7 +87,8 @@ public class PortalServiceImpl extends PortalServiceBaseImpl {
 
 	@Override
 	public void testAddClassNameAndTestTransactionPortletBar_PortletRollback(
-		String transactionPortletBarText) {
+			String transactionPortletBarText)
+		throws SystemException {
 
 		addClassName(PortalService.class.getName());
 
@@ -91,7 +97,8 @@ public class PortalServiceImpl extends PortalServiceBaseImpl {
 
 	@Override
 	public void testAddClassNameAndTestTransactionPortletBar_Success(
-		String transactionPortletBarText) {
+			String transactionPortletBarText)
+		throws SystemException {
 
 		addClassName(PortalService.class.getName());
 
@@ -100,7 +107,8 @@ public class PortalServiceImpl extends PortalServiceBaseImpl {
 
 	@Override
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public void testAutoSyncHibernateSessionStateOnTxCreation() {
+	public void testAutoSyncHibernateSessionStateOnTxCreation()
+		throws SystemException {
 
 		// Add in new transaction
 
@@ -170,7 +178,7 @@ public class PortalServiceImpl extends PortalServiceBaseImpl {
 	}
 
 	@Override
-	public void testDeleteClassName() throws PortalException {
+	public void testDeleteClassName() throws PortalException, SystemException {
 		classNamePersistence.removeByValue(PortalService.class.getName());
 	}
 
@@ -196,7 +204,7 @@ public class PortalServiceImpl extends PortalServiceBaseImpl {
 	}
 
 	@Override
-	public boolean testHasClassName() {
+	public boolean testHasClassName() throws SystemException {
 		int count = classNamePersistence.countByValue(
 			PortalService.class.getName());
 
@@ -208,7 +216,7 @@ public class PortalServiceImpl extends PortalServiceBaseImpl {
 		}
 	}
 
-	protected void addClassName(String classNameValue) {
+	protected void addClassName(String classNameValue) throws SystemException {
 		long classNameId = counterLocalService.increment();
 
 		ClassName className = classNamePersistence.create(classNameId);
@@ -219,7 +227,8 @@ public class PortalServiceImpl extends PortalServiceBaseImpl {
 	}
 
 	protected void addTransactionPortletBar(
-		String transactionPortletBarText, boolean rollback) {
+			String transactionPortletBarText, boolean rollback)
+		throws SystemException {
 
 		try {
 			Message message = new Message();

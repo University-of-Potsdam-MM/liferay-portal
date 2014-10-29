@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portlet.shopping.service.impl;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.security.permission.ActionKeys;
 import com.liferay.portal.service.ServiceContext;
@@ -35,6 +36,17 @@ import java.util.List;
 public class ShoppingItemServiceImpl extends ShoppingItemServiceBaseImpl {
 
 	@Override
+	public void addBookItems(long groupId, long categoryId, String[] isbns)
+		throws PortalException, SystemException {
+
+		ShoppingCategoryPermission.check(
+			getPermissionChecker(), groupId, categoryId, ActionKeys.ADD_ITEM);
+
+		shoppingItemLocalService.addBookItems(
+			getUserId(), groupId, categoryId, isbns);
+	}
+
+	@Override
 	public ShoppingItem addItem(
 			long groupId, long categoryId, String sku, String name,
 			String description, String properties, String fieldsQuantities,
@@ -44,7 +56,7 @@ public class ShoppingItemServiceImpl extends ShoppingItemServiceBaseImpl {
 			File mediumFile, boolean largeImage, String largeImageURL,
 			File largeFile, List<ShoppingItemField> itemFields,
 			List<ShoppingItemPrice> itemPrices, ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		ShoppingCategoryPermission.check(
 			getPermissionChecker(), groupId, categoryId, ActionKeys.ADD_ITEM);
@@ -58,7 +70,9 @@ public class ShoppingItemServiceImpl extends ShoppingItemServiceBaseImpl {
 	}
 
 	@Override
-	public void deleteItem(long itemId) throws PortalException {
+	public void deleteItem(long itemId)
+		throws PortalException, SystemException {
+
 		ShoppingItemPermission.check(
 			getPermissionChecker(), itemId, ActionKeys.DELETE);
 
@@ -66,12 +80,16 @@ public class ShoppingItemServiceImpl extends ShoppingItemServiceBaseImpl {
 	}
 
 	@Override
-	public int getCategoriesItemsCount(long groupId, List<Long> categoryIds) {
+	public int getCategoriesItemsCount(long groupId, List<Long> categoryIds)
+		throws SystemException {
+
 		return shoppingItemFinder.filterCountByG_C(groupId, categoryIds);
 	}
 
 	@Override
-	public ShoppingItem getItem(long itemId) throws PortalException {
+	public ShoppingItem getItem(long itemId)
+		throws PortalException, SystemException {
+
 		ShoppingItemPermission.check(
 			getPermissionChecker(), itemId, ActionKeys.VIEW);
 
@@ -79,28 +97,33 @@ public class ShoppingItemServiceImpl extends ShoppingItemServiceBaseImpl {
 	}
 
 	@Override
-	public List<ShoppingItem> getItems(long groupId, long categoryId) {
+	public List<ShoppingItem> getItems(long groupId, long categoryId)
+		throws SystemException {
+
 		return shoppingItemPersistence.filterFindByG_C(groupId, categoryId);
 	}
 
 	@Override
 	public List<ShoppingItem> getItems(
-		long groupId, long categoryId, int start, int end,
-		OrderByComparator<ShoppingItem> obc) {
+			long groupId, long categoryId, int start, int end,
+			OrderByComparator obc)
+		throws SystemException {
 
 		return shoppingItemPersistence.filterFindByG_C(
 			groupId, categoryId, start, end, obc);
 	}
 
 	@Override
-	public int getItemsCount(long groupId, long categoryId) {
+	public int getItemsCount(long groupId, long categoryId)
+		throws SystemException {
+
 		return shoppingItemPersistence.filterCountByG_C(groupId, categoryId);
 	}
 
 	@Override
 	public ShoppingItem[] getItemsPrevAndNext(
-			long itemId, OrderByComparator<ShoppingItem> obc)
-		throws PortalException {
+			long itemId, OrderByComparator obc)
+		throws PortalException, SystemException {
 
 		ShoppingItem item = shoppingItemPersistence.findByPrimaryKey(itemId);
 
@@ -118,7 +141,7 @@ public class ShoppingItemServiceImpl extends ShoppingItemServiceBaseImpl {
 			File mediumFile, boolean largeImage, String largeImageURL,
 			File largeFile, List<ShoppingItemField> itemFields,
 			List<ShoppingItemPrice> itemPrices, ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		ShoppingItemPermission.check(
 			getPermissionChecker(), itemId, ActionKeys.UPDATE);

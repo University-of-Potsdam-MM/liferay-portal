@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -31,21 +31,6 @@ public class MembershipRequestServiceWrapper implements MembershipRequestService
 		_membershipRequestService = membershipRequestService;
 	}
 
-	@Override
-	public com.liferay.portal.model.MembershipRequest addMembershipRequest(
-		long groupId, java.lang.String comments,
-		com.liferay.portal.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _membershipRequestService.addMembershipRequest(groupId,
-			comments, serviceContext);
-	}
-
-	@Override
-	public void deleteMembershipRequests(long groupId, int statusId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_membershipRequestService.deleteMembershipRequests(groupId, statusId);
-	}
-
 	/**
 	* Returns the Spring bean ID for this bean.
 	*
@@ -54,13 +39,6 @@ public class MembershipRequestServiceWrapper implements MembershipRequestService
 	@Override
 	public java.lang.String getBeanIdentifier() {
 		return _membershipRequestService.getBeanIdentifier();
-	}
-
-	@Override
-	public com.liferay.portal.model.MembershipRequest getMembershipRequest(
-		long membershipRequestId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _membershipRequestService.getMembershipRequest(membershipRequestId);
 	}
 
 	/**
@@ -74,10 +52,36 @@ public class MembershipRequestServiceWrapper implements MembershipRequestService
 	}
 
 	@Override
+	public com.liferay.portal.model.MembershipRequest addMembershipRequest(
+		long groupId, java.lang.String comments,
+		com.liferay.portal.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _membershipRequestService.addMembershipRequest(groupId,
+			comments, serviceContext);
+	}
+
+	@Override
+	public void deleteMembershipRequests(long groupId, int statusId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		_membershipRequestService.deleteMembershipRequests(groupId, statusId);
+	}
+
+	@Override
+	public com.liferay.portal.model.MembershipRequest getMembershipRequest(
+		long membershipRequestId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _membershipRequestService.getMembershipRequest(membershipRequestId);
+	}
+
+	@Override
 	public void updateStatus(long membershipRequestId,
 		java.lang.String reviewComments, int statusId,
 		com.liferay.portal.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		_membershipRequestService.updateStatus(membershipRequestId,
 			reviewComments, statusId, serviceContext);
 	}
@@ -85,7 +89,6 @@ public class MembershipRequestServiceWrapper implements MembershipRequestService
 	/**
 	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedService}
 	 */
-	@Deprecated
 	public MembershipRequestService getWrappedMembershipRequestService() {
 		return _membershipRequestService;
 	}
@@ -93,7 +96,6 @@ public class MembershipRequestServiceWrapper implements MembershipRequestService
 	/**
 	 * @deprecated As of 6.1.0, replaced by {@link #setWrappedService}
 	 */
-	@Deprecated
 	public void setWrappedMembershipRequestService(
 		MembershipRequestService membershipRequestService) {
 		_membershipRequestService = membershipRequestService;

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -13,8 +13,6 @@
  */
 
 package com.liferay.portal.model.impl;
-
-import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -49,7 +47,6 @@ import java.util.Map;
  * @see com.liferay.portal.model.VirtualHostModel
  * @generated
  */
-@ProviderType
 public class VirtualHostModelImpl extends BaseModelImpl<VirtualHost>
 	implements VirtualHostModel {
 	/*
@@ -59,13 +56,12 @@ public class VirtualHostModelImpl extends BaseModelImpl<VirtualHost>
 	 */
 	public static final String TABLE_NAME = "VirtualHost";
 	public static final Object[][] TABLE_COLUMNS = {
-			{ "mvccVersion", Types.BIGINT },
 			{ "virtualHostId", Types.BIGINT },
 			{ "companyId", Types.BIGINT },
 			{ "layoutSetId", Types.BIGINT },
 			{ "hostname", Types.VARCHAR }
 		};
-	public static final String TABLE_SQL_CREATE = "create table VirtualHost (mvccVersion LONG default 0,virtualHostId LONG not null primary key,companyId LONG,layoutSetId LONG,hostname VARCHAR(75) null)";
+	public static final String TABLE_SQL_CREATE = "create table VirtualHost (virtualHostId LONG not null primary key,companyId LONG,layoutSetId LONG,hostname VARCHAR(75) null)";
 	public static final String TABLE_SQL_DROP = "drop table VirtualHost";
 	public static final String ORDER_BY_JPQL = " ORDER BY virtualHost.virtualHostId ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY VirtualHost.virtualHostId ASC";
@@ -81,10 +77,10 @@ public class VirtualHostModelImpl extends BaseModelImpl<VirtualHost>
 	public static final boolean COLUMN_BITMASK_ENABLED = GetterUtil.getBoolean(com.liferay.portal.util.PropsUtil.get(
 				"value.object.column.bitmask.enabled.com.liferay.portal.model.VirtualHost"),
 			true);
-	public static final long COMPANYID_COLUMN_BITMASK = 1L;
-	public static final long HOSTNAME_COLUMN_BITMASK = 2L;
-	public static final long LAYOUTSETID_COLUMN_BITMASK = 4L;
-	public static final long VIRTUALHOSTID_COLUMN_BITMASK = 8L;
+	public static long COMPANYID_COLUMN_BITMASK = 1L;
+	public static long HOSTNAME_COLUMN_BITMASK = 2L;
+	public static long LAYOUTSETID_COLUMN_BITMASK = 4L;
+	public static long VIRTUALHOSTID_COLUMN_BITMASK = 8L;
 	public static final long LOCK_EXPIRATION_TIME = GetterUtil.getLong(com.liferay.portal.util.PropsUtil.get(
 				"lock.expiration.time.com.liferay.portal.model.VirtualHost"));
 
@@ -125,26 +121,16 @@ public class VirtualHostModelImpl extends BaseModelImpl<VirtualHost>
 	public Map<String, Object> getModelAttributes() {
 		Map<String, Object> attributes = new HashMap<String, Object>();
 
-		attributes.put("mvccVersion", getMvccVersion());
 		attributes.put("virtualHostId", getVirtualHostId());
 		attributes.put("companyId", getCompanyId());
 		attributes.put("layoutSetId", getLayoutSetId());
 		attributes.put("hostname", getHostname());
-
-		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
-		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
 
 		return attributes;
 	}
 
 	@Override
 	public void setModelAttributes(Map<String, Object> attributes) {
-		Long mvccVersion = (Long)attributes.get("mvccVersion");
-
-		if (mvccVersion != null) {
-			setMvccVersion(mvccVersion);
-		}
-
 		Long virtualHostId = (Long)attributes.get("virtualHostId");
 
 		if (virtualHostId != null) {
@@ -168,16 +154,6 @@ public class VirtualHostModelImpl extends BaseModelImpl<VirtualHost>
 		if (hostname != null) {
 			setHostname(hostname);
 		}
-	}
-
-	@Override
-	public long getMvccVersion() {
-		return _mvccVersion;
-	}
-
-	@Override
-	public void setMvccVersion(long mvccVersion) {
-		_mvccVersion = mvccVersion;
 	}
 
 	@Override
@@ -290,7 +266,6 @@ public class VirtualHostModelImpl extends BaseModelImpl<VirtualHost>
 	public Object clone() {
 		VirtualHostImpl virtualHostImpl = new VirtualHostImpl();
 
-		virtualHostImpl.setMvccVersion(getMvccVersion());
 		virtualHostImpl.setVirtualHostId(getVirtualHostId());
 		virtualHostImpl.setCompanyId(getCompanyId());
 		virtualHostImpl.setLayoutSetId(getLayoutSetId());
@@ -344,16 +319,6 @@ public class VirtualHostModelImpl extends BaseModelImpl<VirtualHost>
 	}
 
 	@Override
-	public boolean isEntityCacheEnabled() {
-		return ENTITY_CACHE_ENABLED;
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return FINDER_CACHE_ENABLED;
-	}
-
-	@Override
 	public void resetOriginalValues() {
 		VirtualHostModelImpl virtualHostModelImpl = this;
 
@@ -374,8 +339,6 @@ public class VirtualHostModelImpl extends BaseModelImpl<VirtualHost>
 	public CacheModel<VirtualHost> toCacheModel() {
 		VirtualHostCacheModel virtualHostCacheModel = new VirtualHostCacheModel();
 
-		virtualHostCacheModel.mvccVersion = getMvccVersion();
-
 		virtualHostCacheModel.virtualHostId = getVirtualHostId();
 
 		virtualHostCacheModel.companyId = getCompanyId();
@@ -395,11 +358,9 @@ public class VirtualHostModelImpl extends BaseModelImpl<VirtualHost>
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(11);
+		StringBundler sb = new StringBundler(9);
 
-		sb.append("{mvccVersion=");
-		sb.append(getMvccVersion());
-		sb.append(", virtualHostId=");
+		sb.append("{virtualHostId=");
 		sb.append(getVirtualHostId());
 		sb.append(", companyId=");
 		sb.append(getCompanyId());
@@ -414,16 +375,12 @@ public class VirtualHostModelImpl extends BaseModelImpl<VirtualHost>
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(19);
+		StringBundler sb = new StringBundler(16);
 
 		sb.append("<model><model-name>");
 		sb.append("com.liferay.portal.model.VirtualHost");
 		sb.append("</model-name>");
 
-		sb.append(
-			"<column><column-name>mvccVersion</column-name><column-value><![CDATA[");
-		sb.append(getMvccVersion());
-		sb.append("]]></column-value></column>");
 		sb.append(
 			"<column><column-name>virtualHostId</column-name><column-value><![CDATA[");
 		sb.append(getVirtualHostId());
@@ -446,11 +403,10 @@ public class VirtualHostModelImpl extends BaseModelImpl<VirtualHost>
 		return sb.toString();
 	}
 
-	private static final ClassLoader _classLoader = VirtualHost.class.getClassLoader();
-	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
+	private static ClassLoader _classLoader = VirtualHost.class.getClassLoader();
+	private static Class<?>[] _escapedModelInterfaces = new Class[] {
 			VirtualHost.class
 		};
-	private long _mvccVersion;
 	private long _virtualHostId;
 	private long _companyId;
 	private long _originalCompanyId;

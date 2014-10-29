@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -26,7 +26,6 @@ import com.liferay.portal.kernel.servlet.ServletVersionDetector;
 import com.liferay.portal.kernel.util.BasePortalLifecycle;
 import com.liferay.portal.kernel.util.ContextPathUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.JavaConstants;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.PropsUtil;
@@ -167,10 +166,11 @@ public class InvokerFilter extends BasePortalLifecycle implements Filter {
 		if (invokerFilterHelper == null) {
 			invokerFilterHelper = new InvokerFilterHelper();
 
-			invokerFilterHelper.init(_filterConfig);
-
 			servletContext.setAttribute(
 				InvokerFilterHelper.class.getName(), invokerFilterHelper);
+
+			invokerFilterHelper.readLiferayFilterWebXML(
+				servletContext, "/WEB-INF/liferay-web.xml");
 		}
 
 		_invokerFilterHelper = invokerFilterHelper;
@@ -246,7 +246,7 @@ public class InvokerFilter extends BasePortalLifecycle implements Filter {
 			uri = uri.substring(_contextPath.length());
 		}
 
-		return HttpUtil.removePathParameters(uri);
+		return uri;
 	}
 
 	protected HttpServletRequest handleNonSerializableRequest(

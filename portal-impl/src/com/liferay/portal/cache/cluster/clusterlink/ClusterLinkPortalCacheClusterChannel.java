@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,10 +18,7 @@ import com.liferay.portal.kernel.cache.cluster.BasePortalCacheClusterChannel;
 import com.liferay.portal.kernel.cache.cluster.PortalCacheClusterEvent;
 import com.liferay.portal.kernel.cluster.ClusterLinkUtil;
 import com.liferay.portal.kernel.cluster.Priority;
-import com.liferay.portal.kernel.io.Serializer;
 import com.liferay.portal.kernel.messaging.Message;
-
-import java.nio.ByteBuffer;
 
 /**
  * @author Shuyang Zhou
@@ -41,14 +38,7 @@ public class ClusterLinkPortalCacheClusterChannel
 		Message message = new Message();
 
 		message.setDestinationName(_destinationName);
-
-		Serializer serializer = new Serializer();
-
-		serializer.writeObject(portalCacheClusterEvent);
-
-		ByteBuffer byteBuffer = serializer.toByteBuffer();
-
-		message.setPayload(byteBuffer.array());
+		message.setPayload(portalCacheClusterEvent);
 
 		ClusterLinkUtil.sendMulticastMessage(message, _priority);
 	}

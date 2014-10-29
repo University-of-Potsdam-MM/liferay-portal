@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -21,11 +21,11 @@ import com.liferay.portal.model.BaseModel;
 import com.liferay.portal.model.ClassedModel;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.service.ServiceContext;
+import com.liferay.portal.test.LiferayIntegrationJUnitTestRunner;
+import com.liferay.portal.test.MainServletExecutionTestListener;
 import com.liferay.portal.test.Sync;
 import com.liferay.portal.test.SynchronousDestinationExecutionTestListener;
-import com.liferay.portal.test.listeners.MainServletExecutionTestListener;
-import com.liferay.portal.test.runners.LiferayIntegrationJUnitTestRunner;
-import com.liferay.portal.util.test.TestPropsValues;
+import com.liferay.portal.util.TestPropsValues;
 import com.liferay.portlet.messageboards.model.MBCategory;
 import com.liferay.portlet.messageboards.model.MBCategoryConstants;
 import com.liferay.portlet.messageboards.service.MBCategoryLocalServiceUtil;
@@ -46,6 +46,12 @@ import org.junit.runner.RunWith;
 @RunWith(LiferayIntegrationJUnitTestRunner.class)
 @Sync
 public class MBCategoryTrashHandlerTest extends BaseTrashHandlerTestCase {
+
+	@Ignore()
+	@Override
+	@Test
+	public void testDeleteTrashVersions() throws Exception {
+	}
 
 	@Ignore()
 	@Override
@@ -165,22 +171,13 @@ public class MBCategoryTrashHandlerTest extends BaseTrashHandlerTestCase {
 
 	@Override
 	protected BaseModel<?> getParentBaseModel(
-			Group group, long parentBaseModelId, ServiceContext serviceContext)
-		throws Exception {
-
-		return MBCategoryLocalServiceUtil.addCategory(
-			TestPropsValues.getUserId(), parentBaseModelId, getSearchKeywords(),
-			StringPool.BLANK, serviceContext);
-	}
-
-	@Override
-	protected BaseModel<?> getParentBaseModel(
 			Group group, ServiceContext serviceContext)
 		throws Exception {
 
-		return getParentBaseModel(
-			group, MBCategoryConstants.DEFAULT_PARENT_CATEGORY_ID,
-			serviceContext);
+		return MBCategoryLocalServiceUtil.addCategory(
+			TestPropsValues.getUserId(),
+			MBCategoryConstants.DEFAULT_PARENT_CATEGORY_ID, getSearchKeywords(),
+			StringPool.BLANK, serviceContext);
 	}
 
 	@Override
@@ -195,11 +192,6 @@ public class MBCategoryTrashHandlerTest extends BaseTrashHandlerTestCase {
 
 	@Override
 	protected boolean isAssetableModel() {
-		return false;
-	}
-
-	@Override
-	protected boolean isAssetableParentModel() {
 		return false;
 	}
 
@@ -236,25 +228,6 @@ public class MBCategoryTrashHandlerTest extends BaseTrashHandlerTestCase {
 
 		MBCategoryLocalServiceUtil.moveCategoryToTrash(
 			TestPropsValues.getUserId(), primaryKey);
-	}
-
-	@Override
-	protected BaseModel<?> updateBaseModel(
-			long primaryKey, ServiceContext serviceContext)
-		throws Exception {
-
-		MBCategory category = MBCategoryLocalServiceUtil.getCategory(
-			primaryKey);
-
-		if (serviceContext.getWorkflowAction() ==
-				WorkflowConstants.ACTION_SAVE_DRAFT) {
-
-			category = MBCategoryLocalServiceUtil.updateStatus(
-				TestPropsValues.getUserId(), primaryKey,
-				WorkflowConstants.STATUS_DRAFT);
-		}
-
-		return category;
 	}
 
 }

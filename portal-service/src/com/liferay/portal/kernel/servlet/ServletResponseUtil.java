@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -74,7 +74,7 @@ public class ServletResponseUtil {
 		if (!rangeString.matches(_RANGE_REGEX)) {
 			throw new IOException(
 				"Range header does not match regular expression " +
-					rangeString);
+				rangeString);
 		}
 
 		List<Range> ranges = new ArrayList<Range>();
@@ -167,47 +167,44 @@ public class ServletResponseUtil {
 
 	public static void sendFile(
 			HttpServletRequest request, HttpServletResponse response,
-			String fileName, InputStream inputStream)
+			String fileName, InputStream is)
 		throws IOException {
 
-		sendFile(request, response, fileName, inputStream, null);
+		sendFile(request, response, fileName, is, null);
 	}
 
 	public static void sendFile(
 			HttpServletRequest request, HttpServletResponse response,
-			String fileName, InputStream inputStream, long contentLength,
+			String fileName, InputStream is, long contentLength,
 			String contentType)
 		throws IOException {
 
-		sendFile(
-			request, response, fileName, inputStream, contentLength,
-			contentType, null);
+		sendFile(request, response, fileName, is, 0, contentType, null);
 	}
 
 	public static void sendFile(
 			HttpServletRequest request, HttpServletResponse response,
-			String fileName, InputStream inputStream, long contentLength,
+			String fileName, InputStream is, long contentLength,
 			String contentType, String contentDispositionType)
 		throws IOException {
 
 		setHeaders(
 			request, response, fileName, contentType, contentDispositionType);
 
-		write(response, inputStream, contentLength);
+		write(response, is, contentLength);
 	}
 
 	public static void sendFile(
 			HttpServletRequest request, HttpServletResponse response,
-			String fileName, InputStream inputStream, String contentType)
+			String fileName, InputStream is, String contentType)
 		throws IOException {
 
-		sendFile(request, response, fileName, inputStream, 0, contentType);
+		sendFile(request, response, fileName, is, 0, contentType);
 	}
 
 	/**
 	 * @deprecated As of 6.1.0
 	 */
-	@Deprecated
 	public static void sendFile(
 			HttpServletResponse response, String fileName, byte[] bytes)
 		throws IOException {
@@ -218,7 +215,6 @@ public class ServletResponseUtil {
 	/**
 	 * @deprecated As of 6.1.0
 	 */
-	@Deprecated
 	public static void sendFile(
 			HttpServletResponse response, String fileName, byte[] bytes,
 			String contentType)
@@ -230,38 +226,33 @@ public class ServletResponseUtil {
 	/**
 	 * @deprecated As of 6.1.0
 	 */
-	@Deprecated
 	public static void sendFile(
-			HttpServletResponse response, String fileName,
-			InputStream inputStream)
+			HttpServletResponse response, String fileName, InputStream is)
 		throws IOException {
 
-		sendFile(null, response, fileName, inputStream);
+		sendFile(null, response, fileName, is);
 	}
 
 	/**
 	 * @deprecated As of 6.1.0
 	 */
-	@Deprecated
 	public static void sendFile(
-			HttpServletResponse response, String fileName,
-			InputStream inputStream, int contentLength, String contentType)
+			HttpServletResponse response, String fileName, InputStream is,
+			int contentLength, String contentType)
 		throws IOException {
 
-		sendFile(
-			null, response, fileName, inputStream, contentLength, contentType);
+		sendFile(null, response, fileName, is, contentLength, contentType);
 	}
 
 	/**
 	 * @deprecated As of 6.1.0
 	 */
-	@Deprecated
 	public static void sendFile(
-			HttpServletResponse response, String fileName,
-			InputStream inputStream, String contentType)
+			HttpServletResponse response, String fileName, InputStream is,
+			String contentType)
 		throws IOException {
 
-		sendFile(null, response, fileName, inputStream, contentType);
+		sendFile(null, response, fileName, is, contentType);
 	}
 
 	public static void write(
@@ -530,7 +521,9 @@ public class ServletResponseUtil {
 		else {
 			FileInputStream fileInputStream = new FileInputStream(file);
 
-			try (FileChannel fileChannel = fileInputStream.getChannel()) {
+			FileChannel fileChannel = fileInputStream.getChannel();
+
+			try {
 				int contentLength = (int)fileChannel.size();
 
 				response.setContentLength(contentLength);
@@ -541,34 +534,34 @@ public class ServletResponseUtil {
 					0, contentLength,
 					Channels.newChannel(response.getOutputStream()));
 			}
+			finally {
+				fileChannel.close();
+			}
 		}
 	}
 
-	public static void write(
-			HttpServletResponse response, InputStream inputStream)
+	public static void write(HttpServletResponse response, InputStream is)
 		throws IOException {
 
-		write(response, inputStream, 0);
+		write(response, is, 0);
 	}
 
 	public static void write(
-			HttpServletResponse response, InputStream inputStream,
-			long contentLength)
+			HttpServletResponse response, InputStream is, long contentLength)
 		throws IOException {
 
 		if (response.isCommitted()) {
-			StreamUtil.cleanUp(inputStream);
-
 			return;
 		}
 
 		if (contentLength > 0) {
-			response.setContentLength((int)contentLength);
+			response.setHeader(
+				HttpHeaders.CONTENT_LENGTH, String.valueOf(contentLength));
 		}
 
 		response.flushBuffer();
 
-		StreamUtil.transfer(inputStream, response.getOutputStream());
+		StreamUtil.transfer(is, response.getOutputStream());
 	}
 
 	public static void write(HttpServletResponse response, String s)

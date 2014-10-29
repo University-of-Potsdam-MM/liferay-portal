@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -22,7 +22,6 @@ import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.User;
 import com.liferay.portal.security.ldap.PortalLDAPImporterUtil;
-import com.liferay.portal.security.sso.SSOUtil;
 import com.liferay.portal.service.UserLocalServiceUtil;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.PrefsPropsUtil;
@@ -57,7 +56,7 @@ public class RequestHeaderAutoLogin extends BaseAutoLogin {
 
 		String remoteAddr = request.getRemoteAddr();
 
-		if (SSOUtil.isAccessAllowed(request, _hostsAllowed)) {
+		if (AuthSettingsUtil.isAccessAllowed(request, _hostsAllowed)) {
 			if (_log.isDebugEnabled()) {
 				_log.debug("Access allowed for " + remoteAddr);
 			}

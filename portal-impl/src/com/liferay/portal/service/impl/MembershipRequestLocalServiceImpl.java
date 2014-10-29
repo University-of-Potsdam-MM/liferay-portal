@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -16,9 +16,11 @@ package com.liferay.portal.service.impl;
 
 import com.liferay.portal.MembershipRequestCommentsException;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
+import com.liferay.portal.kernel.util.UniqueList;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.MembershipRequest;
@@ -39,22 +41,19 @@ import com.liferay.portal.util.SubscriptionSender;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author Jorge Ferrer
  */
-public class
-	MembershipRequestLocalServiceImpl
+public class MembershipRequestLocalServiceImpl
 	extends MembershipRequestLocalServiceBaseImpl {
 
 	@Override
 	public MembershipRequest addMembershipRequest(
 			long userId, long groupId, String comments,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		User user = userPersistence.findByPrimaryKey(userId);
 		Date now = new Date();
@@ -82,7 +81,7 @@ public class
 	}
 
 	@Override
-	public void deleteMembershipRequests(long groupId) {
+	public void deleteMembershipRequests(long groupId) throws SystemException {
 		List<MembershipRequest> membershipRequests =
 			membershipRequestPersistence.findByGroupId(groupId);
 
@@ -92,7 +91,9 @@ public class
 	}
 
 	@Override
-	public void deleteMembershipRequests(long groupId, int statusId) {
+	public void deleteMembershipRequests(long groupId, int statusId)
+		throws SystemException {
+
 		List<MembershipRequest> membershipRequests =
 			membershipRequestPersistence.findByG_S(groupId, statusId);
 
@@ -102,7 +103,9 @@ public class
 	}
 
 	@Override
-	public void deleteMembershipRequestsByUserId(long userId) {
+	public void deleteMembershipRequestsByUserId(long userId)
+		throws SystemException {
+
 		List<MembershipRequest> membershipRequests =
 			membershipRequestPersistence.findByUserId(userId);
 
@@ -113,15 +116,16 @@ public class
 
 	@Override
 	public List<MembershipRequest> getMembershipRequests(
-		long userId, long groupId, int statusId) {
+			long userId, long groupId, int statusId)
+		throws SystemException {
 
 		return membershipRequestPersistence.findByG_U_S(
 			groupId, userId, statusId);
 	}
 
 	@Override
-	public boolean hasMembershipRequest(
-		long userId, long groupId, int statusId) {
+	public boolean hasMembershipRequest(long userId, long groupId, int statusId)
+		throws SystemException {
 
 		List<MembershipRequest> membershipRequests = getMembershipRequests(
 			userId, groupId, statusId);
@@ -136,14 +140,15 @@ public class
 
 	@Override
 	public List<MembershipRequest> search(
-		long groupId, int status, int start, int end) {
+			long groupId, int status, int start, int end)
+		throws SystemException {
 
 		return membershipRequestPersistence.findByG_S(
 			groupId, status, start, end);
 	}
 
 	@Override
-	public int searchCount(long groupId, int status) {
+	public int searchCount(long groupId, int status) throws SystemException {
 		return membershipRequestPersistence.countByG_S(groupId, status);
 	}
 
@@ -151,7 +156,7 @@ public class
 	public void updateStatus(
 			long replierUserId, long membershipRequestId, String replyComments,
 			int statusId, boolean addUserToGroup, ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		validate(replyComments);
 
@@ -193,9 +198,9 @@ public class
 	}
 
 	protected List<Long> getGroupAdministratorUserIds(long groupId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
-		Set<Long> userIds = new LinkedHashSet<Long>();
+		List<Long> userIds = new UniqueList<Long>();
 
 		Group group = groupLocalService.getGroup(groupId);
 		String modelResource = Group.class.getName();
@@ -272,14 +277,14 @@ public class
 			}
 		}
 
-		return new ArrayList<Long>(userIds);
+		return userIds;
 	}
 
 	protected void notify(
 			long userId, MembershipRequest membershipRequest,
 			String subjectProperty, String bodyProperty,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		User user = userPersistence.findByPrimaryKey(userId);
 		User requestUser = userPersistence.findByPrimaryKey(
@@ -346,7 +351,7 @@ public class
 
 	protected void notifyGroupAdministrators(
 			MembershipRequest membershipRequest, ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		List<Long> userIds = getGroupAdministratorUserIds(
 			membershipRequest.getGroupId());

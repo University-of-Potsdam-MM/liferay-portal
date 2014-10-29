@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -13,8 +13,6 @@
  */
 
 package com.liferay.portlet.ratings.model.impl;
-
-import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -52,7 +50,6 @@ import java.util.Map;
  * @see com.liferay.portlet.ratings.model.RatingsStatsModel
  * @generated
  */
-@ProviderType
 public class RatingsStatsModelImpl extends BaseModelImpl<RatingsStats>
 	implements RatingsStatsModel {
 	/*
@@ -85,9 +82,9 @@ public class RatingsStatsModelImpl extends BaseModelImpl<RatingsStats>
 	public static final boolean COLUMN_BITMASK_ENABLED = GetterUtil.getBoolean(com.liferay.portal.util.PropsUtil.get(
 				"value.object.column.bitmask.enabled.com.liferay.portlet.ratings.model.RatingsStats"),
 			true);
-	public static final long CLASSNAMEID_COLUMN_BITMASK = 1L;
-	public static final long CLASSPK_COLUMN_BITMASK = 2L;
-	public static final long STATSID_COLUMN_BITMASK = 4L;
+	public static long CLASSNAMEID_COLUMN_BITMASK = 1L;
+	public static long CLASSPK_COLUMN_BITMASK = 2L;
+	public static long STATSID_COLUMN_BITMASK = 4L;
 	public static final long LOCK_EXPIRATION_TIME = GetterUtil.getLong(com.liferay.portal.util.PropsUtil.get(
 				"lock.expiration.time.com.liferay.portlet.ratings.model.RatingsStats"));
 
@@ -134,9 +131,6 @@ public class RatingsStatsModelImpl extends BaseModelImpl<RatingsStats>
 		attributes.put("totalEntries", getTotalEntries());
 		attributes.put("totalScore", getTotalScore());
 		attributes.put("averageScore", getAverageScore());
-
-		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
-		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
 
 		return attributes;
 	}
@@ -370,16 +364,6 @@ public class RatingsStatsModelImpl extends BaseModelImpl<RatingsStats>
 	}
 
 	@Override
-	public boolean isEntityCacheEnabled() {
-		return ENTITY_CACHE_ENABLED;
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return FINDER_CACHE_ENABLED;
-	}
-
-	@Override
 	public void resetOriginalValues() {
 		RatingsStatsModelImpl ratingsStatsModelImpl = this;
 
@@ -472,8 +456,8 @@ public class RatingsStatsModelImpl extends BaseModelImpl<RatingsStats>
 		return sb.toString();
 	}
 
-	private static final ClassLoader _classLoader = RatingsStats.class.getClassLoader();
-	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
+	private static ClassLoader _classLoader = RatingsStats.class.getClassLoader();
+	private static Class<?>[] _escapedModelInterfaces = new Class[] {
 			RatingsStats.class
 		};
 	private long _statsId;

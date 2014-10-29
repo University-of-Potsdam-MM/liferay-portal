@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -17,7 +17,8 @@
 <%@ include file="/html/portlet/layouts_admin/init.jsp" %>
 
 <%
-Layout selLayout = layoutsAdminDisplayContext.getSelLayout();
+Group group = (Group)request.getAttribute("edit_pages.jsp-group");
+Layout selLayout = (Layout)request.getAttribute("edit_pages.jsp-selLayout");
 
 UnicodeProperties layoutTypeSettings = selLayout.getTypeSettingsProperties();
 %>
@@ -30,12 +31,7 @@ UnicodeProperties layoutTypeSettings = selLayout.getTypeSettingsProperties();
 
 <liferay-ui:error exception="<%= ImageTypeException.class %>" message="please-enter-a-file-with-a-valid-file-type" />
 
-<aui:fieldset cssClass="lfr-portrait-editor">
-
-	<%
-	Group group = layoutsAdminDisplayContext.getGroup();
-	%>
-
+<aui:fieldset>
 	<c:if test="<%= !group.isLayoutPrototype() %>">
 
 		<%
@@ -51,39 +47,48 @@ UnicodeProperties layoutTypeSettings = selLayout.getTypeSettingsProperties();
 
 	<aui:input label="target" name="TypeSettingsProperties--target--" size="15" type="text" value="<%= HtmlUtil.escapeAttribute(curTarget) %>" />
 
+	<aui:input name="iconImage" type="hidden" value="<%= selLayout.isIconImage() %>" />
+
 	<aui:field-wrapper helpMessage="this-icon-will-be-shown-in-the-navigation-menu" label="icon" name="iconFileName">
-		<liferay-ui:logo-selector
-			currentLogoURL='<%= (selLayout.getIconImageId() == 0) ? themeDisplay.getPathThemeImages() + "/spacer.png" : themeDisplay.getPathImage() + "/logo?img_id=" + selLayout.getIconImageId() + "&t=" + WebServerServletTokenUtil.getToken(selLayout.getIconImageId()) %>'
-			defaultLogo="<%= selLayout.getIconImageId() == 0 %>"
-			defaultLogoURL='<%= themeDisplay.getPathThemeImages() + "/spacer.png" %>'
-			editLogoFn='<%= liferayPortletResponse.getNamespace() + "editLayoutLogo" %>'
-			logoDisplaySelector='<%= ".layout-logo-" + selLayout.getPlid() %>'
-			tempImageFileName="<%= String.valueOf(selLayout.getPlid()) %>"
-		/>
+		<aui:input inlineField="<%= true %>" label="" name="iconFileName" type="file" />
+
+		<c:if test="<%= selLayout.getIconImage() %>">
+			<liferay-ui:icon
+				cssClass="modify-link"
+				id="deleteIconLink"
+				image="delete"
+				label="<%= true %>"
+				url="javascript:;"
+			/>
+
+			<div id="<portlet:namespace />layoutIconContainer">
+				<liferay-theme:layout-icon layout="<%= selLayout %>" />
+			</div>
+		</c:if>
 	</aui:field-wrapper>
 </aui:fieldset>
 
-<aui:script>
-	Liferay.provide(
-		window,
-		'<portlet:namespace />editLayoutLogo',
-		function(logoURL, deleteLogo) {
-			var A = AUI();
+<aui:script use="aui-base">
+	var panel = A.one('#<portlet:namespace />advanced');
 
-			var layoutLogo = A.one('.layout-logo-<%= selLayout.getPlid() %>');
+	var deleteLogoLink = panel.one('#<portlet:namespace />deleteIconLink');
+	var iconFileNameInput = panel.one('#<portlet:namespace />iconFileName');
+	var iconImageInput = panel.one('#<portlet:namespace />iconImage');
+	var layoutIconContainer = panel.one('#<portlet:namespace />layoutIconContainer');
 
-			if (!layoutLogo) {
-				var layoutNavItem = A.one('#layout_<%= selLayout.getLayoutId() %> span');
+	var changeLogo = function(event) {
+		var changeLogo = (event.type == 'change');
 
-				layoutLogo = A.Node.create('<img alt="<liferay-ui:message escapeAttribute="<%= true %>" key="logo" />" class="layout-logo-<%= selLayout.getPlid() %>" src="' + logoURL + '" />');
+		iconImageInput.val(changeLogo);
 
-				if (layoutNavItem) {
-					layoutNavItem.prepend(layoutLogo);
-				}
-			}
+		if (layoutIconContainer) {
+			layoutIconContainer.hide();
+		}
+	};
 
-			layoutLogo.toggle(!deleteLogo);
-		},
-		['aui-base']
-	);
+	if (deleteLogoLink) {
+		deleteLogoLink.on('click', changeLogo);
+	}
+
+	iconFileNameInput.on('change', changeLogo);
 </aui:script>

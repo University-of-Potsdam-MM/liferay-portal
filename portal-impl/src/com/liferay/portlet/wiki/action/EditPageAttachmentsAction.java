@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -19,6 +19,7 @@ import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.servlet.SessionErrors;
+import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.upload.UploadException;
 import com.liferay.portal.kernel.upload.UploadPortletRequest;
 import com.liferay.portal.kernel.util.Constants;
@@ -27,8 +28,8 @@ import com.liferay.portal.kernel.util.ObjectValuePair;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.StreamUtil;
 import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.kernel.util.TempFileEntryUtil;
-import com.liferay.portal.model.TrashedModel;
+import com.liferay.portal.kernel.util.TempFileUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.portletfilerepository.PortletFileRepositoryUtil;
 import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.struts.ActionConstants;
@@ -38,8 +39,6 @@ import com.liferay.portal.util.WebKeys;
 import com.liferay.portlet.documentlibrary.FileSizeException;
 import com.liferay.portlet.documentlibrary.action.EditFileEntryAction;
 import com.liferay.portlet.documentlibrary.model.DLFileEntry;
-import com.liferay.portlet.trash.model.TrashEntry;
-import com.liferay.portlet.trash.service.TrashEntryLocalServiceUtil;
 import com.liferay.portlet.trash.util.TrashUtil;
 import com.liferay.portlet.wiki.NoSuchNodeException;
 import com.liferay.portlet.wiki.NoSuchPageException;
@@ -50,7 +49,9 @@ import com.liferay.portlet.wiki.util.WikiPageAttachmentsUtil;
 import java.io.InputStream;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
@@ -77,16 +78,18 @@ public class EditPageAttachmentsAction extends EditFileEntryAction {
 		String cmd = ParamUtil.getString(actionRequest, Constants.CMD);
 
 		try {
-			UploadException uploadException =
-				(UploadException)actionRequest.getAttribute(
-					WebKeys.UPLOAD_EXCEPTION);
+			if (Validator.isNull(cmd)) {
+				UploadException uploadException =
+					(UploadException)actionRequest.getAttribute(
+						WebKeys.UPLOAD_EXCEPTION);
 
-			if (uploadException != null) {
-				if (uploadException.isExceededSizeLimit()) {
-					throw new FileSizeException(uploadException.getCause());
+				if (uploadException != null) {
+					if (uploadException.isExceededSizeLimit()) {
+						throw new FileSizeException(uploadException.getCause());
+					}
+
+					throw new PortalException(uploadException.getCause());
 				}
-
-				throw new PortalException(uploadException.getCause());
 			}
 			else if (cmd.equals(Constants.ADD)) {
 				addAttachment(actionRequest);
@@ -106,6 +109,9 @@ public class EditPageAttachmentsAction extends EditFileEntryAction {
 			}
 			else if (cmd.equals(Constants.EMPTY_TRASH)) {
 				emptyTrash(actionRequest);
+			}
+			else if (cmd.equals(Constants.MOVE_FROM_TRASH)) {
+				restoreAttachmentFromTrash(actionRequest, actionResponse);
 			}
 			else if (cmd.equals(Constants.MOVE_TO_TRASH)) {
 				deleteAttachment(actionRequest, true);
@@ -246,9 +252,9 @@ public class EditPageAttachmentsAction extends EditFileEntryAction {
 		FileEntry tempFileEntry = null;
 
 		try {
-			tempFileEntry = TempFileEntryUtil.getTempFileEntry(
+			tempFileEntry = TempFileUtil.getTempFile(
 				themeDisplay.getScopeGroupId(), themeDisplay.getUserId(),
-				_TEMP_FOLDER_NAME, selectedFileName);
+				selectedFileName, _TEMP_FOLDER_NAME);
 
 			InputStream inputStream = tempFileEntry.getContentStream();
 			String mimeType = tempFileEntry.getMimeType();
@@ -270,8 +276,7 @@ public class EditPageAttachmentsAction extends EditFileEntryAction {
 		}
 		finally {
 			if (tempFileEntry != null) {
-				TempFileEntryUtil.deleteTempFileEntry(
-					tempFileEntry.getFileEntryId());
+				TempFileUtil.deleteTempFile(tempFileEntry.getFileEntryId());
 			}
 		}
 	}
@@ -292,8 +297,8 @@ public class EditPageAttachmentsAction extends EditFileEntryAction {
 
 			String mimeType = uploadPortletRequest.getContentType("file");
 
-			WikiPageServiceUtil.addTempFileEntry(
-				nodeId, _TEMP_FOLDER_NAME, sourceFileName, inputStream,
+			WikiPageServiceUtil.addTempPageAttachment(
+				nodeId, sourceFileName, _TEMP_FOLDER_NAME, inputStream,
 				mimeType);
 		}
 		finally {
@@ -309,23 +314,40 @@ public class EditPageAttachmentsAction extends EditFileEntryAction {
 		String title = ParamUtil.getString(actionRequest, "title");
 		String attachment = ParamUtil.getString(actionRequest, "fileName");
 
-		TrashedModel trashedModel = null;
+		FileEntry fileEntry = null;
 
 		if (moveToTrash) {
-			FileEntry fileEntry = WikiPageServiceUtil.movePageAttachmentToTrash(
+			fileEntry = WikiPageServiceUtil.movePageAttachmentToTrash(
 				nodeId, title, attachment);
-
-			if (fileEntry.getModel() instanceof DLFileEntry) {
-				trashedModel = (DLFileEntry)fileEntry.getModel();
-			}
 		}
 		else {
 			WikiPageServiceUtil.deletePageAttachment(nodeId, title, attachment);
 		}
 
-		if (moveToTrash && (trashedModel != null)) {
-			TrashUtil.addTrashSessionMessages(
-				actionRequest, trashedModel, Constants.REMOVE);
+		if (moveToTrash && (fileEntry != null)) {
+			Map<String, String[]> data = new HashMap<String, String[]>();
+
+			data.put(Constants.CMD, new String[] {Constants.REMOVE});
+
+			data.put(
+				"deleteEntryClassName",
+				new String[] {DLFileEntry.class.getName()});
+
+			if (Validator.isNotNull(fileEntry.getTitle())) {
+				data.put(
+					"deleteEntryTitle",
+					new String[] {
+						TrashUtil.getOriginalTitle(fileEntry.getTitle())});
+			}
+
+			data.put(
+				"restoreEntryIds",
+				new String[] {String.valueOf(fileEntry.getFileEntryId())});
+
+			SessionMessages.add(
+				actionRequest,
+				PortalUtil.getPortletId(actionRequest) +
+					SessionMessages.KEY_SUFFIX_DELETE_SUCCESS_DATA, data);
 
 			hideDefaultSuccessMessage(actionRequest);
 		}
@@ -344,7 +366,7 @@ public class EditPageAttachmentsAction extends EditFileEntryAction {
 		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
 
 		try {
-			WikiPageServiceUtil.deleteTempFileEntry(
+			WikiPageServiceUtil.deleteTempPageAttachment(
 				nodeId, fileName, _TEMP_FOLDER_NAME);
 
 			jsonObject.put("deleted", Boolean.TRUE);
@@ -371,14 +393,11 @@ public class EditPageAttachmentsAction extends EditFileEntryAction {
 		throws Exception {
 
 		long[] restoreEntryIds = StringUtil.split(
-			ParamUtil.getString(actionRequest, "restoreTrashEntryIds"), 0L);
+			ParamUtil.getString(actionRequest, "restoreEntryIds"), 0L);
 
 		for (long restoreEntryId : restoreEntryIds) {
-			TrashEntry trashEntry = TrashEntryLocalServiceUtil.getTrashEntry(
-				restoreEntryId);
-
 			FileEntry fileEntry = PortletFileRepositoryUtil.getPortletFileEntry(
-				trashEntry.getClassPK());
+				restoreEntryId);
 
 			WikiPage page = WikiPageAttachmentsUtil.getPage(
 				fileEntry.getFileEntryId());
@@ -386,6 +405,24 @@ public class EditPageAttachmentsAction extends EditFileEntryAction {
 			WikiPageServiceUtil.restorePageAttachmentFromTrash(
 				page.getNodeId(), page.getTitle(), fileEntry.getTitle());
 		}
+	}
+
+	protected void restoreAttachmentFromTrash(
+			ActionRequest actionRequest, ActionResponse actionResponse)
+		throws Exception {
+
+		long nodeId = ParamUtil.getLong(actionRequest, "nodeId");
+		String title = ParamUtil.getString(actionRequest, "title");
+		String fileName = ParamUtil.getString(actionRequest, "fileName");
+
+		JSONObject jsonObject =
+			com.liferay.portlet.trash.action.ActionUtil.checkEntry(
+				actionRequest);
+
+		writeJSON(actionRequest, actionResponse, jsonObject);
+
+		WikiPageServiceUtil.restorePageAttachmentFromTrash(
+			nodeId, title, fileName);
 	}
 
 	private static final String _TEMP_FOLDER_NAME =

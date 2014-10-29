@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -37,8 +37,9 @@ public class DLFileRankLocalServiceImpl extends DLFileRankLocalServiceBaseImpl {
 
 	@Override
 	public DLFileRank addFileRank(
-		long groupId, long companyId, long userId, long fileEntryId,
-		ServiceContext serviceContext) {
+			long groupId, long companyId, long userId, long fileEntryId,
+			ServiceContext serviceContext)
+		throws SystemException {
 
 		long fileRankId = counterLocalService.increment();
 
@@ -73,7 +74,7 @@ public class DLFileRankLocalServiceImpl extends DLFileRankLocalServiceBaseImpl {
 	}
 
 	@Override
-	public void checkFileRanks() {
+	public void checkFileRanks() throws SystemException {
 		List<Object[]> staleFileRanks = dlFileRankFinder.findByStaleRanks(
 			PropsValues.DL_FILE_RANK_MAX_SIZE);
 
@@ -101,41 +102,47 @@ public class DLFileRankLocalServiceImpl extends DLFileRankLocalServiceBaseImpl {
 	}
 
 	@Override
-	@SystemEvent(type = SystemEventConstants.TYPE_DELETE)
-	public void deleteFileRank(DLFileRank dlFileRank) {
+	@SystemEvent(
+		action = SystemEventConstants.ACTION_SKIP, send = false,
+		type = SystemEventConstants.TYPE_DELETE)
+	public void deleteFileRank(DLFileRank dlFileRank) throws SystemException {
 		dlFileRankPersistence.remove(dlFileRank);
 	}
 
 	@Override
-	public void deleteFileRank(long fileRankId) throws PortalException {
+	public void deleteFileRank(long fileRankId)
+		throws PortalException, SystemException {
+
 		DLFileRank dlFileRank = dlFileRankPersistence.findByPrimaryKey(
 			fileRankId);
 
-		dlFileRankLocalService.deleteFileRank(dlFileRank);
+		deleteFileRank(dlFileRank);
 	}
 
 	@Override
-	public void deleteFileRanksByFileEntryId(long fileEntryId) {
+	public void deleteFileRanksByFileEntryId(long fileEntryId)
+		throws SystemException {
+
 		List<DLFileRank> dlFileRanks = dlFileRankPersistence.findByFileEntryId(
 			fileEntryId);
 
 		for (DLFileRank dlFileRank : dlFileRanks) {
-			dlFileRankLocalService.deleteFileRank(dlFileRank);
+			deleteFileRank(dlFileRank);
 		}
 	}
 
 	@Override
-	public void deleteFileRanksByUserId(long userId) {
+	public void deleteFileRanksByUserId(long userId) throws SystemException {
 		List<DLFileRank> dlFileRanks = dlFileRankPersistence.findByUserId(
 			userId);
 
 		for (DLFileRank dlFileRank : dlFileRanks) {
-			dlFileRankLocalService.deleteFileRank(dlFileRank);
+			deleteFileRank(dlFileRank);
 		}
 	}
 
 	@Override
-	public void disableFileRanks(long fileEntryId) {
+	public void disableFileRanks(long fileEntryId) throws SystemException {
 		List<DLFileRank> dlFileRanks = dlFileRankPersistence.findByFileEntryId(
 			fileEntryId);
 
@@ -148,7 +155,7 @@ public class DLFileRankLocalServiceImpl extends DLFileRankLocalServiceBaseImpl {
 
 	@Override
 	public void disableFileRanksByFolderId(long folderId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		DLFolder dlFolder = dlFolderLocalService.getDLFolder(folderId);
 
@@ -156,7 +163,7 @@ public class DLFileRankLocalServiceImpl extends DLFileRankLocalServiceBaseImpl {
 	}
 
 	@Override
-	public void enableFileRanks(long fileEntryId) {
+	public void enableFileRanks(long fileEntryId) throws SystemException {
 		List<DLFileRank> dlFileRanks = dlFileRankPersistence.findByFileEntryId(
 			fileEntryId);
 
@@ -169,7 +176,7 @@ public class DLFileRankLocalServiceImpl extends DLFileRankLocalServiceBaseImpl {
 
 	@Override
 	public void enableFileRanksByFolderId(long folderId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		DLFolder dlFolder = dlFolderLocalService.getDLFolder(folderId);
 
@@ -177,7 +184,9 @@ public class DLFileRankLocalServiceImpl extends DLFileRankLocalServiceBaseImpl {
 	}
 
 	@Override
-	public List<DLFileRank> getFileRanks(long groupId, long userId) {
+	public List<DLFileRank> getFileRanks(long groupId, long userId)
+		throws SystemException {
+
 		return dlFileRankPersistence.findByG_U_A(
 			groupId, userId, true, 0, PropsValues.DL_FILE_RANK_MAX_SIZE,
 			new FileRankCreateDateComparator());
@@ -185,8 +194,9 @@ public class DLFileRankLocalServiceImpl extends DLFileRankLocalServiceBaseImpl {
 
 	@Override
 	public DLFileRank updateFileRank(
-		long groupId, long companyId, long userId, long fileEntryId,
-		ServiceContext serviceContext) {
+			long groupId, long companyId, long userId, long fileEntryId,
+			ServiceContext serviceContext)
+		throws SystemException {
 
 		if (!PropsValues.DL_FILE_RANK_ENABLED) {
 			return null;
@@ -218,7 +228,9 @@ public class DLFileRankLocalServiceImpl extends DLFileRankLocalServiceBaseImpl {
 		return dlFileRank;
 	}
 
-	protected void updateFileRanks(DLFolder dlFolder, boolean active) {
+	protected void updateFileRanks(DLFolder dlFolder, boolean active)
+		throws SystemException {
+
 		List<DLFolder> dlFolders = dlFolderPersistence.findByG_P(
 			dlFolder.getGroupId(), dlFolder.getFolderId());
 

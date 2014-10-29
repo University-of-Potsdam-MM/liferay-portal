@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,9 +14,9 @@
 
 package com.liferay.portal.tools;
 
-import com.liferay.portal.kernel.io.DummyOutputStream;
 import com.liferay.portal.kernel.io.unsync.UnsyncBufferedReader;
 import com.liferay.portal.kernel.io.unsync.UnsyncByteArrayInputStream;
+import com.liferay.portal.kernel.io.unsync.UnsyncByteArrayOutputStream;
 import com.liferay.portal.kernel.io.unsync.UnsyncStringReader;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
@@ -44,18 +44,15 @@ public class DBLoader {
 	public static void loadHypersonic(Connection con, String fileName)
 		throws Exception {
 
-		try (UnsyncBufferedReader unsyncBufferedReader =
-				new UnsyncBufferedReader(new FileReader(fileName))) {
+		StringBundler sb = new StringBundler();
 
-			StringBundler sb = new StringBundler();
+		UnsyncBufferedReader unsyncBufferedReader = new UnsyncBufferedReader(
+			new FileReader(fileName));
 
-			String line = null;
+		String line = null;
 
-			while ((line = unsyncBufferedReader.readLine()) != null) {
-				if (line.startsWith("//")) {
-					continue;
-				}
-
+		while ((line = unsyncBufferedReader.readLine()) != null) {
+			if (!line.startsWith("//")) {
 				sb.append(line);
 
 				if (line.endsWith(";")) {
@@ -67,8 +64,12 @@ public class DBLoader {
 
 					sb.setIndex(0);
 
-					try (PreparedStatement ps = con.prepareStatement(sql)) {
+					try {
+						PreparedStatement ps = con.prepareStatement(sql);
+
 						ps.executeUpdate();
+
+						ps.close();
 					}
 					catch (Exception e) {
 						System.out.println(sql);
@@ -78,6 +79,8 @@ public class DBLoader {
 				}
 			}
 		}
+
+		unsyncBufferedReader.close();
 	}
 
 	public static void main(String[] args) {
@@ -158,27 +161,22 @@ public class DBLoader {
 	}
 
 	private void _loadDerby(Connection con, String fileName) throws Exception {
-		try (UnsyncBufferedReader unsyncBufferedReader =
-				new UnsyncBufferedReader(
-					new UnsyncStringReader(_fileUtil.read(fileName)))) {
+		StringBundler sb = new StringBundler();
 
-			StringBundler sb = new StringBundler();
+		UnsyncBufferedReader unsyncBufferedReader = new UnsyncBufferedReader(
+			new UnsyncStringReader(_fileUtil.read(fileName)));
 
-			String line = null;
+		String line = null;
 
-			while ((line = unsyncBufferedReader.readLine()) != null) {
-				if (line.startsWith("--")) {
-					continue;
-				}
-
+		while ((line = unsyncBufferedReader.readLine()) != null) {
+			if (!line.startsWith("--")) {
 				sb.append(line);
 
 				if (line.endsWith(";")) {
 					String sql = sb.toString();
 
 					sql = StringUtil.replace(
-						sql,
-						new String[] {"\\'", "\\\"", "\\\\", "\\n", "\\r"},
+						sql, new String[] {"\\'", "\\\"", "\\\\", "\\n", "\\r"},
 						new String[] {"''", "\"", "\\", "\n", "\r"});
 
 					sql = sql.substring(0, sql.length() - 1);
@@ -193,11 +191,13 @@ public class DBLoader {
 						con,
 						new UnsyncByteArrayInputStream(
 							sql.getBytes(StringPool.UTF8)),
-						StringPool.UTF8, new DummyOutputStream(),
+						StringPool.UTF8, new UnsyncByteArrayOutputStream(),
 						StringPool.UTF8);
 				}
 			}
 		}
+
+		unsyncBufferedReader.close();
 	}
 
 	private void _loadHypersonic() throws Exception {
@@ -206,10 +206,13 @@ public class DBLoader {
 		// See LEP-2927. Appending ;shutdown=true to the database connection URL
 		// guarantees that ${_databaseName}.log is purged.
 
-		try (Connection con = DriverManager.getConnection(
+		Connection con = null;
+
+		try {
+			con = DriverManager.getConnection(
 				"jdbc:hsqldb:" + _sqlDir + "/" + _databaseName +
 					";shutdown=true",
-				"sa", "")) {
+				"sa", "");
 
 			if (Validator.isNull(_fileName)) {
 				loadHypersonic(con, _sqlDir + "/portal/portal-hypersonic.sql");
@@ -221,8 +224,15 @@ public class DBLoader {
 
 			// Shutdown Hypersonic
 
-			try (Statement statement = con.createStatement()) {
-				statement.execute("SHUTDOWN COMPACT");
+			Statement statement = con.createStatement();
+
+			statement.execute("SHUTDOWN COMPACT");
+
+			statement.close();
+		}
+		finally {
+			if (con != null) {
+				con.close();
 			}
 		}
 

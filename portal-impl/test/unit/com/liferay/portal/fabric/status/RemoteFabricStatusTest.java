@@ -16,7 +16,7 @@ package com.liferay.portal.fabric.status;
 
 import com.liferay.portal.kernel.test.CodeCoverageAssertor;
 
-import java.lang.management.PlatformManagedObject;
+//import java.lang.management.PlatformManagedObject;
 
 import org.junit.Assert;
 import org.junit.ClassRule;
@@ -34,9 +34,9 @@ public class RemoteFabricStatusTest extends BaseFabricStatusTestCase {
 	@Test
 	public void testGetPlatformMXBeansIllegalMXBeanClass() {
 		try {
-			RemoteFabricStatus.getPlatformMXBeans(
-				PlatformManagedObject.class,
-				LocalFabricStatus.processCallableExecutor);
+//			RemoteFabricStatus.getPlatformMXBeans(
+//				PlatformManagedObject.class,
+//				LocalFabricStatus.processCallableExecutor);
 
 			Assert.fail();
 		}

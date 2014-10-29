@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,6 +14,7 @@
 
 package com.liferay.portlet.dynamicdatalists.service.persistence;
 
+import com.liferay.portal.kernel.bean.PortalBeanLocatorUtil;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
@@ -22,77 +23,68 @@ import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.template.TemplateException;
-import com.liferay.portal.kernel.template.TemplateManagerUtil;
-import com.liferay.portal.kernel.transaction.Propagation;
+import com.liferay.portal.kernel.test.ExecutionTestListeners;
 import com.liferay.portal.kernel.util.IntegerWrapper;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.OrderByComparatorFactoryUtil;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.test.TransactionalTestRule;
-import com.liferay.portal.test.runners.PersistenceIntegrationJUnitTestRunner;
-import com.liferay.portal.tools.DBUpgrader;
+import com.liferay.portal.service.ServiceTestUtil;
+import com.liferay.portal.service.persistence.BasePersistence;
+import com.liferay.portal.service.persistence.PersistenceExecutionTestListener;
+import com.liferay.portal.test.LiferayPersistenceIntegrationJUnitTestRunner;
+import com.liferay.portal.test.persistence.TransactionalPersistenceAdvice;
 import com.liferay.portal.util.PropsValues;
-import com.liferay.portal.util.test.RandomTestUtil;
 
 import com.liferay.portlet.dynamicdatalists.NoSuchRecordSetException;
 import com.liferay.portlet.dynamicdatalists.model.DDLRecordSet;
 import com.liferay.portlet.dynamicdatalists.model.impl.DDLRecordSetModelImpl;
-import com.liferay.portlet.dynamicdatalists.service.DDLRecordSetLocalServiceUtil;
 
 import org.junit.After;
 import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
 import org.junit.Test;
 
 import org.junit.runner.RunWith;
 
 import java.io.Serializable;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 /**
- * @generated
+ * @author Brian Wing Shun Chan
  */
-@RunWith(PersistenceIntegrationJUnitTestRunner.class)
+@ExecutionTestListeners(listeners =  {
+	PersistenceExecutionTestListener.class})
+@RunWith(LiferayPersistenceIntegrationJUnitTestRunner.class)
 public class DDLRecordSetPersistenceTest {
-	@ClassRule
-	public static TransactionalTestRule transactionalTestRule = new TransactionalTestRule(Propagation.REQUIRED);
-
-	@BeforeClass
-	public static void setupClass() throws TemplateException {
-		try {
-			DBUpgrader.upgrade();
-		}
-		catch (Exception e) {
-			_log.error(e, e);
-		}
-
-		TemplateManagerUtil.init();
-	}
-
 	@After
 	public void tearDown() throws Exception {
-		Iterator<DDLRecordSet> iterator = _ddlRecordSets.iterator();
+		Map<Serializable, BasePersistence<?>> basePersistences = _transactionalPersistenceAdvice.getBasePersistences();
 
-		while (iterator.hasNext()) {
-			_persistence.remove(iterator.next());
+		Set<Serializable> primaryKeys = basePersistences.keySet();
 
-			iterator.remove();
+		for (Serializable primaryKey : primaryKeys) {
+			BasePersistence<?> basePersistence = basePersistences.get(primaryKey);
+
+			try {
+				basePersistence.remove(primaryKey);
+			}
+			catch (Exception e) {
+				if (_log.isDebugEnabled()) {
+					_log.debug("The model with primary key " + primaryKey +
+						" was already deleted");
+				}
+			}
 		}
+
+		_transactionalPersistenceAdvice.reset();
 	}
 
 	@Test
 	public void testCreate() throws Exception {
-		long pk = RandomTestUtil.nextLong();
+		long pk = ServiceTestUtil.nextLong();
 
 		DDLRecordSet ddlRecordSet = _persistence.create(pk);
 
@@ -119,37 +111,37 @@ public class DDLRecordSetPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
+		long pk = ServiceTestUtil.nextLong();
 
 		DDLRecordSet newDDLRecordSet = _persistence.create(pk);
 
-		newDDLRecordSet.setUuid(RandomTestUtil.randomString());
+		newDDLRecordSet.setUuid(ServiceTestUtil.randomString());
 
-		newDDLRecordSet.setGroupId(RandomTestUtil.nextLong());
+		newDDLRecordSet.setGroupId(ServiceTestUtil.nextLong());
 
-		newDDLRecordSet.setCompanyId(RandomTestUtil.nextLong());
+		newDDLRecordSet.setCompanyId(ServiceTestUtil.nextLong());
 
-		newDDLRecordSet.setUserId(RandomTestUtil.nextLong());
+		newDDLRecordSet.setUserId(ServiceTestUtil.nextLong());
 
-		newDDLRecordSet.setUserName(RandomTestUtil.randomString());
+		newDDLRecordSet.setUserName(ServiceTestUtil.randomString());
 
-		newDDLRecordSet.setCreateDate(RandomTestUtil.nextDate());
+		newDDLRecordSet.setCreateDate(ServiceTestUtil.nextDate());
 
-		newDDLRecordSet.setModifiedDate(RandomTestUtil.nextDate());
+		newDDLRecordSet.setModifiedDate(ServiceTestUtil.nextDate());
 
-		newDDLRecordSet.setDDMStructureId(RandomTestUtil.nextLong());
+		newDDLRecordSet.setDDMStructureId(ServiceTestUtil.nextLong());
 
-		newDDLRecordSet.setRecordSetKey(RandomTestUtil.randomString());
+		newDDLRecordSet.setRecordSetKey(ServiceTestUtil.randomString());
 
-		newDDLRecordSet.setName(RandomTestUtil.randomString());
+		newDDLRecordSet.setName(ServiceTestUtil.randomString());
 
-		newDDLRecordSet.setDescription(RandomTestUtil.randomString());
+		newDDLRecordSet.setDescription(ServiceTestUtil.randomString());
 
-		newDDLRecordSet.setMinDisplayRows(RandomTestUtil.nextInt());
+		newDDLRecordSet.setMinDisplayRows(ServiceTestUtil.nextInt());
 
-		newDDLRecordSet.setScope(RandomTestUtil.nextInt());
+		newDDLRecordSet.setScope(ServiceTestUtil.nextInt());
 
-		_ddlRecordSets.add(_persistence.update(newDDLRecordSet));
+		_persistence.update(newDDLRecordSet);
 
 		DDLRecordSet existingDDLRecordSet = _persistence.findByPrimaryKey(newDDLRecordSet.getPrimaryKey());
 
@@ -186,76 +178,6 @@ public class DDLRecordSetPersistenceTest {
 	}
 
 	@Test
-	public void testCountByUuid() {
-		try {
-			_persistence.countByUuid(StringPool.BLANK);
-
-			_persistence.countByUuid(StringPool.NULL);
-
-			_persistence.countByUuid((String)null);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByUUID_G() {
-		try {
-			_persistence.countByUUID_G(StringPool.BLANK,
-				RandomTestUtil.nextLong());
-
-			_persistence.countByUUID_G(StringPool.NULL, 0L);
-
-			_persistence.countByUUID_G((String)null, 0L);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByUuid_C() {
-		try {
-			_persistence.countByUuid_C(StringPool.BLANK,
-				RandomTestUtil.nextLong());
-
-			_persistence.countByUuid_C(StringPool.NULL, 0L);
-
-			_persistence.countByUuid_C((String)null, 0L);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByGroupId() {
-		try {
-			_persistence.countByGroupId(RandomTestUtil.nextLong());
-
-			_persistence.countByGroupId(0L);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByG_R() {
-		try {
-			_persistence.countByG_R(RandomTestUtil.nextLong(), StringPool.BLANK);
-
-			_persistence.countByG_R(0L, StringPool.NULL);
-
-			_persistence.countByG_R(0L, (String)null);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
 	public void testFindByPrimaryKeyExisting() throws Exception {
 		DDLRecordSet newDDLRecordSet = addDDLRecordSet();
 
@@ -266,7 +188,7 @@ public class DDLRecordSetPersistenceTest {
 
 	@Test
 	public void testFindByPrimaryKeyMissing() throws Exception {
-		long pk = RandomTestUtil.nextLong();
+		long pk = ServiceTestUtil.nextLong();
 
 		try {
 			_persistence.findByPrimaryKey(pk);
@@ -299,7 +221,7 @@ public class DDLRecordSetPersistenceTest {
 		}
 	}
 
-	protected OrderByComparator<DDLRecordSet> getOrderByComparator() {
+	protected OrderByComparator getOrderByComparator() {
 		return OrderByComparatorFactoryUtil.create("DDLRecordSet", "uuid",
 			true, "recordSetId", true, "groupId", true, "companyId", true,
 			"userId", true, "userName", true, "createDate", true,
@@ -319,7 +241,7 @@ public class DDLRecordSetPersistenceTest {
 
 	@Test
 	public void testFetchByPrimaryKeyMissing() throws Exception {
-		long pk = RandomTestUtil.nextLong();
+		long pk = ServiceTestUtil.nextLong();
 
 		DDLRecordSet missingDDLRecordSet = _persistence.fetchByPrimaryKey(pk);
 
@@ -327,103 +249,19 @@ public class DDLRecordSetPersistenceTest {
 	}
 
 	@Test
-	public void testFetchByPrimaryKeysWithMultiplePrimaryKeysWhereAllPrimaryKeysExist()
-		throws Exception {
-		DDLRecordSet newDDLRecordSet1 = addDDLRecordSet();
-		DDLRecordSet newDDLRecordSet2 = addDDLRecordSet();
-
-		Set<Serializable> primaryKeys = new HashSet<Serializable>();
-
-		primaryKeys.add(newDDLRecordSet1.getPrimaryKey());
-		primaryKeys.add(newDDLRecordSet2.getPrimaryKey());
-
-		Map<Serializable, DDLRecordSet> ddlRecordSets = _persistence.fetchByPrimaryKeys(primaryKeys);
-
-		Assert.assertEquals(2, ddlRecordSets.size());
-		Assert.assertEquals(newDDLRecordSet1,
-			ddlRecordSets.get(newDDLRecordSet1.getPrimaryKey()));
-		Assert.assertEquals(newDDLRecordSet2,
-			ddlRecordSets.get(newDDLRecordSet2.getPrimaryKey()));
-	}
-
-	@Test
-	public void testFetchByPrimaryKeysWithMultiplePrimaryKeysWhereNoPrimaryKeysExist()
-		throws Exception {
-		long pk1 = RandomTestUtil.nextLong();
-
-		long pk2 = RandomTestUtil.nextLong();
-
-		Set<Serializable> primaryKeys = new HashSet<Serializable>();
-
-		primaryKeys.add(pk1);
-		primaryKeys.add(pk2);
-
-		Map<Serializable, DDLRecordSet> ddlRecordSets = _persistence.fetchByPrimaryKeys(primaryKeys);
-
-		Assert.assertTrue(ddlRecordSets.isEmpty());
-	}
-
-	@Test
-	public void testFetchByPrimaryKeysWithMultiplePrimaryKeysWhereSomePrimaryKeysExist()
-		throws Exception {
-		DDLRecordSet newDDLRecordSet = addDDLRecordSet();
-
-		long pk = RandomTestUtil.nextLong();
-
-		Set<Serializable> primaryKeys = new HashSet<Serializable>();
-
-		primaryKeys.add(newDDLRecordSet.getPrimaryKey());
-		primaryKeys.add(pk);
-
-		Map<Serializable, DDLRecordSet> ddlRecordSets = _persistence.fetchByPrimaryKeys(primaryKeys);
-
-		Assert.assertEquals(1, ddlRecordSets.size());
-		Assert.assertEquals(newDDLRecordSet,
-			ddlRecordSets.get(newDDLRecordSet.getPrimaryKey()));
-	}
-
-	@Test
-	public void testFetchByPrimaryKeysWithNoPrimaryKeys()
-		throws Exception {
-		Set<Serializable> primaryKeys = new HashSet<Serializable>();
-
-		Map<Serializable, DDLRecordSet> ddlRecordSets = _persistence.fetchByPrimaryKeys(primaryKeys);
-
-		Assert.assertTrue(ddlRecordSets.isEmpty());
-	}
-
-	@Test
-	public void testFetchByPrimaryKeysWithOnePrimaryKey()
-		throws Exception {
-		DDLRecordSet newDDLRecordSet = addDDLRecordSet();
-
-		Set<Serializable> primaryKeys = new HashSet<Serializable>();
-
-		primaryKeys.add(newDDLRecordSet.getPrimaryKey());
-
-		Map<Serializable, DDLRecordSet> ddlRecordSets = _persistence.fetchByPrimaryKeys(primaryKeys);
-
-		Assert.assertEquals(1, ddlRecordSets.size());
-		Assert.assertEquals(newDDLRecordSet,
-			ddlRecordSets.get(newDDLRecordSet.getPrimaryKey()));
-	}
-
-	@Test
 	public void testActionableDynamicQuery() throws Exception {
 		final IntegerWrapper count = new IntegerWrapper();
 
-		ActionableDynamicQuery actionableDynamicQuery = DDLRecordSetLocalServiceUtil.getActionableDynamicQuery();
-
-		actionableDynamicQuery.setPerformActionMethod(new ActionableDynamicQuery.PerformActionMethod() {
+		ActionableDynamicQuery actionableDynamicQuery = new DDLRecordSetActionableDynamicQuery() {
 				@Override
-				public void performAction(Object object) {
+				protected void performAction(Object object) {
 					DDLRecordSet ddlRecordSet = (DDLRecordSet)object;
 
 					Assert.assertNotNull(ddlRecordSet);
 
 					count.increment();
 				}
-			});
+			};
 
 		actionableDynamicQuery.performActions();
 
@@ -456,7 +294,7 @@ public class DDLRecordSetPersistenceTest {
 				DDLRecordSet.class.getClassLoader());
 
 		dynamicQuery.add(RestrictionsFactoryUtil.eq("recordSetId",
-				RandomTestUtil.nextLong()));
+				ServiceTestUtil.nextLong()));
 
 		List<DDLRecordSet> result = _persistence.findWithDynamicQuery(dynamicQuery);
 
@@ -495,7 +333,7 @@ public class DDLRecordSetPersistenceTest {
 		dynamicQuery.setProjection(ProjectionFactoryUtil.property("recordSetId"));
 
 		dynamicQuery.add(RestrictionsFactoryUtil.in("recordSetId",
-				new Object[] { RandomTestUtil.nextLong() }));
+				new Object[] { ServiceTestUtil.nextLong() }));
 
 		List<Object> result = _persistence.findWithDynamicQuery(dynamicQuery);
 
@@ -528,42 +366,42 @@ public class DDLRecordSetPersistenceTest {
 	}
 
 	protected DDLRecordSet addDDLRecordSet() throws Exception {
-		long pk = RandomTestUtil.nextLong();
+		long pk = ServiceTestUtil.nextLong();
 
 		DDLRecordSet ddlRecordSet = _persistence.create(pk);
 
-		ddlRecordSet.setUuid(RandomTestUtil.randomString());
+		ddlRecordSet.setUuid(ServiceTestUtil.randomString());
 
-		ddlRecordSet.setGroupId(RandomTestUtil.nextLong());
+		ddlRecordSet.setGroupId(ServiceTestUtil.nextLong());
 
-		ddlRecordSet.setCompanyId(RandomTestUtil.nextLong());
+		ddlRecordSet.setCompanyId(ServiceTestUtil.nextLong());
 
-		ddlRecordSet.setUserId(RandomTestUtil.nextLong());
+		ddlRecordSet.setUserId(ServiceTestUtil.nextLong());
 
-		ddlRecordSet.setUserName(RandomTestUtil.randomString());
+		ddlRecordSet.setUserName(ServiceTestUtil.randomString());
 
-		ddlRecordSet.setCreateDate(RandomTestUtil.nextDate());
+		ddlRecordSet.setCreateDate(ServiceTestUtil.nextDate());
 
-		ddlRecordSet.setModifiedDate(RandomTestUtil.nextDate());
+		ddlRecordSet.setModifiedDate(ServiceTestUtil.nextDate());
 
-		ddlRecordSet.setDDMStructureId(RandomTestUtil.nextLong());
+		ddlRecordSet.setDDMStructureId(ServiceTestUtil.nextLong());
 
-		ddlRecordSet.setRecordSetKey(RandomTestUtil.randomString());
+		ddlRecordSet.setRecordSetKey(ServiceTestUtil.randomString());
 
-		ddlRecordSet.setName(RandomTestUtil.randomString());
+		ddlRecordSet.setName(ServiceTestUtil.randomString());
 
-		ddlRecordSet.setDescription(RandomTestUtil.randomString());
+		ddlRecordSet.setDescription(ServiceTestUtil.randomString());
 
-		ddlRecordSet.setMinDisplayRows(RandomTestUtil.nextInt());
+		ddlRecordSet.setMinDisplayRows(ServiceTestUtil.nextInt());
 
-		ddlRecordSet.setScope(RandomTestUtil.nextInt());
+		ddlRecordSet.setScope(ServiceTestUtil.nextInt());
 
-		_ddlRecordSets.add(_persistence.update(ddlRecordSet));
+		_persistence.update(ddlRecordSet);
 
 		return ddlRecordSet;
 	}
 
 	private static Log _log = LogFactoryUtil.getLog(DDLRecordSetPersistenceTest.class);
-	private List<DDLRecordSet> _ddlRecordSets = new ArrayList<DDLRecordSet>();
-	private DDLRecordSetPersistence _persistence = DDLRecordSetUtil.getPersistence();
+	private DDLRecordSetPersistence _persistence = (DDLRecordSetPersistence)PortalBeanLocatorUtil.locate(DDLRecordSetPersistence.class.getName());
+	private TransactionalPersistenceAdvice _transactionalPersistenceAdvice = (TransactionalPersistenceAdvice)PortalBeanLocatorUtil.locate(TransactionalPersistenceAdvice.class.getName());
 }

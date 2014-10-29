@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -13,8 +13,6 @@
  */
 
 package com.liferay.portlet.expando.model.impl;
-
-import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -47,7 +45,6 @@ import java.util.Map;
  * @see com.liferay.portlet.expando.model.ExpandoRowModel
  * @generated
  */
-@ProviderType
 public class ExpandoRowModelImpl extends BaseModelImpl<ExpandoRow>
 	implements ExpandoRowModel {
 	/*
@@ -79,9 +76,9 @@ public class ExpandoRowModelImpl extends BaseModelImpl<ExpandoRow>
 	public static final boolean COLUMN_BITMASK_ENABLED = GetterUtil.getBoolean(com.liferay.portal.util.PropsUtil.get(
 				"value.object.column.bitmask.enabled.com.liferay.portlet.expando.model.ExpandoRow"),
 			true);
-	public static final long CLASSPK_COLUMN_BITMASK = 1L;
-	public static final long TABLEID_COLUMN_BITMASK = 2L;
-	public static final long ROWID_COLUMN_BITMASK = 4L;
+	public static long CLASSPK_COLUMN_BITMASK = 1L;
+	public static long TABLEID_COLUMN_BITMASK = 2L;
+	public static long ROWID_COLUMN_BITMASK = 4L;
 	public static final long LOCK_EXPIRATION_TIME = GetterUtil.getLong(com.liferay.portal.util.PropsUtil.get(
 				"lock.expiration.time.com.liferay.portlet.expando.model.ExpandoRow"));
 
@@ -127,9 +124,6 @@ public class ExpandoRowModelImpl extends BaseModelImpl<ExpandoRow>
 		attributes.put("modifiedDate", getModifiedDate());
 		attributes.put("tableId", getTableId());
 		attributes.put("classPK", getClassPK());
-
-		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
-		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
 
 		return attributes;
 	}
@@ -313,16 +307,6 @@ public class ExpandoRowModelImpl extends BaseModelImpl<ExpandoRow>
 	}
 
 	@Override
-	public boolean isEntityCacheEnabled() {
-		return ENTITY_CACHE_ENABLED;
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return FINDER_CACHE_ENABLED;
-	}
-
-	@Override
 	public void resetOriginalValues() {
 		ExpandoRowModelImpl expandoRowModelImpl = this;
 
@@ -414,8 +398,8 @@ public class ExpandoRowModelImpl extends BaseModelImpl<ExpandoRow>
 		return sb.toString();
 	}
 
-	private static final ClassLoader _classLoader = ExpandoRow.class.getClassLoader();
-	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
+	private static ClassLoader _classLoader = ExpandoRow.class.getClassLoader();
+	private static Class<?>[] _escapedModelInterfaces = new Class[] {
 			ExpandoRow.class
 		};
 	private long _rowId;

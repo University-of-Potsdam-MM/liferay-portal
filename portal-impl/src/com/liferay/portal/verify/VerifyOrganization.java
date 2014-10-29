@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -20,6 +20,7 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.Organization;
 import com.liferay.portal.service.OrganizationLocalServiceUtil;
+import com.liferay.portal.service.persistence.OrganizationActionableDynamicQuery;
 import com.liferay.portal.util.PortalInstances;
 import com.liferay.portlet.asset.model.AssetEntry;
 import com.liferay.portlet.asset.service.AssetEntryLocalServiceUtil;
@@ -51,41 +52,37 @@ public class VerifyOrganization extends VerifyProcess {
 
 	protected void updateOrganizationAssetEntries() throws Exception {
 		ActionableDynamicQuery actionableDynamicQuery =
-			OrganizationLocalServiceUtil.getActionableDynamicQuery();
+			new OrganizationActionableDynamicQuery() {
 
-		actionableDynamicQuery.setPerformActionMethod(
-			new ActionableDynamicQuery.PerformActionMethod() {
+			@Override
+			protected void performAction(Object object) {
+				Organization organization = (Organization)object;
 
-				@Override
-				public void performAction(Object object) {
-					Organization organization = (Organization)object;
+				try {
+					AssetEntry assetEntry =
+						AssetEntryLocalServiceUtil.getEntry(
+							Organization.class.getName(),
+							organization.getOrganizationId());
 
-					try {
-						AssetEntry assetEntry =
-							AssetEntryLocalServiceUtil.getEntry(
-								Organization.class.getName(),
-								organization.getOrganizationId());
-
-						if (Validator.isNotNull(assetEntry.getClassUuid())) {
-							return;
-						}
-
-						assetEntry.setClassUuid(organization.getUuid());
-
-						AssetEntryLocalServiceUtil.updateAssetEntry(assetEntry);
+					if (Validator.isNotNull(assetEntry.getClassUuid())) {
+						return;
 					}
-					catch (Exception e) {
-						if (_log.isWarnEnabled()) {
-							_log.warn(
-								"Unable to update asset entry for " +
-									"organization " +
-										organization.getOrganizationId(),
-								e);
-						}
+
+					assetEntry.setClassUuid(organization.getUuid());
+
+					AssetEntryLocalServiceUtil.updateAssetEntry(assetEntry);
+				}
+				catch (Exception e) {
+					if (_log.isWarnEnabled()) {
+						_log.warn(
+							"Unable to update asset entry for organization " +
+								organization.getOrganizationId(),
+							e);
 					}
 				}
+			}
 
-			});
+		};
 
 		actionableDynamicQuery.performActions();
 	}

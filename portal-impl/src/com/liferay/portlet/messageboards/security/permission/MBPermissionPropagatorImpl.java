@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -19,6 +19,7 @@ import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Property;
 import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.security.permission.BasePermissionPropagator;
@@ -27,6 +28,7 @@ import com.liferay.portlet.messageboards.model.MBMessage;
 import com.liferay.portlet.messageboards.model.MBThread;
 import com.liferay.portlet.messageboards.service.MBCategoryLocalServiceUtil;
 import com.liferay.portlet.messageboards.service.MBMessageLocalServiceUtil;
+import com.liferay.portlet.messageboards.service.persistence.MBMessageActionableDynamicQuery;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +45,7 @@ public class MBPermissionPropagatorImpl extends BasePermissionPropagator {
 	public void propagateRolePermissions(
 			ActionRequest actionRequest, String className, String primKey,
 			long[] roleIds)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		if (className.equals(MBCategory.class.getName())) {
 			propagateCategoryRolePermissions(
@@ -69,7 +71,7 @@ public class MBPermissionPropagatorImpl extends BasePermissionPropagator {
 	protected void propagateCategoryRolePermissions(
 			ActionRequest actionRequest, String className, long primaryKey,
 			long categoryId, long[] roleIds)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		for (long roleId : roleIds) {
 			propagateRolePermissions(
@@ -81,7 +83,7 @@ public class MBPermissionPropagatorImpl extends BasePermissionPropagator {
 	protected void propagateCategoryRolePermissions(
 			final ActionRequest actionRequest, final String className,
 			String primKey, final long[] roleIds)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		final long categoryId = GetterUtil.getLong(primKey);
 
@@ -123,37 +125,31 @@ public class MBPermissionPropagatorImpl extends BasePermissionPropagator {
 						roleIds);
 
 					ActionableDynamicQuery actionableDynamicQuery =
-						MBMessageLocalServiceUtil.getActionableDynamicQuery();
+						new MBMessageActionableDynamicQuery() {
 
-					actionableDynamicQuery.setAddCriteriaMethod(
-						new ActionableDynamicQuery.AddCriteriaMethod() {
+						@Override
+						protected void addCriteria(DynamicQuery dynamicQuery) {
+							Property categoryIdProperty =
+								PropertyFactoryUtil.forName("categoryId");
 
-							@Override
-							public void addCriteria(DynamicQuery dynamicQuery) {
-								Property categoryIdProperty =
-									PropertyFactoryUtil.forName("categoryId");
+							dynamicQuery.add(
+								categoryIdProperty.eq(addCategoryId));
+						}
 
-								dynamicQuery.add(
-									categoryIdProperty.eq(addCategoryId));
-							}
+						@Override
+						protected void performAction(Object object)
+							throws PortalException, SystemException {
 
-						});
+							MBMessage message = (MBMessage)object;
+
+							propagateMessageRolePermissions(
+								actionRequest, className, categoryId,
+								message.getMessageId(), roleIds);
+						}
+
+					};
+
 					actionableDynamicQuery.setGroupId(category.getGroupId());
-					actionableDynamicQuery.setPerformActionMethod(
-						new ActionableDynamicQuery.PerformActionMethod() {
-
-							@Override
-							public void performAction(Object object)
-								throws PortalException {
-
-								MBMessage message = (MBMessage)object;
-
-								propagateMessageRolePermissions(
-									actionRequest, className, categoryId,
-									message.getMessageId(), roleIds);
-							}
-
-						});
 
 					actionableDynamicQuery.performActions();
 				}
@@ -164,7 +160,7 @@ public class MBPermissionPropagatorImpl extends BasePermissionPropagator {
 	protected void propagateMBRolePermissions(
 			final ActionRequest actionRequest, final String className,
 			String primKey, final long[] roleIds)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		final long groupId = GetterUtil.getLong(primKey);
 
@@ -178,24 +174,22 @@ public class MBPermissionPropagatorImpl extends BasePermissionPropagator {
 		}
 
 		ActionableDynamicQuery actionableDynamicQuery =
-			MBMessageLocalServiceUtil.getActionableDynamicQuery();
+			new MBMessageActionableDynamicQuery() {
+
+			@Override
+			protected void performAction(Object object)
+				throws PortalException, SystemException {
+
+				MBMessage message = (MBMessage)object;
+
+				propagateMessageRolePermissions(
+					actionRequest, className, groupId, message.getMessageId(),
+					roleIds);
+			}
+
+		};
 
 		actionableDynamicQuery.setGroupId(groupId);
-		actionableDynamicQuery.setPerformActionMethod(
-			new ActionableDynamicQuery.PerformActionMethod() {
-
-				@Override
-				public void performAction(Object object)
-					throws PortalException {
-
-					MBMessage message = (MBMessage)object;
-
-					propagateMessageRolePermissions(
-						actionRequest, className, groupId,
-						message.getMessageId(), roleIds);
-				}
-
-			});
 
 		actionableDynamicQuery.performActions();
 	}
@@ -203,7 +197,7 @@ public class MBPermissionPropagatorImpl extends BasePermissionPropagator {
 	protected void propagateMessageRolePermissions(
 			ActionRequest actionRequest, String className, long primaryKey,
 			long messageId, long[] roleIds)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		for (long roleId : roleIds) {
 			propagateRolePermissions(
@@ -215,7 +209,7 @@ public class MBPermissionPropagatorImpl extends BasePermissionPropagator {
 	protected void propagateThreadRolePermissions(
 			ActionRequest actionRequest, String className, long messageId,
 			long threadId, long[] roleIds)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		List<MBMessage> messages = MBMessageLocalServiceUtil.getThreadMessages(
 			threadId, WorkflowConstants.STATUS_ANY);

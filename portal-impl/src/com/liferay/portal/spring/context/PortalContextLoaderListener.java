@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -16,9 +16,6 @@ package com.liferay.portal.spring.context;
 
 import com.liferay.portal.bean.BeanLocatorImpl;
 import com.liferay.portal.cache.ehcache.ClearEhcacheThreadUtil;
-import com.liferay.portal.deploy.hot.IndexerPostProcessorRegistry;
-import com.liferay.portal.deploy.hot.SchedulerEntryRegistry;
-import com.liferay.portal.deploy.hot.ServiceWrapperRegistry;
 import com.liferay.portal.kernel.bean.PortalBeanLocatorUtil;
 import com.liferay.portal.kernel.cache.CacheRegistryUtil;
 import com.liferay.portal.kernel.cache.MultiVMPoolUtil;
@@ -29,15 +26,12 @@ import com.liferay.portal.kernel.dao.orm.EntityCacheUtil;
 import com.liferay.portal.kernel.dao.orm.FinderCacheUtil;
 import com.liferay.portal.kernel.deploy.DeployManagerUtil;
 import com.liferay.portal.kernel.deploy.hot.HotDeployUtil;
-import com.liferay.portal.kernel.exception.LoggedExceptionInInitializerError;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.PortletBagPool;
 import com.liferay.portal.kernel.process.ClassPathUtil;
 import com.liferay.portal.kernel.servlet.DirectServletRegistryUtil;
-import com.liferay.portal.kernel.servlet.SerializableSessionAttributeListener;
 import com.liferay.portal.kernel.servlet.ServletContextPool;
-import com.liferay.portal.kernel.settings.SettingsFactoryUtil;
 import com.liferay.portal.kernel.template.TemplateResourceLoaderUtil;
 import com.liferay.portal.kernel.util.CharBufferPool;
 import com.liferay.portal.kernel.util.ClassLoaderPool;
@@ -46,7 +40,6 @@ import com.liferay.portal.kernel.util.ClearTimerThreadUtil;
 import com.liferay.portal.kernel.util.InstancePool;
 import com.liferay.portal.kernel.util.JavaConstants;
 import com.liferay.portal.kernel.util.MethodCache;
-import com.liferay.portal.kernel.util.PortalLifecycle;
 import com.liferay.portal.kernel.util.PortalLifecycleUtil;
 import com.liferay.portal.kernel.util.ReferenceRegistry;
 import com.liferay.portal.kernel.util.ReflectionUtil;
@@ -91,8 +84,8 @@ import org.springframework.web.context.ContextLoaderListener;
  */
 public class PortalContextLoaderListener extends ContextLoaderListener {
 
-	public static String getPortalServletContextName() {
-		return _portalServletContextName;
+	public static String getPortalServlerContextName() {
+		return _portalServlerContextName;
 	}
 
 	public static String getPortalServletContextPath() {
@@ -140,10 +133,6 @@ public class PortalContextLoaderListener extends ContextLoaderListener {
 			_log.error(e, e);
 		}
 
-		_indexerPostProcessorRegistry.close();
-		_schedulerEntryRegistry.close();
-		_serviceWrapperRegistry.close();
-
 		try {
 			ModuleFrameworkUtilAdapter.stopRuntime();
 		}
@@ -153,13 +142,6 @@ public class PortalContextLoaderListener extends ContextLoaderListener {
 
 		try {
 			PortalLifecycleUtil.reset();
-		}
-		catch (Exception e) {
-			_log.error(e, e);
-		}
-
-		try {
-			SettingsFactoryUtil.clearCache();
 		}
 		catch (Exception e) {
 			_log.error(e, e);
@@ -197,19 +179,18 @@ public class PortalContextLoaderListener extends ContextLoaderListener {
 
 		InitUtil.init();
 
-		final ServletContext servletContext =
-			servletContextEvent.getServletContext();
+		ServletContext servletContext = servletContextEvent.getServletContext();
 
-		_portalServletContextName = servletContext.getServletContextName();
+		_portalServlerContextName = servletContext.getServletContextName();
 
-		if (_portalServletContextName == null) {
-			_portalServletContextName = StringPool.BLANK;
+		if (_portalServlerContextName == null) {
+			_portalServlerContextName = StringPool.BLANK;
 		}
 
 		if (ServerDetector.isJetty() &&
-			_portalServletContextName.equals(StringPool.SLASH)) {
+			_portalServlerContextName.equals(StringPool.SLASH)) {
 
-			_portalServletContextName = StringPool.BLANK;
+			_portalServlerContextName = StringPool.BLANK;
 		}
 
 		_portalServletContextPath = servletContext.getContextPath();
@@ -217,7 +198,7 @@ public class PortalContextLoaderListener extends ContextLoaderListener {
 		if (ServerDetector.isWebSphere() &&
 			_portalServletContextPath.isEmpty()) {
 
-			_portalServletContextName = StringPool.BLANK;
+			_portalServlerContextName = StringPool.BLANK;
 		}
 
 		ClassPathUtil.initializeClassPaths(servletContext);
@@ -259,28 +240,27 @@ public class PortalContextLoaderListener extends ContextLoaderListener {
 			_log.error(e, e);
 		}
 
-		if (PropsValues.CACHE_CLEAR_ON_CONTEXT_INITIALIZATION) {
-			FinderCacheUtil.clearCache();
-			FinderCacheUtil.clearLocalCache();
-			EntityCacheUtil.clearCache();
-			EntityCacheUtil.clearLocalCache();
-			PermissionCacheUtil.clearCache();
-			TemplateResourceLoaderUtil.clearCache();
-			WikiCacheUtil.clearCache(0);
+		FinderCacheUtil.clearCache();
+		FinderCacheUtil.clearLocalCache();
+		EntityCacheUtil.clearCache();
+		EntityCacheUtil.clearLocalCache();
+		PermissionCacheUtil.clearCache();
+		PermissionCacheUtil.clearLocalCache();
+		TemplateResourceLoaderUtil.clearCache();
+		WikiCacheUtil.clearCache(0);
 
-			ServletContextPool.clear();
+		ServletContextPool.clear();
 
-			CacheUtil.clearCache();
-			MultiVMPoolUtil.clear();
-			SingleVMPoolUtil.clear();
-			WebCachePoolUtil.clear();
-		}
+		CacheUtil.clearCache();
+		MultiVMPoolUtil.clear();
+		SingleVMPoolUtil.clear();
+		WebCachePoolUtil.clear();
 
 		ClassLoader portalClassLoader = ClassLoaderUtil.getPortalClassLoader();
 
-		ClassLoaderPool.register(_portalServletContextName, portalClassLoader);
+		ClassLoaderPool.register(_portalServlerContextName, portalClassLoader);
 
-		ServletContextPool.put(_portalServletContextName, servletContext);
+		ServletContextPool.put(_portalServlerContextName, servletContext);
 
 		BeanLocatorImpl beanLocatorImpl = new BeanLocatorImpl(
 			portalClassLoader, applicationContext);
@@ -300,35 +280,15 @@ public class PortalContextLoaderListener extends ContextLoaderListener {
 
 		clearFilteredPropertyDescriptorsCache(autowireCapableBeanFactory);
 
-		_indexerPostProcessorRegistry = new IndexerPostProcessorRegistry();
-		_schedulerEntryRegistry = new SchedulerEntryRegistry();
-		_serviceWrapperRegistry = new ServiceWrapperRegistry();
-
 		try {
-			PortalLifecycleUtil.register(
-				new PortalLifecycle() {
-
-					@Override
-					public void portalInit() {
-						ModuleFrameworkUtilAdapter.registerContext(
-							servletContext);
-					}
-
-					@Override
-					public void portalDestroy() {
-					}
-
-				});
-
 			ModuleFrameworkUtilAdapter.registerContext(applicationContext);
+			ModuleFrameworkUtilAdapter.registerContext(servletContext);
 
 			ModuleFrameworkUtilAdapter.startRuntime();
 		}
 		catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-
-		initListeners(servletContext);
 	}
 
 	protected void clearFilteredPropertyDescriptorsCache(
@@ -338,7 +298,7 @@ public class PortalContextLoaderListener extends ContextLoaderListener {
 			Map<Class<?>, PropertyDescriptor[]>
 				filteredPropertyDescriptorsCache =
 					(Map<Class<?>, PropertyDescriptor[]>)
-						_FILTERED_PROPERTY_DESCRIPTORS_CACHE_FIELD.get(
+						_filteredPropertyDescriptorsCacheField.get(
 							autowireCapableBeanFactory);
 
 			filteredPropertyDescriptorsCache.clear();
@@ -348,35 +308,23 @@ public class PortalContextLoaderListener extends ContextLoaderListener {
 		}
 	}
 
-	protected void initListeners(ServletContext servletContext) {
-		if (PropsValues.SESSION_VERIFY_SERIALIZABLE_ATTRIBUTE) {
-			servletContext.addListener(
-				SerializableSessionAttributeListener.class);
-		}
-	}
-
-	private static final Field _FILTERED_PROPERTY_DESCRIPTORS_CACHE_FIELD;
-
 	private static Log _log = LogFactoryUtil.getLog(
 		PortalContextLoaderListener.class);
 
-	private static String _portalServletContextName = StringPool.BLANK;
+	private static Field _filteredPropertyDescriptorsCacheField;
+	private static String _portalServlerContextName = StringPool.BLANK;
 	private static String _portalServletContextPath = StringPool.SLASH;
 
 	static {
 		try {
-			_FILTERED_PROPERTY_DESCRIPTORS_CACHE_FIELD =
+			_filteredPropertyDescriptorsCacheField =
 				ReflectionUtil.getDeclaredField(
 					AbstractAutowireCapableBeanFactory.class,
 					"filteredPropertyDescriptorsCache");
 		}
 		catch (Exception e) {
-			throw new LoggedExceptionInInitializerError(e);
+			_log.error(e, e);
 		}
 	}
-
-	private IndexerPostProcessorRegistry _indexerPostProcessorRegistry;
-	private SchedulerEntryRegistry _schedulerEntryRegistry;
-	private ServiceWrapperRegistry _serviceWrapperRegistry;
 
 }

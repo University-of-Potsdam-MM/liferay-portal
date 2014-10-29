@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -16,6 +16,7 @@ package com.liferay.portal.model;
 
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.staging.MergeLayoutPrototypesThreadLocal;
@@ -147,7 +148,7 @@ public class LayoutStagingHandler implements InvocationHandler, Serializable {
 
 	private LayoutRevision _getLayoutRevision(
 			Layout layout, LayoutRevision layoutRevision)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		if (layoutRevision != null) {
 			return layoutRevision;
@@ -313,12 +314,10 @@ public class LayoutStagingHandler implements InvocationHandler, Serializable {
 		_layoutRevisionMethodNames.add("getCss");
 		_layoutRevisionMethodNames.add("getCssText");
 		_layoutRevisionMethodNames.add("getDescription");
-		_layoutRevisionMethodNames.add("getGroupId");
 		_layoutRevisionMethodNames.add("getHTMLTitle");
 		_layoutRevisionMethodNames.add("getIconImage");
 		_layoutRevisionMethodNames.add("getIconImageId");
 		_layoutRevisionMethodNames.add("getKeywords");
-		_layoutRevisionMethodNames.add("getLayoutSet");
 		_layoutRevisionMethodNames.add("getName");
 		_layoutRevisionMethodNames.add("getRobots");
 		_layoutRevisionMethodNames.add("getTheme");
@@ -327,7 +326,6 @@ public class LayoutStagingHandler implements InvocationHandler, Serializable {
 		_layoutRevisionMethodNames.add("getTitle");
 		_layoutRevisionMethodNames.add("getTypeSettings");
 		_layoutRevisionMethodNames.add("getTypeSettingsProperties");
-		_layoutRevisionMethodNames.add("getTypeSettingsProperty");
 		_layoutRevisionMethodNames.add("getWapColorScheme");
 		_layoutRevisionMethodNames.add("getWapColorSchemeId");
 		_layoutRevisionMethodNames.add("getWapTheme");
@@ -342,7 +340,6 @@ public class LayoutStagingHandler implements InvocationHandler, Serializable {
 		_layoutRevisionMethodNames.add("setDescription");
 		_layoutRevisionMethodNames.add("setDescriptionMap");
 		_layoutRevisionMethodNames.add("setEscapedModel");
-		_layoutRevisionMethodNames.add("setGroupId");
 		_layoutRevisionMethodNames.add("setIconImage");
 		_layoutRevisionMethodNames.add("setIconImageId");
 		_layoutRevisionMethodNames.add("setKeywords");

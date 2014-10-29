@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,11 +15,11 @@
 package com.liferay.portal.repository.liferayrepository;
 
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.repository.capabilities.Capability;
-import com.liferay.portal.kernel.repository.capabilities.CapabilityProvider;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.SortedArrayList;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.repository.liferayrepository.util.LiferayBase;
 import com.liferay.portal.service.RepositoryLocalService;
 import com.liferay.portal.service.RepositoryService;
 import com.liferay.portal.service.ResourceLocalService;
@@ -48,7 +48,7 @@ import java.util.List;
 /**
  * @author Alexander Chow
  */
-public abstract class LiferayRepositoryBase implements CapabilityProvider {
+public abstract class LiferayRepositoryBase extends LiferayBase {
 
 	public LiferayRepositoryBase(
 		RepositoryLocalService repositoryLocalService,
@@ -61,8 +61,7 @@ public abstract class LiferayRepositoryBase implements CapabilityProvider {
 		DLFileVersionService dlFileVersionService,
 		DLFolderLocalService dlFolderLocalService,
 		DLFolderService dlFolderService,
-		ResourceLocalService resourceLocalService, long groupId,
-		long repositoryId, long dlFolderId) {
+		ResourceLocalService resourceLocalService, long repositoryId) {
 
 		this.repositoryLocalService = repositoryLocalService;
 		this.repositoryService = repositoryService;
@@ -75,33 +74,54 @@ public abstract class LiferayRepositoryBase implements CapabilityProvider {
 		this.dlFolderLocalService = dlFolderLocalService;
 		this.dlFolderService = dlFolderService;
 		this.resourceLocalService = resourceLocalService;
-		_repositoryId = repositoryId;
-		_groupId = groupId;
-		_dlFolderId = dlFolderId;
+
+		initByRepositoryId(repositoryId);
 	}
 
-	@Override
-	public <T extends Capability> T getCapability(Class<T> capabilityClass) {
-		throw new IllegalArgumentException(
-			String.format(
-				"Capability %s is not supported by repository %s",
-				capabilityClass.getName(), getRepositoryId()));
+	public LiferayRepositoryBase(
+		RepositoryLocalService repositoryLocalService,
+		RepositoryService repositoryService,
+		DLAppHelperLocalService dlAppHelperLocalService,
+		DLFileEntryLocalService dlFileEntryLocalService,
+		DLFileEntryService dlFileEntryService,
+		DLFileEntryTypeLocalService dlFileEntryTypeLocalService,
+		DLFileVersionLocalService dlFileVersionLocalService,
+		DLFileVersionService dlFileVersionService,
+		DLFolderLocalService dlFolderLocalService,
+		DLFolderService dlFolderService,
+		ResourceLocalService resourceLocalService, long folderId,
+		long fileEntryId, long fileVersionId) {
+
+		this.repositoryLocalService = repositoryLocalService;
+		this.repositoryService = repositoryService;
+		this.dlAppHelperLocalService = dlAppHelperLocalService;
+		this.dlFileEntryLocalService = dlFileEntryLocalService;
+		this.dlFileEntryService = dlFileEntryService;
+		this.dlFileEntryTypeLocalService = dlFileEntryTypeLocalService;
+		this.dlFileVersionLocalService = dlFileVersionLocalService;
+		this.dlFileVersionService = dlFileVersionService;
+		this.dlFolderLocalService = dlFolderLocalService;
+		this.dlFolderService = dlFolderService;
+		this.resourceLocalService = resourceLocalService;
+
+		if (folderId != 0) {
+			initByFolderId(folderId);
+		}
+		else if (fileEntryId != 0) {
+			initByFileEntryId(fileEntryId);
+		}
+		else if (fileVersionId != 0) {
+			initByFileVersionId(fileVersionId);
+		}
 	}
 
 	public long getRepositoryId() {
 		return _repositoryId;
 	}
 
-	@Override
-	public <T extends Capability> boolean isCapabilityProvided(
-		Class<T> capabilityClass) {
-
-		return false;
-	}
-
 	protected void addFileEntryResources(
 			DLFileEntry dlFileEntry, ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		if (serviceContext.isAddGroupPermissions() ||
 			serviceContext.isAddGuestPermissions()) {
@@ -131,7 +151,7 @@ public abstract class LiferayRepositoryBase implements CapabilityProvider {
 
 	protected long getDefaultFileEntryTypeId(
 			ServiceContext serviceContext, long folderId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		folderId = dlFolderLocalService.getFolderId(
 			serviceContext.getCompanyId(), folderId);
@@ -141,7 +161,7 @@ public abstract class LiferayRepositoryBase implements CapabilityProvider {
 
 	protected HashMap<String, Fields> getFieldsMap(
 			ServiceContext serviceContext, long fileEntryTypeId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		HashMap<String, Fields> fieldsMap = new HashMap<String, Fields>();
 
@@ -195,6 +215,14 @@ public abstract class LiferayRepositoryBase implements CapabilityProvider {
 		return longList;
 	}
 
+	protected abstract void initByFileEntryId(long fileEntryId);
+
+	protected abstract void initByFileVersionId(long fileVersionId);
+
+	protected abstract void initByFolderId(long folderId);
+
+	protected abstract void initByRepositoryId(long repositoryId);
+
 	protected boolean isDefaultRepository() {
 		if (_groupId == _repositoryId) {
 			return true;
@@ -202,6 +230,18 @@ public abstract class LiferayRepositoryBase implements CapabilityProvider {
 		else {
 			return false;
 		}
+	}
+
+	protected void setDlFolderId(long dlFolderId) {
+		_dlFolderId = dlFolderId;
+	}
+
+	protected void setGroupId(long groupId) {
+		_groupId = groupId;
+	}
+
+	protected void setRepositoryId(long repositoryId) {
+		_repositoryId = repositoryId;
 	}
 
 	protected long toFolderId(long folderId) {

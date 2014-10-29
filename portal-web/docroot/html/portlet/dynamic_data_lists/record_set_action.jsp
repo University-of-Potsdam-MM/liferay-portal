@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -26,12 +26,10 @@ ResultRow row = (ResultRow)request.getAttribute(WebKeys.SEARCH_CONTAINER_RESULT_
 DDLRecordSet recordSet = (DDLRecordSet)row.getObject();
 
 DDLRecordSet selRecordSet = (DDLRecordSet)request.getAttribute("record_set_action.jsp-selRecordSet");
-
-boolean hasViewPermission = portletName.equals(PortletKeys.DYNAMIC_DATA_LISTS) && DDLRecordSetPermission.contains(permissionChecker, recordSet, ActionKeys.VIEW);
 %>
 
-<liferay-ui:icon-menu icon="<%= StringPool.BLANK %>" message="<%= StringPool.BLANK %>">
-	<c:if test="<%= hasViewPermission %>">
+<liferay-ui:icon-menu>
+	<c:if test="<%= portletName.equals(PortletKeys.DYNAMIC_DATA_LISTS) && DDLRecordSetPermission.contains(permissionChecker, recordSet, ActionKeys.VIEW) %>">
 		<portlet:renderURL var="viewRecordSetURL">
 			<portlet:param name="struts_action" value="/dynamic_data_lists/view_record_set" />
 			<portlet:param name="<%= Constants.CMD %>" value="<%= Constants.VIEW %>" />
@@ -40,11 +38,12 @@ boolean hasViewPermission = portletName.equals(PortletKeys.DYNAMIC_DATA_LISTS) &
 		</portlet:renderURL>
 
 		<liferay-ui:icon
-			iconCssClass="icon-search"
-			message="view[action]"
+			image="view"
 			url="<%= viewRecordSetURL %>"
 		/>
+	</c:if>
 
+	<c:if test="<%= portletName.equals(PortletKeys.DYNAMIC_DATA_LISTS) && DDLRecordSetPermission.contains(permissionChecker, recordSet, ActionKeys.VIEW) %>">
 		<portlet:renderURL var="viewRecordSetURL">
 			<portlet:param name="struts_action" value="/dynamic_data_lists/view_record_set" />
 			<portlet:param name="<%= Constants.CMD %>" value="<%= Constants.VIEW %>" />
@@ -54,7 +53,7 @@ boolean hasViewPermission = portletName.equals(PortletKeys.DYNAMIC_DATA_LISTS) &
 		</portlet:renderURL>
 
 		<liferay-ui:icon
-			iconCssClass="icon-table"
+			image="view_tasks"
 			message="spreadsheet-view"
 			url="<%= viewRecordSetURL %>"
 		/>
@@ -69,13 +68,12 @@ boolean hasViewPermission = portletName.equals(PortletKeys.DYNAMIC_DATA_LISTS) &
 		</liferay-portlet:renderURL>
 
 		<liferay-ui:icon
-			iconCssClass="icon-edit"
-			message="edit"
+			image="edit"
 			url="<%= editRecordSetURL %>"
 		/>
 	</c:if>
 
-	<c:if test="<%= hasViewPermission %>">
+	<c:if test="<%= portletName.equals(PortletKeys.DYNAMIC_DATA_LISTS) && DDLRecordSetPermission.contains(permissionChecker, recordSet, ActionKeys.VIEW) %>">
 		<portlet:resourceURL var="exportRecordSetURL">
 			<portlet:param name="struts_action" value="/dynamic_data_lists/export" />
 			<portlet:param name="recordSetId" value="<%= String.valueOf(recordSet.getRecordSetId()) %>" />
@@ -93,8 +91,7 @@ boolean hasViewPermission = portletName.equals(PortletKeys.DYNAMIC_DATA_LISTS) &
 		%>
 
 		<liferay-ui:icon
-			iconCssClass="icon-arrow-down"
-			message="export"
+			image="export"
 			url="<%= sb.toString() %>"
 		/>
 	</c:if>
@@ -109,8 +106,7 @@ boolean hasViewPermission = portletName.equals(PortletKeys.DYNAMIC_DATA_LISTS) &
 		/>
 
 		<liferay-ui:icon
-			iconCssClass="icon-lock"
-			message="permissions"
+			image="permissions"
 			method="get"
 			url="<%= permissionsRecordSetURL %>"
 			useDialog="<%= true %>"

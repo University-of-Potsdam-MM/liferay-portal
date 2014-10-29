@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,6 +18,7 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.bean.PortalBeanLocatorUtil;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ReferenceRegistry;
 import com.liferay.portal.service.ServiceContext;
@@ -63,7 +64,8 @@ public class ShoppingCartUtil {
 	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#countWithDynamicQuery(DynamicQuery)
 	 */
-	public static long countWithDynamicQuery(DynamicQuery dynamicQuery) {
+	public static long countWithDynamicQuery(DynamicQuery dynamicQuery)
+		throws SystemException {
 		return getPersistence().countWithDynamicQuery(dynamicQuery);
 	}
 
@@ -71,7 +73,7 @@ public class ShoppingCartUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#findWithDynamicQuery(DynamicQuery)
 	 */
 	public static List<ShoppingCart> findWithDynamicQuery(
-		DynamicQuery dynamicQuery) {
+		DynamicQuery dynamicQuery) throws SystemException {
 		return getPersistence().findWithDynamicQuery(dynamicQuery);
 	}
 
@@ -79,7 +81,8 @@ public class ShoppingCartUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#findWithDynamicQuery(DynamicQuery, int, int)
 	 */
 	public static List<ShoppingCart> findWithDynamicQuery(
-		DynamicQuery dynamicQuery, int start, int end) {
+		DynamicQuery dynamicQuery, int start, int end)
+		throws SystemException {
 		return getPersistence().findWithDynamicQuery(dynamicQuery, start, end);
 	}
 
@@ -88,7 +91,7 @@ public class ShoppingCartUtil {
 	 */
 	public static List<ShoppingCart> findWithDynamicQuery(
 		DynamicQuery dynamicQuery, int start, int end,
-		OrderByComparator<ShoppingCart> orderByComparator) {
+		OrderByComparator orderByComparator) throws SystemException {
 		return getPersistence()
 				   .findWithDynamicQuery(dynamicQuery, start, end,
 			orderByComparator);
@@ -97,7 +100,8 @@ public class ShoppingCartUtil {
 	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel)
 	 */
-	public static ShoppingCart update(ShoppingCart shoppingCart) {
+	public static ShoppingCart update(ShoppingCart shoppingCart)
+		throws SystemException {
 		return getPersistence().update(shoppingCart);
 	}
 
@@ -105,7 +109,7 @@ public class ShoppingCartUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, ServiceContext)
 	 */
 	public static ShoppingCart update(ShoppingCart shoppingCart,
-		ServiceContext serviceContext) {
+		ServiceContext serviceContext) throws SystemException {
 		return getPersistence().update(shoppingCart, serviceContext);
 	}
 
@@ -114,9 +118,11 @@ public class ShoppingCartUtil {
 	*
 	* @param groupId the group ID
 	* @return the matching shopping carts
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.shopping.model.ShoppingCart> findByGroupId(
-		long groupId) {
+		long groupId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByGroupId(groupId);
 	}
 
@@ -131,9 +137,11 @@ public class ShoppingCartUtil {
 	* @param start the lower bound of the range of shopping carts
 	* @param end the upper bound of the range of shopping carts (not inclusive)
 	* @return the range of matching shopping carts
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.shopping.model.ShoppingCart> findByGroupId(
-		long groupId, int start, int end) {
+		long groupId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByGroupId(groupId, start, end);
 	}
 
@@ -149,10 +157,12 @@ public class ShoppingCartUtil {
 	* @param end the upper bound of the range of shopping carts (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching shopping carts
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.shopping.model.ShoppingCart> findByGroupId(
 		long groupId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.shopping.model.ShoppingCart> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByGroupId(groupId, start, end, orderByComparator);
 	}
@@ -164,11 +174,13 @@ public class ShoppingCartUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching shopping cart
 	* @throws com.liferay.portlet.shopping.NoSuchCartException if a matching shopping cart could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.shopping.model.ShoppingCart findByGroupId_First(
 		long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.shopping.model.ShoppingCart> orderByComparator)
-		throws com.liferay.portlet.shopping.NoSuchCartException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.shopping.NoSuchCartException {
 		return getPersistence().findByGroupId_First(groupId, orderByComparator);
 	}
 
@@ -178,10 +190,12 @@ public class ShoppingCartUtil {
 	* @param groupId the group ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching shopping cart, or <code>null</code> if a matching shopping cart could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.shopping.model.ShoppingCart fetchByGroupId_First(
 		long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.shopping.model.ShoppingCart> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByGroupId_First(groupId, orderByComparator);
 	}
 
@@ -192,11 +206,13 @@ public class ShoppingCartUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching shopping cart
 	* @throws com.liferay.portlet.shopping.NoSuchCartException if a matching shopping cart could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.shopping.model.ShoppingCart findByGroupId_Last(
 		long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.shopping.model.ShoppingCart> orderByComparator)
-		throws com.liferay.portlet.shopping.NoSuchCartException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.shopping.NoSuchCartException {
 		return getPersistence().findByGroupId_Last(groupId, orderByComparator);
 	}
 
@@ -206,10 +222,12 @@ public class ShoppingCartUtil {
 	* @param groupId the group ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching shopping cart, or <code>null</code> if a matching shopping cart could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.shopping.model.ShoppingCart fetchByGroupId_Last(
 		long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.shopping.model.ShoppingCart> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByGroupId_Last(groupId, orderByComparator);
 	}
 
@@ -221,11 +239,13 @@ public class ShoppingCartUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next shopping cart
 	* @throws com.liferay.portlet.shopping.NoSuchCartException if a shopping cart with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.shopping.model.ShoppingCart[] findByGroupId_PrevAndNext(
 		long cartId, long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.shopping.model.ShoppingCart> orderByComparator)
-		throws com.liferay.portlet.shopping.NoSuchCartException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.shopping.NoSuchCartException {
 		return getPersistence()
 				   .findByGroupId_PrevAndNext(cartId, groupId, orderByComparator);
 	}
@@ -234,8 +254,10 @@ public class ShoppingCartUtil {
 	* Removes all the shopping carts where groupId = &#63; from the database.
 	*
 	* @param groupId the group ID
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByGroupId(long groupId) {
+	public static void removeByGroupId(long groupId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeByGroupId(groupId);
 	}
 
@@ -244,8 +266,10 @@ public class ShoppingCartUtil {
 	*
 	* @param groupId the group ID
 	* @return the number of matching shopping carts
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByGroupId(long groupId) {
+	public static int countByGroupId(long groupId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByGroupId(groupId);
 	}
 
@@ -254,9 +278,10 @@ public class ShoppingCartUtil {
 	*
 	* @param userId the user ID
 	* @return the matching shopping carts
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.shopping.model.ShoppingCart> findByUserId(
-		long userId) {
+		long userId) throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByUserId(userId);
 	}
 
@@ -271,9 +296,11 @@ public class ShoppingCartUtil {
 	* @param start the lower bound of the range of shopping carts
 	* @param end the upper bound of the range of shopping carts (not inclusive)
 	* @return the range of matching shopping carts
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.shopping.model.ShoppingCart> findByUserId(
-		long userId, int start, int end) {
+		long userId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByUserId(userId, start, end);
 	}
 
@@ -289,10 +316,12 @@ public class ShoppingCartUtil {
 	* @param end the upper bound of the range of shopping carts (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching shopping carts
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.shopping.model.ShoppingCart> findByUserId(
 		long userId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.shopping.model.ShoppingCart> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByUserId(userId, start, end, orderByComparator);
 	}
@@ -304,11 +333,13 @@ public class ShoppingCartUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching shopping cart
 	* @throws com.liferay.portlet.shopping.NoSuchCartException if a matching shopping cart could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.shopping.model.ShoppingCart findByUserId_First(
 		long userId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.shopping.model.ShoppingCart> orderByComparator)
-		throws com.liferay.portlet.shopping.NoSuchCartException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.shopping.NoSuchCartException {
 		return getPersistence().findByUserId_First(userId, orderByComparator);
 	}
 
@@ -318,10 +349,12 @@ public class ShoppingCartUtil {
 	* @param userId the user ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching shopping cart, or <code>null</code> if a matching shopping cart could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.shopping.model.ShoppingCart fetchByUserId_First(
 		long userId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.shopping.model.ShoppingCart> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByUserId_First(userId, orderByComparator);
 	}
 
@@ -332,11 +365,13 @@ public class ShoppingCartUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching shopping cart
 	* @throws com.liferay.portlet.shopping.NoSuchCartException if a matching shopping cart could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.shopping.model.ShoppingCart findByUserId_Last(
 		long userId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.shopping.model.ShoppingCart> orderByComparator)
-		throws com.liferay.portlet.shopping.NoSuchCartException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.shopping.NoSuchCartException {
 		return getPersistence().findByUserId_Last(userId, orderByComparator);
 	}
 
@@ -346,10 +381,12 @@ public class ShoppingCartUtil {
 	* @param userId the user ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching shopping cart, or <code>null</code> if a matching shopping cart could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.shopping.model.ShoppingCart fetchByUserId_Last(
 		long userId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.shopping.model.ShoppingCart> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByUserId_Last(userId, orderByComparator);
 	}
 
@@ -361,11 +398,13 @@ public class ShoppingCartUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next shopping cart
 	* @throws com.liferay.portlet.shopping.NoSuchCartException if a shopping cart with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.shopping.model.ShoppingCart[] findByUserId_PrevAndNext(
 		long cartId, long userId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.shopping.model.ShoppingCart> orderByComparator)
-		throws com.liferay.portlet.shopping.NoSuchCartException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.shopping.NoSuchCartException {
 		return getPersistence()
 				   .findByUserId_PrevAndNext(cartId, userId, orderByComparator);
 	}
@@ -374,8 +413,10 @@ public class ShoppingCartUtil {
 	* Removes all the shopping carts where userId = &#63; from the database.
 	*
 	* @param userId the user ID
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByUserId(long userId) {
+	public static void removeByUserId(long userId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeByUserId(userId);
 	}
 
@@ -384,8 +425,10 @@ public class ShoppingCartUtil {
 	*
 	* @param userId the user ID
 	* @return the number of matching shopping carts
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByUserId(long userId) {
+	public static int countByUserId(long userId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByUserId(userId);
 	}
 
@@ -396,10 +439,12 @@ public class ShoppingCartUtil {
 	* @param userId the user ID
 	* @return the matching shopping cart
 	* @throws com.liferay.portlet.shopping.NoSuchCartException if a matching shopping cart could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.shopping.model.ShoppingCart findByG_U(
 		long groupId, long userId)
-		throws com.liferay.portlet.shopping.NoSuchCartException {
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.shopping.NoSuchCartException {
 		return getPersistence().findByG_U(groupId, userId);
 	}
 
@@ -409,9 +454,11 @@ public class ShoppingCartUtil {
 	* @param groupId the group ID
 	* @param userId the user ID
 	* @return the matching shopping cart, or <code>null</code> if a matching shopping cart could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.shopping.model.ShoppingCart fetchByG_U(
-		long groupId, long userId) {
+		long groupId, long userId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByG_U(groupId, userId);
 	}
 
@@ -422,9 +469,11 @@ public class ShoppingCartUtil {
 	* @param userId the user ID
 	* @param retrieveFromCache whether to use the finder cache
 	* @return the matching shopping cart, or <code>null</code> if a matching shopping cart could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.shopping.model.ShoppingCart fetchByG_U(
-		long groupId, long userId, boolean retrieveFromCache) {
+		long groupId, long userId, boolean retrieveFromCache)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByG_U(groupId, userId, retrieveFromCache);
 	}
 
@@ -434,10 +483,12 @@ public class ShoppingCartUtil {
 	* @param groupId the group ID
 	* @param userId the user ID
 	* @return the shopping cart that was removed
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.shopping.model.ShoppingCart removeByG_U(
 		long groupId, long userId)
-		throws com.liferay.portlet.shopping.NoSuchCartException {
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.shopping.NoSuchCartException {
 		return getPersistence().removeByG_U(groupId, userId);
 	}
 
@@ -447,8 +498,10 @@ public class ShoppingCartUtil {
 	* @param groupId the group ID
 	* @param userId the user ID
 	* @return the number of matching shopping carts
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByG_U(long groupId, long userId) {
+	public static int countByG_U(long groupId, long userId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByG_U(groupId, userId);
 	}
 
@@ -489,14 +542,18 @@ public class ShoppingCartUtil {
 	* @param cartId the primary key of the shopping cart
 	* @return the shopping cart that was removed
 	* @throws com.liferay.portlet.shopping.NoSuchCartException if a shopping cart with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.shopping.model.ShoppingCart remove(
-		long cartId) throws com.liferay.portlet.shopping.NoSuchCartException {
+		long cartId)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.shopping.NoSuchCartException {
 		return getPersistence().remove(cartId);
 	}
 
 	public static com.liferay.portlet.shopping.model.ShoppingCart updateImpl(
-		com.liferay.portlet.shopping.model.ShoppingCart shoppingCart) {
+		com.liferay.portlet.shopping.model.ShoppingCart shoppingCart)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().updateImpl(shoppingCart);
 	}
 
@@ -506,9 +563,12 @@ public class ShoppingCartUtil {
 	* @param cartId the primary key of the shopping cart
 	* @return the shopping cart
 	* @throws com.liferay.portlet.shopping.NoSuchCartException if a shopping cart with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.shopping.model.ShoppingCart findByPrimaryKey(
-		long cartId) throws com.liferay.portlet.shopping.NoSuchCartException {
+		long cartId)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.shopping.NoSuchCartException {
 		return getPersistence().findByPrimaryKey(cartId);
 	}
 
@@ -517,23 +577,21 @@ public class ShoppingCartUtil {
 	*
 	* @param cartId the primary key of the shopping cart
 	* @return the shopping cart, or <code>null</code> if a shopping cart with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.shopping.model.ShoppingCart fetchByPrimaryKey(
-		long cartId) {
+		long cartId) throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByPrimaryKey(cartId);
-	}
-
-	public static java.util.Map<java.io.Serializable, com.liferay.portlet.shopping.model.ShoppingCart> fetchByPrimaryKeys(
-		java.util.Set<java.io.Serializable> primaryKeys) {
-		return getPersistence().fetchByPrimaryKeys(primaryKeys);
 	}
 
 	/**
 	* Returns all the shopping carts.
 	*
 	* @return the shopping carts
+	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portlet.shopping.model.ShoppingCart> findAll() {
+	public static java.util.List<com.liferay.portlet.shopping.model.ShoppingCart> findAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll();
 	}
 
@@ -547,9 +605,11 @@ public class ShoppingCartUtil {
 	* @param start the lower bound of the range of shopping carts
 	* @param end the upper bound of the range of shopping carts (not inclusive)
 	* @return the range of shopping carts
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.shopping.model.ShoppingCart> findAll(
-		int start, int end) {
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll(start, end);
 	}
 
@@ -564,17 +624,22 @@ public class ShoppingCartUtil {
 	* @param end the upper bound of the range of shopping carts (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of shopping carts
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.shopping.model.ShoppingCart> findAll(
 		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.shopping.model.ShoppingCart> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll(start, end, orderByComparator);
 	}
 
 	/**
 	* Removes all the shopping carts from the database.
+	*
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeAll() {
+	public static void removeAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeAll();
 	}
 
@@ -582,8 +647,10 @@ public class ShoppingCartUtil {
 	* Returns the number of shopping carts.
 	*
 	* @return the number of shopping carts
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countAll() {
+	public static int countAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countAll();
 	}
 
@@ -601,7 +668,6 @@ public class ShoppingCartUtil {
 	/**
 	 * @deprecated As of 6.2.0
 	 */
-	@Deprecated
 	public void setPersistence(ShoppingCartPersistence persistence) {
 	}
 

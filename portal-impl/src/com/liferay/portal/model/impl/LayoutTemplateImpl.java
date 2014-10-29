@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,16 +14,12 @@
 
 package com.liferay.portal.model.impl;
 
-import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.servlet.ServletContextPool;
-import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.ContextPathUtil;
 import com.liferay.portal.kernel.util.HttpUtil;
-import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.LayoutTemplate;
 import com.liferay.portal.model.Plugin;
@@ -33,7 +29,6 @@ import java.io.IOException;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import javax.servlet.ServletContext;
 
@@ -45,11 +40,10 @@ public class LayoutTemplateImpl
 	extends PluginBaseImpl implements LayoutTemplate {
 
 	public LayoutTemplateImpl() {
-		this(null, null);
 	}
 
 	public LayoutTemplateImpl(String layoutTemplateId) {
-		this(layoutTemplateId, null);
+		_layoutTemplateId = layoutTemplateId;
 	}
 
 	public LayoutTemplateImpl(String layoutTemplateId, String name) {
@@ -116,19 +110,12 @@ public class LayoutTemplateImpl
 
 	@Override
 	public String getName() {
-		return getName(LocaleUtil.getDefault());
-	}
-
-	@Override
-	public String getName(Locale locale) {
-		if (Validator.isNotNull(_name)) {
+		if (Validator.isNull(_name)) {
+			return _layoutTemplateId;
+		}
+		else {
 			return _name;
 		}
-
-		String layoutTemplateId = StringUtil.replace(
-			_layoutTemplateId, CharPool.UNDERLINE, CharPool.DASH);
-
-		return LanguageUtil.get(locale, "layout-template-" + layoutTemplateId);
 	}
 
 	@Override
@@ -347,7 +334,7 @@ public class LayoutTemplateImpl
 
 	private List<String> _columns = new ArrayList<String>();
 	private String _content;
-	private final String _layoutTemplateId;
+	private String _layoutTemplateId;
 	private String _name;
 	private transient ServletContext _servletContext;
 	private String _servletContextName = StringPool.BLANK;

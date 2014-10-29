@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -17,8 +17,8 @@ package com.liferay.portal.dao.shard.advice;
 import com.liferay.portal.dao.shard.ShardDataSourceTargetSource;
 import com.liferay.portal.dao.shard.ShardSelector;
 import com.liferay.portal.dao.shard.ShardSessionFactoryTargetSource;
-import com.liferay.portal.kernel.exception.LoggedExceptionInInitializerError;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -179,7 +179,7 @@ public class ShardAdvice {
 	}
 
 	private String _setShardNameByCompanyId(long companyId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		String shardName = PropsValues.SHARD_DEFAULT_NAME;
 
@@ -197,14 +197,16 @@ public class ShardAdvice {
 
 	private static Log _log = LogFactoryUtil.getLog(ShardAdvice.class);
 
-	private static final ThreadLocal<Stack<String>> _companyServiceStack =
+	private static ThreadLocal<Stack<String>> _companyServiceStack =
 		new ThreadLocal<Stack<String>>();
-	private static final ThreadLocal<Object> _globalCall =
-		new ThreadLocal<Object>();
-	private static final ThreadLocal<String> _shardName =
+	private static ThreadLocal<Object> _globalCall = new ThreadLocal<Object>();
+	private static ThreadLocal<String> _shardName =
 		new InitialThreadLocal<String>(
 			ShardAdvice.class + "._shardName", PropsValues.SHARD_DEFAULT_NAME);
-	private static final ShardSelector _shardSelector;
+	private static ShardSelector _shardSelector;
+
+	private ShardDataSourceTargetSource _shardDataSourceTargetSource;
+	private ShardSessionFactoryTargetSource _shardSessionFactoryTargetSource;
 
 	static {
 		try {
@@ -213,11 +215,8 @@ public class ShardAdvice {
 			_shardSelector = (ShardSelector)clazz.newInstance();
 		}
 		catch (Exception e) {
-			throw new LoggedExceptionInInitializerError(e);
+			_log.error(e, e);
 		}
 	}
-
-	private ShardDataSourceTargetSource _shardDataSourceTargetSource;
-	private ShardSessionFactoryTargetSource _shardSessionFactoryTargetSource;
 
 }

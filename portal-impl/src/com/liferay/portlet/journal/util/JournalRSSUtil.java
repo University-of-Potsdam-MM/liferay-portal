@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,6 +14,7 @@
 
 package com.liferay.portlet.journal.util;
 
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.repository.model.FileEntry;
@@ -54,7 +55,9 @@ import java.util.Set;
  */
 public class JournalRSSUtil {
 
-	public static List<JournalArticle> getArticles(JournalFeed feed) {
+	public static List<JournalArticle> getArticles(JournalFeed feed)
+		throws SystemException {
+
 		long companyId = feed.getCompanyId();
 		long groupId = feed.getGroupId();
 		List<Long> folderIds = Collections.emptyList();
@@ -94,8 +97,7 @@ public class JournalRSSUtil {
 		String orderByType = feed.getOrderByType();
 		boolean orderByAsc = orderByType.equals("asc");
 
-		OrderByComparator<JournalArticle> obc =
-			new ArticleModifiedDateComparator(orderByAsc);
+		OrderByComparator obc = new ArticleModifiedDateComparator(orderByAsc);
 
 		if (orderByCol.equals("display-date")) {
 			obc = new ArticleDisplayDateComparator(orderByAsc);
@@ -173,7 +175,7 @@ public class JournalRSSUtil {
 			}
 			else if (pathArray.length == 5) {
 				folderId = GetterUtil.getLong(pathArray[3]);
-				title = HttpUtil.decodeURL(pathArray[4]);
+				title = HttpUtil.decodeURL(pathArray[4], true);
 			}
 			else if (pathArray.length > 5) {
 				uuid = pathArray[5];

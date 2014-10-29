@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,42 +18,18 @@
 
 <div class="lfr-ddm-container" id="<%= randomNamespace %>">
 	<c:if test="<%= Validator.isNotNull(xsd) %>">
+		<%= DDMXSDUtil.getSimpleFieldHTMLByName(pageContext, classNameId, classPK, field, portletResponse.getNamespace(), fieldsNamespace, mode, readOnly, requestedLocale) %>
 
-		<%
-		DDMForm ddmForm = DDMFormXSDDeserializerUtil.deserialize(xsd);
+		<aui:input name="<%= fieldsDisplayInputName %>" type="hidden" />
 
-		Map<String, DDMFormField> ddmFormFieldsMap = ddmForm.getDDMFormFieldsMap(true);
-
-		DDMFormField ddmFormField = ddmFormFieldsMap.get(field.getName());
-
-		DDMFormFieldRenderer ddmFormFieldRenderer = DDMFormFieldRendererRegistryUtil.getDDMFormFieldRenderer(ddmFormField.getType());
-
-		DDMFormFieldRenderingContext ddmFormFieldRenderingContext = new DDMFormFieldRenderingContext();
-
-		ddmFormFieldRenderingContext.setField(field);
-		ddmFormFieldRenderingContext.setHttpServletRequest(request);
-		ddmFormFieldRenderingContext.setHttpServletResponse(response);
-		ddmFormFieldRenderingContext.setLocale(requestedLocale);
-		ddmFormFieldRenderingContext.setMode(mode);
-		ddmFormFieldRenderingContext.setNamespace(fieldsNamespace);
-		ddmFormFieldRenderingContext.setPortletNamespace(portletResponse.getNamespace());
-		ddmFormFieldRenderingContext.setReadOnly(readOnly);
-		ddmFormFieldRenderingContext.setShowEmptyFieldLabel(showEmptyFieldLabel);
-		%>
-
-		<%= ddmFormFieldRenderer.render(ddmFormField, ddmFormFieldRenderingContext) %>
-
-		<aui:input name="<%= ddmFormValuesInputName %>" type="hidden" />
-
-		<aui:script use="liferay-ddm-form">
-			new Liferay.DDM.Form(
+		<aui:script use="liferay-ddm-repeatable-fields">
+			new Liferay.DDM.RepeatableFields(
 				{
 					classNameId: <%= classNameId %>,
 					classPK: <%= classPK %>,
 					container: '#<%= randomNamespace %>',
-					ddmFormValuesInput: '#<portlet:namespace /><%= ddmFormValuesInputName %>',
-					definition: <%= DDMFormJSONSerializerUtil.serialize(ddmForm) %>,
 					doAsGroupId: <%= scopeGroupId %>,
+					fieldsDisplayInput: '#<portlet:namespace /><%= fieldsDisplayInputName %>',
 					namespace: '<%= fieldsNamespace %>',
 					p_l_id: <%= themeDisplay.getPlid() %>,
 					portletNamespace: '<portlet:namespace />',

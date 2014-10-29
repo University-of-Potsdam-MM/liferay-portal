@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,9 +18,9 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.LocaleException;
 import com.liferay.portal.kernel.bean.AutoEscape;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.model.BaseModel;
 import com.liferay.portal.model.CacheModel;
-import com.liferay.portal.model.LocalizedModel;
 import com.liferay.portal.model.StagedGroupedModel;
 import com.liferay.portal.service.ServiceContext;
 
@@ -46,7 +46,7 @@ import java.util.Map;
  * @generated
  */
 @ProviderType
-public interface DDMContentModel extends BaseModel<DDMContent>, LocalizedModel,
+public interface DDMContentModel extends BaseModel<DDMContent>,
 	StagedGroupedModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
@@ -151,9 +151,10 @@ public interface DDMContentModel extends BaseModel<DDMContent>, LocalizedModel,
 	 * Returns the user uuid of this d d m content.
 	 *
 	 * @return the user uuid of this d d m content
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public String getUserUuid();
+	public String getUserUuid() throws SystemException;
 
 	/**
 	 * Sets the user uuid of this d d m content.
@@ -327,19 +328,19 @@ public interface DDMContentModel extends BaseModel<DDMContent>, LocalizedModel,
 	public void setDescription(String description);
 
 	/**
-	 * Returns the data of this d d m content.
+	 * Returns the xml of this d d m content.
 	 *
-	 * @return the data of this d d m content
+	 * @return the xml of this d d m content
 	 */
 	@AutoEscape
-	public String getData();
+	public String getXml();
 
 	/**
-	 * Sets the data of this d d m content.
+	 * Sets the xml of this d d m content.
 	 *
-	 * @param data the data of this d d m content
+	 * @param xml the xml of this d d m content
 	 */
-	public void setData(String data);
+	public void setXml(String xml);
 
 	@Override
 	public boolean isNew();
@@ -374,16 +375,12 @@ public interface DDMContentModel extends BaseModel<DDMContent>, LocalizedModel,
 	@Override
 	public void setExpandoBridgeAttributes(ServiceContext serviceContext);
 
-	@Override
 	public String[] getAvailableLanguageIds();
 
-	@Override
 	public String getDefaultLanguageId();
 
-	@Override
 	public void prepareLocalizedFieldsForImport() throws LocaleException;
 
-	@Override
 	public void prepareLocalizedFieldsForImport(Locale defaultImportLocale)
 		throws LocaleException;
 

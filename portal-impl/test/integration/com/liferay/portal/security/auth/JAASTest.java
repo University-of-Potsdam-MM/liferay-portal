@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -17,6 +17,7 @@ package com.liferay.portal.security.auth;
 import com.liferay.portal.events.EventsProcessorUtil;
 import com.liferay.portal.kernel.events.Action;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.security.jaas.PortalPrincipal;
 import com.liferay.portal.kernel.security.jaas.PortalRole;
 import com.liferay.portal.kernel.servlet.HttpMethods;
@@ -30,11 +31,11 @@ import com.liferay.portal.model.User;
 import com.liferay.portal.security.jaas.JAASHelper;
 import com.liferay.portal.service.UserLocalServiceUtil;
 import com.liferay.portal.servlet.MainServlet;
-import com.liferay.portal.test.listeners.MainServletExecutionTestListener;
-import com.liferay.portal.test.mock.AutoDeployMockServletContext;
-import com.liferay.portal.test.runners.LiferayIntegrationJUnitTestRunner;
+import com.liferay.portal.test.EnvironmentExecutionTestListener;
+import com.liferay.portal.test.LiferayIntegrationJUnitTestRunner;
+import com.liferay.portal.test.MainServletExecutionTestListener;
 import com.liferay.portal.util.PropsValues;
-import com.liferay.portal.util.test.TestPropsValues;
+import com.liferay.portal.util.TestPropsValues;
 
 import java.lang.reflect.Field;
 
@@ -76,9 +77,9 @@ import org.springframework.mock.web.MockServletContext;
 /**
  * @author Raymond Augé
  */
-@ExecutionTestListeners(listeners = {MainServletExecutionTestListener.class})
+@ExecutionTestListeners(listeners = {EnvironmentExecutionTestListener.class})
 @RunWith(LiferayIntegrationJUnitTestRunner.class)
-public class JAASTest {
+public class JAASTest extends MainServletExecutionTestListener {
 
 	@Before
 	public void setUp() throws Exception {
@@ -315,7 +316,7 @@ public class JAASTest {
 
 				@Override
 				protected long doGetJaasUserId(long companyId, String name)
-					throws PortalException {
+					throws PortalException, SystemException {
 
 					try {
 						return super.doGetJaasUserId(companyId, name);
@@ -328,13 +329,13 @@ public class JAASTest {
 			}
 		);
 
-		MainServlet mainServlet = new MainServlet();
-
-		MockServletContext mockServletContext =
-			new AutoDeployMockServletContext(new FileSystemResourceLoader());
+		_mockServletContext = new AutoDeployMockServletContext(
+			getResourceBasePath(), new FileSystemResourceLoader());
 
 		MockServletConfig mockServletConfig = new MockServletConfig(
-			mockServletContext);
+			_mockServletContext);
+
+		mainServlet = new MainServlet();
 
 		try {
 			mainServlet.init(mockServletConfig);
@@ -348,8 +349,7 @@ public class JAASTest {
 
 		MockHttpServletRequest mockHttpServletRequest =
 			new MockHttpServletRequest(
-				mainServlet.getServletContext(), HttpMethods.GET,
-				StringPool.SLASH);
+				_mockServletContext, HttpMethods.GET, StringPool.SLASH);
 
 		mockHttpServletRequest.setRemoteUser(String.valueOf(_user.getUserId()));
 
@@ -421,19 +421,20 @@ public class JAASTest {
 	private Field _jaasAuthTypeField;
 	private Boolean _jaasEnabled;
 	private Field _jaasEnabledField;
+	private MockServletContext _mockServletContext;
 	private User _user;
 
 	private class JAASAction extends Action {
-
-		public boolean isRan() {
-			return _ran;
-		}
 
 		@Override
 		public void run(
 			HttpServletRequest request, HttpServletResponse response) {
 
 			_ran = true;
+		}
+
+		public boolean isRan() {
+			return _ran;
 		}
 
 		private boolean _ran;

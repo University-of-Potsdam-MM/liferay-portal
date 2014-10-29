@@ -36,6 +36,17 @@
 				(AssetCategory.name LIKE ? OR ? IS NULL)
 		]]>
 	</sql>
+	<sql id="com.liferay.portlet.asset.service.persistence.AssetCategoryFinder.findByG_L">
+		<![CDATA[
+			SELECT
+				categoryId
+			FROM
+				AssetCategory
+			WHERE
+				(groupId = ?) AND
+				(leftCategoryId BETWEEN ? AND ?)
+		]]>
+	</sql>
 	<sql id="com.liferay.portlet.asset.service.persistence.AssetCategoryFinder.findByG_N">
 		<![CDATA[
 			SELECT
@@ -180,7 +191,7 @@
 				AssetTag
 			WHERE
 				(AssetTag.groupId = ?) AND
-				(AssetTag.name = ?)
+				(lower(AssetTag.name) = ?)
 		]]>
 	</sql>
 	<sql id="com.liferay.portlet.asset.service.persistence.AssetTagFinder.findByG_C_N">

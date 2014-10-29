@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -37,7 +37,6 @@ import com.liferay.portlet.shopping.CCExpirationException;
 import com.liferay.portlet.shopping.CCNameException;
 import com.liferay.portlet.shopping.CCNumberException;
 import com.liferay.portlet.shopping.CCTypeException;
-import com.liferay.portlet.shopping.NoSuchOrderException;
 import com.liferay.portlet.shopping.ShippingCityException;
 import com.liferay.portlet.shopping.ShippingCountryException;
 import com.liferay.portlet.shopping.ShippingEmailAddressException;
@@ -47,10 +46,10 @@ import com.liferay.portlet.shopping.ShippingPhoneException;
 import com.liferay.portlet.shopping.ShippingStateException;
 import com.liferay.portlet.shopping.ShippingStreetException;
 import com.liferay.portlet.shopping.ShippingZipException;
-import com.liferay.portlet.shopping.ShoppingSettings;
 import com.liferay.portlet.shopping.model.ShoppingCart;
 import com.liferay.portlet.shopping.model.ShoppingOrder;
 import com.liferay.portlet.shopping.service.ShoppingOrderLocalServiceUtil;
+import com.liferay.portlet.shopping.util.ShoppingPreferences;
 import com.liferay.portlet.shopping.util.ShoppingUtil;
 
 import javax.portlet.ActionRequest;
@@ -78,16 +77,13 @@ public class CheckoutAction extends CartAction {
 
 		String cmd = ParamUtil.getString(actionRequest, Constants.CMD);
 
-		if (cmd.equals(Constants.CHECKOUT)) {
-			checkout(actionRequest);
+		getLatestOrder(actionRequest);
 
-			setForward(actionRequest, "portlet.shopping.checkout_first");
-		}
-		else if (!hasLatestOrder(actionRequest)) {
-			setForward(actionRequest, "portlet.shopping.checkout_third");
-		}
-		else if (cmd.equals(Constants.SAVE)) {
-			saveLatestOrder(actionRequest, actionResponse);
+		if (cmd.equals(Constants.SAVE)) {
+			updateCart(actionRequest, actionResponse);
+			updateLatestOrder(actionRequest);
+			saveLatestOrder(actionRequest);
+			forwardCheckout(actionRequest, actionResponse);
 		}
 		else if (cmd.equals(Constants.UPDATE)) {
 			try {
@@ -140,19 +136,8 @@ public class CheckoutAction extends CartAction {
 		}
 	}
 
-	protected void checkout(ActionRequest actionRequest) throws Exception {
-		if (!hasLatestOrder(actionRequest)) {
-			ThemeDisplay themeDisplay =
-				(ThemeDisplay)actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
-
-			ShoppingOrderLocalServiceUtil.addLatestOrder(
-				themeDisplay.getUserId(), themeDisplay.getScopeGroupId());
-		}
-	}
-
 	protected void forwardCheckout(
-			ActionRequest actionRequest, ActionResponse actionResponse,
-			ShoppingOrder order)
+			ActionRequest actionRequest, ActionResponse actionResponse)
 		throws Exception {
 
 		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(
@@ -160,20 +145,23 @@ public class CheckoutAction extends CartAction {
 
 		ShoppingCart cart = ShoppingUtil.getCart(actionRequest);
 
-		ShoppingSettings shoppingSettings = ShoppingSettings.getInstance(
-			themeDisplay.getScopeGroupId());
+		ShoppingOrder order = (ShoppingOrder)actionRequest.getAttribute(
+			WebKeys.SHOPPING_ORDER);
+
+		ShoppingPreferences preferences = ShoppingPreferences.getInstance(
+			themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
 
 		String returnURL = ShoppingUtil.getPayPalReturnURL(
 			((ActionResponseImpl)actionResponse).createActionURL(), order);
 		String notifyURL = ShoppingUtil.getPayPalNotifyURL(themeDisplay);
 
-		if (shoppingSettings.usePayPal()) {
+		if (preferences.usePayPal()) {
 			double total = ShoppingUtil.calculateTotal(
 				cart.getItems(), order.getBillingState(), cart.getCoupon(),
 				cart.getAltShipping(), cart.isInsure());
 
 			String redirectURL = ShoppingUtil.getPayPalRedirectURL(
-				shoppingSettings, order, total, returnURL, notifyURL);
+				preferences, order, total, returnURL, notifyURL);
 
 			actionResponse.sendRedirect(redirectURL);
 		}
@@ -188,21 +176,16 @@ public class CheckoutAction extends CartAction {
 		}
 	}
 
-	protected boolean hasLatestOrder(ActionRequest actionRequest)
+	protected void getLatestOrder(ActionRequest actionRequest)
 		throws Exception {
 
-		try {
-			ThemeDisplay themeDisplay =
-				(ThemeDisplay)actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
+		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(
+			WebKeys.THEME_DISPLAY);
 
-			ShoppingOrderLocalServiceUtil.getLatestOrder(
-				themeDisplay.getUserId(), themeDisplay.getScopeGroupId());
+		ShoppingOrder order = ShoppingOrderLocalServiceUtil.getLatestOrder(
+			themeDisplay.getUserId(), themeDisplay.getScopeGroupId());
 
-			return true;
-		}
-		catch (NoSuchOrderException nsoe) {
-			return false;
-		}
+		actionRequest.setAttribute(WebKeys.SHOPPING_ORDER, order);
 	}
 
 	@Override
@@ -210,8 +193,7 @@ public class CheckoutAction extends CartAction {
 		return _CHECK_METHOD_ON_PROCESS_ACTION;
 	}
 
-	protected void saveLatestOrder(
-			ActionRequest actionRequest, ActionResponse actionResponse)
+	protected void saveLatestOrder(ActionRequest actionRequest)
 		throws Exception {
 
 		ShoppingCart cart = ShoppingUtil.getCart(actionRequest);
@@ -219,7 +201,7 @@ public class CheckoutAction extends CartAction {
 		ShoppingOrder order = ShoppingOrderLocalServiceUtil.saveLatestOrder(
 			cart);
 
-		forwardCheckout(actionRequest, actionResponse, order);
+		actionRequest.setAttribute(WebKeys.SHOPPING_ORDER, order);
 	}
 
 	protected void updateLatestOrder(ActionRequest actionRequest)
@@ -292,7 +274,7 @@ public class CheckoutAction extends CartAction {
 
 		String comments = ParamUtil.getString(actionRequest, "comments");
 
-		ShoppingOrderLocalServiceUtil.updateLatestOrder(
+		ShoppingOrder order = ShoppingOrderLocalServiceUtil.updateLatestOrder(
 			themeDisplay.getUserId(), themeDisplay.getScopeGroupId(),
 			billingFirstName, billingLastName, billingEmailAddress,
 			billingCompany, billingStreet, billingCity, billingState,
@@ -301,6 +283,8 @@ public class CheckoutAction extends CartAction {
 			shippingCompany, shippingStreet, shippingCity, shippingState,
 			shippingZip, shippingCountry, shippingPhone, ccName, ccType,
 			ccNumber, ccExpMonth, ccExpYear, ccVerNumber, comments);
+
+		actionRequest.setAttribute(WebKeys.SHOPPING_ORDER, order);
 	}
 
 	private static final boolean _CHECK_METHOD_ON_PROCESS_ACTION = false;

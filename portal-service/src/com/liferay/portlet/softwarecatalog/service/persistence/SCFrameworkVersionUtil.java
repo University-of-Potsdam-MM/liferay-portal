@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,6 +18,7 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.bean.PortalBeanLocatorUtil;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ReferenceRegistry;
 import com.liferay.portal.service.ServiceContext;
@@ -63,7 +64,8 @@ public class SCFrameworkVersionUtil {
 	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#countWithDynamicQuery(DynamicQuery)
 	 */
-	public static long countWithDynamicQuery(DynamicQuery dynamicQuery) {
+	public static long countWithDynamicQuery(DynamicQuery dynamicQuery)
+		throws SystemException {
 		return getPersistence().countWithDynamicQuery(dynamicQuery);
 	}
 
@@ -71,7 +73,7 @@ public class SCFrameworkVersionUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#findWithDynamicQuery(DynamicQuery)
 	 */
 	public static List<SCFrameworkVersion> findWithDynamicQuery(
-		DynamicQuery dynamicQuery) {
+		DynamicQuery dynamicQuery) throws SystemException {
 		return getPersistence().findWithDynamicQuery(dynamicQuery);
 	}
 
@@ -79,7 +81,8 @@ public class SCFrameworkVersionUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#findWithDynamicQuery(DynamicQuery, int, int)
 	 */
 	public static List<SCFrameworkVersion> findWithDynamicQuery(
-		DynamicQuery dynamicQuery, int start, int end) {
+		DynamicQuery dynamicQuery, int start, int end)
+		throws SystemException {
 		return getPersistence().findWithDynamicQuery(dynamicQuery, start, end);
 	}
 
@@ -88,7 +91,7 @@ public class SCFrameworkVersionUtil {
 	 */
 	public static List<SCFrameworkVersion> findWithDynamicQuery(
 		DynamicQuery dynamicQuery, int start, int end,
-		OrderByComparator<SCFrameworkVersion> orderByComparator) {
+		OrderByComparator orderByComparator) throws SystemException {
 		return getPersistence()
 				   .findWithDynamicQuery(dynamicQuery, start, end,
 			orderByComparator);
@@ -98,7 +101,7 @@ public class SCFrameworkVersionUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel)
 	 */
 	public static SCFrameworkVersion update(
-		SCFrameworkVersion scFrameworkVersion) {
+		SCFrameworkVersion scFrameworkVersion) throws SystemException {
 		return getPersistence().update(scFrameworkVersion);
 	}
 
@@ -106,7 +109,8 @@ public class SCFrameworkVersionUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, ServiceContext)
 	 */
 	public static SCFrameworkVersion update(
-		SCFrameworkVersion scFrameworkVersion, ServiceContext serviceContext) {
+		SCFrameworkVersion scFrameworkVersion, ServiceContext serviceContext)
+		throws SystemException {
 		return getPersistence().update(scFrameworkVersion, serviceContext);
 	}
 
@@ -115,9 +119,11 @@ public class SCFrameworkVersionUtil {
 	*
 	* @param groupId the group ID
 	* @return the matching s c framework versions
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion> findByGroupId(
-		long groupId) {
+		long groupId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByGroupId(groupId);
 	}
 
@@ -132,9 +138,11 @@ public class SCFrameworkVersionUtil {
 	* @param start the lower bound of the range of s c framework versions
 	* @param end the upper bound of the range of s c framework versions (not inclusive)
 	* @return the range of matching s c framework versions
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion> findByGroupId(
-		long groupId, int start, int end) {
+		long groupId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByGroupId(groupId, start, end);
 	}
 
@@ -150,10 +158,12 @@ public class SCFrameworkVersionUtil {
 	* @param end the upper bound of the range of s c framework versions (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching s c framework versions
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion> findByGroupId(
 		long groupId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByGroupId(groupId, start, end, orderByComparator);
 	}
@@ -165,11 +175,13 @@ public class SCFrameworkVersionUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching s c framework version
 	* @throws com.liferay.portlet.softwarecatalog.NoSuchFrameworkVersionException if a matching s c framework version could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion findByGroupId_First(
 		long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion> orderByComparator)
-		throws com.liferay.portlet.softwarecatalog.NoSuchFrameworkVersionException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.softwarecatalog.NoSuchFrameworkVersionException {
 		return getPersistence().findByGroupId_First(groupId, orderByComparator);
 	}
 
@@ -179,10 +191,12 @@ public class SCFrameworkVersionUtil {
 	* @param groupId the group ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching s c framework version, or <code>null</code> if a matching s c framework version could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion fetchByGroupId_First(
 		long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByGroupId_First(groupId, orderByComparator);
 	}
 
@@ -193,11 +207,13 @@ public class SCFrameworkVersionUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching s c framework version
 	* @throws com.liferay.portlet.softwarecatalog.NoSuchFrameworkVersionException if a matching s c framework version could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion findByGroupId_Last(
 		long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion> orderByComparator)
-		throws com.liferay.portlet.softwarecatalog.NoSuchFrameworkVersionException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.softwarecatalog.NoSuchFrameworkVersionException {
 		return getPersistence().findByGroupId_Last(groupId, orderByComparator);
 	}
 
@@ -207,10 +223,12 @@ public class SCFrameworkVersionUtil {
 	* @param groupId the group ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching s c framework version, or <code>null</code> if a matching s c framework version could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion fetchByGroupId_Last(
 		long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByGroupId_Last(groupId, orderByComparator);
 	}
 
@@ -222,11 +240,13 @@ public class SCFrameworkVersionUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next s c framework version
 	* @throws com.liferay.portlet.softwarecatalog.NoSuchFrameworkVersionException if a s c framework version with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion[] findByGroupId_PrevAndNext(
 		long frameworkVersionId, long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion> orderByComparator)
-		throws com.liferay.portlet.softwarecatalog.NoSuchFrameworkVersionException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.softwarecatalog.NoSuchFrameworkVersionException {
 		return getPersistence()
 				   .findByGroupId_PrevAndNext(frameworkVersionId, groupId,
 			orderByComparator);
@@ -237,9 +257,11 @@ public class SCFrameworkVersionUtil {
 	*
 	* @param groupId the group ID
 	* @return the matching s c framework versions that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion> filterFindByGroupId(
-		long groupId) {
+		long groupId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().filterFindByGroupId(groupId);
 	}
 
@@ -254,9 +276,11 @@ public class SCFrameworkVersionUtil {
 	* @param start the lower bound of the range of s c framework versions
 	* @param end the upper bound of the range of s c framework versions (not inclusive)
 	* @return the range of matching s c framework versions that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion> filterFindByGroupId(
-		long groupId, int start, int end) {
+		long groupId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().filterFindByGroupId(groupId, start, end);
 	}
 
@@ -272,10 +296,12 @@ public class SCFrameworkVersionUtil {
 	* @param end the upper bound of the range of s c framework versions (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching s c framework versions that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion> filterFindByGroupId(
 		long groupId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .filterFindByGroupId(groupId, start, end, orderByComparator);
 	}
@@ -288,11 +314,13 @@ public class SCFrameworkVersionUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next s c framework version
 	* @throws com.liferay.portlet.softwarecatalog.NoSuchFrameworkVersionException if a s c framework version with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion[] filterFindByGroupId_PrevAndNext(
 		long frameworkVersionId, long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion> orderByComparator)
-		throws com.liferay.portlet.softwarecatalog.NoSuchFrameworkVersionException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.softwarecatalog.NoSuchFrameworkVersionException {
 		return getPersistence()
 				   .filterFindByGroupId_PrevAndNext(frameworkVersionId,
 			groupId, orderByComparator);
@@ -302,8 +330,10 @@ public class SCFrameworkVersionUtil {
 	* Removes all the s c framework versions where groupId = &#63; from the database.
 	*
 	* @param groupId the group ID
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByGroupId(long groupId) {
+	public static void removeByGroupId(long groupId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeByGroupId(groupId);
 	}
 
@@ -312,8 +342,10 @@ public class SCFrameworkVersionUtil {
 	*
 	* @param groupId the group ID
 	* @return the number of matching s c framework versions
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByGroupId(long groupId) {
+	public static int countByGroupId(long groupId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByGroupId(groupId);
 	}
 
@@ -322,8 +354,10 @@ public class SCFrameworkVersionUtil {
 	*
 	* @param groupId the group ID
 	* @return the number of matching s c framework versions that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int filterCountByGroupId(long groupId) {
+	public static int filterCountByGroupId(long groupId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().filterCountByGroupId(groupId);
 	}
 
@@ -332,9 +366,11 @@ public class SCFrameworkVersionUtil {
 	*
 	* @param companyId the company ID
 	* @return the matching s c framework versions
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion> findByCompanyId(
-		long companyId) {
+		long companyId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByCompanyId(companyId);
 	}
 
@@ -349,9 +385,11 @@ public class SCFrameworkVersionUtil {
 	* @param start the lower bound of the range of s c framework versions
 	* @param end the upper bound of the range of s c framework versions (not inclusive)
 	* @return the range of matching s c framework versions
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion> findByCompanyId(
-		long companyId, int start, int end) {
+		long companyId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByCompanyId(companyId, start, end);
 	}
 
@@ -367,10 +405,12 @@ public class SCFrameworkVersionUtil {
 	* @param end the upper bound of the range of s c framework versions (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching s c framework versions
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion> findByCompanyId(
 		long companyId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByCompanyId(companyId, start, end, orderByComparator);
 	}
@@ -382,11 +422,13 @@ public class SCFrameworkVersionUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching s c framework version
 	* @throws com.liferay.portlet.softwarecatalog.NoSuchFrameworkVersionException if a matching s c framework version could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion findByCompanyId_First(
 		long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion> orderByComparator)
-		throws com.liferay.portlet.softwarecatalog.NoSuchFrameworkVersionException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.softwarecatalog.NoSuchFrameworkVersionException {
 		return getPersistence()
 				   .findByCompanyId_First(companyId, orderByComparator);
 	}
@@ -397,10 +439,12 @@ public class SCFrameworkVersionUtil {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching s c framework version, or <code>null</code> if a matching s c framework version could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion fetchByCompanyId_First(
 		long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByCompanyId_First(companyId, orderByComparator);
 	}
@@ -412,11 +456,13 @@ public class SCFrameworkVersionUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching s c framework version
 	* @throws com.liferay.portlet.softwarecatalog.NoSuchFrameworkVersionException if a matching s c framework version could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion findByCompanyId_Last(
 		long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion> orderByComparator)
-		throws com.liferay.portlet.softwarecatalog.NoSuchFrameworkVersionException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.softwarecatalog.NoSuchFrameworkVersionException {
 		return getPersistence()
 				   .findByCompanyId_Last(companyId, orderByComparator);
 	}
@@ -427,10 +473,12 @@ public class SCFrameworkVersionUtil {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching s c framework version, or <code>null</code> if a matching s c framework version could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion fetchByCompanyId_Last(
 		long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByCompanyId_Last(companyId, orderByComparator);
 	}
@@ -443,11 +491,13 @@ public class SCFrameworkVersionUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next s c framework version
 	* @throws com.liferay.portlet.softwarecatalog.NoSuchFrameworkVersionException if a s c framework version with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion[] findByCompanyId_PrevAndNext(
 		long frameworkVersionId, long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion> orderByComparator)
-		throws com.liferay.portlet.softwarecatalog.NoSuchFrameworkVersionException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.softwarecatalog.NoSuchFrameworkVersionException {
 		return getPersistence()
 				   .findByCompanyId_PrevAndNext(frameworkVersionId, companyId,
 			orderByComparator);
@@ -457,8 +507,10 @@ public class SCFrameworkVersionUtil {
 	* Removes all the s c framework versions where companyId = &#63; from the database.
 	*
 	* @param companyId the company ID
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByCompanyId(long companyId) {
+	public static void removeByCompanyId(long companyId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeByCompanyId(companyId);
 	}
 
@@ -467,8 +519,10 @@ public class SCFrameworkVersionUtil {
 	*
 	* @param companyId the company ID
 	* @return the number of matching s c framework versions
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByCompanyId(long companyId) {
+	public static int countByCompanyId(long companyId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByCompanyId(companyId);
 	}
 
@@ -478,9 +532,11 @@ public class SCFrameworkVersionUtil {
 	* @param groupId the group ID
 	* @param active the active
 	* @return the matching s c framework versions
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion> findByG_A(
-		long groupId, boolean active) {
+		long groupId, boolean active)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByG_A(groupId, active);
 	}
 
@@ -496,9 +552,11 @@ public class SCFrameworkVersionUtil {
 	* @param start the lower bound of the range of s c framework versions
 	* @param end the upper bound of the range of s c framework versions (not inclusive)
 	* @return the range of matching s c framework versions
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion> findByG_A(
-		long groupId, boolean active, int start, int end) {
+		long groupId, boolean active, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByG_A(groupId, active, start, end);
 	}
 
@@ -515,10 +573,12 @@ public class SCFrameworkVersionUtil {
 	* @param end the upper bound of the range of s c framework versions (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching s c framework versions
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion> findByG_A(
 		long groupId, boolean active, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByG_A(groupId, active, start, end, orderByComparator);
 	}
@@ -531,11 +591,13 @@ public class SCFrameworkVersionUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching s c framework version
 	* @throws com.liferay.portlet.softwarecatalog.NoSuchFrameworkVersionException if a matching s c framework version could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion findByG_A_First(
 		long groupId, boolean active,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion> orderByComparator)
-		throws com.liferay.portlet.softwarecatalog.NoSuchFrameworkVersionException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.softwarecatalog.NoSuchFrameworkVersionException {
 		return getPersistence()
 				   .findByG_A_First(groupId, active, orderByComparator);
 	}
@@ -547,10 +609,12 @@ public class SCFrameworkVersionUtil {
 	* @param active the active
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching s c framework version, or <code>null</code> if a matching s c framework version could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion fetchByG_A_First(
 		long groupId, boolean active,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByG_A_First(groupId, active, orderByComparator);
 	}
@@ -563,11 +627,13 @@ public class SCFrameworkVersionUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching s c framework version
 	* @throws com.liferay.portlet.softwarecatalog.NoSuchFrameworkVersionException if a matching s c framework version could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion findByG_A_Last(
 		long groupId, boolean active,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion> orderByComparator)
-		throws com.liferay.portlet.softwarecatalog.NoSuchFrameworkVersionException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.softwarecatalog.NoSuchFrameworkVersionException {
 		return getPersistence()
 				   .findByG_A_Last(groupId, active, orderByComparator);
 	}
@@ -579,10 +645,12 @@ public class SCFrameworkVersionUtil {
 	* @param active the active
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching s c framework version, or <code>null</code> if a matching s c framework version could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion fetchByG_A_Last(
 		long groupId, boolean active,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByG_A_Last(groupId, active, orderByComparator);
 	}
@@ -596,11 +664,13 @@ public class SCFrameworkVersionUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next s c framework version
 	* @throws com.liferay.portlet.softwarecatalog.NoSuchFrameworkVersionException if a s c framework version with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion[] findByG_A_PrevAndNext(
 		long frameworkVersionId, long groupId, boolean active,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion> orderByComparator)
-		throws com.liferay.portlet.softwarecatalog.NoSuchFrameworkVersionException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.softwarecatalog.NoSuchFrameworkVersionException {
 		return getPersistence()
 				   .findByG_A_PrevAndNext(frameworkVersionId, groupId, active,
 			orderByComparator);
@@ -612,9 +682,11 @@ public class SCFrameworkVersionUtil {
 	* @param groupId the group ID
 	* @param active the active
 	* @return the matching s c framework versions that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion> filterFindByG_A(
-		long groupId, boolean active) {
+		long groupId, boolean active)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().filterFindByG_A(groupId, active);
 	}
 
@@ -630,9 +702,11 @@ public class SCFrameworkVersionUtil {
 	* @param start the lower bound of the range of s c framework versions
 	* @param end the upper bound of the range of s c framework versions (not inclusive)
 	* @return the range of matching s c framework versions that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion> filterFindByG_A(
-		long groupId, boolean active, int start, int end) {
+		long groupId, boolean active, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().filterFindByG_A(groupId, active, start, end);
 	}
 
@@ -649,10 +723,12 @@ public class SCFrameworkVersionUtil {
 	* @param end the upper bound of the range of s c framework versions (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching s c framework versions that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion> filterFindByG_A(
 		long groupId, boolean active, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .filterFindByG_A(groupId, active, start, end,
 			orderByComparator);
@@ -667,11 +743,13 @@ public class SCFrameworkVersionUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next s c framework version
 	* @throws com.liferay.portlet.softwarecatalog.NoSuchFrameworkVersionException if a s c framework version with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion[] filterFindByG_A_PrevAndNext(
 		long frameworkVersionId, long groupId, boolean active,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion> orderByComparator)
-		throws com.liferay.portlet.softwarecatalog.NoSuchFrameworkVersionException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.softwarecatalog.NoSuchFrameworkVersionException {
 		return getPersistence()
 				   .filterFindByG_A_PrevAndNext(frameworkVersionId, groupId,
 			active, orderByComparator);
@@ -682,8 +760,10 @@ public class SCFrameworkVersionUtil {
 	*
 	* @param groupId the group ID
 	* @param active the active
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByG_A(long groupId, boolean active) {
+	public static void removeByG_A(long groupId, boolean active)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeByG_A(groupId, active);
 	}
 
@@ -693,8 +773,10 @@ public class SCFrameworkVersionUtil {
 	* @param groupId the group ID
 	* @param active the active
 	* @return the number of matching s c framework versions
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByG_A(long groupId, boolean active) {
+	public static int countByG_A(long groupId, boolean active)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByG_A(groupId, active);
 	}
 
@@ -704,8 +786,10 @@ public class SCFrameworkVersionUtil {
 	* @param groupId the group ID
 	* @param active the active
 	* @return the number of matching s c framework versions that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int filterCountByG_A(long groupId, boolean active) {
+	public static int filterCountByG_A(long groupId, boolean active)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().filterCountByG_A(groupId, active);
 	}
 
@@ -746,15 +830,18 @@ public class SCFrameworkVersionUtil {
 	* @param frameworkVersionId the primary key of the s c framework version
 	* @return the s c framework version that was removed
 	* @throws com.liferay.portlet.softwarecatalog.NoSuchFrameworkVersionException if a s c framework version with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion remove(
 		long frameworkVersionId)
-		throws com.liferay.portlet.softwarecatalog.NoSuchFrameworkVersionException {
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.softwarecatalog.NoSuchFrameworkVersionException {
 		return getPersistence().remove(frameworkVersionId);
 	}
 
 	public static com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion updateImpl(
-		com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion scFrameworkVersion) {
+		com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion scFrameworkVersion)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().updateImpl(scFrameworkVersion);
 	}
 
@@ -764,10 +851,12 @@ public class SCFrameworkVersionUtil {
 	* @param frameworkVersionId the primary key of the s c framework version
 	* @return the s c framework version
 	* @throws com.liferay.portlet.softwarecatalog.NoSuchFrameworkVersionException if a s c framework version with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion findByPrimaryKey(
 		long frameworkVersionId)
-		throws com.liferay.portlet.softwarecatalog.NoSuchFrameworkVersionException {
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.softwarecatalog.NoSuchFrameworkVersionException {
 		return getPersistence().findByPrimaryKey(frameworkVersionId);
 	}
 
@@ -776,23 +865,22 @@ public class SCFrameworkVersionUtil {
 	*
 	* @param frameworkVersionId the primary key of the s c framework version
 	* @return the s c framework version, or <code>null</code> if a s c framework version with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion fetchByPrimaryKey(
-		long frameworkVersionId) {
+		long frameworkVersionId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByPrimaryKey(frameworkVersionId);
-	}
-
-	public static java.util.Map<java.io.Serializable, com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion> fetchByPrimaryKeys(
-		java.util.Set<java.io.Serializable> primaryKeys) {
-		return getPersistence().fetchByPrimaryKeys(primaryKeys);
 	}
 
 	/**
 	* Returns all the s c framework versions.
 	*
 	* @return the s c framework versions
+	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion> findAll() {
+	public static java.util.List<com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion> findAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll();
 	}
 
@@ -806,9 +894,11 @@ public class SCFrameworkVersionUtil {
 	* @param start the lower bound of the range of s c framework versions
 	* @param end the upper bound of the range of s c framework versions (not inclusive)
 	* @return the range of s c framework versions
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion> findAll(
-		int start, int end) {
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll(start, end);
 	}
 
@@ -823,17 +913,22 @@ public class SCFrameworkVersionUtil {
 	* @param end the upper bound of the range of s c framework versions (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of s c framework versions
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion> findAll(
 		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll(start, end, orderByComparator);
 	}
 
 	/**
 	* Removes all the s c framework versions from the database.
+	*
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeAll() {
+	public static void removeAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeAll();
 	}
 
@@ -841,19 +936,11 @@ public class SCFrameworkVersionUtil {
 	* Returns the number of s c framework versions.
 	*
 	* @return the number of s c framework versions
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countAll() {
+	public static int countAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countAll();
-	}
-
-	/**
-	* Returns the primaryKeys of s c product versions associated with the s c framework version.
-	*
-	* @param pk the primary key of the s c framework version
-	* @return long[] of the primaryKeys of s c product versions associated with the s c framework version
-	*/
-	public static long[] getSCProductVersionPrimaryKeys(long pk) {
-		return getPersistence().getSCProductVersionPrimaryKeys(pk);
 	}
 
 	/**
@@ -861,9 +948,10 @@ public class SCFrameworkVersionUtil {
 	*
 	* @param pk the primary key of the s c framework version
 	* @return the s c product versions associated with the s c framework version
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.softwarecatalog.model.SCProductVersion> getSCProductVersions(
-		long pk) {
+		long pk) throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().getSCProductVersions(pk);
 	}
 
@@ -878,9 +966,11 @@ public class SCFrameworkVersionUtil {
 	* @param start the lower bound of the range of s c framework versions
 	* @param end the upper bound of the range of s c framework versions (not inclusive)
 	* @return the range of s c product versions associated with the s c framework version
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.softwarecatalog.model.SCProductVersion> getSCProductVersions(
-		long pk, int start, int end) {
+		long pk, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().getSCProductVersions(pk, start, end);
 	}
 
@@ -896,10 +986,12 @@ public class SCFrameworkVersionUtil {
 	* @param end the upper bound of the range of s c framework versions (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of s c product versions associated with the s c framework version
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.softwarecatalog.model.SCProductVersion> getSCProductVersions(
 		long pk, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.softwarecatalog.model.SCProductVersion> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .getSCProductVersions(pk, start, end, orderByComparator);
 	}
@@ -909,8 +1001,10 @@ public class SCFrameworkVersionUtil {
 	*
 	* @param pk the primary key of the s c framework version
 	* @return the number of s c product versions associated with the s c framework version
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int getSCProductVersionsSize(long pk) {
+	public static int getSCProductVersionsSize(long pk)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().getSCProductVersionsSize(pk);
 	}
 
@@ -920,9 +1014,11 @@ public class SCFrameworkVersionUtil {
 	* @param pk the primary key of the s c framework version
 	* @param scProductVersionPK the primary key of the s c product version
 	* @return <code>true</code> if the s c product version is associated with the s c framework version; <code>false</code> otherwise
+	* @throws SystemException if a system exception occurred
 	*/
 	public static boolean containsSCProductVersion(long pk,
-		long scProductVersionPK) {
+		long scProductVersionPK)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().containsSCProductVersion(pk, scProductVersionPK);
 	}
 
@@ -931,8 +1027,10 @@ public class SCFrameworkVersionUtil {
 	*
 	* @param pk the primary key of the s c framework version to check for associations with s c product versions
 	* @return <code>true</code> if the s c framework version has any s c product versions associated with it; <code>false</code> otherwise
+	* @throws SystemException if a system exception occurred
 	*/
-	public static boolean containsSCProductVersions(long pk) {
+	public static boolean containsSCProductVersions(long pk)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().containsSCProductVersions(pk);
 	}
 
@@ -941,8 +1039,10 @@ public class SCFrameworkVersionUtil {
 	*
 	* @param pk the primary key of the s c framework version
 	* @param scProductVersionPK the primary key of the s c product version
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void addSCProductVersion(long pk, long scProductVersionPK) {
+	public static void addSCProductVersion(long pk, long scProductVersionPK)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().addSCProductVersion(pk, scProductVersionPK);
 	}
 
@@ -951,9 +1051,11 @@ public class SCFrameworkVersionUtil {
 	*
 	* @param pk the primary key of the s c framework version
 	* @param scProductVersion the s c product version
+	* @throws SystemException if a system exception occurred
 	*/
 	public static void addSCProductVersion(long pk,
-		com.liferay.portlet.softwarecatalog.model.SCProductVersion scProductVersion) {
+		com.liferay.portlet.softwarecatalog.model.SCProductVersion scProductVersion)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().addSCProductVersion(pk, scProductVersion);
 	}
 
@@ -962,8 +1064,10 @@ public class SCFrameworkVersionUtil {
 	*
 	* @param pk the primary key of the s c framework version
 	* @param scProductVersionPKs the primary keys of the s c product versions
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void addSCProductVersions(long pk, long[] scProductVersionPKs) {
+	public static void addSCProductVersions(long pk, long[] scProductVersionPKs)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().addSCProductVersions(pk, scProductVersionPKs);
 	}
 
@@ -972,9 +1076,11 @@ public class SCFrameworkVersionUtil {
 	*
 	* @param pk the primary key of the s c framework version
 	* @param scProductVersions the s c product versions
+	* @throws SystemException if a system exception occurred
 	*/
 	public static void addSCProductVersions(long pk,
-		java.util.List<com.liferay.portlet.softwarecatalog.model.SCProductVersion> scProductVersions) {
+		java.util.List<com.liferay.portlet.softwarecatalog.model.SCProductVersion> scProductVersions)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().addSCProductVersions(pk, scProductVersions);
 	}
 
@@ -982,8 +1088,10 @@ public class SCFrameworkVersionUtil {
 	* Clears all associations between the s c framework version and its s c product versions. Also notifies the appropriate model listeners and clears the mapping table finder cache.
 	*
 	* @param pk the primary key of the s c framework version to clear the associated s c product versions from
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void clearSCProductVersions(long pk) {
+	public static void clearSCProductVersions(long pk)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().clearSCProductVersions(pk);
 	}
 
@@ -992,8 +1100,10 @@ public class SCFrameworkVersionUtil {
 	*
 	* @param pk the primary key of the s c framework version
 	* @param scProductVersionPK the primary key of the s c product version
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeSCProductVersion(long pk, long scProductVersionPK) {
+	public static void removeSCProductVersion(long pk, long scProductVersionPK)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeSCProductVersion(pk, scProductVersionPK);
 	}
 
@@ -1002,9 +1112,11 @@ public class SCFrameworkVersionUtil {
 	*
 	* @param pk the primary key of the s c framework version
 	* @param scProductVersion the s c product version
+	* @throws SystemException if a system exception occurred
 	*/
 	public static void removeSCProductVersion(long pk,
-		com.liferay.portlet.softwarecatalog.model.SCProductVersion scProductVersion) {
+		com.liferay.portlet.softwarecatalog.model.SCProductVersion scProductVersion)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeSCProductVersion(pk, scProductVersion);
 	}
 
@@ -1013,9 +1125,11 @@ public class SCFrameworkVersionUtil {
 	*
 	* @param pk the primary key of the s c framework version
 	* @param scProductVersionPKs the primary keys of the s c product versions
+	* @throws SystemException if a system exception occurred
 	*/
 	public static void removeSCProductVersions(long pk,
-		long[] scProductVersionPKs) {
+		long[] scProductVersionPKs)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeSCProductVersions(pk, scProductVersionPKs);
 	}
 
@@ -1024,9 +1138,11 @@ public class SCFrameworkVersionUtil {
 	*
 	* @param pk the primary key of the s c framework version
 	* @param scProductVersions the s c product versions
+	* @throws SystemException if a system exception occurred
 	*/
 	public static void removeSCProductVersions(long pk,
-		java.util.List<com.liferay.portlet.softwarecatalog.model.SCProductVersion> scProductVersions) {
+		java.util.List<com.liferay.portlet.softwarecatalog.model.SCProductVersion> scProductVersions)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeSCProductVersions(pk, scProductVersions);
 	}
 
@@ -1035,8 +1151,10 @@ public class SCFrameworkVersionUtil {
 	*
 	* @param pk the primary key of the s c framework version
 	* @param scProductVersionPKs the primary keys of the s c product versions to be associated with the s c framework version
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void setSCProductVersions(long pk, long[] scProductVersionPKs) {
+	public static void setSCProductVersions(long pk, long[] scProductVersionPKs)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().setSCProductVersions(pk, scProductVersionPKs);
 	}
 
@@ -1045,9 +1163,11 @@ public class SCFrameworkVersionUtil {
 	*
 	* @param pk the primary key of the s c framework version
 	* @param scProductVersions the s c product versions to be associated with the s c framework version
+	* @throws SystemException if a system exception occurred
 	*/
 	public static void setSCProductVersions(long pk,
-		java.util.List<com.liferay.portlet.softwarecatalog.model.SCProductVersion> scProductVersions) {
+		java.util.List<com.liferay.portlet.softwarecatalog.model.SCProductVersion> scProductVersions)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().setSCProductVersions(pk, scProductVersions);
 	}
 
@@ -1065,7 +1185,6 @@ public class SCFrameworkVersionUtil {
 	/**
 	 * @deprecated As of 6.2.0
 	 */
-	@Deprecated
 	public void setPersistence(SCFrameworkVersionPersistence persistence) {
 	}
 

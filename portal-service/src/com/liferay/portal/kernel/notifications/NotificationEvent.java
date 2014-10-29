@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -55,10 +55,6 @@ public class NotificationEvent implements Serializable {
 
 	public long getDeliverBy() {
 		return _deliverBy;
-	}
-
-	public int getDeliveryType() {
-		return _deliveryType;
 	}
 
 	public JSONObject getPayload() {
@@ -123,10 +119,6 @@ public class NotificationEvent implements Serializable {
 		_deliveryRequired = true;
 	}
 
-	public void setDeliveryType(int deliveryType) {
-		_deliveryType = deliveryType;
-	}
-
 	public void setTimestamp(long timestamp) {
 		_timestamp = timestamp;
 	}
@@ -138,10 +130,7 @@ public class NotificationEvent implements Serializable {
 	public JSONObject toJSONObject() {
 		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
 
-		jsonObject.put(_KEY_ARCHIVED, _archived);
-		jsonObject.put(_KEY_DELIVERY_BY, _deliverBy);
 		jsonObject.put(_KEY_DELIVERY_REQUIRED, _deliveryRequired);
-		jsonObject.put(_KEY_DELIVERY_TYPE, _deliveryType);
 		jsonObject.put(_KEY_PAYLOAD, _payloadJSONObject);
 		jsonObject.put(_KEY_TIMESTAMP, _timestamp);
 		jsonObject.put(_KEY_TYPE, _type);
@@ -150,13 +139,7 @@ public class NotificationEvent implements Serializable {
 		return jsonObject;
 	}
 
-	private static final String _KEY_ARCHIVED = "archived";
-
-	private static final String _KEY_DELIVERY_BY = "deliveryBy";
-
 	private static final String _KEY_DELIVERY_REQUIRED = "deliveryRequired";
-
-	private static final String _KEY_DELIVERY_TYPE = "deliveryType";
 
 	private static final String _KEY_PAYLOAD = "payload";
 
@@ -169,7 +152,6 @@ public class NotificationEvent implements Serializable {
 	private boolean _archived;
 	private long _deliverBy;
 	private boolean _deliveryRequired;
-	private int _deliveryType;
 	private JSONObject _payloadJSONObject;
 	private long _timestamp;
 	private String _type;

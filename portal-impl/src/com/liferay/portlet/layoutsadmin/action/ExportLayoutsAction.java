@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,17 +14,16 @@
 
 package com.liferay.portlet.layoutsadmin.action;
 
-import com.liferay.portal.LARFileNameException;
 import com.liferay.portal.NoSuchGroupException;
-import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.lar.ExportImportHelperUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.util.Constants;
+import com.liferay.portal.kernel.util.DateRange;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
-import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.UniqueList;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.Layout;
 import com.liferay.portal.security.auth.PrincipalException;
@@ -33,10 +32,8 @@ import com.liferay.portal.service.LayoutServiceUtil;
 import com.liferay.portal.struts.PortletAction;
 import com.liferay.portlet.sites.action.ActionUtil;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
@@ -70,46 +67,37 @@ public class ExportLayoutsAction extends PortletAction {
 
 		String cmd = ParamUtil.getString(actionRequest, Constants.CMD);
 
-		if (Validator.isNull(cmd)) {
-			return;
-		}
-
 		try {
-			long groupId = ParamUtil.getLong(actionRequest, "liveGroupId");
+			String fileName = ParamUtil.getString(
+				actionRequest, "exportFileName");
+			long groupId = ParamUtil.getLong(actionRequest, "groupId");
 			boolean privateLayout = ParamUtil.getBoolean(
 				actionRequest, "privateLayout");
 			long[] layoutIds = getLayoutIds(actionRequest);
+			DateRange dateRange = ExportImportHelperUtil.getDateRange(
+				actionRequest, groupId, privateLayout, 0, null, "all");
 
-			String taskName = StringPool.BLANK;
+			if (Validator.isNotNull(cmd)) {
+				LayoutServiceUtil.exportLayoutsAsFileInBackground(
+					fileName, groupId, privateLayout, layoutIds,
+					actionRequest.getParameterMap(), dateRange.getStartDate(),
+					dateRange.getEndDate(), fileName);
 
-			if (privateLayout) {
-				taskName = LanguageUtil.get(
-					actionRequest.getLocale(), "private-pages");
+				String redirect = ParamUtil.getString(
+					actionRequest, "redirect");
+
+				sendRedirect(actionRequest, actionResponse, redirect);
 			}
-			else {
-				taskName = LanguageUtil.get(
-					actionRequest.getLocale(), "public-pages");
-			}
-
-			LayoutServiceUtil.exportLayoutsAsFileInBackground(
-				taskName, groupId, privateLayout, layoutIds,
-				actionRequest.getParameterMap(), null, null);
-
-			String redirect = ParamUtil.getString(actionRequest, "redirect");
-
-			sendRedirect(actionRequest, actionResponse, redirect);
 		}
 		catch (Exception e) {
+			_log.error(e, e);
+
 			SessionErrors.add(actionRequest, e.getClass());
 
-			if (!(e instanceof LARFileNameException)) {
-				_log.error(e, e);
+			String pagesRedirect = ParamUtil.getString(
+				actionRequest, "pagesRedirect");
 
-				String pagesRedirect = ParamUtil.getString(
-					actionRequest, "pagesRedirect");
-
-				sendRedirect(actionRequest, actionResponse, pagesRedirect);
-			}
+			sendRedirect(actionRequest, actionResponse, pagesRedirect);
 		}
 	}
 
@@ -159,7 +147,7 @@ public class ExportLayoutsAction extends PortletAction {
 	protected long[] getLayoutIds(PortletRequest portletRequest)
 		throws Exception {
 
-		Set<Layout> layouts = new LinkedHashSet<Layout>();
+		List<Layout> layouts = new UniqueList<Layout>();
 
 		Map<Long, Boolean> layoutIdMap = ExportImportHelperUtil.getLayoutIdMap(
 			portletRequest);
@@ -179,8 +167,7 @@ public class ExportLayoutsAction extends PortletAction {
 			}
 		}
 
-		return ExportImportHelperUtil.getLayoutIds(
-			new ArrayList<Layout>(layouts));
+		return ExportImportHelperUtil.getLayoutIds(layouts);
 	}
 
 	private static Log _log = LogFactoryUtil.getLog(ExportLayoutsAction.class);

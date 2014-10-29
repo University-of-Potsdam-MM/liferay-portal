@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,13 +18,10 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.lar.StagedModelType;
 import com.liferay.portal.kernel.repository.model.Folder;
-import com.liferay.portal.kernel.repository.model.RepositoryModelOperation;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portlet.documentlibrary.model.DLFolder;
-import com.liferay.portlet.documentlibrary.model.DLFolderConstants;
 import com.liferay.portlet.documentlibrary.service.permission.DLFolderPermission;
-import com.liferay.portlet.documentlibrary.util.RepositoryModelUtil;
 import com.liferay.portlet.expando.model.ExpandoBridge;
 
 import java.io.Serializable;
@@ -39,7 +36,7 @@ import java.util.Map;
 public class LiferayFolder extends LiferayModel implements Folder {
 
 	public LiferayFolder(DLFolder dlFolder) {
-		this(dlFolder, false);
+		_dlFolder = dlFolder;
 	}
 
 	public LiferayFolder(DLFolder dlFolder, boolean escapedModel) {
@@ -74,7 +71,7 @@ public class LiferayFolder extends LiferayModel implements Folder {
 	@Override
 	public boolean containsPermission(
 			PermissionChecker permissionChecker, String actionId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return DLFolderPermission.contains(
 			permissionChecker, _dlFolder, actionId);
@@ -100,20 +97,15 @@ public class LiferayFolder extends LiferayModel implements Folder {
 	}
 
 	@Override
-	public void execute(RepositoryModelOperation repositoryModelOperation)
-		throws PortalException {
+	public List<Long> getAncestorFolderIds()
+		throws PortalException, SystemException {
 
-		repositoryModelOperation.execute(this);
-	}
-
-	@Override
-	public List<Long> getAncestorFolderIds() throws PortalException {
 		return _dlFolder.getAncestorFolderIds();
 	}
 
 	@Override
-	public List<Folder> getAncestors() throws PortalException {
-		return RepositoryModelUtil.toFolders(_dlFolder.getAncestors());
+	public List<Folder> getAncestors() throws PortalException, SystemException {
+		return toFolders(_dlFolder.getAncestors());
 	}
 
 	@Override
@@ -184,7 +176,7 @@ public class LiferayFolder extends LiferayModel implements Folder {
 	}
 
 	@Override
-	public Folder getParentFolder() throws PortalException {
+	public Folder getParentFolder() throws PortalException, SystemException {
 		DLFolder dlParentFolder = _dlFolder.getParentFolder();
 
 		if (dlParentFolder == null) {
@@ -217,7 +209,7 @@ public class LiferayFolder extends LiferayModel implements Folder {
 
 	@Override
 	public StagedModelType getStagedModelType() {
-		return new StagedModelType(DLFolderConstants.getClassName());
+		return new StagedModelType(Folder.class);
 	}
 
 	@Override
@@ -231,7 +223,7 @@ public class LiferayFolder extends LiferayModel implements Folder {
 	}
 
 	@Override
-	public String getUserUuid() {
+	public String getUserUuid() throws SystemException {
 		return _dlFolder.getUserUuid();
 	}
 
@@ -419,7 +411,7 @@ public class LiferayFolder extends LiferayModel implements Folder {
 		}
 	}
 
-	private final DLFolder _dlFolder;
-	private final boolean _escapedModel;
+	private DLFolder _dlFolder;
+	private boolean _escapedModel;
 
 }

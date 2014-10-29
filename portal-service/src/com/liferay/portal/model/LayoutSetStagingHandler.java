@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portal.model;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
@@ -120,32 +121,22 @@ public class LayoutSetStagingHandler
 	}
 
 	private LayoutSetBranch _getLayoutSetBranch(LayoutSet layoutSet)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		ServiceContext serviceContext =
 			ServiceContextThreadLocal.getServiceContext();
 
-		if (serviceContext == null) {
+		if ((serviceContext == null) || !serviceContext.isSignedIn()) {
 			return null;
 		}
 
 		long layoutSetBranchId = ParamUtil.getLong(
 			serviceContext, "layoutSetBranchId");
 
-		if (layoutSetBranchId > 0) {
-			return LayoutSetBranchLocalServiceUtil.getLayoutSetBranch(
-				layoutSetBranchId);
-		}
-
-		if (serviceContext.isSignedIn()) {
-			return LayoutSetBranchLocalServiceUtil.getUserLayoutSetBranch(
-				serviceContext.getUserId(), layoutSet.getGroupId(),
-				layoutSet.isPrivateLayout(), layoutSet.getLayoutSetId(),
-				layoutSetBranchId);
-		}
-
-		return LayoutSetBranchLocalServiceUtil.getMasterLayoutSetBranch(
-			layoutSet.getGroupId(), layoutSet.isPrivateLayout());
+		return LayoutSetBranchLocalServiceUtil.getUserLayoutSetBranch(
+			serviceContext.getUserId(), layoutSet.getGroupId(),
+			layoutSet.isPrivateLayout(), layoutSet.getLayoutSetId(),
+			layoutSetBranchId);
 	}
 
 	private Object _toEscapedModel() {

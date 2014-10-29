@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,11 +18,9 @@ import com.liferay.mail.service.MailServiceUtil;
 import com.liferay.portal.captcha.CaptchaImpl;
 import com.liferay.portal.captcha.recaptcha.ReCaptchaImpl;
 import com.liferay.portal.captcha.simplecaptcha.SimpleCaptchaImpl;
-import com.liferay.portal.convert.ConvertException;
 import com.liferay.portal.convert.ConvertProcess;
 import com.liferay.portal.kernel.cache.CacheRegistryUtil;
 import com.liferay.portal.kernel.cache.MultiVMPoolUtil;
-import com.liferay.portal.kernel.cache.SingleVMPoolUtil;
 import com.liferay.portal.kernel.captcha.Captcha;
 import com.liferay.portal.kernel.captcha.CaptchaUtil;
 import com.liferay.portal.kernel.cluster.Address;
@@ -41,7 +39,6 @@ import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.log.SanitizerLogWrapper;
 import com.liferay.portal.kernel.mail.Account;
 import com.liferay.portal.kernel.messaging.BaseAsyncDestination;
 import com.liferay.portal.kernel.messaging.Destination;
@@ -73,10 +70,11 @@ import com.liferay.portal.kernel.util.ThreadUtil;
 import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.kernel.util.UnsyncPrintWriterPool;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.kernel.webcache.WebCachePoolUtil;
 import com.liferay.portal.kernel.xuggler.XugglerUtil;
 import com.liferay.portal.model.Portlet;
-import com.liferay.portal.search.SearchEngineInitializer;
 import com.liferay.portal.search.lucene.LuceneHelperUtil;
+import com.liferay.portal.search.lucene.LuceneIndexer;
 import com.liferay.portal.search.lucene.cluster.LuceneClusterUtil;
 import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.security.lang.DoPrivilegedBean;
@@ -96,7 +94,6 @@ import com.liferay.portal.struts.PortletAction;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.upload.UploadServletRequestImpl;
 import com.liferay.portal.util.MaintenanceUtil;
-import com.liferay.portal.util.Portal;
 import com.liferay.portal.util.PortalInstances;
 import com.liferay.portal.util.PrefsPropsUtil;
 import com.liferay.portal.util.PropsValues;
@@ -258,7 +255,7 @@ public class EditServerAction extends PortletAction {
 	}
 
 	protected void cacheSingle() throws Exception {
-		SingleVMPoolUtil.clear();
+		WebCachePoolUtil.clear();
 	}
 
 	protected String convertProcess(
@@ -298,15 +295,6 @@ public class EditServerAction extends PortletAction {
 			}
 
 			convertProcess.setParameterValues(values);
-		}
-
-		try {
-			convertProcess.validate();
-		}
-		catch (ConvertException ce) {
-			SessionErrors.add(actionRequest, ce.getClass(), ce);
-
-			return null;
 		}
 
 		String path = convertProcess.getPath();
@@ -391,13 +379,12 @@ public class EditServerAction extends PortletAction {
 		if (Validator.isNull(portletId)) {
 			for (long companyId : companyIds) {
 				try {
-					SearchEngineInitializer searchEngineInitializer =
-						new SearchEngineInitializer(companyId);
+					LuceneIndexer luceneIndexer = new LuceneIndexer(companyId);
 
-					searchEngineInitializer.reindex();
+					luceneIndexer.reindex();
 
 					usedSearchEngineIds.addAll(
-						searchEngineInitializer.getUsedSearchEngineIds());
+						luceneIndexer.getUsedSearchEngineIds());
 				}
 				catch (Exception e) {
 					_log.error(e, e);
@@ -427,7 +414,7 @@ public class EditServerAction extends PortletAction {
 			for (String searchEngineId : searchEngineIds) {
 				for (long companyId : companyIds) {
 					SearchEngineUtil.deletePortletDocuments(
-						searchEngineId, companyId, portletId, true);
+						searchEngineId, companyId, portletId);
 				}
 			}
 
@@ -529,9 +516,7 @@ public class EditServerAction extends PortletAction {
 			SessionErrors.add(
 				actionRequest, ScriptingException.class.getName(), se);
 
-			Log log = SanitizerLogWrapper.allowCRLF(_log);
-
-			log.error(se.getMessage());
+			_log.error(se.getMessage());
 		}
 	}
 
@@ -622,9 +607,7 @@ public class EditServerAction extends PortletAction {
 
 	protected void threadDump() throws Exception {
 		if (_log.isInfoEnabled()) {
-			Log log = SanitizerLogWrapper.allowCRLF(_log);
-
-			log.info(ThreadUtil.threadDump());
+			_log.info(ThreadUtil.threadDump());
 		}
 		else {
 			_log.error(
@@ -883,24 +866,16 @@ public class EditServerAction extends PortletAction {
 			advancedProperties);
 		portletPreferences.setValue(
 			PropsKeys.MAIL_SESSION_MAIL_POP3_HOST, pop3Host);
-
-		if (!pop3Password.equals(Portal.TEMP_OBFUSCATION_VALUE)) {
-			portletPreferences.setValue(
-				PropsKeys.MAIL_SESSION_MAIL_POP3_PASSWORD, pop3Password);
-		}
-
+		portletPreferences.setValue(
+			PropsKeys.MAIL_SESSION_MAIL_POP3_PASSWORD, pop3Password);
 		portletPreferences.setValue(
 			PropsKeys.MAIL_SESSION_MAIL_POP3_PORT, String.valueOf(pop3Port));
 		portletPreferences.setValue(
 			PropsKeys.MAIL_SESSION_MAIL_POP3_USER, pop3User);
 		portletPreferences.setValue(
 			PropsKeys.MAIL_SESSION_MAIL_SMTP_HOST, smtpHost);
-
-		if (!smtpPassword.equals(Portal.TEMP_OBFUSCATION_VALUE)) {
-			portletPreferences.setValue(
-				PropsKeys.MAIL_SESSION_MAIL_SMTP_PASSWORD, smtpPassword);
-		}
-
+		portletPreferences.setValue(
+			PropsKeys.MAIL_SESSION_MAIL_SMTP_PASSWORD, smtpPassword);
 		portletPreferences.setValue(
 			PropsKeys.MAIL_SESSION_MAIL_SMTP_PORT, String.valueOf(smtpPort));
 		portletPreferences.setValue(

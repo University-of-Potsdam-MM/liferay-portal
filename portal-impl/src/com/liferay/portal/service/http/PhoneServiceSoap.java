@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -65,10 +65,9 @@ import java.rmi.RemoteException;
 @ProviderType
 public class PhoneServiceSoap {
 	/**
-	* @deprecated As of 6.2.0, replaced by {@link #addPhone(String, long,
+	* @deprecated As of 6.2.0, replaced by {@link #addPhone( String, long,
 	String, String, int, boolean, ServiceContext)}
 	*/
-	@Deprecated
 	public static com.liferay.portal.model.PhoneSoap addPhone(
 		java.lang.String className, long classPK, java.lang.String number,
 		java.lang.String extension, int typeId, boolean primary)

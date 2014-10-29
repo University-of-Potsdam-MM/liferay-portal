@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portal.service.impl;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.model.PasswordPolicy;
 import com.liferay.portal.security.permission.ActionKeys;
 import com.liferay.portal.service.ServiceContext;
@@ -33,7 +34,6 @@ public class PasswordPolicyServiceImpl extends PasswordPolicyServiceBaseImpl {
 	 *             int, int, int, int, String, boolean, int, boolean, long,
 	 *             long, int, boolean, int, long, long, long, ServiceContext)}
 	 */
-	@Deprecated
 	@Override
 	public PasswordPolicy addPasswordPolicy(
 			String name, String description, boolean changeable,
@@ -44,7 +44,7 @@ public class PasswordPolicyServiceImpl extends PasswordPolicyServiceBaseImpl {
 			long warningTime, int graceLimit, boolean lockout, int maxFailure,
 			long lockoutDuration, long resetFailureCount,
 			long resetTicketMaxAge)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		PortalPermissionUtil.check(
 			getPermissionChecker(), ActionKeys.ADD_PASSWORD_POLICY);
@@ -68,7 +68,7 @@ public class PasswordPolicyServiceImpl extends PasswordPolicyServiceBaseImpl {
 			long maxAge, long warningTime, int graceLimit, boolean lockout,
 			int maxFailure, long lockoutDuration, long resetFailureCount,
 			long resetTicketMaxAge, ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		PortalPermissionUtil.check(
 			getPermissionChecker(), ActionKeys.ADD_PASSWORD_POLICY);
@@ -84,7 +84,7 @@ public class PasswordPolicyServiceImpl extends PasswordPolicyServiceBaseImpl {
 
 	@Override
 	public void deletePasswordPolicy(long passwordPolicyId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		PasswordPolicyPermissionUtil.check(
 			getPermissionChecker(), passwordPolicyId, ActionKeys.DELETE);
@@ -99,7 +99,6 @@ public class PasswordPolicyServiceImpl extends PasswordPolicyServiceBaseImpl {
 	 *             long, long, int, boolean, int, long, long, long,
 	 *             ServiceContext)}
 	 */
-	@Deprecated
 	@Override
 	public PasswordPolicy updatePasswordPolicy(
 			long passwordPolicyId, String name, String description,
@@ -111,7 +110,7 @@ public class PasswordPolicyServiceImpl extends PasswordPolicyServiceBaseImpl {
 			int graceLimit, boolean lockout, int maxFailure,
 			long lockoutDuration, long resetFailureCount,
 			long resetTicketMaxAge)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		PasswordPolicyPermissionUtil.check(
 			getPermissionChecker(), passwordPolicyId, ActionKeys.UPDATE);
@@ -136,7 +135,7 @@ public class PasswordPolicyServiceImpl extends PasswordPolicyServiceBaseImpl {
 			long warningTime, int graceLimit, boolean lockout, int maxFailure,
 			long lockoutDuration, long resetFailureCount,
 			long resetTicketMaxAge, ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		PasswordPolicyPermissionUtil.check(
 			getPermissionChecker(), passwordPolicyId, ActionKeys.UPDATE);

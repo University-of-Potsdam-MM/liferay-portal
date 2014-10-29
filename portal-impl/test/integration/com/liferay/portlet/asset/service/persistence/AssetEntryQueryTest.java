@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,18 +18,18 @@ import com.liferay.portal.kernel.cache.Lifecycle;
 import com.liferay.portal.kernel.cache.ThreadLocalCache;
 import com.liferay.portal.kernel.cache.ThreadLocalCacheManager;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.test.ExecutionTestListeners;
+import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.test.DeleteAfterTestRun;
-import com.liferay.portal.test.listeners.MainServletExecutionTestListener;
-import com.liferay.portal.test.runners.LiferayIntegrationJUnitTestRunner;
-import com.liferay.portal.util.test.GroupTestUtil;
-import com.liferay.portal.util.test.RandomTestUtil;
-import com.liferay.portal.util.test.ServiceContextTestUtil;
-import com.liferay.portal.util.test.TestPropsValues;
+import com.liferay.portal.service.ServiceTestUtil;
+import com.liferay.portal.test.EnvironmentExecutionTestListener;
+import com.liferay.portal.test.LiferayIntegrationJUnitTestRunner;
+import com.liferay.portal.util.GroupTestUtil;
+import com.liferay.portal.util.TestPropsValues;
 import com.liferay.portlet.asset.model.AssetCategory;
 import com.liferay.portlet.asset.model.AssetEntry;
 import com.liferay.portlet.asset.model.AssetVocabulary;
@@ -41,7 +41,7 @@ import com.liferay.portlet.asset.service.AssetVocabularyLocalServiceUtil;
 import com.liferay.portlet.asset.service.impl.AssetEntryServiceImpl;
 import com.liferay.portlet.blogs.model.BlogsEntry;
 import com.liferay.portlet.blogs.service.BlogsEntryLocalServiceUtil;
-import com.liferay.portlet.blogs.util.test.BlogsTestUtil;
+import com.liferay.portlet.blogs.util.BlogsTestUtil;
 import com.liferay.portlet.ratings.model.RatingsStats;
 import com.liferay.portlet.ratings.service.RatingsEntryServiceUtil;
 import com.liferay.portlet.ratings.service.RatingsStatsLocalServiceUtil;
@@ -57,20 +57,21 @@ import org.junit.runner.RunWith;
 /**
  * @author Sergio González
  */
-@ExecutionTestListeners(listeners = {MainServletExecutionTestListener.class})
+@ExecutionTestListeners(
+	listeners = {
+		EnvironmentExecutionTestListener.class
+	})
 @RunWith(LiferayIntegrationJUnitTestRunner.class)
+@Transactional
 public class AssetEntryQueryTest {
 
 	@Before
 	public void setUp() throws Exception {
-		_group = GroupTestUtil.addGroup();
-
-		ServiceContext serviceContext =
-			ServiceContextTestUtil.getServiceContext();
+		ServiceContext serviceContext = ServiceTestUtil.getServiceContext();
 
 		AssetVocabulary vocabulary =
 			AssetVocabularyLocalServiceUtil.addVocabulary(
-				TestPropsValues.getUserId(), RandomTestUtil.randomString(),
+				TestPropsValues.getUserId(), ServiceTestUtil.randomString(),
 				serviceContext);
 
 		_vocabularyId = vocabulary.getVocabularyId();
@@ -157,8 +158,7 @@ public class AssetEntryQueryTest {
 	@Test
 	public void testAllAssetTags3() throws Exception {
 		testAssetTags(
-			new String[] {"liferay", "architecture", "services"}, false, false,
-			1);
+		new String[] {"liferay", "architecture", "services"}, false, false, 1);
 	}
 
 	@Test
@@ -330,7 +330,7 @@ public class AssetEntryQueryTest {
 		int[] orderedViewCounts = new int[10];
 
 		for (int i = 0; i < viewCounts.length; i++) {
-			int randomInt = RandomTestUtil.randomInt();
+			int randomInt = ServiceTestUtil.randomInt();
 
 			viewCounts[i] = randomInt;
 			orderedViewCounts[i] = randomInt;
@@ -347,7 +347,7 @@ public class AssetEntryQueryTest {
 		int[] orderedViewCounts = new int[10];
 
 		for (int i = 0; i < viewCounts.length; i++) {
-			int randomInt = RandomTestUtil.randomInt();
+			int randomInt = ServiceTestUtil.randomInt();
 
 			viewCounts[i] = randomInt;
 			orderedViewCounts[i] = randomInt;
@@ -363,7 +363,7 @@ public class AssetEntryQueryTest {
 	protected AssetEntryQuery buildAssetEntryQuery(
 			long groupId, long[] assetCategoryIds, String[] assetTagNames,
 			boolean any, boolean not)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		AssetEntryQuery assetEntryQuery = new AssetEntryQuery();
 
@@ -408,7 +408,7 @@ public class AssetEntryQueryTest {
 	}
 
 	protected AssetEntryQuery buildAssetEntryQueryWithAssetTagIds(
-		AssetEntryQuery assetEntryQuery, long[] assetTagIds, boolean any,
+			AssetEntryQuery assetEntryQuery, long[] assetTagIds, boolean any,
 		boolean not) {
 
 		if (any && not) {
@@ -453,14 +453,16 @@ public class AssetEntryQueryTest {
 
 		threadLocalCache.removeAll();
 
+		Group group = GroupTestUtil.addGroup();
+
 		AssetEntryQuery assetEntryQuery = buildAssetEntryQuery(
-			_group.getGroupId(), assetCategoryIds, assetTagNames, any, not);
+			group.getGroupId(), assetCategoryIds, assetTagNames, any, not);
 
 		int initialEntries = AssetEntryServiceUtil.getEntriesCount(
 			assetEntryQuery);
 
-		ServiceContext serviceContext =
-			ServiceContextTestUtil.getServiceContext(_group.getGroupId());
+		ServiceContext serviceContext = ServiceTestUtil.getServiceContext(
+			group.getGroupId());
 
 		if (assetCategoryIds1 != null) {
 			serviceContext.setAssetCategoryIds(assetCategoryIds1);
@@ -472,8 +474,8 @@ public class AssetEntryQueryTest {
 
 		BlogsEntryLocalServiceUtil.addEntry(
 			TestPropsValues.getUserId(), title1, StringPool.BLANK,
-			StringPool.BLANK, "This is a blog entry for testing purposes", 1, 1,
-			1965, 0, 0, true, true, null, null, serviceContext);
+			"This is a blog entry for testing purposes", 1, 1, 1965, 0, 0, true,
+			true, null, false, null, null, null, serviceContext);
 
 		if (assetCategoryIds2 != null) {
 			serviceContext.setAssetCategoryIds(assetCategoryIds2);
@@ -485,15 +487,15 @@ public class AssetEntryQueryTest {
 
 		BlogsEntryLocalServiceUtil.addEntry(
 			TestPropsValues.getUserId(), title2, StringPool.BLANK,
-			StringPool.BLANK, "This is a blog entry for testing purposes", 1, 1,
-			1965, 0, 0, true, true, null, null, serviceContext);
+			"This is a blog entry for testing purposes", 1, 1, 1965, 0, 0, true,
+			true, null, false, null, null, null, serviceContext);
 
 		// Clear the thread local cache which is populated in AssetPublisherUtil
 
 		threadLocalCache.removeAll();
 
 		assetEntryQuery = buildAssetEntryQuery(
-			_group.getGroupId(), assetCategoryIds, assetTagNames, any, not);
+			group.getGroupId(), assetCategoryIds, assetTagNames, any, not);
 
 		int allTagsEntries = AssetEntryServiceUtil.getEntriesCount(
 			assetEntryQuery);
@@ -526,8 +528,11 @@ public class AssetEntryQueryTest {
 
 		threadLocalCache.removeAll();
 
+		Group group = GroupTestUtil.addGroup();
+
 		for (int i = 0; i < scores.length; i++) {
-			BlogsEntry entry = BlogsTestUtil.addEntry(_group, true);
+			BlogsEntry entry = BlogsTestUtil.addEntry(
+				TestPropsValues.getUserId(), group, true);
 
 			RatingsEntryServiceUtil.updateEntry(
 				BlogsEntry.class.getName(), entry.getEntryId(), scores[i]);
@@ -538,7 +543,7 @@ public class AssetEntryQueryTest {
 		threadLocalCache.removeAll();
 
 		AssetEntryQuery assetEntryQuery = buildAssetEntryQuery(
-			_group.getGroupId(), null, null, false, false);
+			group.getGroupId(), null, null, false, false);
 
 		assetEntryQuery.setOrderByCol1("ratings");
 		assetEntryQuery.setOrderByType1(orderByType);
@@ -570,8 +575,11 @@ public class AssetEntryQueryTest {
 
 		threadLocalCache.removeAll();
 
+		Group group = GroupTestUtil.addGroup();
+
 		for (int i = 0; i < viewCounts.length; i++) {
-			BlogsEntry entry = BlogsTestUtil.addEntry(_group, true);
+			BlogsEntry entry = BlogsTestUtil.addEntry(
+				TestPropsValues.getUserId(), group, true);
 
 			AssetEntry assetEntry = AssetEntryLocalServiceUtil.getEntry(
 				BlogsEntry.class.getName(), entry.getEntryId());
@@ -586,7 +594,7 @@ public class AssetEntryQueryTest {
 		threadLocalCache.removeAll();
 
 		AssetEntryQuery assetEntryQuery = buildAssetEntryQuery(
-			_group.getGroupId(), null, null, false, false);
+			group.getGroupId(), null, null, false, false);
 
 		assetEntryQuery.setOrderByCol1("viewCount");
 		assetEntryQuery.setOrderByType1(orderByType);
@@ -606,10 +614,6 @@ public class AssetEntryQueryTest {
 	private long[] _assetCategoryIds2;
 	private long _fashionCategoryId;
 	private long _foodCategoryId;
-
-	@DeleteAfterTestRun
-	private Group _group;
-
 	private long _healthCategoryId;
 	private long _sportCategoryId;
 	private long _travelCategoryId;

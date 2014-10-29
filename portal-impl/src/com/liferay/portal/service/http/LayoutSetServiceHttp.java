@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -13,8 +13,6 @@
  */
 
 package com.liferay.portal.service.http;
-
-import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -51,13 +49,13 @@ import com.liferay.portal.service.LayoutSetServiceUtil;
  * @see com.liferay.portal.service.LayoutSetServiceUtil
  * @generated
  */
-@ProviderType
 public class LayoutSetServiceHttp {
 	public static void updateLayoutSetPrototypeLinkEnabled(
 		HttpPrincipal httpPrincipal, long groupId, boolean privateLayout,
 		boolean layoutSetPrototypeLinkEnabled,
 		java.lang.String layoutSetPrototypeUuid)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(LayoutSetServiceUtil.class,
 					"updateLayoutSetPrototypeLinkEnabled",
@@ -75,6 +73,10 @@ public class LayoutSetServiceHttp {
 					throw (com.liferay.portal.kernel.exception.PortalException)e;
 				}
 
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
+				}
+
 				throw new com.liferay.portal.kernel.exception.SystemException(e);
 			}
 		}
@@ -87,7 +89,8 @@ public class LayoutSetServiceHttp {
 
 	public static void updateLogo(HttpPrincipal httpPrincipal, long groupId,
 		boolean privateLayout, boolean logo, byte[] bytes)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(LayoutSetServiceUtil.class,
 					"updateLogo", _updateLogoParameterTypes1);
@@ -103,6 +106,10 @@ public class LayoutSetServiceHttp {
 					throw (com.liferay.portal.kernel.exception.PortalException)e;
 				}
 
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
+				}
+
 				throw new com.liferay.portal.kernel.exception.SystemException(e);
 			}
 		}
@@ -115,7 +122,8 @@ public class LayoutSetServiceHttp {
 
 	public static void updateLogo(HttpPrincipal httpPrincipal, long groupId,
 		boolean privateLayout, boolean logo, java.io.File file)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(LayoutSetServiceUtil.class,
 					"updateLogo", _updateLogoParameterTypes2);
@@ -131,6 +139,10 @@ public class LayoutSetServiceHttp {
 					throw (com.liferay.portal.kernel.exception.PortalException)e;
 				}
 
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
+				}
+
 				throw new com.liferay.portal.kernel.exception.SystemException(e);
 			}
 		}
@@ -143,7 +155,8 @@ public class LayoutSetServiceHttp {
 
 	public static void updateLogo(HttpPrincipal httpPrincipal, long groupId,
 		boolean privateLayout, boolean logo, java.io.InputStream inputStream)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(LayoutSetServiceUtil.class,
 					"updateLogo", _updateLogoParameterTypes3);
@@ -159,6 +172,10 @@ public class LayoutSetServiceHttp {
 					throw (com.liferay.portal.kernel.exception.PortalException)e;
 				}
 
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
+				}
+
 				throw new com.liferay.portal.kernel.exception.SystemException(e);
 			}
 		}
@@ -172,7 +189,8 @@ public class LayoutSetServiceHttp {
 	public static void updateLogo(HttpPrincipal httpPrincipal, long groupId,
 		boolean privateLayout, boolean logo, java.io.InputStream inputStream,
 		boolean cleanUpStream)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(LayoutSetServiceUtil.class,
 					"updateLogo", _updateLogoParameterTypes4);
@@ -186,6 +204,10 @@ public class LayoutSetServiceHttp {
 			catch (Exception e) {
 				if (e instanceof com.liferay.portal.kernel.exception.PortalException) {
 					throw (com.liferay.portal.kernel.exception.PortalException)e;
+				}
+
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
 				}
 
 				throw new com.liferay.portal.kernel.exception.SystemException(e);
@@ -202,7 +224,8 @@ public class LayoutSetServiceHttp {
 		HttpPrincipal httpPrincipal, long groupId, boolean privateLayout,
 		java.lang.String themeId, java.lang.String colorSchemeId,
 		java.lang.String css, boolean wapTheme)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(LayoutSetServiceUtil.class,
 					"updateLookAndFeel", _updateLookAndFeelParameterTypes5);
@@ -220,6 +243,10 @@ public class LayoutSetServiceHttp {
 					throw (com.liferay.portal.kernel.exception.PortalException)e;
 				}
 
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
+				}
+
 				throw new com.liferay.portal.kernel.exception.SystemException(e);
 			}
 
@@ -235,7 +262,8 @@ public class LayoutSetServiceHttp {
 	public static com.liferay.portal.model.LayoutSet updateSettings(
 		HttpPrincipal httpPrincipal, long groupId, boolean privateLayout,
 		java.lang.String settings)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(LayoutSetServiceUtil.class,
 					"updateSettings", _updateSettingsParameterTypes6);
@@ -253,6 +281,10 @@ public class LayoutSetServiceHttp {
 					throw (com.liferay.portal.kernel.exception.PortalException)e;
 				}
 
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
+				}
+
 				throw new com.liferay.portal.kernel.exception.SystemException(e);
 			}
 
@@ -268,7 +300,8 @@ public class LayoutSetServiceHttp {
 	public static com.liferay.portal.model.LayoutSet updateVirtualHost(
 		HttpPrincipal httpPrincipal, long groupId, boolean privateLayout,
 		java.lang.String virtualHost)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(LayoutSetServiceUtil.class,
 					"updateVirtualHost", _updateVirtualHostParameterTypes7);
@@ -284,6 +317,10 @@ public class LayoutSetServiceHttp {
 			catch (Exception e) {
 				if (e instanceof com.liferay.portal.kernel.exception.PortalException) {
 					throw (com.liferay.portal.kernel.exception.PortalException)e;
+				}
+
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
 				}
 
 				throw new com.liferay.portal.kernel.exception.SystemException(e);

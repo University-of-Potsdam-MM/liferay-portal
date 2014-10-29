@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -19,11 +19,10 @@ import com.liferay.portal.kernel.repository.LocalRepository;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.FileVersion;
 import com.liferay.portal.kernel.repository.model.Folder;
-import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
+import com.liferay.portal.kernel.util.UnmodifiableList;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -118,8 +117,8 @@ public abstract class RepositoryModelProxyBean {
 			fileEntryProxyBeans.add(newFileEntryProxyBean(fileEntry));
 		}
 
-		if (ListUtil.isUnmodifiableList(fileEntries)) {
-			return Collections.unmodifiableList(fileEntryProxyBeans);
+		if (fileEntries instanceof UnmodifiableList) {
+			return new UnmodifiableList<FileEntry>(fileEntries);
 		}
 
 		return fileEntryProxyBeans;
@@ -139,8 +138,8 @@ public abstract class RepositoryModelProxyBean {
 			fileVersionProxyBeans.add(newFileVersionProxyBean(fileVersion));
 		}
 
-		if (ListUtil.isUnmodifiableList(fileVersions)) {
-			return Collections.unmodifiableList(fileVersionProxyBeans);
+		if (fileVersions instanceof UnmodifiableList) {
+			return new UnmodifiableList<FileVersion>(fileVersions);
 		}
 
 		return fileVersionProxyBeans;
@@ -157,8 +156,8 @@ public abstract class RepositoryModelProxyBean {
 			folderProxyBeans.add(newFolderProxyBean(folder));
 		}
 
-		if (ListUtil.isUnmodifiableList(folders)) {
-			return Collections.unmodifiableList(folderProxyBeans);
+		if (folders instanceof UnmodifiableList) {
+			return new UnmodifiableList<Folder>(folderProxyBeans);
 		}
 
 		return folderProxyBeans;
@@ -175,8 +174,8 @@ public abstract class RepositoryModelProxyBean {
 			objectProxyBeans.add(newProxyBean(object));
 		}
 
-		if (ListUtil.isUnmodifiableList(objects)) {
-			return Collections.unmodifiableList(objectProxyBeans);
+		if (objects instanceof UnmodifiableList) {
+			return new UnmodifiableList<Object>(objectProxyBeans);
 		}
 
 		return objectProxyBeans;

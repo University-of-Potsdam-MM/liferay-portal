@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -32,7 +32,9 @@ public abstract class BaseFileAntivirusScanner implements AntivirusScanner {
 	}
 
 	@Override
-	public void scan(byte[] bytes) throws AntivirusScannerException {
+	public void scan(byte[] bytes)
+		throws AntivirusScannerException, SystemException {
+
 		File file = null;
 
 		try {
@@ -53,7 +55,9 @@ public abstract class BaseFileAntivirusScanner implements AntivirusScanner {
 	}
 
 	@Override
-	public void scan(InputStream inputStream) throws AntivirusScannerException {
+	public void scan(InputStream inputStream)
+		throws AntivirusScannerException, SystemException {
+
 		File file = null;
 
 		try {

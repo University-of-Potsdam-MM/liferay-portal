@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -37,25 +37,11 @@ public class CamelCaseUtilTest {
 	@Test
 	public void testNormalization() {
 		Assert.assertEquals(
-			"camelCase", CamelCaseUtil.normalizeCamelCase("camelCase", true));
+			"camelCase", CamelCaseUtil.normalizeCamelCase("camelCase"));
 		Assert.assertEquals(
-			"camelCase", CamelCaseUtil.normalizeCamelCase("camelCase", false));
+			"camelCaseWord", CamelCaseUtil.normalizeCamelCase("camelCASEWord"));
 		Assert.assertEquals(
-			"camelCaseWord",
-			CamelCaseUtil.normalizeCamelCase("camelCASEWord", true));
-		Assert.assertEquals(
-			"camelCaseWord",
-			CamelCaseUtil.normalizeCamelCase("camelCASEWord", false));
-		Assert.assertEquals(
-			"camelCase", CamelCaseUtil.normalizeCamelCase("camelCASE", true));
-		Assert.assertEquals(
-			"camelCase", CamelCaseUtil.normalizeCamelCase("camelCASE", false));
-		Assert.assertEquals(
-			"camelCase.fooUrl",
-			CamelCaseUtil.normalizeCamelCase("camelCASE.fooURL", true));
-		Assert.assertEquals(
-			"camelCase.fooURL",
-			CamelCaseUtil.normalizeCamelCase("camelCASE.fooURL", false));
+			"camelCase", CamelCaseUtil.normalizeCamelCase("camelCASE"));
 	}
 
 	@Test

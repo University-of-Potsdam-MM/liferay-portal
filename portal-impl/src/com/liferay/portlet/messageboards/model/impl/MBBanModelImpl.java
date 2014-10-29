@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,10 +14,8 @@
 
 package com.liferay.portlet.messageboards.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
-import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSON;
 import com.liferay.portal.kernel.lar.StagedModelType;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -25,10 +23,8 @@ import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.CacheModel;
-import com.liferay.portal.model.User;
 import com.liferay.portal.model.impl.BaseModelImpl;
 import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.service.UserLocalServiceUtil;
 import com.liferay.portal.util.PortalUtil;
 
 import com.liferay.portlet.expando.model.ExpandoBridge;
@@ -61,7 +57,6 @@ import java.util.Map;
  * @generated
  */
 @JSON(strict = true)
-@ProviderType
 public class MBBanModelImpl extends BaseModelImpl<MBBan> implements MBBanModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
@@ -96,12 +91,12 @@ public class MBBanModelImpl extends BaseModelImpl<MBBan> implements MBBanModel {
 	public static final boolean COLUMN_BITMASK_ENABLED = GetterUtil.getBoolean(com.liferay.portal.util.PropsUtil.get(
 				"value.object.column.bitmask.enabled.com.liferay.portlet.messageboards.model.MBBan"),
 			true);
-	public static final long BANUSERID_COLUMN_BITMASK = 1L;
-	public static final long COMPANYID_COLUMN_BITMASK = 2L;
-	public static final long GROUPID_COLUMN_BITMASK = 4L;
-	public static final long USERID_COLUMN_BITMASK = 8L;
-	public static final long UUID_COLUMN_BITMASK = 16L;
-	public static final long BANID_COLUMN_BITMASK = 32L;
+	public static long BANUSERID_COLUMN_BITMASK = 1L;
+	public static long COMPANYID_COLUMN_BITMASK = 2L;
+	public static long GROUPID_COLUMN_BITMASK = 4L;
+	public static long USERID_COLUMN_BITMASK = 8L;
+	public static long UUID_COLUMN_BITMASK = 16L;
+	public static long BANID_COLUMN_BITMASK = 32L;
 
 	/**
 	 * Converts the soap model instance into a normal model instance.
@@ -198,9 +193,6 @@ public class MBBanModelImpl extends BaseModelImpl<MBBan> implements MBBanModel {
 		attributes.put("createDate", getCreateDate());
 		attributes.put("modifiedDate", getModifiedDate());
 		attributes.put("banUserId", getBanUserId());
-
-		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
-		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
 
 		return attributes;
 	}
@@ -363,19 +355,13 @@ public class MBBanModelImpl extends BaseModelImpl<MBBan> implements MBBanModel {
 	}
 
 	@Override
-	public String getUserUuid() {
-		try {
-			User user = UserLocalServiceUtil.getUserById(getUserId());
-
-			return user.getUuid();
-		}
-		catch (PortalException pe) {
-			return StringPool.BLANK;
-		}
+	public String getUserUuid() throws SystemException {
+		return PortalUtil.getUserValue(getUserId(), "uuid", _userUuid);
 	}
 
 	@Override
 	public void setUserUuid(String userUuid) {
+		_userUuid = userUuid;
 	}
 
 	public long getOriginalUserId() {
@@ -440,19 +426,13 @@ public class MBBanModelImpl extends BaseModelImpl<MBBan> implements MBBanModel {
 	}
 
 	@Override
-	public String getBanUserUuid() {
-		try {
-			User user = UserLocalServiceUtil.getUserById(getBanUserId());
-
-			return user.getUuid();
-		}
-		catch (PortalException pe) {
-			return StringPool.BLANK;
-		}
+	public String getBanUserUuid() throws SystemException {
+		return PortalUtil.getUserValue(getBanUserId(), "uuid", _banUserUuid);
 	}
 
 	@Override
 	public void setBanUserUuid(String banUserUuid) {
+		_banUserUuid = banUserUuid;
 	}
 
 	public long getOriginalBanUserId() {
@@ -551,16 +531,6 @@ public class MBBanModelImpl extends BaseModelImpl<MBBan> implements MBBanModel {
 	@Override
 	public int hashCode() {
 		return (int)getPrimaryKey();
-	}
-
-	@Override
-	public boolean isEntityCacheEnabled() {
-		return ENTITY_CACHE_ENABLED;
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return FINDER_CACHE_ENABLED;
 	}
 
 	@Override
@@ -716,10 +686,8 @@ public class MBBanModelImpl extends BaseModelImpl<MBBan> implements MBBanModel {
 		return sb.toString();
 	}
 
-	private static final ClassLoader _classLoader = MBBan.class.getClassLoader();
-	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
-			MBBan.class
-		};
+	private static ClassLoader _classLoader = MBBan.class.getClassLoader();
+	private static Class<?>[] _escapedModelInterfaces = new Class[] { MBBan.class };
 	private String _uuid;
 	private String _originalUuid;
 	private long _banId;
@@ -730,12 +698,14 @@ public class MBBanModelImpl extends BaseModelImpl<MBBan> implements MBBanModel {
 	private long _originalCompanyId;
 	private boolean _setOriginalCompanyId;
 	private long _userId;
+	private String _userUuid;
 	private long _originalUserId;
 	private boolean _setOriginalUserId;
 	private String _userName;
 	private Date _createDate;
 	private Date _modifiedDate;
 	private long _banUserId;
+	private String _banUserUuid;
 	private long _originalBanUserId;
 	private boolean _setOriginalBanUserId;
 	private long _columnBitmask;

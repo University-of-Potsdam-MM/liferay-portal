@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,6 +14,7 @@
 
 package com.liferay.portlet.dynamicdatamapping.service.persistence;
 
+import com.liferay.portal.kernel.bean.PortalBeanLocatorUtil;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
@@ -22,75 +23,66 @@ import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.template.TemplateException;
-import com.liferay.portal.kernel.template.TemplateManagerUtil;
-import com.liferay.portal.kernel.transaction.Propagation;
+import com.liferay.portal.kernel.test.ExecutionTestListeners;
 import com.liferay.portal.kernel.util.IntegerWrapper;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.OrderByComparatorFactoryUtil;
-import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.test.TransactionalTestRule;
-import com.liferay.portal.test.runners.PersistenceIntegrationJUnitTestRunner;
-import com.liferay.portal.tools.DBUpgrader;
+import com.liferay.portal.service.ServiceTestUtil;
+import com.liferay.portal.service.persistence.BasePersistence;
+import com.liferay.portal.service.persistence.PersistenceExecutionTestListener;
+import com.liferay.portal.test.LiferayPersistenceIntegrationJUnitTestRunner;
+import com.liferay.portal.test.persistence.TransactionalPersistenceAdvice;
 import com.liferay.portal.util.PropsValues;
-import com.liferay.portal.util.test.RandomTestUtil;
 
 import com.liferay.portlet.dynamicdatamapping.NoSuchStorageLinkException;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStorageLink;
 import com.liferay.portlet.dynamicdatamapping.model.impl.DDMStorageLinkModelImpl;
-import com.liferay.portlet.dynamicdatamapping.service.DDMStorageLinkLocalServiceUtil;
 
 import org.junit.After;
 import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
 import org.junit.Test;
 
 import org.junit.runner.RunWith;
 
 import java.io.Serializable;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 /**
- * @generated
+ * @author Brian Wing Shun Chan
  */
-@RunWith(PersistenceIntegrationJUnitTestRunner.class)
+@ExecutionTestListeners(listeners =  {
+	PersistenceExecutionTestListener.class})
+@RunWith(LiferayPersistenceIntegrationJUnitTestRunner.class)
 public class DDMStorageLinkPersistenceTest {
-	@ClassRule
-	public static TransactionalTestRule transactionalTestRule = new TransactionalTestRule(Propagation.REQUIRED);
-
-	@BeforeClass
-	public static void setupClass() throws TemplateException {
-		try {
-			DBUpgrader.upgrade();
-		}
-		catch (Exception e) {
-			_log.error(e, e);
-		}
-
-		TemplateManagerUtil.init();
-	}
-
 	@After
 	public void tearDown() throws Exception {
-		Iterator<DDMStorageLink> iterator = _ddmStorageLinks.iterator();
+		Map<Serializable, BasePersistence<?>> basePersistences = _transactionalPersistenceAdvice.getBasePersistences();
 
-		while (iterator.hasNext()) {
-			_persistence.remove(iterator.next());
+		Set<Serializable> primaryKeys = basePersistences.keySet();
 
-			iterator.remove();
+		for (Serializable primaryKey : primaryKeys) {
+			BasePersistence<?> basePersistence = basePersistences.get(primaryKey);
+
+			try {
+				basePersistence.remove(primaryKey);
+			}
+			catch (Exception e) {
+				if (_log.isDebugEnabled()) {
+					_log.debug("The model with primary key " + primaryKey +
+						" was already deleted");
+				}
+			}
 		}
+
+		_transactionalPersistenceAdvice.reset();
 	}
 
 	@Test
 	public void testCreate() throws Exception {
-		long pk = RandomTestUtil.nextLong();
+		long pk = ServiceTestUtil.nextLong();
 
 		DDMStorageLink ddmStorageLink = _persistence.create(pk);
 
@@ -117,19 +109,19 @@ public class DDMStorageLinkPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
+		long pk = ServiceTestUtil.nextLong();
 
 		DDMStorageLink newDDMStorageLink = _persistence.create(pk);
 
-		newDDMStorageLink.setUuid(RandomTestUtil.randomString());
+		newDDMStorageLink.setUuid(ServiceTestUtil.randomString());
 
-		newDDMStorageLink.setClassNameId(RandomTestUtil.nextLong());
+		newDDMStorageLink.setClassNameId(ServiceTestUtil.nextLong());
 
-		newDDMStorageLink.setClassPK(RandomTestUtil.nextLong());
+		newDDMStorageLink.setClassPK(ServiceTestUtil.nextLong());
 
-		newDDMStorageLink.setStructureId(RandomTestUtil.nextLong());
+		newDDMStorageLink.setStructureId(ServiceTestUtil.nextLong());
 
-		_ddmStorageLinks.add(_persistence.update(newDDMStorageLink));
+		_persistence.update(newDDMStorageLink);
 
 		DDMStorageLink existingDDMStorageLink = _persistence.findByPrimaryKey(newDDMStorageLink.getPrimaryKey());
 
@@ -146,44 +138,6 @@ public class DDMStorageLinkPersistenceTest {
 	}
 
 	@Test
-	public void testCountByUuid() {
-		try {
-			_persistence.countByUuid(StringPool.BLANK);
-
-			_persistence.countByUuid(StringPool.NULL);
-
-			_persistence.countByUuid((String)null);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByClassPK() {
-		try {
-			_persistence.countByClassPK(RandomTestUtil.nextLong());
-
-			_persistence.countByClassPK(0L);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByStructureId() {
-		try {
-			_persistence.countByStructureId(RandomTestUtil.nextLong());
-
-			_persistence.countByStructureId(0L);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
 	public void testFindByPrimaryKeyExisting() throws Exception {
 		DDMStorageLink newDDMStorageLink = addDDMStorageLink();
 
@@ -194,7 +148,7 @@ public class DDMStorageLinkPersistenceTest {
 
 	@Test
 	public void testFindByPrimaryKeyMissing() throws Exception {
-		long pk = RandomTestUtil.nextLong();
+		long pk = ServiceTestUtil.nextLong();
 
 		try {
 			_persistence.findByPrimaryKey(pk);
@@ -217,7 +171,7 @@ public class DDMStorageLinkPersistenceTest {
 		}
 	}
 
-	protected OrderByComparator<DDMStorageLink> getOrderByComparator() {
+	protected OrderByComparator getOrderByComparator() {
 		return OrderByComparatorFactoryUtil.create("DDMStorageLink", "uuid",
 			true, "storageLinkId", true, "classNameId", true, "classPK", true,
 			"structureId", true);
@@ -234,7 +188,7 @@ public class DDMStorageLinkPersistenceTest {
 
 	@Test
 	public void testFetchByPrimaryKeyMissing() throws Exception {
-		long pk = RandomTestUtil.nextLong();
+		long pk = ServiceTestUtil.nextLong();
 
 		DDMStorageLink missingDDMStorageLink = _persistence.fetchByPrimaryKey(pk);
 
@@ -242,103 +196,19 @@ public class DDMStorageLinkPersistenceTest {
 	}
 
 	@Test
-	public void testFetchByPrimaryKeysWithMultiplePrimaryKeysWhereAllPrimaryKeysExist()
-		throws Exception {
-		DDMStorageLink newDDMStorageLink1 = addDDMStorageLink();
-		DDMStorageLink newDDMStorageLink2 = addDDMStorageLink();
-
-		Set<Serializable> primaryKeys = new HashSet<Serializable>();
-
-		primaryKeys.add(newDDMStorageLink1.getPrimaryKey());
-		primaryKeys.add(newDDMStorageLink2.getPrimaryKey());
-
-		Map<Serializable, DDMStorageLink> ddmStorageLinks = _persistence.fetchByPrimaryKeys(primaryKeys);
-
-		Assert.assertEquals(2, ddmStorageLinks.size());
-		Assert.assertEquals(newDDMStorageLink1,
-			ddmStorageLinks.get(newDDMStorageLink1.getPrimaryKey()));
-		Assert.assertEquals(newDDMStorageLink2,
-			ddmStorageLinks.get(newDDMStorageLink2.getPrimaryKey()));
-	}
-
-	@Test
-	public void testFetchByPrimaryKeysWithMultiplePrimaryKeysWhereNoPrimaryKeysExist()
-		throws Exception {
-		long pk1 = RandomTestUtil.nextLong();
-
-		long pk2 = RandomTestUtil.nextLong();
-
-		Set<Serializable> primaryKeys = new HashSet<Serializable>();
-
-		primaryKeys.add(pk1);
-		primaryKeys.add(pk2);
-
-		Map<Serializable, DDMStorageLink> ddmStorageLinks = _persistence.fetchByPrimaryKeys(primaryKeys);
-
-		Assert.assertTrue(ddmStorageLinks.isEmpty());
-	}
-
-	@Test
-	public void testFetchByPrimaryKeysWithMultiplePrimaryKeysWhereSomePrimaryKeysExist()
-		throws Exception {
-		DDMStorageLink newDDMStorageLink = addDDMStorageLink();
-
-		long pk = RandomTestUtil.nextLong();
-
-		Set<Serializable> primaryKeys = new HashSet<Serializable>();
-
-		primaryKeys.add(newDDMStorageLink.getPrimaryKey());
-		primaryKeys.add(pk);
-
-		Map<Serializable, DDMStorageLink> ddmStorageLinks = _persistence.fetchByPrimaryKeys(primaryKeys);
-
-		Assert.assertEquals(1, ddmStorageLinks.size());
-		Assert.assertEquals(newDDMStorageLink,
-			ddmStorageLinks.get(newDDMStorageLink.getPrimaryKey()));
-	}
-
-	@Test
-	public void testFetchByPrimaryKeysWithNoPrimaryKeys()
-		throws Exception {
-		Set<Serializable> primaryKeys = new HashSet<Serializable>();
-
-		Map<Serializable, DDMStorageLink> ddmStorageLinks = _persistence.fetchByPrimaryKeys(primaryKeys);
-
-		Assert.assertTrue(ddmStorageLinks.isEmpty());
-	}
-
-	@Test
-	public void testFetchByPrimaryKeysWithOnePrimaryKey()
-		throws Exception {
-		DDMStorageLink newDDMStorageLink = addDDMStorageLink();
-
-		Set<Serializable> primaryKeys = new HashSet<Serializable>();
-
-		primaryKeys.add(newDDMStorageLink.getPrimaryKey());
-
-		Map<Serializable, DDMStorageLink> ddmStorageLinks = _persistence.fetchByPrimaryKeys(primaryKeys);
-
-		Assert.assertEquals(1, ddmStorageLinks.size());
-		Assert.assertEquals(newDDMStorageLink,
-			ddmStorageLinks.get(newDDMStorageLink.getPrimaryKey()));
-	}
-
-	@Test
 	public void testActionableDynamicQuery() throws Exception {
 		final IntegerWrapper count = new IntegerWrapper();
 
-		ActionableDynamicQuery actionableDynamicQuery = DDMStorageLinkLocalServiceUtil.getActionableDynamicQuery();
-
-		actionableDynamicQuery.setPerformActionMethod(new ActionableDynamicQuery.PerformActionMethod() {
+		ActionableDynamicQuery actionableDynamicQuery = new DDMStorageLinkActionableDynamicQuery() {
 				@Override
-				public void performAction(Object object) {
+				protected void performAction(Object object) {
 					DDMStorageLink ddmStorageLink = (DDMStorageLink)object;
 
 					Assert.assertNotNull(ddmStorageLink);
 
 					count.increment();
 				}
-			});
+			};
 
 		actionableDynamicQuery.performActions();
 
@@ -371,7 +241,7 @@ public class DDMStorageLinkPersistenceTest {
 				DDMStorageLink.class.getClassLoader());
 
 		dynamicQuery.add(RestrictionsFactoryUtil.eq("storageLinkId",
-				RandomTestUtil.nextLong()));
+				ServiceTestUtil.nextLong()));
 
 		List<DDMStorageLink> result = _persistence.findWithDynamicQuery(dynamicQuery);
 
@@ -412,7 +282,7 @@ public class DDMStorageLinkPersistenceTest {
 				"storageLinkId"));
 
 		dynamicQuery.add(RestrictionsFactoryUtil.in("storageLinkId",
-				new Object[] { RandomTestUtil.nextLong() }));
+				new Object[] { ServiceTestUtil.nextLong() }));
 
 		List<Object> result = _persistence.findWithDynamicQuery(dynamicQuery);
 
@@ -436,24 +306,24 @@ public class DDMStorageLinkPersistenceTest {
 	}
 
 	protected DDMStorageLink addDDMStorageLink() throws Exception {
-		long pk = RandomTestUtil.nextLong();
+		long pk = ServiceTestUtil.nextLong();
 
 		DDMStorageLink ddmStorageLink = _persistence.create(pk);
 
-		ddmStorageLink.setUuid(RandomTestUtil.randomString());
+		ddmStorageLink.setUuid(ServiceTestUtil.randomString());
 
-		ddmStorageLink.setClassNameId(RandomTestUtil.nextLong());
+		ddmStorageLink.setClassNameId(ServiceTestUtil.nextLong());
 
-		ddmStorageLink.setClassPK(RandomTestUtil.nextLong());
+		ddmStorageLink.setClassPK(ServiceTestUtil.nextLong());
 
-		ddmStorageLink.setStructureId(RandomTestUtil.nextLong());
+		ddmStorageLink.setStructureId(ServiceTestUtil.nextLong());
 
-		_ddmStorageLinks.add(_persistence.update(ddmStorageLink));
+		_persistence.update(ddmStorageLink);
 
 		return ddmStorageLink;
 	}
 
 	private static Log _log = LogFactoryUtil.getLog(DDMStorageLinkPersistenceTest.class);
-	private List<DDMStorageLink> _ddmStorageLinks = new ArrayList<DDMStorageLink>();
-	private DDMStorageLinkPersistence _persistence = DDMStorageLinkUtil.getPersistence();
+	private DDMStorageLinkPersistence _persistence = (DDMStorageLinkPersistence)PortalBeanLocatorUtil.locate(DDMStorageLinkPersistence.class.getName());
+	private TransactionalPersistenceAdvice _transactionalPersistenceAdvice = (TransactionalPersistenceAdvice)PortalBeanLocatorUtil.locate(TransactionalPersistenceAdvice.class.getName());
 }

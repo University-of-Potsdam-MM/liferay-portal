@@ -66,34 +66,9 @@ AUI.add(
 							}
 						);
 
-						instance._eventHandles = [
-							container.delegate('key', instance._childrenEventHandler, instance.get(STR_KEYS).collapse, instance.get(STR_CHILDREN), instance),
-							host.on('toggler:expandedChange', instance._onExpandedChange, instance)
-						];
+						container.delegate('key', instance._childrenEventHandler, instance.get(STR_KEYS).collapse, instance.get(STR_CHILDREN), instance);
 
 						instance._focusManager = container.focusManager;
-					},
-
-					destructor: function() {
-						var instance = this;
-
-						(new A.EventHandle(instance._eventHandles)).detach();
-					},
-
-					_onExpandedChange: function(event) {
-						var instance = this;
-
-						if (event.silent) {
-							var host = instance.get(STR_HOST);
-
-							var container = host.get(STR_CONTAINER);
-
-							var headerCssClass = host.get(STR_HEADER) + ':visible';
-
-							instance._focusManager.refresh();
-
-							instance._focusManager.set('activeDescendant', container.one(headerCssClass));
-						}
 					},
 
 					_childrenEventHandler: function(event) {
@@ -123,7 +98,7 @@ AUI.add(
 					_getDescendants: function() {
 						var instance = this;
 
-						var result = instance.get(STR_HOST).get(STR_HEADER) + ':visible';
+						var result = instance.get(STR_HOST).get(STR_HEADER);
 
 						var children = instance.get(STR_CHILDREN);
 
@@ -149,6 +124,6 @@ AUI.add(
 	},
 	'',
 	{
-		requires: ['event-key', 'liferay-toggler-key-filter', 'node-focusmanager']
+		requires: ['key-event', 'liferay-toggler-key-filter', 'node-focusmanager']
 	}
 );

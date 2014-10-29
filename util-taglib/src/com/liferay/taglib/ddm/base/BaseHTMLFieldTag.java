@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -58,10 +58,6 @@ public class BaseHTMLFieldTag extends com.liferay.taglib.util.IncludeTag {
 		return _requestedLocale;
 	}
 
-	public boolean getShowEmptyFieldLabel() {
-		return _showEmptyFieldLabel;
-	}
-
 	public void setClassNameId(long classNameId) {
 		_classNameId = classNameId;
 
@@ -104,12 +100,6 @@ public class BaseHTMLFieldTag extends com.liferay.taglib.util.IncludeTag {
 		setScopedAttribute("requestedLocale", requestedLocale);
 	}
 
-	public void setShowEmptyFieldLabel(boolean showEmptyFieldLabel) {
-		_showEmptyFieldLabel = showEmptyFieldLabel;
-
-		setScopedAttribute("showEmptyFieldLabel", showEmptyFieldLabel);
-	}
-
 	@Override
 	protected void cleanUp() {
 		_classNameId = 0;
@@ -119,7 +109,6 @@ public class BaseHTMLFieldTag extends com.liferay.taglib.util.IncludeTag {
 		_readOnly = false;
 		_repeatable = true;
 		_requestedLocale = null;
-		_showEmptyFieldLabel = true;
 	}
 
 	@Override
@@ -141,7 +130,6 @@ public class BaseHTMLFieldTag extends com.liferay.taglib.util.IncludeTag {
 		setNamespacedAttribute(request, "readOnly", _readOnly);
 		setNamespacedAttribute(request, "repeatable", _repeatable);
 		setNamespacedAttribute(request, "requestedLocale", _requestedLocale);
-		setNamespacedAttribute(request, "showEmptyFieldLabel", _showEmptyFieldLabel);
 	}
 
 	protected static final String _ATTRIBUTE_NAMESPACE = "ddm:html-field:";
@@ -159,6 +147,5 @@ public class BaseHTMLFieldTag extends com.liferay.taglib.util.IncludeTag {
 	private boolean _readOnly = false;
 	private boolean _repeatable = true;
 	private java.util.Locale _requestedLocale = null;
-	private boolean _showEmptyFieldLabel = true;
 
 }

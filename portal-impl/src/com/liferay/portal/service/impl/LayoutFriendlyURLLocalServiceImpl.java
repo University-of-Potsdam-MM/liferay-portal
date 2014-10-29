@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -16,9 +16,9 @@ package com.liferay.portal.service.impl;
 
 import com.liferay.portal.NoSuchLayoutFriendlyURLException;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
-import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.LayoutFriendlyURL;
 import com.liferay.portal.model.User;
@@ -57,7 +57,7 @@ public class LayoutFriendlyURLLocalServiceImpl
 			long userId, long companyId, long groupId, long plid,
 			boolean privateLayout, String friendlyURL, String languageId,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		User user = userPersistence.findByPrimaryKey(userId);
 		Date now = new Date();
@@ -87,7 +87,7 @@ public class LayoutFriendlyURLLocalServiceImpl
 			long userId, long companyId, long groupId, long plid,
 			boolean privateLayout, Map<Locale, String> friendlyURLMap,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		List<LayoutFriendlyURL> layoutFriendlyURLs =
 			new ArrayList<LayoutFriendlyURL>();
@@ -113,13 +113,16 @@ public class LayoutFriendlyURLLocalServiceImpl
 
 	@Override
 	public LayoutFriendlyURL deleteLayoutFriendlyURL(
-		LayoutFriendlyURL layoutFriendlyURL) {
+			LayoutFriendlyURL layoutFriendlyURL)
+		throws SystemException {
 
 		return layoutFriendlyURLPersistence.remove(layoutFriendlyURL);
 	}
 
 	@Override
-	public void deleteLayoutFriendlyURL(long plid, String languageId) {
+	public void deleteLayoutFriendlyURL(long plid, String languageId)
+		throws SystemException {
+
 		LayoutFriendlyURL layoutFriendlyURL =
 			layoutFriendlyURLPersistence.fetchByP_L(plid, languageId);
 
@@ -129,7 +132,7 @@ public class LayoutFriendlyURLLocalServiceImpl
 	}
 
 	@Override
-	public void deleteLayoutFriendlyURLs(long plid) {
+	public void deleteLayoutFriendlyURLs(long plid) throws SystemException {
 		List<LayoutFriendlyURL> layoutFriendlyURLs =
 			layoutFriendlyURLPersistence.findByPlid(plid);
 
@@ -140,7 +143,8 @@ public class LayoutFriendlyURLLocalServiceImpl
 
 	@Override
 	public LayoutFriendlyURL fetchFirstLayoutFriendlyURL(
-		long groupId, boolean privateLayout, String friendlyURL) {
+			long groupId, boolean privateLayout, String friendlyURL)
+		throws SystemException {
 
 		return layoutFriendlyURLPersistence.fetchByG_P_F_First(
 			groupId, privateLayout, friendlyURL, null);
@@ -148,8 +152,9 @@ public class LayoutFriendlyURLLocalServiceImpl
 
 	@Override
 	public LayoutFriendlyURL fetchLayoutFriendlyURL(
-		long groupId, boolean privateLayout, String friendlyURL,
-		String languageId) {
+			long groupId, boolean privateLayout, String friendlyURL,
+			String languageId)
+		throws SystemException {
 
 		return layoutFriendlyURLPersistence.fetchByG_P_F_L(
 			groupId, privateLayout, friendlyURL, languageId);
@@ -157,14 +162,16 @@ public class LayoutFriendlyURLLocalServiceImpl
 
 	@Override
 	public LayoutFriendlyURL fetchLayoutFriendlyURL(
-		long plid, String languageId) {
+			long plid, String languageId)
+		throws SystemException {
 
 		return fetchLayoutFriendlyURL(plid, languageId, true);
 	}
 
 	@Override
 	public LayoutFriendlyURL fetchLayoutFriendlyURL(
-		long plid, String languageId, boolean useDefault) {
+			long plid, String languageId, boolean useDefault)
+		throws SystemException {
 
 		LayoutFriendlyURL layoutFriendlyURL =
 			layoutFriendlyURLPersistence.fetchByP_L(plid, languageId);
@@ -188,7 +195,7 @@ public class LayoutFriendlyURLLocalServiceImpl
 
 	@Override
 	public LayoutFriendlyURL getLayoutFriendlyURL(long plid, String languageId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return getLayoutFriendlyURL(plid, languageId, true);
 	}
@@ -196,21 +203,13 @@ public class LayoutFriendlyURLLocalServiceImpl
 	@Override
 	public LayoutFriendlyURL getLayoutFriendlyURL(
 			long plid, String languageId, boolean useDefault)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		LayoutFriendlyURL layoutFriendlyURL =
 			layoutFriendlyURLPersistence.fetchByP_L(plid, languageId);
 
 		if ((layoutFriendlyURL == null) && !useDefault) {
-			StringBundler sb = new StringBundler(5);
-
-			sb.append("{plid=");
-			sb.append(plid);
-			sb.append(", languageId=");
-			sb.append(languageId);
-			sb.append("}");
-
-			throw new NoSuchLayoutFriendlyURLException(sb.toString());
+			throw new NoSuchLayoutFriendlyURLException();
 		}
 
 		if (layoutFriendlyURL == null) {
@@ -227,13 +226,16 @@ public class LayoutFriendlyURLLocalServiceImpl
 	}
 
 	@Override
-	public List<LayoutFriendlyURL> getLayoutFriendlyURLs(long plid) {
+	public List<LayoutFriendlyURL> getLayoutFriendlyURLs(long plid)
+		throws SystemException {
+
 		return layoutFriendlyURLPersistence.findByPlid(plid);
 	}
 
 	@Override
 	public List<LayoutFriendlyURL> getLayoutFriendlyURLs(
-		long plid, String friendlyURL, int start, int end) {
+			long plid, String friendlyURL, int start, int end)
+		throws SystemException {
 
 		return layoutFriendlyURLPersistence.findByP_F(
 			plid, friendlyURL, start, end);
@@ -244,7 +246,7 @@ public class LayoutFriendlyURLLocalServiceImpl
 			long userId, long companyId, long groupId, long plid,
 			boolean privateLayout, String friendlyURL, String languageId,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		LayoutFriendlyURL layoutFriendlyURL =
 			layoutFriendlyURLPersistence.fetchByP_L(plid, languageId);
@@ -265,7 +267,7 @@ public class LayoutFriendlyURLLocalServiceImpl
 			long userId, long companyId, long groupId, long plid,
 			boolean privateLayout, Map<Locale, String> friendlyURLMap,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		List<LayoutFriendlyURL> layoutFriendlyURLs =
 			new ArrayList<LayoutFriendlyURL>();

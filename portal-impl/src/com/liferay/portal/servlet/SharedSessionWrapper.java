@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -44,10 +44,8 @@ public class SharedSessionWrapper implements HttpSession {
 				_log.warn("Wrapped portal session is null");
 			}
 		}
-		else {
-			_portalSession = portalSession;
-		}
 
+		_portalSession = portalSession;
 		_portletSession = portletSession;
 	}
 
@@ -122,7 +120,6 @@ public class SharedSessionWrapper implements HttpSession {
 	/**
 	 * @deprecated As of 6.1.0
 	 */
-	@Deprecated
 	@Override
 	public javax.servlet.http.HttpSessionContext getSessionContext() {
 		HttpSession session = getSessionDelegate();
@@ -224,7 +221,7 @@ public class SharedSessionWrapper implements HttpSession {
 
 	private static Log _log = LogFactoryUtil.getLog(SharedSessionWrapper.class);
 
-	private static final Map<String, String> _sharedSessionAttributesExcludes;
+	private static Map<String, String> _sharedSessionAttributesExcludes;
 
 	static {
 		_sharedSessionAttributesExcludes = new HashMap<String, String>();
@@ -234,7 +231,7 @@ public class SharedSessionWrapper implements HttpSession {
 		}
 	}
 
-	private final HttpSession _portalSession;
+	private HttpSession _portalSession;
 	private HttpSession _portletSession;
 
 }

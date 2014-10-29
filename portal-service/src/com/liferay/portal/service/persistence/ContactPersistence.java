@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -43,9 +43,11 @@ public interface ContactPersistence extends BasePersistence<Contact> {
 	*
 	* @param companyId the company ID
 	* @return the matching contacts
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.Contact> findByCompanyId(
-		long companyId);
+		long companyId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns a range of all the contacts where companyId = &#63;.
@@ -58,9 +60,11 @@ public interface ContactPersistence extends BasePersistence<Contact> {
 	* @param start the lower bound of the range of contacts
 	* @param end the upper bound of the range of contacts (not inclusive)
 	* @return the range of matching contacts
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.Contact> findByCompanyId(
-		long companyId, int start, int end);
+		long companyId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns an ordered range of all the contacts where companyId = &#63;.
@@ -74,10 +78,12 @@ public interface ContactPersistence extends BasePersistence<Contact> {
 	* @param end the upper bound of the range of contacts (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching contacts
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.Contact> findByCompanyId(
 		long companyId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Contact> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the first contact in the ordered set where companyId = &#63;.
@@ -86,11 +92,13 @@ public interface ContactPersistence extends BasePersistence<Contact> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching contact
 	* @throws com.liferay.portal.NoSuchContactException if a matching contact could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.Contact findByCompanyId_First(
 		long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Contact> orderByComparator)
-		throws com.liferay.portal.NoSuchContactException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchContactException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the first contact in the ordered set where companyId = &#63;.
@@ -98,10 +106,12 @@ public interface ContactPersistence extends BasePersistence<Contact> {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching contact, or <code>null</code> if a matching contact could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.Contact fetchByCompanyId_First(
 		long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Contact> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the last contact in the ordered set where companyId = &#63;.
@@ -110,11 +120,13 @@ public interface ContactPersistence extends BasePersistence<Contact> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching contact
 	* @throws com.liferay.portal.NoSuchContactException if a matching contact could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.Contact findByCompanyId_Last(
 		long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Contact> orderByComparator)
-		throws com.liferay.portal.NoSuchContactException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchContactException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the last contact in the ordered set where companyId = &#63;.
@@ -122,10 +134,12 @@ public interface ContactPersistence extends BasePersistence<Contact> {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching contact, or <code>null</code> if a matching contact could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.Contact fetchByCompanyId_Last(
 		long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Contact> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the contacts before and after the current contact in the ordered set where companyId = &#63;.
@@ -135,35 +149,43 @@ public interface ContactPersistence extends BasePersistence<Contact> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next contact
 	* @throws com.liferay.portal.NoSuchContactException if a contact with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.Contact[] findByCompanyId_PrevAndNext(
 		long contactId, long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Contact> orderByComparator)
-		throws com.liferay.portal.NoSuchContactException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchContactException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Removes all the contacts where companyId = &#63; from the database.
 	*
 	* @param companyId the company ID
+	* @throws SystemException if a system exception occurred
 	*/
-	public void removeByCompanyId(long companyId);
+	public void removeByCompanyId(long companyId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of contacts where companyId = &#63;.
 	*
 	* @param companyId the company ID
 	* @return the number of matching contacts
+	* @throws SystemException if a system exception occurred
 	*/
-	public int countByCompanyId(long companyId);
+	public int countByCompanyId(long companyId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns all the contacts where accountId = &#63;.
 	*
 	* @param accountId the account ID
 	* @return the matching contacts
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.Contact> findByAccountId(
-		long accountId);
+		long accountId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns a range of all the contacts where accountId = &#63;.
@@ -176,9 +198,11 @@ public interface ContactPersistence extends BasePersistence<Contact> {
 	* @param start the lower bound of the range of contacts
 	* @param end the upper bound of the range of contacts (not inclusive)
 	* @return the range of matching contacts
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.Contact> findByAccountId(
-		long accountId, int start, int end);
+		long accountId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns an ordered range of all the contacts where accountId = &#63;.
@@ -192,10 +216,12 @@ public interface ContactPersistence extends BasePersistence<Contact> {
 	* @param end the upper bound of the range of contacts (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching contacts
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.Contact> findByAccountId(
 		long accountId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Contact> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the first contact in the ordered set where accountId = &#63;.
@@ -204,11 +230,13 @@ public interface ContactPersistence extends BasePersistence<Contact> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching contact
 	* @throws com.liferay.portal.NoSuchContactException if a matching contact could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.Contact findByAccountId_First(
 		long accountId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Contact> orderByComparator)
-		throws com.liferay.portal.NoSuchContactException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchContactException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the first contact in the ordered set where accountId = &#63;.
@@ -216,10 +244,12 @@ public interface ContactPersistence extends BasePersistence<Contact> {
 	* @param accountId the account ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching contact, or <code>null</code> if a matching contact could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.Contact fetchByAccountId_First(
 		long accountId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Contact> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the last contact in the ordered set where accountId = &#63;.
@@ -228,11 +258,13 @@ public interface ContactPersistence extends BasePersistence<Contact> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching contact
 	* @throws com.liferay.portal.NoSuchContactException if a matching contact could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.Contact findByAccountId_Last(
 		long accountId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Contact> orderByComparator)
-		throws com.liferay.portal.NoSuchContactException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchContactException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the last contact in the ordered set where accountId = &#63;.
@@ -240,10 +272,12 @@ public interface ContactPersistence extends BasePersistence<Contact> {
 	* @param accountId the account ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching contact, or <code>null</code> if a matching contact could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.Contact fetchByAccountId_Last(
 		long accountId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Contact> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the contacts before and after the current contact in the ordered set where accountId = &#63;.
@@ -253,26 +287,32 @@ public interface ContactPersistence extends BasePersistence<Contact> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next contact
 	* @throws com.liferay.portal.NoSuchContactException if a contact with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.Contact[] findByAccountId_PrevAndNext(
 		long contactId, long accountId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Contact> orderByComparator)
-		throws com.liferay.portal.NoSuchContactException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchContactException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Removes all the contacts where accountId = &#63; from the database.
 	*
 	* @param accountId the account ID
+	* @throws SystemException if a system exception occurred
 	*/
-	public void removeByAccountId(long accountId);
+	public void removeByAccountId(long accountId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of contacts where accountId = &#63;.
 	*
 	* @param accountId the account ID
 	* @return the number of matching contacts
+	* @throws SystemException if a system exception occurred
 	*/
-	public int countByAccountId(long accountId);
+	public int countByAccountId(long accountId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns all the contacts where classNameId = &#63; and classPK = &#63;.
@@ -280,9 +320,11 @@ public interface ContactPersistence extends BasePersistence<Contact> {
 	* @param classNameId the class name ID
 	* @param classPK the class p k
 	* @return the matching contacts
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.Contact> findByC_C(
-		long classNameId, long classPK);
+		long classNameId, long classPK)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns a range of all the contacts where classNameId = &#63; and classPK = &#63;.
@@ -296,9 +338,11 @@ public interface ContactPersistence extends BasePersistence<Contact> {
 	* @param start the lower bound of the range of contacts
 	* @param end the upper bound of the range of contacts (not inclusive)
 	* @return the range of matching contacts
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.Contact> findByC_C(
-		long classNameId, long classPK, int start, int end);
+		long classNameId, long classPK, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns an ordered range of all the contacts where classNameId = &#63; and classPK = &#63;.
@@ -313,10 +357,12 @@ public interface ContactPersistence extends BasePersistence<Contact> {
 	* @param end the upper bound of the range of contacts (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching contacts
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.Contact> findByC_C(
 		long classNameId, long classPK, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Contact> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the first contact in the ordered set where classNameId = &#63; and classPK = &#63;.
@@ -326,11 +372,13 @@ public interface ContactPersistence extends BasePersistence<Contact> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching contact
 	* @throws com.liferay.portal.NoSuchContactException if a matching contact could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.Contact findByC_C_First(long classNameId,
 		long classPK,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Contact> orderByComparator)
-		throws com.liferay.portal.NoSuchContactException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchContactException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the first contact in the ordered set where classNameId = &#63; and classPK = &#63;.
@@ -339,10 +387,12 @@ public interface ContactPersistence extends BasePersistence<Contact> {
 	* @param classPK the class p k
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching contact, or <code>null</code> if a matching contact could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.Contact fetchByC_C_First(long classNameId,
 		long classPK,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Contact> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the last contact in the ordered set where classNameId = &#63; and classPK = &#63;.
@@ -352,11 +402,13 @@ public interface ContactPersistence extends BasePersistence<Contact> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching contact
 	* @throws com.liferay.portal.NoSuchContactException if a matching contact could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.Contact findByC_C_Last(long classNameId,
 		long classPK,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Contact> orderByComparator)
-		throws com.liferay.portal.NoSuchContactException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchContactException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the last contact in the ordered set where classNameId = &#63; and classPK = &#63;.
@@ -365,10 +417,12 @@ public interface ContactPersistence extends BasePersistence<Contact> {
 	* @param classPK the class p k
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching contact, or <code>null</code> if a matching contact could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.Contact fetchByC_C_Last(long classNameId,
 		long classPK,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Contact> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the contacts before and after the current contact in the ordered set where classNameId = &#63; and classPK = &#63;.
@@ -379,19 +433,23 @@ public interface ContactPersistence extends BasePersistence<Contact> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next contact
 	* @throws com.liferay.portal.NoSuchContactException if a contact with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.Contact[] findByC_C_PrevAndNext(
 		long contactId, long classNameId, long classPK,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Contact> orderByComparator)
-		throws com.liferay.portal.NoSuchContactException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchContactException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Removes all the contacts where classNameId = &#63; and classPK = &#63; from the database.
 	*
 	* @param classNameId the class name ID
 	* @param classPK the class p k
+	* @throws SystemException if a system exception occurred
 	*/
-	public void removeByC_C(long classNameId, long classPK);
+	public void removeByC_C(long classNameId, long classPK)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of contacts where classNameId = &#63; and classPK = &#63;.
@@ -399,8 +457,10 @@ public interface ContactPersistence extends BasePersistence<Contact> {
 	* @param classNameId the class name ID
 	* @param classPK the class p k
 	* @return the number of matching contacts
+	* @throws SystemException if a system exception occurred
 	*/
-	public int countByC_C(long classNameId, long classPK);
+	public int countByC_C(long classNameId, long classPK)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Caches the contact in the entity cache if it is enabled.
@@ -431,12 +491,15 @@ public interface ContactPersistence extends BasePersistence<Contact> {
 	* @param contactId the primary key of the contact
 	* @return the contact that was removed
 	* @throws com.liferay.portal.NoSuchContactException if a contact with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.Contact remove(long contactId)
-		throws com.liferay.portal.NoSuchContactException;
+		throws com.liferay.portal.NoSuchContactException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	public com.liferay.portal.model.Contact updateImpl(
-		com.liferay.portal.model.Contact contact);
+		com.liferay.portal.model.Contact contact)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the contact with the primary key or throws a {@link com.liferay.portal.NoSuchContactException} if it could not be found.
@@ -444,28 +507,30 @@ public interface ContactPersistence extends BasePersistence<Contact> {
 	* @param contactId the primary key of the contact
 	* @return the contact
 	* @throws com.liferay.portal.NoSuchContactException if a contact with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.Contact findByPrimaryKey(long contactId)
-		throws com.liferay.portal.NoSuchContactException;
+		throws com.liferay.portal.NoSuchContactException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the contact with the primary key or returns <code>null</code> if it could not be found.
 	*
 	* @param contactId the primary key of the contact
 	* @return the contact, or <code>null</code> if a contact with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
-	public com.liferay.portal.model.Contact fetchByPrimaryKey(long contactId);
-
-	@Override
-	public java.util.Map<java.io.Serializable, com.liferay.portal.model.Contact> fetchByPrimaryKeys(
-		java.util.Set<java.io.Serializable> primaryKeys);
+	public com.liferay.portal.model.Contact fetchByPrimaryKey(long contactId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns all the contacts.
 	*
 	* @return the contacts
+	* @throws SystemException if a system exception occurred
 	*/
-	public java.util.List<com.liferay.portal.model.Contact> findAll();
+	public java.util.List<com.liferay.portal.model.Contact> findAll()
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns a range of all the contacts.
@@ -477,9 +542,10 @@ public interface ContactPersistence extends BasePersistence<Contact> {
 	* @param start the lower bound of the range of contacts
 	* @param end the upper bound of the range of contacts (not inclusive)
 	* @return the range of contacts
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.Contact> findAll(int start,
-		int end);
+		int end) throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns an ordered range of all the contacts.
@@ -492,20 +558,27 @@ public interface ContactPersistence extends BasePersistence<Contact> {
 	* @param end the upper bound of the range of contacts (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of contacts
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.Contact> findAll(int start,
 		int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Contact> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Removes all the contacts from the database.
+	*
+	* @throws SystemException if a system exception occurred
 	*/
-	public void removeAll();
+	public void removeAll()
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of contacts.
 	*
 	* @return the number of contacts
+	* @throws SystemException if a system exception occurred
 	*/
-	public int countAll();
+	public int countAll()
+		throws com.liferay.portal.kernel.exception.SystemException;
 }

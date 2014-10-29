@@ -10,26 +10,14 @@
 
 <#assign finderFieldSQLSuffix = "_SQL">
 
-package ${packagePath}.service.persistence.impl;
+package ${packagePath}.service.persistence;
 
 <#assign noSuchEntity = serviceBuilder.getNoSuchEntityException(entity)>
 
-<#if osgiModule>
-	import ${packagePath}.exception.${noSuchEntity}Exception;
-<#else>
-	import ${packagePath}.${noSuchEntity}Exception;
-</#if>
-
+import ${packagePath}.${noSuchEntity}Exception;
 import ${packagePath}.model.${entity.name};
 import ${packagePath}.model.impl.${entity.name}Impl;
 import ${packagePath}.model.impl.${entity.name}ModelImpl;
-import ${packagePath}.service.persistence.${entity.name}Persistence;
-
-<#if entity.hasCompoundPK()>
-	import ${packagePath}.service.persistence.${entity.PKClassName};
-</#if>
-
-import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.NoSuchModelException;
 import com.liferay.portal.kernel.bean.BeanReference;
@@ -56,8 +44,9 @@ import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.ContentTypes;
+import com.liferay.portal.kernel.util.CalendarUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.kernel.util.InstanceFactory;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.PropsUtil;
@@ -65,15 +54,14 @@ import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.UnmodifiableList;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
 import com.liferay.portal.model.CacheModel;
-import com.liferay.portal.model.MVCCModel;
+import com.liferay.portal.model.ModelListener;
 import com.liferay.portal.security.auth.PrincipalThreadLocal;
 import com.liferay.portal.security.permission.InlineSQLHelperUtil;
 import com.liferay.portal.service.persistence.impl.BasePersistenceImpl;
-import com.liferay.portal.service.persistence.impl.NestedSetsTreeManager;
-import com.liferay.portal.service.persistence.impl.PersistenceNestedSetsTreeManager;
 import com.liferay.portal.service.persistence.impl.TableMapper;
 import com.liferay.portal.service.persistence.impl.TableMapperFactory;
 
@@ -81,16 +69,13 @@ import java.io.Serializable;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 <#list referenceList as tempEntity>
@@ -111,7 +96,6 @@ import java.util.Set;
  * @see ${entity.name}Util
  * @generated
  */
-@ProviderType
 public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.name}> implements ${entity.name}Persistence {
 
 	/*
@@ -151,40 +135,6 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 		FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
 		"countAll",
 		new String[0]);
-
-	<#if entity.isHierarchicalTree()>
-		public static final FinderPath FINDER_PATH_WITH_PAGINATION_COUNT_ANCESTORS = new FinderPath(
-			${entity.name}ModelImpl.ENTITY_CACHE_ENABLED,
-			${entity.name}ModelImpl.FINDER_CACHE_ENABLED,
-			Long.class,
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
-			"countAncestors",
-			new String[] {Long.class.getName(), Long.class.getName(), Long.class.getName()});
-
-		public static final FinderPath FINDER_PATH_WITH_PAGINATION_COUNT_DESCENDANTS = new FinderPath(
-			${entity.name}ModelImpl.ENTITY_CACHE_ENABLED,
-			${entity.name}ModelImpl.FINDER_CACHE_ENABLED,
-			Long.class,
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
-			"countDescendants",
-			new String[] {Long.class.getName(), Long.class.getName(), Long.class.getName()});
-
-		public static final FinderPath FINDER_PATH_WITH_PAGINATION_GET_ANCESTORS = new FinderPath(
-			${entity.name}ModelImpl.ENTITY_CACHE_ENABLED,
-			${entity.name}ModelImpl.FINDER_CACHE_ENABLED,
-			${entity.name}Impl.class,
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
-			"getAncestors",
-			new String[] {Long.class.getName(), Long.class.getName(), Long.class.getName()});
-
-		public static final FinderPath FINDER_PATH_WITH_PAGINATION_GET_DESCENDANTS = new FinderPath(
-			${entity.name}ModelImpl.ENTITY_CACHE_ENABLED,
-			${entity.name}ModelImpl.FINDER_CACHE_ENABLED,
-			${entity.name}Impl.class,
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
-			"getDescendants",
-			new String[] {Long.class.getName(), Long.class.getName(), Long.class.getName()});
-	</#if>
 
 	<#list entity.getFinderList() as finder>
 		<#include "persistence_impl_finder_finder_path.ftl">
@@ -261,7 +211,7 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 			CacheRegistryUtil.clear(${entity.name}Impl.class.getName());
 		}
 
-		EntityCacheUtil.clearCache(${entity.name}Impl.class);
+		EntityCacheUtil.clearCache(${entity.name}Impl.class.getName());
 
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
@@ -416,9 +366,10 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 	 * @param ${entity.PKVarName} the primary key of the ${entity.humanName}
 	 * @return the ${entity.humanName} that was removed
 	 * @throws ${packagePath}.${noSuchEntity}Exception if a ${entity.humanName} with the primary key could not be found
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public ${entity.name} remove(${entity.PKClassName} ${entity.PKVarName}) throws ${noSuchEntity}Exception {
+	public ${entity.name} remove(${entity.PKClassName} ${entity.PKVarName}) throws ${noSuchEntity}Exception, SystemException {
 		return remove((Serializable)${entity.PKVarName});
 	}
 
@@ -428,9 +379,10 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 	 * @param primaryKey the primary key of the ${entity.humanName}
 	 * @return the ${entity.humanName} that was removed
 	 * @throws ${packagePath}.${noSuchEntity}Exception if a ${entity.humanName} with the primary key could not be found
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public ${entity.name} remove(Serializable primaryKey) throws ${noSuchEntity}Exception {
+	public ${entity.name} remove(Serializable primaryKey) throws ${noSuchEntity}Exception, SystemException {
 		Session session = null;
 
 		try {
@@ -460,7 +412,7 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 	}
 
 	@Override
-	protected ${entity.name} removeImpl(${entity.name} ${entity.varName}) {
+	protected ${entity.name} removeImpl(${entity.name} ${entity.varName}) throws SystemException {
 		${entity.varName} = toUnwrappedModel(${entity.varName});
 
 		<#list entity.columnList as column>
@@ -471,24 +423,14 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 			</#if>
 		</#list>
 
+		<#if entity.isHierarchicalTree()>
+			shrinkTree(${entity.varName});
+		</#if>
+
 		Session session = null;
 
 		try {
 			session = openSession();
-
-			<#if entity.isHierarchicalTree()>
-				if (rebuildTreeEnabled) {
-					if (session.isDirty()) {
-						session.flush();
-					}
-
-					nestedSetsTreeManager.delete(${entity.varName});
-
-					clearCache();
-
-					session.clear();
-				}
-			</#if>
 
 			if (!session.contains(${entity.varName})) {
 				${entity.varName} = (${entity.name})session.get(
@@ -514,7 +456,7 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 	}
 
 	@Override
-	public ${entity.name} updateImpl(${packagePath}.model.${entity.name} ${entity.varName}) {
+	public ${entity.name} updateImpl(${packagePath}.model.${entity.name} ${entity.varName}) throws SystemException {
 		${entity.varName} = toUnwrappedModel(${entity.varName});
 
 		boolean isNew = ${entity.varName}.isNew();
@@ -544,6 +486,20 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 				String uuid = PortalUUIDUtil.generate();
 
 				${entity.varName}.setUuid(uuid);
+			}
+		</#if>
+
+		<#if entity.isHierarchicalTree()>
+			if (isNew) {
+				expandTree(${entity.varName}, null);
+			}
+			else {
+				if (${entity.varName}.getParent${pkColumn.methodName}() != ${entity.varName}ModelImpl.getOriginalParent${pkColumn.methodName}()) {
+					List<Long> children${pkColumn.methodNames} = getChildrenTree${pkColumn.methodNames}(${entity.varName});
+
+					shrinkTree(${entity.varName});
+					expandTree(${entity.varName}, children${pkColumn.methodNames});
+				}
 			}
 		</#if>
 
@@ -610,25 +566,6 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 
 		try {
 			session = openSession();
-
-			<#if entity.isHierarchicalTree()>
-				if (rebuildTreeEnabled) {
-					if (session.isDirty()) {
-						session.flush();
-					}
-
-					if (isNew) {
-						nestedSetsTreeManager.insert(${entity.varName}, fetchByPrimaryKey(${entity.varName}.getParent${pkColumn.methodName}()));
-					}
-					else if (${entity.varName}.getParent${pkColumn.methodName}() != ${entity.varName}ModelImpl.getOriginalParent${pkColumn.methodName}()){
-						nestedSetsTreeManager.move(${entity.varName}, fetchByPrimaryKey(${entity.varName}ModelImpl.getOriginalParent${pkColumn.methodName}()), fetchByPrimaryKey(${entity.varName}.getParent${pkColumn.methodName}()));
-					}
-
-					clearCache();
-
-					session.clear();
-				}
-			</#if>
 
 			if (${entity.varName}.isNew()) {
 				session.save(${entity.varName});
@@ -735,7 +672,7 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 			</#if>
 		</#if>
 
-		EntityCacheUtil.putResult(${entity.name}ModelImpl.ENTITY_CACHE_ENABLED, ${entity.name}Impl.class, ${entity.varName}.getPrimaryKey(), ${entity.varName}, false);
+		EntityCacheUtil.putResult(${entity.name}ModelImpl.ENTITY_CACHE_ENABLED, ${entity.name}Impl.class, ${entity.varName}.getPrimaryKey(), ${entity.varName});
 
 		<#assign uniqueFinderList = entity.getUniqueFinderList()>
 
@@ -744,7 +681,9 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 			cacheUniqueFindersCache(${entity.varName});
 		</#if>
 
-		${entity.varName}.resetOriginalValues();
+		<#if entity.hasLazyBlobColumn()>
+			${entity.varName}.resetOriginalValues();
+		</#if>
 
 		return ${entity.varName};
 	}
@@ -780,9 +719,10 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 	 * @param primaryKey the primary key of the ${entity.humanName}
 	 * @return the ${entity.humanName}
 	 * @throws ${packagePath}.${noSuchEntity}Exception if a ${entity.humanName} with the primary key could not be found
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public ${entity.name} findByPrimaryKey(Serializable primaryKey) throws ${noSuchEntity}Exception {
+	public ${entity.name} findByPrimaryKey(Serializable primaryKey) throws ${noSuchEntity}Exception, SystemException {
 		${entity.name} ${entity.varName} = fetchByPrimaryKey(primaryKey);
 
 		if (${entity.varName} == null) {
@@ -802,9 +742,10 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 	 * @param ${entity.PKVarName} the primary key of the ${entity.humanName}
 	 * @return the ${entity.humanName}
 	 * @throws ${packagePath}.${noSuchEntity}Exception if a ${entity.humanName} with the primary key could not be found
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public ${entity.name} findByPrimaryKey(${entity.PKClassName} ${entity.PKVarName}) throws ${noSuchEntity}Exception {
+	public ${entity.name} findByPrimaryKey(${entity.PKClassName} ${entity.PKVarName}) throws ${noSuchEntity}Exception, SystemException {
 		return findByPrimaryKey((Serializable)${entity.PKVarName});
 	}
 
@@ -813,9 +754,10 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 	 *
 	 * @param primaryKey the primary key of the ${entity.humanName}
 	 * @return the ${entity.humanName}, or <code>null</code> if a ${entity.humanName} with the primary key could not be found
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public ${entity.name} fetchByPrimaryKey(Serializable primaryKey) {
+	public ${entity.name} fetchByPrimaryKey(Serializable primaryKey) throws SystemException {
 		${entity.name} ${entity.varName} = (${entity.name})EntityCacheUtil.getResult(${entity.name}ModelImpl.ENTITY_CACHE_ENABLED, ${entity.name}Impl.class, primaryKey);
 
 		if (${entity.varName} == _null${entity.name}) {
@@ -855,129 +797,21 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 	 *
 	 * @param ${entity.PKVarName} the primary key of the ${entity.humanName}
 	 * @return the ${entity.humanName}, or <code>null</code> if a ${entity.humanName} with the primary key could not be found
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public ${entity.name} fetchByPrimaryKey(${entity.PKClassName} ${entity.PKVarName}) {
+	public ${entity.name} fetchByPrimaryKey(${entity.PKClassName} ${entity.PKVarName}) throws SystemException {
 		return fetchByPrimaryKey((Serializable)${entity.PKVarName});
-	}
-
-	@Override
-	public Map<Serializable, ${entity.name}> fetchByPrimaryKeys(Set<Serializable> primaryKeys) {
-		if (primaryKeys.isEmpty()) {
-			return Collections.emptyMap();
-		}
-
-		Map<Serializable, ${entity.name}> map = new HashMap<Serializable, ${entity.name}>();
-
-		<#if entity.hasCompoundPK()>
-			for (Serializable primaryKey : primaryKeys) {
-				${entity.name} ${entity.varName} = fetchByPrimaryKey(primaryKey);
-
-				if (${entity.varName} != null) {
-					map.put(primaryKey, ${entity.varName});
-				}
-			}
-
-			return map;
-		<#else>
-			if (primaryKeys.size() == 1) {
-				Iterator<Serializable> iterator = primaryKeys.iterator();
-
-				Serializable primaryKey = iterator.next();
-
-				${entity.name} ${entity.varName} = fetchByPrimaryKey(primaryKey);
-
-				if (${entity.varName} != null) {
-					map.put(primaryKey, ${entity.varName});
-				}
-
-				return map;
-			}
-
-			Set<Serializable> uncachedPrimaryKeys = null;
-
-			for (Serializable primaryKey : primaryKeys) {
-				${entity.name} ${entity.varName} = (${entity.name})EntityCacheUtil.getResult(${entity.name}ModelImpl.ENTITY_CACHE_ENABLED, ${entity.name}Impl.class, primaryKey);
-
-				if (${entity.varName} == null) {
-					if (uncachedPrimaryKeys == null) {
-						uncachedPrimaryKeys = new HashSet<Serializable>();
-					}
-
-					uncachedPrimaryKeys.add(primaryKey);
-				}
-				else {
-					map.put(primaryKey, ${entity.varName});
-				}
-			}
-
-			if (uncachedPrimaryKeys == null) {
-				return map;
-			}
-
-			<#if entity.PKClassName == "String">
-				StringBundler query = new StringBundler(uncachedPrimaryKeys.size() * 4 + 1);
-			<#else>
-				StringBundler query = new StringBundler(uncachedPrimaryKeys.size() * 2 + 1);
-			</#if>
-
-			query.append(_SQL_SELECT_${entity.alias?upper_case}_WHERE_PKS_IN);
-
-			for (Serializable primaryKey : uncachedPrimaryKeys) {
-				<#if entity.PKClassName == "String">
-					query.append(StringPool.QUOTE);
-					query.append((String)primaryKey);
-					query.append(StringPool.QUOTE);
-				<#else>
-					query.append(String.valueOf(primaryKey));
-				</#if>
-
-				query.append(StringPool.COMMA);
-			}
-
-			query.setIndex(query.index() - 1);
-
-			query.append(StringPool.CLOSE_PARENTHESIS);
-
-			String sql = query.toString();
-
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				Query q = session.createQuery(sql);
-
-				for (${entity.name} ${entity.varName} : (List<${entity.name}>)q.list()) {
-					map.put(${entity.varName}.getPrimaryKeyObj(), ${entity.varName});
-
-					cacheResult(${entity.varName});
-
-					uncachedPrimaryKeys.remove(${entity.varName}.getPrimaryKeyObj());
-				}
-
-				for (Serializable primaryKey : uncachedPrimaryKeys) {
-					EntityCacheUtil.putResult(${entity.name}ModelImpl.ENTITY_CACHE_ENABLED, ${entity.name}Impl.class, primaryKey, _null${entity.name});
-				}
-			}
-			catch (Exception e) {
-				throw processException(e);
-			}
-			finally {
-				closeSession(session);
-			}
-
-			return map;
-		</#if>
 	}
 
 	/**
 	 * Returns all the ${entity.humanNames}.
 	 *
 	 * @return the ${entity.humanNames}
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public List<${entity.name}> findAll() {
+	public List<${entity.name}> findAll() throws SystemException {
 		return findAll(QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
 	}
 
@@ -991,9 +825,10 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 	 * @param start the lower bound of the range of ${entity.humanNames}
 	 * @param end the upper bound of the range of ${entity.humanNames} (not inclusive)
 	 * @return the range of ${entity.humanNames}
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public List<${entity.name}> findAll(int start, int end) {
+	public List<${entity.name}> findAll(int start, int end) throws SystemException {
 		return findAll(start, end, null);
 	}
 
@@ -1008,9 +843,10 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 	 * @param end the upper bound of the range of ${entity.humanNames} (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of ${entity.humanNames}
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public List<${entity.name}> findAll(int start, int end, OrderByComparator<${entity.name}> orderByComparator) {
+	public List<${entity.name}> findAll(int start, int end, OrderByComparator orderByComparator) throws SystemException {
 		boolean pagination = true;
 		FinderPath finderPath = null;
 		Object[] finderArgs = null;
@@ -1060,7 +896,7 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 
 					Collections.sort(list);
 
-					list = Collections.unmodifiableList(list);
+					list = new UnmodifiableList<${entity.name}>(list);
 				}
 				else {
 					list = (List<${entity.name}>)QueryUtil.list(q, getDialect(), start, end);
@@ -1086,9 +922,10 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 	/**
 	 * Removes all the ${entity.humanNames} from the database.
 	 *
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public void removeAll() {
+	public void removeAll() throws SystemException {
 		for (${entity.name} ${entity.varName} : findAll()) {
 			remove(${entity.varName});
 		}
@@ -1098,9 +935,10 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 	 * Returns the number of ${entity.humanNames}.
 	 *
 	 * @return the number of ${entity.humanNames}
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public int countAll() {
+	public int countAll() throws SystemException {
 		Long count = (Long)FinderCacheUtil.getResult(FINDER_PATH_COUNT_ALL, FINDER_ARGS_EMPTY, this);
 
 		if (count == null) {
@@ -1133,26 +971,14 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 			<#assign tempEntity = serviceBuilder.getEntity(column.getEJBName())>
 
 			/**
-			 * Returns the primaryKeys of ${tempEntity.humanNames} associated with the ${entity.humanName}.
-			 *
-			 * @param pk the primary key of the ${entity.humanName}
-			 * @return long[] of the primaryKeys of ${tempEntity.humanNames} associated with the ${entity.humanName}
-			 */
-			@Override
-			public long[] get${tempEntity.name}PrimaryKeys(${entity.PKClassName} pk) {
-				long[] pks = ${entity.varName}To${tempEntity.name}TableMapper.getRightPrimaryKeys(pk);
-
-				return pks.clone();
-			}
-
-			/**
 			 * Returns all the ${tempEntity.humanNames} associated with the ${entity.humanName}.
 			 *
 			 * @param pk the primary key of the ${entity.humanName}
 			 * @return the ${tempEntity.humanNames} associated with the ${entity.humanName}
+			 * @throws SystemException if a system exception occurred
 			 */
 			@Override
-			public List<${tempEntity.packagePath}.model.${tempEntity.name}> get${tempEntity.names}(${entity.PKClassName} pk) {
+			public List<${tempEntity.packagePath}.model.${tempEntity.name}> get${tempEntity.names}(${entity.PKClassName} pk) throws SystemException {
 				return get${tempEntity.names}(pk, QueryUtil.ALL_POS, QueryUtil.ALL_POS);
 			}
 
@@ -1167,9 +993,10 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 			 * @param start the lower bound of the range of ${entity.humanNames}
 			 * @param end the upper bound of the range of ${entity.humanNames} (not inclusive)
 			 * @return the range of ${tempEntity.humanNames} associated with the ${entity.humanName}
+			 * @throws SystemException if a system exception occurred
 			 */
 			@Override
-			public List<${tempEntity.packagePath}.model.${tempEntity.name}> get${tempEntity.names}(${entity.PKClassName} pk, int start, int end) {
+			public List<${tempEntity.packagePath}.model.${tempEntity.name}> get${tempEntity.names}(${entity.PKClassName} pk, int start, int end) throws SystemException {
 				return get${tempEntity.names}(pk, start, end, null);
 			}
 
@@ -1185,9 +1012,10 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 			 * @param end the upper bound of the range of ${entity.humanNames} (not inclusive)
 			 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 			 * @return the ordered range of ${tempEntity.humanNames} associated with the ${entity.humanName}
+			 * @throws SystemException if a system exception occurred
 			 */
 			@Override
-			public List<${tempEntity.packagePath}.model.${tempEntity.name}> get${tempEntity.names}(${entity.PKClassName} pk, int start, int end, OrderByComparator<${tempEntity.packagePath}.model.${tempEntity.name}> orderByComparator) {
+			public List<${tempEntity.packagePath}.model.${tempEntity.name}> get${tempEntity.names}(${entity.PKClassName} pk, int start, int end, OrderByComparator orderByComparator) throws SystemException {
 				return ${entity.varName}To${tempEntity.name}TableMapper.getRightBaseModels(pk, start, end, orderByComparator);
 			}
 
@@ -1196,9 +1024,10 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 			 *
 			 * @param pk the primary key of the ${entity.humanName}
 			 * @return the number of ${tempEntity.humanNames} associated with the ${entity.humanName}
+			 * @throws SystemException if a system exception occurred
 			 */
 			@Override
-			public int get${tempEntity.names}Size(${entity.PKClassName} pk) {
+			public int get${tempEntity.names}Size(${entity.PKClassName} pk) throws SystemException {
 				long[] pks = ${entity.varName}To${tempEntity.name}TableMapper.getRightPrimaryKeys(pk);
 
 				return pks.length;
@@ -1210,9 +1039,10 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 			 * @param pk the primary key of the ${entity.humanName}
 			 * @param ${tempEntity.varName}PK the primary key of the ${tempEntity.humanName}
 			 * @return <code>true</code> if the ${tempEntity.humanName} is associated with the ${entity.humanName}; <code>false</code> otherwise
+			 * @throws SystemException if a system exception occurred
 			 */
 			@Override
-			public boolean contains${tempEntity.name}(${entity.PKClassName} pk, ${tempEntity.PKClassName} ${tempEntity.varName}PK) {
+			public boolean contains${tempEntity.name}(${entity.PKClassName} pk, ${tempEntity.PKClassName} ${tempEntity.varName}PK) throws SystemException {
 				return ${entity.varName}To${tempEntity.name}TableMapper.containsTableMapping(pk, ${tempEntity.varName}PK);
 			}
 
@@ -1221,9 +1051,10 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 			 *
 			 * @param pk the primary key of the ${entity.humanName} to check for associations with ${tempEntity.humanNames}
 			 * @return <code>true</code> if the ${entity.humanName} has any ${tempEntity.humanNames} associated with it; <code>false</code> otherwise
+			 * @throws SystemException if a system exception occurred
 			 */
 			@Override
-			public boolean contains${tempEntity.names}(${entity.PKClassName} pk) {
+			public boolean contains${tempEntity.names}(${entity.PKClassName} pk) throws SystemException {
 				if (get${tempEntity.names}Size(pk)> 0) {
 					return true;
 				}
@@ -1240,9 +1071,10 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 				 *
 				 * @param pk the primary key of the ${entity.humanName}
 				 * @param ${tempEntity.varName}PK the primary key of the ${tempEntity.humanName}
+				 * @throws SystemException if a system exception occurred
 				 */
 				@Override
-				public void add${tempEntity.name}(${entity.PKClassName} pk, ${tempEntity.PKClassName} ${tempEntity.varName}PK) {
+				public void add${tempEntity.name}(${entity.PKClassName} pk, ${tempEntity.PKClassName} ${tempEntity.varName}PK) throws SystemException {
 					${entity.varName}To${tempEntity.name}TableMapper.addTableMapping(pk, ${tempEntity.varName}PK);
 				}
 
@@ -1251,9 +1083,10 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 				 *
 				 * @param pk the primary key of the ${entity.humanName}
 				 * @param ${tempEntity.varName} the ${tempEntity.humanName}
+				 * @throws SystemException if a system exception occurred
 				 */
 				@Override
-				public void add${tempEntity.name}(${entity.PKClassName} pk, ${tempEntity.packagePath}.model.${tempEntity.name} ${tempEntity.varName}) {
+				public void add${tempEntity.name}(${entity.PKClassName} pk, ${tempEntity.packagePath}.model.${tempEntity.name} ${tempEntity.varName}) throws SystemException {
 					${entity.varName}To${tempEntity.name}TableMapper.addTableMapping(pk, ${tempEntity.varName}.getPrimaryKey());
 				}
 
@@ -1262,9 +1095,10 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 				 *
 				 * @param pk the primary key of the ${entity.humanName}
 				 * @param ${tempEntity.varName}PKs the primary keys of the ${tempEntity.humanNames}
+				 * @throws SystemException if a system exception occurred
 				 */
 				@Override
-				public void add${tempEntity.names}(${entity.PKClassName} pk, ${tempEntity.PKClassName}[] ${tempEntity.varName}PKs) {
+				public void add${tempEntity.names}(${entity.PKClassName} pk, ${tempEntity.PKClassName}[] ${tempEntity.varName}PKs) throws SystemException {
 					for (${tempEntity.PKClassName} ${tempEntity.varName}PK : ${tempEntity.varName}PKs) {
 						${entity.varName}To${tempEntity.name}TableMapper.addTableMapping(pk, ${tempEntity.varName}PK);
 					}
@@ -1275,9 +1109,10 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 				 *
 				 * @param pk the primary key of the ${entity.humanName}
 				 * @param ${tempEntity.varNames} the ${tempEntity.humanNames}
+				 * @throws SystemException if a system exception occurred
 				 */
 				@Override
-				public void add${tempEntity.names}(${entity.PKClassName} pk, List<${tempEntity.packagePath}.model.${tempEntity.name}> ${tempEntity.varNames}) {
+				public void add${tempEntity.names}(${entity.PKClassName} pk, List<${tempEntity.packagePath}.model.${tempEntity.name}> ${tempEntity.varNames}) throws SystemException {
 					for (${tempEntity.packagePath}.model.${tempEntity.name} ${tempEntity.varName} : ${tempEntity.varNames}) {
 						${entity.varName}To${tempEntity.name}TableMapper.addTableMapping(pk, ${tempEntity.varName}.getPrimaryKey());
 					}
@@ -1287,9 +1122,10 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 				 * Clears all associations between the ${entity.humanName} and its ${tempEntity.humanNames}. Also notifies the appropriate model listeners and clears the mapping table finder cache.
 				 *
 				 * @param pk the primary key of the ${entity.humanName} to clear the associated ${tempEntity.humanNames} from
+				 * @throws SystemException if a system exception occurred
 				 */
 				@Override
-				public void clear${tempEntity.names}(${entity.PKClassName} pk) {
+				public void clear${tempEntity.names}(${entity.PKClassName} pk) throws SystemException {
 					${entity.varName}To${tempEntity.name}TableMapper.deleteLeftPrimaryKeyTableMappings(pk);
 				}
 
@@ -1298,9 +1134,10 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 				 *
 				 * @param pk the primary key of the ${entity.humanName}
 				 * @param ${tempEntity.varName}PK the primary key of the ${tempEntity.humanName}
+				 * @throws SystemException if a system exception occurred
 				 */
 				@Override
-				public void remove${tempEntity.name}(${entity.PKClassName} pk, ${tempEntity.PKClassName} ${tempEntity.varName}PK) {
+				public void remove${tempEntity.name}(${entity.PKClassName} pk, ${tempEntity.PKClassName} ${tempEntity.varName}PK) throws SystemException {
 					${entity.varName}To${tempEntity.name}TableMapper.deleteTableMapping(pk, ${tempEntity.varName}PK);
 				}
 
@@ -1309,9 +1146,10 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 				 *
 				 * @param pk the primary key of the ${entity.humanName}
 				 * @param ${tempEntity.varName} the ${tempEntity.humanName}
+				 * @throws SystemException if a system exception occurred
 				 */
 				@Override
-				public void remove${tempEntity.name}(${entity.PKClassName} pk, ${tempEntity.packagePath}.model.${tempEntity.name} ${tempEntity.varName}) {
+				public void remove${tempEntity.name}(${entity.PKClassName} pk, ${tempEntity.packagePath}.model.${tempEntity.name} ${tempEntity.varName}) throws SystemException {
 					${entity.varName}To${tempEntity.name}TableMapper.deleteTableMapping(pk, ${tempEntity.varName}.getPrimaryKey());
 				}
 
@@ -1320,9 +1158,10 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 				 *
 				 * @param pk the primary key of the ${entity.humanName}
 				 * @param ${tempEntity.varName}PKs the primary keys of the ${tempEntity.humanNames}
+				 * @throws SystemException if a system exception occurred
 				 */
 				@Override
-				public void remove${tempEntity.names}(${entity.PKClassName} pk, ${tempEntity.PKClassName}[] ${tempEntity.varName}PKs) {
+				public void remove${tempEntity.names}(${entity.PKClassName} pk, ${tempEntity.PKClassName}[] ${tempEntity.varName}PKs) throws SystemException {
 					for (${tempEntity.PKClassName} ${tempEntity.varName}PK : ${tempEntity.varName}PKs) {
 						${entity.varName}To${tempEntity.name}TableMapper.deleteTableMapping(pk, ${tempEntity.varName}PK);
 					}
@@ -1333,9 +1172,10 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 				 *
 				 * @param pk the primary key of the ${entity.humanName}
 				 * @param ${tempEntity.varNames} the ${tempEntity.humanNames}
+				 * @throws SystemException if a system exception occurred
 				 */
 				@Override
-				public void remove${tempEntity.names}(${entity.PKClassName} pk, List<${tempEntity.packagePath}.model.${tempEntity.name}> ${tempEntity.varNames}) {
+				public void remove${tempEntity.names}(${entity.PKClassName} pk, List<${tempEntity.packagePath}.model.${tempEntity.name}> ${tempEntity.varNames}) throws SystemException {
 					for (${tempEntity.packagePath}.model.${tempEntity.name} ${tempEntity.varName} : ${tempEntity.varNames}) {
 						${entity.varName}To${tempEntity.name}TableMapper.deleteTableMapping(pk, ${tempEntity.varName}.getPrimaryKey());
 					}
@@ -1346,9 +1186,10 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 				 *
 				 * @param pk the primary key of the ${entity.humanName}
 				 * @param ${tempEntity.varName}PKs the primary keys of the ${tempEntity.humanNames} to be associated with the ${entity.humanName}
+				 * @throws SystemException if a system exception occurred
 				 */
 				@Override
-				public void set${tempEntity.names}(${entity.PKClassName} pk, ${tempEntity.PKClassName}[] ${tempEntity.varName}PKs) {
+				public void set${tempEntity.names}(${entity.PKClassName} pk, ${tempEntity.PKClassName}[] ${tempEntity.varName}PKs) throws SystemException {
 					Set<Long> new${tempEntity.name}PKsSet = SetUtil.fromArray(${tempEntity.varName}PKs);
 					Set<Long> old${tempEntity.name}PKsSet = SetUtil.fromArray(${entity.varName}To${tempEntity.name}TableMapper.getRightPrimaryKeys(pk));
 
@@ -1372,9 +1213,10 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 				 *
 				 * @param pk the primary key of the ${entity.humanName}
 				 * @param ${tempEntity.varNames} the ${tempEntity.humanNames} to be associated with the ${entity.humanName}
+				 * @throws SystemException if a system exception occurred
 				 */
 				@Override
-				public void set${tempEntity.names}(${entity.PKClassName} pk, List<${tempEntity.packagePath}.model.${tempEntity.name}> ${tempEntity.varNames}) {
+				public void set${tempEntity.names}(${entity.PKClassName} pk, List<${tempEntity.packagePath}.model.${tempEntity.name}> ${tempEntity.varNames}) throws SystemException {
 					try {
 						${tempEntity.PKClassName}[] ${tempEntity.varName}PKs = new ${tempEntity.PKClassName}[${tempEntity.varNames}.size()];
 
@@ -1389,6 +1231,9 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 					catch (Exception e) {
 						throw processException(e);
 					}
+					finally {
+						FinderCacheUtil.clearCache(${entity.name}ModelImpl.MAPPING_TABLE_${stringUtil.upperCase(column.mappingTable)}_NAME);
+					}
 				}
 			</#if>
 		</#if>
@@ -1402,118 +1247,6 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 	</#if>
 
 	<#if entity.isHierarchicalTree()>
-		@Override
-		public long countAncestors(${entity.name} ${entity.varName}) {
-			Object[] finderArgs = new Object[] {${entity.varName}.get${scopeColumn.methodName}(), ${entity.varName}.getLeft${pkColumn.methodName}(), ${entity.varName}.getRight${pkColumn.methodName}()};
-
-			Long count = (Long)FinderCacheUtil.getResult(FINDER_PATH_WITH_PAGINATION_COUNT_ANCESTORS, finderArgs, this);
-
-			if (count == null) {
-				try {
-					count = nestedSetsTreeManager.countAncestors(${entity.varName});
-
-					FinderCacheUtil.putResult(FINDER_PATH_WITH_PAGINATION_COUNT_ANCESTORS, finderArgs, count);
-				}
-				catch (SystemException se) {
-					FinderCacheUtil.removeResult(FINDER_PATH_WITH_PAGINATION_COUNT_ANCESTORS, finderArgs);
-
-					throw se;
-				}
-			}
-
-			return count.intValue();
-		}
-
-		@Override
-		public long countDescendants(${entity.name} ${entity.varName}) {
-			Object[] finderArgs = new Object[] {${entity.varName}.get${scopeColumn.methodName}(), ${entity.varName}.getLeft${pkColumn.methodName}(), ${entity.varName}.getRight${pkColumn.methodName}()};
-
-			Long count = (Long)FinderCacheUtil.getResult(FINDER_PATH_WITH_PAGINATION_COUNT_DESCENDANTS, finderArgs, this);
-
-			if (count == null) {
-				try {
-					count = nestedSetsTreeManager.countDescendants(${entity.varName});
-
-					FinderCacheUtil.putResult(FINDER_PATH_WITH_PAGINATION_COUNT_DESCENDANTS, finderArgs, count);
-				}
-				catch (SystemException se) {
-					FinderCacheUtil.removeResult(FINDER_PATH_WITH_PAGINATION_COUNT_DESCENDANTS, finderArgs);
-
-					throw se;
-				}
-			}
-
-			return count.intValue();
-		}
-
-		@Override
-		public List<${entity.name}> getAncestors(${entity.name} ${entity.varName}) {
-			Object[] finderArgs = new Object[] {${entity.varName}.get${scopeColumn.methodName}(), ${entity.varName}.getLeft${pkColumn.methodName}(), ${entity.varName}.getRight${pkColumn.methodName}()};
-
-			List<${entity.name}> list = (List<${entity.name}>)FinderCacheUtil.getResult(FINDER_PATH_WITH_PAGINATION_GET_ANCESTORS, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (${entity.name} temp${entity.name} : list) {
-					if ((${entity.varName}.getLeft${pkColumn.methodName}() < temp${entity.name}.getLeft${pkColumn.methodName}()) || (${entity.varName}.getRight${pkColumn.methodName}() > temp${entity.name}.getRight${pkColumn.methodName}())) {
-						list = null;
-
-						break;
-					}
-				}
-			}
-
-			if (list == null) {
-				try {
-					list = nestedSetsTreeManager.getAncestors(${entity.varName});
-
-					cacheResult(list);
-
-					FinderCacheUtil.putResult(FINDER_PATH_WITH_PAGINATION_GET_ANCESTORS, finderArgs, list);
-				}
-				catch (SystemException se) {
-					FinderCacheUtil.removeResult(FINDER_PATH_WITH_PAGINATION_GET_ANCESTORS, finderArgs);
-
-					throw se;
-				}
-			}
-
-			return list;
-		}
-
-		@Override
-		public List<${entity.name}> getDescendants(${entity.name} ${entity.varName}) {
-			Object[] finderArgs = new Object[] {${entity.varName}.get${scopeColumn.methodName}(), ${entity.varName}.getLeft${pkColumn.methodName}(), ${entity.varName}.getRight${pkColumn.methodName}()};
-
-			List<${entity.name}> list = (List<${entity.name}>)FinderCacheUtil.getResult(FINDER_PATH_WITH_PAGINATION_GET_DESCENDANTS, finderArgs, this);
-
-			if ((list != null) && !list.isEmpty()) {
-				for (${entity.name} temp${entity.name} : list) {
-					if ((${entity.varName}.getLeft${pkColumn.methodName}() > temp${entity.name}.getLeft${pkColumn.methodName}()) || (${entity.varName}.getRight${pkColumn.methodName}() < temp${entity.name}.getRight${pkColumn.methodName}())) {
-						list = null;
-
-						break;
-					}
-				}
-			}
-
-			if (list == null) {
-				try {
-					list = nestedSetsTreeManager.getDescendants(${entity.varName});
-
-					cacheResult(list);
-
-					FinderCacheUtil.putResult(FINDER_PATH_WITH_PAGINATION_GET_DESCENDANTS, finderArgs, list);
-				}
-				catch (SystemException se) {
-					FinderCacheUtil.removeResult(FINDER_PATH_WITH_PAGINATION_GET_DESCENDANTS, finderArgs);
-
-					throw se;
-				}
-			}
-
-			return list;
-		}
-
 		/**
 		 * Rebuilds the ${entity.humanNames} tree for the scope using the modified pre-order tree traversal algorithm.
 		 *
@@ -1525,37 +1258,21 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 		 * @param force whether to force the rebuild even if the tree is not stale
 		 */
 		@Override
-		public void rebuildTree(long ${scopeColumn.name}, boolean force) {
+		public void rebuildTree(long ${scopeColumn.name}, boolean force) throws SystemException {
 			if (!rebuildTreeEnabled) {
 				return;
 			}
 
 			if (force || (countOrphanTreeNodes(${scopeColumn.name}) > 0)) {
-				Session session = null;
+				rebuildTree(${scopeColumn.name}, 0, 1);
 
-				try {
-					session = openSession();
-
-					if (session.isDirty()) {
-						session.flush();
-					}
-
-					SQLQuery selectQuery = session.createSQLQuery("SELECT ${pkColumn.DBName} FROM ${entity.table} WHERE ${scopeColumn.DBName} = ? AND parent${pkColumn.methodName} = ? ORDER BY ${pkColumn.name} ASC");
-
-					selectQuery.addScalar("${pkColumn.name}", com.liferay.portal.kernel.dao.orm.Type.LONG);
-
-					SQLQuery updateQuery = session.createSQLQuery("UPDATE ${entity.table} SET left${pkColumn.methodName} = ?, right${pkColumn.methodName} = ? WHERE ${pkColumn.name} = ?");
-
-					rebuildTree(session, selectQuery, updateQuery, ${scopeColumn.name}, 0, 0);
-				}
-				catch (Exception e) {
-					throw processException(e);
-				}
-				finally {
-					closeSession(session);
+				if (_HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE) {
+					CacheRegistryUtil.clear(${entity.name}Impl.class.getName());
 				}
 
-				clearCache();
+				EntityCacheUtil.clearCache(${entity.name}Impl.class.getName());
+				FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
+				FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 			}
 		}
 
@@ -1564,13 +1281,13 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 			this.rebuildTreeEnabled = rebuildTreeEnabled;
 		}
 
-		protected long countOrphanTreeNodes(long ${scopeColumn.name}) {
+		protected long countOrphanTreeNodes(long ${scopeColumn.name}) throws SystemException {
 			Session session = null;
 
 			try {
 				session = openSession();
 
-				SQLQuery q = session.createSynchronizedSQLQuery("SELECT COUNT(*) AS COUNT_VALUE FROM ${entity.table} WHERE ${scopeColumn.DBName} = ? AND (left${pkColumn.methodName} = 0 OR left${pkColumn.methodName} IS NULL OR right${pkColumn.methodName} = 0 OR right${pkColumn.methodName} IS NULL)");
+				SQLQuery q = session.createSQLQuery("SELECT COUNT(*) AS COUNT_VALUE FROM ${entity.table} WHERE ${scopeColumn.DBName} = ? AND (left${pkColumn.methodName} = 0 OR left${pkColumn.methodName} IS NULL OR right${pkColumn.methodName} = 0 OR right${pkColumn.methodName} IS NULL)");
 
 				q.addScalar(COUNT_COLUMN_NAME, com.liferay.portal.kernel.dao.orm.Type.LONG);
 
@@ -1588,31 +1305,206 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 			}
 		}
 
-		protected long rebuildTree(Session session, SQLQuery selectQuery, SQLQuery updateQuery, long ${scopeColumn.name}, long parent${pkColumn.methodName}, long left${pkColumn.methodName}) {
+		protected void expandNoChildrenLeft${pkColumn.methodName}(long ${scopeColumn.name}, long left${pkColumn.methodName}, List<Long> children${pkColumn.methodNames}, long delta) {
+			String sql = "UPDATE ${entity.table} SET left${entity.PKDBName} = (left${entity.PKDBName} + ?) WHERE (${scopeColumn.DBName} = ?) AND (left${entity.PKDBName} > ?) AND (${entity.PKDBName} NOT IN (" + StringUtil.merge(children${pkColumn.methodNames}) + "))";
+
+			SqlUpdate _sqlUpdate = SqlUpdateFactoryUtil.getSqlUpdate(getDataSource(), sql, new int[] {java.sql.Types.BIGINT, java.sql.Types.BIGINT, java.sql.Types.BIGINT});
+
+			_sqlUpdate.update(new Object[] {delta, ${scopeColumn.name}, left${pkColumn.methodName} });
+		}
+
+		protected void expandNoChildrenRight${pkColumn.methodName}(long ${scopeColumn.name}, long right${pkColumn.methodName}, List<Long> children${pkColumn.methodNames}, long delta) {
+			String sql = "UPDATE ${entity.table} SET right${entity.PKDBName} = (right${entity.PKDBName} + ?) WHERE (${scopeColumn.DBName} = ?) AND (right${entity.PKDBName} > ?) AND (${entity.PKDBName} NOT IN (" + StringUtil.merge(children${pkColumn.methodNames}) + "))";
+
+			SqlUpdate _sqlUpdate = SqlUpdateFactoryUtil.getSqlUpdate(getDataSource(), sql, new int[] {java.sql.Types.BIGINT, java.sql.Types.BIGINT, java.sql.Types.BIGINT});
+
+			_sqlUpdate.update(new Object[] {delta, ${scopeColumn.name}, right${pkColumn.methodName} });
+		}
+
+		protected void expandTree(${entity.name} ${entity.varName}, List<Long> children${pkColumn.methodNames}) throws SystemException {
+			if (!rebuildTreeEnabled) {
+				return;
+			}
+
+			long ${scopeColumn.name} = ${entity.varName}.get${scopeColumn.methodName}();
+
+			long lastRight${pkColumn.methodName} = getLastRight${pkColumn.methodName}(${scopeColumn.name}, ${entity.varName}.getParent${pkColumn.methodName}());
+
+			long left${pkColumn.methodName} = 2;
+			long right${pkColumn.methodName} = 3;
+
+			if (lastRight${pkColumn.methodName} > 0) {
+				left${pkColumn.methodName} = lastRight${pkColumn.methodName} + 1;
+
+				long childrenDistance = ${entity.varName}.getRight${pkColumn.methodName}() - ${entity.varName}.getLeft${pkColumn.methodName}();
+
+				if (childrenDistance > 1) {
+					right${pkColumn.methodName} = left${pkColumn.methodName} + childrenDistance;
+
+					updateChildrenTree(${scopeColumn.name}, children${pkColumn.methodNames}, left${pkColumn.methodName} - ${entity.varName}.getLeft${pkColumn.methodName}());
+
+					expandNoChildrenLeft${pkColumn.methodName}(${scopeColumn.name}, lastRight${pkColumn.methodName}, children${pkColumn.methodNames}, childrenDistance + 1);
+					expandNoChildrenRight${pkColumn.methodName}(${scopeColumn.name}, lastRight${pkColumn.methodName}, children${pkColumn.methodNames}, childrenDistance + 1);
+				}
+				else {
+					right${pkColumn.methodName} = lastRight${pkColumn.methodName} + 2;
+
+					expandTreeLeft${pkColumn.methodName}.expand(${scopeColumn.name}, lastRight${pkColumn.methodName});
+					expandTreeRight${pkColumn.methodName}.expand(${scopeColumn.name}, lastRight${pkColumn.methodName});
+				}
+
+				if (_HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE) {
+					CacheRegistryUtil.clear(${entity.name}Impl.class.getName());
+				}
+
+				EntityCacheUtil.clearCache(${entity.name}Impl.class.getName());
+				FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
+				FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
+			}
+
+			${entity.varName}.setLeft${pkColumn.methodName}(left${pkColumn.methodName});
+			${entity.varName}.setRight${pkColumn.methodName}(right${pkColumn.methodName});
+		}
+
+		protected List<Long> getChildrenTree${pkColumn.methodNames}(${entity.name} parent${entity.name}) throws SystemException {
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				SQLQuery q = session.createSQLQuery("SELECT ${entity.PKDBName} FROM ${entity.table} WHERE (${scopeColumn.DBName} = ?) AND (left${entity.PKDBName} BETWEEN ? AND ?)");
+
+				q.addScalar("${pkColumn.methodName}", com.liferay.portal.kernel.dao.orm.Type.LONG);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(parent${entity.name}.get${scopeColumn.methodName}());
+				qPos.add(parent${entity.name}.getLeft${pkColumn.methodName}() + 1);
+				qPos.add(parent${entity.name}.getRight${pkColumn.methodName}());
+
+				return q.list();
+			}
+			catch (Exception e) {
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		protected long getLastRight${pkColumn.methodName}(long ${scopeColumn.name}, long parent${pkColumn.methodName}) throws SystemException {
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				SQLQuery q = session.createSQLQuery("SELECT right${pkColumn.methodName} FROM ${entity.table} WHERE (${scopeColumn.DBName} = ?) AND (parent${pkColumn.methodName} = ?) ORDER BY right${pkColumn.methodName} DESC");
+
+				q.addScalar("right${pkColumn.methodName}", com.liferay.portal.kernel.dao.orm.Type.LONG);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(${scopeColumn.name});
+				qPos.add(parent${pkColumn.methodName});
+
+				List<Long> list = (List<Long>)QueryUtil.list(q, getDialect(), 0, 1);
+
+				if (list.isEmpty()) {
+					if (parent${pkColumn.methodName} > 0) {
+						session.clear();
+
+						${entity.name} parent${entity.name} = findByPrimaryKey(parent${pkColumn.methodName});
+
+						return parent${entity.name}.getLeft${pkColumn.methodName}();
+					}
+
+					return 0;
+				}
+				else {
+					return list.get(0);
+				}
+			}
+			catch (Exception e) {
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		protected long rebuildTree(long ${scopeColumn.name}, long parent${pkColumn.methodName}, long left${pkColumn.methodName}) throws SystemException {
+			if (!rebuildTreeEnabled) {
+				return 0;
+			}
+
+			List<Long> ${pkColumn.names} = null;
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				SQLQuery q = session.createSQLQuery("SELECT ${pkColumn.DBName} FROM ${entity.table} WHERE ${scopeColumn.DBName} = ? AND parent${pkColumn.methodName} = ? ORDER BY ${pkColumn.name} ASC");
+
+				q.addScalar("${pkColumn.name}", com.liferay.portal.kernel.dao.orm.Type.LONG);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(${scopeColumn.name});
+				qPos.add(parent${pkColumn.methodName});
+
+				${pkColumn.names} = q.list();
+			}
+			catch (Exception e) {
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+
 			long right${pkColumn.methodName} = left${pkColumn.methodName} + 1;
 
-			QueryPos qPos = QueryPos.getInstance(selectQuery);
-
-			qPos.add(${scopeColumn.name});
-			qPos.add(parent${pkColumn.methodName});
-
-			List<Long> ${pkColumn.names} = selectQuery.list();
-
 			for (long ${pkColumn.name} : ${pkColumn.names}) {
-				right${pkColumn.methodName} = rebuildTree(session, selectQuery, updateQuery, ${scopeColumn.name}, ${pkColumn.name}, right${pkColumn.methodName});
+				right${pkColumn.methodName} = rebuildTree(${scopeColumn.name}, ${pkColumn.name}, right${pkColumn.methodName});
 			}
 
 			if (parent${pkColumn.methodName} > 0) {
-				qPos = QueryPos.getInstance(updateQuery);
-
-				qPos.add(left${pkColumn.methodName});
-				qPos.add(right${pkColumn.methodName});
-				qPos.add(parent${pkColumn.methodName});
-
-				updateQuery.executeUpdate();
+				updateTree.update(parent${pkColumn.methodName}, left${pkColumn.methodName}, right${pkColumn.methodName});
 			}
 
 			return right${pkColumn.methodName} + 1;
+		}
+
+		protected void shrinkTree(${entity.name} ${entity.varName}) {
+			if (!rebuildTreeEnabled) {
+				return;
+			}
+
+			long ${scopeColumn.name} = ${entity.varName}.get${scopeColumn.methodName}();
+
+			long left${pkColumn.methodName} = ${entity.varName}.getLeft${pkColumn.methodName}();
+			long right${pkColumn.methodName} = ${entity.varName}.getRight${pkColumn.methodName}();
+
+			long delta = (right${pkColumn.methodName} - left${pkColumn.methodName}) + 1;
+
+			shrinkTreeLeft${pkColumn.methodName}.shrink(${scopeColumn.name}, right${pkColumn.methodName}, delta);
+			shrinkTreeRight${pkColumn.methodName}.shrink(${scopeColumn.name}, right${pkColumn.methodName}, delta);
+
+			if (_HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE) {
+				CacheRegistryUtil.clear(${entity.name}Impl.class.getName());
+			}
+
+			EntityCacheUtil.clearCache(${entity.name}Impl.class.getName());
+			FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
+			FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
+		}
+
+		protected void updateChildrenTree(long ${scopeColumn.name}, List<Long> children${pkColumn.methodNames}, long delta) {
+			String sql = "UPDATE ${entity.table} SET left${entity.PKDBName} = (left${entity.PKDBName} + ?), right${entity.PKDBName} = (right${entity.PKDBName} + ?) WHERE (${scopeColumn.DBName} = ?) AND (${entity.PKDBName} IN (" + StringUtil.merge(children${pkColumn.methodNames}) + "))";
+
+			SqlUpdate _sqlUpdate = SqlUpdateFactoryUtil.getSqlUpdate(getDataSource(), sql, new int[] {java.sql.Types.BIGINT, java.sql.Types.BIGINT, java.sql.Types.BIGINT});
+
+			_sqlUpdate.update(new Object[] {delta, delta, ${scopeColumn.name} });
 		}
 	</#if>
 
@@ -1620,6 +1512,22 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 	 * Initializes the ${entity.humanName} persistence.
 	 */
 	public void afterPropertiesSet() {
+		String[] listenerClassNames = StringUtil.split(GetterUtil.getString(${propsUtil}.get("value.object.listener.${packagePath}.model.${entity.name}")));
+
+		if (listenerClassNames.length > 0) {
+			try {
+				List<ModelListener<${entity.name}>> listenersList = new ArrayList<ModelListener<${entity.name}>>();
+
+				for (String listenerClassName : listenerClassNames) {
+					listenersList.add((ModelListener<${entity.name}>)InstanceFactory.newInstance(getClassLoader(), listenerClassName));
+				}
+
+				listeners = listenersList.toArray(new ModelListener[listenersList.size()]);
+			}
+			catch (Exception e) {
+				_log.error(e);
+			}
+		}
 
 		<#list entity.columnList as column>
 			<#if column.isCollection() && column.isMappingManyToMany()>
@@ -1630,6 +1538,10 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 		</#list>
 
 		<#if entity.isHierarchicalTree()>
+			expandTreeLeft${pkColumn.methodName} = new ExpandTreeLeft${pkColumn.methodName}();
+			expandTreeRight${pkColumn.methodName} = new ExpandTreeRight${pkColumn.methodName}();
+			shrinkTreeLeft${pkColumn.methodName} = new ShrinkTreeLeft${pkColumn.methodName}();
+			shrinkTreeRight${pkColumn.methodName} = new ShrinkTreeRight${pkColumn.methodName}();
 			updateTree = new UpdateTree();
 		</#if>
 	}
@@ -1639,12 +1551,6 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 		FinderCacheUtil.removeCache(FINDER_CLASS_NAME_ENTITY);
 		FinderCacheUtil.removeCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 		FinderCacheUtil.removeCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
-
-		<#list entity.columnList as column>
-			<#if column.isCollection() && column.isMappingManyToMany()>
-				TableMapperFactory.removeTableMapper("${column.mappingTable}");
-			</#if>
-		</#list>
 	}
 
 	<#list entity.columnList as column>
@@ -1658,9 +1564,68 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 	</#list>
 
 	<#if entity.isHierarchicalTree()>
-		protected NestedSetsTreeManager<${entity.name}> nestedSetsTreeManager = new PersistenceNestedSetsTreeManager<${entity.name}>(this, "${entity.table}", "${entity.name}", ${entity.name}Impl.class, "${pkColumn.DBName}", "${scopeColumn.DBName}", "left${pkColumn.methodName}", "right${pkColumn.methodName}");
 		protected boolean rebuildTreeEnabled = true;
+		protected ExpandTreeLeft${pkColumn.methodName} expandTreeLeft${pkColumn.methodName};
+		protected ExpandTreeRight${pkColumn.methodName} expandTreeRight${pkColumn.methodName};
+		protected ShrinkTreeLeft${pkColumn.methodName} shrinkTreeLeft${pkColumn.methodName};
+		protected ShrinkTreeRight${pkColumn.methodName} shrinkTreeRight${pkColumn.methodName};
 		protected UpdateTree updateTree;
+
+		protected class ExpandTreeLeft${pkColumn.methodName} {
+
+			protected ExpandTreeLeft${pkColumn.methodName}() {
+				_sqlUpdate = SqlUpdateFactoryUtil.getSqlUpdate(getDataSource(), "UPDATE ${entity.table} SET left${pkColumn.methodName} = (left${pkColumn.methodName} + 2) WHERE (${scopeColumn.DBName} = ?) AND (left${pkColumn.methodName} > ?)", new int[] {java.sql.Types.${serviceBuilder.getSqlType("long")}, java.sql.Types.${serviceBuilder.getSqlType("long")}});
+			}
+
+			protected void expand(long ${scopeColumn.name}, long left${pkColumn.methodName}) {
+				_sqlUpdate.update(new Object[] {${scopeColumn.name}, left${pkColumn.methodName}});
+			}
+
+			private SqlUpdate _sqlUpdate;
+
+		}
+
+		protected class ExpandTreeRight${pkColumn.methodName} {
+
+			protected ExpandTreeRight${pkColumn.methodName}() {
+				_sqlUpdate = SqlUpdateFactoryUtil.getSqlUpdate(getDataSource(), "UPDATE ${entity.table} SET right${pkColumn.methodName} = (right${pkColumn.methodName} + 2) WHERE (${scopeColumn.DBName} = ?) AND (right${pkColumn.methodName} > ?)", new int[] {java.sql.Types.${serviceBuilder.getSqlType("long")}, java.sql.Types.${serviceBuilder.getSqlType("long")}});
+			}
+
+			protected void expand(long ${scopeColumn.name}, long right${pkColumn.methodName}) {
+				_sqlUpdate.update(new Object[] {${scopeColumn.name}, right${pkColumn.methodName}});
+			}
+
+			private SqlUpdate _sqlUpdate;
+
+		}
+
+		protected class ShrinkTreeLeft${pkColumn.methodName} {
+
+			protected ShrinkTreeLeft${pkColumn.methodName}() {
+				_sqlUpdate = SqlUpdateFactoryUtil.getSqlUpdate(getDataSource(), "UPDATE ${entity.table} SET left${pkColumn.methodName} = (left${pkColumn.methodName} - ?) WHERE (${scopeColumn.DBName} = ?) AND (left${pkColumn.methodName} > ?)", new int[] {java.sql.Types.${serviceBuilder.getSqlType("long")}, java.sql.Types.${serviceBuilder.getSqlType("long")}, java.sql.Types.${serviceBuilder.getSqlType("long")}});
+			}
+
+			protected void shrink(long ${scopeColumn.name}, long right${pkColumn.methodName}, long delta) {
+				_sqlUpdate.update(new Object[] {delta, ${scopeColumn.name}, right${pkColumn.methodName}});
+			}
+
+			private SqlUpdate _sqlUpdate;
+
+		}
+
+		protected class ShrinkTreeRight${pkColumn.methodName} {
+
+			protected ShrinkTreeRight${pkColumn.methodName}() {
+				_sqlUpdate = SqlUpdateFactoryUtil.getSqlUpdate(getDataSource(), "UPDATE ${entity.table} SET right${pkColumn.methodName} = (right${pkColumn.methodName} - ?) WHERE (${scopeColumn.DBName} = ?) AND (right${pkColumn.methodName} > ?)", new int[] {java.sql.Types.${serviceBuilder.getSqlType("long")}, java.sql.Types.${serviceBuilder.getSqlType("long")}, java.sql.Types.${serviceBuilder.getSqlType("long")}});
+			}
+
+			protected void shrink(long ${scopeColumn.name}, long right${pkColumn.methodName}, long delta) {
+				_sqlUpdate.update(new Object[] {delta, ${scopeColumn.name}, right${pkColumn.methodName}});
+			}
+
+			private SqlUpdate _sqlUpdate;
+
+		}
 
 		protected class UpdateTree {
 
@@ -1678,10 +1643,6 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 	</#if>
 
 	private static final String _SQL_SELECT_${entity.alias?upper_case} = "SELECT ${entity.alias} FROM ${entity.name} ${entity.alias}";
-
-	<#if !entity.hasCompoundPK()>
-		private static final String _SQL_SELECT_${entity.alias?upper_case}_WHERE_PKS_IN = "SELECT ${entity.alias} FROM ${entity.name} ${entity.alias} WHERE ${entity.PKDBName} IN (";
-	</#if>
 
 	<#if entity.getFinderList()?size != 0>
 		private static final String _SQL_SELECT_${entity.alias?upper_case}_WHERE = "SELECT ${entity.alias} FROM ${entity.name} ${entity.alias} WHERE ";
@@ -1731,10 +1692,10 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 
 	private static final boolean _HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE = <#if pluginName != "">GetterUtil.getBoolean(PropsUtil.get(PropsKeys.HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE))<#else>com.liferay.portal.util.PropsValues.HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE</#if>;
 
-	private static final Log _log = LogFactoryUtil.getLog(${entity.name}PersistenceImpl.class);
+	private static Log _log = LogFactoryUtil.getLog(${entity.name}PersistenceImpl.class);
 
 	<#if entity.badNamedColumnsList?size != 0>
-		private static final Set<String> _badColumnNames = SetUtil.fromArray(
+		private static Set<String> _badColumnNames = SetUtil.fromArray(
 			new String[] {
 				<#list entity.badNamedColumnsList as column>
 					"${column.name}"
@@ -1746,7 +1707,7 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 			});
 	</#if>
 
-	private static final ${entity.name} _null${entity.name} = new ${entity.name}Impl() {
+	private static ${entity.name} _null${entity.name} = new ${entity.name}Impl() {
 
 		@Override
 		public Object clone() {
@@ -1760,78 +1721,11 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 
 	};
 
-	private static final CacheModel<${entity.name}> _null${entity.name}CacheModel =
-
-	<#if entity.isMvccEnabled()>
-		new NullCacheModel();
-
-		private static class NullCacheModel implements CacheModel<${entity.name}>, MVCCModel {
-
-			@Override
-			public long getMvccVersion() {
-				return 0;
-			}
-
-			@Override
-			public void setMvccVersion(long mvccVersion) {
-			}
-
-			@Override
-			public ${entity.name} toEntityModel() {
-				return _null${entity.name};
-			}
-
+	private static CacheModel<${entity.name}> _null${entity.name}CacheModel = new CacheModel<${entity.name}>() {
+		@Override
+		public ${entity.name} toEntityModel() {
+			return _null${entity.name};
 		}
-	<#else>
-		new CacheModel<${entity.name}>() {
-
-			@Override
-			public ${entity.name} toEntityModel() {
-				return _null${entity.name};
-			}
-
-		};
-	</#if>
+	};
 
 }
-
-<#function bindParameter finderColsList>
-	<#list finderColsList as finderCol>
-		<#if !finderCol.hasArrayableOperator() || finderCol.type == "String">
-			<#return true>
-		</#if>
-	</#list>
-
-	<#return false>
-</#function>
-
-<#macro finderQPos
-	_arrayable = false
->
-	<#list finderColsList as finderCol>
-		<#if _arrayable && finderCol.hasArrayableOperator()>
-			<#if finderCol.type == "String">
-				for (String ${finderCol.name} : ${finderCol.names}) {
-					if (${finderCol.name} != null && !${finderCol.name}.isEmpty()) {
-						qPos.add(${finderCol.name});
-					}
-				}
-			</#if>
-		<#elseif finderCol.isPrimitiveType()>
-			qPos.add(${finderCol.name}${serviceBuilder.getPrimitiveObjValue("${finderCol.type}")});
-
-		<#else>
-			if (bind${finderCol.methodName}) {
-				qPos.add(
-					<#if finderCol.type == "Date">
-						new Timestamp(${finderCol.name}.getTime())
-					<#elseif finderCol.type == "String" && !finderCol.isCaseSensitive()>
-						StringUtil.toLowerCase(${finderCol.name})
-					<#else>
-						${finderCol.name}
-					</#if>
-				);
-			}
-		</#if>
-	</#list>
-</#macro>

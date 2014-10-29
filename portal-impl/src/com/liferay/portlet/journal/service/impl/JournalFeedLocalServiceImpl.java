@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,21 +15,24 @@
 package com.liferay.portlet.journal.service.impl;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.util.CharPool;
+import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.kernel.xml.Document;
+import com.liferay.portal.kernel.xml.Node;
+import com.liferay.portal.kernel.xml.SAXReaderUtil;
+import com.liferay.portal.kernel.xml.XPath;
 import com.liferay.portal.model.ResourceConstants;
 import com.liferay.portal.model.SystemEventConstants;
 import com.liferay.portal.model.User;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.util.PortalUtil;
-import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
-import com.liferay.portlet.dynamicdatamapping.model.DDMFormField;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 import com.liferay.portlet.journal.DuplicateFeedIdException;
 import com.liferay.portlet.journal.FeedContentFieldException;
@@ -44,7 +47,6 @@ import com.liferay.util.RSSUtil;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author Raymond Augé
@@ -61,7 +63,7 @@ public class JournalFeedLocalServiceImpl
 			String targetLayoutFriendlyUrl, String targetPortletId,
 			String contentField, String feedFormat, double feedVersion,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		// Feed
 
@@ -137,7 +139,7 @@ public class JournalFeedLocalServiceImpl
 	public void addFeedResources(
 			JournalFeed feed, boolean addGroupPermissions,
 			boolean addGuestPermissions)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		resourceLocalService.addResources(
 			feed.getCompanyId(), feed.getGroupId(), feed.getUserId(),
@@ -149,7 +151,7 @@ public class JournalFeedLocalServiceImpl
 	public void addFeedResources(
 			JournalFeed feed, String[] groupPermissions,
 			String[] guestPermissions)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		resourceLocalService.addModelResources(
 			feed.getCompanyId(), feed.getGroupId(), feed.getUserId(),
@@ -161,7 +163,7 @@ public class JournalFeedLocalServiceImpl
 	public void addFeedResources(
 			long feedId, boolean addGroupPermissions,
 			boolean addGuestPermissions)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		JournalFeed feed = journalFeedPersistence.findByPrimaryKey(feedId);
 
@@ -171,7 +173,7 @@ public class JournalFeedLocalServiceImpl
 	@Override
 	public void addFeedResources(
 			long feedId, String[] groupPermissions, String[] guestPermissions)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		JournalFeed feed = journalFeedPersistence.findByPrimaryKey(feedId);
 
@@ -180,7 +182,8 @@ public class JournalFeedLocalServiceImpl
 
 	@Override
 	@SystemEvent(type = SystemEventConstants.TYPE_DELETE)
-	public void deleteFeed(JournalFeed feed) throws PortalException {
+	public void deleteFeed(JournalFeed feed)
+		throws PortalException, SystemException {
 
 		// Feed
 
@@ -199,60 +202,71 @@ public class JournalFeedLocalServiceImpl
 	}
 
 	@Override
-	public void deleteFeed(long feedId) throws PortalException {
+	public void deleteFeed(long feedId)
+		throws PortalException, SystemException {
+
 		JournalFeed feed = journalFeedPersistence.findByPrimaryKey(feedId);
 
 		journalFeedLocalService.deleteFeed(feed);
 	}
 
 	@Override
-	public void deleteFeed(long groupId, String feedId) throws PortalException {
+	public void deleteFeed(long groupId, String feedId)
+		throws PortalException, SystemException {
+
 		JournalFeed feed = journalFeedPersistence.findByG_F(groupId, feedId);
 
 		journalFeedLocalService.deleteFeed(feed);
 	}
 
 	@Override
-	public JournalFeed fetchFeed(long groupId, String feedId) {
+	public JournalFeed fetchFeed(long groupId, String feedId)
+		throws SystemException {
+
 		return journalFeedPersistence.fetchByG_F(groupId, feedId);
 	}
 
 	@Override
-	public JournalFeed getFeed(long feedId) throws PortalException {
+	public JournalFeed getFeed(long feedId)
+		throws PortalException, SystemException {
+
 		return journalFeedPersistence.findByPrimaryKey(feedId);
 	}
 
 	@Override
 	public JournalFeed getFeed(long groupId, String feedId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return journalFeedPersistence.findByG_F(groupId, feedId);
 	}
 
 	@Override
-	public List<JournalFeed> getFeeds() {
+	public List<JournalFeed> getFeeds() throws SystemException {
 		return journalFeedPersistence.findAll();
 	}
 
 	@Override
-	public List<JournalFeed> getFeeds(long groupId) {
+	public List<JournalFeed> getFeeds(long groupId) throws SystemException {
 		return journalFeedPersistence.findByGroupId(groupId);
 	}
 
 	@Override
-	public List<JournalFeed> getFeeds(long groupId, int start, int end) {
+	public List<JournalFeed> getFeeds(long groupId, int start, int end)
+		throws SystemException {
+
 		return journalFeedPersistence.findByGroupId(groupId, start, end);
 	}
 
 	@Override
-	public int getFeedsCount(long groupId) {
+	public int getFeedsCount(long groupId) throws SystemException {
 		return journalFeedPersistence.countByGroupId(groupId);
 	}
 
 	@Override
 	public List<JournalFeed> search(
-		long companyId, long groupId, String keywords, int start, int end,
-		OrderByComparator<JournalFeed> obc) {
+			long companyId, long groupId, String keywords, int start, int end,
+			OrderByComparator obc)
+		throws SystemException {
 
 		return journalFeedFinder.findByKeywords(
 			companyId, groupId, keywords, start, end, obc);
@@ -260,9 +274,10 @@ public class JournalFeedLocalServiceImpl
 
 	@Override
 	public List<JournalFeed> search(
-		long companyId, long groupId, String feedId, String name,
-		String description, boolean andOperator, int start, int end,
-		OrderByComparator<JournalFeed> obc) {
+			long companyId, long groupId, String feedId, String name,
+			String description, boolean andOperator, int start, int end,
+			OrderByComparator obc)
+		throws SystemException {
 
 		return journalFeedFinder.findByC_G_F_N_D(
 			companyId, groupId, feedId, name, description, andOperator, start,
@@ -270,14 +285,17 @@ public class JournalFeedLocalServiceImpl
 	}
 
 	@Override
-	public int searchCount(long companyId, long groupId, String keywords) {
+	public int searchCount(long companyId, long groupId, String keywords)
+		throws SystemException {
+
 		return journalFeedFinder.countByKeywords(companyId, groupId, keywords);
 	}
 
 	@Override
 	public int searchCount(
-		long companyId, long groupId, String feedId, String name,
-		String description, boolean andOperator) {
+			long companyId, long groupId, String feedId, String name,
+			String description, boolean andOperator)
+		throws SystemException {
 
 		return journalFeedFinder.countByC_G_F_N_D(
 			companyId, groupId, feedId, name, description, andOperator);
@@ -291,7 +309,7 @@ public class JournalFeedLocalServiceImpl
 			String orderByType, String targetLayoutFriendlyUrl,
 			String targetPortletId, String contentField, String feedFormat,
 			double feedVersion, ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		// Feed
 
@@ -343,16 +361,21 @@ public class JournalFeedLocalServiceImpl
 		try {
 			DDMStructure ddmStructure =
 				ddmStructureLocalService.getStructure(
-					groupId,
-					classNameLocalService.getClassNameId(JournalArticle.class),
+					groupId, PortalUtil.getClassNameId(JournalArticle.class),
 					structureId);
 
-			DDMForm ddmForm = ddmStructure.getDDMForm();
+			Document document = SAXReaderUtil.read(ddmStructure.getXsd());
 
-			Map<String, DDMFormField> ddmFormFieldsMap =
-				ddmForm.getDDMFormFieldsMap(true);
+			contentField = HtmlUtil.escapeXPathAttribute(contentField);
 
-			return ddmFormFieldsMap.containsKey(contentField);
+			XPath xPathSelector = SAXReaderUtil.createXPath(
+				"//dynamic-element[@name="+ contentField + "]");
+
+			Node node = xPathSelector.selectSingleNode(document);
+
+			if (node != null) {
+				return true;
+			}
 		}
 		catch (Exception e) {
 			_log.error(e, e);
@@ -365,7 +388,7 @@ public class JournalFeedLocalServiceImpl
 			long companyId, long groupId, String feedId, boolean autoFeedId,
 			String name, String structureId, String targetLayoutFriendlyUrl,
 			String contentField)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		if (!autoFeedId) {
 			if (Validator.isNull(feedId) || Validator.isNumber(feedId) ||
@@ -379,15 +402,7 @@ public class JournalFeedLocalServiceImpl
 				groupId, feedId);
 
 			if (feed != null) {
-				StringBundler sb = new StringBundler(5);
-
-				sb.append("{groupId=");
-				sb.append(groupId);
-				sb.append(", feedId=");
-				sb.append(feedId);
-				sb.append("}");
-
-				throw new DuplicateFeedIdException(sb.toString());
+				throw new DuplicateFeedIdException();
 			}
 		}
 

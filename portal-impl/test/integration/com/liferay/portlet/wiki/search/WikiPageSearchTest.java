@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -22,18 +22,17 @@ import com.liferay.portal.model.ClassedModel;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.search.BaseSearchTestCase;
 import com.liferay.portal.service.ServiceContext;
+import com.liferay.portal.service.ServiceTestUtil;
+import com.liferay.portal.test.LiferayIntegrationJUnitTestRunner;
+import com.liferay.portal.test.MainServletExecutionTestListener;
 import com.liferay.portal.test.Sync;
 import com.liferay.portal.test.SynchronousDestinationExecutionTestListener;
-import com.liferay.portal.test.listeners.MainServletExecutionTestListener;
-import com.liferay.portal.test.runners.LiferayIntegrationJUnitTestRunner;
-import com.liferay.portal.util.test.RandomTestUtil;
-import com.liferay.portal.util.test.TestPropsValues;
+import com.liferay.portal.util.TestPropsValues;
 import com.liferay.portlet.wiki.asset.WikiPageAssetRenderer;
 import com.liferay.portlet.wiki.model.WikiPage;
 import com.liferay.portlet.wiki.service.WikiNodeLocalServiceUtil;
-import com.liferay.portlet.wiki.service.WikiPageLocalServiceUtil;
 import com.liferay.portlet.wiki.service.WikiPageServiceUtil;
-import com.liferay.portlet.wiki.util.test.WikiTestUtil;
+import com.liferay.portlet.wiki.util.WikiTestUtil;
 
 import java.util.List;
 
@@ -52,12 +51,6 @@ import org.junit.runner.RunWith;
 @RunWith(LiferayIntegrationJUnitTestRunner.class)
 @Sync
 public class WikiPageSearchTest extends BaseSearchTestCase {
-
-	@Ignore()
-	@Override
-	@Test
-	public void testLocalizedSearch() throws Exception {
-	}
 
 	@Ignore()
 	@Override
@@ -113,12 +106,7 @@ public class WikiPageSearchTest extends BaseSearchTestCase {
 		return WikiTestUtil.addPage(
 			TestPropsValues.getUserId(),
 			(Long)parentBaseModel.getPrimaryKeyObj(),
-			RandomTestUtil.randomString(), keywords, approved, serviceContext);
-	}
-
-	@Override
-	protected void deleteBaseModel(long primaryKey) throws Exception {
-		WikiPageLocalServiceUtil.deleteWikiPage(primaryKey);
+			ServiceTestUtil.randomString(), keywords, approved, serviceContext);
 	}
 
 	@Override
@@ -178,14 +166,6 @@ public class WikiPageSearchTest extends BaseSearchTestCase {
 	@Override
 	protected boolean isExpirableAllVersions() {
 		return true;
-	}
-
-	@Override
-	protected void moveBaseModelToTrash(long primaryKey) throws Exception {
-		WikiPage page = WikiPageLocalServiceUtil.getPageByPageId(primaryKey);
-
-		WikiPageLocalServiceUtil.movePageToTrash(
-			TestPropsValues.getUserId(), page.getNodeId(), page.getTitle());
 	}
 
 	@Override

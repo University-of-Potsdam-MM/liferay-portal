@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -35,17 +35,13 @@ public class ReleaseLocalServiceWrapper implements ReleaseLocalService,
 	*
 	* @param release the release
 	* @return the release that was added
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
 	public com.liferay.portal.model.Release addRelease(
-		com.liferay.portal.model.Release release) {
+		com.liferay.portal.model.Release release)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return _releaseLocalService.addRelease(release);
-	}
-
-	@Override
-	public com.liferay.portal.model.Release addRelease(
-		java.lang.String servletContextName, int buildNumber) {
-		return _releaseLocalService.addRelease(servletContextName, buildNumber);
 	}
 
 	/**
@@ -59,19 +55,19 @@ public class ReleaseLocalServiceWrapper implements ReleaseLocalService,
 		return _releaseLocalService.createRelease(releaseId);
 	}
 
-	@Override
-	public void createTablesAndPopulate() {
-		_releaseLocalService.createTablesAndPopulate();
-	}
-
 	/**
-	* @throws PortalException
+	* Deletes the release with the primary key from the database. Also notifies the appropriate model listeners.
+	*
+	* @param releaseId the primary key of the release
+	* @return the release that was removed
+	* @throws PortalException if a release with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
-	public com.liferay.portal.model.PersistedModel deletePersistedModel(
-		com.liferay.portal.model.PersistedModel persistedModel)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _releaseLocalService.deletePersistedModel(persistedModel);
+	public com.liferay.portal.model.Release deleteRelease(long releaseId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _releaseLocalService.deleteRelease(releaseId);
 	}
 
 	/**
@@ -79,24 +75,13 @@ public class ReleaseLocalServiceWrapper implements ReleaseLocalService,
 	*
 	* @param release the release
 	* @return the release that was removed
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
 	public com.liferay.portal.model.Release deleteRelease(
-		com.liferay.portal.model.Release release) {
+		com.liferay.portal.model.Release release)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return _releaseLocalService.deleteRelease(release);
-	}
-
-	/**
-	* Deletes the release with the primary key from the database. Also notifies the appropriate model listeners.
-	*
-	* @param releaseId the primary key of the release
-	* @return the release that was removed
-	* @throws PortalException if a release with the primary key could not be found
-	*/
-	@Override
-	public com.liferay.portal.model.Release deleteRelease(long releaseId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _releaseLocalService.deleteRelease(releaseId);
 	}
 
 	@Override
@@ -109,10 +94,13 @@ public class ReleaseLocalServiceWrapper implements ReleaseLocalService,
 	*
 	* @param dynamicQuery the dynamic query
 	* @return the matching rows
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
-	public <T> java.util.List<T> dynamicQuery(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery) {
+	@SuppressWarnings("rawtypes")
+	public java.util.List dynamicQuery(
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return _releaseLocalService.dynamicQuery(dynamicQuery);
 	}
 
@@ -127,11 +115,13 @@ public class ReleaseLocalServiceWrapper implements ReleaseLocalService,
 	* @param start the lower bound of the range of model instances
 	* @param end the upper bound of the range of model instances (not inclusive)
 	* @return the range of matching rows
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
-	public <T> java.util.List<T> dynamicQuery(
+	@SuppressWarnings("rawtypes")
+	public java.util.List dynamicQuery(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
-		int end) {
+		int end) throws com.liferay.portal.kernel.exception.SystemException {
 		return _releaseLocalService.dynamicQuery(dynamicQuery, start, end);
 	}
 
@@ -147,12 +137,15 @@ public class ReleaseLocalServiceWrapper implements ReleaseLocalService,
 	* @param end the upper bound of the range of model instances (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching rows
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
-	public <T> java.util.List<T> dynamicQuery(
+	@SuppressWarnings("rawtypes")
+	public java.util.List dynamicQuery(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
 		int end,
-		com.liferay.portal.kernel.util.OrderByComparator<T> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return _releaseLocalService.dynamicQuery(dynamicQuery, start, end,
 			orderByComparator);
 	}
@@ -162,10 +155,12 @@ public class ReleaseLocalServiceWrapper implements ReleaseLocalService,
 	*
 	* @param dynamicQuery the dynamic query
 	* @return the number of rows that match the dynamic query
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
 	public long dynamicQueryCount(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery) {
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return _releaseLocalService.dynamicQueryCount(dynamicQuery);
 	}
 
@@ -175,51 +170,20 @@ public class ReleaseLocalServiceWrapper implements ReleaseLocalService,
 	* @param dynamicQuery the dynamic query
 	* @param projection the projection to apply to the query
 	* @return the number of rows that match the dynamic query
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
 	public long dynamicQueryCount(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery,
-		com.liferay.portal.kernel.dao.orm.Projection projection) {
+		com.liferay.portal.kernel.dao.orm.Projection projection)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return _releaseLocalService.dynamicQueryCount(dynamicQuery, projection);
 	}
 
 	@Override
-	public com.liferay.portal.model.Release fetchRelease(long releaseId) {
+	public com.liferay.portal.model.Release fetchRelease(long releaseId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return _releaseLocalService.fetchRelease(releaseId);
-	}
-
-	@Override
-	public com.liferay.portal.model.Release fetchRelease(
-		java.lang.String servletContextName) {
-		return _releaseLocalService.fetchRelease(servletContextName);
-	}
-
-	@Override
-	public com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery getActionableDynamicQuery() {
-		return _releaseLocalService.getActionableDynamicQuery();
-	}
-
-	/**
-	* Returns the Spring bean ID for this bean.
-	*
-	* @return the Spring bean ID for this bean
-	*/
-	@Override
-	public java.lang.String getBeanIdentifier() {
-		return _releaseLocalService.getBeanIdentifier();
-	}
-
-	@Override
-	public int getBuildNumberOrCreate()
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _releaseLocalService.getBuildNumberOrCreate();
-	}
-
-	@Override
-	public com.liferay.portal.model.PersistedModel getPersistedModel(
-		java.io.Serializable primaryKeyObj)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _releaseLocalService.getPersistedModel(primaryKeyObj);
 	}
 
 	/**
@@ -228,11 +192,21 @@ public class ReleaseLocalServiceWrapper implements ReleaseLocalService,
 	* @param releaseId the primary key of the release
 	* @return the release
 	* @throws PortalException if a release with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
 	public com.liferay.portal.model.Release getRelease(long releaseId)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return _releaseLocalService.getRelease(releaseId);
+	}
+
+	@Override
+	public com.liferay.portal.model.PersistedModel getPersistedModel(
+		java.io.Serializable primaryKeyObj)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _releaseLocalService.getPersistedModel(primaryKeyObj);
 	}
 
 	/**
@@ -245,10 +219,12 @@ public class ReleaseLocalServiceWrapper implements ReleaseLocalService,
 	* @param start the lower bound of the range of releases
 	* @param end the upper bound of the range of releases (not inclusive)
 	* @return the range of releases
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
 	public java.util.List<com.liferay.portal.model.Release> getReleases(
-		int start, int end) {
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return _releaseLocalService.getReleases(start, end);
 	}
 
@@ -256,10 +232,36 @@ public class ReleaseLocalServiceWrapper implements ReleaseLocalService,
 	* Returns the number of releases.
 	*
 	* @return the number of releases
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
-	public int getReleasesCount() {
+	public int getReleasesCount()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return _releaseLocalService.getReleasesCount();
+	}
+
+	/**
+	* Updates the release in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
+	*
+	* @param release the release
+	* @return the release that was updated
+	* @throws SystemException if a system exception occurred
+	*/
+	@Override
+	public com.liferay.portal.model.Release updateRelease(
+		com.liferay.portal.model.Release release)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return _releaseLocalService.updateRelease(release);
+	}
+
+	/**
+	* Returns the Spring bean ID for this bean.
+	*
+	* @return the Spring bean ID for this bean
+	*/
+	@Override
+	public java.lang.String getBeanIdentifier() {
+		return _releaseLocalService.getBeanIdentifier();
 	}
 
 	/**
@@ -272,48 +274,45 @@ public class ReleaseLocalServiceWrapper implements ReleaseLocalService,
 		_releaseLocalService.setBeanIdentifier(beanIdentifier);
 	}
 
-	/**
-	* Updates the release in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
-	*
-	* @param release the release
-	* @return the release that was updated
-	*/
 	@Override
-	public com.liferay.portal.model.Release updateRelease(
-		com.liferay.portal.model.Release release) {
-		return _releaseLocalService.updateRelease(release);
+	public com.liferay.portal.model.Release addRelease(
+		java.lang.String servletContextName, int buildNumber)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return _releaseLocalService.addRelease(servletContextName, buildNumber);
+	}
+
+	@Override
+	public void createTablesAndPopulate()
+		throws com.liferay.portal.kernel.exception.SystemException {
+		_releaseLocalService.createTablesAndPopulate();
+	}
+
+	@Override
+	public com.liferay.portal.model.Release fetchRelease(
+		java.lang.String servletContextName)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return _releaseLocalService.fetchRelease(servletContextName);
+	}
+
+	@Override
+	public int getBuildNumberOrCreate()
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _releaseLocalService.getBuildNumberOrCreate();
 	}
 
 	@Override
 	public com.liferay.portal.model.Release updateRelease(long releaseId,
 		int buildNumber, java.util.Date buildDate, boolean verified)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return _releaseLocalService.updateRelease(releaseId, buildNumber,
 			buildDate, verified);
-	}
-
-	@Override
-	public void updateRelease(java.lang.String servletContextName,
-		java.util.List<com.liferay.portal.kernel.upgrade.UpgradeProcess> upgradeProcesses,
-		int buildNumber, int previousBuildNumber, boolean indexOnUpgrade)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_releaseLocalService.updateRelease(servletContextName,
-			upgradeProcesses, buildNumber, previousBuildNumber, indexOnUpgrade);
-	}
-
-	@Override
-	public void updateRelease(java.lang.String servletContextName,
-		java.util.List<com.liferay.portal.kernel.upgrade.UpgradeProcess> upgradeProcesses,
-		java.util.Properties unfilteredPortalProperties)
-		throws java.lang.Exception {
-		_releaseLocalService.updateRelease(servletContextName,
-			upgradeProcesses, unfilteredPortalProperties);
 	}
 
 	/**
 	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedService}
 	 */
-	@Deprecated
 	public ReleaseLocalService getWrappedReleaseLocalService() {
 		return _releaseLocalService;
 	}
@@ -321,7 +320,6 @@ public class ReleaseLocalServiceWrapper implements ReleaseLocalService,
 	/**
 	 * @deprecated As of 6.1.0, replaced by {@link #setWrappedService}
 	 */
-	@Deprecated
 	public void setWrappedReleaseLocalService(
 		ReleaseLocalService releaseLocalService) {
 		_releaseLocalService = releaseLocalService;

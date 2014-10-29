@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,14 +14,12 @@
 
 package com.liferay.portlet.messageboards.lar;
 
-import com.liferay.portal.kernel.dao.orm.QueryUtil;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.lar.BaseStagedModelDataHandler;
 import com.liferay.portal.kernel.lar.ExportImportPathUtil;
 import com.liferay.portal.kernel.lar.PortletDataContext;
 import com.liferay.portal.kernel.lar.StagedModelDataHandlerUtil;
-import com.liferay.portal.kernel.lar.StagedModelModifiedDateComparator;
 import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.kernel.xml.Element;
@@ -36,7 +34,6 @@ import com.liferay.portlet.messageboards.service.MBMessageLocalServiceUtil;
 import com.liferay.portlet.messageboards.service.MBThreadFlagLocalServiceUtil;
 import com.liferay.portlet.messageboards.service.MBThreadLocalServiceUtil;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -49,38 +46,16 @@ public class MBThreadFlagStagedModelDataHandler
 
 	@Override
 	public void deleteStagedModel(
-		String uuid, long groupId, String className, String extraData) {
+			String uuid, long groupId, String className, String extraData)
+		throws SystemException {
 
-		MBThreadFlag threadFlag = fetchStagedModelByUuidAndGroupId(
-			uuid, groupId);
+		MBThreadFlag threadFlag =
+			MBThreadFlagLocalServiceUtil.fetchMBThreadFlagByUuidAndGroupId(
+				uuid, groupId);
 
 		if (threadFlag != null) {
 			MBThreadFlagLocalServiceUtil.deleteThreadFlag(threadFlag);
 		}
-	}
-
-	@Override
-	public MBThreadFlag fetchStagedModelByUuidAndCompanyId(
-		String uuid, long companyId) {
-
-		List<MBThreadFlag> threadFlags =
-			MBThreadFlagLocalServiceUtil.getMBThreadFlagsByUuidAndCompanyId(
-				uuid, companyId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-				new StagedModelModifiedDateComparator<MBThreadFlag>());
-
-		if (ListUtil.isEmpty(threadFlags)) {
-			return null;
-		}
-
-		return threadFlags.get(0);
-	}
-
-	@Override
-	public MBThreadFlag fetchStagedModelByUuidAndGroupId(
-		String uuid, long groupId) {
-
-		return MBThreadFlagLocalServiceUtil.fetchMBThreadFlagByUuidAndGroupId(
-			uuid, groupId);
 	}
 
 	@Override

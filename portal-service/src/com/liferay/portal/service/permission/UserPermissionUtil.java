@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -26,7 +26,6 @@ public class UserPermissionUtil {
 	/**
 	 * @deprecated As of 6.1.0
 	 */
-	@Deprecated
 	public static void check(
 			PermissionChecker permissionChecker, long userId,
 			long organizationId, long locationId, String actionId)
@@ -56,7 +55,6 @@ public class UserPermissionUtil {
 	/**
 	 * @deprecated As of 6.1.0
 	 */
-	@Deprecated
 	public static boolean contains(
 		PermissionChecker permissionChecker, long userId, long organizationId,
 		long locationId, String actionId) {

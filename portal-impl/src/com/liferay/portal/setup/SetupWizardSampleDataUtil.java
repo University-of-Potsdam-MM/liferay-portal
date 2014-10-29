@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -48,11 +48,13 @@ import org.apache.commons.lang.time.StopWatch;
 public class SetupWizardSampleDataUtil {
 
 	public static void addSampleData(long companyId) throws Exception {
-		StopWatch stopWatch = new StopWatch();
-
-		stopWatch.start();
+		StopWatch stopWatch = null;
 
 		if (_log.isInfoEnabled()) {
+			stopWatch = new StopWatch();
+
+			stopWatch.start();
+
 			_log.info("Adding sample data");
 		}
 
@@ -205,6 +207,9 @@ public class SetupWizardSampleDataUtil {
 		}
 	}
 
+	private static Log _log = LogFactoryUtil.getLog(
+		SetupWizardSampleDataUtil.class);
+
 	private static Object[][] _ORGANIZATION_ARRAYS = {
 		{
 			"Chicago", 19014L, 19L, OrganizationConstants.TYPE_LOCATION, "ORD"
@@ -259,8 +264,5 @@ public class SetupWizardSampleDataUtil {
 			OrganizationConstants.TYPE_REGULAR_ORGANIZATION
 		}
 	};
-
-	private static Log _log = LogFactoryUtil.getLog(
-		SetupWizardSampleDataUtil.class);
 
 }

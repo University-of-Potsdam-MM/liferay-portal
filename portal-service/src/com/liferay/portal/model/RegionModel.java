@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -37,7 +37,7 @@ import java.io.Serializable;
  * @generated
  */
 @ProviderType
-public interface RegionModel extends BaseModel<Region>, MVCCModel {
+public interface RegionModel extends BaseModel<Region> {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -57,22 +57,6 @@ public interface RegionModel extends BaseModel<Region>, MVCCModel {
 	 * @param primaryKey the primary key of this region
 	 */
 	public void setPrimaryKey(long primaryKey);
-
-	/**
-	 * Returns the mvcc version of this region.
-	 *
-	 * @return the mvcc version of this region
-	 */
-	@Override
-	public long getMvccVersion();
-
-	/**
-	 * Sets the mvcc version of this region.
-	 *
-	 * @param mvccVersion the mvcc version of this region
-	 */
-	@Override
-	public void setMvccVersion(long mvccVersion);
 
 	/**
 	 * Returns the region ID of this region.

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -16,19 +16,20 @@ package com.liferay.portlet.expando.service;
 
 import com.liferay.counter.service.CounterLocalServiceUtil;
 import com.liferay.portal.kernel.test.ExecutionTestListeners;
+import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.LocaleUtil;
-import com.liferay.portal.test.DeleteAfterTestRun;
-import com.liferay.portal.test.listeners.MainServletExecutionTestListener;
-import com.liferay.portal.test.runners.LiferayIntegrationJUnitTestRunner;
+import com.liferay.portal.test.EnvironmentExecutionTestListener;
+import com.liferay.portal.test.LiferayIntegrationJUnitTestRunner;
+import com.liferay.portal.test.TransactionalExecutionTestListener;
 import com.liferay.portal.util.PortalUtil;
-import com.liferay.portal.util.test.TestPropsValues;
+import com.liferay.portal.util.TestPropsValues;
 import com.liferay.portlet.blogs.model.BlogsEntry;
 import com.liferay.portlet.expando.ValueDataException;
 import com.liferay.portlet.expando.model.ExpandoColumn;
 import com.liferay.portlet.expando.model.ExpandoColumnConstants;
 import com.liferay.portlet.expando.model.ExpandoTable;
 import com.liferay.portlet.expando.model.ExpandoValue;
-import com.liferay.portlet.expando.util.test.ExpandoTestUtil;
+import com.liferay.portlet.expando.util.ExpandoTestUtil;
 
 import java.io.Serializable;
 
@@ -45,26 +46,31 @@ import org.junit.runner.RunWith;
 /**
  * @author Marcellus Tavares
  */
-@ExecutionTestListeners(listeners = {MainServletExecutionTestListener.class})
+@ExecutionTestListeners(
+	listeners = {
+		EnvironmentExecutionTestListener.class,
+		TransactionalExecutionTestListener.class
+	})
 @RunWith(LiferayIntegrationJUnitTestRunner.class)
+@Transactional
 public class ExpandoValueLocalServiceTest {
 
 	@Before
-	public void setUp() throws Exception {
+	public void setUp() {
 		_classNameId = PortalUtil.getClassNameId(BlogsEntry.class);
 
 		_enLocale = LocaleUtil.fromLanguageId("en_US");
 		_frLocale = LocaleUtil.fromLanguageId("fr_FR");
 		_ptLocale = LocaleUtil.fromLanguageId("pt_BR");
-
-		_expandoTable = ExpandoTestUtil.addTable(
-			_classNameId, "testExpandoTable");
 	}
 
 	@Test
 	public void testAddLocalizedStringArrayValue() throws Exception {
+		ExpandoTable table = ExpandoTestUtil.addTable(
+			_classNameId, "testAddLocalizedStringArrayValue");
+
 		ExpandoColumn column = ExpandoTestUtil.addColumn(
-			_expandoTable, "Test Column",
+			table, "Test Column",
 			ExpandoColumnConstants.STRING_ARRAY_LOCALIZED);
 
 		Map<Locale, String[]> dataMap = new HashMap<Locale, String[]>();
@@ -72,8 +78,7 @@ public class ExpandoValueLocalServiceTest {
 		dataMap.put(_enLocale, new String[] {"one", "two", "three"});
 		dataMap.put(_ptLocale, new String[] {"um", "dois", "tres"});
 
-		ExpandoValue value = ExpandoTestUtil.addValue(
-			_expandoTable, column, dataMap);
+		ExpandoValue value = ExpandoTestUtil.addValue(table, column, dataMap);
 
 		value = ExpandoValueLocalServiceUtil.getExpandoValue(
 			value.getValueId());
@@ -93,17 +98,18 @@ public class ExpandoValueLocalServiceTest {
 
 	@Test
 	public void testAddLocalizedStringValue() throws Exception {
+		ExpandoTable table = ExpandoTestUtil.addTable(
+			_classNameId, "testAddLocalizedStringValue");
+
 		ExpandoColumn column = ExpandoTestUtil.addColumn(
-			_expandoTable, "Test Column",
-			ExpandoColumnConstants.STRING_LOCALIZED);
+			table, "Test Column", ExpandoColumnConstants.STRING_LOCALIZED);
 
 		Map<Locale, String> dataMap = new HashMap<Locale, String>();
 
 		dataMap.put(_enLocale, "Test");
 		dataMap.put(_ptLocale, "Teste");
 
-		ExpandoValue value = ExpandoTestUtil.addValue(
-			_expandoTable, column, dataMap);
+		ExpandoValue value = ExpandoTestUtil.addValue(table, column, dataMap);
 
 		value = ExpandoValueLocalServiceUtil.getExpandoValue(
 			value.getValueId());
@@ -116,11 +122,14 @@ public class ExpandoValueLocalServiceTest {
 
 	@Test
 	public void testAddStringArrayValue() throws Exception {
+		ExpandoTable table = ExpandoTestUtil.addTable(
+			_classNameId, "testAddStringArrayValue");
+
 		ExpandoColumn column = ExpandoTestUtil.addColumn(
-			_expandoTable, "Test Column", ExpandoColumnConstants.STRING_ARRAY);
+			table, "Test Column", ExpandoColumnConstants.STRING_ARRAY);
 
 		ExpandoValue value = ExpandoTestUtil.addValue(
-			_expandoTable, column, new String[] {"one", "two, three"});
+			table, column, new String[] {"one", "two, three"});
 
 		value = ExpandoValueLocalServiceUtil.getExpandoValue(
 			value.getValueId());
@@ -134,8 +143,11 @@ public class ExpandoValueLocalServiceTest {
 
 	@Test
 	public void testAddWrongValue() throws Exception {
+		ExpandoTable table = ExpandoTestUtil.addTable(
+			_classNameId, "testAddWrongValue");
+
 		ExpandoColumn column = ExpandoTestUtil.addColumn(
-			_expandoTable, "Test Column", ExpandoColumnConstants.STRING);
+			table, "Test Column", ExpandoColumnConstants.STRING);
 
 		Map<Locale, String> dataMap = new HashMap<Locale, String>();
 
@@ -144,7 +156,7 @@ public class ExpandoValueLocalServiceTest {
 
 		try {
 			ExpandoTestUtil.addValue(
-				_expandoTable, column, dataMap, LocaleUtil.getDefault());
+				table, column, dataMap, LocaleUtil.getDefault());
 
 			Assert.fail();
 		}
@@ -154,13 +166,16 @@ public class ExpandoValueLocalServiceTest {
 
 	@Test
 	public void testGetDefaultColumnValue() throws Exception {
+		ExpandoTable table = ExpandoTestUtil.addTable(
+			_classNameId, "testGetDefaultColumnValue");
+
 		Map<Locale, String> defaultData = new HashMap<Locale, String>();
 
 		defaultData.put(_enLocale, "Test");
 
 		ExpandoColumn column = ExpandoTestUtil.addColumn(
-			_expandoTable, "Test Column",
-			ExpandoColumnConstants.STRING_LOCALIZED, defaultData);
+			table, "Test Column", ExpandoColumnConstants.STRING_LOCALIZED,
+			defaultData);
 
 		column = ExpandoColumnLocalServiceUtil.getColumn(column.getColumnId());
 
@@ -172,9 +187,11 @@ public class ExpandoValueLocalServiceTest {
 
 	@Test
 	public void testGetNonexistingLocaleValue() throws Exception {
+		ExpandoTable table = ExpandoTestUtil.addTable(
+			_classNameId, "testGetNonexistingLocaleValue");
+
 		ExpandoColumn column = ExpandoTestUtil.addColumn(
-			_expandoTable, "Test Column",
-			ExpandoColumnConstants.STRING_LOCALIZED);
+			table, "Test Column", ExpandoColumnConstants.STRING_LOCALIZED);
 
 		Map<Locale, String> dataMap = new HashMap<Locale, String>();
 
@@ -182,7 +199,7 @@ public class ExpandoValueLocalServiceTest {
 		dataMap.put(_ptLocale, "um");
 
 		ExpandoValue value = ExpandoTestUtil.addValue(
-			_expandoTable, column, dataMap, _ptLocale);
+			table, column, dataMap, _ptLocale);
 
 		value = ExpandoValueLocalServiceUtil.getExpandoValue(
 			value.getValueId());
@@ -200,8 +217,11 @@ public class ExpandoValueLocalServiceTest {
 
 	@Test
 	public void testGetSerializableData() throws Exception {
+		ExpandoTable table = ExpandoTestUtil.addTable(
+			_classNameId, "testGetSerializableData");
+
 		ExpandoColumn column = ExpandoTestUtil.addColumn(
-			_expandoTable, "Test Column",
+			table, "Test Column",
 			ExpandoColumnConstants.STRING_ARRAY_LOCALIZED);
 
 		Map<Locale, String[]> dataMap = new HashMap<Locale, String[]>();
@@ -211,11 +231,11 @@ public class ExpandoValueLocalServiceTest {
 
 		long classPK = CounterLocalServiceUtil.increment();
 
-		ExpandoTestUtil.addValue(_expandoTable, column, classPK, dataMap);
+		ExpandoTestUtil.addValue(table, column, classPK, dataMap);
 
 		Serializable serializable = ExpandoValueLocalServiceUtil.getData(
 			TestPropsValues.getCompanyId(),
-			PortalUtil.getClassName(_classNameId), _expandoTable.getName(),
+			PortalUtil.getClassName(_classNameId), table.getName(),
 			column.getName(), classPK);
 
 		Assert.assertTrue(serializable instanceof Map);
@@ -230,10 +250,6 @@ public class ExpandoValueLocalServiceTest {
 
 	private long _classNameId;
 	private Locale _enLocale;
-
-	@DeleteAfterTestRun
-	private ExpandoTable _expandoTable;
-
 	private Locale _frLocale;
 	private Locale _ptLocale;
 

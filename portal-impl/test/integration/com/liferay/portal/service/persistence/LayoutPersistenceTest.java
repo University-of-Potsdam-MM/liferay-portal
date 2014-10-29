@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portal.service.persistence;
 
 import com.liferay.portal.NoSuchLayoutException;
+import com.liferay.portal.kernel.bean.PortalBeanLocatorUtil;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
@@ -23,75 +24,66 @@ import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.template.TemplateException;
-import com.liferay.portal.kernel.template.TemplateManagerUtil;
-import com.liferay.portal.kernel.transaction.Propagation;
+import com.liferay.portal.kernel.test.ExecutionTestListeners;
 import com.liferay.portal.kernel.util.IntegerWrapper;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.OrderByComparatorFactoryUtil;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.Layout;
 import com.liferay.portal.model.impl.LayoutModelImpl;
-import com.liferay.portal.service.LayoutLocalServiceUtil;
-import com.liferay.portal.test.TransactionalTestRule;
-import com.liferay.portal.test.runners.PersistenceIntegrationJUnitTestRunner;
-import com.liferay.portal.tools.DBUpgrader;
+import com.liferay.portal.service.ServiceTestUtil;
+import com.liferay.portal.service.persistence.BasePersistence;
+import com.liferay.portal.service.persistence.PersistenceExecutionTestListener;
+import com.liferay.portal.test.LiferayPersistenceIntegrationJUnitTestRunner;
+import com.liferay.portal.test.persistence.TransactionalPersistenceAdvice;
 import com.liferay.portal.util.PropsValues;
-import com.liferay.portal.util.test.RandomTestUtil;
 
 import org.junit.After;
 import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
 import org.junit.Test;
 
 import org.junit.runner.RunWith;
 
 import java.io.Serializable;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 /**
- * @generated
+ * @author Brian Wing Shun Chan
  */
-@RunWith(PersistenceIntegrationJUnitTestRunner.class)
+@ExecutionTestListeners(listeners =  {
+	PersistenceExecutionTestListener.class})
+@RunWith(LiferayPersistenceIntegrationJUnitTestRunner.class)
 public class LayoutPersistenceTest {
-	@ClassRule
-	public static TransactionalTestRule transactionalTestRule = new TransactionalTestRule(Propagation.REQUIRED);
-
-	@BeforeClass
-	public static void setupClass() throws TemplateException {
-		try {
-			DBUpgrader.upgrade();
-		}
-		catch (Exception e) {
-			_log.error(e, e);
-		}
-
-		TemplateManagerUtil.init();
-	}
-
 	@After
 	public void tearDown() throws Exception {
-		Iterator<Layout> iterator = _layouts.iterator();
+		Map<Serializable, BasePersistence<?>> basePersistences = _transactionalPersistenceAdvice.getBasePersistences();
 
-		while (iterator.hasNext()) {
-			_persistence.remove(iterator.next());
+		Set<Serializable> primaryKeys = basePersistences.keySet();
 
-			iterator.remove();
+		for (Serializable primaryKey : primaryKeys) {
+			BasePersistence<?> basePersistence = basePersistences.get(primaryKey);
+
+			try {
+				basePersistence.remove(primaryKey);
+			}
+			catch (Exception e) {
+				if (_log.isDebugEnabled()) {
+					_log.debug("The model with primary key " + primaryKey +
+						" was already deleted");
+				}
+			}
 		}
+
+		_transactionalPersistenceAdvice.reset();
 	}
 
 	@Test
 	public void testCreate() throws Exception {
-		long pk = RandomTestUtil.nextLong();
+		long pk = ServiceTestUtil.nextLong();
 
 		Layout layout = _persistence.create(pk);
 
@@ -118,76 +110,74 @@ public class LayoutPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
+		long pk = ServiceTestUtil.nextLong();
 
 		Layout newLayout = _persistence.create(pk);
 
-		newLayout.setMvccVersion(RandomTestUtil.nextLong());
+		newLayout.setUuid(ServiceTestUtil.randomString());
 
-		newLayout.setUuid(RandomTestUtil.randomString());
+		newLayout.setGroupId(ServiceTestUtil.nextLong());
 
-		newLayout.setGroupId(RandomTestUtil.nextLong());
+		newLayout.setCompanyId(ServiceTestUtil.nextLong());
 
-		newLayout.setCompanyId(RandomTestUtil.nextLong());
+		newLayout.setUserId(ServiceTestUtil.nextLong());
 
-		newLayout.setUserId(RandomTestUtil.nextLong());
+		newLayout.setUserName(ServiceTestUtil.randomString());
 
-		newLayout.setUserName(RandomTestUtil.randomString());
+		newLayout.setCreateDate(ServiceTestUtil.nextDate());
 
-		newLayout.setCreateDate(RandomTestUtil.nextDate());
+		newLayout.setModifiedDate(ServiceTestUtil.nextDate());
 
-		newLayout.setModifiedDate(RandomTestUtil.nextDate());
+		newLayout.setPrivateLayout(ServiceTestUtil.randomBoolean());
 
-		newLayout.setPrivateLayout(RandomTestUtil.randomBoolean());
+		newLayout.setLayoutId(ServiceTestUtil.nextLong());
 
-		newLayout.setLayoutId(RandomTestUtil.nextLong());
+		newLayout.setParentLayoutId(ServiceTestUtil.nextLong());
 
-		newLayout.setParentLayoutId(RandomTestUtil.nextLong());
+		newLayout.setName(ServiceTestUtil.randomString());
 
-		newLayout.setName(RandomTestUtil.randomString());
+		newLayout.setTitle(ServiceTestUtil.randomString());
 
-		newLayout.setTitle(RandomTestUtil.randomString());
+		newLayout.setDescription(ServiceTestUtil.randomString());
 
-		newLayout.setDescription(RandomTestUtil.randomString());
+		newLayout.setKeywords(ServiceTestUtil.randomString());
 
-		newLayout.setKeywords(RandomTestUtil.randomString());
+		newLayout.setRobots(ServiceTestUtil.randomString());
 
-		newLayout.setRobots(RandomTestUtil.randomString());
+		newLayout.setType(ServiceTestUtil.randomString());
 
-		newLayout.setType(RandomTestUtil.randomString());
+		newLayout.setTypeSettings(ServiceTestUtil.randomString());
 
-		newLayout.setTypeSettings(RandomTestUtil.randomString());
+		newLayout.setHidden(ServiceTestUtil.randomBoolean());
 
-		newLayout.setHidden(RandomTestUtil.randomBoolean());
+		newLayout.setFriendlyURL(ServiceTestUtil.randomString());
 
-		newLayout.setFriendlyURL(RandomTestUtil.randomString());
+		newLayout.setIconImage(ServiceTestUtil.randomBoolean());
 
-		newLayout.setIconImageId(RandomTestUtil.nextLong());
+		newLayout.setIconImageId(ServiceTestUtil.nextLong());
 
-		newLayout.setThemeId(RandomTestUtil.randomString());
+		newLayout.setThemeId(ServiceTestUtil.randomString());
 
-		newLayout.setColorSchemeId(RandomTestUtil.randomString());
+		newLayout.setColorSchemeId(ServiceTestUtil.randomString());
 
-		newLayout.setWapThemeId(RandomTestUtil.randomString());
+		newLayout.setWapThemeId(ServiceTestUtil.randomString());
 
-		newLayout.setWapColorSchemeId(RandomTestUtil.randomString());
+		newLayout.setWapColorSchemeId(ServiceTestUtil.randomString());
 
-		newLayout.setCss(RandomTestUtil.randomString());
+		newLayout.setCss(ServiceTestUtil.randomString());
 
-		newLayout.setPriority(RandomTestUtil.nextInt());
+		newLayout.setPriority(ServiceTestUtil.nextInt());
 
-		newLayout.setLayoutPrototypeUuid(RandomTestUtil.randomString());
+		newLayout.setLayoutPrototypeUuid(ServiceTestUtil.randomString());
 
-		newLayout.setLayoutPrototypeLinkEnabled(RandomTestUtil.randomBoolean());
+		newLayout.setLayoutPrototypeLinkEnabled(ServiceTestUtil.randomBoolean());
 
-		newLayout.setSourcePrototypeLayoutUuid(RandomTestUtil.randomString());
+		newLayout.setSourcePrototypeLayoutUuid(ServiceTestUtil.randomString());
 
-		_layouts.add(_persistence.update(newLayout));
+		_persistence.update(newLayout);
 
 		Layout existingLayout = _persistence.findByPrimaryKey(newLayout.getPrimaryKey());
 
-		Assert.assertEquals(existingLayout.getMvccVersion(),
-			newLayout.getMvccVersion());
 		Assert.assertEquals(existingLayout.getUuid(), newLayout.getUuid());
 		Assert.assertEquals(existingLayout.getPlid(), newLayout.getPlid());
 		Assert.assertEquals(existingLayout.getGroupId(), newLayout.getGroupId());
@@ -221,6 +211,8 @@ public class LayoutPersistenceTest {
 		Assert.assertEquals(existingLayout.getHidden(), newLayout.getHidden());
 		Assert.assertEquals(existingLayout.getFriendlyURL(),
 			newLayout.getFriendlyURL());
+		Assert.assertEquals(existingLayout.getIconImage(),
+			newLayout.getIconImage());
 		Assert.assertEquals(existingLayout.getIconImageId(),
 			newLayout.getIconImageId());
 		Assert.assertEquals(existingLayout.getThemeId(), newLayout.getThemeId());
@@ -242,206 +234,6 @@ public class LayoutPersistenceTest {
 	}
 
 	@Test
-	public void testCountByUuid() {
-		try {
-			_persistence.countByUuid(StringPool.BLANK);
-
-			_persistence.countByUuid(StringPool.NULL);
-
-			_persistence.countByUuid((String)null);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByUUID_G_P() {
-		try {
-			_persistence.countByUUID_G_P(StringPool.BLANK,
-				RandomTestUtil.nextLong(), RandomTestUtil.randomBoolean());
-
-			_persistence.countByUUID_G_P(StringPool.NULL, 0L,
-				RandomTestUtil.randomBoolean());
-
-			_persistence.countByUUID_G_P((String)null, 0L,
-				RandomTestUtil.randomBoolean());
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByUuid_C() {
-		try {
-			_persistence.countByUuid_C(StringPool.BLANK,
-				RandomTestUtil.nextLong());
-
-			_persistence.countByUuid_C(StringPool.NULL, 0L);
-
-			_persistence.countByUuid_C((String)null, 0L);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByGroupId() {
-		try {
-			_persistence.countByGroupId(RandomTestUtil.nextLong());
-
-			_persistence.countByGroupId(0L);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByCompanyId() {
-		try {
-			_persistence.countByCompanyId(RandomTestUtil.nextLong());
-
-			_persistence.countByCompanyId(0L);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByIconImageId() {
-		try {
-			_persistence.countByIconImageId(RandomTestUtil.nextLong());
-
-			_persistence.countByIconImageId(0L);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByLayoutPrototypeUuid() {
-		try {
-			_persistence.countByLayoutPrototypeUuid(StringPool.BLANK);
-
-			_persistence.countByLayoutPrototypeUuid(StringPool.NULL);
-
-			_persistence.countByLayoutPrototypeUuid((String)null);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountBySourcePrototypeLayoutUuid() {
-		try {
-			_persistence.countBySourcePrototypeLayoutUuid(StringPool.BLANK);
-
-			_persistence.countBySourcePrototypeLayoutUuid(StringPool.NULL);
-
-			_persistence.countBySourcePrototypeLayoutUuid((String)null);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByG_P() {
-		try {
-			_persistence.countByG_P(RandomTestUtil.nextLong(),
-				RandomTestUtil.randomBoolean());
-
-			_persistence.countByG_P(0L, RandomTestUtil.randomBoolean());
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByG_P_L() {
-		try {
-			_persistence.countByG_P_L(RandomTestUtil.nextLong(),
-				RandomTestUtil.randomBoolean(), RandomTestUtil.nextLong());
-
-			_persistence.countByG_P_L(0L, RandomTestUtil.randomBoolean(), 0L);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByG_P_P() {
-		try {
-			_persistence.countByG_P_P(RandomTestUtil.nextLong(),
-				RandomTestUtil.randomBoolean(), RandomTestUtil.nextLong());
-
-			_persistence.countByG_P_P(0L, RandomTestUtil.randomBoolean(), 0L);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByG_P_T() {
-		try {
-			_persistence.countByG_P_T(RandomTestUtil.nextLong(),
-				RandomTestUtil.randomBoolean(), StringPool.BLANK);
-
-			_persistence.countByG_P_T(0L, RandomTestUtil.randomBoolean(),
-				StringPool.NULL);
-
-			_persistence.countByG_P_T(0L, RandomTestUtil.randomBoolean(),
-				(String)null);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByG_P_F() {
-		try {
-			_persistence.countByG_P_F(RandomTestUtil.nextLong(),
-				RandomTestUtil.randomBoolean(), StringPool.BLANK);
-
-			_persistence.countByG_P_F(0L, RandomTestUtil.randomBoolean(),
-				StringPool.NULL);
-
-			_persistence.countByG_P_F(0L, RandomTestUtil.randomBoolean(),
-				(String)null);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByG_P_SPLU() {
-		try {
-			_persistence.countByG_P_SPLU(RandomTestUtil.nextLong(),
-				RandomTestUtil.randomBoolean(), StringPool.BLANK);
-
-			_persistence.countByG_P_SPLU(0L, RandomTestUtil.randomBoolean(),
-				StringPool.NULL);
-
-			_persistence.countByG_P_SPLU(0L, RandomTestUtil.randomBoolean(),
-				(String)null);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
 	public void testFindByPrimaryKeyExisting() throws Exception {
 		Layout newLayout = addLayout();
 
@@ -452,7 +244,7 @@ public class LayoutPersistenceTest {
 
 	@Test
 	public void testFindByPrimaryKeyMissing() throws Exception {
-		long pk = RandomTestUtil.nextLong();
+		long pk = ServiceTestUtil.nextLong();
 
 		try {
 			_persistence.findByPrimaryKey(pk);
@@ -485,19 +277,18 @@ public class LayoutPersistenceTest {
 		}
 	}
 
-	protected OrderByComparator<Layout> getOrderByComparator() {
-		return OrderByComparatorFactoryUtil.create("Layout", "mvccVersion",
-			true, "uuid", true, "plid", true, "groupId", true, "companyId",
-			true, "userId", true, "userName", true, "createDate", true,
-			"modifiedDate", true, "privateLayout", true, "layoutId", true,
-			"parentLayoutId", true, "name", true, "title", true, "description",
-			true, "keywords", true, "robots", true, "type", true,
-			"typeSettings", true, "hidden", true, "friendlyURL", true,
-			"iconImageId", true, "themeId", true, "colorSchemeId", true,
-			"wapThemeId", true, "wapColorSchemeId", true, "css", true,
-			"priority", true, "layoutPrototypeUuid", true,
-			"layoutPrototypeLinkEnabled", true, "sourcePrototypeLayoutUuid",
-			true);
+	protected OrderByComparator getOrderByComparator() {
+		return OrderByComparatorFactoryUtil.create("Layout", "uuid", true,
+			"plid", true, "groupId", true, "companyId", true, "userId", true,
+			"userName", true, "createDate", true, "modifiedDate", true,
+			"privateLayout", true, "layoutId", true, "parentLayoutId", true,
+			"name", true, "title", true, "description", true, "keywords", true,
+			"robots", true, "type", true, "typeSettings", true, "hidden", true,
+			"friendlyURL", true, "iconImage", true, "iconImageId", true,
+			"themeId", true, "colorSchemeId", true, "wapThemeId", true,
+			"wapColorSchemeId", true, "css", true, "priority", true,
+			"layoutPrototypeUuid", true, "layoutPrototypeLinkEnabled", true,
+			"sourcePrototypeLayoutUuid", true);
 	}
 
 	@Test
@@ -511,7 +302,7 @@ public class LayoutPersistenceTest {
 
 	@Test
 	public void testFetchByPrimaryKeyMissing() throws Exception {
-		long pk = RandomTestUtil.nextLong();
+		long pk = ServiceTestUtil.nextLong();
 
 		Layout missingLayout = _persistence.fetchByPrimaryKey(pk);
 
@@ -519,99 +310,19 @@ public class LayoutPersistenceTest {
 	}
 
 	@Test
-	public void testFetchByPrimaryKeysWithMultiplePrimaryKeysWhereAllPrimaryKeysExist()
-		throws Exception {
-		Layout newLayout1 = addLayout();
-		Layout newLayout2 = addLayout();
-
-		Set<Serializable> primaryKeys = new HashSet<Serializable>();
-
-		primaryKeys.add(newLayout1.getPrimaryKey());
-		primaryKeys.add(newLayout2.getPrimaryKey());
-
-		Map<Serializable, Layout> layouts = _persistence.fetchByPrimaryKeys(primaryKeys);
-
-		Assert.assertEquals(2, layouts.size());
-		Assert.assertEquals(newLayout1, layouts.get(newLayout1.getPrimaryKey()));
-		Assert.assertEquals(newLayout2, layouts.get(newLayout2.getPrimaryKey()));
-	}
-
-	@Test
-	public void testFetchByPrimaryKeysWithMultiplePrimaryKeysWhereNoPrimaryKeysExist()
-		throws Exception {
-		long pk1 = RandomTestUtil.nextLong();
-
-		long pk2 = RandomTestUtil.nextLong();
-
-		Set<Serializable> primaryKeys = new HashSet<Serializable>();
-
-		primaryKeys.add(pk1);
-		primaryKeys.add(pk2);
-
-		Map<Serializable, Layout> layouts = _persistence.fetchByPrimaryKeys(primaryKeys);
-
-		Assert.assertTrue(layouts.isEmpty());
-	}
-
-	@Test
-	public void testFetchByPrimaryKeysWithMultiplePrimaryKeysWhereSomePrimaryKeysExist()
-		throws Exception {
-		Layout newLayout = addLayout();
-
-		long pk = RandomTestUtil.nextLong();
-
-		Set<Serializable> primaryKeys = new HashSet<Serializable>();
-
-		primaryKeys.add(newLayout.getPrimaryKey());
-		primaryKeys.add(pk);
-
-		Map<Serializable, Layout> layouts = _persistence.fetchByPrimaryKeys(primaryKeys);
-
-		Assert.assertEquals(1, layouts.size());
-		Assert.assertEquals(newLayout, layouts.get(newLayout.getPrimaryKey()));
-	}
-
-	@Test
-	public void testFetchByPrimaryKeysWithNoPrimaryKeys()
-		throws Exception {
-		Set<Serializable> primaryKeys = new HashSet<Serializable>();
-
-		Map<Serializable, Layout> layouts = _persistence.fetchByPrimaryKeys(primaryKeys);
-
-		Assert.assertTrue(layouts.isEmpty());
-	}
-
-	@Test
-	public void testFetchByPrimaryKeysWithOnePrimaryKey()
-		throws Exception {
-		Layout newLayout = addLayout();
-
-		Set<Serializable> primaryKeys = new HashSet<Serializable>();
-
-		primaryKeys.add(newLayout.getPrimaryKey());
-
-		Map<Serializable, Layout> layouts = _persistence.fetchByPrimaryKeys(primaryKeys);
-
-		Assert.assertEquals(1, layouts.size());
-		Assert.assertEquals(newLayout, layouts.get(newLayout.getPrimaryKey()));
-	}
-
-	@Test
 	public void testActionableDynamicQuery() throws Exception {
 		final IntegerWrapper count = new IntegerWrapper();
 
-		ActionableDynamicQuery actionableDynamicQuery = LayoutLocalServiceUtil.getActionableDynamicQuery();
-
-		actionableDynamicQuery.setPerformActionMethod(new ActionableDynamicQuery.PerformActionMethod() {
+		ActionableDynamicQuery actionableDynamicQuery = new LayoutActionableDynamicQuery() {
 				@Override
-				public void performAction(Object object) {
+				protected void performAction(Object object) {
 					Layout layout = (Layout)object;
 
 					Assert.assertNotNull(layout);
 
 					count.increment();
 				}
-			});
+			};
 
 		actionableDynamicQuery.performActions();
 
@@ -643,7 +354,7 @@ public class LayoutPersistenceTest {
 				Layout.class.getClassLoader());
 
 		dynamicQuery.add(RestrictionsFactoryUtil.eq("plid",
-				RandomTestUtil.nextLong()));
+				ServiceTestUtil.nextLong()));
 
 		List<Layout> result = _persistence.findWithDynamicQuery(dynamicQuery);
 
@@ -682,7 +393,7 @@ public class LayoutPersistenceTest {
 		dynamicQuery.setProjection(ProjectionFactoryUtil.property("plid"));
 
 		dynamicQuery.add(RestrictionsFactoryUtil.in("plid",
-				new Object[] { RandomTestUtil.nextLong() }));
+				new Object[] { ServiceTestUtil.nextLong() }));
 
 		List<Object> result = _persistence.findWithDynamicQuery(dynamicQuery);
 
@@ -736,76 +447,76 @@ public class LayoutPersistenceTest {
 	}
 
 	protected Layout addLayout() throws Exception {
-		long pk = RandomTestUtil.nextLong();
+		long pk = ServiceTestUtil.nextLong();
 
 		Layout layout = _persistence.create(pk);
 
-		layout.setMvccVersion(RandomTestUtil.nextLong());
+		layout.setUuid(ServiceTestUtil.randomString());
 
-		layout.setUuid(RandomTestUtil.randomString());
+		layout.setGroupId(ServiceTestUtil.nextLong());
 
-		layout.setGroupId(RandomTestUtil.nextLong());
+		layout.setCompanyId(ServiceTestUtil.nextLong());
 
-		layout.setCompanyId(RandomTestUtil.nextLong());
+		layout.setUserId(ServiceTestUtil.nextLong());
 
-		layout.setUserId(RandomTestUtil.nextLong());
+		layout.setUserName(ServiceTestUtil.randomString());
 
-		layout.setUserName(RandomTestUtil.randomString());
+		layout.setCreateDate(ServiceTestUtil.nextDate());
 
-		layout.setCreateDate(RandomTestUtil.nextDate());
+		layout.setModifiedDate(ServiceTestUtil.nextDate());
 
-		layout.setModifiedDate(RandomTestUtil.nextDate());
+		layout.setPrivateLayout(ServiceTestUtil.randomBoolean());
 
-		layout.setPrivateLayout(RandomTestUtil.randomBoolean());
+		layout.setLayoutId(ServiceTestUtil.nextLong());
 
-		layout.setLayoutId(RandomTestUtil.nextLong());
+		layout.setParentLayoutId(ServiceTestUtil.nextLong());
 
-		layout.setParentLayoutId(RandomTestUtil.nextLong());
+		layout.setName(ServiceTestUtil.randomString());
 
-		layout.setName(RandomTestUtil.randomString());
+		layout.setTitle(ServiceTestUtil.randomString());
 
-		layout.setTitle(RandomTestUtil.randomString());
+		layout.setDescription(ServiceTestUtil.randomString());
 
-		layout.setDescription(RandomTestUtil.randomString());
+		layout.setKeywords(ServiceTestUtil.randomString());
 
-		layout.setKeywords(RandomTestUtil.randomString());
+		layout.setRobots(ServiceTestUtil.randomString());
 
-		layout.setRobots(RandomTestUtil.randomString());
+		layout.setType(ServiceTestUtil.randomString());
 
-		layout.setType(RandomTestUtil.randomString());
+		layout.setTypeSettings(ServiceTestUtil.randomString());
 
-		layout.setTypeSettings(RandomTestUtil.randomString());
+		layout.setHidden(ServiceTestUtil.randomBoolean());
 
-		layout.setHidden(RandomTestUtil.randomBoolean());
+		layout.setFriendlyURL(ServiceTestUtil.randomString());
 
-		layout.setFriendlyURL(RandomTestUtil.randomString());
+		layout.setIconImage(ServiceTestUtil.randomBoolean());
 
-		layout.setIconImageId(RandomTestUtil.nextLong());
+		layout.setIconImageId(ServiceTestUtil.nextLong());
 
-		layout.setThemeId(RandomTestUtil.randomString());
+		layout.setThemeId(ServiceTestUtil.randomString());
 
-		layout.setColorSchemeId(RandomTestUtil.randomString());
+		layout.setColorSchemeId(ServiceTestUtil.randomString());
 
-		layout.setWapThemeId(RandomTestUtil.randomString());
+		layout.setWapThemeId(ServiceTestUtil.randomString());
 
-		layout.setWapColorSchemeId(RandomTestUtil.randomString());
+		layout.setWapColorSchemeId(ServiceTestUtil.randomString());
 
-		layout.setCss(RandomTestUtil.randomString());
+		layout.setCss(ServiceTestUtil.randomString());
 
-		layout.setPriority(RandomTestUtil.nextInt());
+		layout.setPriority(ServiceTestUtil.nextInt());
 
-		layout.setLayoutPrototypeUuid(RandomTestUtil.randomString());
+		layout.setLayoutPrototypeUuid(ServiceTestUtil.randomString());
 
-		layout.setLayoutPrototypeLinkEnabled(RandomTestUtil.randomBoolean());
+		layout.setLayoutPrototypeLinkEnabled(ServiceTestUtil.randomBoolean());
 
-		layout.setSourcePrototypeLayoutUuid(RandomTestUtil.randomString());
+		layout.setSourcePrototypeLayoutUuid(ServiceTestUtil.randomString());
 
-		_layouts.add(_persistence.update(layout));
+		_persistence.update(layout);
 
 		return layout;
 	}
 
 	private static Log _log = LogFactoryUtil.getLog(LayoutPersistenceTest.class);
-	private List<Layout> _layouts = new ArrayList<Layout>();
-	private LayoutPersistence _persistence = LayoutUtil.getPersistence();
+	private LayoutPersistence _persistence = (LayoutPersistence)PortalBeanLocatorUtil.locate(LayoutPersistence.class.getName());
+	private TransactionalPersistenceAdvice _transactionalPersistenceAdvice = (TransactionalPersistenceAdvice)PortalBeanLocatorUtil.locate(TransactionalPersistenceAdvice.class.getName());
 }

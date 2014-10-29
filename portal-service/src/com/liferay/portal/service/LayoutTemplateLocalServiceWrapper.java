@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -42,9 +42,20 @@ public class LayoutTemplateLocalServiceWrapper
 		return _layoutTemplateLocalService.getBeanIdentifier();
 	}
 
+	/**
+	* Sets the Spring bean ID for this bean.
+	*
+	* @param beanIdentifier the Spring bean ID for this bean
+	*/
+	@Override
+	public void setBeanIdentifier(java.lang.String beanIdentifier) {
+		_layoutTemplateLocalService.setBeanIdentifier(beanIdentifier);
+	}
+
 	@Override
 	public java.lang.String getContent(java.lang.String layoutTemplateId,
-		boolean standard, java.lang.String themeId) {
+		boolean standard, java.lang.String themeId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return _layoutTemplateLocalService.getContent(layoutTemplateId,
 			standard, themeId);
 	}
@@ -70,7 +81,8 @@ public class LayoutTemplateLocalServiceWrapper
 
 	@Override
 	public java.lang.String getWapContent(java.lang.String layoutTemplateId,
-		boolean standard, java.lang.String themeId) {
+		boolean standard, java.lang.String themeId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return _layoutTemplateLocalService.getWapContent(layoutTemplateId,
 			standard, themeId);
 	}
@@ -104,16 +116,6 @@ public class LayoutTemplateLocalServiceWrapper
 			pluginPackage);
 	}
 
-	/**
-	* Sets the Spring bean ID for this bean.
-	*
-	* @param beanIdentifier the Spring bean ID for this bean
-	*/
-	@Override
-	public void setBeanIdentifier(java.lang.String beanIdentifier) {
-		_layoutTemplateLocalService.setBeanIdentifier(beanIdentifier);
-	}
-
 	@Override
 	public void uninstallLayoutTemplate(java.lang.String layoutTemplateId,
 		boolean standard) {
@@ -129,7 +131,6 @@ public class LayoutTemplateLocalServiceWrapper
 	/**
 	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedService}
 	 */
-	@Deprecated
 	public LayoutTemplateLocalService getWrappedLayoutTemplateLocalService() {
 		return _layoutTemplateLocalService;
 	}
@@ -137,7 +138,6 @@ public class LayoutTemplateLocalServiceWrapper
 	/**
 	 * @deprecated As of 6.1.0, replaced by {@link #setWrappedService}
 	 */
-	@Deprecated
 	public void setWrappedLayoutTemplateLocalService(
 		LayoutTemplateLocalService layoutTemplateLocalService) {
 		_layoutTemplateLocalService = layoutTemplateLocalService;

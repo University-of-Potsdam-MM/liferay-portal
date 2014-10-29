@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -26,7 +26,7 @@ ResultRow row = (ResultRow)request.getAttribute(WebKeys.SEARCH_CONTAINER_RESULT_
 MDRRuleGroup ruleGroup = (MDRRuleGroup)row.getObject();
 %>
 
-<liferay-ui:icon-menu direction="down" icon="<%= StringPool.BLANK %>" message="<%= StringPool.BLANK %>" showWhenSingleIcon="<%= true %>">
+<liferay-ui:icon-menu>
 	<c:if test="<%= MDRRuleGroupPermissionUtil.contains(permissionChecker, ruleGroup.getRuleGroupId(), ActionKeys.UPDATE) %>">
 		<liferay-portlet:renderURL var="editURL">
 			<portlet:param name="struts_action" value="/mobile_device_rules/edit_rule_group" />
@@ -34,11 +34,7 @@ MDRRuleGroup ruleGroup = (MDRRuleGroup)row.getObject();
 			<portlet:param name="ruleGroupId" value="<%= String.valueOf(ruleGroup.getRuleGroupId()) %>" />
 		</liferay-portlet:renderURL>
 
-		<liferay-ui:icon
-			iconCssClass="icon-edit"
-			message="edit"
-			url="<%= editURL %>"
-		/>
+		<liferay-ui:icon image="edit" url="<%= editURL %>" />
 	</c:if>
 
 	<c:if test="<%= MDRRuleGroupPermissionUtil.contains(permissionChecker, ruleGroup.getRuleGroupId(), ActionKeys.PERMISSIONS) %>">
@@ -51,8 +47,7 @@ MDRRuleGroup ruleGroup = (MDRRuleGroup)row.getObject();
 		/>
 
 		<liferay-ui:icon
-			iconCssClass="icon-lock"
-			message="permissions"
+			image="permissions"
 			method="get"
 			url="<%= permissionsURL %>"
 			useDialog="<%= true %>"
@@ -67,11 +62,7 @@ MDRRuleGroup ruleGroup = (MDRRuleGroup)row.getObject();
 			<portlet:param name="groupId" value="<%= String.valueOf(groupId) %>" />
 		</portlet:renderURL>
 
-		<liferay-ui:icon
-			iconCssClass="icon-cog"
-			message="manage-classification-rules"
-			url="<%= editRulesURL.toString() %>"
-		/>
+		<liferay-ui:icon image="manage_nodes" message="manage-classification-rules" url="<%= editRulesURL.toString() %>" />
 
 		<portlet:actionURL var="copyURL">
 			<portlet:param name="struts_action" value="/mobile_device_rules/edit_rule_group" />
@@ -81,11 +72,7 @@ MDRRuleGroup ruleGroup = (MDRRuleGroup)row.getObject();
 			<portlet:param name="groupId" value="<%= String.valueOf(groupId) %>" />
 		</portlet:actionURL>
 
-		<liferay-ui:icon
-			iconCssClass="icon-copy"
-			message="copy"
-			url="<%= copyURL.toString() %>"
-		/>
+		<liferay-ui:icon image="copy" url="<%= copyURL.toString() %>" />
 	</c:if>
 
 	<c:if test="<%= MDRRuleGroupPermissionUtil.contains(permissionChecker, ruleGroup.getRuleGroupId(), ActionKeys.DELETE) %>">

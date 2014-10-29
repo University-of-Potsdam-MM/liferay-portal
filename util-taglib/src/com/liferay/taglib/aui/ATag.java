@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -60,7 +60,8 @@ public class ATag extends BaseATag {
 		if (Validator.isNotNull(getHref())) {
 			if (isOpensNewWindow()) {
 				jspWriter.write("<span class=\"opens-new-window-accessible\">");
-				jspWriter.write(LanguageUtil.get(request, "opens-new-window"));
+				jspWriter.write(
+					LanguageUtil.get(pageContext, "opens-new-window"));
 				jspWriter.write("</span>");
 			}
 
@@ -84,7 +85,6 @@ public class ATag extends BaseATag {
 		String id = getId();
 		String label = getLabel();
 		String lang = getLang();
-		Boolean localizeLabel = getLocalizeLabel();
 		String namespace = _getNamespace();
 		String onClick = getOnClick();
 		String target = getTarget();
@@ -94,7 +94,7 @@ public class ATag extends BaseATag {
 			jspWriter.write("<a ");
 
 			jspWriter.write("href=\"");
-			jspWriter.write(HtmlUtil.escapeAttribute(href));
+			jspWriter.write(HtmlUtil.escape(href));
 			jspWriter.write("\" ");
 
 			if (Validator.isNotNull(target)) {
@@ -142,11 +142,12 @@ public class ATag extends BaseATag {
 			jspWriter.write("title=\"");
 
 			if (Validator.isNotNull(title)) {
-				jspWriter.write(LanguageUtil.get(request, title));
+				jspWriter.write(LanguageUtil.get(pageContext, title));
 			}
 
 			if (isOpensNewWindow()) {
-				jspWriter.write(LanguageUtil.get(request, "opens-new-window"));
+				jspWriter.write(
+					LanguageUtil.get(pageContext, "opens-new-window"));
 			}
 
 			jspWriter.write("\" ");
@@ -161,12 +162,7 @@ public class ATag extends BaseATag {
 		jspWriter.write(">");
 
 		if (Validator.isNotNull(label)) {
-			if (localizeLabel) {
-				jspWriter.write(LanguageUtil.get(request, label));
-			}
-			else {
-				jspWriter.write(label);
-			}
+			jspWriter.write(LanguageUtil.get(pageContext, label));
 		}
 
 		return EVAL_BODY_INCLUDE;

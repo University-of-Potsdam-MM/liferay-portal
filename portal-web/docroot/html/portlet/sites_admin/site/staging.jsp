@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -24,7 +24,6 @@ UnicodeProperties liveGroupTypeSettings = (UnicodeProperties)request.getAttribut
 LayoutSet privateLayoutSet = LayoutSetLocalServiceUtil.getLayoutSet(liveGroup.getGroupId(), true);
 LayoutSet publicLayoutSet = LayoutSetLocalServiceUtil.getLayoutSet(liveGroup.getGroupId(), false);
 
-boolean liveGroupRemoteStaging = liveGroup.hasRemoteStagingGroup() && PropsValues.STAGING_LIVE_GROUP_REMOTE_STAGING_ENABLED;
 boolean stagedLocally = liveGroup.isStaged() && !liveGroup.isStagedRemotely();
 boolean stagedRemotely = liveGroup.isStaged() && !stagedLocally;
 
@@ -41,14 +40,8 @@ BackgroundTask lastCompletedInitialPublicationBackgroundTask = BackgroundTaskLoc
 
 <h3><liferay-ui:message key="staging" /></h3>
 
-<c:if test="<%= liveGroupRemoteStaging %>">
-	<div class="alert alert-info">
-		<liferay-ui:message key="live-group-remote-staging-alert" />
-	</div>
-</c:if>
-
 <c:if test="<%= (lastCompletedInitialPublicationBackgroundTask != null) && (lastCompletedInitialPublicationBackgroundTask.getStatus() == BackgroundTaskConstants.STATUS_FAILED) %>">
-	<div class="alert alert-danger">
+	<div class="alert alert-error">
 		<liferay-ui:message key="an-unexpected-error-occurred--with-the-initial-staging-publication" />
 
 		<liferay-portlet:actionURL portletName="<%= PortletKeys.GROUP_PAGES %>" var="deleteBackgroundTaskURL">
@@ -71,7 +64,17 @@ BackgroundTask lastCompletedInitialPublicationBackgroundTask = BackgroundTaskLoc
 </c:if>
 
 <c:if test="<%= stagedLocally && (BackgroundTaskLocalServiceUtil.getBackgroundTasksCount(liveGroupId, LayoutStagingBackgroundTaskExecutor.class.getName(), false) > 0) %>">
-	<div class="alert alert-warning">
+	<liferay-portlet:renderURL portletName="<%= PortletKeys.LAYOUTS_ADMIN %>" var="publishProcessesURL" windowState="<%= LiferayWindowState.POP_UP.toString() %>">
+		<portlet:param name="<%= Constants.CMD %>" value="view_processes" />
+		<portlet:param name="struts_action" value="/layouts_admin/publish_layouts" />
+		<portlet:param name="<%= SearchContainer.DEFAULT_CUR_PARAM %>" value="<%= ParamUtil.getString(request, SearchContainer.DEFAULT_CUR_PARAM) %>" />
+		<portlet:param name="<%= SearchContainer.DEFAULT_DELTA_PARAM %>" value="<%= ParamUtil.getString(request, SearchContainer.DEFAULT_DELTA_PARAM) %>" />
+		<portlet:param name="groupId" value="<%= String.valueOf(stagingGroupId) %>" />
+		<portlet:param name="liveGroupId" value="<%= String.valueOf(liveGroupId) %>" />
+		<portlet:param name="localPublishing" value="<%= String.valueOf(stagedLocally) %>" />
+	</liferay-portlet:renderURL>
+
+	<div class="alert alert-block">
 		<liferay-ui:message key="an-inital-staging-publication-is-in-progress" />
 
 		<a id="<portlet:namespace />publishProcessesLink"><liferay-ui:message key="the-status-of-the-publication-can-be-checked-on-the-publish-screen" /></a>
@@ -86,18 +89,7 @@ BackgroundTask lastCompletedInitialPublicationBackgroundTask = BackgroundTaskLoc
 				Liferay.Util.openWindow(
 					{
 						id: 'publishProcesses',
-						title: '<liferay-ui:message key="initial-publication" />',
-
-						<liferay-portlet:renderURL portletName="<%= PortletKeys.LAYOUTS_ADMIN %>" var="publishProcessesURL" windowState="<%= LiferayWindowState.POP_UP.toString() %>">
-							<portlet:param name="struts_action" value="/layouts_admin/publish_layouts" />
-							<portlet:param name="<%= Constants.CMD %>" value="view_processes" />
-							<portlet:param name="<%= SearchContainer.DEFAULT_CUR_PARAM %>" value="<%= ParamUtil.getString(request, SearchContainer.DEFAULT_CUR_PARAM) %>" />
-							<portlet:param name="<%= SearchContainer.DEFAULT_DELTA_PARAM %>" value="<%= ParamUtil.getString(request, SearchContainer.DEFAULT_DELTA_PARAM) %>" />
-							<portlet:param name="groupId" value="<%= String.valueOf(stagingGroupId) %>" />
-							<portlet:param name="liveGroupId" value="<%= String.valueOf(liveGroupId) %>" />
-							<portlet:param name="localPublishing" value="<%= String.valueOf(stagedLocally) %>" />
-						</liferay-portlet:renderURL>
-
+						title: Liferay.Language.get('initial-publication'),
 						uri: '<%= HtmlUtil.escapeJS(publishProcessesURL.toString()) %>'
 					}
 				);
@@ -122,7 +114,7 @@ BackgroundTask lastCompletedInitialPublicationBackgroundTask = BackgroundTaskLoc
 			</c:choose>
 		</div>
 	</c:when>
-	<c:when test="<%= GroupPermissionUtil.contains(permissionChecker, liveGroup, ActionKeys.MANAGE_STAGING) %>">
+	<c:when test="<%= GroupPermissionUtil.contains(permissionChecker, liveGroupId, ActionKeys.MANAGE_STAGING) %>">
 
 		<liferay-ui:error exception="<%= LocaleException.class %>">
 
@@ -131,7 +123,7 @@ BackgroundTask lastCompletedInitialPublicationBackgroundTask = BackgroundTaskLoc
 			%>
 
 			<c:if test="<%= le.getType() == LocaleException.TYPE_EXPORT_IMPORT %>">
-				<liferay-ui:message arguments="<%= new String[] {StringUtil.merge(le.getSourceAvailableLocales(), StringPool.COMMA_AND_SPACE), StringUtil.merge(le.getTargetAvailableLocales(), StringPool.COMMA_AND_SPACE)} %>" key="the-default-language-x-does-not-match-the-portal's-available-languages-x" translateArguments="<%= false %>" />
+				<liferay-ui:message arguments="<%= new String[] {StringUtil.merge(le.getSourceAvailableLocales(), StringPool.COMMA_AND_SPACE), StringUtil.merge(le.getTargetAvailableLocales(), StringPool.COMMA_AND_SPACE)} %>" key="the-default-language-x-does-not-match-the-portal's-available-languages-x" />
 			</c:if>
 		</liferay-ui:error>
 
@@ -148,9 +140,7 @@ BackgroundTask lastCompletedInitialPublicationBackgroundTask = BackgroundTaskLoc
 			<aui:field-wrapper label="staging-type">
 				<aui:input checked="<%= !liveGroup.isStaged() %>" id="none" label="none" name="stagingType" type="radio" value="<%= StagingConstants.TYPE_NOT_STAGED %>" />
 
-				<c:if test="<%= !liveGroupRemoteStaging %>">
-					<aui:input checked="<%= stagedLocally %>" helpMessage="staging-type-local" id="local" label="local-live" name="stagingType" type="radio" value="<%= StagingConstants.TYPE_LOCAL_STAGING %>" />
-				</c:if>
+				<aui:input checked="<%= stagedLocally %>" helpMessage="staging-type-local" id="local" label="local-live" name="stagingType" type="radio" value="<%= StagingConstants.TYPE_LOCAL_STAGING %>" />
 
 				<aui:input checked="<%= stagedRemotely %>" helpMessage="staging-type-remote" id="remote" label="remote-live" name="stagingType" type="radio" value="<%= StagingConstants.TYPE_REMOTE_STAGING %>" />
 			</aui:field-wrapper>
@@ -186,7 +176,7 @@ BackgroundTask lastCompletedInitialPublicationBackgroundTask = BackgroundTaskLoc
 
 				<aui:input label="remote-path-context" name="remotePathContext" size="10" type="text" value='<%= liveGroupTypeSettings.getProperty("remotePathContext") %>' />
 
-				<aui:input label='<%= LanguageUtil.get(request, "remote-site-id" ) %>' name="remoteGroupId" size="10" type="text" value='<%= liveGroupTypeSettings.getProperty("remoteGroupId") %>' />
+				<aui:input label='<%= LanguageUtil.get(pageContext, "remote-site-id" ) %>' name="remoteGroupId" size="10" type="text" value='<%= liveGroupTypeSettings.getProperty("remoteGroupId") %>' />
 
 				<aui:input label="use-a-secure-network-connection" name="secureConnection" type="checkbox" value='<%= liveGroupTypeSettings.getProperty("secureConnection") %>' />
 			</aui:fieldset>
@@ -195,7 +185,7 @@ BackgroundTask lastCompletedInitialPublicationBackgroundTask = BackgroundTaskLoc
 		<div class="<%= ((liveGroup.isStaged() || (stagingType != StagingConstants.TYPE_NOT_STAGED)) ? StringPool.BLANK : "hide") %> staging-section" id="<portlet:namespace />stagedPortlets">
 			<br />
 
-			<c:if test="<%= !liveGroup.isCompany() && !liveGroupRemoteStaging %>">
+			<c:if test="<%= !liveGroup.isCompany() %>">
 				<aui:fieldset helpMessage="page-versioning-help" label="page-versioning">
 					<aui:input label="enabled-on-public-pages" name="branchingPublic" type="checkbox" value='<%= GetterUtil.getBoolean(liveGroupTypeSettings.getProperty("branchingPublic")) %>' />
 
@@ -204,14 +194,14 @@ BackgroundTask lastCompletedInitialPublicationBackgroundTask = BackgroundTaskLoc
 			</c:if>
 
 			<aui:fieldset helpMessage="staged-portlets-help" label="staged-content">
-				<div class="alert alert-warning">
+				<div class="alert alert-block">
 					<liferay-ui:message key="staged-portlets-alert" />
 				</div>
 
 				<%
 				Set<String> portletDataHandlerClasses = new HashSet<String>();
 
-				List<Portlet> dataSiteLevelPortlets = LayoutExporter.getDataSiteLevelPortlets(company.getCompanyId(), true);
+				List<Portlet> dataSiteLevelPortlets = LayoutExporter.getDataSiteLevelPortlets(company.getCompanyId());
 
 				dataSiteLevelPortlets = ListUtil.sort(dataSiteLevelPortlets, new PortletTitleComparator(application, locale));
 
@@ -230,7 +220,7 @@ BackgroundTask lastCompletedInitialPublicationBackgroundTask = BackgroundTaskLoc
 					boolean staged = GetterUtil.getBoolean(liveGroupTypeSettings.getProperty(StagingUtil.getStagedPortletId(curPortlet.getRootPortletId())), portletDataHandler.isPublishToLiveByDefault());
 				%>
 
-					<aui:input disabled="<%= liveGroupRemoteStaging %>" label="<%= PortalUtil.getPortletTitle(curPortlet, application, locale) %>" name="<%= StagingConstants.STAGED_PREFIX + StagingUtil.getStagedPortletId(curPortlet.getRootPortletId()) + StringPool.DOUBLE_DASH %>" type="checkbox" value="<%= staged %>" />
+					<aui:input label="<%= PortalUtil.getPortletTitle(curPortlet, application, locale) %>" name="<%= StagingUtil.getStagedPortletId(curPortlet.getRootPortletId()) %>" type="checkbox" value="<%= staged %>" />
 
 				<%
 				}

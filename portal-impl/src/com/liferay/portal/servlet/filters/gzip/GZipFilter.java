@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -38,22 +38,20 @@ public class GZipFilter extends BasePortalFilter {
 
 	public GZipFilter() {
 
-		// The compression filter will work on JBoss, Jetty, JOnAS, OC4J,
-		// Tomcat, WebLogic, and WebSphere, but may break on other servers
-
-		boolean filterEnabled = false;
+		// The compression filter will work on JBoss, Jetty, JOnAS, OC4J, and
+		// Tomcat, but may break on other servers
 
 		if (super.isFilterEnabled()) {
 			if (ServerDetector.isJBoss() || ServerDetector.isJetty() ||
 				ServerDetector.isJOnAS() || ServerDetector.isOC4J() ||
-				ServerDetector.isTomcat() || ServerDetector.isWebLogic() ||
-				ServerDetector.isWebSphere()) {
+				ServerDetector.isTomcat()) {
 
-				filterEnabled = true;
+				_filterEnabled = true;
+			}
+			else {
+				_filterEnabled = false;
 			}
 		}
-
-		_filterEnabled = filterEnabled;
 	}
 
 	@Override
@@ -131,6 +129,6 @@ public class GZipFilter extends BasePortalFilter {
 
 	private static Log _log = LogFactoryUtil.getLog(GZipFilter.class);
 
-	private final boolean _filterEnabled;
+	private boolean _filterEnabled;
 
 }

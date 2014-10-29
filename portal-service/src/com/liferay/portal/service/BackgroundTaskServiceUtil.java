@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -40,17 +40,6 @@ public class BackgroundTaskServiceUtil {
 	 *
 	 * Never modify this class directly. Add custom service methods to {@link com.liferay.portal.service.impl.BackgroundTaskServiceImpl} and rerun ServiceBuilder to regenerate this class.
 	 */
-	public static java.lang.String getBackgroundTaskStatusJSON(
-		long backgroundTaskId) {
-		return getService().getBackgroundTaskStatusJSON(backgroundTaskId);
-	}
-
-	public static int getBackgroundTasksCount(long groupId,
-		java.lang.String taskExecutorClassName, java.lang.String completed) {
-		return getService()
-				   .getBackgroundTasksCount(groupId, taskExecutorClassName,
-			completed);
-	}
 
 	/**
 	* Returns the Spring bean ID for this bean.
@@ -70,6 +59,19 @@ public class BackgroundTaskServiceUtil {
 		getService().setBeanIdentifier(beanIdentifier);
 	}
 
+	public static int getBackgroundTasksCount(long groupId,
+		java.lang.String taskExecutorClassName, java.lang.String completed)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService()
+				   .getBackgroundTasksCount(groupId, taskExecutorClassName,
+			completed);
+	}
+
+	public static java.lang.String getBackgroundTaskStatusJSON(
+		long backgroundTaskId) {
+		return getService().getBackgroundTaskStatusJSON(backgroundTaskId);
+	}
+
 	public static BackgroundTaskService getService() {
 		if (_service == null) {
 			_service = (BackgroundTaskService)PortalBeanLocatorUtil.locate(BackgroundTaskService.class.getName());
@@ -84,7 +86,6 @@ public class BackgroundTaskServiceUtil {
 	/**
 	 * @deprecated As of 6.2.0
 	 */
-	@Deprecated
 	public void setService(BackgroundTaskService service) {
 	}
 

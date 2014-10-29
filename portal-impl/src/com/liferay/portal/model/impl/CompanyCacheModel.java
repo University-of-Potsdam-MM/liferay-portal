@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,13 +14,10 @@
 
 package com.liferay.portal.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.CacheModel;
 import com.liferay.portal.model.Company;
-import com.liferay.portal.model.MVCCModel;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -34,26 +31,12 @@ import java.io.ObjectOutput;
  * @see Company
  * @generated
  */
-@ProviderType
-public class CompanyCacheModel implements CacheModel<Company>, Externalizable,
-	MVCCModel {
-	@Override
-	public long getMvccVersion() {
-		return mvccVersion;
-	}
-
-	@Override
-	public void setMvccVersion(long mvccVersion) {
-		this.mvccVersion = mvccVersion;
-	}
-
+public class CompanyCacheModel implements CacheModel<Company>, Externalizable {
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(23);
+		StringBundler sb = new StringBundler(21);
 
-		sb.append("{mvccVersion=");
-		sb.append(mvccVersion);
-		sb.append(", companyId=");
+		sb.append("{companyId=");
 		sb.append(companyId);
 		sb.append(", accountId=");
 		sb.append(accountId);
@@ -82,7 +65,6 @@ public class CompanyCacheModel implements CacheModel<Company>, Externalizable,
 	public Company toEntityModel() {
 		CompanyImpl companyImpl = new CompanyImpl();
 
-		companyImpl.setMvccVersion(mvccVersion);
 		companyImpl.setCompanyId(companyId);
 		companyImpl.setAccountId(accountId);
 
@@ -131,7 +113,6 @@ public class CompanyCacheModel implements CacheModel<Company>, Externalizable,
 	@Override
 	public void readExternal(ObjectInput objectInput)
 		throws ClassNotFoundException, IOException {
-		mvccVersion = objectInput.readLong();
 		companyId = objectInput.readLong();
 		accountId = objectInput.readLong();
 		webId = objectInput.readUTF();
@@ -150,7 +131,6 @@ public class CompanyCacheModel implements CacheModel<Company>, Externalizable,
 	@Override
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
-		objectOutput.writeLong(mvccVersion);
 		objectOutput.writeLong(companyId);
 		objectOutput.writeLong(accountId);
 
@@ -191,7 +171,6 @@ public class CompanyCacheModel implements CacheModel<Company>, Externalizable,
 		objectOutput.writeObject(_virtualHostname);
 	}
 
-	public long mvccVersion;
 	public long companyId;
 	public long accountId;
 	public String webId;

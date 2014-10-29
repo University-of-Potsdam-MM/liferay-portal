@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portal.service.impl;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.model.MembershipRequest;
 import com.liferay.portal.security.permission.ActionKeys;
 import com.liferay.portal.service.ServiceContext;
@@ -30,7 +31,7 @@ public class MembershipRequestServiceImpl
 	@Override
 	public MembershipRequest addMembershipRequest(
 			long groupId, String comments, ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return membershipRequestLocalService.addMembershipRequest(
 			getUserId(), groupId, comments, serviceContext);
@@ -38,7 +39,7 @@ public class MembershipRequestServiceImpl
 
 	@Override
 	public void deleteMembershipRequests(long groupId, int statusId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		GroupPermissionUtil.check(
 			getPermissionChecker(), groupId, ActionKeys.ASSIGN_MEMBERS);
@@ -49,7 +50,7 @@ public class MembershipRequestServiceImpl
 
 	@Override
 	public MembershipRequest getMembershipRequest(long membershipRequestId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return membershipRequestLocalService.getMembershipRequest(
 			membershipRequestId);
@@ -59,7 +60,7 @@ public class MembershipRequestServiceImpl
 	public void updateStatus(
 			long membershipRequestId, String reviewComments, int statusId,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		MembershipRequest membershipRequest =
 			membershipRequestPersistence.findByPrimaryKey(membershipRequestId);

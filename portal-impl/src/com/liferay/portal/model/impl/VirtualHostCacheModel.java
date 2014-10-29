@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,12 +14,9 @@
 
 package com.liferay.portal.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.CacheModel;
-import com.liferay.portal.model.MVCCModel;
 import com.liferay.portal.model.VirtualHost;
 
 import java.io.Externalizable;
@@ -34,26 +31,13 @@ import java.io.ObjectOutput;
  * @see VirtualHost
  * @generated
  */
-@ProviderType
 public class VirtualHostCacheModel implements CacheModel<VirtualHost>,
-	Externalizable, MVCCModel {
-	@Override
-	public long getMvccVersion() {
-		return mvccVersion;
-	}
-
-	@Override
-	public void setMvccVersion(long mvccVersion) {
-		this.mvccVersion = mvccVersion;
-	}
-
+	Externalizable {
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(11);
+		StringBundler sb = new StringBundler(9);
 
-		sb.append("{mvccVersion=");
-		sb.append(mvccVersion);
-		sb.append(", virtualHostId=");
+		sb.append("{virtualHostId=");
 		sb.append(virtualHostId);
 		sb.append(", companyId=");
 		sb.append(companyId);
@@ -70,7 +54,6 @@ public class VirtualHostCacheModel implements CacheModel<VirtualHost>,
 	public VirtualHost toEntityModel() {
 		VirtualHostImpl virtualHostImpl = new VirtualHostImpl();
 
-		virtualHostImpl.setMvccVersion(mvccVersion);
 		virtualHostImpl.setVirtualHostId(virtualHostId);
 		virtualHostImpl.setCompanyId(companyId);
 		virtualHostImpl.setLayoutSetId(layoutSetId);
@@ -89,7 +72,6 @@ public class VirtualHostCacheModel implements CacheModel<VirtualHost>,
 
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
-		mvccVersion = objectInput.readLong();
 		virtualHostId = objectInput.readLong();
 		companyId = objectInput.readLong();
 		layoutSetId = objectInput.readLong();
@@ -99,7 +81,6 @@ public class VirtualHostCacheModel implements CacheModel<VirtualHost>,
 	@Override
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
-		objectOutput.writeLong(mvccVersion);
 		objectOutput.writeLong(virtualHostId);
 		objectOutput.writeLong(companyId);
 		objectOutput.writeLong(layoutSetId);
@@ -112,7 +93,6 @@ public class VirtualHostCacheModel implements CacheModel<VirtualHost>,
 		}
 	}
 
-	public long mvccVersion;
 	public long virtualHostId;
 	public long companyId;
 	public long layoutSetId;

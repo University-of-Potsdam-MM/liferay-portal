@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -16,6 +16,7 @@ package com.liferay.portal.servlet.filters.sso.ntlm;
 
 import com.liferay.portal.kernel.cache.PortalCache;
 import com.liferay.portal.kernel.cache.SingleVMPoolUtil;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.io.BigEndianCodec;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -25,6 +26,7 @@ import com.liferay.portal.kernel.servlet.HttpHeaders;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.security.auth.AuthSettingsUtil;
 import com.liferay.portal.security.ntlm.NtlmManager;
 import com.liferay.portal.security.ntlm.NtlmUserAccount;
 import com.liferay.portal.servlet.filters.BasePortalFilter;
@@ -85,9 +87,7 @@ public class NtlmFilter extends BasePortalFilter {
 			long companyId = PortalInstances.getCompanyId(request);
 
 			if (BrowserSnifferUtil.isIe(request) &&
-				PrefsPropsUtil.getBoolean(
-					companyId, PropsKeys.NTLM_AUTH_ENABLED,
-					PropsValues.NTLM_AUTH_ENABLED)) {
+				AuthSettingsUtil.isNtlmEnabled(companyId)) {
 
 				return true;
 			}
@@ -104,7 +104,9 @@ public class NtlmFilter extends BasePortalFilter {
 		return _log;
 	}
 
-	protected NtlmManager getNtlmManager(long companyId) {
+	protected NtlmManager getNtlmManager(long companyId)
+		throws SystemException {
+
 		String domain = PrefsPropsUtil.getString(
 			companyId, PropsKeys.NTLM_DOMAIN, PropsValues.NTLM_DOMAIN);
 		String domainController = PrefsPropsUtil.getString(

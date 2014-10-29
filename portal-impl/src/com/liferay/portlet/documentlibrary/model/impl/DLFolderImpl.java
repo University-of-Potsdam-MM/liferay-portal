@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,7 +15,9 @@
 package com.liferay.portlet.documentlibrary.model.impl;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.lar.StagedModelType;
+import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -39,7 +41,9 @@ public class DLFolderImpl extends DLFolderBaseImpl {
 	}
 
 	@Override
-	public List<Long> getAncestorFolderIds() throws PortalException {
+	public List<Long> getAncestorFolderIds()
+		throws PortalException, SystemException {
+
 		List<Long> ancestorFolderIds = new ArrayList<Long>();
 
 		DLFolder folder = this;
@@ -63,7 +67,9 @@ public class DLFolderImpl extends DLFolderBaseImpl {
 	}
 
 	@Override
-	public List<DLFolder> getAncestors() throws PortalException {
+	public List<DLFolder> getAncestors()
+		throws PortalException, SystemException {
+
 		List<DLFolder> ancestors = new ArrayList<DLFolder>();
 
 		DLFolder folder = this;
@@ -87,7 +93,7 @@ public class DLFolderImpl extends DLFolderBaseImpl {
 	}
 
 	@Override
-	public DLFolder getParentFolder() throws PortalException {
+	public DLFolder getParentFolder() throws PortalException, SystemException {
 		if (getParentFolderId() == DLFolderConstants.DEFAULT_PARENT_FOLDER_ID) {
 			return null;
 		}
@@ -96,7 +102,7 @@ public class DLFolderImpl extends DLFolderBaseImpl {
 	}
 
 	@Override
-	public String getPath() throws PortalException {
+	public String getPath() throws PortalException, SystemException {
 		StringBuilder sb = new StringBuilder();
 
 		DLFolder folder = this;
@@ -112,7 +118,7 @@ public class DLFolderImpl extends DLFolderBaseImpl {
 	}
 
 	@Override
-	public String[] getPathArray() throws PortalException {
+	public String[] getPathArray() throws PortalException, SystemException {
 		String path = getPath();
 
 		// Remove leading /
@@ -124,7 +130,7 @@ public class DLFolderImpl extends DLFolderBaseImpl {
 
 	@Override
 	public StagedModelType getStagedModelType() {
-		return new StagedModelType(DLFolderConstants.getClassName());
+		return new StagedModelType(Folder.class);
 	}
 
 	@Override

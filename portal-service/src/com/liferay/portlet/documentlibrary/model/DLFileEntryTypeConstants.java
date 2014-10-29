@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -27,14 +27,14 @@ public class DLFileEntryTypeConstants {
 
 	public static final String NAME_BASIC_DOCUMENT = "basic-document";
 
-	public static final String NAME_CONTRACT = "contract";
+	public static final String NAME_CONTRACT = "Contract";
 
-	public static final String NAME_IG_IMAGE = "image-gallery-image";
+	public static final String NAME_IG_IMAGE = "Image Gallery Image";
 
-	public static final String NAME_MARKETING_BANNER = "marketing-banner";
+	public static final String NAME_MARKETING_BANNER = "Marketing Banner";
 
-	public static final String NAME_ONLINE_TRAINING = "online-training";
+	public static final String NAME_ONLINE_TRAINING = "Online Training";
 
-	public static final String NAME_SALES_PRESENTATION = "sales-presentation";
+	public static final String NAME_SALES_PRESENTATION = "Sales Presentation";
 
 }

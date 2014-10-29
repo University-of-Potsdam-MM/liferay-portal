@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -38,12 +38,12 @@ import com.liferay.portal.kernel.scheduler.StorageType;
 import com.liferay.portal.kernel.scheduler.TriggerFactoryUtil;
 import com.liferay.portal.kernel.scheduler.TriggerState;
 import com.liferay.portal.kernel.scheduler.TriggerType;
-import com.liferay.portal.kernel.scheduler.messaging.ReceiverKey;
 import com.liferay.portal.kernel.scheduler.messaging.SchedulerEventMessageListenerWrapper;
 import com.liferay.portal.kernel.scheduler.messaging.SchedulerResponse;
 import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.ClassLoaderPool;
 import com.liferay.portal.kernel.util.ProxyUtil;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.scheduler.job.MessageSenderJob;
 import com.liferay.portal.service.QuartzLocalService;
@@ -569,6 +569,10 @@ public class QuartzSchedulerEngine implements SchedulerEngine {
 		return argument;
 	}
 
+	protected String getFullName(String jobName, String groupName) {
+		return groupName.concat(StringPool.PERIOD).concat(jobName);
+	}
+
 	protected JobState getJobState(JobDataMap jobDataMap) {
 		Map<String, Object> jobStateMap = (Map<String, Object>)jobDataMap.get(
 			JOB_STATE);
@@ -744,7 +748,7 @@ public class QuartzSchedulerEngine implements SchedulerEngine {
 			message.put(PREVIOUS_FIRE_TIME, trigger.getPreviousFireTime());
 			message.put(START_TIME, trigger.getStartTime());
 
-			if (trigger instanceof CronTrigger) {
+			if (CronTrigger.class.isAssignableFrom(trigger.getClass())) {
 				CronTrigger cronTrigger = CronTrigger.class.cast(trigger);
 
 				schedulerResponse = new SchedulerResponse();
@@ -759,7 +763,7 @@ public class QuartzSchedulerEngine implements SchedulerEngine {
 						cronTrigger.getEndTime(),
 						cronTrigger.getCronExpression()));
 			}
-			else if (trigger instanceof SimpleTrigger) {
+			else if (SimpleTrigger.class.isAssignableFrom(trigger.getClass())) {
 				SimpleTrigger simpleTrigger = SimpleTrigger.class.cast(trigger);
 
 				schedulerResponse = new SchedulerResponse();
@@ -835,14 +839,9 @@ public class QuartzSchedulerEngine implements SchedulerEngine {
 			String dbType = db.getType();
 
 			if (dbType.equals(DB.TYPE_SQLSERVER)) {
-				String lockHandlerClassName = properties.getProperty(
-					"org.quartz.jobStore.lockHandler.class");
-
-				if (Validator.isNull(lockHandlerClassName)) {
-					properties.setProperty(
-						"org.quartz.jobStore.lockHandler.class",
-						UpdateLockRowSemaphore.class.getName());
-				}
+				properties.setProperty(
+					"org.quartz.jobStore.lockHandler.class",
+					UpdateLockRowSemaphore.class.getName());
 			}
 
 			if (PropsValues.CLUSTER_LINK_ENABLED) {
@@ -951,7 +950,7 @@ public class QuartzSchedulerEngine implements SchedulerEngine {
 			MESSAGE_LISTENER_UUID,
 			schedulerEventListenerWrapper.getMessageListenerUUID());
 
-		message.put(RECEIVER_KEY, new ReceiverKey(jobName, groupName));
+		message.put(RECEIVER_KEY, getFullName(jobName, groupName));
 	}
 
 	protected void schedule(
@@ -1021,10 +1020,6 @@ public class QuartzSchedulerEngine implements SchedulerEngine {
 		MessageBus messageBus = MessageBusUtil.getMessageBus();
 
 		Destination destination = messageBus.getDestination(destinationName);
-
-		if (destination == null) {
-			return;
-		}
 
 		Set<MessageListener> messageListeners =
 			destination.getMessageListeners();

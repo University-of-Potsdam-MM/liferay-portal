@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portal.service.permission;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.security.permission.PermissionChecker;
 
 /**
@@ -29,10 +30,9 @@ public interface SubscriptionPermission {
 	 * @deprecated As of 6.2.0, replaced by {@link #check(PermissionChecker,
 	 *             String, long, String, long)}
 	 */
-	@Deprecated
 	public void check(
 			PermissionChecker permissionChecker, String className, long classPK)
-		throws PortalException;
+		throws PortalException, SystemException;
 
 	/**
 	 * Checks if the user has permission to subscribe to the subscription entity
@@ -48,22 +48,22 @@ public interface SubscriptionPermission {
 	 * @throws PortalException if the user did not have permission to view the
 	 *         inferred entity or receive notifications about the subscribed
 	 *         entity, or if a portal exception occurred
+	 * @throws SystemException if a system exception occurred
 	 * @see    #contains(PermissionChecker, String, long, String, long)
 	 */
 	public void check(
 			PermissionChecker permissionChecker, String subscriptionClassName,
 			long subscriptionClassPK, String inferredClassName,
 			long inferredClassPK)
-		throws PortalException;
+		throws PortalException, SystemException;
 
 	/**
 	 * @deprecated As of 6.2.0, replaced by {@link #contains(PermissionChecker,
 	 *             String, long, String, long)}
 	 */
-	@Deprecated
 	public boolean contains(
 			PermissionChecker permissionChecker, String className, long classPK)
-		throws PortalException;
+		throws PortalException, SystemException;
 
 	/**
 	 * Returns <code>true</code> if the user has permission to subscribe to the
@@ -100,11 +100,12 @@ public interface SubscriptionPermission {
 	 * @throws PortalException if the user did not have permission to view the
 	 *         inferred entity or receive notifications about it via the
 	 *         subscribed entity, or if a portal exception occurred
+	 * @throws SystemException if a system exception occurred
 	 */
 	public boolean contains(
 			PermissionChecker permissionChecker, String subscriptionClassName,
 			long subscriptionClassPK, String inferredClassName,
 			long inferredClassPK)
-		throws PortalException;
+		throws PortalException, SystemException;
 
 }

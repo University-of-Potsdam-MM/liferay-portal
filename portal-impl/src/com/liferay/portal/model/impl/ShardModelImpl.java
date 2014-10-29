@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -13,8 +13,6 @@
  */
 
 package com.liferay.portal.model.impl;
-
-import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -51,7 +49,6 @@ import java.util.Map;
  * @see com.liferay.portal.model.ShardModel
  * @generated
  */
-@ProviderType
 public class ShardModelImpl extends BaseModelImpl<Shard> implements ShardModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
@@ -60,13 +57,12 @@ public class ShardModelImpl extends BaseModelImpl<Shard> implements ShardModel {
 	 */
 	public static final String TABLE_NAME = "Shard";
 	public static final Object[][] TABLE_COLUMNS = {
-			{ "mvccVersion", Types.BIGINT },
 			{ "shardId", Types.BIGINT },
 			{ "classNameId", Types.BIGINT },
 			{ "classPK", Types.BIGINT },
 			{ "name", Types.VARCHAR }
 		};
-	public static final String TABLE_SQL_CREATE = "create table Shard (mvccVersion LONG default 0,shardId LONG not null primary key,classNameId LONG,classPK LONG,name VARCHAR(75) null)";
+	public static final String TABLE_SQL_CREATE = "create table Shard (shardId LONG not null primary key,classNameId LONG,classPK LONG,name VARCHAR(75) null)";
 	public static final String TABLE_SQL_DROP = "drop table Shard";
 	public static final String ORDER_BY_JPQL = " ORDER BY shard.shardId ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY Shard.shardId ASC";
@@ -82,10 +78,10 @@ public class ShardModelImpl extends BaseModelImpl<Shard> implements ShardModel {
 	public static final boolean COLUMN_BITMASK_ENABLED = GetterUtil.getBoolean(com.liferay.portal.util.PropsUtil.get(
 				"value.object.column.bitmask.enabled.com.liferay.portal.model.Shard"),
 			true);
-	public static final long CLASSNAMEID_COLUMN_BITMASK = 1L;
-	public static final long CLASSPK_COLUMN_BITMASK = 2L;
-	public static final long NAME_COLUMN_BITMASK = 4L;
-	public static final long SHARDID_COLUMN_BITMASK = 8L;
+	public static long CLASSNAMEID_COLUMN_BITMASK = 1L;
+	public static long CLASSPK_COLUMN_BITMASK = 2L;
+	public static long NAME_COLUMN_BITMASK = 4L;
+	public static long SHARDID_COLUMN_BITMASK = 8L;
 	public static final long LOCK_EXPIRATION_TIME = GetterUtil.getLong(com.liferay.portal.util.PropsUtil.get(
 				"lock.expiration.time.com.liferay.portal.model.Shard"));
 
@@ -126,26 +122,16 @@ public class ShardModelImpl extends BaseModelImpl<Shard> implements ShardModel {
 	public Map<String, Object> getModelAttributes() {
 		Map<String, Object> attributes = new HashMap<String, Object>();
 
-		attributes.put("mvccVersion", getMvccVersion());
 		attributes.put("shardId", getShardId());
 		attributes.put("classNameId", getClassNameId());
 		attributes.put("classPK", getClassPK());
 		attributes.put("name", getName());
-
-		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
-		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
 
 		return attributes;
 	}
 
 	@Override
 	public void setModelAttributes(Map<String, Object> attributes) {
-		Long mvccVersion = (Long)attributes.get("mvccVersion");
-
-		if (mvccVersion != null) {
-			setMvccVersion(mvccVersion);
-		}
-
 		Long shardId = (Long)attributes.get("shardId");
 
 		if (shardId != null) {
@@ -169,16 +155,6 @@ public class ShardModelImpl extends BaseModelImpl<Shard> implements ShardModel {
 		if (name != null) {
 			setName(name);
 		}
-	}
-
-	@Override
-	public long getMvccVersion() {
-		return _mvccVersion;
-	}
-
-	@Override
-	public void setMvccVersion(long mvccVersion) {
-		_mvccVersion = mvccVersion;
 	}
 
 	@Override
@@ -311,7 +287,6 @@ public class ShardModelImpl extends BaseModelImpl<Shard> implements ShardModel {
 	public Object clone() {
 		ShardImpl shardImpl = new ShardImpl();
 
-		shardImpl.setMvccVersion(getMvccVersion());
 		shardImpl.setShardId(getShardId());
 		shardImpl.setClassNameId(getClassNameId());
 		shardImpl.setClassPK(getClassPK());
@@ -365,16 +340,6 @@ public class ShardModelImpl extends BaseModelImpl<Shard> implements ShardModel {
 	}
 
 	@Override
-	public boolean isEntityCacheEnabled() {
-		return ENTITY_CACHE_ENABLED;
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return FINDER_CACHE_ENABLED;
-	}
-
-	@Override
 	public void resetOriginalValues() {
 		ShardModelImpl shardModelImpl = this;
 
@@ -395,8 +360,6 @@ public class ShardModelImpl extends BaseModelImpl<Shard> implements ShardModel {
 	public CacheModel<Shard> toCacheModel() {
 		ShardCacheModel shardCacheModel = new ShardCacheModel();
 
-		shardCacheModel.mvccVersion = getMvccVersion();
-
 		shardCacheModel.shardId = getShardId();
 
 		shardCacheModel.classNameId = getClassNameId();
@@ -416,11 +379,9 @@ public class ShardModelImpl extends BaseModelImpl<Shard> implements ShardModel {
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(11);
+		StringBundler sb = new StringBundler(9);
 
-		sb.append("{mvccVersion=");
-		sb.append(getMvccVersion());
-		sb.append(", shardId=");
+		sb.append("{shardId=");
 		sb.append(getShardId());
 		sb.append(", classNameId=");
 		sb.append(getClassNameId());
@@ -435,16 +396,12 @@ public class ShardModelImpl extends BaseModelImpl<Shard> implements ShardModel {
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(19);
+		StringBundler sb = new StringBundler(16);
 
 		sb.append("<model><model-name>");
 		sb.append("com.liferay.portal.model.Shard");
 		sb.append("</model-name>");
 
-		sb.append(
-			"<column><column-name>mvccVersion</column-name><column-value><![CDATA[");
-		sb.append(getMvccVersion());
-		sb.append("]]></column-value></column>");
 		sb.append(
 			"<column><column-name>shardId</column-name><column-value><![CDATA[");
 		sb.append(getShardId());
@@ -467,11 +424,8 @@ public class ShardModelImpl extends BaseModelImpl<Shard> implements ShardModel {
 		return sb.toString();
 	}
 
-	private static final ClassLoader _classLoader = Shard.class.getClassLoader();
-	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
-			Shard.class
-		};
-	private long _mvccVersion;
+	private static ClassLoader _classLoader = Shard.class.getClassLoader();
+	private static Class<?>[] _escapedModelInterfaces = new Class[] { Shard.class };
 	private long _shardId;
 	private long _classNameId;
 	private long _originalClassNameId;

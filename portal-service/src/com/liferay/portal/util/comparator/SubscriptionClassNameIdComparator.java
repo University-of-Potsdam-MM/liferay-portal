@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -20,8 +20,7 @@ import com.liferay.portal.model.Subscription;
 /**
  * @author Peter Shin
  */
-public class SubscriptionClassNameIdComparator
-	extends OrderByComparator<Subscription> {
+public class SubscriptionClassNameIdComparator extends OrderByComparator {
 
 	public static final String ORDER_BY_ASC = "Subscription.classNameId ASC";
 
@@ -38,7 +37,10 @@ public class SubscriptionClassNameIdComparator
 	}
 
 	@Override
-	public int compare(Subscription subscription1, Subscription subscription2) {
+	public int compare(Object obj1, Object obj2) {
+		Subscription subscription1 = (Subscription)obj1;
+		Subscription subscription2 = (Subscription)obj2;
+
 		int value = 0;
 
 		if (subscription1.getClassNameId() < subscription2.getClassNameId()) {

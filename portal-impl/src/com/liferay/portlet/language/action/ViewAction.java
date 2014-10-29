@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,14 +15,10 @@
 package com.liferay.portlet.language.action;
 
 import com.liferay.portal.kernel.language.LanguageUtil;
-import com.liferay.portal.kernel.util.CharPool;
-import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.Contact;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.Layout;
@@ -124,15 +120,15 @@ public class ViewAction extends PortletAction {
 			layoutURL = redirect.substring(0, pos);
 			queryString = redirect.substring(pos);
 		}
-		else {
-			layoutURL = redirect;
-		}
 
 		Layout layout = themeDisplay.getLayout();
 
 		Group group = layout.getGroup();
 
-		if (isGroupFriendlyURL(group, layout, layoutURL, locale)) {
+		if (PortalUtil.isGroupFriendlyURL(
+				layoutURL, group.getFriendlyURL(),
+				layout.getFriendlyURL(locale))) {
+
 			if (PropsValues.LOCALE_PREPEND_FRIENDLY_URL_STYLE == 0) {
 				redirect = layoutURL;
 			}
@@ -147,8 +143,7 @@ public class ViewAction extends PortletAction {
 					redirect = layout.getFriendlyURL(locale);
 				}
 				else {
-					redirect = PortalUtil.getLayoutURL(
-						layout, themeDisplay, locale);
+					redirect = PortalUtil.getLayoutURL(layout, themeDisplay);
 				}
 			}
 			else {
@@ -157,12 +152,7 @@ public class ViewAction extends PortletAction {
 			}
 		}
 
-		int lifecycle = GetterUtil.getInteger(
-			HttpUtil.getParameter(queryString, "p_p_lifecycle", false));
-
-		if (lifecycle == 0) {
-			redirect = redirect + queryString;
-		}
+		redirect = redirect + queryString;
 
 		actionResponse.sendRedirect(redirect);
 	}
@@ -180,34 +170,6 @@ public class ViewAction extends PortletAction {
 	@Override
 	protected boolean isCheckMethodOnProcessAction() {
 		return _CHECK_METHOD_ON_PROCESS_ACTION;
-	}
-
-	protected boolean isGroupFriendlyURL(
-		Group group, Layout layout, String layoutURL, Locale locale) {
-
-		if (Validator.isNull(layoutURL)) {
-			return true;
-		}
-
-		int pos = layoutURL.lastIndexOf(CharPool.SLASH);
-
-		String layoutURLLanguageId = layoutURL.substring(pos + 1);
-
-		Locale layoutURLLocale = LocaleUtil.fromLanguageId(
-			layoutURLLanguageId, true, false);
-
-		if (layoutURLLocale != null) {
-			return true;
-		}
-
-		if (PortalUtil.isGroupFriendlyURL(
-				layoutURL, group.getFriendlyURL(),
-				layout.getFriendlyURL(locale))) {
-
-			return true;
-		}
-
-		return false;
 	}
 
 	private static final boolean _CHECK_METHOD_ON_PROCESS_ACTION = false;

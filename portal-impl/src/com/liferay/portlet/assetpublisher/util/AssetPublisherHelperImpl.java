@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -16,16 +16,11 @@ package com.liferay.portlet.assetpublisher.util;
 
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
-import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.kernel.util.WebKeys;
-import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
-import com.liferay.portlet.PortletURLUtil;
 import com.liferay.portlet.asset.model.AssetEntry;
 import com.liferay.portlet.asset.model.AssetRenderer;
 import com.liferay.portlet.asset.model.AssetRendererFactory;
-import com.liferay.portlet.asset.util.AssetUtil;
 
 import javax.portlet.PortletURL;
 
@@ -39,23 +34,15 @@ public class AssetPublisherHelperImpl implements AssetPublisherHelper {
 		LiferayPortletRequest liferayPortletRequest,
 		LiferayPortletResponse liferayPortletResponse, AssetEntry assetEntry) {
 
-		return getAssetViewURL(
-			liferayPortletRequest, liferayPortletResponse, assetEntry, false);
-	}
+		PortletURL viewURL = liferayPortletResponse.createRenderURL();
 
-	@Override
-	public String getAssetViewURL(
-		LiferayPortletRequest liferayPortletRequest,
-		LiferayPortletResponse liferayPortletResponse, AssetEntry assetEntry,
-		boolean viewInContext) {
+		viewURL.setParameter("struts_action", "/asset_publisher/view_content");
 
-		PortletURL viewFullContentURL =
-			liferayPortletResponse.createRenderURL();
+		String currentURL = PortalUtil.getCurrentURL(liferayPortletRequest);
 
-		viewFullContentURL.setParameter(
-			"struts_action", "/asset_publisher/view_content");
+		viewURL.setParameter("redirect", currentURL);
 
-		viewFullContentURL.setParameter(
+		viewURL.setParameter(
 			"assetEntryId", String.valueOf(assetEntry.getEntryId()));
 
 		AssetRendererFactory assetRendererFactory =
@@ -63,57 +50,13 @@ public class AssetPublisherHelperImpl implements AssetPublisherHelper {
 
 		AssetRenderer assetRenderer = assetEntry.getAssetRenderer();
 
-		viewFullContentURL.setParameter("type", assetRendererFactory.getType());
-
-		ThemeDisplay themeDisplay =
-			(ThemeDisplay)liferayPortletRequest.getAttribute(
-				WebKeys.THEME_DISPLAY);
+		viewURL.setParameter("type", assetRendererFactory.getType());
 
 		if (Validator.isNotNull(assetRenderer.getUrlTitle())) {
-			if (assetRenderer.getGroupId() != themeDisplay.getScopeGroupId()) {
-				viewFullContentURL.setParameter(
-					"groupId", String.valueOf(assetRenderer.getGroupId()));
-			}
-
-			viewFullContentURL.setParameter(
-				"urlTitle", assetRenderer.getUrlTitle());
+			viewURL.setParameter("urlTitle", assetRenderer.getUrlTitle());
 		}
 
-		String viewURL = null;
-
-		String currentURL = null;
-
-		if (viewInContext) {
-			currentURL = PortalUtil.getCurrentURL(liferayPortletRequest);
-
-			String viewFullContentURLString = viewFullContentURL.toString();
-
-			viewFullContentURLString = HttpUtil.setParameter(
-				viewFullContentURLString, "redirect", currentURL);
-
-			try {
-				viewURL = assetRenderer.getURLViewInContext(
-					liferayPortletRequest, liferayPortletResponse,
-					viewFullContentURLString);
-			}
-			catch (Exception e) {
-			}
-		}
-		else {
-			PortletURL currentURLObj = PortletURLUtil.getCurrent(
-				liferayPortletRequest, liferayPortletResponse);
-
-			currentURL = currentURLObj.toString();
-		}
-
-		if (Validator.isNull(viewURL)) {
-			viewURL = viewFullContentURL.toString();
-		}
-
-		viewURL = AssetUtil.checkViewURL(
-			assetEntry, viewInContext, viewURL, currentURL, themeDisplay);
-
-		return viewURL;
+		return viewURL.toString();
 	}
 
 }

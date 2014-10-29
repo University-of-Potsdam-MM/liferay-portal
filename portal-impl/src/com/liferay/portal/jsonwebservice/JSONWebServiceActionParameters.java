@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -17,7 +17,6 @@ package com.liferay.portal.jsonwebservice;
 import com.liferay.portal.kernel.upload.UploadServletRequest;
 import com.liferay.portal.kernel.util.CamelCaseUtil;
 import com.liferay.portal.kernel.util.CharPool;
-import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -242,8 +241,6 @@ public class JSONWebServiceActionParameters {
 
 		@Override
 		public Object put(String key, Object value) {
-			int pos = key.indexOf(CharPool.COLON);
-
 			if (key.startsWith(StringPool.DASH)) {
 				key = key.substring(1);
 
@@ -252,50 +249,26 @@ public class JSONWebServiceActionParameters {
 			else if (key.startsWith(StringPool.PLUS)) {
 				key = key.substring(1);
 
-				String typeName = null;
+				int pos = key.indexOf(CharPool.COLON);
 
 				if (pos != -1) {
-					typeName = key.substring(pos);
+					value = key.substring(pos + 1);
 
-					key = key.substring(0, pos - 1);
-				}
-				else {
-					if (value != null) {
-						typeName = value.toString();
-
-						value = Void.TYPE;
-					}
+					key = key.substring(0, pos);
 				}
 
-				if (typeName != null) {
+				if (Validator.isNotNull(value)) {
 					if (_parameterTypes == null) {
 						_parameterTypes = new HashMap<String, String>();
 					}
 
-					_parameterTypes.put(key, typeName);
+					_parameterTypes.put(key, value.toString());
 				}
 
-				if (Validator.isNull(GetterUtil.getString(value))) {
-					value = Void.TYPE;
-				}
-			}
-			else if (pos != -1) {
-				String typeName = key.substring(pos + 1);
-
-				key = key.substring(0, pos);
-
-				if (_parameterTypes == null) {
-					_parameterTypes = new HashMap<String, String>();
-				}
-
-				_parameterTypes.put(key, typeName);
-
-				if (Validator.isNull(GetterUtil.getString(value))) {
-					value = Void.TYPE;
-				}
+				value = Void.TYPE;
 			}
 
-			pos = key.indexOf(CharPool.PERIOD);
+			int pos = key.indexOf(CharPool.PERIOD);
 
 			if (pos != -1) {
 				String baseName = key.substring(0, pos);

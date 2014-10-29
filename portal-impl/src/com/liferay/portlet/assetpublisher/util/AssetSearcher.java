@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,14 +14,17 @@
 
 package com.liferay.portlet.assetpublisher.util;
 
-import com.liferay.portal.kernel.search.BaseSearcher;
+import com.liferay.portal.kernel.search.BaseIndexer;
 import com.liferay.portal.kernel.search.BooleanClauseOccur;
 import com.liferay.portal.kernel.search.BooleanQuery;
 import com.liferay.portal.kernel.search.BooleanQueryFactoryUtil;
+import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.DocumentImpl;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.Indexer;
+import com.liferay.portal.kernel.search.IndexerPostProcessor;
 import com.liferay.portal.kernel.search.SearchContext;
+import com.liferay.portal.kernel.search.Summary;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portal.security.permission.PermissionThreadLocal;
@@ -34,19 +37,20 @@ import com.liferay.portlet.asset.util.AssetUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+
+import javax.portlet.PortletURL;
 
 /**
  * @author Eudaldo Alonso
  */
-public class AssetSearcher extends BaseSearcher {
+public class AssetSearcher extends BaseIndexer {
 
 	public static Indexer getInstance() {
 		return new AssetSearcher();
 	}
 
 	public AssetSearcher() {
-		setDefaultSelectedFieldNames(
-			Field.ENTRY_CLASS_NAME, Field.ENTRY_CLASS_PK);
 		setFilterSearch(true);
 		setPermissionAware(true);
 	}
@@ -66,14 +70,25 @@ public class AssetSearcher extends BaseSearcher {
 		return classNames;
 	}
 
-	public void setAssetEntryQuery(AssetEntryQuery assetEntryQuery) {
-		_assetEntryQuery = assetEntryQuery;
+	@Override
+	public IndexerPostProcessor[] getIndexerPostProcessors() {
+		throw new UnsupportedOperationException();
 	}
 
-	protected void addImpossibleTerm(BooleanQuery contextQuery, String field)
-		throws Exception {
+	@Override
+	public String getPortletId() {
+		return null;
+	}
 
-		contextQuery.addTerm(field, "-1", false, BooleanClauseOccur.MUST);
+	@Override
+	public void registerIndexerPostProcessor(
+		IndexerPostProcessor indexerPostProcessor) {
+
+		throw new UnsupportedOperationException();
+	}
+
+	public void setAssetEntryQuery(AssetEntryQuery assetEntryQuery) {
+		_assetEntryQuery = assetEntryQuery;
 	}
 
 	protected void addSearchAllCategories(
@@ -83,25 +98,17 @@ public class AssetSearcher extends BaseSearcher {
 		PermissionChecker permissionChecker =
 			PermissionThreadLocal.getPermissionChecker();
 
-		long[] allCategoryIds = _assetEntryQuery.getAllCategoryIds();
+		long[] allCategoryIds = AssetUtil.filterCategoryIds(
+			permissionChecker, _assetEntryQuery.getAllCategoryIds());
 
 		if (allCategoryIds.length == 0) {
-			return;
-		}
-
-		long[] filteredAllCategoryIds = AssetUtil.filterCategoryIds(
-			permissionChecker, allCategoryIds);
-
-		if (allCategoryIds.length != filteredAllCategoryIds.length) {
-			addImpossibleTerm(contextQuery, Field.ASSET_CATEGORY_IDS);
-
 			return;
 		}
 
 		BooleanQuery categoryIdsQuery = BooleanQueryFactoryUtil.create(
 			searchContext);
 
-		for (long allCategoryId : filteredAllCategoryIds) {
+		for (long allCategoryId : allCategoryIds) {
 			AssetCategory assetCategory =
 				AssetCategoryLocalServiceUtil.fetchAssetCategory(allCategoryId);
 
@@ -112,9 +119,8 @@ public class AssetSearcher extends BaseSearcher {
 			List<Long> categoryIds = new ArrayList<Long>();
 
 			if (PropsValues.ASSET_CATEGORIES_SEARCH_HIERARCHICAL) {
-				categoryIds.addAll(
-					AssetCategoryLocalServiceUtil.getSubcategoryIds(
-						allCategoryId));
+				categoryIds = AssetCategoryLocalServiceUtil.getSubcategoryIds(
+					allCategoryId);
 			}
 
 			if (categoryIds.isEmpty()) {
@@ -141,18 +147,10 @@ public class AssetSearcher extends BaseSearcher {
 		PermissionChecker permissionChecker =
 			PermissionThreadLocal.getPermissionChecker();
 
-		long[] allTagIds = _assetEntryQuery.getAllTagIds();
+		long[] allTagIds = AssetUtil.filterTagIds(
+			permissionChecker, _assetEntryQuery.getAllTagIds());
 
 		if (allTagIds.length == 0) {
-			return;
-		}
-
-		long[] filteredAllTagIds = AssetUtil.filterTagIds(
-			permissionChecker, allTagIds);
-
-		if (allTagIds.length != filteredAllTagIds.length) {
-			addImpossibleTerm(contextQuery, Field.ASSET_TAG_IDS);
-
 			return;
 		}
 
@@ -173,25 +171,17 @@ public class AssetSearcher extends BaseSearcher {
 		PermissionChecker permissionChecker =
 			PermissionThreadLocal.getPermissionChecker();
 
-		long[] anyCategoryIds = _assetEntryQuery.getAnyCategoryIds();
+		long[] anyCategoryIds = AssetUtil.filterCategoryIds(
+			permissionChecker, _assetEntryQuery.getAnyCategoryIds());
 
 		if (anyCategoryIds.length == 0) {
-			return;
-		}
-
-		long[] filteredAnyCategoryIds = AssetUtil.filterCategoryIds(
-			permissionChecker, anyCategoryIds);
-
-		if (filteredAnyCategoryIds.length == 0) {
-			addImpossibleTerm(contextQuery, Field.ASSET_CATEGORY_IDS);
-
 			return;
 		}
 
 		BooleanQuery categoryIdsQuery = BooleanQueryFactoryUtil.create(
 			searchContext);
 
-		for (long anyCategoryId : filteredAnyCategoryIds) {
+		for (long anyCategoryId : anyCategoryIds) {
 			AssetCategory assetCategory =
 				AssetCategoryLocalServiceUtil.fetchAssetCategory(anyCategoryId);
 
@@ -202,9 +192,8 @@ public class AssetSearcher extends BaseSearcher {
 			List<Long> categoryIds = new ArrayList<Long>();
 
 			if (PropsValues.ASSET_CATEGORIES_SEARCH_HIERARCHICAL) {
-				categoryIds.addAll(
-					AssetCategoryLocalServiceUtil.getSubcategoryIds(
-						anyCategoryId));
+				categoryIds = AssetCategoryLocalServiceUtil.getSubcategoryIds(
+					anyCategoryId);
 			}
 
 			if (categoryIds.isEmpty()) {
@@ -226,18 +215,10 @@ public class AssetSearcher extends BaseSearcher {
 		PermissionChecker permissionChecker =
 			PermissionThreadLocal.getPermissionChecker();
 
-		long[] anyTagIds = _assetEntryQuery.getAnyTagIds();
+		long[] anyTagIds = AssetUtil.filterTagIds(
+			permissionChecker, _assetEntryQuery.getAnyTagIds());
 
 		if (anyTagIds.length == 0) {
-			return;
-		}
-
-		long[] filteredAnyTagIds = AssetUtil.filterTagIds(
-			permissionChecker, anyTagIds);
-
-		if (filteredAnyTagIds.length == 0) {
-			addImpossibleTerm(contextQuery, Field.ASSET_TAG_IDS);
-
 			return;
 		}
 
@@ -330,9 +311,8 @@ public class AssetSearcher extends BaseSearcher {
 			List<Long> categoryIds = new ArrayList<Long>();
 
 			if (PropsValues.ASSET_CATEGORIES_SEARCH_HIERARCHICAL) {
-				categoryIds.addAll(
-					AssetCategoryLocalServiceUtil.getSubcategoryIds(
-						notAllCategoryId));
+				categoryIds = AssetCategoryLocalServiceUtil.getSubcategoryIds(
+					notAllCategoryId);
 			}
 
 			if (categoryIds.isEmpty()) {
@@ -397,9 +377,8 @@ public class AssetSearcher extends BaseSearcher {
 			List<Long> categoryIds = new ArrayList<Long>();
 
 			if (PropsValues.ASSET_CATEGORIES_SEARCH_HIERARCHICAL) {
-				categoryIds.addAll(
-					AssetCategoryLocalServiceUtil.getSubcategoryIds(
-						notAnyCategoryId));
+				categoryIds = AssetCategoryLocalServiceUtil.getSubcategoryIds(
+					notAnyCategoryId);
 			}
 
 			if (categoryIds.isEmpty()) {
@@ -435,11 +414,42 @@ public class AssetSearcher extends BaseSearcher {
 	}
 
 	@Override
-	protected void postProcessFullQuery(
-			BooleanQuery fullQuery, SearchContext searchContext)
+	protected void doDelete(Object obj) throws Exception {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	protected Document doGetDocument(Object obj) throws Exception {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	protected Summary doGetSummary(
+			Document document, Locale locale, String snippet,
+			PortletURL portletURL)
 		throws Exception {
 
-		fullQuery.addRequiredTerm("visible", true);
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	protected void doReindex(Object obj) throws Exception {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	protected void doReindex(String className, long classPK) throws Exception {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	protected void doReindex(String[] ids) throws Exception {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	protected String getPortletId(SearchContext searchContext) {
+		return null;
 	}
 
 	private AssetEntryQuery _assetEntryQuery;

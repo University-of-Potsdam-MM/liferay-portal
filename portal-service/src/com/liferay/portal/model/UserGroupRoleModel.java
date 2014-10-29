@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -16,6 +16,7 @@ package com.liferay.portal.model;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.persistence.UserGroupRolePK;
 
@@ -37,7 +38,7 @@ import java.io.Serializable;
  * @generated
  */
 @ProviderType
-public interface UserGroupRoleModel extends BaseModel<UserGroupRole>, MVCCModel {
+public interface UserGroupRoleModel extends BaseModel<UserGroupRole> {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -59,22 +60,6 @@ public interface UserGroupRoleModel extends BaseModel<UserGroupRole>, MVCCModel 
 	public void setPrimaryKey(UserGroupRolePK primaryKey);
 
 	/**
-	 * Returns the mvcc version of this user group role.
-	 *
-	 * @return the mvcc version of this user group role
-	 */
-	@Override
-	public long getMvccVersion();
-
-	/**
-	 * Sets the mvcc version of this user group role.
-	 *
-	 * @param mvccVersion the mvcc version of this user group role
-	 */
-	@Override
-	public void setMvccVersion(long mvccVersion);
-
-	/**
 	 * Returns the user ID of this user group role.
 	 *
 	 * @return the user ID of this user group role
@@ -92,8 +77,9 @@ public interface UserGroupRoleModel extends BaseModel<UserGroupRole>, MVCCModel 
 	 * Returns the user uuid of this user group role.
 	 *
 	 * @return the user uuid of this user group role
+	 * @throws SystemException if a system exception occurred
 	 */
-	public String getUserUuid();
+	public String getUserUuid() throws SystemException;
 
 	/**
 	 * Sets the user uuid of this user group role.

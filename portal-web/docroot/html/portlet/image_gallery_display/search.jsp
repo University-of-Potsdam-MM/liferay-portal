@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -42,6 +42,8 @@ else {
 }
 
 String keywords = ParamUtil.getString(request, "keywords");
+
+String[] mediaGalleryMimeTypes = DLUtil.getMediaGalleryMimeTypes(portletPreferences, renderRequest);
 %>
 
 <liferay-portlet:renderURL varImpl="searchURL">
@@ -71,12 +73,12 @@ String keywords = ParamUtil.getString(request, "keywords");
 	portletURL.setParameter("searchFolderIds", String.valueOf(searchFolderIds));
 	portletURL.setParameter("keywords", keywords);
 
-	SearchContainer searchContainer = new SearchContainer(renderRequest, null, null, SearchContainer.DEFAULT_CUR_PARAM, SearchContainer.DEFAULT_DELTA, portletURL, null, LanguageUtil.format(request, "no-entries-were-found-that-matched-the-keywords-x", "<strong>" + HtmlUtil.escape(keywords) + "</strong>", false));
+	SearchContainer searchContainer = new SearchContainer(renderRequest, null, null, SearchContainer.DEFAULT_CUR_PARAM, SearchContainer.DEFAULT_DELTA, portletURL, null, LanguageUtil.format(pageContext, "no-entries-were-found-that-matched-the-keywords-x", "<strong>" + HtmlUtil.escape(keywords) + "</strong>"));
 
 	try {
 		SearchContext searchContext = SearchContextFactory.getInstance(request);
 
-		searchContext.setAttribute("mimeTypes", dlPortletInstanceSettings.getMimeTypes());
+		searchContext.setAttribute("mimeTypes", mediaGalleryMimeTypes);
 		searchContext.setAttribute("paginationType", "more");
 		searchContext.setEnd(searchContainer.getEnd());
 		searchContext.setFolderIds(folderIdsArray);
@@ -117,12 +119,12 @@ String keywords = ParamUtil.getString(request, "keywords");
 		<%
 		Folder folder = (Folder)request.getAttribute(WebKeys.DOCUMENT_LIBRARY_FOLDER);
 
-		long defaultFolderId = dlPortletInstanceSettings.getDefaultFolderId();
+		long defaultFolderId = GetterUtil.getLong(portletPreferences.getValue("rootFolderId", StringPool.BLANK), DLFolderConstants.DEFAULT_PARENT_FOLDER_ID);
 
 		long folderId = BeanParamUtil.getLong(folder, request, "folderId", defaultFolderId);
 
 		request.setAttribute("view.jsp-folderId", String.valueOf(folderId));
-		request.setAttribute("view.jsp-mediaGalleryMimeTypes", dlPortletInstanceSettings.getMimeTypes());
+		request.setAttribute("view.jsp-mediaGalleryMimeTypes", mediaGalleryMimeTypes);
 		request.setAttribute("view.jsp-searchContainer", searchContainer);
 		%>
 
@@ -143,7 +145,7 @@ if (searchFolderId > 0) {
 	IGUtil.addPortletBreadcrumbEntries(searchFolderId, request, renderResponse);
 }
 
-PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.get(request, "search") + ": " + keywords, currentURL);
+PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.get(pageContext, "search") + ": " + keywords, currentURL);
 %>
 
 <%!

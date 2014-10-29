@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -33,9 +33,8 @@ import javax.portlet.PortletURL;
  */
 public class WorkflowTaskSearch extends SearchContainer<WorkflowTask> {
 
-	public static List<String> headerNames = new ArrayList<String>();
-	public static Map<String, String> orderableHeaders =
-		new HashMap<String, String>();
+	static List<String> headerNames = new ArrayList<String>();
+	static Map<String, String> orderableHeaders = new HashMap<String, String>();
 
 	static {
 		headerNames.add("task");
@@ -74,8 +73,8 @@ public class WorkflowTaskSearch extends SearchContainer<WorkflowTask> {
 		String orderByCol = ParamUtil.getString(portletRequest, "orderByCol");
 		String orderByType = ParamUtil.getString(portletRequest, "orderByType");
 
-		OrderByComparator<WorkflowTask> orderByComparator =
-			getOrderByComparator(orderByCol, orderByType);
+		OrderByComparator orderByComparator = getOrderByComparator(
+			orderByCol, orderByType);
 
 		setOrderableHeaders(orderableHeaders);
 		setOrderByCol(orderByCol);
@@ -83,7 +82,7 @@ public class WorkflowTaskSearch extends SearchContainer<WorkflowTask> {
 		setOrderByComparator(orderByComparator);
 	}
 
-	protected OrderByComparator<WorkflowTask> getOrderByComparator(
+	protected OrderByComparator getOrderByComparator(
 		String orderByCol, String orderByType) {
 
 		boolean orderByAsc = false;
@@ -92,7 +91,7 @@ public class WorkflowTaskSearch extends SearchContainer<WorkflowTask> {
 			orderByAsc = true;
 		}
 
-		OrderByComparator<WorkflowTask> orderByComparator = null;
+		OrderByComparator orderByComparator = null;
 
 		if (orderByCol.equals("name")) {
 			orderByComparator =

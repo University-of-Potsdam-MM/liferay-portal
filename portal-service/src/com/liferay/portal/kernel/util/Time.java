@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -184,26 +184,23 @@ public class Time {
 
 		long millisAgo = System.currentTimeMillis() - milliseconds;
 
-		if (millisAgo < Time.HOUR) {
-			long minutes = millisAgo / Time.MINUTE;
-
-			if (minutes <= 1) {
-				return LanguageUtil.get(locale, "about-a-minute-ago");
-			}
-
-			return LanguageUtil.format(locale, "x-minutes-ago", minutes, false);
+		if (millisAgo <= Time.MINUTE) {
+			return LanguageUtil.get(locale, "about-a-minute-ago");
+		}
+		else if (millisAgo < Time.HOUR) {
+			return LanguageUtil.format(
+				locale, "x-minutes-ago", (millisAgo / Time.MINUTE));
 		}
 		else if ((millisAgo / Time.HOUR) == 1) {
 			return LanguageUtil.get(locale, "about-an-hour-ago");
 		}
 		else if ((millisAgo < Time.DAY) || (daysBetween == 0)) {
 			return LanguageUtil.format(
-				locale, "x-hours-ago", (millisAgo / Time.HOUR), false);
+				locale, "x-hours-ago", (millisAgo / Time.HOUR));
 		}
 		else if (daysBetween == 1) {
 			return LanguageUtil.format(
-				locale, "yesterday-at-x", timeFormat.format(milliseconds),
-				false);
+				locale, "yesterday-at-x", timeFormat.format(milliseconds));
 		}
 
 		Format dateFormat = FastDateFormatFactoryUtil.getSimpleDateFormat(

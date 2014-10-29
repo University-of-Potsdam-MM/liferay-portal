@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -17,15 +17,17 @@
 <%@ include file="/html/portlet/blogs_admin/init.jsp" %>
 
 <%
-long assetCategoryId = ParamUtil.getLong(request, "categoryId");
-String assetTagName = ParamUtil.getString(request, "tag");
-
 PortletURL portletURL = renderResponse.createRenderURL();
 
 portletURL.setParameter("struts_action", "/blogs_admin/view");
 %>
 
-<liferay-ui:trash-undo />
+<portlet:actionURL var="undoTrashURL">
+	<portlet:param name="struts_action" value="/blogs/edit_entry" />
+	<portlet:param name="<%= Constants.CMD %>" value="<%= Constants.RESTORE %>" />
+</portlet:actionURL>
+
+<liferay-ui:trash-undo portletURL="<%= undoTrashURL %>" />
 
 <liferay-portlet:renderURL varImpl="searchURL">
 	<portlet:param name="struts_action" value="/blogs_admin/search" />
@@ -38,11 +40,6 @@ portletURL.setParameter("struts_action", "/blogs_admin/view");
 	<aui:input name="deleteEntryIds" type="hidden" />
 
 	<liferay-util:include page="/html/portlet/blogs_admin/toolbar.jsp" />
-
-	<liferay-ui:categorization-filter
-		assetType="entries"
-		portletURL="<%= portletURL %>"
-	/>
 
 	<liferay-ui:search-container
 		rowChecker="<%= new RowChecker(renderResponse) %>"
@@ -74,7 +71,6 @@ portletURL.setParameter("struts_action", "/blogs_admin/view");
 
 			<liferay-ui:search-container-column-jsp
 				align="right"
-				cssClass="entry-action"
 				path="/html/portlet/blogs_admin/entry_action.jsp"
 			/>
 		</liferay-ui:search-container-row>
@@ -96,12 +92,12 @@ portletURL.setParameter("struts_action", "/blogs_admin/view");
 		window,
 		'<portlet:namespace />deleteEntries',
 		function() {
-			if (<%= TrashUtil.isTrashEnabled(scopeGroupId) %> || confirm('<%= UnicodeLanguageUtil.get(request, "are-you-sure-you-want-to-delete-the-selected-entries") %>')) {
-				document.<portlet:namespace />fm.method = 'post';
-				document.<portlet:namespace />fm.<portlet:namespace /><%= Constants.CMD %>.value = '<%= TrashUtil.isTrashEnabled(scopeGroupId) ? Constants.MOVE_TO_TRASH :Constants.DELETE %>';
+			if (<%= TrashUtil.isTrashEnabled(scopeGroupId) %> || confirm('<%= UnicodeLanguageUtil.get(pageContext, "are-you-sure-you-want-to-delete-the-selected-entries") %>')) {
+				document.<portlet:namespace />fm.method = "post";
+				document.<portlet:namespace />fm.<portlet:namespace /><%= Constants.CMD %>.value = "<%= TrashUtil.isTrashEnabled(scopeGroupId) ? Constants.MOVE_TO_TRASH :Constants.DELETE %>";
 				document.<portlet:namespace />fm.<portlet:namespace />deleteEntryIds.value = Liferay.Util.listCheckedExcept(document.<portlet:namespace />fm, '<portlet:namespace />allRowIds');
 
-				submitForm(document.<portlet:namespace />fm, '<portlet:actionURL><portlet:param name="struts_action" value="/blogs_admin/edit_entry" /></portlet:actionURL>');
+				submitForm(document.<portlet:namespace />fm, "<portlet:actionURL><portlet:param name="struts_action" value="/blogs_admin/edit_entry" /></portlet:actionURL>");
 			}
 		},
 		['liferay-util-list-fields']

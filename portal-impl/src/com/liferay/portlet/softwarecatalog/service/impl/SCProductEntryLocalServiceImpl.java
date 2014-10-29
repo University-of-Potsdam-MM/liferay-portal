@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portlet.softwarecatalog.service.impl;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.plugin.Version;
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
@@ -70,7 +71,7 @@ public class SCProductEntryLocalServiceImpl
 			String author, String repoGroupId, String repoArtifactId,
 			long[] licenseIds, List<byte[]> thumbnails, List<byte[]> fullImages,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		// Product entry
 
@@ -147,7 +148,7 @@ public class SCProductEntryLocalServiceImpl
 	public void addProductEntryResources(
 			long productEntryId, boolean addGroupPermissions,
 			boolean addGuestPermissions)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		SCProductEntry productEntry =
 			scProductEntryPersistence.findByPrimaryKey(productEntryId);
@@ -160,7 +161,7 @@ public class SCProductEntryLocalServiceImpl
 	public void addProductEntryResources(
 			long productEntryId, String[] groupPermissions,
 			String[] guestPermissions)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		SCProductEntry productEntry =
 			scProductEntryPersistence.findByPrimaryKey(productEntryId);
@@ -173,7 +174,7 @@ public class SCProductEntryLocalServiceImpl
 	public void addProductEntryResources(
 			SCProductEntry productEntry, boolean addGroupPermissions,
 			boolean addGuestPermissions)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		resourceLocalService.addResources(
 			productEntry.getCompanyId(), productEntry.getGroupId(),
@@ -186,7 +187,7 @@ public class SCProductEntryLocalServiceImpl
 	public void addProductEntryResources(
 			SCProductEntry productEntry, String[] groupPermissions,
 			String[] guestPermissions)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		resourceLocalService.addModelResources(
 			productEntry.getCompanyId(), productEntry.getGroupId(),
@@ -196,7 +197,9 @@ public class SCProductEntryLocalServiceImpl
 	}
 
 	@Override
-	public void deleteProductEntries(long groupId) throws PortalException {
+	public void deleteProductEntries(long groupId)
+		throws PortalException, SystemException {
+
 		List<SCProductEntry> productEntries =
 			scProductEntryPersistence.findByGroupId(groupId);
 
@@ -208,7 +211,7 @@ public class SCProductEntryLocalServiceImpl
 	@Indexable(type = IndexableType.DELETE)
 	@Override
 	public SCProductEntry deleteProductEntry(long productEntryId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		SCProductEntry productEntry =
 			scProductEntryPersistence.findByPrimaryKey(productEntryId);
@@ -219,7 +222,7 @@ public class SCProductEntryLocalServiceImpl
 	@Indexable(type = IndexableType.DELETE)
 	@Override
 	public SCProductEntry deleteProductEntry(SCProductEntry productEntry)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		// Product entry
 
@@ -263,27 +266,31 @@ public class SCProductEntryLocalServiceImpl
 
 	@Override
 	public List<SCProductEntry> getCompanyProductEntries(
-		long companyId, int start, int end) {
+			long companyId, int start, int end)
+		throws SystemException {
 
 		return scProductEntryPersistence.findByCompanyId(companyId, start, end);
 	}
 
 	@Override
-	public int getCompanyProductEntriesCount(long companyId) {
+	public int getCompanyProductEntriesCount(long companyId)
+		throws SystemException {
+
 		return scProductEntryPersistence.countByCompanyId(companyId);
 	}
 
 	@Override
 	public List<SCProductEntry> getProductEntries(
-		long groupId, int start, int end) {
+			long groupId, int start, int end)
+		throws SystemException {
 
 		return scProductEntryPersistence.findByGroupId(groupId, start, end);
 	}
 
 	@Override
 	public List<SCProductEntry> getProductEntries(
-		long groupId, int start, int end,
-		OrderByComparator<SCProductEntry> obc) {
+			long groupId, int start, int end, OrderByComparator obc)
+		throws SystemException {
 
 		return scProductEntryPersistence.findByGroupId(
 			groupId, start, end, obc);
@@ -291,41 +298,46 @@ public class SCProductEntryLocalServiceImpl
 
 	@Override
 	public List<SCProductEntry> getProductEntries(
-		long groupId, long userId, int start, int end) {
+			long groupId, long userId, int start, int end)
+		throws SystemException {
 
 		return scProductEntryPersistence.findByG_U(groupId, userId, start, end);
 	}
 
 	@Override
 	public List<SCProductEntry> getProductEntries(
-		long groupId, long userId, int start, int end,
-		OrderByComparator<SCProductEntry> obc) {
+			long groupId, long userId, int start, int end,
+			OrderByComparator obc)
+		throws SystemException {
 
 		return scProductEntryPersistence.findByG_U(
 			groupId, userId, start, end, obc);
 	}
 
 	@Override
-	public int getProductEntriesCount(long groupId) {
+	public int getProductEntriesCount(long groupId) throws SystemException {
 		return scProductEntryPersistence.countByGroupId(groupId);
 	}
 
 	@Override
-	public int getProductEntriesCount(long groupId, long userId) {
+	public int getProductEntriesCount(long groupId, long userId)
+		throws SystemException {
+
 		return scProductEntryPersistence.countByG_U(groupId, userId);
 	}
 
 	@Override
 	public SCProductEntry getProductEntry(long productEntryId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return scProductEntryPersistence.findByPrimaryKey(productEntryId);
 	}
 
 	@Override
 	public String getRepositoryXML(
-		long groupId, String baseImageURL, Date oldestDate,
-		int maxNumOfVersions, Properties repoSettings) {
+			long groupId, String baseImageURL, Date oldestDate,
+			int maxNumOfVersions, Properties repoSettings)
+		throws SystemException {
 
 		return getRepositoryXML(
 			groupId, null, baseImageURL, oldestDate, maxNumOfVersions,
@@ -334,8 +346,9 @@ public class SCProductEntryLocalServiceImpl
 
 	@Override
 	public String getRepositoryXML(
-		long groupId, String version, String baseImageURL, Date oldestDate,
-		int maxNumOfVersions, Properties repoSettings) {
+			long groupId, String version, String baseImageURL, Date oldestDate,
+			int maxNumOfVersions, Properties repoSettings)
+		throws SystemException {
 
 		Document doc = SAXReaderUtil.createDocument();
 
@@ -402,7 +415,7 @@ public class SCProductEntryLocalServiceImpl
 			String shortDescription, String longDescription, String pageURL,
 			String author, String repoGroupId, String repoArtifactId,
 			long[] licenseIds, List<byte[]> thumbnails, List<byte[]> fullImages)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		// Product entry
 
@@ -437,7 +450,7 @@ public class SCProductEntryLocalServiceImpl
 
 		// Product screenshots
 
-		if (thumbnails.isEmpty()) {
+		if (thumbnails.size() == 0) {
 			scProductScreenshotLocalService.deleteProductScreenshots(
 				productEntryId);
 		}
@@ -472,8 +485,9 @@ public class SCProductEntryLocalServiceImpl
 	}
 
 	protected void populatePluginPackageElement(
-		Element el, SCProductEntry productEntry,
-		SCProductVersion productVersion, String baseImageURL) {
+			Element el, SCProductEntry productEntry,
+			SCProductVersion productVersion, String baseImageURL)
+		throws SystemException {
 
 		DocUtil.add(el, "name", productEntry.getName());
 
@@ -578,7 +592,7 @@ public class SCProductEntryLocalServiceImpl
 	protected void saveProductScreenshots(
 			SCProductEntry productEntry, List<byte[]> thumbnails,
 			List<byte[]> fullImages)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		long productEntryId = productEntry.getProductEntryId();
 
@@ -637,7 +651,7 @@ public class SCProductEntryLocalServiceImpl
 			String shortDescription, String pageURL, String author,
 			String repoGroupId, String repoArtifactId, long[] licenseIds,
 			List<byte[]> thumbnails, List<byte[]> fullImages)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		if (Validator.isNull(name)) {
 			throw new ProductEntryNameException();
@@ -668,8 +682,7 @@ public class SCProductEntryLocalServiceImpl
 		if ((productEntry != null) &&
 			(productEntry.getProductEntryId() != productEntryId)) {
 
-			throw new DuplicateProductEntryModuleIdException(
-				"{productEntryId=" + productEntryId + "}");
+			throw new DuplicateProductEntryModuleIdException();
 		}
 
 		if (licenseIds.length == 0) {

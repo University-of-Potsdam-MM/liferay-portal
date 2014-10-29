@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portlet.journal.service.impl;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portlet.journal.model.JournalArticleResource;
 import com.liferay.portlet.journal.service.base.JournalArticleResourceLocalServiceBaseImpl;
@@ -29,21 +30,23 @@ public class JournalArticleResourceLocalServiceImpl
 
 	@Override
 	public void deleteArticleResource(long groupId, String articleId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		journalArticleResourcePersistence.removeByG_A(groupId, articleId);
 	}
 
 	@Override
 	public JournalArticleResource fetchArticleResource(
-		long groupId, String articleId) {
+			long groupId, String articleId)
+		throws SystemException {
 
 		return journalArticleResourcePersistence.fetchByG_A(groupId, articleId);
 	}
 
 	@Override
 	public JournalArticleResource fetchArticleResource(
-		String uuid, long groupId) {
+			String uuid, long groupId)
+		throws SystemException {
 
 		return journalArticleResourcePersistence.fetchByUUID_G(uuid, groupId);
 	}
@@ -51,20 +54,23 @@ public class JournalArticleResourceLocalServiceImpl
 	@Override
 	public JournalArticleResource getArticleResource(
 			long articleResourcePrimKey)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return journalArticleResourcePersistence.findByPrimaryKey(
 			articleResourcePrimKey);
 	}
 
 	@Override
-	public long getArticleResourcePrimKey(long groupId, String articleId) {
+	public long getArticleResourcePrimKey(long groupId, String articleId)
+		throws SystemException {
+
 		return getArticleResourcePrimKey(null, groupId, articleId);
 	}
 
 	@Override
 	public long getArticleResourcePrimKey(
-		String uuid, long groupId, String articleId) {
+			String uuid, long groupId, String articleId)
+		throws SystemException {
 
 		JournalArticleResource articleResource = null;
 
@@ -98,7 +104,9 @@ public class JournalArticleResourceLocalServiceImpl
 	}
 
 	@Override
-	public List<JournalArticleResource> getArticleResources(long groupId) {
+	public List<JournalArticleResource> getArticleResources(long groupId)
+		throws SystemException {
+
 		return journalArticleResourcePersistence.findByGroupId(groupId);
 	}
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -137,30 +137,24 @@ public class ShoppingCartWrapper implements ShoppingCart,
 		}
 	}
 
+	/**
+	* Returns the primary key of this shopping cart.
+	*
+	* @return the primary key of this shopping cart
+	*/
 	@Override
-	public void addItemId(long itemId, java.lang.String fields) {
-		_shoppingCart.addItemId(itemId, fields);
-	}
-
-	@Override
-	public java.lang.Object clone() {
-		return new ShoppingCartWrapper((ShoppingCart)_shoppingCart.clone());
-	}
-
-	@Override
-	public int compareTo(
-		com.liferay.portlet.shopping.model.ShoppingCart shoppingCart) {
-		return _shoppingCart.compareTo(shoppingCart);
+	public long getPrimaryKey() {
+		return _shoppingCart.getPrimaryKey();
 	}
 
 	/**
-	* Returns the alt shipping of this shopping cart.
+	* Sets the primary key of this shopping cart.
 	*
-	* @return the alt shipping of this shopping cart
+	* @param primaryKey the primary key of this shopping cart
 	*/
 	@Override
-	public int getAltShipping() {
-		return _shoppingCart.getAltShipping();
+	public void setPrimaryKey(long primaryKey) {
+		_shoppingCart.setPrimaryKey(primaryKey);
 	}
 
 	/**
@@ -174,44 +168,13 @@ public class ShoppingCartWrapper implements ShoppingCart,
 	}
 
 	/**
-	* Returns the company ID of this shopping cart.
+	* Sets the cart ID of this shopping cart.
 	*
-	* @return the company ID of this shopping cart
+	* @param cartId the cart ID of this shopping cart
 	*/
 	@Override
-	public long getCompanyId() {
-		return _shoppingCart.getCompanyId();
-	}
-
-	@Override
-	public com.liferay.portlet.shopping.model.ShoppingCoupon getCoupon()
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _shoppingCart.getCoupon();
-	}
-
-	/**
-	* Returns the coupon codes of this shopping cart.
-	*
-	* @return the coupon codes of this shopping cart
-	*/
-	@Override
-	public java.lang.String getCouponCodes() {
-		return _shoppingCart.getCouponCodes();
-	}
-
-	/**
-	* Returns the create date of this shopping cart.
-	*
-	* @return the create date of this shopping cart
-	*/
-	@Override
-	public java.util.Date getCreateDate() {
-		return _shoppingCart.getCreateDate();
-	}
-
-	@Override
-	public com.liferay.portlet.expando.model.ExpandoBridge getExpandoBridge() {
-		return _shoppingCart.getExpandoBridge();
+	public void setCartId(long cartId) {
+		_shoppingCart.setCartId(cartId);
 	}
 
 	/**
@@ -225,148 +188,23 @@ public class ShoppingCartWrapper implements ShoppingCart,
 	}
 
 	/**
-	* Returns the insure of this shopping cart.
+	* Sets the group ID of this shopping cart.
 	*
-	* @return the insure of this shopping cart
+	* @param groupId the group ID of this shopping cart
 	*/
 	@Override
-	public boolean getInsure() {
-		return _shoppingCart.getInsure();
+	public void setGroupId(long groupId) {
+		_shoppingCart.setGroupId(groupId);
 	}
 
 	/**
-	* Returns the item IDs of this shopping cart.
+	* Returns the company ID of this shopping cart.
 	*
-	* @return the item IDs of this shopping cart
+	* @return the company ID of this shopping cart
 	*/
 	@Override
-	public java.lang.String getItemIds() {
-		return _shoppingCart.getItemIds();
-	}
-
-	@Override
-	public java.util.Map<com.liferay.portlet.shopping.model.ShoppingCartItem, java.lang.Integer> getItems() {
-		return _shoppingCart.getItems();
-	}
-
-	@Override
-	public int getItemsSize() {
-		return _shoppingCart.getItemsSize();
-	}
-
-	/**
-	* Returns the modified date of this shopping cart.
-	*
-	* @return the modified date of this shopping cart
-	*/
-	@Override
-	public java.util.Date getModifiedDate() {
-		return _shoppingCart.getModifiedDate();
-	}
-
-	/**
-	* Returns the primary key of this shopping cart.
-	*
-	* @return the primary key of this shopping cart
-	*/
-	@Override
-	public long getPrimaryKey() {
-		return _shoppingCart.getPrimaryKey();
-	}
-
-	@Override
-	public java.io.Serializable getPrimaryKeyObj() {
-		return _shoppingCart.getPrimaryKeyObj();
-	}
-
-	/**
-	* Returns the user ID of this shopping cart.
-	*
-	* @return the user ID of this shopping cart
-	*/
-	@Override
-	public long getUserId() {
-		return _shoppingCart.getUserId();
-	}
-
-	/**
-	* Returns the user name of this shopping cart.
-	*
-	* @return the user name of this shopping cart
-	*/
-	@Override
-	public java.lang.String getUserName() {
-		return _shoppingCart.getUserName();
-	}
-
-	/**
-	* Returns the user uuid of this shopping cart.
-	*
-	* @return the user uuid of this shopping cart
-	*/
-	@Override
-	public java.lang.String getUserUuid() {
-		return _shoppingCart.getUserUuid();
-	}
-
-	@Override
-	public int hashCode() {
-		return _shoppingCart.hashCode();
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _shoppingCart.isCachedModel();
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _shoppingCart.isEscapedModel();
-	}
-
-	/**
-	* Returns <code>true</code> if this shopping cart is insure.
-	*
-	* @return <code>true</code> if this shopping cart is insure; <code>false</code> otherwise
-	*/
-	@Override
-	public boolean isInsure() {
-		return _shoppingCart.isInsure();
-	}
-
-	@Override
-	public boolean isNew() {
-		return _shoppingCart.isNew();
-	}
-
-	@Override
-	public void persist() {
-		_shoppingCart.persist();
-	}
-
-	/**
-	* Sets the alt shipping of this shopping cart.
-	*
-	* @param altShipping the alt shipping of this shopping cart
-	*/
-	@Override
-	public void setAltShipping(int altShipping) {
-		_shoppingCart.setAltShipping(altShipping);
-	}
-
-	@Override
-	public void setCachedModel(boolean cachedModel) {
-		_shoppingCart.setCachedModel(cachedModel);
-	}
-
-	/**
-	* Sets the cart ID of this shopping cart.
-	*
-	* @param cartId the cart ID of this shopping cart
-	*/
-	@Override
-	public void setCartId(long cartId) {
-		_shoppingCart.setCartId(cartId);
+	public long getCompanyId() {
+		return _shoppingCart.getCompanyId();
 	}
 
 	/**
@@ -380,13 +218,75 @@ public class ShoppingCartWrapper implements ShoppingCart,
 	}
 
 	/**
-	* Sets the coupon codes of this shopping cart.
+	* Returns the user ID of this shopping cart.
 	*
-	* @param couponCodes the coupon codes of this shopping cart
+	* @return the user ID of this shopping cart
 	*/
 	@Override
-	public void setCouponCodes(java.lang.String couponCodes) {
-		_shoppingCart.setCouponCodes(couponCodes);
+	public long getUserId() {
+		return _shoppingCart.getUserId();
+	}
+
+	/**
+	* Sets the user ID of this shopping cart.
+	*
+	* @param userId the user ID of this shopping cart
+	*/
+	@Override
+	public void setUserId(long userId) {
+		_shoppingCart.setUserId(userId);
+	}
+
+	/**
+	* Returns the user uuid of this shopping cart.
+	*
+	* @return the user uuid of this shopping cart
+	* @throws SystemException if a system exception occurred
+	*/
+	@Override
+	public java.lang.String getUserUuid()
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return _shoppingCart.getUserUuid();
+	}
+
+	/**
+	* Sets the user uuid of this shopping cart.
+	*
+	* @param userUuid the user uuid of this shopping cart
+	*/
+	@Override
+	public void setUserUuid(java.lang.String userUuid) {
+		_shoppingCart.setUserUuid(userUuid);
+	}
+
+	/**
+	* Returns the user name of this shopping cart.
+	*
+	* @return the user name of this shopping cart
+	*/
+	@Override
+	public java.lang.String getUserName() {
+		return _shoppingCart.getUserName();
+	}
+
+	/**
+	* Sets the user name of this shopping cart.
+	*
+	* @param userName the user name of this shopping cart
+	*/
+	@Override
+	public void setUserName(java.lang.String userName) {
+		_shoppingCart.setUserName(userName);
+	}
+
+	/**
+	* Returns the create date of this shopping cart.
+	*
+	* @return the create date of this shopping cart
+	*/
+	@Override
+	public java.util.Date getCreateDate() {
+		return _shoppingCart.getCreateDate();
 	}
 
 	/**
@@ -397,6 +297,156 @@ public class ShoppingCartWrapper implements ShoppingCart,
 	@Override
 	public void setCreateDate(java.util.Date createDate) {
 		_shoppingCart.setCreateDate(createDate);
+	}
+
+	/**
+	* Returns the modified date of this shopping cart.
+	*
+	* @return the modified date of this shopping cart
+	*/
+	@Override
+	public java.util.Date getModifiedDate() {
+		return _shoppingCart.getModifiedDate();
+	}
+
+	/**
+	* Sets the modified date of this shopping cart.
+	*
+	* @param modifiedDate the modified date of this shopping cart
+	*/
+	@Override
+	public void setModifiedDate(java.util.Date modifiedDate) {
+		_shoppingCart.setModifiedDate(modifiedDate);
+	}
+
+	/**
+	* Returns the item IDs of this shopping cart.
+	*
+	* @return the item IDs of this shopping cart
+	*/
+	@Override
+	public java.lang.String getItemIds() {
+		return _shoppingCart.getItemIds();
+	}
+
+	/**
+	* Sets the item IDs of this shopping cart.
+	*
+	* @param itemIds the item IDs of this shopping cart
+	*/
+	@Override
+	public void setItemIds(java.lang.String itemIds) {
+		_shoppingCart.setItemIds(itemIds);
+	}
+
+	/**
+	* Returns the coupon codes of this shopping cart.
+	*
+	* @return the coupon codes of this shopping cart
+	*/
+	@Override
+	public java.lang.String getCouponCodes() {
+		return _shoppingCart.getCouponCodes();
+	}
+
+	/**
+	* Sets the coupon codes of this shopping cart.
+	*
+	* @param couponCodes the coupon codes of this shopping cart
+	*/
+	@Override
+	public void setCouponCodes(java.lang.String couponCodes) {
+		_shoppingCart.setCouponCodes(couponCodes);
+	}
+
+	/**
+	* Returns the alt shipping of this shopping cart.
+	*
+	* @return the alt shipping of this shopping cart
+	*/
+	@Override
+	public int getAltShipping() {
+		return _shoppingCart.getAltShipping();
+	}
+
+	/**
+	* Sets the alt shipping of this shopping cart.
+	*
+	* @param altShipping the alt shipping of this shopping cart
+	*/
+	@Override
+	public void setAltShipping(int altShipping) {
+		_shoppingCart.setAltShipping(altShipping);
+	}
+
+	/**
+	* Returns the insure of this shopping cart.
+	*
+	* @return the insure of this shopping cart
+	*/
+	@Override
+	public boolean getInsure() {
+		return _shoppingCart.getInsure();
+	}
+
+	/**
+	* Returns <code>true</code> if this shopping cart is insure.
+	*
+	* @return <code>true</code> if this shopping cart is insure; <code>false</code> otherwise
+	*/
+	@Override
+	public boolean isInsure() {
+		return _shoppingCart.isInsure();
+	}
+
+	/**
+	* Sets whether this shopping cart is insure.
+	*
+	* @param insure the insure of this shopping cart
+	*/
+	@Override
+	public void setInsure(boolean insure) {
+		_shoppingCart.setInsure(insure);
+	}
+
+	@Override
+	public boolean isNew() {
+		return _shoppingCart.isNew();
+	}
+
+	@Override
+	public void setNew(boolean n) {
+		_shoppingCart.setNew(n);
+	}
+
+	@Override
+	public boolean isCachedModel() {
+		return _shoppingCart.isCachedModel();
+	}
+
+	@Override
+	public void setCachedModel(boolean cachedModel) {
+		_shoppingCart.setCachedModel(cachedModel);
+	}
+
+	@Override
+	public boolean isEscapedModel() {
+		return _shoppingCart.isEscapedModel();
+	}
+
+	@Override
+	public java.io.Serializable getPrimaryKeyObj() {
+		return _shoppingCart.getPrimaryKeyObj();
+	}
+
+	@Override
+	public void setPrimaryKeyObj(java.io.Serializable primaryKeyObj) {
+		_shoppingCart.setPrimaryKeyObj(primaryKeyObj);
+	}
+
+	@Override
+	public com.liferay.portlet.expando.model.ExpandoBridge getExpandoBridge() {
+		return _shoppingCart.getExpandoBridge();
 	}
 
 	@Override
@@ -417,94 +467,20 @@ public class ShoppingCartWrapper implements ShoppingCart,
 		_shoppingCart.setExpandoBridgeAttributes(serviceContext);
 	}
 
-	/**
-	* Sets the group ID of this shopping cart.
-	*
-	* @param groupId the group ID of this shopping cart
-	*/
 	@Override
-	public void setGroupId(long groupId) {
-		_shoppingCart.setGroupId(groupId);
-	}
-
-	/**
-	* Sets whether this shopping cart is insure.
-	*
-	* @param insure the insure of this shopping cart
-	*/
-	@Override
-	public void setInsure(boolean insure) {
-		_shoppingCart.setInsure(insure);
-	}
-
-	/**
-	* Sets the item IDs of this shopping cart.
-	*
-	* @param itemIds the item IDs of this shopping cart
-	*/
-	@Override
-	public void setItemIds(java.lang.String itemIds) {
-		_shoppingCart.setItemIds(itemIds);
-	}
-
-	/**
-	* Sets the modified date of this shopping cart.
-	*
-	* @param modifiedDate the modified date of this shopping cart
-	*/
-	@Override
-	public void setModifiedDate(java.util.Date modifiedDate) {
-		_shoppingCart.setModifiedDate(modifiedDate);
+	public java.lang.Object clone() {
+		return new ShoppingCartWrapper((ShoppingCart)_shoppingCart.clone());
 	}
 
 	@Override
-	public void setNew(boolean n) {
-		_shoppingCart.setNew(n);
-	}
-
-	/**
-	* Sets the primary key of this shopping cart.
-	*
-	* @param primaryKey the primary key of this shopping cart
-	*/
-	@Override
-	public void setPrimaryKey(long primaryKey) {
-		_shoppingCart.setPrimaryKey(primaryKey);
+	public int compareTo(
+		com.liferay.portlet.shopping.model.ShoppingCart shoppingCart) {
+		return _shoppingCart.compareTo(shoppingCart);
 	}
 
 	@Override
-	public void setPrimaryKeyObj(java.io.Serializable primaryKeyObj) {
-		_shoppingCart.setPrimaryKeyObj(primaryKeyObj);
-	}
-
-	/**
-	* Sets the user ID of this shopping cart.
-	*
-	* @param userId the user ID of this shopping cart
-	*/
-	@Override
-	public void setUserId(long userId) {
-		_shoppingCart.setUserId(userId);
-	}
-
-	/**
-	* Sets the user name of this shopping cart.
-	*
-	* @param userName the user name of this shopping cart
-	*/
-	@Override
-	public void setUserName(java.lang.String userName) {
-		_shoppingCart.setUserName(userName);
-	}
-
-	/**
-	* Sets the user uuid of this shopping cart.
-	*
-	* @param userUuid the user uuid of this shopping cart
-	*/
-	@Override
-	public void setUserUuid(java.lang.String userUuid) {
-		_shoppingCart.setUserUuid(userUuid);
+	public int hashCode() {
+		return _shoppingCart.hashCode();
 	}
 
 	@Override
@@ -518,18 +494,47 @@ public class ShoppingCartWrapper implements ShoppingCart,
 	}
 
 	@Override
-	public java.lang.String toString() {
-		return _shoppingCart.toString();
-	}
-
-	@Override
 	public com.liferay.portlet.shopping.model.ShoppingCart toUnescapedModel() {
 		return new ShoppingCartWrapper(_shoppingCart.toUnescapedModel());
 	}
 
 	@Override
+	public java.lang.String toString() {
+		return _shoppingCart.toString();
+	}
+
+	@Override
 	public java.lang.String toXmlString() {
 		return _shoppingCart.toXmlString();
+	}
+
+	@Override
+	public void persist()
+		throws com.liferay.portal.kernel.exception.SystemException {
+		_shoppingCart.persist();
+	}
+
+	@Override
+	public void addItemId(long itemId, java.lang.String fields) {
+		_shoppingCart.addItemId(itemId, fields);
+	}
+
+	@Override
+	public com.liferay.portlet.shopping.model.ShoppingCoupon getCoupon()
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _shoppingCart.getCoupon();
+	}
+
+	@Override
+	public java.util.Map<com.liferay.portlet.shopping.model.ShoppingCartItem, java.lang.Integer> getItems()
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return _shoppingCart.getItems();
+	}
+
+	@Override
+	public int getItemsSize() {
+		return _shoppingCart.getItemsSize();
 	}
 
 	@Override
@@ -554,7 +559,6 @@ public class ShoppingCartWrapper implements ShoppingCart,
 	/**
 	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedModel}
 	 */
-	@Deprecated
 	public ShoppingCart getWrappedShoppingCart() {
 		return _shoppingCart;
 	}
@@ -565,19 +569,9 @@ public class ShoppingCartWrapper implements ShoppingCart,
 	}
 
 	@Override
-	public boolean isEntityCacheEnabled() {
-		return _shoppingCart.isEntityCacheEnabled();
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return _shoppingCart.isFinderCacheEnabled();
-	}
-
-	@Override
 	public void resetOriginalValues() {
 		_shoppingCart.resetOriginalValues();
 	}
 
-	private final ShoppingCart _shoppingCart;
+	private ShoppingCart _shoppingCart;
 }

@@ -2,14 +2,13 @@ package ${packagePath}.model;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.lar.StagedModelType;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.ModelWrapper;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portlet.expando.model.ExpandoBridge;
 import com.liferay.portlet.expando.util.ExpandoBridgeFactoryUtil;
-
-import java.io.Serializable;
 
 import java.sql.Blob;
 
@@ -27,7 +26,10 @@ import java.util.Map;
  * @generated
  */
 
-@ProviderType
+<#if pluginName == "">
+	@ProviderType
+</#if>
+
 public class ${entity.name}Wrapper implements ${entity.name}, ModelWrapper<${entity.name}> {
 
 	public ${entity.name}Wrapper(${entity.name} ${entity.varName}) {
@@ -61,7 +63,7 @@ public class ${entity.name}Wrapper implements ${entity.name}, ModelWrapper<${ent
 			<#if column.isPrimitiveType()>
 				${serviceBuilder.getPrimitiveObj(column.type)}
 			<#else>
-				${column.genericizedType}
+				${column.type}
 			</#if>
 
 			${column.name} =
@@ -69,7 +71,7 @@ public class ${entity.name}Wrapper implements ${entity.name}, ModelWrapper<${ent
 			<#if column.isPrimitiveType()>
 				(${serviceBuilder.getPrimitiveObj(column.type)})
 			<#else>
-				(${column.genericizedType})
+				(${column.type})
 			</#if>
 
 			attributes.get("${column.name}");
@@ -81,7 +83,7 @@ public class ${entity.name}Wrapper implements ${entity.name}, ModelWrapper<${ent
 	}
 
 	<#list methods as method>
-		<#if !method.isConstructor() && !method.isStatic() && method.isPublic() && !(method.name == "equals" && (parameters?size == 1))>
+		<#if !method.isConstructor() && !method.isStatic() && method.isPublic() && !serviceBuilder.isDuplicateMethod(method, tempMap) && !(method.name == "equals" && (parameters?size == 1))>
 			<#if method.name == "getStagedModelType">
 				<#assign hasGetStagedModelTypeMethod = true>
 			</#if>
@@ -89,11 +91,6 @@ public class ${entity.name}Wrapper implements ${entity.name}, ModelWrapper<${ent
 			<#assign parameters = method.parameters>
 
 			${serviceBuilder.getJavadocComment(method)}
-
-			<#if serviceBuilder.hasAnnotation(method, "Deprecated")>
-				@Deprecated
-			</#if>
-
 			@Override
 			public ${serviceBuilder.getTypeGenericsName(method.returns)} ${method.name} (
 
@@ -164,33 +161,6 @@ public class ${entity.name}Wrapper implements ${entity.name}, ModelWrapper<${ent
 		return false;
 	}
 
-	<#if entity.isHierarchicalTree()>
-		@Override
-		public long getNestedSetsTreeNodeLeft() {
-			return _${entity.varName}.getNestedSetsTreeNodeLeft();
-		}
-
-		@Override
-		public long getNestedSetsTreeNodeRight() {
-			return _${entity.varName}.getNestedSetsTreeNodeRight();
-		}
-
-		@Override
-		public long getNestedSetsTreeNodeScopeId() {
-			return _${entity.varName}.getNestedSetsTreeNodeScopeId();
-		}
-
-		@Override
-		public void setNestedSetsTreeNodeLeft(long nestedSetsTreeNodeLeft) {
-			_${entity.varName}.setNestedSetsTreeNodeLeft(nestedSetsTreeNodeLeft);
-		}
-
-		@Override
-		public void setNestedSetsTreeNodeRight(long nestedSetsTreeNodeRight) {
-			_${entity.varName}.setNestedSetsTreeNodeRight(nestedSetsTreeNodeRight);
-		}
-	</#if>
-
 	<#if entity.isStagedModel() && !hasGetStagedModelTypeMethod!false>
 		@Override
 		public StagedModelType getStagedModelType() {
@@ -201,7 +171,6 @@ public class ${entity.name}Wrapper implements ${entity.name}, ModelWrapper<${ent
 	/**
 	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedModel}
 	 */
-	@Deprecated
 	public ${entity.name} getWrapped${entity.name}() {
 		return _${entity.varName};
 	}
@@ -212,20 +181,10 @@ public class ${entity.name}Wrapper implements ${entity.name}, ModelWrapper<${ent
 	}
 
 	@Override
-	public boolean isEntityCacheEnabled() {
-		return _${entity.varName}.isEntityCacheEnabled();
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return _${entity.varName}.isFinderCacheEnabled();
-	}
-
-	@Override
 	public void resetOriginalValues() {
 		_${entity.varName}.resetOriginalValues();
 	}
 
-	private final ${entity.name} _${entity.varName};
+	private ${entity.name} _${entity.varName};
 
 }

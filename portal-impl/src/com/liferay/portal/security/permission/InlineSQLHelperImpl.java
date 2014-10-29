@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -302,59 +302,17 @@ public class InlineSQLHelperImpl implements InlineSQLHelper {
 	}
 
 	protected long[] getRoleIds(long[] groupIds) {
-		Set<Long> roleIds = new HashSet<Long>();
+		long[] roleIds = PermissionChecker.DEFAULT_ROLE_IDS;
 
 		for (long groupId : groupIds) {
 			for (long roleId : getRoleIds(groupId)) {
-				roleIds.add(roleId);
+				if (!ArrayUtil.contains(roleIds, roleId)) {
+					roleIds = ArrayUtil.append(roleIds, roleId);
+				}
 			}
 		}
 
-		return ArrayUtil.toLongArray(roleIds);
-	}
-
-	protected String getRoleIdsOrOwnerIdSQL(
-		PermissionChecker permissionChecker, long[] groupIds,
-		String userIdField) {
-
-		StringBundler sb = new StringBundler();
-
-		sb.append(StringPool.OPEN_PARENTHESIS);
-
-		sb.append("ResourcePermission.roleId IN (");
-
-		long[] roleIds = getRoleIds(groupIds);
-
-		if (roleIds.length == 0) {
-			roleIds = _NO_ROLE_IDS;
-		}
-
-		sb.append(StringUtil.merge(roleIds));
-
-		sb.append(StringPool.CLOSE_PARENTHESIS);
-
-		if (permissionChecker.isSignedIn()) {
-			sb.append(" OR ");
-
-			long userId = permissionChecker.getUserId();
-
-			if (Validator.isNotNull(userIdField)) {
-				sb.append(StringPool.OPEN_PARENTHESIS);
-				sb.append(userIdField);
-				sb.append(" = ");
-				sb.append(userId);
-				sb.append(StringPool.CLOSE_PARENTHESIS);
-			}
-			else {
-				sb.append("(ResourcePermission.ownerId = ");
-				sb.append(userId);
-				sb.append(StringPool.CLOSE_PARENTHESIS);
-			}
-		}
-
-		sb.append(StringPool.CLOSE_PARENTHESIS);
-
-		return sb.toString();
+		return roleIds;
 	}
 
 	protected long getUserId() {
@@ -548,7 +506,12 @@ public class InlineSQLHelperImpl implements InlineSQLHelper {
 
 		sb.append("(((InlineSQLResourcePermission.primKey = CAST_TEXT(");
 		sb.append(classPKField);
-		sb.append(")) AND ((");
+		sb.append(")) AND (((");
+		sb.append("InlineSQLResourcePermission.scope = ");
+		sb.append(ResourceConstants.SCOPE_INDIVIDUAL);
+		sb.append(") AND ");
+
+		long userId = getUserId();
 
 		boolean hasPreviousViewableGroup = false;
 
@@ -581,6 +544,42 @@ public class InlineSQLHelperImpl implements InlineSQLHelper {
 
 				sb.append(groupId);
 				sb.append(StringPool.CLOSE_PARENTHESIS);
+
+				long[] roleIds = getRoleIds(groupId);
+
+				if (roleIds.length == 0) {
+					roleIds = _NO_ROLE_IDS;
+				}
+
+				sb.append(" AND (");
+
+				for (int i = 0; i < roleIds.length; i++) {
+					if (i > 0) {
+						sb.append(" OR ");
+					}
+
+					sb.append("InlineSQLResourcePermission.roleId = ");
+					sb.append(roleIds[i]);
+				}
+
+				if (permissionChecker.isSignedIn()) {
+					sb.append(" OR ");
+
+					if (Validator.isNotNull(userIdField)) {
+						sb.append(StringPool.OPEN_PARENTHESIS);
+						sb.append(userIdField);
+						sb.append(" = ");
+						sb.append(userId);
+						sb.append(StringPool.CLOSE_PARENTHESIS);
+					}
+					else {
+						sb.append("(InlineSQLResourcePermission.ownerId = ");
+						sb.append(userId);
+						sb.append(StringPool.CLOSE_PARENTHESIS);
+					}
+				}
+
+				sb.append(StringPool.CLOSE_PARENTHESIS);
 			}
 			else {
 				viewableGroupIds.add(groupId);
@@ -611,20 +610,14 @@ public class InlineSQLHelperImpl implements InlineSQLHelper {
 
 		sb.append(")))");
 
-		String roleIdsOrOwnerIdSQL = getRoleIdsOrOwnerIdSQL(
-			permissionChecker, groupIds, userIdField);
-
-		int scope = ResourceConstants.SCOPE_INDIVIDUAL;
-
 		permissionJoin = StringUtil.replace(
 			permissionJoin,
 			new String[] {
-				"[$CLASS_NAME$]", "[$COMPANY_ID$]", "[$PRIM_KEYS$]",
-				"[$RESOURCE_SCOPE_INDIVIDUAL$]", "[$ROLE_IDS_OR_OWNER_ID$]"
+				"[$CLASS_NAME$]", "[$COMPANY_ID$]", "[$PRIM_KEYS$]"
 			},
 			new String[] {
 				className, String.valueOf(permissionChecker.getCompanyId()),
-				sb.toString(), String.valueOf(scope), roleIdsOrOwnerIdSQL
+				sb.toString()
 			});
 
 		int pos = sql.indexOf(_WHERE_CLAUSE);

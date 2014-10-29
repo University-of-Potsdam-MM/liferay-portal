@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,6 +14,7 @@
 
 package com.liferay.portal.plugin;
 
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.model.Plugin;
 import com.liferay.portal.model.PluginSetting;
 import com.liferay.portal.model.User;
@@ -28,7 +29,8 @@ import java.util.List;
 public class PluginUtil {
 
 	public static <P extends Plugin> List<P> restrictPlugins(
-		List<P> plugins, long companyId, long userId) {
+			List<P> plugins, long companyId, long userId)
+		throws SystemException {
 
 		List<P> visiblePlugins = new ArrayList<P>(plugins.size());
 
@@ -48,7 +50,8 @@ public class PluginUtil {
 	}
 
 	public static <P extends Plugin> List<P> restrictPlugins(
-		List<P> plugins, User user) {
+			List<P> plugins, User user)
+		throws SystemException {
 
 		return restrictPlugins(plugins, user.getCompanyId(), user.getUserId());
 	}

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -37,10 +37,12 @@ public class ServiceComponentLocalServiceWrapper
 	*
 	* @param serviceComponent the service component
 	* @return the service component that was added
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
 	public com.liferay.portal.model.ServiceComponent addServiceComponent(
-		com.liferay.portal.model.ServiceComponent serviceComponent) {
+		com.liferay.portal.model.ServiceComponent serviceComponent)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return _serviceComponentLocalService.addServiceComponent(serviceComponent);
 	}
 
@@ -57,13 +59,19 @@ public class ServiceComponentLocalServiceWrapper
 	}
 
 	/**
-	* @throws PortalException
+	* Deletes the service component with the primary key from the database. Also notifies the appropriate model listeners.
+	*
+	* @param serviceComponentId the primary key of the service component
+	* @return the service component that was removed
+	* @throws PortalException if a service component with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
-	public com.liferay.portal.model.PersistedModel deletePersistedModel(
-		com.liferay.portal.model.PersistedModel persistedModel)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _serviceComponentLocalService.deletePersistedModel(persistedModel);
+	public com.liferay.portal.model.ServiceComponent deleteServiceComponent(
+		long serviceComponentId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _serviceComponentLocalService.deleteServiceComponent(serviceComponentId);
 	}
 
 	/**
@@ -71,33 +79,13 @@ public class ServiceComponentLocalServiceWrapper
 	*
 	* @param serviceComponent the service component
 	* @return the service component that was removed
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
 	public com.liferay.portal.model.ServiceComponent deleteServiceComponent(
-		com.liferay.portal.model.ServiceComponent serviceComponent) {
+		com.liferay.portal.model.ServiceComponent serviceComponent)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return _serviceComponentLocalService.deleteServiceComponent(serviceComponent);
-	}
-
-	/**
-	* Deletes the service component with the primary key from the database. Also notifies the appropriate model listeners.
-	*
-	* @param serviceComponentId the primary key of the service component
-	* @return the service component that was removed
-	* @throws PortalException if a service component with the primary key could not be found
-	*/
-	@Override
-	public com.liferay.portal.model.ServiceComponent deleteServiceComponent(
-		long serviceComponentId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _serviceComponentLocalService.deleteServiceComponent(serviceComponentId);
-	}
-
-	@Override
-	public void destroyServiceComponent(
-		com.liferay.portal.service.configuration.ServiceComponentConfiguration serviceComponentConfiguration,
-		java.lang.ClassLoader classLoader) {
-		_serviceComponentLocalService.destroyServiceComponent(serviceComponentConfiguration,
-			classLoader);
 	}
 
 	@Override
@@ -110,10 +98,13 @@ public class ServiceComponentLocalServiceWrapper
 	*
 	* @param dynamicQuery the dynamic query
 	* @return the matching rows
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
-	public <T> java.util.List<T> dynamicQuery(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery) {
+	@SuppressWarnings("rawtypes")
+	public java.util.List dynamicQuery(
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return _serviceComponentLocalService.dynamicQuery(dynamicQuery);
 	}
 
@@ -128,11 +119,13 @@ public class ServiceComponentLocalServiceWrapper
 	* @param start the lower bound of the range of model instances
 	* @param end the upper bound of the range of model instances (not inclusive)
 	* @return the range of matching rows
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
-	public <T> java.util.List<T> dynamicQuery(
+	@SuppressWarnings("rawtypes")
+	public java.util.List dynamicQuery(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
-		int end) {
+		int end) throws com.liferay.portal.kernel.exception.SystemException {
 		return _serviceComponentLocalService.dynamicQuery(dynamicQuery, start,
 			end);
 	}
@@ -149,12 +142,15 @@ public class ServiceComponentLocalServiceWrapper
 	* @param end the upper bound of the range of model instances (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching rows
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
-	public <T> java.util.List<T> dynamicQuery(
+	@SuppressWarnings("rawtypes")
+	public java.util.List dynamicQuery(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
 		int end,
-		com.liferay.portal.kernel.util.OrderByComparator<T> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return _serviceComponentLocalService.dynamicQuery(dynamicQuery, start,
 			end, orderByComparator);
 	}
@@ -164,10 +160,12 @@ public class ServiceComponentLocalServiceWrapper
 	*
 	* @param dynamicQuery the dynamic query
 	* @return the number of rows that match the dynamic query
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
 	public long dynamicQueryCount(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery) {
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return _serviceComponentLocalService.dynamicQueryCount(dynamicQuery);
 	}
 
@@ -177,41 +175,22 @@ public class ServiceComponentLocalServiceWrapper
 	* @param dynamicQuery the dynamic query
 	* @param projection the projection to apply to the query
 	* @return the number of rows that match the dynamic query
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
 	public long dynamicQueryCount(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery,
-		com.liferay.portal.kernel.dao.orm.Projection projection) {
+		com.liferay.portal.kernel.dao.orm.Projection projection)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return _serviceComponentLocalService.dynamicQueryCount(dynamicQuery,
 			projection);
 	}
 
 	@Override
 	public com.liferay.portal.model.ServiceComponent fetchServiceComponent(
-		long serviceComponentId) {
+		long serviceComponentId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return _serviceComponentLocalService.fetchServiceComponent(serviceComponentId);
-	}
-
-	@Override
-	public com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery getActionableDynamicQuery() {
-		return _serviceComponentLocalService.getActionableDynamicQuery();
-	}
-
-	/**
-	* Returns the Spring bean ID for this bean.
-	*
-	* @return the Spring bean ID for this bean
-	*/
-	@Override
-	public java.lang.String getBeanIdentifier() {
-		return _serviceComponentLocalService.getBeanIdentifier();
-	}
-
-	@Override
-	public com.liferay.portal.model.PersistedModel getPersistedModel(
-		java.io.Serializable primaryKeyObj)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _serviceComponentLocalService.getPersistedModel(primaryKeyObj);
 	}
 
 	/**
@@ -220,12 +199,22 @@ public class ServiceComponentLocalServiceWrapper
 	* @param serviceComponentId the primary key of the service component
 	* @return the service component
 	* @throws PortalException if a service component with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
 	public com.liferay.portal.model.ServiceComponent getServiceComponent(
 		long serviceComponentId)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return _serviceComponentLocalService.getServiceComponent(serviceComponentId);
+	}
+
+	@Override
+	public com.liferay.portal.model.PersistedModel getPersistedModel(
+		java.io.Serializable primaryKeyObj)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _serviceComponentLocalService.getPersistedModel(primaryKeyObj);
 	}
 
 	/**
@@ -238,10 +227,12 @@ public class ServiceComponentLocalServiceWrapper
 	* @param start the lower bound of the range of service components
 	* @param end the upper bound of the range of service components (not inclusive)
 	* @return the range of service components
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
 	public java.util.List<com.liferay.portal.model.ServiceComponent> getServiceComponents(
-		int start, int end) {
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return _serviceComponentLocalService.getServiceComponents(start, end);
 	}
 
@@ -249,21 +240,36 @@ public class ServiceComponentLocalServiceWrapper
 	* Returns the number of service components.
 	*
 	* @return the number of service components
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
-	public int getServiceComponentsCount() {
+	public int getServiceComponentsCount()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return _serviceComponentLocalService.getServiceComponentsCount();
 	}
 
+	/**
+	* Updates the service component in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
+	*
+	* @param serviceComponent the service component
+	* @return the service component that was updated
+	* @throws SystemException if a system exception occurred
+	*/
 	@Override
-	public com.liferay.portal.model.ServiceComponent initServiceComponent(
-		com.liferay.portal.service.configuration.ServiceComponentConfiguration serviceComponentConfiguration,
-		java.lang.ClassLoader classLoader, java.lang.String buildNamespace,
-		long buildNumber, long buildDate, boolean buildAutoUpgrade)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _serviceComponentLocalService.initServiceComponent(serviceComponentConfiguration,
-			classLoader, buildNamespace, buildNumber, buildDate,
-			buildAutoUpgrade);
+	public com.liferay.portal.model.ServiceComponent updateServiceComponent(
+		com.liferay.portal.model.ServiceComponent serviceComponent)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return _serviceComponentLocalService.updateServiceComponent(serviceComponent);
+	}
+
+	/**
+	* Returns the Spring bean ID for this bean.
+	*
+	* @return the Spring bean ID for this bean
+	*/
+	@Override
+	public java.lang.String getBeanIdentifier() {
+		return _serviceComponentLocalService.getBeanIdentifier();
 	}
 
 	/**
@@ -276,16 +282,25 @@ public class ServiceComponentLocalServiceWrapper
 		_serviceComponentLocalService.setBeanIdentifier(beanIdentifier);
 	}
 
-	/**
-	* Updates the service component in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
-	*
-	* @param serviceComponent the service component
-	* @return the service component that was updated
-	*/
 	@Override
-	public com.liferay.portal.model.ServiceComponent updateServiceComponent(
-		com.liferay.portal.model.ServiceComponent serviceComponent) {
-		return _serviceComponentLocalService.updateServiceComponent(serviceComponent);
+	public void destroyServiceComponent(
+		javax.servlet.ServletContext servletContext,
+		java.lang.ClassLoader classLoader)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		_serviceComponentLocalService.destroyServiceComponent(servletContext,
+			classLoader);
+	}
+
+	@Override
+	public com.liferay.portal.model.ServiceComponent initServiceComponent(
+		javax.servlet.ServletContext servletContext,
+		java.lang.ClassLoader classLoader, java.lang.String buildNamespace,
+		long buildNumber, long buildDate, boolean buildAutoUpgrade)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _serviceComponentLocalService.initServiceComponent(servletContext,
+			classLoader, buildNamespace, buildNumber, buildDate,
+			buildAutoUpgrade);
 	}
 
 	@Override
@@ -301,14 +316,14 @@ public class ServiceComponentLocalServiceWrapper
 	}
 
 	@Override
-	public void verifyDB() {
+	public void verifyDB()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		_serviceComponentLocalService.verifyDB();
 	}
 
 	/**
 	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedService}
 	 */
-	@Deprecated
 	public ServiceComponentLocalService getWrappedServiceComponentLocalService() {
 		return _serviceComponentLocalService;
 	}
@@ -316,7 +331,6 @@ public class ServiceComponentLocalServiceWrapper
 	/**
 	 * @deprecated As of 6.1.0, replaced by {@link #setWrappedService}
 	 */
-	@Deprecated
 	public void setWrappedServiceComponentLocalService(
 		ServiceComponentLocalService serviceComponentLocalService) {
 		_serviceComponentLocalService = serviceComponentLocalService;

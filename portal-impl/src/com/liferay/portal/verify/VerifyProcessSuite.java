@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -41,14 +41,12 @@ public class VerifyProcessSuite extends VerifyProcess {
 		verify(new VerifyCalendar());
 		verify(new VerifyDocumentLibrary());
 		verify(new VerifyDynamicDataMapping());
-		verify(new VerifyGroupedModel());
+		verify(new VerifyGroupId());
 		verify(new VerifyJournal());
 		verify(new VerifyLayout());
 		verify(new VerifyMessageBoards());
 		verify(new VerifyOrganization());
 		verify(new VerifyResourcePermissions());
-		verify(new VerifySocial());
-		verify(new VerifySystemEvent());
 		verify(new VerifyUser());
 		verify(new VerifyWiki());
 		verify(new VerifyWorkflow());

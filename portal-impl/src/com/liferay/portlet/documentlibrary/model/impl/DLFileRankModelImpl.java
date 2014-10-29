@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,20 +14,16 @@
 
 package com.liferay.portlet.documentlibrary.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
-import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.DateUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.CacheModel;
-import com.liferay.portal.model.User;
 import com.liferay.portal.model.impl.BaseModelImpl;
 import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.service.UserLocalServiceUtil;
+import com.liferay.portal.util.PortalUtil;
 
 import com.liferay.portlet.documentlibrary.model.DLFileRank;
 import com.liferay.portlet.documentlibrary.model.DLFileRankModel;
@@ -55,7 +51,6 @@ import java.util.Map;
  * @see com.liferay.portlet.documentlibrary.model.DLFileRankModel
  * @generated
  */
-@ProviderType
 public class DLFileRankModelImpl extends BaseModelImpl<DLFileRank>
 	implements DLFileRankModel {
 	/*
@@ -89,12 +84,12 @@ public class DLFileRankModelImpl extends BaseModelImpl<DLFileRank>
 	public static final boolean COLUMN_BITMASK_ENABLED = GetterUtil.getBoolean(com.liferay.portal.util.PropsUtil.get(
 				"value.object.column.bitmask.enabled.com.liferay.portlet.documentlibrary.model.DLFileRank"),
 			true);
-	public static final long ACTIVE_COLUMN_BITMASK = 1L;
-	public static final long COMPANYID_COLUMN_BITMASK = 2L;
-	public static final long FILEENTRYID_COLUMN_BITMASK = 4L;
-	public static final long GROUPID_COLUMN_BITMASK = 8L;
-	public static final long USERID_COLUMN_BITMASK = 16L;
-	public static final long CREATEDATE_COLUMN_BITMASK = 32L;
+	public static long ACTIVE_COLUMN_BITMASK = 1L;
+	public static long COMPANYID_COLUMN_BITMASK = 2L;
+	public static long FILEENTRYID_COLUMN_BITMASK = 4L;
+	public static long GROUPID_COLUMN_BITMASK = 8L;
+	public static long USERID_COLUMN_BITMASK = 16L;
+	public static long CREATEDATE_COLUMN_BITMASK = 32L;
 	public static final long LOCK_EXPIRATION_TIME = GetterUtil.getLong(com.liferay.portal.util.PropsUtil.get(
 				"lock.expiration.time.com.liferay.portlet.documentlibrary.model.DLFileRank"));
 
@@ -142,9 +137,6 @@ public class DLFileRankModelImpl extends BaseModelImpl<DLFileRank>
 		attributes.put("createDate", getCreateDate());
 		attributes.put("fileEntryId", getFileEntryId());
 		attributes.put("active", getActive());
-
-		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
-		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
 
 		return attributes;
 	}
@@ -267,19 +259,13 @@ public class DLFileRankModelImpl extends BaseModelImpl<DLFileRank>
 	}
 
 	@Override
-	public String getUserUuid() {
-		try {
-			User user = UserLocalServiceUtil.getUserById(getUserId());
-
-			return user.getUuid();
-		}
-		catch (PortalException pe) {
-			return StringPool.BLANK;
-		}
+	public String getUserUuid() throws SystemException {
+		return PortalUtil.getUserValue(getUserId(), "uuid", _userUuid);
 	}
 
 	@Override
 	public void setUserUuid(String userUuid) {
+		_userUuid = userUuid;
 	}
 
 	public long getOriginalUserId() {
@@ -434,16 +420,6 @@ public class DLFileRankModelImpl extends BaseModelImpl<DLFileRank>
 	}
 
 	@Override
-	public boolean isEntityCacheEnabled() {
-		return ENTITY_CACHE_ENABLED;
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return FINDER_CACHE_ENABLED;
-	}
-
-	@Override
 	public void resetOriginalValues() {
 		DLFileRankModelImpl dlFileRankModelImpl = this;
 
@@ -563,8 +539,8 @@ public class DLFileRankModelImpl extends BaseModelImpl<DLFileRank>
 		return sb.toString();
 	}
 
-	private static final ClassLoader _classLoader = DLFileRank.class.getClassLoader();
-	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
+	private static ClassLoader _classLoader = DLFileRank.class.getClassLoader();
+	private static Class<?>[] _escapedModelInterfaces = new Class[] {
 			DLFileRank.class
 		};
 	private long _fileRankId;
@@ -575,6 +551,7 @@ public class DLFileRankModelImpl extends BaseModelImpl<DLFileRank>
 	private long _originalCompanyId;
 	private boolean _setOriginalCompanyId;
 	private long _userId;
+	private String _userUuid;
 	private long _originalUserId;
 	private boolean _setOriginalUserId;
 	private Date _createDate;

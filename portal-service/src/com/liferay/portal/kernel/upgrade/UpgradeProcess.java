@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,11 +18,11 @@ import com.liferay.portal.kernel.dao.db.BaseDBProcess;
 import com.liferay.portal.kernel.dao.db.DB;
 import com.liferay.portal.kernel.dao.db.DBFactoryUtil;
 import com.liferay.portal.kernel.dao.jdbc.DataAccess;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.upgrade.util.UpgradeTable;
 import com.liferay.portal.kernel.upgrade.util.UpgradeTableFactoryUtil;
-import com.liferay.portal.kernel.util.StringUtil;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -49,23 +49,35 @@ public abstract class UpgradeProcess extends BaseDBProcess {
 	}
 
 	public boolean hasTable(String tableName) throws Exception {
-		if (doHasTable(StringUtil.toLowerCase(tableName)) ||
-			doHasTable(StringUtil.toUpperCase(tableName)) ||
-			doHasTable(tableName)) {
+		Connection con = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
 
-			return true;
+		try {
+			con = DataAccess.getUpgradeOptimizedConnection();
+
+			DatabaseMetaData metadata = con.getMetaData();
+
+			rs = metadata.getTables(null, null, tableName, null);
+
+			while (rs.next()) {
+				return true;
+			}
+		}
+		finally {
+			DataAccess.cleanUp(con, ps, rs);
 		}
 
 		return false;
 	}
 
-	public long increment() {
+	public long increment() throws SystemException {
 		DB db = DBFactoryUtil.getDB();
 
 		return db.increment();
 	}
 
-	public long increment(String name) {
+	public long increment(String name) throws SystemException {
 		DB db = DBFactoryUtil.getDB();
 
 		return db.increment(name);
@@ -114,7 +126,7 @@ public abstract class UpgradeProcess extends BaseDBProcess {
 			for (int i = 0; i < rsmd.getColumnCount(); i++) {
 				String curColumnName = rsmd.getColumnName(i + 1);
 
-				if (StringUtil.equalsIgnoreCase(curColumnName, columnName)) {
+				if (curColumnName.equals(columnName)) {
 					return true;
 				}
 			}
@@ -185,29 +197,6 @@ public abstract class UpgradeProcess extends BaseDBProcess {
 
 	public void upgrade(UpgradeProcess upgradeProcess) throws UpgradeException {
 		upgradeProcess.upgrade();
-	}
-
-	protected boolean doHasTable(String tableName) throws Exception {
-		Connection con = null;
-		PreparedStatement ps = null;
-		ResultSet rs = null;
-
-		try {
-			con = DataAccess.getUpgradeOptimizedConnection();
-
-			DatabaseMetaData metadata = con.getMetaData();
-
-			rs = metadata.getTables(null, null, tableName, null);
-
-			while (rs.next()) {
-				return true;
-			}
-		}
-		finally {
-			DataAccess.cleanUp(con, ps, rs);
-		}
-
-		return false;
 	}
 
 	protected void doUpgrade() throws Exception {

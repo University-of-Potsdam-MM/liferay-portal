@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,7 +14,7 @@
 
 package com.liferay.portal.tools.sourceformatter;
 
-import com.liferay.portal.kernel.util.NaturalOrderStringComparator;
+import com.liferay.portal.kernel.util.NumericalStringComparator;
 import com.liferay.portal.kernel.util.StringUtil;
 
 import java.util.Comparator;
@@ -25,27 +25,68 @@ import java.util.List;
  */
 public class JavaTermComparator implements Comparator<JavaTerm> {
 
-	public JavaTermComparator() {
-		this(true);
-	}
-
-	public JavaTermComparator(boolean ascending) {
-		_ascending = ascending;
-	}
-
 	@Override
 	public int compare(JavaTerm javaTerm1, JavaTerm javaTerm2) {
-		int value = doCompare(javaTerm1, javaTerm2);
+		int type1 = javaTerm1.getType();
+		int type2 = javaTerm2.getType();
 
-		if (_ascending) {
-			return value;
+		if (type1 != type2) {
+			return type1 - type2;
 		}
-		else {
-			return -value;
+
+		String name1 = javaTerm1.getName();
+		String name2 = javaTerm2.getName();
+
+		if (type1 == JavaSourceProcessor.TYPE_VARIABLE_PRIVATE_STATIC) {
+			if (name2.equals("_log")) {
+				return 1;
+			}
+
+			if (name1.equals("_instance") || name1.equals("_log")) {
+				return -1;
+			}
+
+			if (name2.equals("_instance")) {
+				return 1;
+			}
 		}
+
+		if (JavaSourceProcessor.isInJavaTermTypeGroup(
+				type1, JavaSourceProcessor.TYPE_VARIABLE)) {
+
+			if (StringUtil.isUpperCase(name1) &&
+				!StringUtil.isLowerCase(name1) &&
+				!StringUtil.isUpperCase(name2)) {
+
+				return -1;
+			}
+
+			if (!StringUtil.isUpperCase(name1) &&
+				StringUtil.isUpperCase(name2) &&
+				!StringUtil.isLowerCase(name2)) {
+
+				return 1;
+			}
+		}
+
+		if (name1.compareToIgnoreCase(name2) != 0) {
+			NumericalStringComparator numericalStringComparator =
+				new NumericalStringComparator(true, false);
+
+			return numericalStringComparator.compare(name1, name2);
+		}
+
+		if (name1.compareTo(name2) != 0) {
+			NumericalStringComparator numericalStringComparator =
+				new NumericalStringComparator(true, true);
+
+			return -numericalStringComparator.compare(name1, name2);
+		}
+
+		return _compareParameterTypes(javaTerm1, javaTerm2);
 	}
 
-	protected int compareParameterTypes(
+	private static int _compareParameterTypes(
 		JavaTerm javaTerm1, JavaTerm javaTerm2) {
 
 		List<String> parameterTypes2 = javaTerm2.getParameterTypes();
@@ -86,67 +127,5 @@ public class JavaTermComparator implements Comparator<JavaTerm> {
 
 		return -1;
 	}
-
-	protected int doCompare(JavaTerm javaTerm1, JavaTerm javaTerm2) {
-		int type1 = javaTerm1.getType();
-		int type2 = javaTerm2.getType();
-
-		if (type1 != type2) {
-			return type1 - type2;
-		}
-
-		String name1 = javaTerm1.getName();
-		String name2 = javaTerm2.getName();
-
-		if (JavaClass.isInJavaTermTypeGroup(type1, JavaClass.TYPE_VARIABLE)) {
-			if (StringUtil.isUpperCase(name1) &&
-				!StringUtil.isLowerCase(name1) &&
-				!StringUtil.isUpperCase(name2)) {
-
-				return -1;
-			}
-
-			if (!StringUtil.isUpperCase(name1) &&
-				StringUtil.isUpperCase(name2) &&
-				!StringUtil.isLowerCase(name2)) {
-
-				return 1;
-			}
-		}
-
-		if (type1 == JavaClass.TYPE_VARIABLE_PRIVATE_STATIC) {
-			if (name2.equals("_log") || name2.equals("_logger")) {
-				return 1;
-			}
-
-			if (name1.equals("_instance") || name1.equals("_log") ||
-				name1.equals("_logger")) {
-
-				return -1;
-			}
-
-			if (name2.equals("_instance")) {
-				return 1;
-			}
-		}
-
-		if (name1.compareToIgnoreCase(name2) != 0) {
-			NaturalOrderStringComparator naturalOrderStringComparator =
-				new NaturalOrderStringComparator(true, false);
-
-			return naturalOrderStringComparator.compare(name1, name2);
-		}
-
-		if (name1.compareTo(name2) != 0) {
-			NaturalOrderStringComparator naturalOrderStringComparator =
-				new NaturalOrderStringComparator(true, true);
-
-			return -naturalOrderStringComparator.compare(name1, name2);
-		}
-
-		return compareParameterTypes(javaTerm1, javaTerm2);
-	}
-
-	private boolean _ascending;
 
 }

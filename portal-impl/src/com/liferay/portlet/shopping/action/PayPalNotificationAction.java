@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -24,9 +24,9 @@ import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextFactory;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portlet.shopping.NoSuchOrderException;
-import com.liferay.portlet.shopping.ShoppingSettings;
 import com.liferay.portlet.shopping.model.ShoppingOrder;
 import com.liferay.portlet.shopping.service.ShoppingOrderLocalServiceUtil;
+import com.liferay.portlet.shopping.util.ShoppingPreferences;
 import com.liferay.portlet.shopping.util.ShoppingUtil;
 
 import java.io.InputStreamReader;
@@ -87,20 +87,20 @@ public class PayPalNotificationAction extends Action {
 			urlc.setRequestProperty(
 				"Content-Type","application/x-www-form-urlencoded");
 
-			try (PrintWriter pw = UnsyncPrintWriterPool.borrow(
-					urlc.getOutputStream())) {
+			PrintWriter pw = UnsyncPrintWriterPool.borrow(
+				urlc.getOutputStream());
 
-				pw.println(query);
-			}
+			pw.println(query);
 
-			String payPalStatus = null;
+			pw.close();
 
-			try (UnsyncBufferedReader unsyncBufferedReader =
-					new UnsyncBufferedReader(
-						new InputStreamReader(urlc.getInputStream()))) {
+			UnsyncBufferedReader unsyncBufferedReader =
+				new UnsyncBufferedReader(
+					new InputStreamReader(urlc.getInputStream()));
 
-				payPalStatus = unsyncBufferedReader.readLine();
-			}
+			String payPalStatus = unsyncBufferedReader.readLine();
+
+			unsyncBufferedReader.close();
 
 			String itemName = ParamUtil.getString(request, "item_name");
 			String itemNumber = ParamUtil.getString(request, "item_number");
@@ -153,14 +153,14 @@ public class PayPalNotificationAction extends Action {
 
 		ShoppingOrder order = ShoppingOrderLocalServiceUtil.getOrder(ppInvoice);
 
-		ShoppingSettings shoppingSettings = ShoppingSettings.getInstance(
-			order.getGroupId());
+		ShoppingPreferences shoppingPrefs = ShoppingPreferences.getInstance(
+			order.getCompanyId(), order.getGroupId());
 
 		// Receiver email address
 
 		String ppReceiverEmail = ParamUtil.getString(request, "receiver_email");
 
-		String payPalEmailAddress = shoppingSettings.getPayPalEmailAddress();
+		String payPalEmailAddress = shoppingPrefs.getPayPalEmailAddress();
 
 		if (!payPalEmailAddress.equals(ppReceiverEmail)) {
 			return false;
@@ -180,7 +180,7 @@ public class PayPalNotificationAction extends Action {
 
 		String ppCurrency = ParamUtil.getString(request, "mc_currency");
 
-		String currencyId = shoppingSettings.getCurrencyId();
+		String currencyId = shoppingPrefs.getCurrencyId();
 
 		if (!currencyId.equals(ppCurrency)) {
 			return false;

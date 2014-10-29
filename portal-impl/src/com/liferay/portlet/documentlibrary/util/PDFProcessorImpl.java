@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -21,9 +21,8 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.messaging.DestinationNames;
 import com.liferay.portal.kernel.process.ClassPathUtil;
 import com.liferay.portal.kernel.process.ProcessCallable;
-import com.liferay.portal.kernel.process.ProcessChannel;
 import com.liferay.portal.kernel.process.ProcessException;
-import com.liferay.portal.kernel.process.ProcessExecutorUtil;
+import com.liferay.portal.kernel.process.ProcessExecutor;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.FileVersion;
 import com.liferay.portal.kernel.util.ContentTypes;
@@ -412,9 +411,13 @@ public class PDFProcessorImpl
 		throws Exception {
 
 		if (_isGeneratePreview(fileVersion)) {
-			StopWatch stopWatch = new StopWatch();
+			StopWatch stopWatch = null;
 
-			stopWatch.start();
+			if (_log.isInfoEnabled()) {
+				stopWatch = new StopWatch();
+
+				stopWatch.start();
+			}
 
 			_generateImagesGS(fileVersion, file, false);
 
@@ -424,22 +427,25 @@ public class PDFProcessorImpl
 				_log.info(
 					"Ghostscript generated " + previewFileCount +
 						" preview pages for " + fileVersion.getTitle() +
-							" in " + stopWatch.getTime() + " ms");
+							" in " + stopWatch);
 			}
 		}
 
 		if (_isGenerateThumbnail(fileVersion)) {
-			StopWatch stopWatch = new StopWatch();
+			StopWatch stopWatch = null;
 
-			stopWatch.start();
+			if (_log.isInfoEnabled()) {
+				stopWatch = new StopWatch();
+
+				stopWatch.start();
+			}
 
 			_generateImagesGS(fileVersion, file, true);
 
 			if (_log.isInfoEnabled()) {
 				_log.info(
 					"Ghostscript generated a thumbnail for " +
-						fileVersion.getTitle() + " in " + stopWatch.getTime() +
-							" ms");
+						fileVersion.getTitle() + " in " + stopWatch);
 			}
 		}
 	}
@@ -552,8 +558,17 @@ public class PDFProcessorImpl
 
 		int previewFilesCount = 0;
 
-		try (PDDocument pdDocument = PDDocument.load(file)) {
+		PDDocument pdDocument = null;
+
+		try {
+			pdDocument = PDDocument.load(file);
+
 			previewFilesCount = pdDocument.getNumberOfPages();
+		}
+		finally {
+			if (pdDocument != null) {
+				pdDocument.close();
+			}
 		}
 
 		File[] previewFiles = new File[previewFilesCount];
@@ -578,10 +593,8 @@ public class PDFProcessorImpl
 					PropsValues.DL_FILE_ENTRY_PREVIEW_DOCUMENT_MAX_WIDTH,
 					generatePreview, generateThumbnail);
 
-			ProcessChannel<String> processChannel = ProcessExecutorUtil.execute(
-				ClassPathUtil.getPortalProcessConfig(), processCallable);
-
-			Future<String> future = processChannel.getProcessNoticeableFuture();
+			Future<String> future = ProcessExecutor.execute(
+				ClassPathUtil.getPortalClassPath(), processCallable);
 
 			String processIdentity = String.valueOf(
 				fileVersion.getFileVersionId());
@@ -625,8 +638,7 @@ public class PDFProcessorImpl
 				try {
 					addFileToStore(
 						fileVersion.getCompanyId(), PREVIEW_PATH,
-						getPreviewFilePath(fileVersion, index + 1),
-						previewFile);
+						getPreviewFilePath(fileVersion, index +1), previewFile);
 				}
 				finally {
 					FileUtil.delete(previewFile);
@@ -738,7 +750,7 @@ public class PDFProcessorImpl
 	private static Log _log = LogFactoryUtil.getLog(PDFProcessorImpl.class);
 
 	private List<Long> _fileVersionIds = new Vector<Long>();
-	private boolean _ghostscriptInitialized;
+	private boolean _ghostscriptInitialized = false;
 
 	private static class LiferayPDFBoxProcessCallable
 		implements ProcessCallable<String> {
@@ -748,7 +760,7 @@ public class PDFProcessorImpl
 			Map<String, String> customLogSettings, File inputFile,
 			File thumbnailFile, File[] previewFiles, String extension,
 			String thumbnailExtension, int dpi, int height, int width,
-			boolean generatePreview, boolean generateThumbnail) {
+			boolean generateThumbnail, boolean generatePreview) {
 
 			_serverId = serverId;
 			_liferayHome = liferayHome;
@@ -761,8 +773,8 @@ public class PDFProcessorImpl
 			_dpi = dpi;
 			_height = height;
 			_width = width;
-			_generatePreview = generatePreview;
 			_generateThumbnail = generateThumbnail;
+			_generatePreview = generatePreview;
 		}
 
 		@Override

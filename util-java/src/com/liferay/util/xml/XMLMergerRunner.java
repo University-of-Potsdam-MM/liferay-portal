@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -38,9 +38,6 @@ public class XMLMergerRunner {
 	public XMLMergerRunner(String descriptorClassName) {
 		if (Validator.isNotNull(descriptorClassName)) {
 			_descriptorClassName = descriptorClassName;
-		}
-		else {
-			_descriptorClassName = _AUTO_DESCRIPTOR;
 		}
 	}
 
@@ -150,6 +147,6 @@ public class XMLMergerRunner {
 
 	private static final String _AUTO_DESCRIPTOR = "auto";
 
-	private final String _descriptorClassName;
+	private String _descriptorClassName = _AUTO_DESCRIPTOR;
 
 }

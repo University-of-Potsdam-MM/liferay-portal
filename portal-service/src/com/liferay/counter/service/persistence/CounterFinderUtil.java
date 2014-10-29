@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -28,7 +28,8 @@ public class CounterFinderUtil {
 		getFinder().afterPropertiesSet();
 	}
 
-	public static java.util.List<java.lang.String> getNames() {
+	public static java.util.List<java.lang.String> getNames()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getFinder().getNames();
 	}
 
@@ -36,15 +37,18 @@ public class CounterFinderUtil {
 		return getFinder().getRegistryName();
 	}
 
-	public static long increment() {
+	public static long increment()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getFinder().increment();
 	}
 
-	public static long increment(java.lang.String name) {
+	public static long increment(java.lang.String name)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getFinder().increment(name);
 	}
 
-	public static long increment(java.lang.String name, int size) {
+	public static long increment(java.lang.String name, int size)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getFinder().increment(name, size);
 	}
 
@@ -52,15 +56,18 @@ public class CounterFinderUtil {
 		getFinder().invalidate();
 	}
 
-	public static void rename(java.lang.String oldName, java.lang.String newName) {
+	public static void rename(java.lang.String oldName, java.lang.String newName)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getFinder().rename(oldName, newName);
 	}
 
-	public static void reset(java.lang.String name) {
+	public static void reset(java.lang.String name)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getFinder().reset(name);
 	}
 
-	public static void reset(java.lang.String name, long size) {
+	public static void reset(java.lang.String name, long size)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getFinder().reset(name, size);
 	}
 

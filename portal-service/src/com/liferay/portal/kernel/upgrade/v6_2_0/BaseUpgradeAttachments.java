@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -30,7 +30,6 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
 import com.liferay.portal.model.CompanyConstants;
 import com.liferay.portal.model.ResourceConstants;
-import com.liferay.portal.model.ResourcePermission;
 import com.liferay.portal.model.RoleConstants;
 import com.liferay.portal.security.permission.ActionKeys;
 import com.liferay.portal.util.PortalUtil;
@@ -379,8 +378,7 @@ public abstract class BaseUpgradeAttachments extends UpgradeProcess {
 		PreparedStatement ps = null;
 
 		try {
-			long resourcePermissionId = increment(
-				ResourcePermission.class.getName());
+			long resourcePermissionId = increment();
 
 			con = DataAccess.getUpgradeOptimizedConnection();
 

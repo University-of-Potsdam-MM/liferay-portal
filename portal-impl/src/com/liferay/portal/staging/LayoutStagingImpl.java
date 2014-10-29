@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,7 +14,6 @@
 
 package com.liferay.portal.staging;
 
-import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.security.pacl.DoPrivileged;
 import com.liferay.portal.kernel.staging.LayoutStaging;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -27,7 +26,6 @@ import com.liferay.portal.model.LayoutSet;
 import com.liferay.portal.model.LayoutSetBranch;
 import com.liferay.portal.model.LayoutSetStagingHandler;
 import com.liferay.portal.model.LayoutStagingHandler;
-import com.liferay.portal.service.LayoutSetBranchLocalServiceUtil;
 
 import java.lang.reflect.InvocationHandler;
 
@@ -110,7 +108,7 @@ public class LayoutStagingImpl implements LayoutStaging {
 	public boolean isBranchingLayoutSet(Group group, boolean privateLayout) {
 		boolean isStagingGroup = false;
 
-		if (group.isStagingGroup() && !group.isStagedRemotely()) {
+		if (group.isStagingGroup()) {
 			isStagingGroup = true;
 
 			group = group.getLiveGroup();
@@ -134,27 +132,15 @@ public class LayoutStagingImpl implements LayoutStaging {
 				typeSettingsProperties.getProperty("branchingPublic"));
 		}
 
-		if (!branchingEnabled || !group.isStaged() ||
-			(!group.isStagedRemotely() && !isStagingGroup)) {
-
-			return false;
-		}
-
-		Group stagingGroup = group;
-
-		if (isStagingGroup) {
-			stagingGroup = group.getStagingGroup();
-		}
-
-		try {
-			LayoutSetBranchLocalServiceUtil.getMasterLayoutSetBranch(
-				stagingGroup.getGroupId(), privateLayout);
+		if (branchingEnabled && group.isStaged()) {
+			if (!isStagingGroup && !group.isStagedRemotely()) {
+				return false;
+			}
 
 			return true;
 		}
-		catch (PortalException pe) {
-			return false;
-		}
+
+		return false;
 	}
 
 }

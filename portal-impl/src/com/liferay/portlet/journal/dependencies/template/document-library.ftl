@@ -6,7 +6,7 @@
 	<#assign localeVariable = "$" + localeVariable>
 </#if>
 
-<#assign labelName = "languageUtil.format(" + localeVariable + ", \"download-x\", \"" + label + "\", false)">
+<#assign labelName = "languageUtil.format(" + localeVariable + ", \"download-x\", \"" + label + "\")">
 
 <a href="${getVariableReferenceCode(variableName)}">
 	${getVariableReferenceCode(labelName)}

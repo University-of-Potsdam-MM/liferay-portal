@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -13,8 +13,6 @@
  */
 
 package com.liferay.portal.parsers.creole.ast;
-
-import com.liferay.portal.util.PropsValues;
 
 /**
  * @author Miguel Pastor
@@ -64,8 +62,10 @@ public abstract class URLNode extends ASTNode {
 		_supportedProtocols = supportedProtocols;
 	}
 
+	private static final String[] _SUPPORTED_PROTOCOL_LINK =
+		{"http://", "https://", "ftp://", "mailto:"};
+
 	private String _link;
-	private String[] _supportedProtocols =
-		PropsValues.WIKI_PARSERS_CREOLE_SUPPORTED_PROTOCOLS;
+	private String[] _supportedProtocols = _SUPPORTED_PROTOCOL_LINK;
 
 }

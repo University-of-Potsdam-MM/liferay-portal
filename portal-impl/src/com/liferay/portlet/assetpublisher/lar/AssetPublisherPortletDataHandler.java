@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -160,7 +160,8 @@ public class AssetPublisherPortletDataHandler
 
 				ExportImportHelperUtil.updateExportPortletPreferencesClassPKs(
 					portletDataContext, portlet, portletPreferences, name,
-					DLFileEntryType.class.getName());
+					DLFileEntryType.class.getName(),
+					portletDataContext.getExportDataRootElement());
 			}
 			else if (name.equals(
 						"anyClassTypeJournalArticleAssetRendererFactory") ||
@@ -172,12 +173,14 @@ public class AssetPublisherPortletDataHandler
 
 				ExportImportHelperUtil.updateExportPortletPreferencesClassPKs(
 					portletDataContext, portlet, portletPreferences, name,
-					DDMStructure.class.getName());
+					DDMStructure.class.getName(),
+					portletDataContext.getExportDataRootElement());
 			}
 			else if (name.equals("assetVocabularyId")) {
 				ExportImportHelperUtil.updateExportPortletPreferencesClassPKs(
 					portletDataContext, portlet, portletPreferences, name,
-					AssetVocabulary.class.getName());
+					AssetVocabulary.class.getName(),
+					portletDataContext.getExportDataRootElement());
 			}
 			else if (name.startsWith("queryName") &&
 					 StringUtil.equalsIgnoreCase(value, "assetCategories")) {
@@ -186,7 +189,8 @@ public class AssetPublisherPortletDataHandler
 
 				ExportImportHelperUtil.updateExportPortletPreferencesClassPKs(
 					portletDataContext, portlet, portletPreferences,
-					"queryValues" + index, AssetCategory.class.getName());
+					"queryValues" + index, AssetCategory.class.getName(),
+					portletDataContext.getExportDataRootElement());
 			}
 			else if (name.equals("scopeIds")) {
 				updateExportScopeIds(

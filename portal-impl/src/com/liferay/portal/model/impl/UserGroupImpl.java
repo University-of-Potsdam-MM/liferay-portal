@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portal.model.impl;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.service.GroupLocalServiceUtil;
 
@@ -28,34 +29,38 @@ public class UserGroupImpl extends UserGroupBaseImpl {
 	}
 
 	@Override
-	public Group getGroup() throws PortalException {
+	public Group getGroup() throws PortalException, SystemException {
 		return GroupLocalServiceUtil.getUserGroupGroup(
 			getCompanyId(), getUserGroupId());
 	}
 
 	@Override
-	public long getGroupId() throws PortalException {
+	public long getGroupId() throws PortalException, SystemException {
 		Group group = getGroup();
 
 		return group.getGroupId();
 	}
 
 	@Override
-	public int getPrivateLayoutsPageCount() throws PortalException {
+	public int getPrivateLayoutsPageCount()
+		throws PortalException, SystemException {
+
 		Group group = getGroup();
 
 		return group.getPrivateLayoutsPageCount();
 	}
 
 	@Override
-	public int getPublicLayoutsPageCount() throws PortalException {
+	public int getPublicLayoutsPageCount()
+		throws PortalException, SystemException {
+
 		Group group = getGroup();
 
 		return group.getPublicLayoutsPageCount();
 	}
 
 	@Override
-	public boolean hasPrivateLayouts() throws PortalException {
+	public boolean hasPrivateLayouts() throws PortalException, SystemException {
 		if (getPrivateLayoutsPageCount() > 0) {
 			return true;
 		}
@@ -65,7 +70,7 @@ public class UserGroupImpl extends UserGroupBaseImpl {
 	}
 
 	@Override
-	public boolean hasPublicLayouts() throws PortalException {
+	public boolean hasPublicLayouts() throws PortalException, SystemException {
 		if (getPublicLayoutsPageCount() > 0) {
 			return true;
 		}

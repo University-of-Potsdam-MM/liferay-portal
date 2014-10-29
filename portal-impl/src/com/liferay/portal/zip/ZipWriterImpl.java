@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -43,6 +43,13 @@ import java.io.OutputStream;
  */
 public class ZipWriterImpl implements ZipWriter {
 
+	static {
+		File.setDefaultArchiveDetector(
+			new DefaultArchiveDetector(
+				ArchiveDetector.ALL, "lar|" + ArchiveDetector.ALL.getSuffixes(),
+				new ZipDriver()));
+	}
+
 	public ZipWriterImpl() {
 		_file = new File(
 			SystemProperties.get(SystemProperties.TMP_DIR) + StringPool.SLASH +
@@ -51,8 +58,7 @@ public class ZipWriterImpl implements ZipWriter {
 		_file.mkdir();
 
 		FinalizeManager.register(
-			_file, new DeleteFileFinalizeAction(_file.getAbsolutePath()),
-			FinalizeManager.PHANTOM_REFERENCE_FACTORY);
+			_file, new DeleteFileFinalizeAction(_file.getAbsolutePath()));
 	}
 
 	public ZipWriterImpl(java.io.File file) {
@@ -63,10 +69,14 @@ public class ZipWriterImpl implements ZipWriter {
 
 	@Override
 	public void addEntry(String name, byte[] bytes) throws IOException {
-		try (UnsyncByteArrayInputStream unsyncByteArrayInputStream =
-				new UnsyncByteArrayInputStream(bytes)) {
+		UnsyncByteArrayInputStream unsyncByteArrayInputStream =
+			new UnsyncByteArrayInputStream(bytes);
 
+		try {
 			addEntry(name, unsyncByteArrayInputStream);
+		}
+		finally {
+			unsyncByteArrayInputStream.close();
 		}
 	}
 
@@ -88,10 +98,14 @@ public class ZipWriterImpl implements ZipWriter {
 
 		FileUtil.mkdirs(getPath());
 
-		try (OutputStream outputStream = new FileOutputStream(
-				new File(getPath() + StringPool.SLASH + name))) {
+		OutputStream outputStream = new FileOutputStream(
+			new File(getPath() + StringPool.SLASH + name));
 
+		try {
 			File.cat(inputStream, outputStream);
+		}
+		finally {
+			outputStream.close();
 		}
 	}
 
@@ -141,13 +155,6 @@ public class ZipWriterImpl implements ZipWriter {
 	}
 
 	private static Log _log = LogFactoryUtil.getLog(ZipWriterImpl.class);
-
-	static {
-		File.setDefaultArchiveDetector(
-			new DefaultArchiveDetector(
-				ArchiveDetector.ALL, "lar|" + ArchiveDetector.ALL.getSuffixes(),
-				new ZipDriver()));
-	}
 
 	private File _file;
 

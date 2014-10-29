@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -45,8 +45,6 @@ else {
 String keywords = ParamUtil.getString(request, "keywords");
 
 int mountFoldersCount = DLAppServiceUtil.getMountFoldersCount(scopeGroupId, DLFolderConstants.DEFAULT_PARENT_FOLDER_ID);
-
-DLActionsDisplayContext dlActionsDisplayContext = new DLActionsDisplayContext(request, dlPortletInstanceSettings);
 %>
 
 <liferay-portlet:renderURL varImpl="searchURL">
@@ -97,7 +95,7 @@ DLActionsDisplayContext dlActionsDisplayContext = new DLActionsDisplayContext(re
 			sb.append("<a href=\"");
 			sb.append(searchExternalRepositoryURL.toString());
 			sb.append("\">");
-			sb.append(HtmlUtil.escape(mountFolder.getName()));
+			sb.append(mountFolder.getName());
 			sb.append("</a>");
 
 			if ((i + 1) < mountFoldersCount) {
@@ -107,7 +105,7 @@ DLActionsDisplayContext dlActionsDisplayContext = new DLActionsDisplayContext(re
 		%>
 
 		<span class="alert alert-info">
-			<liferay-ui:message arguments="<%= sb.toString() %>" key="results-from-the-local-repository-search-in-x" translateArguments="<%= false %>" />
+			<liferay-ui:message arguments="<%= sb.toString() %>" key="results-from-the-local-repository-search-in-x" />
 		</span>
 	</c:if>
 
@@ -125,7 +123,7 @@ DLActionsDisplayContext dlActionsDisplayContext = new DLActionsDisplayContext(re
 	%>
 
 	<liferay-ui:search-container
-		emptyResultsMessage='<%= LanguageUtil.format(request, "no-documents-were-found-that-matched-the-keywords-x", "<strong>" + HtmlUtil.escape(keywords) + "</strong>", false) %>'
+		emptyResultsMessage='<%= LanguageUtil.format(pageContext, "no-documents-were-found-that-matched-the-keywords-x", "<strong>" + HtmlUtil.escape(keywords) + "</strong>") %>'
 		iteratorURL="<%= portletURL %>"
 	>
 
@@ -137,6 +135,13 @@ DLActionsDisplayContext dlActionsDisplayContext = new DLActionsDisplayContext(re
 		searchContext.setFolderIds(folderIdsArray);
 		searchContext.setIncludeDiscussions(true);
 		searchContext.setKeywords(keywords);
+
+		QueryConfig queryConfig = new QueryConfig();
+
+		queryConfig.setHighlightEnabled(true);
+
+		searchContext.setQueryConfig(queryConfig);
+
 		searchContext.setStart(searchContainer.getStart());
 
 		Hits hits = DLAppServiceUtil.search(repositoryId, searchContext);
@@ -187,14 +192,14 @@ DLActionsDisplayContext dlActionsDisplayContext = new DLActionsDisplayContext(re
 					</portlet:renderURL>
 
 					<liferay-ui:app-view-search-entry
-						actionJsp='<%= (dlActionsDisplayContext.isShowActions()) ? "/html/portlet/document_library/file_entry_action.jsp" : StringPool.BLANK %>'
+						actionJsp='<%= (showActions) ? "/html/portlet/document_library/file_entry_action.jsp" : StringPool.BLANK %>'
 						containerName="<%= DLUtil.getAbsolutePath(renderRequest, fileEntry.getFolderId()) %>"
 						cssClass='<%= MathUtil.isEven(index) ? "search" : "search alt" %>'
-						description="<%= (summary != null) ? summary.getContent() : fileEntry.getDescription() %>"
+						description="<%= (summary != null) ? HtmlUtil.escape(summary.getContent()) : fileEntry.getDescription() %>"
 						mbMessages="<%= searchResult.getMBMessages() %>"
 						queryTerms="<%= hits.getQueryTerms() %>"
 						thumbnailSrc="<%= DLUtil.getThumbnailSrc(fileEntry, null, themeDisplay) %>"
-						title="<%= (summary != null) ? summary.getTitle() : fileEntry.getTitle() %>"
+						title="<%= (summary != null) ? HtmlUtil.escape(summary.getTitle()) : fileEntry.getTitle() %>"
 						url="<%= rowURL %>"
 					/>
 				</c:when>
@@ -219,13 +224,13 @@ DLActionsDisplayContext dlActionsDisplayContext = new DLActionsDisplayContext(re
 					</portlet:renderURL>
 
 					<liferay-ui:app-view-search-entry
-						actionJsp='<%= (dlActionsDisplayContext.isShowActions()) ? "/html/portlet/document_library/folder_action.jsp" : StringPool.BLANK %>'
+						actionJsp='<%= (showActions) ? "/html/portlet/document_library/folder_action.jsp" : StringPool.BLANK %>'
 						containerName="<%= DLUtil.getAbsolutePath(renderRequest, folder.getParentFolderId()) %>"
 						cssClass='<%= MathUtil.isEven(index) ? "search" : "search alt" %>'
-						description="<%= (summary != null) ? summary.getContent() : folder.getDescription() %>"
+						description="<%= (summary != null) ? HtmlUtil.escape(summary.getContent()) : folder.getDescription() %>"
 						queryTerms="<%= hits.getQueryTerms() %>"
 						thumbnailSrc='<%= themeDisplay.getPathThemeImages() + "/file_system/large/" + folderImage + ".png" %>'
-						title="<%= (summary != null) ? summary.getTitle() : folder.getName() %>"
+						title="<%= (summary != null) ? HtmlUtil.escape(summary.getTitle()) : folder.getName() %>"
 						url="<%= rowURL %>"
 					/>
 				</c:when>
@@ -241,5 +246,5 @@ if (searchFolderId > 0) {
 	DLUtil.addPortletBreadcrumbEntries(searchFolderId, request, renderResponse);
 }
 
-PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.get(request, "search") + ": " + keywords, currentURL);
+PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.get(pageContext, "search") + ": " + keywords, currentURL);
 %>

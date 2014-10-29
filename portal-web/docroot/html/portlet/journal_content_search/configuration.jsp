@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -16,13 +16,15 @@
 
 <%@ include file="/html/portlet/journal_content_search/init.jsp" %>
 
-<liferay-portlet:actionURL portletConfiguration="true" var="configurationActionURL" />
+<%
+String redirect = ParamUtil.getString(request, "redirect");
+%>
 
-<liferay-portlet:renderURL portletConfiguration="true" var="configurationRenderURL" />
+<liferay-portlet:actionURL portletConfiguration="true" var="configurationURL" />
 
-<aui:form action="<%= configurationActionURL %>" method="post" name="fm">
+<aui:form action="<%= configurationURL %>" method="post" name="fm">
 	<aui:input name="<%= Constants.CMD %>" type="hidden" value="<%= Constants.UPDATE %>" />
-	<aui:input name="redirect" type="hidden" value="<%= configurationRenderURL %>" />
+	<aui:input name="redirect" type="hidden" value="<%= redirect %>" />
 
 	<div class="alert alert-info">
 		<liferay-ui:message key="define-the-behavior-of-this-search" />
@@ -57,5 +59,5 @@
 </aui:form>
 
 <aui:script>
-	Liferay.Util.toggleBoxes('<portlet:namespace />showListed','<portlet:namespace />webContentDisplay', true);
+	Liferay.Util.toggleBoxes('<portlet:namespace />showListedCheckbox','<portlet:namespace />webContentDisplay', true);
 </aui:script>

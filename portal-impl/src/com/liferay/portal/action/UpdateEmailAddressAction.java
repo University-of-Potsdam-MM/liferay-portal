@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,6 +14,7 @@
 
 package com.liferay.portal.action;
 
+import com.liferay.portal.DuplicateUserEmailAddressException;
 import com.liferay.portal.NoSuchUserException;
 import com.liferay.portal.ReservedUserEmailAddressException;
 import com.liferay.portal.UserEmailAddressException;
@@ -64,7 +65,8 @@ public class UpdateEmailAddressAction extends Action {
 				ActionConstants.COMMON_REFERER_JSP);
 		}
 		catch (Exception e) {
-			if (e instanceof ReservedUserEmailAddressException ||
+			if (e instanceof DuplicateUserEmailAddressException ||
+				e instanceof ReservedUserEmailAddressException ||
 				e instanceof UserEmailAddressException) {
 
 				SessionErrors.add(request, e.getClass());

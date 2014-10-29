@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,16 +15,14 @@
 package com.liferay.portlet.dynamicdatalists.asset;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portlet.asset.model.AssetRenderer;
 import com.liferay.portlet.asset.model.BaseAssetRendererFactory;
-import com.liferay.portlet.asset.model.BaseDDMStructureClassTypeReader;
-import com.liferay.portlet.asset.model.ClassTypeReader;
 import com.liferay.portlet.dynamicdatalists.model.DDLRecord;
 import com.liferay.portlet.dynamicdatalists.model.DDLRecordVersion;
 import com.liferay.portlet.dynamicdatalists.service.DDLRecordLocalServiceUtil;
-import com.liferay.portlet.dynamicdatalists.service.DDLRecordVersionLocalServiceUtil;
 import com.liferay.portlet.dynamicdatalists.service.permission.DDLRecordSetPermission;
 
 /**
@@ -34,21 +32,15 @@ public class DDLRecordAssetRendererFactory extends BaseAssetRendererFactory {
 
 	public static final String TYPE = "record";
 
-	public DDLRecordAssetRendererFactory() {
-		setCategorizable(false);
-		setSelectable(false);
-	}
-
 	@Override
 	public AssetRenderer getAssetRenderer(long classPK, int type)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		DDLRecord record = null;
 		DDLRecordVersion recordVersion = null;
 
 		if (type == TYPE_LATEST) {
-			recordVersion = DDLRecordVersionLocalServiceUtil.getRecordVersion(
-				classPK);
+			recordVersion = DDLRecordLocalServiceUtil.getRecordVersion(classPK);
 
 			record = recordVersion.getRecord();
 		}
@@ -72,11 +64,6 @@ public class DDLRecordAssetRendererFactory extends BaseAssetRendererFactory {
 	}
 
 	@Override
-	public ClassTypeReader getClassTypeReader() {
-		return new BaseDDMStructureClassTypeReader(getClassName());
-	}
-
-	@Override
 	public String getType() {
 		return TYPE;
 	}
@@ -93,8 +80,22 @@ public class DDLRecordAssetRendererFactory extends BaseAssetRendererFactory {
 	}
 
 	@Override
+	public boolean isCategorizable() {
+		return _CATEGORIZABLE;
+	}
+
+	@Override
+	public boolean isSelectable() {
+		return _SELECTABLE;
+	}
+
+	@Override
 	protected String getIconPath(ThemeDisplay themeDisplay) {
 		return themeDisplay.getPathThemeImages() + "/common/history.png";
 	}
+
+	private static final boolean _CATEGORIZABLE = false;
+
+	private static final boolean _SELECTABLE = false;
 
 }

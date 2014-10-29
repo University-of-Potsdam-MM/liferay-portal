@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portal.util;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
@@ -50,7 +51,7 @@ import javax.servlet.ServletContext;
 public class PortletListerImpl implements PortletLister {
 
 	@Override
-	public TreeView getTreeView() throws PortalException {
+	public TreeView getTreeView() throws PortalException, SystemException {
 		_nodeId = 1;
 
 		_list = new ArrayList<TreeNodeView>();
@@ -130,7 +131,7 @@ public class PortletListerImpl implements PortletLister {
 	protected void iteratePortletCategories(
 			TreeNodeView parentNodeView,
 			List<PortletCategory> portletCategories, long parentId, int depth)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		portletCategories = ListUtil.sort(
 			portletCategories, new PortletCategoryComparator(getLocale()));
@@ -194,7 +195,7 @@ public class PortletListerImpl implements PortletLister {
 	protected void iteratePortlets(
 			TreeNodeView parentNodeView, PortletCategory portletCategory,
 			Set<String> portletIds, int parentNodeId, int depth)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		List<Portlet> portlets = new ArrayList<Portlet>();
 

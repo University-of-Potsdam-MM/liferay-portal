@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portlet.asset.service.permission;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portlet.asset.model.AssetTag;
@@ -36,7 +37,7 @@ public class AssetTagPermission {
 
 	public static void check(
 			PermissionChecker permissionChecker, long tagId, String actionId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		if (!contains(permissionChecker, tagId, actionId)) {
 			throw new PrincipalException();
@@ -60,7 +61,7 @@ public class AssetTagPermission {
 
 	public static boolean contains(
 			PermissionChecker permissionChecker, long tagId, String actionId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		AssetTag tag = AssetTagLocalServiceUtil.getTag(tagId);
 

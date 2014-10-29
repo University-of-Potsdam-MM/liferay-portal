@@ -4,8 +4,6 @@ package ${packagePath}.model;
 	import ${packagePath}.service.persistence.${entity.name}PK;
 </#if>
 
-import aQute.bnd.annotation.ProviderType;
-
 import java.io.Serializable;
 
 import java.sql.Blob;
@@ -13,7 +11,6 @@ import java.sql.Blob;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 /**
  * This class is used by SOAP remote services<#if entity.hasRemoteService()>, specifically {@link ${packagePath}.service.http.${entity.name}ServiceSoap}</#if>.
@@ -24,7 +21,6 @@ import java.util.Map;
 </#if>
  * @generated
  */
-@ProviderType
 public class ${entity.name}Soap implements Serializable {
 
 	public static ${entity.name}Soap toSoapModel(${entity.name} model) {
@@ -104,7 +100,7 @@ public class ${entity.name}Soap implements Serializable {
 	}
 
 	<#list entity.regularColList as column>
-		public ${column.genericizedType} get${column.methodName}() {
+		public ${column.type} get${column.methodName}() {
 			return _${column.name};
 		}
 
@@ -114,13 +110,13 @@ public class ${entity.name}Soap implements Serializable {
 			}
 		</#if>
 
-		public void set${column.methodName}(${column.genericizedType} ${column.name}) {
+		public void set${column.methodName}(${column.type} ${column.name}) {
 			_${column.name} = ${column.name};
 		}
 	</#list>
 
 	<#list entity.regularColList as column>
-		private ${column.genericizedType} _${column.name};
+		private ${column.type} _${column.name};
 	</#list>
 
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -17,6 +17,7 @@ package com.liferay.portlet.bookmarks.asset;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.trash.TrashRenderer;
+import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.security.permission.ActionKeys;
 import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portal.theme.ThemeDisplay;
@@ -31,7 +32,6 @@ import java.util.Date;
 import java.util.Locale;
 
 import javax.portlet.PortletRequest;
-import javax.portlet.PortletResponse;
 import javax.portlet.PortletURL;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
@@ -82,10 +82,8 @@ public class BookmarksEntryAssetRenderer
 	}
 
 	@Override
-	public String getSummary(
-		PortletRequest portletRequest, PortletResponse portletResponse) {
-
-		return _entry.getDescription();
+	public String getSummary(Locale locale) {
+		return HtmlUtil.stripHtml(_entry.getDescription());
 	}
 
 	@Override
@@ -116,8 +114,8 @@ public class BookmarksEntryAssetRenderer
 		throws Exception {
 
 		PortletURL portletURL = liferayPortletResponse.createLiferayPortletURL(
-			getControlPanelPlid(liferayPortletRequest),
-			PortletKeys.BOOKMARKS_ADMIN, PortletRequest.RENDER_PHASE);
+			getControlPanelPlid(liferayPortletRequest), PortletKeys.BOOKMARKS,
+			PortletRequest.RENDER_PHASE);
 
 		portletURL.setParameter("struts_action", "/bookmarks/edit_entry");
 		portletURL.setParameter(

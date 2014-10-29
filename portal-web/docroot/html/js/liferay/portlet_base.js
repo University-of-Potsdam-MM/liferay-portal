@@ -22,24 +22,13 @@ AUI.add(
 			instance.NS = namespace;
 			instance.ID = namespace.replace(/^_(.*)_$/, '$1');
 
-			if (config.rootNode) {
-				instance._setRootNode(config.rootNode);
-			}
+			instance.rootNode = A.one('#p_p_id' + namespace);
 		};
 
 		PortletBase.ATTRS = {
 			namespace: {
 				getter: '_getNS',
 				writeOnce: true
-			},
-			rootNode: {
-				getter: '_getRootNode',
-				setter: '_setRootNode',
-				valueFn: function() {
-					var instance = this;
-
-					return A.one('#p_p_id' + instance.NS);
-				}
 			}
 		};
 
@@ -76,22 +65,6 @@ AUI.add(
 				var instance = this;
 
 				return instance.NS;
-			},
-
-			_getRootNode: function(value) {
-				var instance = this;
-
-				return instance.rootNode;
-			},
-
-			_setRootNode: function(value) {
-				var instance = this;
-
-				var rootNode = A.one(value);
-
-				instance.rootNode = rootNode;
-
-				return rootNode;
 			}
 		};
 

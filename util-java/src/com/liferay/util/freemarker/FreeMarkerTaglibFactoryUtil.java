@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -26,8 +26,6 @@ import freemarker.ext.jsp.TaglibFactory;
 import freemarker.template.TemplateHashModel;
 import freemarker.template.TemplateModel;
 import freemarker.template.TemplateModelException;
-
-import java.lang.ref.Reference;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -93,11 +91,11 @@ public class FreeMarkerTaglibFactoryUtil implements CacheRegistryItem {
 					new FinalizeAction() {
 
 						@Override
-						public void doFinalize(Reference<?> reference) {
+						public void doFinalize() {
 							CacheRegistryUtil.unregister(name);
 						}
 
-					}, FinalizeManager.PHANTOM_REFERENCE_FACTORY);
+					});
 			}
 		}
 

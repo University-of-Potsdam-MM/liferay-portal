@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -20,6 +20,7 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.TextFormatter;
 import com.liferay.portal.tools.comparator.JavaMethodComparator;
 import com.liferay.portal.tools.servicebuilder.ServiceBuilder;
+import com.liferay.portal.util.InitUtil;
 
 import com.thoughtworks.qdox.JavaDocBuilder;
 import com.thoughtworks.qdox.model.JavaClass;
@@ -41,7 +42,7 @@ import java.util.TreeSet;
 public class CopyInterfaceBuilder {
 
 	public static void main(String[] args) {
-		ToolDependencies.wireBasic();
+		InitUtil.initWithSpring();
 
 		if (args.length == 2) {
 			new CopyInterfaceBuilder(args[0], args[1]);
@@ -145,7 +146,7 @@ public class CopyInterfaceBuilder {
 					imports.add(thrownException.getValue());
 				}
 
-				if (!newExceptions.isEmpty()) {
+				if (newExceptions.size() > 0) {
 					sb.append(" throws ");
 
 					for (String newException : newExceptions) {

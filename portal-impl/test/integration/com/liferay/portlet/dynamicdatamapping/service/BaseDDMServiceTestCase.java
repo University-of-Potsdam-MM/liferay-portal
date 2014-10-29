@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -19,11 +19,10 @@ import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.model.Group;
-import com.liferay.portal.test.DeleteAfterTestRun;
+import com.liferay.portal.service.ServiceTestUtil;
+import com.liferay.portal.util.GroupTestUtil;
 import com.liferay.portal.util.PortalUtil;
-import com.liferay.portal.util.test.GroupTestUtil;
-import com.liferay.portal.util.test.ServiceContextTestUtil;
-import com.liferay.portal.util.test.TestPropsValues;
+import com.liferay.portal.util.TestPropsValues;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructureConstants;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
@@ -74,26 +73,13 @@ public class BaseDDMServiceTestCase {
 		return addFormTemplate(classPK, name, getTestTemplateScript("xsd"));
 	}
 
-	protected DDMTemplate addFormTemplate(
-			long classPK, String name, String definition)
+	protected DDMTemplate addFormTemplate(long classPK, String name, String xsd)
 		throws Exception {
 
 		return addTemplate(
 			PortalUtil.getClassNameId(DDMStructure.class), classPK, name,
 			DDMTemplateConstants.TEMPLATE_TYPE_FORM,
-			DDMTemplateConstants.TEMPLATE_MODE_CREATE, "xsd", definition);
-	}
-
-	protected DDMStructure addStructure(
-			long parentStructureId, long classNameId, String structureKey,
-			String name, String definition, String storageType, int type)
-		throws Exception {
-
-		return DDMStructureLocalServiceUtil.addStructure(
-			TestPropsValues.getUserId(), group.getGroupId(), parentStructureId,
-			classNameId, structureKey, getDefaultLocaleMap(name), null,
-			definition, storageType, type,
-			ServiceContextTestUtil.getServiceContext(group.getGroupId()));
+			DDMTemplateConstants.TEMPLATE_MODE_CREATE, "xsd", xsd);
 	}
 
 	protected DDMStructure addStructure(long classNameId, String name)
@@ -102,18 +88,20 @@ public class BaseDDMServiceTestCase {
 		String storageType = StorageType.XML.getValue();
 
 		return addStructure(
-			classNameId, null, name, getTestStructureDefinition(storageType),
+			classNameId, null, name, getTestStructureXsd(storageType),
 			storageType, DDMStructureConstants.TYPE_DEFAULT);
 	}
 
 	protected DDMStructure addStructure(
-			long classNameId, String structureKey, String name,
-			String definition, String storageType, int type)
+			long classNameId, String structureKey, String name, String xsd,
+			String storageType, int type)
 		throws Exception {
 
-		return addStructure(
+		return DDMStructureLocalServiceUtil.addStructure(
+			TestPropsValues.getUserId(), group.getGroupId(),
 			DDMStructureConstants.DEFAULT_PARENT_STRUCTURE_ID, classNameId,
-			structureKey, name, definition, storageType, type);
+			structureKey, getDefaultLocaleMap(name), null, xsd, storageType,
+			type, ServiceTestUtil.getServiceContext(group.getGroupId()));
 	}
 
 	protected DDMTemplate addTemplate(
@@ -146,7 +134,7 @@ public class BaseDDMServiceTestCase {
 			TestPropsValues.getUserId(), group.getGroupId(), classNameId,
 			classPK, templateKey, getDefaultLocaleMap(name), null, type, mode,
 			language, script, cacheable, smallImage, smallImageURL, smallFile,
-			ServiceContextTestUtil.getServiceContext());
+			ServiceTestUtil.getServiceContext());
 	}
 
 	protected String getBasePath() {
@@ -161,9 +149,7 @@ public class BaseDDMServiceTestCase {
 		return map;
 	}
 
-	protected String getTestStructureDefinition(String storageType)
-		throws Exception {
-
+	protected String getTestStructureXsd(String storageType) throws Exception {
 		String text = StringPool.BLANK;
 
 		if (storageType.equals(StorageType.XML.getValue())) {
@@ -197,7 +183,6 @@ public class BaseDDMServiceTestCase {
 		return StringUtil.read(inputStream);
 	}
 
-	@DeleteAfterTestRun
 	protected Group group;
 
 }

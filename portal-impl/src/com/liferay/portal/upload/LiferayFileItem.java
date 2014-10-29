@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -128,8 +128,7 @@ public class LiferayFileItem extends DiskFileItem implements FileItem {
 		File tempFile = new File(_repository, tempFileName);
 
 		FinalizeManager.register(
-			tempFile, new DeleteFileFinalizeAction(tempFile.getAbsolutePath()),
-			FinalizeManager.PHANTOM_REFERENCE_FACTORY);
+			tempFile, new DeleteFileFinalizeAction(tempFile.getAbsolutePath()));
 
 		return tempFile;
 	}

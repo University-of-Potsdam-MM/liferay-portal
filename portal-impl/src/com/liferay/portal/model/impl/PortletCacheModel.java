@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,12 +14,9 @@
 
 package com.liferay.portal.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.CacheModel;
-import com.liferay.portal.model.MVCCModel;
 import com.liferay.portal.model.Portlet;
 
 import java.io.Externalizable;
@@ -34,26 +31,12 @@ import java.io.ObjectOutput;
  * @see Portlet
  * @generated
  */
-@ProviderType
-public class PortletCacheModel implements CacheModel<Portlet>, Externalizable,
-	MVCCModel {
-	@Override
-	public long getMvccVersion() {
-		return mvccVersion;
-	}
-
-	@Override
-	public void setMvccVersion(long mvccVersion) {
-		this.mvccVersion = mvccVersion;
-	}
-
+public class PortletCacheModel implements CacheModel<Portlet>, Externalizable {
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(13);
+		StringBundler sb = new StringBundler(11);
 
-		sb.append("{mvccVersion=");
-		sb.append(mvccVersion);
-		sb.append(", id=");
+		sb.append("{id=");
 		sb.append(id);
 		sb.append(", companyId=");
 		sb.append(companyId);
@@ -72,7 +55,6 @@ public class PortletCacheModel implements CacheModel<Portlet>, Externalizable,
 	public Portlet toEntityModel() {
 		PortletImpl portletImpl = new PortletImpl();
 
-		portletImpl.setMvccVersion(mvccVersion);
 		portletImpl.setId(id);
 		portletImpl.setCompanyId(companyId);
 
@@ -99,7 +81,6 @@ public class PortletCacheModel implements CacheModel<Portlet>, Externalizable,
 
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
-		mvccVersion = objectInput.readLong();
 		id = objectInput.readLong();
 		companyId = objectInput.readLong();
 		portletId = objectInput.readUTF();
@@ -110,7 +91,6 @@ public class PortletCacheModel implements CacheModel<Portlet>, Externalizable,
 	@Override
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
-		objectOutput.writeLong(mvccVersion);
 		objectOutput.writeLong(id);
 		objectOutput.writeLong(companyId);
 
@@ -131,7 +111,6 @@ public class PortletCacheModel implements CacheModel<Portlet>, Externalizable,
 		objectOutput.writeBoolean(active);
 	}
 
-	public long mvccVersion;
 	public long id;
 	public long companyId;
 	public String portletId;

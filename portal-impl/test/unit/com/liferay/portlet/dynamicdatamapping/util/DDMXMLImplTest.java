@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,29 +15,59 @@
 package com.liferay.portlet.dynamicdatamapping.util;
 
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.xml.Attribute;
 import com.liferay.portal.kernel.xml.Document;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.kernel.xml.Node;
 import com.liferay.portal.kernel.xml.SAXReaderUtil;
-import com.liferay.portlet.dynamicdatamapping.BaseDDMTestCase;
+import com.liferay.portal.xml.SAXReaderImpl;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 import java.util.List;
 import java.util.Locale;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 /**
  * @author Manuel de la Peña
- * @author Miguel Angelo Caldas Gallindo
  */
-public class DDMXMLImplTest extends BaseDDMTestCase {
+@PrepareForTest({DDMXMLUtil.class, SAXReaderUtil.class})
+@RunWith(PowerMockRunner.class)
+public class DDMXMLImplTest extends PowerMockito {
 
 	@Before
 	public void setUp() {
-		setUpSAXReaderUtil();
+		spy(SAXReaderUtil.class);
+
+		when(
+			SAXReaderUtil.getSAXReader()
+		).thenReturn(
+			_saxReader
+		);
+
+		spy(DDMXMLUtil.class);
+
+		when(
+			DDMXMLUtil.getDDMXML()
+		).thenReturn(
+			_ddmXML
+		);
+	}
+
+	@After
+	public void tearDown() {
+		verifyStatic();
 	}
 
 	@Test
@@ -88,11 +118,20 @@ public class DDMXMLImplTest extends BaseDDMTestCase {
 		return checkElementLocale(rootElement, newLocaleId);
 	}
 
+	protected String readXML(String fileName) throws IOException {
+		Class<?> clazz = getClass();
+
+		InputStream inputStream = clazz.getResourceAsStream(
+			"dependencies/" + fileName);
+
+		return StringUtil.read(inputStream);
+	}
+
 	protected void updateContentDefaultLocale(
 			String fileName, boolean expectedResult)
 		throws Exception {
 
-		String xml = read(fileName);
+		String xml = readXML(fileName);
 
 		Document document = SAXReaderUtil.read(xml);
 
@@ -113,7 +152,7 @@ public class DDMXMLImplTest extends BaseDDMTestCase {
 
 			String rootXML = rootElement.asXML();
 
-			structureXML = _ddmXML.updateXMLDefaultLocale(
+			structureXML = DDMXMLUtil.updateXMLDefaultLocale(
 				rootXML, contentDefaultLocale, availableDefaultLocale);
 
 			Document updatedXMLDocument = SAXReaderUtil.read(structureXML);
@@ -133,6 +172,7 @@ public class DDMXMLImplTest extends BaseDDMTestCase {
 		Assert.assertFalse(expectedResult);
 	}
 
-	private DDMXML _ddmXML = new DDMXMLImpl();
+	private DDMXMLImpl _ddmXML = new DDMXMLImpl();
+	private SAXReaderImpl _saxReader = new SAXReaderImpl();
 
 }

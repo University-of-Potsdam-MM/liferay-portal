@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -51,8 +51,6 @@ import com.liferay.portlet.dynamicdatalists.model.DDLRecordModel;
 import com.liferay.portlet.dynamicdatalists.model.DDLRecordSet;
 import com.liferay.portlet.dynamicdatalists.model.DDLRecordVersion;
 import com.liferay.portlet.dynamicdatalists.service.DDLRecordLocalServiceUtil;
-import com.liferay.portlet.dynamicdatamapping.model.DDMForm;
-import com.liferay.portlet.dynamicdatamapping.model.DDMFormField;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructureLink;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
@@ -61,6 +59,7 @@ import com.liferay.portlet.dynamicdatamapping.service.DDMStructureLinkLocalServi
 import com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalServiceUtil;
 import com.liferay.portlet.dynamicdatamapping.service.DDMTemplateLocalServiceUtil;
 import com.liferay.portlet.dynamicdatamapping.storage.Field;
+import com.liferay.portlet.dynamicdatamapping.storage.FieldConstants;
 import com.liferay.portlet.dynamicdatamapping.storage.Fields;
 import com.liferay.portlet.dynamicdatamapping.storage.StorageEngineUtil;
 import com.liferay.portlet.dynamicdatamapping.util.DDMXMLUtil;
@@ -148,6 +147,28 @@ public class VerifyDynamicDataMapping extends VerifyProcess {
 		}
 	}
 
+	protected boolean createDefaultMetadataElement(
+		Element dynamicElementElement, String defaultLanguageId) {
+
+		boolean hasDefaultMetadataElement = hasDefaultMetadataElement(
+			dynamicElementElement, defaultLanguageId);
+
+		if (hasDefaultMetadataElement) {
+			return false;
+		}
+
+		Element metadataElement = dynamicElementElement.addElement("meta-data");
+
+		metadataElement.addAttribute("locale", defaultLanguageId);
+
+		Element entryElement = metadataElement.addElement("entry");
+
+		entryElement.addAttribute("name", "label");
+		entryElement.addCDATA(StringPool.BLANK);
+
+		return true;
+	}
+
 	protected ServiceContext createServiceContext() {
 		ServiceContext serviceContext = new ServiceContext();
 
@@ -161,21 +182,14 @@ public class VerifyDynamicDataMapping extends VerifyProcess {
 	protected void doVerify() throws Exception {
 		setUpClassNameIds();
 
-		List<DDMStructure> ddmStructures =
+		List<DDMStructure> structures =
 			DDMStructureLocalServiceUtil.getStructures();
 
-		for (DDMStructure ddmStructure : ddmStructures) {
-			verifyDDMStructure(ddmStructure);
-			verifyDDMTemplates(ddmStructure);
+		for (DDMStructure structure : structures) {
+			verifyStructure(structure);
 
-			updateFileUploadReferences(ddmStructure);
+			updateFileUploadReferences(structure);
 		}
-	}
-
-	protected List<Node> getDynamicElementNodes(Document document) {
-		XPath xPathSelector = SAXReaderUtil.createXPath("//dynamic-element");
-
-		return xPathSelector.selectNodes(document);
 	}
 
 	protected String getFileUploadPath(BaseModel<?> baseModel)
@@ -218,15 +232,6 @@ public class VerifyDynamicDataMapping extends VerifyProcess {
 		return sb.toString();
 	}
 
-	protected List<DDMTemplate> getFormDDMTemplates(DDMStructure ddmStructure)
-		throws Exception {
-
-		return DDMTemplateLocalServiceUtil.getTemplates(
-			ddmStructure.getGroupId(), _ddmStructureClassNameId,
-			ddmStructure.getStructureId(),
-			DDMTemplateConstants.TEMPLATE_TYPE_FORM);
-	}
-
 	protected String getJSON(FileEntry fileEntry) {
 		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
 
@@ -253,16 +258,15 @@ public class VerifyDynamicDataMapping extends VerifyProcess {
 		return false;
 	}
 
-	protected boolean hasFileUploadFields(DDMStructure ddmStructure)
+	protected boolean hasFileUploadFields(DDMStructure structure)
 		throws Exception {
 
-		Map<String, DDMFormField> ddmFormFieldsMap =
-			ddmStructure.getFullHierarchyDDMFormFieldsMap(true);
+		Map<String, Map<String, String>> fieldsMap = structure.getFieldsMap();
 
-		for (DDMFormField ddmFormField : ddmFormFieldsMap.values()) {
-			String dataType = ddmFormField.getDataType();
+		for (Map<String, String> field : fieldsMap.values()) {
+			String dataType = field.get(FieldConstants.DATA_TYPE);
 
-			if (Validator.equals(dataType, "file-upload")) {
+			if (dataType.equals("file-upload")) {
 				return true;
 			}
 		}
@@ -291,27 +295,6 @@ public class VerifyDynamicDataMapping extends VerifyProcess {
 				ddlRecord.getUserId(), ddlRecord.getGroupId(), ddlRecord,
 				ddlRecord.getStatus());
 		}
-	}
-
-	protected void updateDDMStructure(
-			DDMStructure ddmStructure, DDMForm ddmForm)
-		throws Exception {
-
-		ddmStructure.updateDDMForm(ddmForm);
-
-		DDMStructureLocalServiceUtil.updateDDMStructure(ddmStructure);
-	}
-
-	protected void updateDDMTemplate(DDMTemplate template, String script)
-		throws Exception {
-
-		if (script.equals(template.getScript())) {
-			return;
-		}
-
-		template.setScript(script);
-
-		DDMTemplateLocalServiceUtil.updateDDMTemplate(template);
 	}
 
 	protected void updateDLFileUploadReferences(long dlFileEntryMetadataId)
@@ -363,78 +346,47 @@ public class VerifyDynamicDataMapping extends VerifyProcess {
 
 		DLFileEntryLocalServiceUtil.updateStatus(
 			fileVersion.getUserId(), fileVersion.getFileVersionId(), status,
-			serviceContext, workflowContext);
+			workflowContext, serviceContext);
 	}
 
-	protected void updateFileUploadReferences(DDMForm ddmForm)
+	protected void updateFileUploadReferences(DDMStructure structure)
 		throws Exception {
 
-		List<DDMFormField> ddmFormFields = ddmForm.getDDMFormFields();
-
-		for (DDMFormField ddmFormField : ddmFormFields) {
-			updateFileUploadReferences(ddmFormField);
-		}
-	}
-
-	protected void updateFileUploadReferences(DDMFormField ddmFormField) {
-		String dataType = ddmFormField.getDataType();
-
-		if (Validator.equals(dataType, "file-upload")) {
-			ddmFormField.setDataType("document-library");
-			ddmFormField.setType("ddm-documentlibrary");
-		}
-	}
-
-	protected void updateFileUploadReferences(DDMStructure ddmStructure)
-		throws Exception {
-
-		if (!hasFileUploadFields(ddmStructure)) {
+		if (!hasFileUploadFields(structure)) {
 			return;
 		}
 
-		List<DDMStructureLink> ddmStructureLinks =
+		List<DDMStructureLink> structureLinks =
 			DDMStructureLinkLocalServiceUtil.getStructureLinks(
-				ddmStructure.getStructureId(), QueryUtil.ALL_POS,
+				structure.getStructureId(), QueryUtil.ALL_POS,
 				QueryUtil.ALL_POS);
 
-		for (DDMStructureLink ddmStructureLink : ddmStructureLinks) {
-			updateFileUploadReferences(ddmStructureLink);
+		for (DDMStructureLink structureLink : structureLinks) {
+			updateFileUploadReferences(structureLink);
 		}
 
-		DDMForm ddmForm = ddmStructure.getDDMForm();
+		updateStructure(structure, updateXSD(structure.getXsd()));
 
-		updateFileUploadReferences(ddmForm);
+		List<DDMTemplate> templates = DDMTemplateLocalServiceUtil.getTemplates(
+			structure.getGroupId(), _ddmStructureClassNameId,
+			structure.getStructureId(),
+			DDMTemplateConstants.TEMPLATE_TYPE_FORM);
 
-		updateDDMStructure(ddmStructure, ddmForm);
-
-		List<DDMTemplate> ddmTemplates = getFormDDMTemplates(ddmStructure);
-
-		for (DDMTemplate ddmTemplate : ddmTemplates) {
-			String script = updateFileUploadReferences(ddmTemplate.getScript());
-
-			updateDDMTemplate(ddmTemplate, script);
+		for (DDMTemplate template : templates) {
+			updateTemplate(template, updateXSD(template.getScript()));
 		}
 	}
 
-	protected void updateFileUploadReferences(DDMStructureLink ddmStructureLink)
+	protected void updateFileUploadReferences(DDMStructureLink structureLink)
 		throws Exception {
 
-		long classNameId = ddmStructureLink.getClassNameId();
+		long classNameId = structureLink.getClassNameId();
 
 		if (classNameId == _ddlRecordSetClassNameId) {
-			updateDDLFileUploadReferences(ddmStructureLink.getClassPK());
+			updateDDLFileUploadReferences(structureLink.getClassPK());
 		}
 		else if (classNameId == _dlFileEntryMetadataClassNameId) {
-			updateDLFileUploadReferences(ddmStructureLink.getClassPK());
-		}
-	}
-
-	protected void updateFileUploadReferences(Element dynamicElementElement) {
-		String dataType = dynamicElementElement.attributeValue("dataType");
-
-		if (Validator.equals(dataType, "file-upload")) {
-			dynamicElementElement.addAttribute("dataType", "document-library");
-			dynamicElementElement.addAttribute("type", "ddm-documentlibrary");
+			updateDLFileUploadReferences(structureLink.getClassPK());
 		}
 	}
 
@@ -450,9 +402,7 @@ public class VerifyDynamicDataMapping extends VerifyProcess {
 		for (Field field : fields) {
 			String dataType = field.getDataType();
 
-			if (!dataType.equals("file-upload") ||
-				Validator.isNull(field.getValue())) {
-
+			if (!dataType.equals("file-upload") || (field.getValue() == null)) {
 				continue;
 			}
 
@@ -482,115 +432,81 @@ public class VerifyDynamicDataMapping extends VerifyProcess {
 		updateFieldValues(storageId, fieldValues);
 	}
 
-	protected String updateFileUploadReferences(String xsd) throws Exception {
+	protected void updateStructure(DDMStructure structure, String xsd)
+		throws Exception {
+
+		xsd = DDMXMLUtil.formatXML(xsd);
+
+		structure.setXsd(xsd);
+
+		DDMStructureLocalServiceUtil.updateDDMStructure(structure);
+	}
+
+	protected void updateTemplate(DDMTemplate template, String script)
+		throws Exception {
+
+		script = DDMXMLUtil.formatXML(script);
+
+		template.setScript(script);
+
+		DDMTemplateLocalServiceUtil.updateDDMTemplate(template);
+	}
+
+	protected String updateXSD(String xsd) throws Exception {
 		Document document = SAXReaderUtil.read(xsd);
 
-		List<Node> nodes = getDynamicElementNodes(document);
+		Element rootElement = document.getRootElement();
+
+		List<Element> dynamicElementElements = rootElement.elements(
+			"dynamic-element");
+
+		for (Element dynamicElementElement : dynamicElementElements) {
+			updateXSDDynamicElement(dynamicElementElement);
+		}
+
+		return document.asXML();
+	}
+
+	protected void updateXSDDynamicElement(Element element) {
+		String dataType = element.attributeValue("dataType");
+
+		if (Validator.equals(dataType, "file-upload")) {
+			element.addAttribute("dataType", "document-library");
+			element.addAttribute("type", "ddm-documentlibrary");
+		}
+
+		List<Element> dynamicElementElements = element.elements(
+			"dynamic-element");
+
+		for (Element dynamicElementElement : dynamicElementElements) {
+			updateXSDDynamicElement(dynamicElementElement);
+		}
+	}
+
+	protected void verifyStructure(DDMStructure structure) throws Exception {
+		boolean modified = false;
+
+		String defaultLanguageId = structure.getDefaultLanguageId();
+
+		XPath xPathSelector = SAXReaderUtil.createXPath("//dynamic-element");
+
+		Document document = structure.getDocument();
+
+		List<Node> nodes = xPathSelector.selectNodes(document);
 
 		for (Node node : nodes) {
 			Element dynamicElementElement = (Element)node;
 
-			updateFileUploadReferences(dynamicElementElement);
+			if (createDefaultMetadataElement(
+					dynamicElementElement, defaultLanguageId)) {
+
+				modified = true;
+			}
 		}
 
-		return DDMXMLUtil.formatXML(document.asXML());
-	}
-
-	protected DDMForm verifyDDMForm(DDMForm ddmForm) {
-		List<DDMFormField> ddmFormFields = ddmForm.getDDMFormFields();
-
-		for (DDMFormField ddmFormField : ddmFormFields) {
-			verifyDDMFormField(ddmFormField);
+		if (modified) {
+			updateStructure(structure, document.asXML());
 		}
-
-		return ddmForm;
-	}
-
-	protected void verifyDDMFormField(DDMFormField ddmFormField) {
-		String dataType = ddmFormField.getDataType();
-
-		if (Validator.equals(dataType, "image")) {
-			ddmFormField.setNamespace("ddm");
-			ddmFormField.setType("ddm-image");
-		}
-	}
-
-	protected void verifyDDMStructure(DDMStructure ddmStructure)
-		throws Exception {
-
-		DDMForm ddmForm = verifyDDMForm(ddmStructure.getDDMForm());
-
-		updateDDMStructure(ddmStructure, ddmForm);
-	}
-
-	protected void verifyDDMTemplate(DDMTemplate ddmTemplate) throws Exception {
-		if (ddmTemplate.getType() != DDMTemplateConstants.TEMPLATE_TYPE_FORM) {
-			return;
-		}
-
-		String script = verifySchema(
-			ddmTemplate.getScript(), ddmTemplate.getDefaultLanguageId());
-
-		updateDDMTemplate(ddmTemplate, script);
-	}
-
-	protected void verifyDDMTemplates(DDMStructure ddmStructure)
-		throws Exception {
-
-		List<DDMTemplate> ddmTemplates = getFormDDMTemplates(ddmStructure);
-
-		for (DDMTemplate ddmTemplate : ddmTemplates) {
-			verifyDDMTemplate(ddmTemplate);
-		}
-	}
-
-	protected void verifyDynamicElement(
-		Element dynamicElementElement, String defaultLanguageId) {
-
-		String dataType = dynamicElementElement.attributeValue("dataType");
-
-		if (Validator.equals(dataType, "image")) {
-			dynamicElementElement.addAttribute("fieldNamespace", "ddm");
-			dynamicElementElement.addAttribute("type", "ddm-image");
-		}
-
-		verifyMetadataElement(dynamicElementElement, defaultLanguageId);
-	}
-
-	protected void verifyMetadataElement(
-		Element dynamicElementElement, String defaultLanguageId) {
-
-		boolean hasDefaultMetadataElement = hasDefaultMetadataElement(
-			dynamicElementElement, defaultLanguageId);
-
-		if (hasDefaultMetadataElement) {
-			return;
-		}
-
-		Element metadataElement = dynamicElementElement.addElement("meta-data");
-
-		metadataElement.addAttribute("locale", defaultLanguageId);
-
-		Element entryElement = metadataElement.addElement("entry");
-
-		entryElement.addAttribute("name", "label");
-		entryElement.addCDATA(StringPool.BLANK);
-	}
-
-	protected String verifySchema(String xsd, String defaultLanguageId)
-		throws Exception {
-
-		Document document = SAXReaderUtil.read(xsd);
-
-		List<Node> nodes = getDynamicElementNodes(document);
-
-		for (Node node : nodes) {
-			Element dynamicElementElement = (Element)node;
-
-			verifyDynamicElement(dynamicElementElement, defaultLanguageId);
-		}
-
-		return DDMXMLUtil.formatXML(document.asXML());
 	}
 
 	private static Log _log = LogFactoryUtil.getLog(

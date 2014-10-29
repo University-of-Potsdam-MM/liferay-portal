@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -48,12 +48,10 @@ import javax.portlet.PortletRequest;
 public class ConfigurationActionImpl extends DefaultConfigurationAction {
 
 	public ConfigurationActionImpl() {
-		Method doProcessActionMethod = null;
-
 		try {
 			Class<?> clazz = getClass();
 
-			doProcessActionMethod = clazz.getDeclaredMethod(
+			_doProcessActionMethod = clazz.getDeclaredMethod(
 				"doProcessAction",
 				new Class<?>[] {
 					PortletConfig.class, ActionRequest.class,
@@ -63,8 +61,6 @@ public class ConfigurationActionImpl extends DefaultConfigurationAction {
 		catch (Exception e) {
 			_log.error(e, e);
 		}
-
-		_doProcessActionMethod = doProcessActionMethod;
 	}
 
 	@Override
@@ -95,6 +91,10 @@ public class ConfigurationActionImpl extends DefaultConfigurationAction {
 			PortletConfig portletConfig, ActionRequest actionRequest,
 			ActionResponse actionResponse)
 		throws Exception {
+
+		String[] extensions = actionRequest.getParameterValues("extensions");
+
+		setPreference(actionRequest, "extensions", extensions);
 
 		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
@@ -149,6 +149,6 @@ public class ConfigurationActionImpl extends DefaultConfigurationAction {
 	private static Log _log = LogFactoryUtil.getLog(
 		ConfigurationActionImpl.class);
 
-	private final Method _doProcessActionMethod;
+	private Method _doProcessActionMethod;
 
 }

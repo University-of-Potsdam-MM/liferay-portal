@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,10 +15,12 @@
 package com.liferay.portlet.calendar.lar;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.lar.BasePortletDataHandler;
 import com.liferay.portal.kernel.lar.ExportImportPathUtil;
 import com.liferay.portal.kernel.lar.PortletDataContext;
 import com.liferay.portal.kernel.lar.PortletDataHandlerBoolean;
+import com.liferay.portal.kernel.lar.StagedModelType;
 import com.liferay.portal.kernel.util.CalendarFactoryUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringBundler;
@@ -52,6 +54,8 @@ public class CalendarPortletDataHandler extends BasePortletDataHandler {
 	public static final String NAMESPACE = "calendar";
 
 	public CalendarPortletDataHandler() {
+		setDeletionSystemEventStagedModelTypes(
+			new StagedModelType(CalEvent.class));
 		setExportControls(
 			new PortletDataHandlerBoolean(
 				NAMESPACE, "events", true, true, null,
@@ -135,7 +139,7 @@ public class CalendarPortletDataHandler extends BasePortletDataHandler {
 	protected void exportEvent(
 			PortletDataContext portletDataContext, Element rootElement,
 			CalEvent event)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		if (!portletDataContext.isWithinDateRange(event.getModifiedDate())) {
 			return;

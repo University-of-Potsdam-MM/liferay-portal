@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -82,7 +82,7 @@ int weekNumber = 1;
 		%>
 
 			<th class="table-header">
-				<%= LanguageUtil.get(request, CalendarUtil.DAYS_ABBREVIATION[daysIndex]) %>
+				<%= LanguageUtil.get(pageContext, CalendarUtil.DAYS_ABBREVIATION[daysIndex]) %>
 			</th>
 
 		<%
@@ -108,17 +108,17 @@ int weekNumber = 1;
 		maxDayOfPrevMonth = (maxDayOfPrevMonth - dayOfWeek) + 1;
 
 		for (int i = 1; i < dayOfWeek; i++) {
-			String cssClass = "table-cell calendar-inactive calendar-previous-month";
+			String className = "table-cell calendar-inactive calendar-previous-month";
 
 			if (i == 1) {
-				cssClass += " first";
+				className += " first";
 			}
 			else if (i == 7) {
-				cssClass += " last";
+				className += " last";
 			}
 		%>
 
-			<td class="<%= cssClass %>"><%= maxDayOfPrevMonth + i %></td>
+			<td class="<%= className %>"><%= maxDayOfPrevMonth + i %></td>
 
 		<%
 		}
@@ -143,27 +143,27 @@ int weekNumber = 1;
 
 			boolean hasData = (data != null) && data.contains(new Integer(i));
 
-			String cssClass = "";
+			String className = "";
 
 			if (i == selDay) {
-				cssClass = "table-cell calendar-current-day portlet-section-selected";
+				className = "table-cell calendar-current-day portlet-section-selected";
 			}
 
 			if (hasData) {
-				cssClass += " has-events";
+				className += " has-events";
 			}
 
 			if (dayOfWeek == 1) {
-				cssClass += " first";
+				className += " first";
 			}
 			else if (dayOfWeek == 7) {
-				cssClass += " last";
+				className += " last";
 			}
 
 			dayOfWeek++;
 		%>
 
-			<td class="<%= cssClass %>">
+			<td class="<%= className %>">
 				<a href="javascript:<%= namespace %>updateCalendar(<%= selMonth %>, <%= i %>, <%= selYear %>);"><span><%= i %></span></a>
 			</td>
 
@@ -173,17 +173,17 @@ int weekNumber = 1;
 		int dayOfNextMonth = 1;
 
 		for (int i = 7; i >= dayOfWeek; i--) {
-			String cssClass = "table-cell calendar-inactive calendar-next-month";
+			String className = "table-cell calendar-inactive calendar-next-month";
 
 			if (dayOfWeek == 1) {
-				cssClass += " first";
+				className += " first";
 			}
 			else if (i == dayOfWeek) {
-				cssClass += " last";
+				className += " last";
 			}
 		%>
 
-			<td class="<%= cssClass %>"><%= dayOfNextMonth++ %></td>
+			<td class="<%= className %>"><%= dayOfNextMonth++ %></td>
 
 		<%
 		}
@@ -195,17 +195,17 @@ int weekNumber = 1;
 
 				<%
 				for (int i = 1; i <= 7; i++) {
-					String cssClass = "table-cell calendar-inactive calendar-next-month";
+					String className = "table-cell calendar-inactive calendar-next-month";
 
 					if (i == 1) {
-						cssClass += " first";
+						className += " first";
 					}
 					else if (i == 7) {
-						cssClass += " last";
+						className += " last";
 					}
 				%>
 
-					<td class="<%= cssClass %>"><%= dayOfNextMonth++ %></td>
+					<td class="<%= className %>"><%= dayOfNextMonth++ %></td>
 
 				<%
 				}

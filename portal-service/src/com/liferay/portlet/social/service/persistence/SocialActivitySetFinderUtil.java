@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -24,39 +24,47 @@ import com.liferay.portal.kernel.util.ReferenceRegistry;
  */
 @ProviderType
 public class SocialActivitySetFinderUtil {
-	public static int countByRelation(long userId) {
+	public static int countByRelation(long userId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getFinder().countByRelation(userId);
 	}
 
-	public static int countByRelationType(long userId, int type) {
+	public static int countByRelationType(long userId, int type)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getFinder().countByRelationType(userId, type);
 	}
 
-	public static int countByUser(long userId) {
+	public static int countByUser(long userId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getFinder().countByUser(userId);
 	}
 
-	public static int countByUserGroups(long userId) {
+	public static int countByUserGroups(long userId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getFinder().countByUserGroups(userId);
 	}
 
 	public static java.util.List<com.liferay.portlet.social.model.SocialActivitySet> findByRelation(
-		long userId, int start, int end) {
+		long userId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getFinder().findByRelation(userId, start, end);
 	}
 
 	public static java.util.List<com.liferay.portlet.social.model.SocialActivitySet> findByRelationType(
-		long userId, int type, int start, int end) {
+		long userId, int type, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getFinder().findByRelationType(userId, type, start, end);
 	}
 
 	public static java.util.List<com.liferay.portlet.social.model.SocialActivitySet> findByUser(
-		long userId, int start, int end) {
+		long userId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getFinder().findByUser(userId, start, end);
 	}
 
 	public static java.util.List<com.liferay.portlet.social.model.SocialActivitySet> findByUserGroups(
-		long userId, int start, int end) {
+		long userId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getFinder().findByUserGroups(userId, start, end);
 	}
 

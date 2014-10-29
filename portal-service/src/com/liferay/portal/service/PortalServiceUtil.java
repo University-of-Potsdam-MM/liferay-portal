@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -40,9 +40,6 @@ public class PortalServiceUtil {
 	 *
 	 * Never modify this class directly. Add custom service methods to {@link com.liferay.portal.service.impl.PortalServiceImpl} and rerun ServiceBuilder to regenerate this class.
 	 */
-	public static java.lang.String getAutoDeployDirectory() {
-		return getService().getAutoDeployDirectory();
-	}
 
 	/**
 	* Returns the Spring bean ID for this bean.
@@ -51,10 +48,6 @@ public class PortalServiceUtil {
 	*/
 	public static java.lang.String getBeanIdentifier() {
 		return getService().getBeanIdentifier();
-	}
-
-	public static int getBuildNumber() {
-		return getService().getBuildNumber();
 	}
 
 	/**
@@ -66,39 +59,55 @@ public class PortalServiceUtil {
 		getService().setBeanIdentifier(beanIdentifier);
 	}
 
+	public static java.lang.String getAutoDeployDirectory()
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().getAutoDeployDirectory();
+	}
+
+	public static int getBuildNumber() {
+		return getService().getBuildNumber();
+	}
+
+	public static void testAddClassName_Rollback(
+		java.lang.String classNameValue)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		getService().testAddClassName_Rollback(classNameValue);
+	}
+
+	public static void testAddClassName_Success(java.lang.String classNameValue)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		getService().testAddClassName_Success(classNameValue);
+	}
+
 	public static void testAddClassNameAndTestTransactionPortletBar_PortalRollback(
-		java.lang.String transactionPortletBarText) {
+		java.lang.String transactionPortletBarText)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getService()
 			.testAddClassNameAndTestTransactionPortletBar_PortalRollback(transactionPortletBarText);
 	}
 
 	public static void testAddClassNameAndTestTransactionPortletBar_PortletRollback(
-		java.lang.String transactionPortletBarText) {
+		java.lang.String transactionPortletBarText)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getService()
 			.testAddClassNameAndTestTransactionPortletBar_PortletRollback(transactionPortletBarText);
 	}
 
 	public static void testAddClassNameAndTestTransactionPortletBar_Success(
-		java.lang.String transactionPortletBarText) {
+		java.lang.String transactionPortletBarText)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getService()
 			.testAddClassNameAndTestTransactionPortletBar_Success(transactionPortletBarText);
 	}
 
-	public static void testAddClassName_Rollback(
-		java.lang.String classNameValue) {
-		getService().testAddClassName_Rollback(classNameValue);
-	}
-
-	public static void testAddClassName_Success(java.lang.String classNameValue) {
-		getService().testAddClassName_Success(classNameValue);
-	}
-
-	public static void testAutoSyncHibernateSessionStateOnTxCreation() {
+	public static void testAutoSyncHibernateSessionStateOnTxCreation()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getService().testAutoSyncHibernateSessionStateOnTxCreation();
 	}
 
 	public static void testDeleteClassName()
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		getService().testDeleteClassName();
 	}
 
@@ -110,7 +119,8 @@ public class PortalServiceUtil {
 		getService().testGetUserId();
 	}
 
-	public static boolean testHasClassName() {
+	public static boolean testHasClassName()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().testHasClassName();
 	}
 
@@ -128,7 +138,6 @@ public class PortalServiceUtil {
 	/**
 	 * @deprecated As of 6.2.0
 	 */
-	@Deprecated
 	public void setService(PortalService service) {
 	}
 

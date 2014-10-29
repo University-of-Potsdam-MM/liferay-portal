@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portal.service.persistence;
 
 import com.liferay.portal.NoSuchLockException;
+import com.liferay.portal.kernel.bean.PortalBeanLocatorUtil;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
@@ -23,75 +24,66 @@ import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.template.TemplateException;
-import com.liferay.portal.kernel.template.TemplateManagerUtil;
-import com.liferay.portal.kernel.transaction.Propagation;
+import com.liferay.portal.kernel.test.ExecutionTestListeners;
 import com.liferay.portal.kernel.util.IntegerWrapper;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.OrderByComparatorFactoryUtil;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.Lock;
 import com.liferay.portal.model.impl.LockModelImpl;
-import com.liferay.portal.service.LockLocalServiceUtil;
-import com.liferay.portal.test.TransactionalTestRule;
-import com.liferay.portal.test.runners.PersistenceIntegrationJUnitTestRunner;
-import com.liferay.portal.tools.DBUpgrader;
+import com.liferay.portal.service.ServiceTestUtil;
+import com.liferay.portal.service.persistence.BasePersistence;
+import com.liferay.portal.service.persistence.PersistenceExecutionTestListener;
+import com.liferay.portal.test.LiferayPersistenceIntegrationJUnitTestRunner;
+import com.liferay.portal.test.persistence.TransactionalPersistenceAdvice;
 import com.liferay.portal.util.PropsValues;
-import com.liferay.portal.util.test.RandomTestUtil;
 
 import org.junit.After;
 import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
 import org.junit.Test;
 
 import org.junit.runner.RunWith;
 
 import java.io.Serializable;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 /**
- * @generated
+ * @author Brian Wing Shun Chan
  */
-@RunWith(PersistenceIntegrationJUnitTestRunner.class)
+@ExecutionTestListeners(listeners =  {
+	PersistenceExecutionTestListener.class})
+@RunWith(LiferayPersistenceIntegrationJUnitTestRunner.class)
 public class LockPersistenceTest {
-	@ClassRule
-	public static TransactionalTestRule transactionalTestRule = new TransactionalTestRule(Propagation.REQUIRED);
-
-	@BeforeClass
-	public static void setupClass() throws TemplateException {
-		try {
-			DBUpgrader.upgrade();
-		}
-		catch (Exception e) {
-			_log.error(e, e);
-		}
-
-		TemplateManagerUtil.init();
-	}
-
 	@After
 	public void tearDown() throws Exception {
-		Iterator<Lock> iterator = _locks.iterator();
+		Map<Serializable, BasePersistence<?>> basePersistences = _transactionalPersistenceAdvice.getBasePersistences();
 
-		while (iterator.hasNext()) {
-			_persistence.remove(iterator.next());
+		Set<Serializable> primaryKeys = basePersistences.keySet();
 
-			iterator.remove();
+		for (Serializable primaryKey : primaryKeys) {
+			BasePersistence<?> basePersistence = basePersistences.get(primaryKey);
+
+			try {
+				basePersistence.remove(primaryKey);
+			}
+			catch (Exception e) {
+				if (_log.isDebugEnabled()) {
+					_log.debug("The model with primary key " + primaryKey +
+						" was already deleted");
+				}
+			}
 		}
+
+		_transactionalPersistenceAdvice.reset();
 	}
 
 	@Test
 	public void testCreate() throws Exception {
-		long pk = RandomTestUtil.nextLong();
+		long pk = ServiceTestUtil.nextLong();
 
 		Lock lock = _persistence.create(pk);
 
@@ -118,38 +110,34 @@ public class LockPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
+		long pk = ServiceTestUtil.nextLong();
 
 		Lock newLock = _persistence.create(pk);
 
-		newLock.setMvccVersion(RandomTestUtil.nextLong());
+		newLock.setUuid(ServiceTestUtil.randomString());
 
-		newLock.setUuid(RandomTestUtil.randomString());
+		newLock.setCompanyId(ServiceTestUtil.nextLong());
 
-		newLock.setCompanyId(RandomTestUtil.nextLong());
+		newLock.setUserId(ServiceTestUtil.nextLong());
 
-		newLock.setUserId(RandomTestUtil.nextLong());
+		newLock.setUserName(ServiceTestUtil.randomString());
 
-		newLock.setUserName(RandomTestUtil.randomString());
+		newLock.setCreateDate(ServiceTestUtil.nextDate());
 
-		newLock.setCreateDate(RandomTestUtil.nextDate());
+		newLock.setClassName(ServiceTestUtil.randomString());
 
-		newLock.setClassName(RandomTestUtil.randomString());
+		newLock.setKey(ServiceTestUtil.randomString());
 
-		newLock.setKey(RandomTestUtil.randomString());
+		newLock.setOwner(ServiceTestUtil.randomString());
 
-		newLock.setOwner(RandomTestUtil.randomString());
+		newLock.setInheritable(ServiceTestUtil.randomBoolean());
 
-		newLock.setInheritable(RandomTestUtil.randomBoolean());
+		newLock.setExpirationDate(ServiceTestUtil.nextDate());
 
-		newLock.setExpirationDate(RandomTestUtil.nextDate());
-
-		_locks.add(_persistence.update(newLock));
+		_persistence.update(newLock);
 
 		Lock existingLock = _persistence.findByPrimaryKey(newLock.getPrimaryKey());
 
-		Assert.assertEquals(existingLock.getMvccVersion(),
-			newLock.getMvccVersion());
 		Assert.assertEquals(existingLock.getUuid(), newLock.getUuid());
 		Assert.assertEquals(existingLock.getLockId(), newLock.getLockId());
 		Assert.assertEquals(existingLock.getCompanyId(), newLock.getCompanyId());
@@ -168,61 +156,6 @@ public class LockPersistenceTest {
 	}
 
 	@Test
-	public void testCountByUuid() {
-		try {
-			_persistence.countByUuid(StringPool.BLANK);
-
-			_persistence.countByUuid(StringPool.NULL);
-
-			_persistence.countByUuid((String)null);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByUuid_C() {
-		try {
-			_persistence.countByUuid_C(StringPool.BLANK,
-				RandomTestUtil.nextLong());
-
-			_persistence.countByUuid_C(StringPool.NULL, 0L);
-
-			_persistence.countByUuid_C((String)null, 0L);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByLtExpirationDate() {
-		try {
-			_persistence.countByLtExpirationDate(RandomTestUtil.nextDate());
-
-			_persistence.countByLtExpirationDate(RandomTestUtil.nextDate());
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByC_K() {
-		try {
-			_persistence.countByC_K(StringPool.BLANK, StringPool.BLANK);
-
-			_persistence.countByC_K(StringPool.NULL, StringPool.NULL);
-
-			_persistence.countByC_K((String)null, (String)null);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
 	public void testFindByPrimaryKeyExisting() throws Exception {
 		Lock newLock = addLock();
 
@@ -233,7 +166,7 @@ public class LockPersistenceTest {
 
 	@Test
 	public void testFindByPrimaryKeyMissing() throws Exception {
-		long pk = RandomTestUtil.nextLong();
+		long pk = ServiceTestUtil.nextLong();
 
 		try {
 			_persistence.findByPrimaryKey(pk);
@@ -255,12 +188,11 @@ public class LockPersistenceTest {
 		}
 	}
 
-	protected OrderByComparator<Lock> getOrderByComparator() {
-		return OrderByComparatorFactoryUtil.create("Lock_", "mvccVersion",
-			true, "uuid", true, "lockId", true, "companyId", true, "userId",
-			true, "userName", true, "createDate", true, "className", true,
-			"key", true, "owner", true, "inheritable", true, "expirationDate",
-			true);
+	protected OrderByComparator getOrderByComparator() {
+		return OrderByComparatorFactoryUtil.create("Lock_", "uuid", true,
+			"lockId", true, "companyId", true, "userId", true, "userName",
+			true, "createDate", true, "className", true, "key", true, "owner",
+			true, "inheritable", true, "expirationDate", true);
 	}
 
 	@Test
@@ -274,7 +206,7 @@ public class LockPersistenceTest {
 
 	@Test
 	public void testFetchByPrimaryKeyMissing() throws Exception {
-		long pk = RandomTestUtil.nextLong();
+		long pk = ServiceTestUtil.nextLong();
 
 		Lock missingLock = _persistence.fetchByPrimaryKey(pk);
 
@@ -282,99 +214,19 @@ public class LockPersistenceTest {
 	}
 
 	@Test
-	public void testFetchByPrimaryKeysWithMultiplePrimaryKeysWhereAllPrimaryKeysExist()
-		throws Exception {
-		Lock newLock1 = addLock();
-		Lock newLock2 = addLock();
-
-		Set<Serializable> primaryKeys = new HashSet<Serializable>();
-
-		primaryKeys.add(newLock1.getPrimaryKey());
-		primaryKeys.add(newLock2.getPrimaryKey());
-
-		Map<Serializable, Lock> locks = _persistence.fetchByPrimaryKeys(primaryKeys);
-
-		Assert.assertEquals(2, locks.size());
-		Assert.assertEquals(newLock1, locks.get(newLock1.getPrimaryKey()));
-		Assert.assertEquals(newLock2, locks.get(newLock2.getPrimaryKey()));
-	}
-
-	@Test
-	public void testFetchByPrimaryKeysWithMultiplePrimaryKeysWhereNoPrimaryKeysExist()
-		throws Exception {
-		long pk1 = RandomTestUtil.nextLong();
-
-		long pk2 = RandomTestUtil.nextLong();
-
-		Set<Serializable> primaryKeys = new HashSet<Serializable>();
-
-		primaryKeys.add(pk1);
-		primaryKeys.add(pk2);
-
-		Map<Serializable, Lock> locks = _persistence.fetchByPrimaryKeys(primaryKeys);
-
-		Assert.assertTrue(locks.isEmpty());
-	}
-
-	@Test
-	public void testFetchByPrimaryKeysWithMultiplePrimaryKeysWhereSomePrimaryKeysExist()
-		throws Exception {
-		Lock newLock = addLock();
-
-		long pk = RandomTestUtil.nextLong();
-
-		Set<Serializable> primaryKeys = new HashSet<Serializable>();
-
-		primaryKeys.add(newLock.getPrimaryKey());
-		primaryKeys.add(pk);
-
-		Map<Serializable, Lock> locks = _persistence.fetchByPrimaryKeys(primaryKeys);
-
-		Assert.assertEquals(1, locks.size());
-		Assert.assertEquals(newLock, locks.get(newLock.getPrimaryKey()));
-	}
-
-	@Test
-	public void testFetchByPrimaryKeysWithNoPrimaryKeys()
-		throws Exception {
-		Set<Serializable> primaryKeys = new HashSet<Serializable>();
-
-		Map<Serializable, Lock> locks = _persistence.fetchByPrimaryKeys(primaryKeys);
-
-		Assert.assertTrue(locks.isEmpty());
-	}
-
-	@Test
-	public void testFetchByPrimaryKeysWithOnePrimaryKey()
-		throws Exception {
-		Lock newLock = addLock();
-
-		Set<Serializable> primaryKeys = new HashSet<Serializable>();
-
-		primaryKeys.add(newLock.getPrimaryKey());
-
-		Map<Serializable, Lock> locks = _persistence.fetchByPrimaryKeys(primaryKeys);
-
-		Assert.assertEquals(1, locks.size());
-		Assert.assertEquals(newLock, locks.get(newLock.getPrimaryKey()));
-	}
-
-	@Test
 	public void testActionableDynamicQuery() throws Exception {
 		final IntegerWrapper count = new IntegerWrapper();
 
-		ActionableDynamicQuery actionableDynamicQuery = LockLocalServiceUtil.getActionableDynamicQuery();
-
-		actionableDynamicQuery.setPerformActionMethod(new ActionableDynamicQuery.PerformActionMethod() {
+		ActionableDynamicQuery actionableDynamicQuery = new LockActionableDynamicQuery() {
 				@Override
-				public void performAction(Object object) {
+				protected void performAction(Object object) {
 					Lock lock = (Lock)object;
 
 					Assert.assertNotNull(lock);
 
 					count.increment();
 				}
-			});
+			};
 
 		actionableDynamicQuery.performActions();
 
@@ -407,7 +259,7 @@ public class LockPersistenceTest {
 				Lock.class.getClassLoader());
 
 		dynamicQuery.add(RestrictionsFactoryUtil.eq("lockId",
-				RandomTestUtil.nextLong()));
+				ServiceTestUtil.nextLong()));
 
 		List<Lock> result = _persistence.findWithDynamicQuery(dynamicQuery);
 
@@ -446,7 +298,7 @@ public class LockPersistenceTest {
 		dynamicQuery.setProjection(ProjectionFactoryUtil.property("lockId"));
 
 		dynamicQuery.add(RestrictionsFactoryUtil.in("lockId",
-				new Object[] { RandomTestUtil.nextLong() }));
+				new Object[] { ServiceTestUtil.nextLong() }));
 
 		List<Object> result = _persistence.findWithDynamicQuery(dynamicQuery);
 
@@ -473,38 +325,36 @@ public class LockPersistenceTest {
 	}
 
 	protected Lock addLock() throws Exception {
-		long pk = RandomTestUtil.nextLong();
+		long pk = ServiceTestUtil.nextLong();
 
 		Lock lock = _persistence.create(pk);
 
-		lock.setMvccVersion(RandomTestUtil.nextLong());
+		lock.setUuid(ServiceTestUtil.randomString());
 
-		lock.setUuid(RandomTestUtil.randomString());
+		lock.setCompanyId(ServiceTestUtil.nextLong());
 
-		lock.setCompanyId(RandomTestUtil.nextLong());
+		lock.setUserId(ServiceTestUtil.nextLong());
 
-		lock.setUserId(RandomTestUtil.nextLong());
+		lock.setUserName(ServiceTestUtil.randomString());
 
-		lock.setUserName(RandomTestUtil.randomString());
+		lock.setCreateDate(ServiceTestUtil.nextDate());
 
-		lock.setCreateDate(RandomTestUtil.nextDate());
+		lock.setClassName(ServiceTestUtil.randomString());
 
-		lock.setClassName(RandomTestUtil.randomString());
+		lock.setKey(ServiceTestUtil.randomString());
 
-		lock.setKey(RandomTestUtil.randomString());
+		lock.setOwner(ServiceTestUtil.randomString());
 
-		lock.setOwner(RandomTestUtil.randomString());
+		lock.setInheritable(ServiceTestUtil.randomBoolean());
 
-		lock.setInheritable(RandomTestUtil.randomBoolean());
+		lock.setExpirationDate(ServiceTestUtil.nextDate());
 
-		lock.setExpirationDate(RandomTestUtil.nextDate());
-
-		_locks.add(_persistence.update(lock));
+		_persistence.update(lock);
 
 		return lock;
 	}
 
 	private static Log _log = LogFactoryUtil.getLog(LockPersistenceTest.class);
-	private List<Lock> _locks = new ArrayList<Lock>();
-	private LockPersistence _persistence = LockUtil.getPersistence();
+	private LockPersistence _persistence = (LockPersistence)PortalBeanLocatorUtil.locate(LockPersistence.class.getName());
+	private TransactionalPersistenceAdvice _transactionalPersistenceAdvice = (TransactionalPersistenceAdvice)PortalBeanLocatorUtil.locate(TransactionalPersistenceAdvice.class.getName());
 }

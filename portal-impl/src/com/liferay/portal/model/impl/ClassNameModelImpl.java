@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -13,8 +13,6 @@
  */
 
 package com.liferay.portal.model.impl;
-
-import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
 import com.liferay.portal.kernel.json.JSON;
@@ -56,7 +54,6 @@ import java.util.Map;
  * @generated
  */
 @JSON(strict = true)
-@ProviderType
 public class ClassNameModelImpl extends BaseModelImpl<ClassName>
 	implements ClassNameModel {
 	/*
@@ -66,11 +63,10 @@ public class ClassNameModelImpl extends BaseModelImpl<ClassName>
 	 */
 	public static final String TABLE_NAME = "ClassName_";
 	public static final Object[][] TABLE_COLUMNS = {
-			{ "mvccVersion", Types.BIGINT },
 			{ "classNameId", Types.BIGINT },
 			{ "value", Types.VARCHAR }
 		};
-	public static final String TABLE_SQL_CREATE = "create table ClassName_ (mvccVersion LONG default 0,classNameId LONG not null primary key,value VARCHAR(200) null)";
+	public static final String TABLE_SQL_CREATE = "create table ClassName_ (classNameId LONG not null primary key,value VARCHAR(200) null)";
 	public static final String TABLE_SQL_DROP = "drop table ClassName_";
 	public static final String ORDER_BY_JPQL = " ORDER BY className.classNameId ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY ClassName_.classNameId ASC";
@@ -86,8 +82,8 @@ public class ClassNameModelImpl extends BaseModelImpl<ClassName>
 	public static final boolean COLUMN_BITMASK_ENABLED = GetterUtil.getBoolean(com.liferay.portal.util.PropsUtil.get(
 				"value.object.column.bitmask.enabled.com.liferay.portal.model.ClassName"),
 			true);
-	public static final long VALUE_COLUMN_BITMASK = 1L;
-	public static final long CLASSNAMEID_COLUMN_BITMASK = 2L;
+	public static long VALUE_COLUMN_BITMASK = 1L;
+	public static long CLASSNAMEID_COLUMN_BITMASK = 2L;
 
 	/**
 	 * Converts the soap model instance into a normal model instance.
@@ -102,7 +98,6 @@ public class ClassNameModelImpl extends BaseModelImpl<ClassName>
 
 		ClassName model = new ClassNameImpl();
 
-		model.setMvccVersion(soapModel.getMvccVersion());
 		model.setClassNameId(soapModel.getClassNameId());
 		model.setValue(soapModel.getValue());
 
@@ -169,24 +164,14 @@ public class ClassNameModelImpl extends BaseModelImpl<ClassName>
 	public Map<String, Object> getModelAttributes() {
 		Map<String, Object> attributes = new HashMap<String, Object>();
 
-		attributes.put("mvccVersion", getMvccVersion());
 		attributes.put("classNameId", getClassNameId());
 		attributes.put("value", getValue());
-
-		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
-		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
 
 		return attributes;
 	}
 
 	@Override
 	public void setModelAttributes(Map<String, Object> attributes) {
-		Long mvccVersion = (Long)attributes.get("mvccVersion");
-
-		if (mvccVersion != null) {
-			setMvccVersion(mvccVersion);
-		}
-
 		Long classNameId = (Long)attributes.get("classNameId");
 
 		if (classNameId != null) {
@@ -198,17 +183,6 @@ public class ClassNameModelImpl extends BaseModelImpl<ClassName>
 		if (value != null) {
 			setValue(value);
 		}
-	}
-
-	@JSON
-	@Override
-	public long getMvccVersion() {
-		return _mvccVersion;
-	}
-
-	@Override
-	public void setMvccVersion(long mvccVersion) {
-		_mvccVersion = mvccVersion;
 	}
 
 	@Override
@@ -299,7 +273,6 @@ public class ClassNameModelImpl extends BaseModelImpl<ClassName>
 	public Object clone() {
 		ClassNameImpl classNameImpl = new ClassNameImpl();
 
-		classNameImpl.setMvccVersion(getMvccVersion());
 		classNameImpl.setClassNameId(getClassNameId());
 		classNameImpl.setValue(getValue());
 
@@ -351,16 +324,6 @@ public class ClassNameModelImpl extends BaseModelImpl<ClassName>
 	}
 
 	@Override
-	public boolean isEntityCacheEnabled() {
-		return ENTITY_CACHE_ENABLED;
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return FINDER_CACHE_ENABLED;
-	}
-
-	@Override
 	public void resetOriginalValues() {
 		ClassNameModelImpl classNameModelImpl = this;
 
@@ -372,8 +335,6 @@ public class ClassNameModelImpl extends BaseModelImpl<ClassName>
 	@Override
 	public CacheModel<ClassName> toCacheModel() {
 		ClassNameCacheModel classNameCacheModel = new ClassNameCacheModel();
-
-		classNameCacheModel.mvccVersion = getMvccVersion();
 
 		classNameCacheModel.classNameId = getClassNameId();
 
@@ -390,11 +351,9 @@ public class ClassNameModelImpl extends BaseModelImpl<ClassName>
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(7);
+		StringBundler sb = new StringBundler(5);
 
-		sb.append("{mvccVersion=");
-		sb.append(getMvccVersion());
-		sb.append(", classNameId=");
+		sb.append("{classNameId=");
 		sb.append(getClassNameId());
 		sb.append(", value=");
 		sb.append(getValue());
@@ -405,16 +364,12 @@ public class ClassNameModelImpl extends BaseModelImpl<ClassName>
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(13);
+		StringBundler sb = new StringBundler(10);
 
 		sb.append("<model><model-name>");
 		sb.append("com.liferay.portal.model.ClassName");
 		sb.append("</model-name>");
 
-		sb.append(
-			"<column><column-name>mvccVersion</column-name><column-value><![CDATA[");
-		sb.append(getMvccVersion());
-		sb.append("]]></column-value></column>");
 		sb.append(
 			"<column><column-name>classNameId</column-name><column-value><![CDATA[");
 		sb.append(getClassNameId());
@@ -429,11 +384,10 @@ public class ClassNameModelImpl extends BaseModelImpl<ClassName>
 		return sb.toString();
 	}
 
-	private static final ClassLoader _classLoader = ClassName.class.getClassLoader();
-	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
+	private static ClassLoader _classLoader = ClassName.class.getClassLoader();
+	private static Class<?>[] _escapedModelInterfaces = new Class[] {
 			ClassName.class
 		};
-	private long _mvccVersion;
 	private long _classNameId;
 	private String _value;
 	private String _originalValue;

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,6 +18,7 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.bean.PortalBeanLocatorUtil;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ReferenceRegistry;
 import com.liferay.portal.model.BrowserTracker;
@@ -62,7 +63,8 @@ public class BrowserTrackerUtil {
 	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#countWithDynamicQuery(DynamicQuery)
 	 */
-	public static long countWithDynamicQuery(DynamicQuery dynamicQuery) {
+	public static long countWithDynamicQuery(DynamicQuery dynamicQuery)
+		throws SystemException {
 		return getPersistence().countWithDynamicQuery(dynamicQuery);
 	}
 
@@ -70,7 +72,7 @@ public class BrowserTrackerUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#findWithDynamicQuery(DynamicQuery)
 	 */
 	public static List<BrowserTracker> findWithDynamicQuery(
-		DynamicQuery dynamicQuery) {
+		DynamicQuery dynamicQuery) throws SystemException {
 		return getPersistence().findWithDynamicQuery(dynamicQuery);
 	}
 
@@ -78,7 +80,8 @@ public class BrowserTrackerUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#findWithDynamicQuery(DynamicQuery, int, int)
 	 */
 	public static List<BrowserTracker> findWithDynamicQuery(
-		DynamicQuery dynamicQuery, int start, int end) {
+		DynamicQuery dynamicQuery, int start, int end)
+		throws SystemException {
 		return getPersistence().findWithDynamicQuery(dynamicQuery, start, end);
 	}
 
@@ -87,7 +90,7 @@ public class BrowserTrackerUtil {
 	 */
 	public static List<BrowserTracker> findWithDynamicQuery(
 		DynamicQuery dynamicQuery, int start, int end,
-		OrderByComparator<BrowserTracker> orderByComparator) {
+		OrderByComparator orderByComparator) throws SystemException {
 		return getPersistence()
 				   .findWithDynamicQuery(dynamicQuery, start, end,
 			orderByComparator);
@@ -96,7 +99,8 @@ public class BrowserTrackerUtil {
 	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel)
 	 */
-	public static BrowserTracker update(BrowserTracker browserTracker) {
+	public static BrowserTracker update(BrowserTracker browserTracker)
+		throws SystemException {
 		return getPersistence().update(browserTracker);
 	}
 
@@ -104,7 +108,7 @@ public class BrowserTrackerUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, ServiceContext)
 	 */
 	public static BrowserTracker update(BrowserTracker browserTracker,
-		ServiceContext serviceContext) {
+		ServiceContext serviceContext) throws SystemException {
 		return getPersistence().update(browserTracker, serviceContext);
 	}
 
@@ -114,9 +118,12 @@ public class BrowserTrackerUtil {
 	* @param userId the user ID
 	* @return the matching browser tracker
 	* @throws com.liferay.portal.NoSuchBrowserTrackerException if a matching browser tracker could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.BrowserTracker findByUserId(
-		long userId) throws com.liferay.portal.NoSuchBrowserTrackerException {
+		long userId)
+		throws com.liferay.portal.NoSuchBrowserTrackerException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByUserId(userId);
 	}
 
@@ -125,9 +132,10 @@ public class BrowserTrackerUtil {
 	*
 	* @param userId the user ID
 	* @return the matching browser tracker, or <code>null</code> if a matching browser tracker could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.BrowserTracker fetchByUserId(
-		long userId) {
+		long userId) throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByUserId(userId);
 	}
 
@@ -137,9 +145,11 @@ public class BrowserTrackerUtil {
 	* @param userId the user ID
 	* @param retrieveFromCache whether to use the finder cache
 	* @return the matching browser tracker, or <code>null</code> if a matching browser tracker could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.BrowserTracker fetchByUserId(
-		long userId, boolean retrieveFromCache) {
+		long userId, boolean retrieveFromCache)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByUserId(userId, retrieveFromCache);
 	}
 
@@ -148,9 +158,12 @@ public class BrowserTrackerUtil {
 	*
 	* @param userId the user ID
 	* @return the browser tracker that was removed
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.BrowserTracker removeByUserId(
-		long userId) throws com.liferay.portal.NoSuchBrowserTrackerException {
+		long userId)
+		throws com.liferay.portal.NoSuchBrowserTrackerException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().removeByUserId(userId);
 	}
 
@@ -159,8 +172,10 @@ public class BrowserTrackerUtil {
 	*
 	* @param userId the user ID
 	* @return the number of matching browser trackers
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByUserId(long userId) {
+	public static int countByUserId(long userId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByUserId(userId);
 	}
 
@@ -201,15 +216,18 @@ public class BrowserTrackerUtil {
 	* @param browserTrackerId the primary key of the browser tracker
 	* @return the browser tracker that was removed
 	* @throws com.liferay.portal.NoSuchBrowserTrackerException if a browser tracker with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.BrowserTracker remove(
 		long browserTrackerId)
-		throws com.liferay.portal.NoSuchBrowserTrackerException {
+		throws com.liferay.portal.NoSuchBrowserTrackerException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().remove(browserTrackerId);
 	}
 
 	public static com.liferay.portal.model.BrowserTracker updateImpl(
-		com.liferay.portal.model.BrowserTracker browserTracker) {
+		com.liferay.portal.model.BrowserTracker browserTracker)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().updateImpl(browserTracker);
 	}
 
@@ -219,10 +237,12 @@ public class BrowserTrackerUtil {
 	* @param browserTrackerId the primary key of the browser tracker
 	* @return the browser tracker
 	* @throws com.liferay.portal.NoSuchBrowserTrackerException if a browser tracker with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.BrowserTracker findByPrimaryKey(
 		long browserTrackerId)
-		throws com.liferay.portal.NoSuchBrowserTrackerException {
+		throws com.liferay.portal.NoSuchBrowserTrackerException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByPrimaryKey(browserTrackerId);
 	}
 
@@ -231,23 +251,22 @@ public class BrowserTrackerUtil {
 	*
 	* @param browserTrackerId the primary key of the browser tracker
 	* @return the browser tracker, or <code>null</code> if a browser tracker with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.BrowserTracker fetchByPrimaryKey(
-		long browserTrackerId) {
+		long browserTrackerId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByPrimaryKey(browserTrackerId);
-	}
-
-	public static java.util.Map<java.io.Serializable, com.liferay.portal.model.BrowserTracker> fetchByPrimaryKeys(
-		java.util.Set<java.io.Serializable> primaryKeys) {
-		return getPersistence().fetchByPrimaryKeys(primaryKeys);
 	}
 
 	/**
 	* Returns all the browser trackers.
 	*
 	* @return the browser trackers
+	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portal.model.BrowserTracker> findAll() {
+	public static java.util.List<com.liferay.portal.model.BrowserTracker> findAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll();
 	}
 
@@ -261,9 +280,11 @@ public class BrowserTrackerUtil {
 	* @param start the lower bound of the range of browser trackers
 	* @param end the upper bound of the range of browser trackers (not inclusive)
 	* @return the range of browser trackers
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portal.model.BrowserTracker> findAll(
-		int start, int end) {
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll(start, end);
 	}
 
@@ -278,17 +299,22 @@ public class BrowserTrackerUtil {
 	* @param end the upper bound of the range of browser trackers (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of browser trackers
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portal.model.BrowserTracker> findAll(
 		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BrowserTracker> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll(start, end, orderByComparator);
 	}
 
 	/**
 	* Removes all the browser trackers from the database.
+	*
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeAll() {
+	public static void removeAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeAll();
 	}
 
@@ -296,8 +322,10 @@ public class BrowserTrackerUtil {
 	* Returns the number of browser trackers.
 	*
 	* @return the number of browser trackers
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countAll() {
+	public static int countAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countAll();
 	}
 
@@ -315,7 +343,6 @@ public class BrowserTrackerUtil {
 	/**
 	 * @deprecated As of 6.2.0
 	 */
-	@Deprecated
 	public void setPersistence(BrowserTrackerPersistence persistence) {
 	}
 

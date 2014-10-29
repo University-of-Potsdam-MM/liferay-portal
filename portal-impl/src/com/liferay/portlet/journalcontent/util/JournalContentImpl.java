@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -19,20 +19,22 @@ import com.liferay.portal.kernel.cache.PortalCache;
 import com.liferay.portal.kernel.lar.ExportImportThreadLocal;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.portlet.PortletRequestModel;
 import com.liferay.portal.kernel.security.pacl.DoPrivileged;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.model.Layout;
 import com.liferay.portal.model.LayoutSet;
 import com.liferay.portal.security.permission.ActionKeys;
 import com.liferay.portal.theme.ThemeDisplay;
+import com.liferay.portal.util.PropsValues;
 import com.liferay.portlet.journal.model.JournalArticleDisplay;
 import com.liferay.portlet.journal.service.JournalArticleLocalServiceUtil;
 import com.liferay.portlet.journal.service.permission.JournalArticlePermission;
 
-import javax.portlet.RenderRequest;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.time.StopWatch;
 
@@ -63,39 +65,20 @@ public class JournalContentImpl implements JournalContent {
 	@Override
 	public String getContent(
 		long groupId, String articleId, String viewMode, String languageId,
-		PortletRequestModel portletRequestModel) {
+		String xmlRequest) {
 
 		return getContent(
-			groupId, articleId, null, viewMode, languageId, portletRequestModel,
-			null);
+			groupId, articleId, null, viewMode, languageId, null, xmlRequest);
 	}
 
 	@Override
 	public String getContent(
 		long groupId, String articleId, String ddmTemplateKey, String viewMode,
-		String languageId, PortletRequestModel portletRequestModel) {
+		String languageId, String xmlRequest) {
 
 		return getContent(
-			groupId, articleId, ddmTemplateKey, viewMode, languageId,
-			portletRequestModel, null);
-	}
-
-	@Override
-	public String getContent(
-		long groupId, String articleId, String ddmTemplateKey, String viewMode,
-		String languageId, PortletRequestModel portletRequestModel,
-		ThemeDisplay themeDisplay) {
-
-		JournalArticleDisplay articleDisplay = getDisplay(
-			groupId, articleId, ddmTemplateKey, viewMode, languageId, 1,
-			portletRequestModel, themeDisplay);
-
-		if (articleDisplay != null) {
-			return articleDisplay.getContent();
-		}
-		else {
-			return null;
-		}
+			groupId, articleId, ddmTemplateKey, viewMode, languageId, null,
+			xmlRequest);
 	}
 
 	@Override
@@ -105,7 +88,24 @@ public class JournalContentImpl implements JournalContent {
 
 		return getContent(
 			groupId, articleId, ddmTemplateKey, viewMode, languageId,
-			(PortletRequestModel)null, themeDisplay);
+			themeDisplay, null);
+	}
+
+	@Override
+	public String getContent(
+		long groupId, String articleId, String ddmTemplateKey, String viewMode,
+		String languageId, ThemeDisplay themeDisplay, String xmlRequest) {
+
+		JournalArticleDisplay articleDisplay = getDisplay(
+			groupId, articleId, ddmTemplateKey, viewMode, languageId,
+			themeDisplay, 1, xmlRequest);
+
+		if (articleDisplay != null) {
+			return articleDisplay.getContent();
+		}
+		else {
+			return null;
+		}
 	}
 
 	@Override
@@ -120,12 +120,16 @@ public class JournalContentImpl implements JournalContent {
 	@Override
 	public JournalArticleDisplay getDisplay(
 		long groupId, String articleId, double version, String ddmTemplateKey,
-		String viewMode, String languageId, int page,
-		PortletRequestModel portletRequestModel, ThemeDisplay themeDisplay) {
+		String viewMode, String languageId, ThemeDisplay themeDisplay, int page,
+		String xmlRequest) {
 
-		StopWatch stopWatch = new StopWatch();
+		StopWatch stopWatch = null;
 
-		stopWatch.start();
+		if (_log.isDebugEnabled()) {
+			stopWatch = new StopWatch();
+
+			stopWatch.start();
+		}
 
 		articleId = StringUtil.toUpperCase(GetterUtil.getString(articleId));
 		ddmTemplateKey = StringUtil.toUpperCase(
@@ -136,19 +140,14 @@ public class JournalContentImpl implements JournalContent {
 
 		if (themeDisplay != null) {
 			try {
-				if (!JournalArticlePermission.contains(
-						themeDisplay.getPermissionChecker(), groupId, articleId,
-						ActionKeys.VIEW)) {
+				Layout layout = themeDisplay.getLayout();
 
-					return null;
-				}
+				LayoutSet layoutSet = layout.getLayoutSet();
+
+				layoutSetId = layoutSet.getLayoutSetId();
 			}
 			catch (Exception e) {
 			}
-
-			LayoutSet layoutSet = themeDisplay.getLayoutSet();
-
-			layoutSetId = layoutSet.getLayoutSetId();
 
 			secure = themeDisplay.isSecure();
 		}
@@ -159,23 +158,31 @@ public class JournalContentImpl implements JournalContent {
 
 		JournalArticleDisplay articleDisplay = portalCache.get(key);
 
-		boolean lifecycleRender = false;
-
-		if (portletRequestModel != null) {
-			lifecycleRender = RenderRequest.RENDER_PHASE.equals(
-				portletRequestModel.getLifecycle());
-		}
+		boolean lifecycleRender = isLifecycleRender(themeDisplay, xmlRequest);
 
 		if ((articleDisplay == null) || !lifecycleRender) {
 			articleDisplay = getArticleDisplay(
 				groupId, articleId, ddmTemplateKey, viewMode, languageId, page,
-				portletRequestModel, themeDisplay);
+				xmlRequest, themeDisplay);
 
 			if ((articleDisplay != null) && articleDisplay.isCacheable() &&
 				lifecycleRender) {
 
 				portalCache.put(key, articleDisplay);
 			}
+		}
+
+		try {
+			if (PropsValues.JOURNAL_ARTICLE_VIEW_PERMISSION_CHECK_ENABLED &&
+				(articleDisplay != null) && (themeDisplay != null) &&
+				!JournalArticlePermission.contains(
+					themeDisplay.getPermissionChecker(), groupId, articleId,
+					ActionKeys.VIEW)) {
+
+				articleDisplay = null;
+			}
+		}
+		catch (Exception e) {
 		}
 
 		if (_log.isDebugEnabled()) {
@@ -191,42 +198,21 @@ public class JournalContentImpl implements JournalContent {
 	@Override
 	public JournalArticleDisplay getDisplay(
 		long groupId, String articleId, String viewMode, String languageId,
-		int page, ThemeDisplay themeDisplay) {
+		String xmlRequest) {
 
 		return getDisplay(
-			groupId, articleId, null, viewMode, languageId, page,
-			(PortletRequestModel)null, themeDisplay);
-	}
-
-	@Override
-	public JournalArticleDisplay getDisplay(
-		long groupId, String articleId, String viewMode, String languageId,
-		PortletRequestModel portletRequestModel) {
-
-		return getDisplay(
-			groupId, articleId, null, viewMode, languageId, 1,
-			portletRequestModel, null);
+			groupId, articleId, null, viewMode, languageId, null, 1,
+			xmlRequest);
 	}
 
 	@Override
 	public JournalArticleDisplay getDisplay(
 		long groupId, String articleId, String ddmTemplateKey, String viewMode,
-		String languageId, int page, PortletRequestModel portletRequestModel,
-		ThemeDisplay themeDisplay) {
+		String languageId, String xmlRequest) {
 
 		return getDisplay(
-			groupId, articleId, 0, ddmTemplateKey, viewMode, languageId, 1,
-			portletRequestModel, themeDisplay);
-	}
-
-	@Override
-	public JournalArticleDisplay getDisplay(
-		long groupId, String articleId, String ddmTemplateKey, String viewMode,
-		String languageId, PortletRequestModel portletRequestModel) {
-
-		return getDisplay(
-			groupId, articleId, ddmTemplateKey, viewMode, languageId, 1,
-			portletRequestModel, null);
+			groupId, articleId, ddmTemplateKey, viewMode, languageId, null, 1,
+			xmlRequest);
 	}
 
 	@Override
@@ -235,8 +221,19 @@ public class JournalContentImpl implements JournalContent {
 		String languageId, ThemeDisplay themeDisplay) {
 
 		return getDisplay(
-			groupId, articleId, ddmTemplateKey, viewMode, languageId, 1,
-			(PortletRequestModel)null, themeDisplay);
+			groupId, articleId, ddmTemplateKey, viewMode, languageId,
+			themeDisplay, 1, null);
+	}
+
+	@Override
+	public JournalArticleDisplay getDisplay(
+		long groupId, String articleId, String ddmTemplateKey, String viewMode,
+		String languageId, ThemeDisplay themeDisplay, int page,
+		String xmlRequest) {
+
+		return getDisplay(
+			groupId, articleId, 0, ddmTemplateKey, viewMode, languageId,
+			themeDisplay, 1, xmlRequest);
 	}
 
 	@Override
@@ -245,7 +242,17 @@ public class JournalContentImpl implements JournalContent {
 		ThemeDisplay themeDisplay) {
 
 		return getDisplay(
-			groupId, articleId, viewMode, languageId, 1, themeDisplay);
+			groupId, articleId, viewMode, languageId, themeDisplay, 1);
+	}
+
+	@Override
+	public JournalArticleDisplay getDisplay(
+		long groupId, String articleId, String viewMode, String languageId,
+		ThemeDisplay themeDisplay, int page) {
+
+		return getDisplay(
+			groupId, articleId, null, viewMode, languageId, themeDisplay, page,
+			null);
 	}
 
 	protected String encodeKey(
@@ -253,7 +260,7 @@ public class JournalContentImpl implements JournalContent {
 		long layoutSetId, String viewMode, String languageId, int page,
 		boolean secure) {
 
-		StringBundler sb = new StringBundler(17);
+		StringBundler sb = new StringBundler();
 
 		sb.append(StringUtil.toHexString(groupId));
 		sb.append(ARTICLE_SEPARATOR);
@@ -291,7 +298,7 @@ public class JournalContentImpl implements JournalContent {
 
 	protected JournalArticleDisplay getArticleDisplay(
 		long groupId, String articleId, String ddmTemplateKey, String viewMode,
-		String languageId, int page, PortletRequestModel portletRequestModel,
+		String languageId, int page, String xmlRequest,
 		ThemeDisplay themeDisplay) {
 
 		try {
@@ -303,7 +310,7 @@ public class JournalContentImpl implements JournalContent {
 
 			return JournalArticleLocalServiceUtil.getArticleDisplay(
 				groupId, articleId, ddmTemplateKey, viewMode, languageId, page,
-				portletRequestModel, themeDisplay);
+				xmlRequest, themeDisplay);
 		}
 		catch (Exception e) {
 			if (_log.isWarnEnabled()) {
@@ -316,8 +323,26 @@ public class JournalContentImpl implements JournalContent {
 		}
 	}
 
+	protected boolean isLifecycleRender(
+		ThemeDisplay themeDisplay, String xmlRequest) {
+
+		if (themeDisplay != null) {
+			return themeDisplay.isLifecycleRender();
+		}
+		else if (Validator.isNotNull(xmlRequest)) {
+			Matcher matcher = lifecycleRenderPhasePattern.matcher(xmlRequest);
+
+			return matcher.find();
+		}
+		else {
+			return false;
+		}
+	}
+
 	protected static final String CACHE_NAME = JournalContent.class.getName();
 
+	protected static Pattern lifecycleRenderPhasePattern = Pattern.compile(
+		"<lifecycle>\\s*RENDER_PHASE\\s*</lifecycle>");
 	protected static PortalCache<String, JournalArticleDisplay> portalCache =
 		MultiVMPoolUtil.getCache(CACHE_NAME);
 

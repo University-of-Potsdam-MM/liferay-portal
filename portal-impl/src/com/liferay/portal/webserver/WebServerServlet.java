@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -35,7 +35,6 @@ import com.liferay.portal.kernel.template.TemplateResource;
 import com.liferay.portal.kernel.template.URLTemplateResource;
 import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.ContentTypes;
-import com.liferay.portal.kernel.util.DigesterUtil;
 import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -322,7 +321,7 @@ public class WebServerServlet extends HttpServlet {
 	}
 
 	protected Image convertFileEntry(boolean smallImage, FileEntry fileEntry)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		try {
 			Image image = new ImageImpl();
@@ -421,7 +420,7 @@ public class WebServerServlet extends HttpServlet {
 	}
 
 	protected Image getImage(HttpServletRequest request, boolean getDefault)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Image image = null;
 
@@ -529,33 +528,19 @@ public class WebServerServlet extends HttpServlet {
 			imageId = ParamUtil.getLong(request, "i_id");
 		}
 
-		User user = null;
-
 		if (imageId <= 0) {
 			long companyId = ParamUtil.getLong(request, "companyId");
 			String screenName = ParamUtil.getString(request, "screenName");
 
-			if ((companyId > 0) && Validator.isNotNull(screenName)) {
-				user = UserLocalServiceUtil.fetchUserByScreenName(
-					companyId, screenName);
+			try {
+				if ((companyId > 0) && Validator.isNotNull(screenName)) {
+					User user = UserLocalServiceUtil.getUserByScreenName(
+						companyId, screenName);
 
-				if (user != null) {
 					imageId = user.getPortraitId();
 				}
 			}
-		}
-
-		if (PropsValues.USERS_IMAGE_CHECK_TOKEN && (imageId > 0)) {
-			String imageIdToken = ParamUtil.getString(request, "img_id_token");
-
-			if (user == null) {
-				user = UserLocalServiceUtil.fetchUserByPortraitId(imageId);
-			}
-
-			if ((user != null) &&
-				!imageIdToken.equals(DigesterUtil.digest(user.getUserUuid()))) {
-
-				return 0;
+			catch (Exception e) {
 			}
 		}
 
@@ -630,7 +615,7 @@ public class WebServerServlet extends HttpServlet {
 	}
 
 	protected Image getUserPortraitImageResized(Image image, long imageId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		if (image == null) {
 			return null;
@@ -684,19 +669,10 @@ public class WebServerServlet extends HttpServlet {
 				queryString = "&imageThumbnail=3";
 			}
 
-			FileEntry fileEntry = new LiferayFileEntry(dlFileEntry);
-
-			FileVersion fileVersion = new LiferayFileVersion(
-				dlFileEntry.getFileVersion());
-
-			if (PropsValues.DL_FILE_ENTRY_IG_THUMBNAIL_GENERATION &&
-				Validator.isNotNull(queryString)) {
-
-				ImageProcessorUtil.hasImages(fileVersion);
-			}
-
 			String url = DLUtil.getPreviewURL(
-				fileEntry, fileVersion, themeDisplay, queryString);
+				new LiferayFileEntry(dlFileEntry),
+				new LiferayFileVersion(dlFileEntry.getFileVersion()),
+				themeDisplay, queryString);
 
 			response.setHeader(HttpHeaders.LOCATION, url);
 			response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
@@ -894,7 +870,15 @@ public class WebServerServlet extends HttpServlet {
 			return;
 		}
 
-		String fileName = fileVersion.getFileName();
+		String fileName = fileVersion.getTitle();
+
+		String extension = fileVersion.getExtension();
+
+		if (Validator.isNotNull(extension) &&
+			!fileName.endsWith(StringPool.PERIOD + extension)) {
+
+			fileName += StringPool.PERIOD + extension;
+		}
 
 		// Handle requested conversion
 
@@ -1004,8 +988,7 @@ public class WebServerServlet extends HttpServlet {
 
 			if (Validator.isNotNull(targetExtension)) {
 				File convertedFile = DocumentConversionUtil.convert(
-					tempFileId, inputStream, fileVersion.getExtension(),
-					targetExtension);
+					tempFileId, inputStream, extension, targetExtension);
 
 				if (convertedFile != null) {
 					fileName = FileUtil.stripExtension(fileName).concat(
@@ -1041,18 +1024,9 @@ public class WebServerServlet extends HttpServlet {
 				contentType);
 		}
 		else {
-			boolean download = ParamUtil.getBoolean(request, "download");
-
-			if (download) {
-				ServletResponseUtil.sendFile(
-					request, response, fileName, inputStream, contentLength,
-					contentType, HttpHeaders.CONTENT_DISPOSITION_ATTACHMENT);
-			}
-			else {
-				ServletResponseUtil.sendFile(
-					request, response, fileName, inputStream, contentLength,
-					contentType);
-			}
+			ServletResponseUtil.sendFile(
+				request, response, fileName, inputStream, contentLength,
+				contentType);
 		}
 	}
 
@@ -1190,25 +1164,16 @@ public class WebServerServlet extends HttpServlet {
 			return;
 		}
 
-		String fileName = HttpUtil.decodeURL(HtmlUtil.escape(pathArray[2]));
+		String fileName = HttpUtil.decodeURL(
+			HtmlUtil.escape(pathArray[2]), true);
 
 		if (fileEntry.isInTrash()) {
 			fileName = TrashUtil.getOriginalTitle(fileName);
 		}
 
-		boolean download = ParamUtil.getBoolean(request, "download");
-
-		if (download) {
-			ServletResponseUtil.sendFile(
-				request, response, fileName, fileEntry.getContentStream(),
-				fileEntry.getSize(), fileEntry.getMimeType(),
-				HttpHeaders.CONTENT_DISPOSITION_ATTACHMENT);
-		}
-		else {
-			ServletResponseUtil.sendFile(
-				request, response, fileName, fileEntry.getContentStream(),
-				fileEntry.getSize(), fileEntry.getMimeType());
-		}
+		ServletResponseUtil.sendFile(
+			request, response, fileName, fileEntry.getContentStream(),
+			fileEntry.getSize(), fileEntry.getMimeType());
 	}
 
 	protected void writeImage(

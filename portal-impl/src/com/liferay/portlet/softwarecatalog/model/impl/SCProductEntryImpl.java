@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,6 +14,7 @@
 
 package com.liferay.portlet.softwarecatalog.model.impl;
 
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portlet.softwarecatalog.model.SCLicense;
 import com.liferay.portlet.softwarecatalog.model.SCProductScreenshot;
 import com.liferay.portlet.softwarecatalog.model.SCProductVersion;
@@ -32,14 +33,14 @@ public class SCProductEntryImpl extends SCProductEntryBaseImpl {
 	}
 
 	@Override
-	public SCProductVersion getLatestVersion() {
+	public SCProductVersion getLatestVersion() throws SystemException {
 		List<SCProductVersion> results =
 			SCProductVersionLocalServiceUtil.getProductVersions(
 				getProductEntryId(), 0, 1);
 
 		SCProductVersion lastVersion = null;
 
-		if (!results.isEmpty()) {
+		if (results.size() > 0) {
 			lastVersion = results.get(0);
 		}
 
@@ -47,13 +48,13 @@ public class SCProductEntryImpl extends SCProductEntryBaseImpl {
 	}
 
 	@Override
-	public List<SCLicense> getLicenses() {
+	public List<SCLicense> getLicenses() throws SystemException {
 		return SCLicenseLocalServiceUtil.getProductEntryLicenses(
 			getProductEntryId());
 	}
 
 	@Override
-	public List<SCProductScreenshot> getScreenshots() {
+	public List<SCProductScreenshot> getScreenshots() throws SystemException {
 		return SCProductScreenshotLocalServiceUtil.getProductScreenshots(
 			getProductEntryId());
 	}

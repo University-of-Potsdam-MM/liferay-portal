@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -13,8 +13,6 @@
  */
 
 package com.liferay.portlet.expando.model.impl;
-
-import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
 import com.liferay.portal.kernel.json.JSON;
@@ -54,7 +52,6 @@ import java.util.Map;
  * @generated
  */
 @JSON(strict = true)
-@ProviderType
 public class ExpandoValueModelImpl extends BaseModelImpl<ExpandoValue>
 	implements ExpandoValueModel {
 	/*
@@ -71,9 +68,9 @@ public class ExpandoValueModelImpl extends BaseModelImpl<ExpandoValue>
 			{ "rowId_", Types.BIGINT },
 			{ "classNameId", Types.BIGINT },
 			{ "classPK", Types.BIGINT },
-			{ "data_", Types.CLOB }
+			{ "data_", Types.VARCHAR }
 		};
-	public static final String TABLE_SQL_CREATE = "create table ExpandoValue (valueId LONG not null primary key,companyId LONG,tableId LONG,columnId LONG,rowId_ LONG,classNameId LONG,classPK LONG,data_ TEXT null)";
+	public static final String TABLE_SQL_CREATE = "create table ExpandoValue (valueId LONG not null primary key,companyId LONG,tableId LONG,columnId LONG,rowId_ LONG,classNameId LONG,classPK LONG,data_ STRING null)";
 	public static final String TABLE_SQL_DROP = "drop table ExpandoValue";
 	public static final String ORDER_BY_JPQL = " ORDER BY expandoValue.tableId ASC, expandoValue.rowId ASC, expandoValue.columnId ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY ExpandoValue.tableId ASC, ExpandoValue.rowId_ ASC, ExpandoValue.columnId ASC";
@@ -89,12 +86,12 @@ public class ExpandoValueModelImpl extends BaseModelImpl<ExpandoValue>
 	public static final boolean COLUMN_BITMASK_ENABLED = GetterUtil.getBoolean(com.liferay.portal.util.PropsUtil.get(
 				"value.object.column.bitmask.enabled.com.liferay.portlet.expando.model.ExpandoValue"),
 			true);
-	public static final long CLASSNAMEID_COLUMN_BITMASK = 1L;
-	public static final long CLASSPK_COLUMN_BITMASK = 2L;
-	public static final long COLUMNID_COLUMN_BITMASK = 4L;
-	public static final long DATA_COLUMN_BITMASK = 8L;
-	public static final long ROWID_COLUMN_BITMASK = 16L;
-	public static final long TABLEID_COLUMN_BITMASK = 32L;
+	public static long CLASSNAMEID_COLUMN_BITMASK = 1L;
+	public static long CLASSPK_COLUMN_BITMASK = 2L;
+	public static long COLUMNID_COLUMN_BITMASK = 4L;
+	public static long DATA_COLUMN_BITMASK = 8L;
+	public static long ROWID_COLUMN_BITMASK = 16L;
+	public static long TABLEID_COLUMN_BITMASK = 32L;
 
 	/**
 	 * Converts the soap model instance into a normal model instance.
@@ -189,9 +186,6 @@ public class ExpandoValueModelImpl extends BaseModelImpl<ExpandoValue>
 		attributes.put("classNameId", getClassNameId());
 		attributes.put("classPK", getClassPK());
 		attributes.put("data", getData());
-
-		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
-		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
 
 		return attributes;
 	}
@@ -539,16 +533,6 @@ public class ExpandoValueModelImpl extends BaseModelImpl<ExpandoValue>
 	}
 
 	@Override
-	public boolean isEntityCacheEnabled() {
-		return ENTITY_CACHE_ENABLED;
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return FINDER_CACHE_ENABLED;
-	}
-
-	@Override
 	public void resetOriginalValues() {
 		ExpandoValueModelImpl expandoValueModelImpl = this;
 
@@ -677,8 +661,8 @@ public class ExpandoValueModelImpl extends BaseModelImpl<ExpandoValue>
 		return sb.toString();
 	}
 
-	private static final ClassLoader _classLoader = ExpandoValue.class.getClassLoader();
-	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
+	private static ClassLoader _classLoader = ExpandoValue.class.getClassLoader();
+	private static Class<?>[] _escapedModelInterfaces = new Class[] {
 			ExpandoValue.class
 		};
 	private long _valueId;

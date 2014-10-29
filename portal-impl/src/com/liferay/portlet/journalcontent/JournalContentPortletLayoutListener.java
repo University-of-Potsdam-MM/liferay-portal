@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -19,6 +19,7 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.PortletLayoutListener;
 import com.liferay.portal.kernel.portlet.PortletLayoutListenerException;
 import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.UniqueList;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.xml.Document;
 import com.liferay.portal.kernel.xml.Element;
@@ -40,8 +41,7 @@ import com.liferay.portlet.journal.model.JournalArticle;
 import com.liferay.portlet.journal.service.JournalArticleLocalServiceUtil;
 import com.liferay.portlet.journal.service.JournalContentSearchLocalServiceUtil;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.List;
 
 import javax.portlet.PortletPreferences;
 
@@ -169,7 +169,7 @@ public class JournalContentPortletLayoutListener
 			}
 		}
 
-		Set<String> portletIds = getRuntimePortletIds(article.getContent());
+		List<String> portletIds = getRuntimePortletIds(article.getContent());
 
 		if (Validator.isNotNull(article.getTemplateId())) {
 			DDMTemplate ddmTemplate = DDMTemplateLocalServiceUtil.getTemplate(
@@ -182,10 +182,10 @@ public class JournalContentPortletLayoutListener
 		return portletIds.toArray(new String[portletIds.size()]);
 	}
 
-	protected Set<String> getRuntimePortletIds(String content)
+	protected List<String> getRuntimePortletIds(String content)
 		throws Exception {
 
-		Set<String> portletIds = new LinkedHashSet<String>();
+		List<String> portletIds = new UniqueList<String>();
 
 		for (int index = 0;;) {
 			index = content.indexOf(PortletLogic.OPEN_TAG, index);

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,23 +15,24 @@
 package com.liferay.portlet.blogs.action;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.sanitizer.SanitizerException;
 import com.liferay.portal.kernel.servlet.SessionErrors;
-import com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector;
-import com.liferay.portal.kernel.upload.LiferayFileItemException;
-import com.liferay.portal.kernel.upload.UploadException;
+import com.liferay.portal.kernel.servlet.SessionMessages;
+import com.liferay.portal.kernel.upload.UploadPortletRequest;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.CalendarFactoryUtil;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.StreamUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
-import com.liferay.portal.model.TrashedModel;
 import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextFactory;
@@ -54,12 +55,12 @@ import com.liferay.portlet.blogs.NoSuchEntryException;
 import com.liferay.portlet.blogs.model.BlogsEntry;
 import com.liferay.portlet.blogs.service.BlogsEntryLocalServiceUtil;
 import com.liferay.portlet.blogs.service.BlogsEntryServiceUtil;
-import com.liferay.portlet.documentlibrary.FileSizeException;
-import com.liferay.portlet.trash.util.TrashUtil;
 
-import java.util.ArrayList;
+import java.io.InputStream;
+
 import java.util.Calendar;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
@@ -98,23 +99,7 @@ public class EditEntryAction extends PortletAction {
 			BlogsEntry entry = null;
 			String oldUrlTitle = StringPool.BLANK;
 
-			UploadException uploadException =
-				(UploadException)actionRequest.getAttribute(
-					WebKeys.UPLOAD_EXCEPTION);
-
-			if (uploadException != null) {
-				if (uploadException.isExceededLiferayFileItemSizeLimit()) {
-					throw new LiferayFileItemException();
-				}
-				else if (uploadException.isExceededSizeLimit()) {
-					throw new FileSizeException(uploadException.getCause());
-				}
-
-				throw new PortalException(uploadException.getCause());
-			}
-			else if (cmd.equals(Constants.ADD) ||
-					 cmd.equals(Constants.UPDATE)) {
-
+			if (cmd.equals(Constants.ADD) || cmd.equals(Constants.UPDATE)) {
 				Object[] returnValue = updateEntry(actionRequest);
 
 				entry = (BlogsEntry)returnValue[0];
@@ -128,6 +113,9 @@ public class EditEntryAction extends PortletAction {
 			}
 			else if (cmd.equals(Constants.SUBSCRIBE)) {
 				subscribe(actionRequest);
+			}
+			else if (cmd.equals(Constants.RESTORE)) {
+				restoreEntries(actionRequest);
 			}
 			else if (cmd.equals(Constants.UNSUBSCRIBE)) {
 				unsubscribe(actionRequest);
@@ -238,8 +226,6 @@ public class EditEntryAction extends PortletAction {
 					 e instanceof EntrySmallImageNameException ||
 					 e instanceof EntrySmallImageSizeException ||
 					 e instanceof EntryTitleException ||
-					 e instanceof FileSizeException ||
-					 e instanceof LiferayFileItemException ||
 					 e instanceof SanitizerException) {
 
 				SessionErrors.add(actionRequest, e.getClass());
@@ -320,22 +306,42 @@ public class EditEntryAction extends PortletAction {
 				ParamUtil.getString(actionRequest, "deleteEntryIds"), 0L);
 		}
 
-		List<TrashedModel> trashedModels = new ArrayList<TrashedModel>();
+		String deleteEntryTitle = null;
 
-		for (long deleteEntryId : deleteEntryIds) {
+		for (int i = 0; i < deleteEntryIds.length; i++) {
+			long deleteEntryId = deleteEntryIds[i];
+
 			if (moveToTrash) {
 				BlogsEntry entry = BlogsEntryServiceUtil.moveEntryToTrash(
 					deleteEntryId);
 
-				trashedModels.add(entry);
+				if (i == 0) {
+					deleteEntryTitle = entry.getTitle();
+				}
 			}
 			else {
 				BlogsEntryServiceUtil.deleteEntry(deleteEntryId);
 			}
 		}
 
-		if (moveToTrash && !trashedModels.isEmpty()) {
-			TrashUtil.addTrashSessionMessages(actionRequest, trashedModels);
+		if (moveToTrash && (deleteEntryIds.length > 0)) {
+			Map<String, String[]> data = new HashMap<String, String[]>();
+
+			data.put(
+				"deleteEntryClassName",
+				new String[] {BlogsEntry.class.getName()});
+
+			if (Validator.isNotNull(deleteEntryTitle)) {
+				data.put("deleteEntryTitle", new String[] {deleteEntryTitle});
+			}
+
+			data.put(
+				"restoreEntryIds", ArrayUtil.toStringArray(deleteEntryIds));
+
+			SessionMessages.add(
+				actionRequest,
+				PortalUtil.getPortletId(actionRequest) +
+					SessionMessages.KEY_SUFFIX_DELETE_SUCCESS_DATA, data);
 
 			hideDefaultSuccessMessage(actionRequest);
 		}
@@ -379,6 +385,17 @@ public class EditEntryAction extends PortletAction {
 		return portletURL.toString();
 	}
 
+	protected void restoreEntries(ActionRequest actionRequest)
+		throws PortalException, SystemException {
+
+		long[] restoreEntryIds = StringUtil.split(
+			ParamUtil.getString(actionRequest, "restoreEntryIds"), 0L);
+
+		for (long restoreEntryId : restoreEntryIds) {
+			BlogsEntryServiceUtil.restoreEntryFromTrash(restoreEntryId);
+		}
+	}
+
 	protected void subscribe(ActionRequest actionRequest) throws Exception {
 		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
@@ -397,17 +414,13 @@ public class EditEntryAction extends PortletAction {
 			ActionRequest actionRequest, ActionResponse actionResponse)
 		throws Exception {
 
-		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(
-			WebKeys.THEME_DISPLAY);
-
 		long entryId = ParamUtil.getLong(actionRequest, "entryId");
 
 		BlogsEntry entry = BlogsEntryLocalServiceUtil.getEntry(entryId);
 
 		String content = ParamUtil.getString(actionRequest, "content");
 
-		Calendar displayDateCal = CalendarFactoryUtil.getCalendar(
-			themeDisplay.getTimeZone());
+		Calendar displayDateCal = CalendarFactoryUtil.getCalendar();
 
 		displayDateCal.setTime(entry.getDisplayDate());
 
@@ -428,11 +441,11 @@ public class EditEntryAction extends PortletAction {
 
 		try {
 			BlogsEntryServiceUtil.updateEntry(
-				entryId, entry.getTitle(), entry.getSubtitle(),
-				entry.getDescription(), content, displayDateMonth,
-				displayDateDay, displayDateYear, displayDateHour,
-				displayDateMinute, entry.getAllowPingbacks(),
-				entry.getAllowTrackbacks(), null, null, serviceContext);
+				entryId, entry.getTitle(), entry.getDescription(), content,
+				displayDateMonth, displayDateDay, displayDateYear,
+				displayDateHour, displayDateMinute, entry.getAllowPingbacks(),
+				entry.getAllowTrackbacks(), null, entry.getSmallImage(),
+				entry.getSmallImageURL(), null, null, serviceContext);
 
 			JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
 
@@ -457,7 +470,6 @@ public class EditEntryAction extends PortletAction {
 		long entryId = ParamUtil.getLong(actionRequest, "entryId");
 
 		String title = ParamUtil.getString(actionRequest, "title");
-		String subtitle = ParamUtil.getString(actionRequest, "subtitle");
 		String description = ParamUtil.getString(actionRequest, "description");
 		String content = ParamUtil.getString(actionRequest, "content");
 
@@ -485,67 +497,80 @@ public class EditEntryAction extends PortletAction {
 		String[] trackbacks = StringUtil.split(
 			ParamUtil.getString(actionRequest, "trackbacks"));
 
-		long smallImageFileEntryId = ParamUtil.getLong(
-			actionRequest, "smallImageFileEntryId");
-		String smallImageURL = ParamUtil.getString(
-			actionRequest, "smallImageURL");
-
-		ImageSelector imageSelector = new ImageSelector(
-			smallImageFileEntryId, smallImageURL);
+		boolean smallImage = false;
+		String smallImageURL = null;
+		String smallImageFileName = null;
+		InputStream smallImageInputStream = null;
 
 		BlogsEntry entry = null;
-		String oldUrlTitle = StringPool.BLANK;
+		String oldUrlTitle = null;
 
-		ServiceContext serviceContext = ServiceContextFactory.getInstance(
-			BlogsEntry.class.getName(), actionRequest);
+		try {
+			boolean ajax = ParamUtil.getBoolean(actionRequest, "ajax");
 
-		if (entryId <= 0) {
+			if (!ajax) {
+				smallImage = ParamUtil.getBoolean(actionRequest, "smallImage");
+				smallImageURL = ParamUtil.getString(
+					actionRequest, "smallImageURL");
 
-			// Add entry
+				if (smallImage && Validator.isNull(smallImageURL)) {
+					UploadPortletRequest uploadPortletRequest =
+						PortalUtil.getUploadPortletRequest(actionRequest);
 
-			entry = BlogsEntryServiceUtil.addEntry(
-				title, subtitle, description, content, displayDateMonth,
-				displayDateDay, displayDateYear, displayDateHour,
-				displayDateMinute, allowPingbacks, allowTrackbacks, trackbacks,
-				imageSelector, serviceContext);
-
-			AssetPublisherUtil.addAndStoreSelection(
-				actionRequest, BlogsEntry.class.getName(), entry.getEntryId(),
-				-1);
-		}
-		else {
-
-			// Update entry
-
-			boolean sendEmailEntryUpdated = ParamUtil.getBoolean(
-				actionRequest, "sendEmailEntryUpdated");
-
-			serviceContext.setAttribute(
-				"sendEmailEntryUpdated", sendEmailEntryUpdated);
-
-			String emailEntryUpdatedComment = ParamUtil.getString(
-				actionRequest, "emailEntryUpdatedComment");
-
-			serviceContext.setAttribute(
-				"emailEntryUpdatedComment", emailEntryUpdatedComment);
-
-			entry = BlogsEntryLocalServiceUtil.getEntry(entryId);
-
-			String tempOldUrlTitle = entry.getUrlTitle();
-
-			entry = BlogsEntryServiceUtil.updateEntry(
-				entryId, title, subtitle, description, content,
-				displayDateMonth, displayDateDay, displayDateYear,
-				displayDateHour, displayDateMinute, allowPingbacks,
-				allowTrackbacks, trackbacks, imageSelector, serviceContext);
-
-			if (!tempOldUrlTitle.equals(entry.getUrlTitle())) {
-				oldUrlTitle = tempOldUrlTitle;
+					smallImageFileName = uploadPortletRequest.getFileName(
+						"smallFile");
+					smallImageInputStream =
+						uploadPortletRequest.getFileAsStream("smallFile");
+				}
 			}
 
-			AssetPublisherUtil.addAndStoreSelection(
-				actionRequest, BlogsEntry.class.getName(), entry.getEntryId(),
-				-1);
+			ServiceContext serviceContext = ServiceContextFactory.getInstance(
+				BlogsEntry.class.getName(), actionRequest);
+
+			entry = null;
+			oldUrlTitle = StringPool.BLANK;
+
+			if (entryId <= 0) {
+
+				// Add entry
+
+				entry = BlogsEntryServiceUtil.addEntry(
+					title, description, content, displayDateMonth,
+					displayDateDay, displayDateYear, displayDateHour,
+					displayDateMinute, allowPingbacks, allowTrackbacks,
+					trackbacks, smallImage, smallImageURL, smallImageFileName,
+					smallImageInputStream, serviceContext);
+
+				AssetPublisherUtil.addAndStoreSelection(
+					actionRequest, BlogsEntry.class.getName(),
+					entry.getEntryId(), -1);
+			}
+			else {
+
+				// Update entry
+
+				entry = BlogsEntryLocalServiceUtil.getEntry(entryId);
+
+				String tempOldUrlTitle = entry.getUrlTitle();
+
+				entry = BlogsEntryServiceUtil.updateEntry(
+					entryId, title, description, content, displayDateMonth,
+					displayDateDay, displayDateYear, displayDateHour,
+					displayDateMinute, allowPingbacks, allowTrackbacks,
+					trackbacks, smallImage, smallImageURL, smallImageFileName,
+					smallImageInputStream, serviceContext);
+
+				if (!tempOldUrlTitle.equals(entry.getUrlTitle())) {
+					oldUrlTitle = tempOldUrlTitle;
+				}
+
+				AssetPublisherUtil.addAndStoreSelection(
+					actionRequest, BlogsEntry.class.getName(),
+					entry.getEntryId(), -1);
+			}
+		}
+		finally {
+			StreamUtil.cleanUp(smallImageInputStream);
 		}
 
 		return new Object[] {entry, oldUrlTitle};

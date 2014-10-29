@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -46,16 +46,14 @@ public class ClusterLinkImpl extends ClusterBase implements ClusterLink {
 			return;
 		}
 
-		for (JChannel jChannel : _transportJChannels) {
+		for (JChannel jChannel : _transportChannels) {
 			jChannel.close();
 		}
 	}
 
 	@Override
 	public InetAddress getBindInetAddress() {
-		JChannel jChannel = _transportJChannels.get(0);
-
-		return getBindInetAddress(jChannel);
+		return bindInetAddress;
 	}
 
 	@Override
@@ -138,7 +136,7 @@ public class ClusterLinkImpl extends ClusterBase implements ClusterLink {
 					priority);
 		}
 
-		return _transportJChannels.get(channelIndex);
+		return _transportChannels.get(channelIndex);
 	}
 
 	@Override
@@ -155,7 +153,7 @@ public class ClusterLinkImpl extends ClusterBase implements ClusterLink {
 
 		_localTransportAddresses = new ArrayList<org.jgroups.Address>(
 			_channelCount);
-		_transportJChannels = new ArrayList<JChannel>(_channelCount);
+		_transportChannels = new ArrayList<JChannel>(_channelCount);
 
 		List<String> keys = new ArrayList<String>(_channelCount);
 
@@ -177,7 +175,7 @@ public class ClusterLinkImpl extends ClusterBase implements ClusterLink {
 					_LIFERAY_TRANSPORT_CHANNEL + i);
 
 			_localTransportAddresses.add(jChannel.getAddress());
-			_transportJChannels.add(jChannel);
+			_transportChannels.add(jChannel);
 		}
 	}
 
@@ -189,6 +187,6 @@ public class ClusterLinkImpl extends ClusterBase implements ClusterLink {
 	private int _channelCount;
 	private ClusterForwardMessageListener _clusterForwardMessageListener;
 	private List<org.jgroups.Address> _localTransportAddresses;
-	private List<JChannel> _transportJChannels;
+	private List<JChannel> _transportChannels;
 
 }

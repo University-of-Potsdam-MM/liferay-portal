@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -16,9 +16,9 @@ package com.liferay.portlet.portletdisplaytemplate.lar;
 
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
-import com.liferay.portal.kernel.dao.orm.ExportActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Property;
 import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.lar.BasePortletDataHandler;
 import com.liferay.portal.kernel.lar.ManifestSummary;
 import com.liferay.portal.kernel.lar.PortletDataContext;
@@ -31,7 +31,7 @@ import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplateConstants;
-import com.liferay.portlet.dynamicdatamapping.service.DDMTemplateLocalServiceUtil;
+import com.liferay.portlet.dynamicdatamapping.service.persistence.DDMTemplateExportActionableDynamicQuery;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -140,44 +140,39 @@ public class PortletDisplayTemplatePortletDataHandler
 	}
 
 	protected ActionableDynamicQuery getDDMTemplateActionableDynamicQuery(
-		final PortletDataContext portletDataContext, final Long[] classNameIds,
-		final StagedModelType stagedModelType) {
+			final PortletDataContext portletDataContext,
+			final Long[] classNameIds, final StagedModelType stagedModelType)
+		throws SystemException {
 
-		ExportActionableDynamicQuery exportActionableDynamicQuery =
-			DDMTemplateLocalServiceUtil.getExportActionableDynamicQuery(
-				portletDataContext);
+		return new DDMTemplateExportActionableDynamicQuery(
+			portletDataContext) {
 
-		final ActionableDynamicQuery.AddCriteriaMethod addCriteriaMethod =
-			exportActionableDynamicQuery.getAddCriteriaMethod();
+			@Override
+			protected void addCriteria(DynamicQuery dynamicQuery) {
+				super.addCriteria(dynamicQuery);
 
-		exportActionableDynamicQuery.setAddCriteriaMethod(
-			new ActionableDynamicQuery.AddCriteriaMethod() {
+				Property classNameIdProperty = PropertyFactoryUtil.forName(
+					"classNameId");
 
-				@Override
-				public void addCriteria(DynamicQuery dynamicQuery) {
-					addCriteriaMethod.addCriteria(dynamicQuery);
+				dynamicQuery.add(classNameIdProperty.in(classNameIds));
 
-					Property classNameIdProperty = PropertyFactoryUtil.forName(
-						"classNameId");
+				Property classPKProperty = PropertyFactoryUtil.forName(
+					"classPK");
 
-					dynamicQuery.add(classNameIdProperty.in(classNameIds));
+				dynamicQuery.add(classPKProperty.eq(0L));
 
-					Property classPKProperty = PropertyFactoryUtil.forName(
-						"classPK");
+				Property typeProperty = PropertyFactoryUtil.forName("type");
 
-					dynamicQuery.add(classPKProperty.eq(0L));
+				dynamicQuery.add(
+					typeProperty.eq(
+						DDMTemplateConstants.TEMPLATE_TYPE_DISPLAY));
+			}
 
-					Property typeProperty = PropertyFactoryUtil.forName("type");
-
-					dynamicQuery.add(
-						typeProperty.eq(
-							DDMTemplateConstants.TEMPLATE_TYPE_DISPLAY));
-				}
-
-			});
-		exportActionableDynamicQuery.setStagedModelType(stagedModelType);
-
-		return exportActionableDynamicQuery;
+			@Override
+			protected StagedModelType getStagedModelType() {
+				return stagedModelType;
+			}
+		};
 	}
 
 	protected StagedModelType[] getStagedModelTypes() {

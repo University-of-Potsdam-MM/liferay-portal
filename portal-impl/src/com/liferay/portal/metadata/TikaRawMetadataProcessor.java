@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -20,11 +20,11 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.process.ClassPathUtil;
 import com.liferay.portal.kernel.process.ProcessCallable;
-import com.liferay.portal.kernel.process.ProcessChannel;
 import com.liferay.portal.kernel.process.ProcessException;
-import com.liferay.portal.kernel.process.ProcessExecutorUtil;
+import com.liferay.portal.kernel.process.ProcessExecutor;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.FileUtil;
+import com.liferay.portal.kernel.util.StreamUtil;
 import com.liferay.portal.util.PropsValues;
 
 import java.io.File;
@@ -40,7 +40,6 @@ import org.apache.pdfbox.exceptions.CryptographyException;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
-import org.apache.tika.metadata.XMPDM;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.parser.Parser;
 import org.apache.tika.sax.WriteOutContentHandler;
@@ -59,7 +58,7 @@ public class TikaRawMetadataProcessor extends XugglerRawMetadataProcessor {
 	}
 
 	protected static Metadata extractMetadata(
-			File file, Metadata metadata, Parser parser)
+			InputStream inputStream, Metadata metadata, Parser parser)
 		throws IOException {
 
 		if (metadata == null) {
@@ -73,7 +72,7 @@ public class TikaRawMetadataProcessor extends XugglerRawMetadataProcessor {
 		ContentHandler contentHandler = new WriteOutContentHandler(
 			new DummyWriter());
 
-		try (InputStream inputStream = new FileInputStream(file)) {
+		try {
 			parser.parse(inputStream, contentHandler, metadata, parserContext);
 		}
 		catch (Exception e) {
@@ -97,7 +96,7 @@ public class TikaRawMetadataProcessor extends XugglerRawMetadataProcessor {
 				_log.error(e, e);
 			}
 
-			throw new IOException(e);
+			throw new IOException(e.getMessage());
 		}
 
 		// Remove potential security risks
@@ -110,7 +109,8 @@ public class TikaRawMetadataProcessor extends XugglerRawMetadataProcessor {
 
 	@Override
 	protected Metadata extractMetadata(
-		String extension, String mimeType, File file) {
+			String extension, String mimeType, File file)
+		throws SystemException {
 
 		Metadata metadata = super.extractMetadata(extension, mimeType, file);
 
@@ -130,13 +130,9 @@ public class TikaRawMetadataProcessor extends XugglerRawMetadataProcessor {
 				new ExtractMetadataProcessCallable(file, metadata, _parser);
 
 			try {
-				ProcessChannel<Metadata> processChannel =
-					ProcessExecutorUtil.execute(
-						ClassPathUtil.getPortalProcessConfig(),
-						extractMetadataProcessCallable);
-
-				Future<Metadata> future =
-					processChannel.getProcessNoticeableFuture();
+				Future<Metadata> future = ProcessExecutor.execute(
+					ClassPathUtil.getPortalClassPath(),
+					extractMetadataProcessCallable);
 
 				return future.get();
 			}
@@ -145,30 +141,68 @@ public class TikaRawMetadataProcessor extends XugglerRawMetadataProcessor {
 			}
 		}
 
+		InputStream inputStream = null;
+
 		try {
-			return extractMetadata(file, metadata, _parser);
+			inputStream = new FileInputStream(file);
+
+			return extractMetadata(inputStream, metadata, _parser);
 		}
 		catch (IOException ioe) {
 			throw new SystemException(ioe);
+		}
+		finally {
+			StreamUtil.cleanUp(inputStream);
 		}
 	}
 
 	@Override
 	protected Metadata extractMetadata(
-		String extension, String mimeType, InputStream inputStream) {
+			String extension, String mimeType, InputStream inputStream)
+		throws SystemException {
 
-		File file = FileUtil.createTempFile();
+		Metadata metadata = super.extractMetadata(
+			extension, mimeType, inputStream);
+
+		boolean forkProcess = false;
+
+		if (PropsValues.TEXT_EXTRACTION_FORK_PROCESS_ENABLED) {
+			if (ArrayUtil.contains(
+					PropsValues.TEXT_EXTRACTION_FORK_PROCESS_MIME_TYPES,
+					mimeType)) {
+
+				forkProcess = true;
+			}
+		}
+
+		if (forkProcess) {
+			File file = FileUtil.createTempFile();
+
+			try {
+				FileUtil.write(file, inputStream);
+
+				ExtractMetadataProcessCallable extractMetadataProcessCallable =
+					new ExtractMetadataProcessCallable(file, metadata, _parser);
+
+				Future<Metadata> future = ProcessExecutor.execute(
+					ClassPathUtil.getPortalClassPath(),
+					extractMetadataProcessCallable);
+
+				return future.get();
+			}
+			catch (Exception e) {
+				throw new SystemException(e);
+			}
+			finally {
+				file.delete();
+			}
+		}
 
 		try {
-			FileUtil.write(file, inputStream);
-
-			return extractMetadata(extension, mimeType, file);
+			return extractMetadata(inputStream, metadata, _parser);
 		}
-		catch (Exception e) {
-			throw new SystemException(e);
-		}
-		finally {
-			file.delete();
+		catch (IOException ioe) {
+			throw new SystemException(ioe);
 		}
 	}
 
@@ -190,19 +224,33 @@ public class TikaRawMetadataProcessor extends XugglerRawMetadataProcessor {
 
 		@Override
 		public Metadata call() throws ProcessException {
+			InputStream inputStream = null;
+
 			try {
-				return extractMetadata(_file, _metadata, _parser);
+				inputStream = new FileInputStream(_file);
+
+				return extractMetadata(inputStream, _metadata, _parser);
 			}
 			catch (IOException ioe) {
 				throw new ProcessException(ioe);
+			}
+			finally {
+				if (inputStream != null) {
+					try {
+						inputStream.close();
+					}
+					catch (IOException ioe) {
+						throw new ProcessException(ioe);
+					}
+				}
 			}
 		}
 
 		private static final long serialVersionUID = 1L;
 
-		private final File _file;
-		private final Metadata _metadata;
-		private final Parser _parser;
+		private File _file;
+		private Metadata _metadata;
+		private Parser _parser;
 
 	}
 

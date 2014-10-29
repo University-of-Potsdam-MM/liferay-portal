@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,47 +14,30 @@
 
 package com.liferay.portlet.journal.service;
 
+import com.liferay.portal.kernel.dao.orm.FinderCacheUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
-import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.test.ExecutionTestListeners;
+import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.LocaleUtil;
-import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.model.Group;
-import com.liferay.portal.service.ClassNameServiceUtil;
+import com.liferay.portal.service.GroupLocalServiceUtil;
 import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.test.DeleteAfterTestRun;
+import com.liferay.portal.service.ServiceTestUtil;
+import com.liferay.portal.test.EnvironmentExecutionTestListener;
+import com.liferay.portal.test.LiferayIntegrationJUnitTestRunner;
 import com.liferay.portal.test.Sync;
 import com.liferay.portal.test.SynchronousDestinationExecutionTestListener;
-import com.liferay.portal.test.listeners.MainServletExecutionTestListener;
-import com.liferay.portal.test.runners.LiferayIntegrationJUnitTestRunner;
-import com.liferay.portal.util.test.GroupTestUtil;
-import com.liferay.portal.util.test.RandomTestUtil;
-import com.liferay.portal.util.test.ServiceContextTestUtil;
-import com.liferay.portal.util.test.TestPropsValues;
-import com.liferay.portlet.asset.model.AssetEntry;
-import com.liferay.portlet.asset.service.AssetEntryLocalServiceUtil;
-import com.liferay.portlet.dynamicdatamapping.StorageFieldRequiredException;
-import com.liferay.portlet.dynamicdatamapping.StructureDefinitionException;
-import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
-import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
-import com.liferay.portlet.dynamicdatamapping.service.DDMStructureServiceUtil;
-import com.liferay.portlet.dynamicdatamapping.util.test.DDMStructureTestUtil;
-import com.liferay.portlet.dynamicdatamapping.util.test.DDMTemplateTestUtil;
+import com.liferay.portal.test.TransactionalExecutionTestListener;
+import com.liferay.portal.util.GroupTestUtil;
+import com.liferay.portal.util.TestPropsValues;
 import com.liferay.portlet.journal.model.JournalArticle;
 import com.liferay.portlet.journal.model.JournalArticleConstants;
-import com.liferay.portlet.journal.model.JournalFolder;
 import com.liferay.portlet.journal.model.JournalFolderConstants;
-import com.liferay.portlet.journal.service.impl.JournalArticleLocalServiceImpl;
-import com.liferay.portlet.journal.util.test.JournalTestUtil;
-
-import java.io.InputStream;
+import com.liferay.portlet.journal.util.JournalTestUtil;
 
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -68,15 +51,19 @@ import org.junit.runner.RunWith;
  */
 @ExecutionTestListeners(
 	listeners = {
-		MainServletExecutionTestListener.class,
-		SynchronousDestinationExecutionTestListener.class
+		EnvironmentExecutionTestListener.class,
+		SynchronousDestinationExecutionTestListener.class,
+		TransactionalExecutionTestListener.class
 	})
 @RunWith(LiferayIntegrationJUnitTestRunner.class)
 @Sync
+@Transactional
 public class JournalArticleServiceTest {
 
 	@Before
 	public void setUp() throws Exception {
+		FinderCacheUtil.clearCache();
+
 		_group = GroupTestUtil.addGroup();
 
 		_article = JournalTestUtil.addArticle(
@@ -89,6 +76,8 @@ public class JournalArticleServiceTest {
 	public void tearDown() throws Exception {
 		JournalArticleLocalServiceUtil.deleteArticle(
 			_group.getGroupId(), _article.getArticleId(), new ServiceContext());
+
+		GroupLocalServiceUtil.deleteGroup(_group);
 	}
 
 	@Test
@@ -97,64 +86,6 @@ public class JournalArticleServiceTest {
 			"Version 1", _article.getTitle(LocaleUtil.getDefault()));
 		Assert.assertTrue(_article.isApproved());
 		Assert.assertEquals(1.0, _article.getVersion(), 0);
-	}
-
-	@Test(expected = StorageFieldRequiredException.class)
-	public void testAddArticleWithEmptyRequiredHTMLField() throws Exception {
-		Map<String, String> requiredFields = new HashMap<String, String>();
-
-		requiredFields.put("HTML2030", "");
-
-		testAddArticleRequiredFields(
-			"test-ddm-structure-html-required-field.xml",
-			"test-journal-content-html-required-field.xml", requiredFields);
-	}
-
-	@Test
-	public void testAddArticleWithNotEmptyRequiredHTMLField() throws Exception {
-		Map<String, String> requiredFields = new HashMap<String, String>();
-
-		requiredFields.put("HTML2030", "<p>Hello World!</p>");
-
-		testAddArticleRequiredFields(
-			"test-ddm-structure-html-required-field.xml",
-			"test-journal-content-html-required-field.xml", requiredFields);
-	}
-
-	@Test(expected = StructureDefinitionException.class)
-	public void testCheckArticleWithInvalidStructure() throws Exception {
-		DDMStructure ddmStructure = DDMStructureTestUtil.addStructure(
-			JournalArticle.class.getName());
-
-		DDMTemplate ddmTemplate = DDMTemplateTestUtil.addTemplate(
-			ddmStructure.getStructureId());
-
-		String content = "<?xml version=\"1.0\"?><root></root>";
-
-		JournalArticle article = JournalTestUtil.addArticleWithXMLContent(
-			content, ddmStructure.getStructureKey(),
-			ddmTemplate.getTemplateKey());
-
-		checkArticleMatchesStructure(article, ddmStructure);
-	}
-
-	@Test
-	public void testCheckArticleWithValidStructure() throws Exception {
-		Group group = GroupTestUtil.addGroup();
-
-		JournalFolder parentFolder = JournalTestUtil.addFolder(
-			group.getGroupId(), RandomTestUtil.randomString());
-
-		JournalArticle article = JournalTestUtil.addArticle(
-			group.getGroupId(), parentFolder.getFolderId(), "title", "content");
-
-		long classNameId = ClassNameServiceUtil.fetchClassNameId(
-			JournalArticle.class);
-
-		DDMStructure ddmStructure = DDMStructureServiceUtil.getStructure(
-			group.getGroupId(), classNameId, article.getStructureId());
-
-		checkArticleMatchesStructure(article, ddmStructure);
 	}
 
 	@Test
@@ -310,7 +241,7 @@ public class JournalArticleServiceTest {
 		throws Exception {
 
 		List<JournalArticle> expectedArticles = addArticles(
-			2, RandomTestUtil.randomString());
+			2, ServiceTestUtil.randomString());
 
 		_article = updateArticleStatus(
 			_article, WorkflowConstants.STATUS_DRAFT);
@@ -337,9 +268,7 @@ public class JournalArticleServiceTest {
 		throws Exception {
 
 		List<JournalArticle> expectedArticles = addArticles(
-			2, RandomTestUtil.randomString());
-
-		expectedArticles.add(0, _article);
+			2, ServiceTestUtil.randomString());
 
 		_article = updateArticleStatus(
 			_article, WorkflowConstants.STATUS_DRAFT);
@@ -349,7 +278,7 @@ public class JournalArticleServiceTest {
 			JournalFolderConstants.DEFAULT_PARENT_FOLDER_ID,
 			WorkflowConstants.STATUS_APPROVED);
 
-		Assert.assertEquals(3, count);
+		Assert.assertEquals(2, count);
 
 		List<JournalArticle> articles =
 			JournalArticleServiceUtil.getGroupArticles(
@@ -366,7 +295,7 @@ public class JournalArticleServiceTest {
 		throws Exception {
 
 		List<JournalArticle> expectedArticles = addArticles(
-			2, RandomTestUtil.randomString());
+			2, ServiceTestUtil.randomString());
 
 		_article = updateArticleStatus(
 			_article, WorkflowConstants.STATUS_DRAFT);
@@ -393,9 +322,7 @@ public class JournalArticleServiceTest {
 		throws Exception {
 
 		List<JournalArticle> expectedArticles = addArticles(
-			2, RandomTestUtil.randomString());
-
-		expectedArticles.add(0, _article);
+			2, ServiceTestUtil.randomString());
 
 		_article = updateArticleStatus(
 			_article, WorkflowConstants.STATUS_DRAFT);
@@ -405,7 +332,7 @@ public class JournalArticleServiceTest {
 			JournalFolderConstants.DEFAULT_PARENT_FOLDER_ID,
 			WorkflowConstants.STATUS_APPROVED);
 
-		Assert.assertEquals(3, count);
+		Assert.assertEquals(2, count);
 
 		List<JournalArticle> articles =
 			JournalArticleServiceUtil.getGroupArticles(
@@ -436,13 +363,16 @@ public class JournalArticleServiceTest {
 	public void testSearchArticlesByKeywordAndStatus() throws Exception {
 		List<JournalArticle> initialArticles = createArticlesWithKeyword(2);
 
-		updateArticleStatus(
-			initialArticles.get(0), WorkflowConstants.STATUS_DRAFT);
+		JournalArticle initialArticle = initialArticles.get(0);
+
+		initialArticles.remove(initialArticle);
+
+		updateArticleStatus(initialArticle, WorkflowConstants.STATUS_DRAFT);
 
 		int count = countArticlesByKeyword(
 			_keyword, WorkflowConstants.STATUS_APPROVED);
 
-		Assert.assertEquals(2, count);
+		Assert.assertEquals(1, count);
 
 		List<JournalArticle> articles = searchArticlesByKeyword(
 			_keyword, WorkflowConstants.STATUS_APPROVED);
@@ -452,44 +382,12 @@ public class JournalArticleServiceTest {
 
 	@Test
 	public void testUpdateArticle() throws Exception {
-		Date oldDisplayDate = _article.getDisplayDate();
-
-		_article.setDisplayDate(new Date());
-
 		_article = JournalTestUtil.updateArticle(_article, "Version 2");
 
 		Assert.assertEquals(
 			"Version 2", _article.getTitle(LocaleUtil.getDefault()));
 		Assert.assertTrue(_article.isApproved());
 		Assert.assertEquals(1.1, _article.getVersion(), 0);
-
-		AssetEntry assetEntry = AssetEntryLocalServiceUtil.getEntry(
-			_article.getModelClassName(), _article.getResourcePrimKey());
-
-		Assert.assertEquals(oldDisplayDate, assetEntry.getPublishDate());
-	}
-
-	@Test
-	public void testUpdateExpiredArticle() throws Exception {
-		_article = JournalTestUtil.expireArticle(
-			_group.getGroupId(), _article, _article.getVersion());
-
-		Assert.assertTrue(_article.isExpired());
-
-		_article.setDisplayDate(new Date());
-
-		_article = JournalTestUtil.updateArticle(_article, "Version 2");
-
-		Assert.assertEquals(
-			"Version 2", _article.getTitle(LocaleUtil.getDefault()));
-		Assert.assertTrue(_article.isApproved());
-		Assert.assertEquals(1.1, _article.getVersion(), 0);
-
-		AssetEntry assetEntry = AssetEntryLocalServiceUtil.getEntry(
-			_article.getModelClassName(), _article.getResourcePrimKey());
-
-		Assert.assertEquals(
-			_article.getDisplayDate(), assetEntry.getPublishDate());
 	}
 
 	protected List<JournalArticle> addArticles(int count, String content)
@@ -501,29 +399,12 @@ public class JournalArticleServiceTest {
 			JournalArticle article = JournalTestUtil.addArticle(
 				_group.getGroupId(),
 				JournalFolderConstants.DEFAULT_PARENT_FOLDER_ID,
-				RandomTestUtil.randomString(), content);
+				ServiceTestUtil.randomString(), content);
 
 			articles.add(article);
 		}
 
 		return articles;
-	}
-
-	protected void checkArticleMatchesStructure(
-			JournalArticle article, DDMStructure ddmStructure)
-		throws PortalException {
-
-		new JournalArticleLocalServiceImpl() {
-
-			@Override
-			public void checkStructure(
-					JournalArticle article, DDMStructure structure)
-				throws PortalException {
-
-				super.checkStructure(article, structure);
-			}
-
-		}.checkStructure(article, ddmStructure);
 	}
 
 	protected int countArticlesByKeyword(String keyword, int status)
@@ -536,13 +417,13 @@ public class JournalArticleServiceTest {
 		return JournalArticleLocalServiceUtil.searchCount(
 			TestPropsValues.getCompanyId(), _group.getGroupId(), folderIds,
 			JournalArticleConstants.CLASSNAME_ID_DEFAULT, null, null, null,
-			null, keyword, "general", "", "", null, null, status, null, true);
+			null, keyword, null, "", "", null, null, status, null, true);
 	}
 
 	protected List<JournalArticle> createArticlesWithKeyword(int count)
 		throws Exception {
 
-		_keyword = RandomTestUtil.randomString();
+		_keyword = ServiceTestUtil.randomString();
 
 		List<JournalArticle> articles = searchArticlesByKeyword(
 			_keyword, WorkflowConstants.STATUS_ANY);
@@ -570,17 +451,6 @@ public class JournalArticleServiceTest {
 			_article.getResourcePrimKey(), status, preferApproved);
 	}
 
-	protected String readText(String fileName) throws Exception {
-		Class<?> clazz = getClass();
-
-		ClassLoader classLoader = clazz.getClassLoader();
-
-		InputStream inputStream = classLoader.getResourceAsStream(
-			"com/liferay/portlet/journal/dependencies/" + fileName);
-
-		return StringUtil.read(inputStream);
-	}
-
 	protected List<JournalArticle> searchArticlesByKeyword(
 			String keyword, int status)
 		throws Exception {
@@ -592,41 +462,8 @@ public class JournalArticleServiceTest {
 		return JournalArticleLocalServiceUtil.search(
 			TestPropsValues.getCompanyId(), _group.getGroupId(), folderIds,
 			JournalArticleConstants.CLASSNAME_ID_DEFAULT, null, null, null,
-			null, keyword, "general", "", "", null, null, status, null, false,
+			null, keyword, null, "", "", null, null, status, null, false,
 			QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-	}
-
-	protected void testAddArticleRequiredFields(
-			String ddmStructureDefinition, String journalArticleContent,
-			Map<String, String> requiredFields)
-		throws Exception {
-
-		String definition = readText(ddmStructureDefinition);
-
-		DDMStructure ddmStructure = DDMStructureTestUtil.addStructure(
-			_group.getGroupId(), JournalArticle.class.getName(), definition);
-
-		DDMTemplate ddmTemplate = DDMTemplateTestUtil.addTemplate(
-			_group.getGroupId(), ddmStructure.getStructureId());
-
-		String xmlContent = readText(journalArticleContent);
-
-		ServiceContext serviceContext =
-			ServiceContextTestUtil.getServiceContext(_group.getGroupId());
-
-		for (String requiredFieldName : requiredFields.keySet()) {
-			Assert.assertTrue(ddmStructure.getFieldRequired(requiredFieldName));
-
-			serviceContext.setAttribute(
-				requiredFieldName, requiredFields.get(requiredFieldName));
-		}
-
-		JournalTestUtil.addArticleWithXMLContent(
-			JournalFolderConstants.DEFAULT_PARENT_FOLDER_ID,
-			JournalArticleConstants.CLASSNAME_ID_DEFAULT, xmlContent,
-			ddmStructure.getStructureKey(), ddmTemplate.getTemplateKey(),
-			LocaleUtil.fromLanguageId(ddmStructure.getDefaultLanguageId()),
-			serviceContext);
 	}
 
 	protected void updateAndExpireArticle() throws Exception {
@@ -646,8 +483,7 @@ public class JournalArticleServiceTest {
 			JournalArticle article, int status)
 		throws Exception {
 
-		ServiceContext serviceContext =
-			ServiceContextTestUtil.getServiceContext();
+		ServiceContext serviceContext = ServiceTestUtil.getServiceContext();
 
 		if (status == WorkflowConstants.STATUS_DRAFT) {
 			serviceContext.setWorkflowAction(
@@ -658,15 +494,12 @@ public class JournalArticleServiceTest {
 		}
 
 		return JournalTestUtil.updateArticle(
-			article, "Version 2", article.getContent(), false, true,
+			article, "Version 2", ServiceTestUtil.randomString(),
 			serviceContext);
 	}
 
 	private JournalArticle _article;
-
-	@DeleteAfterTestRun
 	private Group _group;
-
 	private String _keyword;
 	private JournalArticle _latestArticle;
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,11 +14,15 @@
 
 package com.liferay.portal.tools.sourceformatter;
 
+import com.liferay.portal.test.LiferayIntegrationJUnitTestRunner;
+
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 /**
  * @author Hugo Huijser
  */
+@RunWith(LiferayIntegrationJUnitTestRunner.class)
 public class JavaSourceProcessorTest extends BaseSourceProcessorTestCase {
 
 	@Test
@@ -28,7 +32,7 @@ public class JavaSourceProcessorTest extends BaseSourceProcessorTestCase {
 
 	@Test
 	public void testExceedMaxLineLength() throws Exception {
-		test("ExceedMaxLineLength.testjava", "> 80:", 34);
+		test("ExceedMaxLineLength.testjava", "> 80:", 22);
 	}
 
 	@Test
@@ -60,8 +64,12 @@ public class JavaSourceProcessorTest extends BaseSourceProcessorTestCase {
 	}
 
 	@Test
-	public void testIncorrectImports() throws Exception {
+	public void testIncorrectImports1() throws Exception {
 		test("IncorrectImports1.testjava");
+	}
+
+	@Test
+	public void testIncorrectImports2() throws Exception {
 		test(
 			"IncorrectImports2.testjava",
 			new String[] {
@@ -87,12 +95,10 @@ public class JavaSourceProcessorTest extends BaseSourceProcessorTestCase {
 
 	@Test
 	public void testIncorrectTabs() throws Exception {
-		/*
 		test(
 			"IncorrectTabs.testjava",
-			new String[] {"tab:", "tab:", "tab:", "tab:"},
-			new Integer[] {23, 27, 33, 40});
-		*/
+			new String[] {"tab:", "tab:", "tab:", "tab:", "tab:"},
+			new Integer[] {23, 27, 31, 37, 44});
 	}
 
 	@Test
@@ -102,13 +108,19 @@ public class JavaSourceProcessorTest extends BaseSourceProcessorTestCase {
 
 	@Test
 	public void testInefficientStringMethods() throws Exception {
-		test(
-			"InefficientStringMethods.testjava",
-			new String[] {
-				"Use StringUtil.equalsIgnoreCase:",
-				"Use StringUtil.toLowerCase:", "Use StringUtil.toUpperCase:"
-			},
-			new Integer[] {26, 30, 31});
+		String mainReleaseVersion = sourceFormatter.getMainReleaseVersion();
+
+		if (!mainReleaseVersion.equals(
+				BaseSourceProcessor.MAIN_RELEASE_VERSION_6_1_0)) {
+
+			test(
+				"InefficientStringMethods.testjava",
+				new String[] {
+					"Use StringUtil.equalsIgnoreCase:",
+					"Use StringUtil.toLowerCase:", "Use StringUtil.toUpperCase:"
+				},
+				new Integer[] {26, 30, 31});
+		}
 	}
 
 	@Test
@@ -144,8 +156,7 @@ public class JavaSourceProcessorTest extends BaseSourceProcessorTestCase {
 	public void testSecureRandomNumberGeneration() throws Exception {
 		test(
 			"SecureRandomNumberGeneration.testjava",
-			"Use SecureRandomUtil or com.liferay.portal.kernel.security." +
-				"SecureRandom instead of java.security.SecureRandom:");
+			"Use SecureRandomUtil instead of java.security.SecureRandom:");
 	}
 
 	@Test
@@ -159,20 +170,23 @@ public class JavaSourceProcessorTest extends BaseSourceProcessorTestCase {
 	}
 
 	@Test
-	public void testSortJavaTerms() throws Exception {
+	public void testSortJavaTerms1() throws Exception {
 		test("SortJavaTerms1.testjava");
+	}
+
+	@Test
+	public void testSortJavaTerms2() throws Exception {
 		test("SortJavaTerms2.testjava");
+	}
+
+	@Test
+	public void testSortJavaTerms3() throws Exception {
 		test("SortJavaTerms3.testjava");
 	}
 
 	@Test
 	public void testStaticFinalLog() throws Exception {
 		test("StaticFinalLog.testjava");
-	}
-
-	@Test
-	public void testThrowsSystemException() throws Exception {
-		test("ThrowsSystemException.testjava");
 	}
 
 	@Test

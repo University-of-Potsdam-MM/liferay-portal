@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -26,6 +26,7 @@ import com.liferay.portal.kernel.scheduler.SchedulerEngine;
 import com.liferay.portal.kernel.scheduler.SchedulerEngineHelperUtil;
 import com.liferay.portal.kernel.scheduler.TriggerState;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
 
 import java.util.Date;
@@ -46,7 +47,7 @@ public class SchedulerEventMessageListenerWrapper implements MessageListener {
 				0, SchedulerEngine.JOB_NAME_MAX_LENGTH);
 		}
 
-		_receiverKey = new ReceiverKey(_jobName, _groupName);
+		_key = _jobName.concat(StringPool.PERIOD).concat(_groupName);
 
 		if (_messageListenerUUID == null) {
 			_messageListenerUUID = PortalUUIDUtil.generate();
@@ -63,10 +64,10 @@ public class SchedulerEventMessageListenerWrapper implements MessageListener {
 			message.getString(SchedulerEngine.DESTINATION_NAME));
 
 		if (destinationName.equals(DestinationNames.SCHEDULER_DISPATCH)) {
-			ReceiverKey receiverKey = (ReceiverKey)message.get(
-				SchedulerEngine.RECEIVER_KEY);
+			String receiverKey = GetterUtil.getString(
+				message.getString(SchedulerEngine.RECEIVER_KEY));
 
-			if (!_receiverKey.equals(receiverKey)) {
+			if (!receiverKey.equals(_key)) {
 				return;
 			}
 		}
@@ -116,7 +117,6 @@ public class SchedulerEventMessageListenerWrapper implements MessageListener {
 	/**
 	 * @deprecated As of 6.2.0, replaced by {@link #setGroupName(String)}
 	 */
-	@Deprecated
 	public void setClassName(String className) {
 		_groupName = className;
 		_jobName = className;
@@ -151,8 +151,8 @@ public class SchedulerEventMessageListenerWrapper implements MessageListener {
 
 	private String _groupName;
 	private String _jobName;
+	private String _key;
 	private MessageListener _messageListener;
 	private String _messageListenerUUID;
-	private ReceiverKey _receiverKey;
 
 }

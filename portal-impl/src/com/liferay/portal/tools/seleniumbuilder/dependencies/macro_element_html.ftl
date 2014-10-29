@@ -10,83 +10,47 @@
 
 <#assign macroName = macro?substring(0, x)>
 
+<#assign void = macroNameStack.push(macroName)>
+
 <#assign macroRootElement = seleniumBuilderContext.getMacroRootElement(macroName)>
 
-<#assign macroCommandFound = false>
+<#assign macroCommandElements = macroRootElement.elements("command")>
 
-<#if macroRootElement.element("command")??>
-	<#assign macroCommandElements = macroRootElement.elements("command")>
+<#list macroCommandElements as macroCommandElement>
+	<#assign macroCommandName = macroCommandElement.attributeValue("name")>
 
-	<#list macroCommandElements as macroCommandElement>
-		<#assign currentMacroCommandName = macroCommandElement.attributeValue("name")>
+	<#if macroCommandName == macroCommand>
+		<#assign macroRootVarElements = macroRootElement.elements("var")>
 
-		<#if macroCommand == currentMacroCommandName>
-			<#assign void = macroNameStack.push(macroName)>
+		<#list macroRootVarElements as macroRootVarElement>
+			<#assign lineNumber = macroRootVarElement.attributeValue("line-number")>
 
-			<#assign macroRootVarElements = macroRootElement.elements("var")>
+			<li id="${macroNameStack.peek()?uncap_first}Macro${lineNumber}">
+				<#assign displayElement = macroRootVarElement>
 
-			<#list macroRootVarElements as macroRootVarElement>
-				<#assign lineNumber = macroRootVarElement.attributeValue("line-number")>
+				<#include "element_whole_html.ftl">
+			</li>
+		</#list>
 
-				<li id="${macroNameStack.peek()?uncap_first}Macro${lineNumber}">
-					<#assign displayElement = macroRootVarElement>
+		<#assign macroVarElements = macroElement.elements("var")>
 
-					<#include "element_whole_html.ftl">
-				</li>
-			</#list>
+		<#list macroVarElements as macroVarElement>
+			<#assign lineNumber = macroVarElement.attributeValue("line-number")>
 
-			<#assign void = blockLevelStack.push("macro")>
+			<li id="${macroNameStack.peek()?uncap_first}Macro${lineNumber}">
+				<#assign displayElement = macroVarElement>
 
-			<#assign blockElement = macroCommandElement>
+				<#include "element_whole_html.ftl">
+			</li>
+		</#list>
 
-			<#include "block_element_html.ftl">
+		<#assign macroBlockElement = macroCommandElement>
 
-			<#assign void = blockLevelStack.pop()>
+		<#include "macro_block_element_html.ftl">
 
-			<#assign macroCommandFound = true>
-
-			<#break>
-		</#if>
-	</#list>
-</#if>
-
-<#if !macroCommandFound && macroRootElement.attributeValue("extends")??>
-	<#assign extendedMacroName = macroRootElement.attributeValue("extends")>
-
-	<#assign extendedMacroRootElement = seleniumBuilderContext.getMacroRootElement(extendedMacroName)>
-
-	<#assign extendedMacroCommandElements = extendedMacroRootElement.elements("command")>
-
-	<#list extendedMacroCommandElements as extendedMacroCommandElement>
-		<#assign extendedMacroCommandName = extendedMacroCommandElement.attributeValue("name")>
-
-		<#if macroCommand == extendedMacroCommandName>
-			<#assign void = macroNameStack.push(extendedMacroName)>
-
-			<#assign extendedMacroRootVarElements = extendedMacroRootElement.elements("var")>
-
-			<#list extendedMacroRootVarElements as extendedMacroRootVarElement>
-				<#assign lineNumber = extendedMacroRootVarElement.attributeValue("line-number")>
-
-				<li id="${macroNameStack.peek()?uncap_first}Macro${lineNumber}">
-					<#assign displayElement = extendedMacroRootVarElement>
-
-					<#include "element_whole_html.ftl">
-				</li>
-			</#list>
-
-			<#assign void = blockLevelStack.push("macro")>
-
-			<#assign blockElement = extendedMacroCommandElement>
-
-			<#include "block_element_html.ftl">
-
-			<#assign void = blockLevelStack.pop()>
-
-			<#break>
-		</#if>
-	</#list>
-</#if>
+		<#break>
+	</#if>
+</#list>
 
 <#assign void = macroNameStack.pop()>
 

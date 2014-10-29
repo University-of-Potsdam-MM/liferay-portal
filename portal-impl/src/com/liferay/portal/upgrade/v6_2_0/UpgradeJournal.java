@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -19,8 +19,6 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.upgrade.BaseUpgradePortletPreferences;
 import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.LocaleUtil;
-import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -35,6 +33,8 @@ import com.liferay.portlet.dynamicdatamapping.model.DDMStructureConstants;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplateConstants;
 import com.liferay.portlet.journal.model.JournalArticle;
+import com.liferay.portlet.journal.model.JournalStructure;
+import com.liferay.portlet.journal.model.JournalTemplate;
 import com.liferay.portlet.journal.util.JournalConverterUtil;
 
 import java.sql.Connection;
@@ -44,7 +44,6 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import javax.portlet.PortletPreferences;
@@ -97,9 +96,7 @@ public class UpgradeJournal extends BaseUpgradePortletPreferences {
 			ps.setString(11, ddmStructureKey);
 			ps.setString(12, name);
 			ps.setString(13, description);
-			ps.setString(
-				14,
-				JournalConverterUtil.getDDMXSD(xsd, getDefaultLocale(name)));
+			ps.setString(14, JournalConverterUtil.getDDMXSD(xsd));
 			ps.setString(15, storageType);
 			ps.setInt(16, type);
 
@@ -130,18 +127,13 @@ public class UpgradeJournal extends BaseUpgradePortletPreferences {
 			parentDDMStructureId = updateStructure(parentStructureId);
 		}
 
-		long insertedDDMStructureId = getDDMStructureId(
-			groupId, ddmStructureKey, false);
-
-		if (insertedDDMStructureId == 0) {
-			addDDMStructure(
-				uuid_, ddmStructureId, groupId, companyId, userId, userName,
-				createDate, modifiedDate, parentDDMStructureId,
-				PortalUtil.getClassNameId(JournalArticle.class.getName()),
-				ddmStructureKey, name, description, xsd,
-				PropsValues.JOURNAL_ARTICLE_STORAGE_TYPE,
-				DDMStructureConstants.TYPE_DEFAULT);
-		}
+		addDDMStructure(
+			uuid_, ddmStructureId, groupId, companyId, userId, userName,
+			createDate, modifiedDate, parentDDMStructureId,
+			PortalUtil.getClassNameId(JournalArticle.class.getName()),
+			ddmStructureKey, name, description, xsd,
+			PropsValues.JOURNAL_ARTICLE_STORAGE_TYPE,
+			DDMStructureConstants.TYPE_DEFAULT);
 	}
 
 	protected void addDDMTemplate(
@@ -229,12 +221,6 @@ public class UpgradeJournal extends BaseUpgradePortletPreferences {
 	}
 
 	protected long getDDMStructureId(long groupId, String structureId) {
-		return getDDMStructureId(groupId, structureId, true);
-	}
-
-	protected long getDDMStructureId(
-		long groupId, String structureId, boolean warn) {
-
 		if (Validator.isNull(structureId)) {
 			return 0;
 		}
@@ -242,25 +228,16 @@ public class UpgradeJournal extends BaseUpgradePortletPreferences {
 		Long ddmStructureId = _ddmStructureIds.get(groupId + "#" + structureId);
 
 		if (ddmStructureId == null) {
-			if (warn) {
-				if (_log.isWarnEnabled()) {
-					_log.warn(
-						"Unable to get the DDM structure ID for group " +
-							groupId + " and journal structure ID " +
-								structureId);
-				}
+			if (_log.isWarnEnabled()) {
+				_log.warn(
+					"Unable to get the DDM structure ID for group " +
+						groupId + " and journal structure ID " + structureId);
 			}
 
 			return 0;
 		}
 
 		return ddmStructureId;
-	}
-
-	protected Locale getDefaultLocale(String xml) {
-		String defaultLanguageId = LocalizationUtil.getDefaultLanguageId(xml);
-
-		return LocaleUtil.fromLanguageId(defaultLanguageId);
 	}
 
 	@Override
@@ -331,44 +308,6 @@ public class UpgradeJournal extends BaseUpgradePortletPreferences {
 		runSQL(sb.toString());
 	}
 
-	protected long updateStructure(ResultSet rs) throws Exception {
-		String uuid_ = rs.getString("uuid_");
-		long id_ = rs.getLong("id_");
-		long groupId = rs.getLong("groupId");
-		long companyId = rs.getLong("companyId");
-		long userId = rs.getLong("userId");
-		String userName = rs.getString("userName");
-		Timestamp createDate = rs.getTimestamp("createDate");
-		Timestamp modifiedDate = rs.getTimestamp("modifiedDate");
-		String structureId = rs.getString("structureId");
-		String parentStructureId = rs.getString("parentStructureId");
-		String name = rs.getString("name");
-		String description = rs.getString("description");
-		String xsd = rs.getString("xsd");
-
-		Long ddmStructureId = _ddmStructureIds.get(groupId + "#" + structureId);
-
-		if (ddmStructureId != null) {
-			return ddmStructureId;
-		}
-
-		ddmStructureId = increment();
-
-		addDDMStructure(
-			uuid_, ddmStructureId, groupId, companyId, userId, userName,
-			createDate, modifiedDate, parentStructureId, structureId, name,
-			description, xsd);
-
-		updateResourcePermission(
-			companyId, "com.liferay.portlet.journal.model.JournalStructure",
-			DDMStructure.class.getName(), id_, ddmStructureId);
-
-		_ddmStructureIds.put(groupId + "#" + structureId, ddmStructureId);
-		_ddmStructurePKs.put(id_, ddmStructureId);
-
-		return 0;
-	}
-
 	protected long updateStructure(String structureId) throws Exception {
 		Connection con = null;
 		PreparedStatement ps = null;
@@ -378,14 +317,45 @@ public class UpgradeJournal extends BaseUpgradePortletPreferences {
 			con = DataAccess.getUpgradeOptimizedConnection();
 
 			ps = con.prepareStatement(
-				"select * from JournalStructure where structureId = ?");
-
-			ps.setString(1, structureId);
+				"select * from JournalStructure where structureId = " +
+					structureId);
 
 			rs = ps.executeQuery();
 
 			if (rs.next()) {
-				return updateStructure(rs);
+				String uuid_ = rs.getString("uuid_");
+				long id_ = rs.getLong("id_");
+				long groupId = rs.getLong("groupId");
+				long companyId = rs.getLong("companyId");
+				long userId = rs.getLong("userId");
+				String userName = rs.getString("userName");
+				Timestamp createDate = rs.getTimestamp("createDate");
+				Timestamp modifiedDate = rs.getTimestamp("modifiedDate");
+				String parentStructureId = rs.getString("parentStructureId");
+				String name = rs.getString("name");
+				String description = rs.getString("description");
+				String xsd = rs.getString("xsd");
+
+				Long ddmStructureId = _ddmStructureIds.get(
+					groupId + "#" + structureId);
+
+				if (ddmStructureId != null) {
+					return ddmStructureId;
+				}
+
+				ddmStructureId = increment();
+
+				addDDMStructure(
+					uuid_, ddmStructureId, groupId, companyId, userId, userName,
+					createDate, modifiedDate, parentStructureId, structureId,
+					name, description, xsd);
+
+				updateResourcePermission(
+					companyId, JournalStructure.class.getName(),
+					DDMStructure.class.getName(), id_, ddmStructureId);
+
+				_ddmStructureIds.put(
+					groupId + "#" + structureId, ddmStructureId);
 			}
 
 			return 0;
@@ -415,7 +385,34 @@ public class UpgradeJournal extends BaseUpgradePortletPreferences {
 			rs = ps.executeQuery();
 
 			while (rs.next()) {
-				updateStructure(rs);
+				String uuid_ = rs.getString("uuid_");
+				long id_ = rs.getLong("id_");
+				long groupId = rs.getLong("groupId");
+				long companyId = rs.getLong("companyId");
+				long userId = rs.getLong("userId");
+				String userName = rs.getString("userName");
+				Timestamp createDate = rs.getTimestamp("createDate");
+				Timestamp modifiedDate = rs.getTimestamp("modifiedDate");
+				String structureId = rs.getString("structureId");
+				String parentStructureId = rs.getString("parentStructureId");
+				String name = rs.getString("name");
+				String description = rs.getString("description");
+				String xsd = rs.getString("xsd");
+
+				long ddmStructureId = increment();
+
+				addDDMStructure(
+					uuid_, ddmStructureId, groupId, companyId, userId, userName,
+					createDate, modifiedDate, parentStructureId, structureId,
+					name, description, xsd);
+
+				updateResourcePermission(
+					companyId, JournalStructure.class.getName(),
+					DDMStructure.class.getName(), id_, ddmStructureId);
+
+				_ddmStructureIds.put(
+					groupId + "#" + structureId, ddmStructureId);
+				_ddmStructurePKs.put(id_, ddmStructureId);
 			}
 		}
 		finally {
@@ -473,8 +470,7 @@ public class UpgradeJournal extends BaseUpgradePortletPreferences {
 					cacheable, smallImage, smallImageId, smallImageURL);
 
 				updateResourcePermission(
-					companyId,
-					"com.liferay.portlet.journal.model.JournalTemplate",
+					companyId, JournalTemplate.class.getName(),
 					DDMTemplate.class.getName(), id_, ddmTemplateId);
 			}
 		}

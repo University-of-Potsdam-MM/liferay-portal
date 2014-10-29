@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -51,13 +51,13 @@ public class LayoutSetWrapper implements LayoutSet, ModelWrapper<LayoutSet> {
 	public Map<String, Object> getModelAttributes() {
 		Map<String, Object> attributes = new HashMap<String, Object>();
 
-		attributes.put("mvccVersion", getMvccVersion());
 		attributes.put("layoutSetId", getLayoutSetId());
 		attributes.put("groupId", getGroupId());
 		attributes.put("companyId", getCompanyId());
 		attributes.put("createDate", getCreateDate());
 		attributes.put("modifiedDate", getModifiedDate());
 		attributes.put("privateLayout", getPrivateLayout());
+		attributes.put("logo", getLogo());
 		attributes.put("logoId", getLogoId());
 		attributes.put("themeId", getThemeId());
 		attributes.put("colorSchemeId", getColorSchemeId());
@@ -75,12 +75,6 @@ public class LayoutSetWrapper implements LayoutSet, ModelWrapper<LayoutSet> {
 
 	@Override
 	public void setModelAttributes(Map<String, Object> attributes) {
-		Long mvccVersion = (Long)attributes.get("mvccVersion");
-
-		if (mvccVersion != null) {
-			setMvccVersion(mvccVersion);
-		}
-
 		Long layoutSetId = (Long)attributes.get("layoutSetId");
 
 		if (layoutSetId != null) {
@@ -115,6 +109,12 @@ public class LayoutSetWrapper implements LayoutSet, ModelWrapper<LayoutSet> {
 
 		if (privateLayout != null) {
 			setPrivateLayout(privateLayout);
+		}
+
+		Boolean logo = (Boolean)attributes.get("logo");
+
+		if (logo != null) {
+			setLogo(logo);
 		}
 
 		Long logoId = (Long)attributes.get("logoId");
@@ -180,100 +180,24 @@ public class LayoutSetWrapper implements LayoutSet, ModelWrapper<LayoutSet> {
 		}
 	}
 
+	/**
+	* Returns the primary key of this layout set.
+	*
+	* @return the primary key of this layout set
+	*/
 	@Override
-	public java.lang.Object clone() {
-		return new LayoutSetWrapper((LayoutSet)_layoutSet.clone());
-	}
-
-	@Override
-	public int compareTo(com.liferay.portal.model.LayoutSet layoutSet) {
-		return _layoutSet.compareTo(layoutSet);
+	public long getPrimaryKey() {
+		return _layoutSet.getPrimaryKey();
 	}
 
 	/**
-	* Returns the layout set's color scheme.
+	* Sets the primary key of this layout set.
 	*
-	* <p>
-	* Just like themes, color schemes can be configured on the layout set
-	* level. The layout set's color scheme can be overridden on the layout
-	* level.
-	* </p>
-	*
-	* @return the layout set's color scheme
-	* @throws SystemException if a system exception occurred
+	* @param primaryKey the primary key of this layout set
 	*/
 	@Override
-	public com.liferay.portal.model.ColorScheme getColorScheme() {
-		return _layoutSet.getColorScheme();
-	}
-
-	/**
-	* Returns the color scheme ID of this layout set.
-	*
-	* @return the color scheme ID of this layout set
-	*/
-	@Override
-	public java.lang.String getColorSchemeId() {
-		return _layoutSet.getColorSchemeId();
-	}
-
-	/**
-	* Returns the company ID of this layout set.
-	*
-	* @return the company ID of this layout set
-	*/
-	@Override
-	public long getCompanyId() {
-		return _layoutSet.getCompanyId();
-	}
-
-	/**
-	* Returns the create date of this layout set.
-	*
-	* @return the create date of this layout set
-	*/
-	@Override
-	public java.util.Date getCreateDate() {
-		return _layoutSet.getCreateDate();
-	}
-
-	/**
-	* Returns the css of this layout set.
-	*
-	* @return the css of this layout set
-	*/
-	@Override
-	public java.lang.String getCss() {
-		return _layoutSet.getCss();
-	}
-
-	@Override
-	public com.liferay.portlet.expando.model.ExpandoBridge getExpandoBridge() {
-		return _layoutSet.getExpandoBridge();
-	}
-
-	/**
-	* Returns the layout set's group.
-	*
-	* @return the layout set's group
-	* @throws PortalException if a group with the primary key could not be
-	found
-	* @throws SystemException if a system exception occurred
-	*/
-	@Override
-	public com.liferay.portal.model.Group getGroup()
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _layoutSet.getGroup();
-	}
-
-	/**
-	* Returns the group ID of this layout set.
-	*
-	* @return the group ID of this layout set
-	*/
-	@Override
-	public long getGroupId() {
-		return _layoutSet.getGroupId();
+	public void setPrimaryKey(long primaryKey) {
+		_layoutSet.setPrimaryKey(primaryKey);
 	}
 
 	/**
@@ -287,275 +211,43 @@ public class LayoutSetWrapper implements LayoutSet, ModelWrapper<LayoutSet> {
 	}
 
 	/**
-	* Returns the layout set prototype's ID, or <code>0</code> if it has no layout
-	* set prototype.
+	* Sets the layout set ID of this layout set.
 	*
-	* <p>
-	* Prototype is Liferay's technical name for a site template.
-	* </p>
-	*
-	* @return the layout set prototype's ID, or <code>0</code> if it has no layout
-	set prototype
-	* @throws PortalException if a matching layout set prototype could not be
-	found
-	* @throws SystemException if a system exception occurred
+	* @param layoutSetId the layout set ID of this layout set
 	*/
 	@Override
-	public long getLayoutSetPrototypeId()
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _layoutSet.getLayoutSetPrototypeId();
+	public void setLayoutSetId(long layoutSetId) {
+		_layoutSet.setLayoutSetId(layoutSetId);
 	}
 
 	/**
-	* Returns the layout set prototype link enabled of this layout set.
+	* Returns the group ID of this layout set.
 	*
-	* @return the layout set prototype link enabled of this layout set
+	* @return the group ID of this layout set
 	*/
 	@Override
-	public boolean getLayoutSetPrototypeLinkEnabled() {
-		return _layoutSet.getLayoutSetPrototypeLinkEnabled();
+	public long getGroupId() {
+		return _layoutSet.getGroupId();
 	}
 
 	/**
-	* Returns the layout set prototype uuid of this layout set.
+	* Sets the group ID of this layout set.
 	*
-	* @return the layout set prototype uuid of this layout set
+	* @param groupId the group ID of this layout set
 	*/
 	@Override
-	public java.lang.String getLayoutSetPrototypeUuid() {
-		return _layoutSet.getLayoutSetPrototypeUuid();
-	}
-
-	@Override
-	public long getLiveLogoId() {
-		return _layoutSet.getLiveLogoId();
-	}
-
-	@Override
-	public boolean getLogo() {
-		return _layoutSet.getLogo();
+	public void setGroupId(long groupId) {
+		_layoutSet.setGroupId(groupId);
 	}
 
 	/**
-	* Returns the logo ID of this layout set.
+	* Returns the company ID of this layout set.
 	*
-	* @return the logo ID of this layout set
+	* @return the company ID of this layout set
 	*/
 	@Override
-	public long getLogoId() {
-		return _layoutSet.getLogoId();
-	}
-
-	/**
-	* Returns the modified date of this layout set.
-	*
-	* @return the modified date of this layout set
-	*/
-	@Override
-	public java.util.Date getModifiedDate() {
-		return _layoutSet.getModifiedDate();
-	}
-
-	/**
-	* Returns the mvcc version of this layout set.
-	*
-	* @return the mvcc version of this layout set
-	*/
-	@Override
-	public long getMvccVersion() {
-		return _layoutSet.getMvccVersion();
-	}
-
-	/**
-	* Returns the page count of this layout set.
-	*
-	* @return the page count of this layout set
-	*/
-	@Override
-	public int getPageCount() {
-		return _layoutSet.getPageCount();
-	}
-
-	/**
-	* Returns the primary key of this layout set.
-	*
-	* @return the primary key of this layout set
-	*/
-	@Override
-	public long getPrimaryKey() {
-		return _layoutSet.getPrimaryKey();
-	}
-
-	@Override
-	public java.io.Serializable getPrimaryKeyObj() {
-		return _layoutSet.getPrimaryKeyObj();
-	}
-
-	/**
-	* Returns the private layout of this layout set.
-	*
-	* @return the private layout of this layout set
-	*/
-	@Override
-	public boolean getPrivateLayout() {
-		return _layoutSet.getPrivateLayout();
-	}
-
-	/**
-	* Returns the settings of this layout set.
-	*
-	* @return the settings of this layout set
-	*/
-	@Override
-	public java.lang.String getSettings() {
-		return _layoutSet.getSettings();
-	}
-
-	@Override
-	public com.liferay.portal.kernel.util.UnicodeProperties getSettingsProperties() {
-		return _layoutSet.getSettingsProperties();
-	}
-
-	@Override
-	public java.lang.String getSettingsProperty(java.lang.String key) {
-		return _layoutSet.getSettingsProperty(key);
-	}
-
-	@Override
-	public com.liferay.portal.model.Theme getTheme() {
-		return _layoutSet.getTheme();
-	}
-
-	/**
-	* Returns the theme ID of this layout set.
-	*
-	* @return the theme ID of this layout set
-	*/
-	@Override
-	public java.lang.String getThemeId() {
-		return _layoutSet.getThemeId();
-	}
-
-	@Override
-	public java.lang.String getThemeSetting(java.lang.String key,
-		java.lang.String device) {
-		return _layoutSet.getThemeSetting(key, device);
-	}
-
-	/**
-	* Returns the name of the layout set's virtual host.
-	*
-	* <p>
-	* When accessing a layout set that has a the virtual host, the URL elements
-	* "/web/sitename" or "/group/sitename" can be omitted.
-	* </p>
-	*
-	* @return the layout set's virtual host name, or an empty string if the layout
-	set has no virtual host configured
-	*/
-	@Override
-	public java.lang.String getVirtualHostname() {
-		return _layoutSet.getVirtualHostname();
-	}
-
-	@Override
-	public com.liferay.portal.model.ColorScheme getWapColorScheme() {
-		return _layoutSet.getWapColorScheme();
-	}
-
-	/**
-	* Returns the wap color scheme ID of this layout set.
-	*
-	* @return the wap color scheme ID of this layout set
-	*/
-	@Override
-	public java.lang.String getWapColorSchemeId() {
-		return _layoutSet.getWapColorSchemeId();
-	}
-
-	@Override
-	public com.liferay.portal.model.Theme getWapTheme() {
-		return _layoutSet.getWapTheme();
-	}
-
-	/**
-	* Returns the wap theme ID of this layout set.
-	*
-	* @return the wap theme ID of this layout set
-	*/
-	@Override
-	public java.lang.String getWapThemeId() {
-		return _layoutSet.getWapThemeId();
-	}
-
-	@Override
-	public int hashCode() {
-		return _layoutSet.hashCode();
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _layoutSet.isCachedModel();
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _layoutSet.isEscapedModel();
-	}
-
-	@Override
-	public boolean isLayoutSetPrototypeLinkActive() {
-		return _layoutSet.isLayoutSetPrototypeLinkActive();
-	}
-
-	/**
-	* Returns <code>true</code> if this layout set is layout set prototype link enabled.
-	*
-	* @return <code>true</code> if this layout set is layout set prototype link enabled; <code>false</code> otherwise
-	*/
-	@Override
-	public boolean isLayoutSetPrototypeLinkEnabled() {
-		return _layoutSet.isLayoutSetPrototypeLinkEnabled();
-	}
-
-	@Override
-	public boolean isLogo() {
-		return _layoutSet.isLogo();
-	}
-
-	@Override
-	public boolean isNew() {
-		return _layoutSet.isNew();
-	}
-
-	/**
-	* Returns <code>true</code> if this layout set is private layout.
-	*
-	* @return <code>true</code> if this layout set is private layout; <code>false</code> otherwise
-	*/
-	@Override
-	public boolean isPrivateLayout() {
-		return _layoutSet.isPrivateLayout();
-	}
-
-	@Override
-	public void persist() {
-		_layoutSet.persist();
-	}
-
-	@Override
-	public void setCachedModel(boolean cachedModel) {
-		_layoutSet.setCachedModel(cachedModel);
-	}
-
-	/**
-	* Sets the color scheme ID of this layout set.
-	*
-	* @param colorSchemeId the color scheme ID of this layout set
-	*/
-	@Override
-	public void setColorSchemeId(java.lang.String colorSchemeId) {
-		_layoutSet.setColorSchemeId(colorSchemeId);
+	public long getCompanyId() {
+		return _layoutSet.getCompanyId();
 	}
 
 	/**
@@ -569,6 +261,16 @@ public class LayoutSetWrapper implements LayoutSet, ModelWrapper<LayoutSet> {
 	}
 
 	/**
+	* Returns the create date of this layout set.
+	*
+	* @return the create date of this layout set
+	*/
+	@Override
+	public java.util.Date getCreateDate() {
+		return _layoutSet.getCreateDate();
+	}
+
+	/**
 	* Sets the create date of this layout set.
 	*
 	* @param createDate the create date of this layout set
@@ -579,6 +281,196 @@ public class LayoutSetWrapper implements LayoutSet, ModelWrapper<LayoutSet> {
 	}
 
 	/**
+	* Returns the modified date of this layout set.
+	*
+	* @return the modified date of this layout set
+	*/
+	@Override
+	public java.util.Date getModifiedDate() {
+		return _layoutSet.getModifiedDate();
+	}
+
+	/**
+	* Sets the modified date of this layout set.
+	*
+	* @param modifiedDate the modified date of this layout set
+	*/
+	@Override
+	public void setModifiedDate(java.util.Date modifiedDate) {
+		_layoutSet.setModifiedDate(modifiedDate);
+	}
+
+	/**
+	* Returns the private layout of this layout set.
+	*
+	* @return the private layout of this layout set
+	*/
+	@Override
+	public boolean getPrivateLayout() {
+		return _layoutSet.getPrivateLayout();
+	}
+
+	/**
+	* Returns <code>true</code> if this layout set is private layout.
+	*
+	* @return <code>true</code> if this layout set is private layout; <code>false</code> otherwise
+	*/
+	@Override
+	public boolean isPrivateLayout() {
+		return _layoutSet.isPrivateLayout();
+	}
+
+	/**
+	* Sets whether this layout set is private layout.
+	*
+	* @param privateLayout the private layout of this layout set
+	*/
+	@Override
+	public void setPrivateLayout(boolean privateLayout) {
+		_layoutSet.setPrivateLayout(privateLayout);
+	}
+
+	/**
+	* Returns the logo of this layout set.
+	*
+	* @return the logo of this layout set
+	*/
+	@Override
+	public boolean getLogo() {
+		return _layoutSet.getLogo();
+	}
+
+	/**
+	* Returns <code>true</code> if this layout set is logo.
+	*
+	* @return <code>true</code> if this layout set is logo; <code>false</code> otherwise
+	*/
+	@Override
+	public boolean isLogo() {
+		return _layoutSet.isLogo();
+	}
+
+	/**
+	* Sets whether this layout set is logo.
+	*
+	* @param logo the logo of this layout set
+	*/
+	@Override
+	public void setLogo(boolean logo) {
+		_layoutSet.setLogo(logo);
+	}
+
+	/**
+	* Returns the logo ID of this layout set.
+	*
+	* @return the logo ID of this layout set
+	*/
+	@Override
+	public long getLogoId() {
+		return _layoutSet.getLogoId();
+	}
+
+	/**
+	* Sets the logo ID of this layout set.
+	*
+	* @param logoId the logo ID of this layout set
+	*/
+	@Override
+	public void setLogoId(long logoId) {
+		_layoutSet.setLogoId(logoId);
+	}
+
+	/**
+	* Returns the theme ID of this layout set.
+	*
+	* @return the theme ID of this layout set
+	*/
+	@Override
+	public java.lang.String getThemeId() {
+		return _layoutSet.getThemeId();
+	}
+
+	/**
+	* Sets the theme ID of this layout set.
+	*
+	* @param themeId the theme ID of this layout set
+	*/
+	@Override
+	public void setThemeId(java.lang.String themeId) {
+		_layoutSet.setThemeId(themeId);
+	}
+
+	/**
+	* Returns the color scheme ID of this layout set.
+	*
+	* @return the color scheme ID of this layout set
+	*/
+	@Override
+	public java.lang.String getColorSchemeId() {
+		return _layoutSet.getColorSchemeId();
+	}
+
+	/**
+	* Sets the color scheme ID of this layout set.
+	*
+	* @param colorSchemeId the color scheme ID of this layout set
+	*/
+	@Override
+	public void setColorSchemeId(java.lang.String colorSchemeId) {
+		_layoutSet.setColorSchemeId(colorSchemeId);
+	}
+
+	/**
+	* Returns the wap theme ID of this layout set.
+	*
+	* @return the wap theme ID of this layout set
+	*/
+	@Override
+	public java.lang.String getWapThemeId() {
+		return _layoutSet.getWapThemeId();
+	}
+
+	/**
+	* Sets the wap theme ID of this layout set.
+	*
+	* @param wapThemeId the wap theme ID of this layout set
+	*/
+	@Override
+	public void setWapThemeId(java.lang.String wapThemeId) {
+		_layoutSet.setWapThemeId(wapThemeId);
+	}
+
+	/**
+	* Returns the wap color scheme ID of this layout set.
+	*
+	* @return the wap color scheme ID of this layout set
+	*/
+	@Override
+	public java.lang.String getWapColorSchemeId() {
+		return _layoutSet.getWapColorSchemeId();
+	}
+
+	/**
+	* Sets the wap color scheme ID of this layout set.
+	*
+	* @param wapColorSchemeId the wap color scheme ID of this layout set
+	*/
+	@Override
+	public void setWapColorSchemeId(java.lang.String wapColorSchemeId) {
+		_layoutSet.setWapColorSchemeId(wapColorSchemeId);
+	}
+
+	/**
+	* Returns the css of this layout set.
+	*
+	* @return the css of this layout set
+	*/
+	@Override
+	public java.lang.String getCss() {
+		return _layoutSet.getCss();
+	}
+
+	/**
 	* Sets the css of this layout set.
 	*
 	* @param css the css of this layout set
@@ -586,6 +478,138 @@ public class LayoutSetWrapper implements LayoutSet, ModelWrapper<LayoutSet> {
 	@Override
 	public void setCss(java.lang.String css) {
 		_layoutSet.setCss(css);
+	}
+
+	/**
+	* Returns the page count of this layout set.
+	*
+	* @return the page count of this layout set
+	*/
+	@Override
+	public int getPageCount() {
+		return _layoutSet.getPageCount();
+	}
+
+	/**
+	* Sets the page count of this layout set.
+	*
+	* @param pageCount the page count of this layout set
+	*/
+	@Override
+	public void setPageCount(int pageCount) {
+		_layoutSet.setPageCount(pageCount);
+	}
+
+	/**
+	* Returns the settings of this layout set.
+	*
+	* @return the settings of this layout set
+	*/
+	@Override
+	public java.lang.String getSettings() {
+		return _layoutSet.getSettings();
+	}
+
+	/**
+	* Sets the settings of this layout set.
+	*
+	* @param settings the settings of this layout set
+	*/
+	@Override
+	public void setSettings(java.lang.String settings) {
+		_layoutSet.setSettings(settings);
+	}
+
+	/**
+	* Returns the layout set prototype uuid of this layout set.
+	*
+	* @return the layout set prototype uuid of this layout set
+	*/
+	@Override
+	public java.lang.String getLayoutSetPrototypeUuid() {
+		return _layoutSet.getLayoutSetPrototypeUuid();
+	}
+
+	/**
+	* Sets the layout set prototype uuid of this layout set.
+	*
+	* @param layoutSetPrototypeUuid the layout set prototype uuid of this layout set
+	*/
+	@Override
+	public void setLayoutSetPrototypeUuid(
+		java.lang.String layoutSetPrototypeUuid) {
+		_layoutSet.setLayoutSetPrototypeUuid(layoutSetPrototypeUuid);
+	}
+
+	/**
+	* Returns the layout set prototype link enabled of this layout set.
+	*
+	* @return the layout set prototype link enabled of this layout set
+	*/
+	@Override
+	public boolean getLayoutSetPrototypeLinkEnabled() {
+		return _layoutSet.getLayoutSetPrototypeLinkEnabled();
+	}
+
+	/**
+	* Returns <code>true</code> if this layout set is layout set prototype link enabled.
+	*
+	* @return <code>true</code> if this layout set is layout set prototype link enabled; <code>false</code> otherwise
+	*/
+	@Override
+	public boolean isLayoutSetPrototypeLinkEnabled() {
+		return _layoutSet.isLayoutSetPrototypeLinkEnabled();
+	}
+
+	/**
+	* Sets whether this layout set is layout set prototype link enabled.
+	*
+	* @param layoutSetPrototypeLinkEnabled the layout set prototype link enabled of this layout set
+	*/
+	@Override
+	public void setLayoutSetPrototypeLinkEnabled(
+		boolean layoutSetPrototypeLinkEnabled) {
+		_layoutSet.setLayoutSetPrototypeLinkEnabled(layoutSetPrototypeLinkEnabled);
+	}
+
+	@Override
+	public boolean isNew() {
+		return _layoutSet.isNew();
+	}
+
+	@Override
+	public void setNew(boolean n) {
+		_layoutSet.setNew(n);
+	}
+
+	@Override
+	public boolean isCachedModel() {
+		return _layoutSet.isCachedModel();
+	}
+
+	@Override
+	public void setCachedModel(boolean cachedModel) {
+		_layoutSet.setCachedModel(cachedModel);
+	}
+
+	@Override
+	public boolean isEscapedModel() {
+		return _layoutSet.isEscapedModel();
+	}
+
+	@Override
+	public java.io.Serializable getPrimaryKeyObj() {
+		return _layoutSet.getPrimaryKeyObj();
+	}
+
+	@Override
+	public void setPrimaryKeyObj(java.io.Serializable primaryKeyObj) {
+		_layoutSet.setPrimaryKeyObj(primaryKeyObj);
+	}
+
+	@Override
+	public com.liferay.portlet.expando.model.ExpandoBridge getExpandoBridge() {
+		return _layoutSet.getExpandoBridge();
 	}
 
 	@Override
@@ -606,173 +630,19 @@ public class LayoutSetWrapper implements LayoutSet, ModelWrapper<LayoutSet> {
 		_layoutSet.setExpandoBridgeAttributes(serviceContext);
 	}
 
-	/**
-	* Sets the group ID of this layout set.
-	*
-	* @param groupId the group ID of this layout set
-	*/
 	@Override
-	public void setGroupId(long groupId) {
-		_layoutSet.setGroupId(groupId);
-	}
-
-	/**
-	* Sets the layout set ID of this layout set.
-	*
-	* @param layoutSetId the layout set ID of this layout set
-	*/
-	@Override
-	public void setLayoutSetId(long layoutSetId) {
-		_layoutSet.setLayoutSetId(layoutSetId);
-	}
-
-	/**
-	* Sets whether this layout set is layout set prototype link enabled.
-	*
-	* @param layoutSetPrototypeLinkEnabled the layout set prototype link enabled of this layout set
-	*/
-	@Override
-	public void setLayoutSetPrototypeLinkEnabled(
-		boolean layoutSetPrototypeLinkEnabled) {
-		_layoutSet.setLayoutSetPrototypeLinkEnabled(layoutSetPrototypeLinkEnabled);
-	}
-
-	/**
-	* Sets the layout set prototype uuid of this layout set.
-	*
-	* @param layoutSetPrototypeUuid the layout set prototype uuid of this layout set
-	*/
-	@Override
-	public void setLayoutSetPrototypeUuid(
-		java.lang.String layoutSetPrototypeUuid) {
-		_layoutSet.setLayoutSetPrototypeUuid(layoutSetPrototypeUuid);
-	}
-
-	/**
-	* Sets the logo ID of this layout set.
-	*
-	* @param logoId the logo ID of this layout set
-	*/
-	@Override
-	public void setLogoId(long logoId) {
-		_layoutSet.setLogoId(logoId);
-	}
-
-	/**
-	* Sets the modified date of this layout set.
-	*
-	* @param modifiedDate the modified date of this layout set
-	*/
-	@Override
-	public void setModifiedDate(java.util.Date modifiedDate) {
-		_layoutSet.setModifiedDate(modifiedDate);
-	}
-
-	/**
-	* Sets the mvcc version of this layout set.
-	*
-	* @param mvccVersion the mvcc version of this layout set
-	*/
-	@Override
-	public void setMvccVersion(long mvccVersion) {
-		_layoutSet.setMvccVersion(mvccVersion);
+	public java.lang.Object clone() {
+		return new LayoutSetWrapper((LayoutSet)_layoutSet.clone());
 	}
 
 	@Override
-	public void setNew(boolean n) {
-		_layoutSet.setNew(n);
-	}
-
-	/**
-	* Sets the page count of this layout set.
-	*
-	* @param pageCount the page count of this layout set
-	*/
-	@Override
-	public void setPageCount(int pageCount) {
-		_layoutSet.setPageCount(pageCount);
-	}
-
-	/**
-	* Sets the primary key of this layout set.
-	*
-	* @param primaryKey the primary key of this layout set
-	*/
-	@Override
-	public void setPrimaryKey(long primaryKey) {
-		_layoutSet.setPrimaryKey(primaryKey);
+	public int compareTo(com.liferay.portal.model.LayoutSet layoutSet) {
+		return _layoutSet.compareTo(layoutSet);
 	}
 
 	@Override
-	public void setPrimaryKeyObj(java.io.Serializable primaryKeyObj) {
-		_layoutSet.setPrimaryKeyObj(primaryKeyObj);
-	}
-
-	/**
-	* Sets whether this layout set is private layout.
-	*
-	* @param privateLayout the private layout of this layout set
-	*/
-	@Override
-	public void setPrivateLayout(boolean privateLayout) {
-		_layoutSet.setPrivateLayout(privateLayout);
-	}
-
-	/**
-	* Sets the settings of this layout set.
-	*
-	* @param settings the settings of this layout set
-	*/
-	@Override
-	public void setSettings(java.lang.String settings) {
-		_layoutSet.setSettings(settings);
-	}
-
-	@Override
-	public void setSettingsProperties(
-		com.liferay.portal.kernel.util.UnicodeProperties settingsProperties) {
-		_layoutSet.setSettingsProperties(settingsProperties);
-	}
-
-	/**
-	* Sets the theme ID of this layout set.
-	*
-	* @param themeId the theme ID of this layout set
-	*/
-	@Override
-	public void setThemeId(java.lang.String themeId) {
-		_layoutSet.setThemeId(themeId);
-	}
-
-	/**
-	* Sets the name of the layout set's virtual host.
-	*
-	* @param virtualHostname the name of the layout set's virtual host
-	* @see #getVirtualHostname()
-	*/
-	@Override
-	public void setVirtualHostname(java.lang.String virtualHostname) {
-		_layoutSet.setVirtualHostname(virtualHostname);
-	}
-
-	/**
-	* Sets the wap color scheme ID of this layout set.
-	*
-	* @param wapColorSchemeId the wap color scheme ID of this layout set
-	*/
-	@Override
-	public void setWapColorSchemeId(java.lang.String wapColorSchemeId) {
-		_layoutSet.setWapColorSchemeId(wapColorSchemeId);
-	}
-
-	/**
-	* Sets the wap theme ID of this layout set.
-	*
-	* @param wapThemeId the wap theme ID of this layout set
-	*/
-	@Override
-	public void setWapThemeId(java.lang.String wapThemeId) {
-		_layoutSet.setWapThemeId(wapThemeId);
+	public int hashCode() {
+		return _layoutSet.hashCode();
 	}
 
 	@Override
@@ -786,18 +656,105 @@ public class LayoutSetWrapper implements LayoutSet, ModelWrapper<LayoutSet> {
 	}
 
 	@Override
-	public java.lang.String toString() {
-		return _layoutSet.toString();
-	}
-
-	@Override
 	public com.liferay.portal.model.LayoutSet toUnescapedModel() {
 		return new LayoutSetWrapper(_layoutSet.toUnescapedModel());
 	}
 
 	@Override
+	public java.lang.String toString() {
+		return _layoutSet.toString();
+	}
+
+	@Override
 	public java.lang.String toXmlString() {
 		return _layoutSet.toXmlString();
+	}
+
+	@Override
+	public void persist()
+		throws com.liferay.portal.kernel.exception.SystemException {
+		_layoutSet.persist();
+	}
+
+	@Override
+	public com.liferay.portal.model.ColorScheme getColorScheme()
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return _layoutSet.getColorScheme();
+	}
+
+	@Override
+	public com.liferay.portal.model.Group getGroup()
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _layoutSet.getGroup();
+	}
+
+	@Override
+	public long getLayoutSetPrototypeId()
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _layoutSet.getLayoutSetPrototypeId();
+	}
+
+	@Override
+	public long getLiveLogoId() {
+		return _layoutSet.getLiveLogoId();
+	}
+
+	@Override
+	public com.liferay.portal.kernel.util.UnicodeProperties getSettingsProperties() {
+		return _layoutSet.getSettingsProperties();
+	}
+
+	@Override
+	public java.lang.String getSettingsProperty(java.lang.String key) {
+		return _layoutSet.getSettingsProperty(key);
+	}
+
+	@Override
+	public com.liferay.portal.model.Theme getTheme()
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return _layoutSet.getTheme();
+	}
+
+	@Override
+	public java.lang.String getThemeSetting(java.lang.String key,
+		java.lang.String device)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return _layoutSet.getThemeSetting(key, device);
+	}
+
+	@Override
+	public java.lang.String getVirtualHostname() {
+		return _layoutSet.getVirtualHostname();
+	}
+
+	@Override
+	public com.liferay.portal.model.ColorScheme getWapColorScheme()
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return _layoutSet.getWapColorScheme();
+	}
+
+	@Override
+	public com.liferay.portal.model.Theme getWapTheme()
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return _layoutSet.getWapTheme();
+	}
+
+	@Override
+	public boolean isLayoutSetPrototypeLinkActive() {
+		return _layoutSet.isLayoutSetPrototypeLinkActive();
+	}
+
+	@Override
+	public void setSettingsProperties(
+		com.liferay.portal.kernel.util.UnicodeProperties settingsProperties) {
+		_layoutSet.setSettingsProperties(settingsProperties);
+	}
+
+	@Override
+	public void setVirtualHostname(java.lang.String virtualHostname) {
+		_layoutSet.setVirtualHostname(virtualHostname);
 	}
 
 	@Override
@@ -822,7 +779,6 @@ public class LayoutSetWrapper implements LayoutSet, ModelWrapper<LayoutSet> {
 	/**
 	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedModel}
 	 */
-	@Deprecated
 	public LayoutSet getWrappedLayoutSet() {
 		return _layoutSet;
 	}
@@ -833,19 +789,9 @@ public class LayoutSetWrapper implements LayoutSet, ModelWrapper<LayoutSet> {
 	}
 
 	@Override
-	public boolean isEntityCacheEnabled() {
-		return _layoutSet.isEntityCacheEnabled();
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return _layoutSet.isFinderCacheEnabled();
-	}
-
-	@Override
 	public void resetOriginalValues() {
 		_layoutSet.resetOriginalValues();
 	}
 
-	private final LayoutSet _layoutSet;
+	private LayoutSet _layoutSet;
 }

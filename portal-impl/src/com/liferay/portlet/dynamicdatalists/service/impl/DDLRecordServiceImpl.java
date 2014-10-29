@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portlet.dynamicdatalists.service.impl;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.security.permission.ActionKeys;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portlet.dynamicdatalists.model.DDLRecord;
@@ -40,7 +41,7 @@ public class DDLRecordServiceImpl extends DDLRecordServiceBaseImpl {
 	public DDLRecord addRecord(
 			long groupId, long recordSetId, int displayIndex, Fields fields,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		DDLRecordSetPermission.check(
 			getPermissionChecker(), recordSetId, ActionKeys.ADD_RECORD);
@@ -54,7 +55,7 @@ public class DDLRecordServiceImpl extends DDLRecordServiceBaseImpl {
 	public DDLRecord addRecord(
 			long groupId, long recordSetId, int displayIndex,
 			Map<String, Serializable> fieldsMap, ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		DDLRecordSetPermission.check(
 			getPermissionChecker(), recordSetId, ActionKeys.ADD_RECORD);
@@ -65,19 +66,9 @@ public class DDLRecordServiceImpl extends DDLRecordServiceBaseImpl {
 	}
 
 	@Override
-	public void deleteRecord(long recordId) throws PortalException {
-		DDLRecord record = ddlRecordLocalService.getDDLRecord(recordId);
-
-		DDLRecordSetPermission.check(
-			getPermissionChecker(), record.getRecordSetId(), ActionKeys.DELETE);
-
-		ddlRecordLocalService.deleteRecord(record);
-	}
-
-	@Override
 	public DDLRecord deleteRecordLocale(
 			long recordId, Locale locale, ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		DDLRecord record = ddlRecordLocalService.getDDLRecord(recordId);
 
@@ -89,7 +80,9 @@ public class DDLRecordServiceImpl extends DDLRecordServiceBaseImpl {
 	}
 
 	@Override
-	public DDLRecord getRecord(long recordId) throws PortalException {
+	public DDLRecord getRecord(long recordId)
+		throws PortalException, SystemException {
+
 		DDLRecord record = ddlRecordLocalService.getDDLRecord(recordId);
 
 		DDLRecordSetPermission.check(
@@ -99,37 +92,10 @@ public class DDLRecordServiceImpl extends DDLRecordServiceBaseImpl {
 	}
 
 	@Override
-	public void revertRecord(
-			long recordId, String version, ServiceContext serviceContext)
-		throws PortalException {
-
-		DDLRecord record = ddlRecordLocalService.getDDLRecord(recordId);
-
-		DDLRecordSetPermission.check(
-			getPermissionChecker(), record.getRecordSetId(), ActionKeys.UPDATE);
-
-		ddlRecordLocalService.revertRecord(
-			getGuestOrUserId(), recordId, version, serviceContext);
-	}
-
-	/**
-	 * @deprecated As of 7.0.0, replaced by {@link #revertRecord(long, long,
-	 *             String, ServiceContext)}
-	 */
-	@Deprecated
-	@Override
-	public void revertRecordVersion(
-			long recordId, String version, ServiceContext serviceContext)
-		throws PortalException {
-
-		revertRecord(recordId, version, serviceContext);
-	}
-
-	@Override
 	public DDLRecord updateRecord(
 			long recordId, boolean majorVersion, int displayIndex,
 			Fields fields, boolean mergeFields, ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		DDLRecord record = ddlRecordLocalService.getDDLRecord(recordId);
 
@@ -146,7 +112,7 @@ public class DDLRecordServiceImpl extends DDLRecordServiceBaseImpl {
 			long recordId, int displayIndex,
 			Map<String, Serializable> fieldsMap, boolean mergeFields,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		DDLRecord record = ddlRecordLocalService.getDDLRecord(recordId);
 

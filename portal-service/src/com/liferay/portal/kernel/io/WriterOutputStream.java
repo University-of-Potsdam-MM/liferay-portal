@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,7 +15,6 @@
 package com.liferay.portal.kernel.io;
 
 import com.liferay.portal.kernel.nio.charset.CharsetDecoderUtil;
-import com.liferay.portal.kernel.nio.charset.CharsetEncoderUtil;
 import com.liferay.portal.kernel.util.StringPool;
 
 import java.io.IOException;
@@ -25,7 +24,6 @@ import java.io.Writer;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.CharsetDecoder;
-import java.nio.charset.CharsetEncoder;
 import java.nio.charset.CoderResult;
 
 /**
@@ -35,39 +33,44 @@ public class WriterOutputStream extends OutputStream {
 
 	public WriterOutputStream(Writer writer) {
 		this(
-			writer, StringPool.DEFAULT_CHARSET_NAME,
+			writer, StringPool.UTF8, _DEFAULT_INTPUT_BUFFER_SIZE,
 			_DEFAULT_OUTPUT_BUFFER_SIZE, false);
 	}
 
 	public WriterOutputStream(Writer writer, String charsetName) {
-		this(writer, charsetName, _DEFAULT_OUTPUT_BUFFER_SIZE, false);
+		this(
+			writer, charsetName, _DEFAULT_INTPUT_BUFFER_SIZE,
+			_DEFAULT_OUTPUT_BUFFER_SIZE, false);
 	}
 
 	public WriterOutputStream(
 		Writer writer, String charsetName, boolean autoFlush) {
 
-		this(writer, charsetName, _DEFAULT_OUTPUT_BUFFER_SIZE, autoFlush);
+		this(
+			writer, charsetName, _DEFAULT_INTPUT_BUFFER_SIZE,
+			_DEFAULT_OUTPUT_BUFFER_SIZE, autoFlush);
 	}
 
 	public WriterOutputStream(
-		Writer writer, String charsetName, int outputBufferSize) {
+		Writer writer, String charsetName, int inputBufferSize,
+		int outputBufferSize) {
 
-		this(writer, charsetName, outputBufferSize, false);
+		this(writer, charsetName, inputBufferSize, outputBufferSize, false);
 	}
 
 	public WriterOutputStream(
-		Writer writer, String charsetName, int outputBufferSize,
-		boolean autoFlush) {
+		Writer writer, String charsetName, int inputBufferSize,
+		int outputBufferSize, boolean autoFlush) {
+
+		if (inputBufferSize < 4) {
+			throw new IllegalArgumentException(
+				"Input buffer size " + inputBufferSize + " is less than 4");
+		}
 
 		if (outputBufferSize <= 0) {
-			if (autoFlush) {
-				outputBufferSize = _DEFAULT_OUTPUT_BUFFER_SIZE;
-			}
-			else {
-				throw new IllegalArgumentException(
-					"Output buffer size " + outputBufferSize +
-						" must be a positive number");
-			}
+			throw new IllegalArgumentException(
+				"Output buffer size " + outputBufferSize +
+					" must be a positive number");
 		}
 
 		if (charsetName == null) {
@@ -77,31 +80,22 @@ public class WriterOutputStream extends OutputStream {
 		_writer = writer;
 		_charsetName = charsetName;
 		_charsetDecoder = CharsetDecoderUtil.getCharsetDecoder(charsetName);
-
-		CharsetEncoder charsetEncoder = CharsetEncoderUtil.getCharsetEncoder(
-			charsetName);
-
-		_inputByteBuffer = ByteBuffer.allocate(
-			(int)Math.ceil(charsetEncoder.maxBytesPerChar()));
-
-		_inputByteBuffer.limit(0);
-
-		_outputCharBuffer = CharBuffer.allocate(outputBufferSize);
+		_inputBuffer = ByteBuffer.allocate(inputBufferSize);
+		_outputBuffer = CharBuffer.allocate(outputBufferSize);
 		_autoFlush = autoFlush;
 	}
 
 	@Override
 	public void close() throws IOException {
-		_doDecode(_inputByteBuffer, true);
-
-		_flushBuffer();
+		_doDecode(true);
+		_doFlush();
 
 		_writer.close();
 	}
 
 	@Override
 	public void flush() throws IOException {
-		_flushBuffer();
+		_doFlush();
 
 		_writer.flush();
 	}
@@ -117,81 +111,65 @@ public class WriterOutputStream extends OutputStream {
 
 	@Override
 	public void write(byte[] bytes, int offset, int length) throws IOException {
-		while (_inputByteBuffer.hasRemaining()) {
-			write(bytes[offset++]);
+		while (length > 0) {
+			int blockSize = Math.min(length, _inputBuffer.remaining());
 
-			length--;
+			_inputBuffer.put(bytes, offset, blockSize);
+
+			_doDecode(false);
+
+			length -= blockSize;
+			offset += blockSize;
 		}
 
-		ByteBuffer inputByteBuffer = ByteBuffer.wrap(bytes, offset, length);
-
-		_doDecode(inputByteBuffer, false);
-
-		if (inputByteBuffer.hasRemaining()) {
-			_inputByteBuffer.limit(inputByteBuffer.remaining());
-
-			_inputByteBuffer.put(inputByteBuffer);
-
-			_inputByteBuffer.flip();
+		if (_autoFlush) {
+			_doFlush();
 		}
 	}
 
 	@Override
 	public void write(int b) throws IOException {
-		int limit = _inputByteBuffer.limit();
-
-		_inputByteBuffer.limit(limit + 1);
-
-		_inputByteBuffer.put(limit, (byte)b);
-
-		_doDecode(_inputByteBuffer, false);
-
-		if (!_inputByteBuffer.hasRemaining()) {
-			_inputByteBuffer.position(0);
-
-			_inputByteBuffer.limit(0);
-		}
+		write(new byte[] {(byte)b}, 0, 1);
 	}
 
-	private void _doDecode(ByteBuffer inputByteBuffer, boolean endOfInput)
-		throws IOException {
+	private void _doDecode(boolean endOfInput) throws IOException {
+		_inputBuffer.flip();
 
 		while (true) {
 			CoderResult coderResult = _charsetDecoder.decode(
-				inputByteBuffer, _outputCharBuffer, endOfInput);
+				_inputBuffer, _outputBuffer, endOfInput);
 
 			if (coderResult.isOverflow()) {
-				_flushBuffer();
+				_doFlush();
 			}
 			else if (coderResult.isUnderflow()) {
-				if (_autoFlush) {
-					_flushBuffer();
-				}
-
 				break;
 			}
 			else {
 				throw new IOException("Unexcepted coder result " + coderResult);
 			}
 		}
+
+		_inputBuffer.compact();
 	}
 
-	private void _flushBuffer() throws IOException {
-		if (_outputCharBuffer.position() > 0) {
-			_writer.write(
-				_outputCharBuffer.array(), 0, _outputCharBuffer.position());
+	private void _doFlush() throws IOException {
+		if (_outputBuffer.position() > 0) {
+			_writer.write(_outputBuffer.array(), 0, _outputBuffer.position());
 
-			_outputCharBuffer.rewind();
+			_outputBuffer.rewind();
 		}
 	}
 
-	private static final int _DEFAULT_OUTPUT_BUFFER_SIZE = 8192;
+	private static final int _DEFAULT_INTPUT_BUFFER_SIZE = 128;
+
+	private static final int _DEFAULT_OUTPUT_BUFFER_SIZE = 1024;
 
 	private boolean _autoFlush;
 	private CharsetDecoder _charsetDecoder;
 	private String _charsetName;
-	private ByteBuffer _inputByteBuffer;
-	private CharBuffer _outputCharBuffer;
+	private ByteBuffer _inputBuffer;
+	private CharBuffer _outputBuffer;
 	private Writer _writer;
 
 }

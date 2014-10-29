@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portlet.dynamicdatamapping.service.permission;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.staging.permission.StagingPermissionUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.security.auth.PrincipalException;
@@ -24,7 +25,6 @@ import com.liferay.portlet.dynamicdatamapping.service.DDMTemplateLocalServiceUti
 
 /**
  * @author Eduardo Lundgren
- * @author Levente Hudák
  */
 public class DDMTemplatePermission {
 
@@ -39,33 +39,9 @@ public class DDMTemplatePermission {
 	}
 
 	public static void check(
-			PermissionChecker permissionChecker, long groupId,
-			DDMTemplate template, String portletId, String actionId)
-		throws PortalException {
-
-		if (!contains(
-				permissionChecker, groupId, template, portletId, actionId)) {
-
-			throw new PrincipalException();
-		}
-	}
-
-	public static void check(
-			PermissionChecker permissionChecker, long groupId, long templateId,
-			String portletId, String actionId)
-		throws PortalException {
-
-		if (!contains(
-				permissionChecker, groupId, templateId, portletId, actionId)) {
-
-			throw new PrincipalException();
-		}
-	}
-
-	public static void check(
 			PermissionChecker permissionChecker, long templateId,
 			String actionId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		if (!contains(permissionChecker, templateId, actionId)) {
 			throw new PrincipalException();
@@ -75,6 +51,24 @@ public class DDMTemplatePermission {
 	public static boolean contains(
 		PermissionChecker permissionChecker, DDMTemplate template,
 		String actionId) {
+
+		return contains(permissionChecker, template, null, actionId);
+	}
+
+	public static boolean contains(
+			PermissionChecker permissionChecker, DDMTemplate template,
+			String portletId, String actionId) {
+
+		if (Validator.isNotNull(portletId)) {
+			Boolean hasPermission = StagingPermissionUtil.hasPermission(
+				permissionChecker, template.getGroupId(),
+				DDMTemplate.class.getName(), template.getTemplateId(),
+				portletId, actionId);
+
+			if (hasPermission != null) {
+				return hasPermission.booleanValue();
+			}
+		}
 
 		if (permissionChecker.hasOwnerPermission(
 				template.getCompanyId(), DDMTemplate.class.getName(),
@@ -88,69 +82,23 @@ public class DDMTemplatePermission {
 			template.getTemplateId(), actionId);
 	}
 
-	/**
-	 * @deprecated As of 7.0.0, replaced by {@link #contains(PermissionChecker,
-	 *             DDMTemplate, String)}
-	 */
-	@Deprecated
-	public static boolean contains(
-		PermissionChecker permissionChecker, DDMTemplate template,
-		String portletId, String actionId) {
-
-		return contains(permissionChecker, template, actionId);
-	}
-
-	public static boolean contains(
-		PermissionChecker permissionChecker, long groupId, DDMTemplate template,
-		String portletId, String actionId) {
-
-		if (Validator.isNotNull(portletId)) {
-			Boolean hasPermission = StagingPermissionUtil.hasPermission(
-				permissionChecker, groupId, DDMTemplate.class.getName(),
-				template.getTemplateId(), portletId, actionId);
-
-			if (hasPermission != null) {
-				return hasPermission.booleanValue();
-			}
-		}
-
-		return contains(permissionChecker, template, actionId);
-	}
-
-	public static boolean contains(
-			PermissionChecker permissionChecker, long groupId, long templateId,
-			String portletId, String actionId)
-		throws PortalException {
-
-		DDMTemplate template = DDMTemplateLocalServiceUtil.getTemplate(
-			templateId);
-
-		return contains(
-			permissionChecker, groupId, template, portletId, actionId);
-	}
-
 	public static boolean contains(
 			PermissionChecker permissionChecker, long templateId,
 			String actionId)
-		throws PortalException {
+		throws PortalException, SystemException {
+
+		return contains(permissionChecker, templateId, null, actionId);
+	}
+
+	public static boolean contains(
+			PermissionChecker permissionChecker, long templateId,
+			String portletId, String actionId)
+		throws PortalException, SystemException {
 
 		DDMTemplate template = DDMTemplateLocalServiceUtil.getTemplate(
 			templateId);
 
-		return contains(permissionChecker, template, actionId);
-	}
-
-	/**
-	 * @deprecated As of 7.0.0, replaced by {@link #contains(PermissionChecker,
-	 *             long, String)}
-	 */
-	@Deprecated
-	public static boolean contains(
-			PermissionChecker permissionChecker, long templateId,
-			String portletId, String actionId)
-		throws PortalException {
-
-		return contains(permissionChecker, templateId, actionId);
+		return contains(permissionChecker, template, portletId, actionId);
 	}
 
 }

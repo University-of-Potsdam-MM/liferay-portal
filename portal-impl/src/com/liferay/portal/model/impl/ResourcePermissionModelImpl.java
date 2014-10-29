@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -13,8 +13,6 @@
  */
 
 package com.liferay.portal.model.impl;
-
-import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
 import com.liferay.portal.kernel.json.JSON;
@@ -54,7 +52,6 @@ import java.util.Map;
  * @generated
  */
 @JSON(strict = true)
-@ProviderType
 public class ResourcePermissionModelImpl extends BaseModelImpl<ResourcePermission>
 	implements ResourcePermissionModel {
 	/*
@@ -64,7 +61,6 @@ public class ResourcePermissionModelImpl extends BaseModelImpl<ResourcePermissio
 	 */
 	public static final String TABLE_NAME = "ResourcePermission";
 	public static final Object[][] TABLE_COLUMNS = {
-			{ "mvccVersion", Types.BIGINT },
 			{ "resourcePermissionId", Types.BIGINT },
 			{ "companyId", Types.BIGINT },
 			{ "name", Types.VARCHAR },
@@ -74,7 +70,7 @@ public class ResourcePermissionModelImpl extends BaseModelImpl<ResourcePermissio
 			{ "ownerId", Types.BIGINT },
 			{ "actionIds", Types.BIGINT }
 		};
-	public static final String TABLE_SQL_CREATE = "create table ResourcePermission (mvccVersion LONG default 0,resourcePermissionId LONG not null primary key,companyId LONG,name VARCHAR(255) null,scope INTEGER,primKey VARCHAR(255) null,roleId LONG,ownerId LONG,actionIds LONG)";
+	public static final String TABLE_SQL_CREATE = "create table ResourcePermission (resourcePermissionId LONG not null primary key,companyId LONG,name VARCHAR(255) null,scope INTEGER,primKey VARCHAR(255) null,roleId LONG,ownerId LONG,actionIds LONG)";
 	public static final String TABLE_SQL_DROP = "drop table ResourcePermission";
 	public static final String ORDER_BY_JPQL = " ORDER BY resourcePermission.resourcePermissionId ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY ResourcePermission.resourcePermissionId ASC";
@@ -90,12 +86,12 @@ public class ResourcePermissionModelImpl extends BaseModelImpl<ResourcePermissio
 	public static final boolean COLUMN_BITMASK_ENABLED = GetterUtil.getBoolean(com.liferay.portal.util.PropsUtil.get(
 				"value.object.column.bitmask.enabled.com.liferay.portal.model.ResourcePermission"),
 			true);
-	public static final long COMPANYID_COLUMN_BITMASK = 1L;
-	public static final long NAME_COLUMN_BITMASK = 2L;
-	public static final long PRIMKEY_COLUMN_BITMASK = 4L;
-	public static final long ROLEID_COLUMN_BITMASK = 8L;
-	public static final long SCOPE_COLUMN_BITMASK = 16L;
-	public static final long RESOURCEPERMISSIONID_COLUMN_BITMASK = 32L;
+	public static long COMPANYID_COLUMN_BITMASK = 1L;
+	public static long NAME_COLUMN_BITMASK = 2L;
+	public static long PRIMKEY_COLUMN_BITMASK = 4L;
+	public static long ROLEID_COLUMN_BITMASK = 8L;
+	public static long SCOPE_COLUMN_BITMASK = 16L;
+	public static long RESOURCEPERMISSIONID_COLUMN_BITMASK = 32L;
 
 	/**
 	 * Converts the soap model instance into a normal model instance.
@@ -110,7 +106,6 @@ public class ResourcePermissionModelImpl extends BaseModelImpl<ResourcePermissio
 
 		ResourcePermission model = new ResourcePermissionImpl();
 
-		model.setMvccVersion(soapModel.getMvccVersion());
 		model.setResourcePermissionId(soapModel.getResourcePermissionId());
 		model.setCompanyId(soapModel.getCompanyId());
 		model.setName(soapModel.getName());
@@ -184,7 +179,6 @@ public class ResourcePermissionModelImpl extends BaseModelImpl<ResourcePermissio
 	public Map<String, Object> getModelAttributes() {
 		Map<String, Object> attributes = new HashMap<String, Object>();
 
-		attributes.put("mvccVersion", getMvccVersion());
 		attributes.put("resourcePermissionId", getResourcePermissionId());
 		attributes.put("companyId", getCompanyId());
 		attributes.put("name", getName());
@@ -194,20 +188,11 @@ public class ResourcePermissionModelImpl extends BaseModelImpl<ResourcePermissio
 		attributes.put("ownerId", getOwnerId());
 		attributes.put("actionIds", getActionIds());
 
-		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
-		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
-
 		return attributes;
 	}
 
 	@Override
 	public void setModelAttributes(Map<String, Object> attributes) {
-		Long mvccVersion = (Long)attributes.get("mvccVersion");
-
-		if (mvccVersion != null) {
-			setMvccVersion(mvccVersion);
-		}
-
 		Long resourcePermissionId = (Long)attributes.get("resourcePermissionId");
 
 		if (resourcePermissionId != null) {
@@ -255,17 +240,6 @@ public class ResourcePermissionModelImpl extends BaseModelImpl<ResourcePermissio
 		if (actionIds != null) {
 			setActionIds(actionIds);
 		}
-	}
-
-	@JSON
-	@Override
-	public long getMvccVersion() {
-		return _mvccVersion;
-	}
-
-	@Override
-	public void setMvccVersion(long mvccVersion) {
-		_mvccVersion = mvccVersion;
 	}
 
 	@JSON
@@ -453,7 +427,6 @@ public class ResourcePermissionModelImpl extends BaseModelImpl<ResourcePermissio
 	public Object clone() {
 		ResourcePermissionImpl resourcePermissionImpl = new ResourcePermissionImpl();
 
-		resourcePermissionImpl.setMvccVersion(getMvccVersion());
 		resourcePermissionImpl.setResourcePermissionId(getResourcePermissionId());
 		resourcePermissionImpl.setCompanyId(getCompanyId());
 		resourcePermissionImpl.setName(getName());
@@ -511,16 +484,6 @@ public class ResourcePermissionModelImpl extends BaseModelImpl<ResourcePermissio
 	}
 
 	@Override
-	public boolean isEntityCacheEnabled() {
-		return ENTITY_CACHE_ENABLED;
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return FINDER_CACHE_ENABLED;
-	}
-
-	@Override
 	public void resetOriginalValues() {
 		ResourcePermissionModelImpl resourcePermissionModelImpl = this;
 
@@ -546,8 +509,6 @@ public class ResourcePermissionModelImpl extends BaseModelImpl<ResourcePermissio
 	@Override
 	public CacheModel<ResourcePermission> toCacheModel() {
 		ResourcePermissionCacheModel resourcePermissionCacheModel = new ResourcePermissionCacheModel();
-
-		resourcePermissionCacheModel.mvccVersion = getMvccVersion();
 
 		resourcePermissionCacheModel.resourcePermissionId = getResourcePermissionId();
 
@@ -582,11 +543,9 @@ public class ResourcePermissionModelImpl extends BaseModelImpl<ResourcePermissio
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(19);
+		StringBundler sb = new StringBundler(17);
 
-		sb.append("{mvccVersion=");
-		sb.append(getMvccVersion());
-		sb.append(", resourcePermissionId=");
+		sb.append("{resourcePermissionId=");
 		sb.append(getResourcePermissionId());
 		sb.append(", companyId=");
 		sb.append(getCompanyId());
@@ -609,16 +568,12 @@ public class ResourcePermissionModelImpl extends BaseModelImpl<ResourcePermissio
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(31);
+		StringBundler sb = new StringBundler(28);
 
 		sb.append("<model><model-name>");
 		sb.append("com.liferay.portal.model.ResourcePermission");
 		sb.append("</model-name>");
 
-		sb.append(
-			"<column><column-name>mvccVersion</column-name><column-value><![CDATA[");
-		sb.append(getMvccVersion());
-		sb.append("]]></column-value></column>");
 		sb.append(
 			"<column><column-name>resourcePermissionId</column-name><column-value><![CDATA[");
 		sb.append(getResourcePermissionId());
@@ -657,11 +612,10 @@ public class ResourcePermissionModelImpl extends BaseModelImpl<ResourcePermissio
 		return sb.toString();
 	}
 
-	private static final ClassLoader _classLoader = ResourcePermission.class.getClassLoader();
-	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
+	private static ClassLoader _classLoader = ResourcePermission.class.getClassLoader();
+	private static Class<?>[] _escapedModelInterfaces = new Class[] {
 			ResourcePermission.class
 		};
-	private long _mvccVersion;
 	private long _resourcePermissionId;
 	private long _companyId;
 	private long _originalCompanyId;

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,8 +14,6 @@
 
 package com.liferay.portal.kernel.dao.search;
 
-import com.liferay.portal.kernel.language.LanguageUtil;
-import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -60,12 +58,7 @@ public class RowChecker {
 	}
 
 	public String getAllRowsCheckBox() {
-		return getAllRowsCheckBox(null);
-	}
-
-	public String getAllRowsCheckBox(HttpServletRequest request) {
-		return getAllRowsCheckbox(
-			request, _allRowIds, StringUtil.quote(_rowIds));
+		return getAllRowsCheckbox(_allRowIds, StringUtil.quote(_rowIds));
 	}
 
 	public String getAllRowsId() {
@@ -89,7 +82,6 @@ public class RowChecker {
 	 *             #getRowCheckBox(HttpServletRequest, boolean, boolean,
 	 *             String)}
 	 */
-	@Deprecated
 	public String getRowCheckBox(
 		boolean checked, boolean disabled, String primaryKey) {
 
@@ -101,9 +93,8 @@ public class RowChecker {
 		String primaryKey) {
 
 		return getRowCheckBox(
-			request, checked, disabled, _rowIds, primaryKey,
-			StringUtil.quote(_rowIds), StringUtil.quote(_allRowIds),
-			StringPool.BLANK);
+			checked, disabled, _rowIds, primaryKey, StringUtil.quote(_rowIds),
+			StringUtil.quote(_allRowIds), StringPool.BLANK);
 	}
 
 	public String getRowId() {
@@ -154,19 +145,15 @@ public class RowChecker {
 		_valign = valign;
 	}
 
-	protected String getAllRowsCheckbox(
-		HttpServletRequest request, String name, String checkBoxRowIds) {
-
+	protected String getAllRowsCheckbox(String name, String checkBoxRowIds) {
 		if (Validator.isNull(name)) {
 			return StringPool.BLANK;
 		}
 
-		StringBuilder sb = new StringBuilder(11);
+		StringBuilder sb = new StringBuilder(9);
 
 		sb.append("<input name=\"");
 		sb.append(name);
-		sb.append("\" title=\"");
-		sb.append(LanguageUtil.get(request.getLocale(), "select-all"));
 		sb.append("\" type=\"checkbox\" ");
 		sb.append("onClick=\"Liferay.Util.checkAll(");
 		sb.append("AUI().one(this).ancestor('");
@@ -191,11 +178,11 @@ public class RowChecker {
 	}
 
 	protected String getRowCheckBox(
-		HttpServletRequest request, boolean checked, boolean disabled,
-		String name, String value, String checkBoxRowIds,
-		String checkBoxAllRowIds, String checkBoxPostOnClick) {
+		boolean checked, boolean disabled, String name, String value,
+		String checkBoxRowIds, String checkBoxAllRowIds,
+		String checkBoxPostOnClick) {
 
-		StringBundler sb = new StringBundler(22);
+		StringBundler sb = new StringBundler();
 
 		sb.append("<input ");
 
@@ -209,10 +196,8 @@ public class RowChecker {
 
 		sb.append("name=\"");
 		sb.append(name);
-		sb.append("\" title=\"");
-		sb.append(LanguageUtil.get(request.getLocale(), "select"));
 		sb.append("\" type=\"checkbox\" value=\"");
-		sb.append(HtmlUtil.escapeAttribute(value));
+		sb.append(value);
 		sb.append("\" ");
 
 		if (Validator.isNotNull(_allRowIds)) {

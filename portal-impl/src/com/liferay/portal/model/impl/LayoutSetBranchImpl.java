@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -44,13 +44,13 @@ public class LayoutSetBranchImpl extends LayoutSetBranchBaseImpl {
 	}
 
 	@Override
-	public ColorScheme getColorScheme() {
+	public ColorScheme getColorScheme() throws SystemException {
 		return ThemeLocalServiceUtil.getColorScheme(
 			getCompanyId(), getTheme().getThemeId(), getColorSchemeId(), false);
 	}
 
 	@Override
-	public Group getGroup() throws PortalException {
+	public Group getGroup() throws PortalException, SystemException {
 		return GroupLocalServiceUtil.getGroup(getGroupId());
 	}
 
@@ -95,15 +95,6 @@ public class LayoutSetBranchImpl extends LayoutSetBranchBaseImpl {
 	}
 
 	@Override
-	public boolean getLogo() {
-		if (getLogoId() > 0) {
-			return true;
-		}
-
-		return false;
-	}
-
-	@Override
 	public String getSettings() {
 		if (_settingsProperties == null) {
 			return super.getSettings();
@@ -137,13 +128,15 @@ public class LayoutSetBranchImpl extends LayoutSetBranchBaseImpl {
 	}
 
 	@Override
-	public Theme getTheme() {
+	public Theme getTheme() throws SystemException {
 		return ThemeLocalServiceUtil.getTheme(
 			getCompanyId(), getThemeId(), false);
 	}
 
 	@Override
-	public String getThemeSetting(String key, String device) {
+	public String getThemeSetting(String key, String device)
+		throws SystemException {
+
 		UnicodeProperties settingsProperties = getSettingsProperties();
 
 		String value = settingsProperties.getProperty(
@@ -186,14 +179,14 @@ public class LayoutSetBranchImpl extends LayoutSetBranchBaseImpl {
 	}
 
 	@Override
-	public ColorScheme getWapColorScheme() {
+	public ColorScheme getWapColorScheme() throws SystemException {
 		return ThemeLocalServiceUtil.getColorScheme(
 			getCompanyId(), getWapTheme().getThemeId(), getWapColorSchemeId(),
 			true);
 	}
 
 	@Override
-	public Theme getWapTheme() {
+	public Theme getWapTheme() throws SystemException {
 		return ThemeLocalServiceUtil.getTheme(
 			getCompanyId(), getWapThemeId(), true);
 	}
@@ -207,11 +200,6 @@ public class LayoutSetBranchImpl extends LayoutSetBranchBaseImpl {
 		}
 
 		return false;
-	}
-
-	@Override
-	public boolean isLogo() {
-		return getLogo();
 	}
 
 	@Override

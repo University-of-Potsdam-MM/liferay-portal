@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -124,62 +124,6 @@ public class MBThreadFlagWrapper implements MBThreadFlag,
 		}
 	}
 
-	@Override
-	public java.lang.Object clone() {
-		return new MBThreadFlagWrapper((MBThreadFlag)_mbThreadFlag.clone());
-	}
-
-	@Override
-	public int compareTo(
-		com.liferay.portlet.messageboards.model.MBThreadFlag mbThreadFlag) {
-		return _mbThreadFlag.compareTo(mbThreadFlag);
-	}
-
-	/**
-	* Returns the company ID of this message boards thread flag.
-	*
-	* @return the company ID of this message boards thread flag
-	*/
-	@Override
-	public long getCompanyId() {
-		return _mbThreadFlag.getCompanyId();
-	}
-
-	/**
-	* Returns the create date of this message boards thread flag.
-	*
-	* @return the create date of this message boards thread flag
-	*/
-	@Override
-	public java.util.Date getCreateDate() {
-		return _mbThreadFlag.getCreateDate();
-	}
-
-	@Override
-	public com.liferay.portlet.expando.model.ExpandoBridge getExpandoBridge() {
-		return _mbThreadFlag.getExpandoBridge();
-	}
-
-	/**
-	* Returns the group ID of this message boards thread flag.
-	*
-	* @return the group ID of this message boards thread flag
-	*/
-	@Override
-	public long getGroupId() {
-		return _mbThreadFlag.getGroupId();
-	}
-
-	/**
-	* Returns the modified date of this message boards thread flag.
-	*
-	* @return the modified date of this message boards thread flag
-	*/
-	@Override
-	public java.util.Date getModifiedDate() {
-		return _mbThreadFlag.getModifiedDate();
-	}
-
 	/**
 	* Returns the primary key of this message boards thread flag.
 	*
@@ -190,9 +134,34 @@ public class MBThreadFlagWrapper implements MBThreadFlag,
 		return _mbThreadFlag.getPrimaryKey();
 	}
 
+	/**
+	* Sets the primary key of this message boards thread flag.
+	*
+	* @param primaryKey the primary key of this message boards thread flag
+	*/
 	@Override
-	public java.io.Serializable getPrimaryKeyObj() {
-		return _mbThreadFlag.getPrimaryKeyObj();
+	public void setPrimaryKey(long primaryKey) {
+		_mbThreadFlag.setPrimaryKey(primaryKey);
+	}
+
+	/**
+	* Returns the uuid of this message boards thread flag.
+	*
+	* @return the uuid of this message boards thread flag
+	*/
+	@Override
+	public java.lang.String getUuid() {
+		return _mbThreadFlag.getUuid();
+	}
+
+	/**
+	* Sets the uuid of this message boards thread flag.
+	*
+	* @param uuid the uuid of this message boards thread flag
+	*/
+	@Override
+	public void setUuid(java.lang.String uuid) {
+		_mbThreadFlag.setUuid(uuid);
 	}
 
 	/**
@@ -206,83 +175,43 @@ public class MBThreadFlagWrapper implements MBThreadFlag,
 	}
 
 	/**
-	* Returns the thread ID of this message boards thread flag.
+	* Sets the thread flag ID of this message boards thread flag.
 	*
-	* @return the thread ID of this message boards thread flag
+	* @param threadFlagId the thread flag ID of this message boards thread flag
 	*/
 	@Override
-	public long getThreadId() {
-		return _mbThreadFlag.getThreadId();
+	public void setThreadFlagId(long threadFlagId) {
+		_mbThreadFlag.setThreadFlagId(threadFlagId);
 	}
 
 	/**
-	* Returns the user ID of this message boards thread flag.
+	* Returns the group ID of this message boards thread flag.
 	*
-	* @return the user ID of this message boards thread flag
+	* @return the group ID of this message boards thread flag
 	*/
 	@Override
-	public long getUserId() {
-		return _mbThreadFlag.getUserId();
+	public long getGroupId() {
+		return _mbThreadFlag.getGroupId();
 	}
 
 	/**
-	* Returns the user name of this message boards thread flag.
+	* Sets the group ID of this message boards thread flag.
 	*
-	* @return the user name of this message boards thread flag
+	* @param groupId the group ID of this message boards thread flag
 	*/
 	@Override
-	public java.lang.String getUserName() {
-		return _mbThreadFlag.getUserName();
+	public void setGroupId(long groupId) {
+		_mbThreadFlag.setGroupId(groupId);
 	}
 
 	/**
-	* Returns the user uuid of this message boards thread flag.
+	* Returns the company ID of this message boards thread flag.
 	*
-	* @return the user uuid of this message boards thread flag
+	* @return the company ID of this message boards thread flag
 	*/
 	@Override
-	public java.lang.String getUserUuid() {
-		return _mbThreadFlag.getUserUuid();
-	}
-
-	/**
-	* Returns the uuid of this message boards thread flag.
-	*
-	* @return the uuid of this message boards thread flag
-	*/
-	@Override
-	public java.lang.String getUuid() {
-		return _mbThreadFlag.getUuid();
-	}
-
-	@Override
-	public int hashCode() {
-		return _mbThreadFlag.hashCode();
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _mbThreadFlag.isCachedModel();
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _mbThreadFlag.isEscapedModel();
-	}
-
-	@Override
-	public boolean isNew() {
-		return _mbThreadFlag.isNew();
-	}
-
-	@Override
-	public void persist() {
-		_mbThreadFlag.persist();
-	}
-
-	@Override
-	public void setCachedModel(boolean cachedModel) {
-		_mbThreadFlag.setCachedModel(cachedModel);
+	public long getCompanyId() {
+		return _mbThreadFlag.getCompanyId();
 	}
 
 	/**
@@ -296,6 +225,78 @@ public class MBThreadFlagWrapper implements MBThreadFlag,
 	}
 
 	/**
+	* Returns the user ID of this message boards thread flag.
+	*
+	* @return the user ID of this message boards thread flag
+	*/
+	@Override
+	public long getUserId() {
+		return _mbThreadFlag.getUserId();
+	}
+
+	/**
+	* Sets the user ID of this message boards thread flag.
+	*
+	* @param userId the user ID of this message boards thread flag
+	*/
+	@Override
+	public void setUserId(long userId) {
+		_mbThreadFlag.setUserId(userId);
+	}
+
+	/**
+	* Returns the user uuid of this message boards thread flag.
+	*
+	* @return the user uuid of this message boards thread flag
+	* @throws SystemException if a system exception occurred
+	*/
+	@Override
+	public java.lang.String getUserUuid()
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return _mbThreadFlag.getUserUuid();
+	}
+
+	/**
+	* Sets the user uuid of this message boards thread flag.
+	*
+	* @param userUuid the user uuid of this message boards thread flag
+	*/
+	@Override
+	public void setUserUuid(java.lang.String userUuid) {
+		_mbThreadFlag.setUserUuid(userUuid);
+	}
+
+	/**
+	* Returns the user name of this message boards thread flag.
+	*
+	* @return the user name of this message boards thread flag
+	*/
+	@Override
+	public java.lang.String getUserName() {
+		return _mbThreadFlag.getUserName();
+	}
+
+	/**
+	* Sets the user name of this message boards thread flag.
+	*
+	* @param userName the user name of this message boards thread flag
+	*/
+	@Override
+	public void setUserName(java.lang.String userName) {
+		_mbThreadFlag.setUserName(userName);
+	}
+
+	/**
+	* Returns the create date of this message boards thread flag.
+	*
+	* @return the create date of this message boards thread flag
+	*/
+	@Override
+	public java.util.Date getCreateDate() {
+		return _mbThreadFlag.getCreateDate();
+	}
+
+	/**
 	* Sets the create date of this message boards thread flag.
 	*
 	* @param createDate the create date of this message boards thread flag
@@ -303,6 +304,86 @@ public class MBThreadFlagWrapper implements MBThreadFlag,
 	@Override
 	public void setCreateDate(java.util.Date createDate) {
 		_mbThreadFlag.setCreateDate(createDate);
+	}
+
+	/**
+	* Returns the modified date of this message boards thread flag.
+	*
+	* @return the modified date of this message boards thread flag
+	*/
+	@Override
+	public java.util.Date getModifiedDate() {
+		return _mbThreadFlag.getModifiedDate();
+	}
+
+	/**
+	* Sets the modified date of this message boards thread flag.
+	*
+	* @param modifiedDate the modified date of this message boards thread flag
+	*/
+	@Override
+	public void setModifiedDate(java.util.Date modifiedDate) {
+		_mbThreadFlag.setModifiedDate(modifiedDate);
+	}
+
+	/**
+	* Returns the thread ID of this message boards thread flag.
+	*
+	* @return the thread ID of this message boards thread flag
+	*/
+	@Override
+	public long getThreadId() {
+		return _mbThreadFlag.getThreadId();
+	}
+
+	/**
+	* Sets the thread ID of this message boards thread flag.
+	*
+	* @param threadId the thread ID of this message boards thread flag
+	*/
+	@Override
+	public void setThreadId(long threadId) {
+		_mbThreadFlag.setThreadId(threadId);
+	}
+
+	@Override
+	public boolean isNew() {
+		return _mbThreadFlag.isNew();
+	}
+
+	@Override
+	public void setNew(boolean n) {
+		_mbThreadFlag.setNew(n);
+	}
+
+	@Override
+	public boolean isCachedModel() {
+		return _mbThreadFlag.isCachedModel();
+	}
+
+	@Override
+	public void setCachedModel(boolean cachedModel) {
+		_mbThreadFlag.setCachedModel(cachedModel);
+	}
+
+	@Override
+	public boolean isEscapedModel() {
+		return _mbThreadFlag.isEscapedModel();
+	}
+
+	@Override
+	public java.io.Serializable getPrimaryKeyObj() {
+		return _mbThreadFlag.getPrimaryKeyObj();
+	}
+
+	@Override
+	public void setPrimaryKeyObj(java.io.Serializable primaryKeyObj) {
+		_mbThreadFlag.setPrimaryKeyObj(primaryKeyObj);
+	}
+
+	@Override
+	public com.liferay.portlet.expando.model.ExpandoBridge getExpandoBridge() {
+		return _mbThreadFlag.getExpandoBridge();
 	}
 
 	@Override
@@ -323,104 +404,20 @@ public class MBThreadFlagWrapper implements MBThreadFlag,
 		_mbThreadFlag.setExpandoBridgeAttributes(serviceContext);
 	}
 
-	/**
-	* Sets the group ID of this message boards thread flag.
-	*
-	* @param groupId the group ID of this message boards thread flag
-	*/
 	@Override
-	public void setGroupId(long groupId) {
-		_mbThreadFlag.setGroupId(groupId);
-	}
-
-	/**
-	* Sets the modified date of this message boards thread flag.
-	*
-	* @param modifiedDate the modified date of this message boards thread flag
-	*/
-	@Override
-	public void setModifiedDate(java.util.Date modifiedDate) {
-		_mbThreadFlag.setModifiedDate(modifiedDate);
+	public java.lang.Object clone() {
+		return new MBThreadFlagWrapper((MBThreadFlag)_mbThreadFlag.clone());
 	}
 
 	@Override
-	public void setNew(boolean n) {
-		_mbThreadFlag.setNew(n);
-	}
-
-	/**
-	* Sets the primary key of this message boards thread flag.
-	*
-	* @param primaryKey the primary key of this message boards thread flag
-	*/
-	@Override
-	public void setPrimaryKey(long primaryKey) {
-		_mbThreadFlag.setPrimaryKey(primaryKey);
+	public int compareTo(
+		com.liferay.portlet.messageboards.model.MBThreadFlag mbThreadFlag) {
+		return _mbThreadFlag.compareTo(mbThreadFlag);
 	}
 
 	@Override
-	public void setPrimaryKeyObj(java.io.Serializable primaryKeyObj) {
-		_mbThreadFlag.setPrimaryKeyObj(primaryKeyObj);
-	}
-
-	/**
-	* Sets the thread flag ID of this message boards thread flag.
-	*
-	* @param threadFlagId the thread flag ID of this message boards thread flag
-	*/
-	@Override
-	public void setThreadFlagId(long threadFlagId) {
-		_mbThreadFlag.setThreadFlagId(threadFlagId);
-	}
-
-	/**
-	* Sets the thread ID of this message boards thread flag.
-	*
-	* @param threadId the thread ID of this message boards thread flag
-	*/
-	@Override
-	public void setThreadId(long threadId) {
-		_mbThreadFlag.setThreadId(threadId);
-	}
-
-	/**
-	* Sets the user ID of this message boards thread flag.
-	*
-	* @param userId the user ID of this message boards thread flag
-	*/
-	@Override
-	public void setUserId(long userId) {
-		_mbThreadFlag.setUserId(userId);
-	}
-
-	/**
-	* Sets the user name of this message boards thread flag.
-	*
-	* @param userName the user name of this message boards thread flag
-	*/
-	@Override
-	public void setUserName(java.lang.String userName) {
-		_mbThreadFlag.setUserName(userName);
-	}
-
-	/**
-	* Sets the user uuid of this message boards thread flag.
-	*
-	* @param userUuid the user uuid of this message boards thread flag
-	*/
-	@Override
-	public void setUserUuid(java.lang.String userUuid) {
-		_mbThreadFlag.setUserUuid(userUuid);
-	}
-
-	/**
-	* Sets the uuid of this message boards thread flag.
-	*
-	* @param uuid the uuid of this message boards thread flag
-	*/
-	@Override
-	public void setUuid(java.lang.String uuid) {
-		_mbThreadFlag.setUuid(uuid);
+	public int hashCode() {
+		return _mbThreadFlag.hashCode();
 	}
 
 	@Override
@@ -434,18 +431,24 @@ public class MBThreadFlagWrapper implements MBThreadFlag,
 	}
 
 	@Override
-	public java.lang.String toString() {
-		return _mbThreadFlag.toString();
-	}
-
-	@Override
 	public com.liferay.portlet.messageboards.model.MBThreadFlag toUnescapedModel() {
 		return new MBThreadFlagWrapper(_mbThreadFlag.toUnescapedModel());
 	}
 
 	@Override
+	public java.lang.String toString() {
+		return _mbThreadFlag.toString();
+	}
+
+	@Override
 	public java.lang.String toXmlString() {
 		return _mbThreadFlag.toXmlString();
+	}
+
+	@Override
+	public void persist()
+		throws com.liferay.portal.kernel.exception.SystemException {
+		_mbThreadFlag.persist();
 	}
 
 	@Override
@@ -475,7 +478,6 @@ public class MBThreadFlagWrapper implements MBThreadFlag,
 	/**
 	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedModel}
 	 */
-	@Deprecated
 	public MBThreadFlag getWrappedMBThreadFlag() {
 		return _mbThreadFlag;
 	}
@@ -486,19 +488,9 @@ public class MBThreadFlagWrapper implements MBThreadFlag,
 	}
 
 	@Override
-	public boolean isEntityCacheEnabled() {
-		return _mbThreadFlag.isEntityCacheEnabled();
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return _mbThreadFlag.isFinderCacheEnabled();
-	}
-
-	@Override
 	public void resetOriginalValues() {
 		_mbThreadFlag.resetOriginalValues();
 	}
 
-	private final MBThreadFlag _mbThreadFlag;
+	private MBThreadFlag _mbThreadFlag;
 }

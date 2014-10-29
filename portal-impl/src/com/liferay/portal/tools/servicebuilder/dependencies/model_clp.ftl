@@ -10,18 +10,15 @@ import ${packagePath}.service.ClpSerializer;
 	import ${packagePath}.service.persistence.${entity.name}PK;
 </#if>
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.LocaleException;
-import com.liferay.portal.NoSuchModelException;
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.lar.StagedModelType;
 import com.liferay.portal.kernel.trash.TrashHandler;
 import com.liferay.portal.kernel.trash.TrashHandlerRegistryUtil;
 import com.liferay.portal.kernel.util.DateUtil;
-import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.LocalizationUtil;
@@ -34,9 +31,7 @@ import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.model.BaseModel;
 import com.liferay.portal.model.ContainerModel;
 import com.liferay.portal.model.TrashedModel;
-import com.liferay.portal.model.User;
 import com.liferay.portal.model.impl.BaseModelImpl;
-import com.liferay.portal.service.UserLocalServiceUtil;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portlet.trash.model.TrashEntry;
 import com.liferay.portlet.trash.service.TrashEntryLocalServiceUtil;
@@ -54,7 +49,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-@ProviderType
 public class ${entity.name}Clp extends BaseModelImpl<${entity.name}> implements ${entity.name} {
 
 	public ${entity.name}Clp() {
@@ -146,9 +140,6 @@ public class ${entity.name}Clp extends BaseModelImpl<${entity.name}> implements 
 			attributes.put("${column.name}", get${column.methodName}());
 		</#list>
 
-		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
-		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
-
 		return attributes;
 	}
 
@@ -158,7 +149,7 @@ public class ${entity.name}Clp extends BaseModelImpl<${entity.name}> implements 
 			<#if column.isPrimitiveType()>
 				${serviceBuilder.getPrimitiveObj(column.type)}
 			<#else>
-				${column.genericizedType}
+				${column.type}
 			</#if>
 
 			${column.name} =
@@ -166,7 +157,7 @@ public class ${entity.name}Clp extends BaseModelImpl<${entity.name}> implements 
 			<#if column.isPrimitiveType()>
 				(${serviceBuilder.getPrimitiveObj(column.type)})
 			<#else>
-				(${column.genericizedType})
+				(${column.type})
 			</#if>
 
 			attributes.get("${column.name}");
@@ -175,9 +166,6 @@ public class ${entity.name}Clp extends BaseModelImpl<${entity.name}> implements 
 				set${column.methodName}(${column.name});
 			}
 		</#list>
-
-		_entityCacheEnabled = GetterUtil.getBoolean("entityCacheEnabled");
-		_finderCacheEnabled = GetterUtil.getBoolean("finderCacheEnabled");
 	}
 
 	<#list entity.regularColList as column>
@@ -204,7 +192,7 @@ public class ${entity.name}Clp extends BaseModelImpl<${entity.name}> implements 
 		</#if>
 
 		@Override
-		public ${column.genericizedType} get${column.methodName}() {
+		public ${column.type} get${column.methodName}() {
 			return _${column.name};
 		}
 
@@ -259,7 +247,7 @@ public class ${entity.name}Clp extends BaseModelImpl<${entity.name}> implements 
 		</#if>
 
 		@Override
-		public void set${column.methodName}(${column.genericizedType} ${column.name}) {
+		public void set${column.methodName}(${column.type} ${column.name}) {
 			_${column.name} = ${column.name};
 
 			if (_${entity.varName}RemoteModel != null) {
@@ -345,19 +333,13 @@ public class ${entity.name}Clp extends BaseModelImpl<${entity.name}> implements 
 
 		<#if column.userUuid>
 			@Override
-			public String get${column.methodUserUuidName}() {
-				try {
-					User user = UserLocalServiceUtil.getUserById(get${column.methodName}());
-
-					return user.getUuid();
-				}
-				catch (PortalException pe) {
-					return StringPool.BLANK;
-				}
+			public String get${column.methodUserUuidName}() throws SystemException {
+				return PortalUtil.getUserValue(get${column.methodName}(), "uuid", _${column.userUuidName});
 			}
 
 			@Override
 			public void set${column.methodUserUuidName}(String ${column.userUuidName}) {
+				_${column.userUuidName} = ${column.userUuidName};
 			}
 		</#if>
 	</#list>
@@ -497,7 +479,7 @@ public class ${entity.name}Clp extends BaseModelImpl<${entity.name}> implements 
 		</#if>
 
 		@Override
-		public TrashEntry getTrashEntry() throws PortalException {
+		public TrashEntry getTrashEntry() throws PortalException, SystemException {
 			if (!isInTrash()) {
 				return null;
 			}
@@ -511,14 +493,7 @@ public class ${entity.name}Clp extends BaseModelImpl<${entity.name}> implements 
 			TrashHandler trashHandler = getTrashHandler();
 
 			if (!Validator.isNull(trashHandler.getContainerModelClassName())) {
-				ContainerModel containerModel = null;
-
-				try {
-					containerModel = trashHandler.getParentContainerModel(this);
-				}
-				catch (NoSuchModelException nsme) {
-	            	return null;
-				}
+				ContainerModel containerModel = trashHandler.getParentContainerModel(this);
 
 				while (containerModel != null) {
 					if (containerModel instanceof TrashedModel) {
@@ -584,72 +559,12 @@ public class ${entity.name}Clp extends BaseModelImpl<${entity.name}> implements 
 
 			return false;
 		}
-
-		@Override
-		public boolean isInTrashExplicitly() {
-			if (!isInTrash()) {
-				return false;
-			}
-
-			TrashEntry trashEntry = TrashEntryLocalServiceUtil.fetchEntry(getModelClassName(), getTrashEntryClassPK());
-
-			if (trashEntry != null) {
-				return true;
-			}
-
-			return false;
-		}
-
-		@Override
-		public boolean isInTrashImplicitly() {
-			if (!isInTrash()) {
-				return false;
-			}
-
-			TrashEntry trashEntry = TrashEntryLocalServiceUtil.fetchEntry(getModelClassName(), getTrashEntryClassPK());
-
-			if (trashEntry != null) {
-				return false;
-			}
-
-			return true;
-		}
-	</#if>
-
-	<#if entity.isTreeModel()>
-		<#assign pkColumn = entity.getPKList()?first>
-
-		<#if entity.hasColumn("parent" + pkColumn.methodName)>
-			@Override
-			@SuppressWarnings("unused")
-			public String buildTreePath() throws PortalException {
-				try {
-					return (String)invokeOnRemoteModel("buildTreePath", new Class<?>[0], new Object[0]);
-				}
-				catch (Exception e) {
-					throw new UnsupportedOperationException(e);
-				}
-			}
-		</#if>
-
-		@Override
-		public void updateTreePath(String treePath) {
-			try {
-				_treePath = treePath;
-
-				invokeOnRemoteModel("updateTreePath", new Class<?>[] {String.class}, new Object[] {treePath});
-			}
-			catch (Exception e) {
-				throw new UnsupportedOperationException(e);
-			}
-		}
 	</#if>
 
 	<#if entity.isWorkflowEnabled()>
 		/**
 		 * @deprecated As of 6.1.0, replaced by {@link #isApproved}
 		 */
-		@Deprecated
 		@Override
 		public boolean getApproved() {
 			return isApproved();
@@ -783,7 +698,7 @@ public class ${entity.name}Clp extends BaseModelImpl<${entity.name}> implements 
 
 	<#if entity.hasLocalService() && entity.hasColumns()>
 		@Override
-		public void persist() {
+		public void persist() throws SystemException {
 			if (this.isNew()) {
 				${entity.name}LocalServiceUtil.add${entity.name}(this);
 			}
@@ -793,7 +708,7 @@ public class ${entity.name}Clp extends BaseModelImpl<${entity.name}> implements 
 		}
 	</#if>
 
-	<#if entity.isLocalizedModel()>
+	<#if entity.hasLocalizedColumn()>
 		@Override
 		public String[] getAvailableLanguageIds() {
 			Set<String> availableLanguageIds = new TreeSet<String>();
@@ -826,13 +741,7 @@ public class ${entity.name}Clp extends BaseModelImpl<${entity.name}> implements 
 						return StringPool.BLANK;
 					}
 
-					<#if entity.isGroupedModel()>
-						Locale defaultLocale = LocaleUtil.getSiteDefault();
-					<#else>
-						Locale defaultLocale = LocaleUtil.getDefault();
-					</#if>
-
-					return LocalizationUtil.getDefaultLanguageId(xml, defaultLocale);
+					return LocalizationUtil.getDefaultLanguageId(xml);
 					<#break>
 				</#if>
 			</#list>
@@ -840,17 +749,13 @@ public class ${entity.name}Clp extends BaseModelImpl<${entity.name}> implements 
 
 		@Override
 		public void prepareLocalizedFieldsForImport() throws LocaleException {
-			prepareLocalizedFieldsForImport(null);
+			prepareLocalizedFieldsForImport (null);
 		}
 
 		@Override
 		@SuppressWarnings("unused")
 		public void prepareLocalizedFieldsForImport(Locale defaultImportLocale) throws LocaleException {
-			<#if entity.isGroupedModel()>
-				Locale defaultLocale = LocaleUtil.getSiteDefault();
-			<#else>
-				Locale defaultLocale = LocaleUtil.getDefault();
-			</#if>
+			Locale defaultLocale = LocaleUtil.getDefault();
 
 			String modelDefaultLanguageId = getDefaultLanguageId();
 
@@ -985,10 +890,6 @@ public class ${entity.name}Clp extends BaseModelImpl<${entity.name}> implements 
 		}
 	}
 
-	public Class<?> getClpSerializerClass() {
-		return _clpSerializerClass;
-	}
-
 	@Override
 	public int hashCode() {
 		<#if entity.hasPrimitivePK(false)>
@@ -1000,16 +901,6 @@ public class ${entity.name}Clp extends BaseModelImpl<${entity.name}> implements 
 		<#else>
 			return getPrimaryKey().hashCode();
 		</#if>
-	}
-
-	@Override
-	public boolean isEntityCacheEnabled() {
-		return _entityCacheEnabled;
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return _finderCacheEnabled;
 	}
 
 	@Override
@@ -1053,7 +944,7 @@ public class ${entity.name}Clp extends BaseModelImpl<${entity.name}> implements 
 	}
 
 	<#list entity.regularColList as column>
-		private ${column.genericizedType} _${column.name};
+		private ${column.type} _${column.name};
 
 		<#if column.localized>
 			private String _${column.name}CurrentLanguageId;
@@ -1062,11 +953,12 @@ public class ${entity.name}Clp extends BaseModelImpl<${entity.name}> implements 
 		<#if (column.name == "resourcePrimKey") && entity.isResourcedModel()>
 			private boolean _resourceMain;
 		</#if>
+
+		<#if column.userUuid>
+			private String _${column.userUuidName};
+		</#if>
 	</#list>
 
 	private BaseModel<?> _${entity.varName}RemoteModel;
-	private Class<?> _clpSerializerClass = ${packagePath}.service.ClpSerializer.class;
-	private boolean _entityCacheEnabled;
-	private boolean _finderCacheEnabled;
 
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,11 +14,9 @@
 
 package com.liferay.portlet.asset.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.LocaleException;
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
-import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSON;
 import com.liferay.portal.kernel.lar.StagedModelType;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -29,10 +27,8 @@ import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.CacheModel;
-import com.liferay.portal.model.User;
 import com.liferay.portal.model.impl.BaseModelImpl;
 import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.service.UserLocalServiceUtil;
 import com.liferay.portal.util.PortalUtil;
 
 import com.liferay.portlet.asset.model.AssetCategory;
@@ -68,7 +64,6 @@ import java.util.TreeSet;
  * @generated
  */
 @JSON(strict = true)
-@ProviderType
 public class AssetCategoryModelImpl extends BaseModelImpl<AssetCategory>
 	implements AssetCategoryModel {
 	/*
@@ -110,12 +105,12 @@ public class AssetCategoryModelImpl extends BaseModelImpl<AssetCategory>
 	public static final boolean COLUMN_BITMASK_ENABLED = GetterUtil.getBoolean(com.liferay.portal.util.PropsUtil.get(
 				"value.object.column.bitmask.enabled.com.liferay.portlet.asset.model.AssetCategory"),
 			true);
-	public static final long COMPANYID_COLUMN_BITMASK = 1L;
-	public static final long GROUPID_COLUMN_BITMASK = 2L;
-	public static final long NAME_COLUMN_BITMASK = 4L;
-	public static final long PARENTCATEGORYID_COLUMN_BITMASK = 8L;
-	public static final long UUID_COLUMN_BITMASK = 16L;
-	public static final long VOCABULARYID_COLUMN_BITMASK = 32L;
+	public static long COMPANYID_COLUMN_BITMASK = 1L;
+	public static long GROUPID_COLUMN_BITMASK = 2L;
+	public static long NAME_COLUMN_BITMASK = 4L;
+	public static long PARENTCATEGORYID_COLUMN_BITMASK = 8L;
+	public static long UUID_COLUMN_BITMASK = 16L;
+	public static long VOCABULARYID_COLUMN_BITMASK = 32L;
 
 	/**
 	 * Converts the soap model instance into a normal model instance.
@@ -172,8 +167,8 @@ public class AssetCategoryModelImpl extends BaseModelImpl<AssetCategory>
 	public static final String MAPPING_TABLE_ASSETENTRIES_ASSETCATEGORIES_NAME = "AssetEntries_AssetCategories";
 	public static final Object[][] MAPPING_TABLE_ASSETENTRIES_ASSETCATEGORIES_COLUMNS =
 		{
-			{ "categoryId", Types.BIGINT },
-			{ "entryId", Types.BIGINT }
+			{ "entryId", Types.BIGINT },
+			{ "categoryId", Types.BIGINT }
 		};
 	public static final String MAPPING_TABLE_ASSETENTRIES_ASSETCATEGORIES_SQL_CREATE =
 		"create table AssetEntries_AssetCategories (categoryId LONG not null,entryId LONG not null,primary key (categoryId, entryId))";
@@ -236,9 +231,6 @@ public class AssetCategoryModelImpl extends BaseModelImpl<AssetCategory>
 		attributes.put("title", getTitle());
 		attributes.put("description", getDescription());
 		attributes.put("vocabularyId", getVocabularyId());
-
-		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
-		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
 
 		return attributes;
 	}
@@ -429,19 +421,13 @@ public class AssetCategoryModelImpl extends BaseModelImpl<AssetCategory>
 	}
 
 	@Override
-	public String getUserUuid() {
-		try {
-			User user = UserLocalServiceUtil.getUserById(getUserId());
-
-			return user.getUuid();
-		}
-		catch (PortalException pe) {
-			return StringPool.BLANK;
-		}
+	public String getUserUuid() throws SystemException {
+		return PortalUtil.getUserValue(getUserId(), "uuid", _userUuid);
 	}
 
 	@Override
 	public void setUserUuid(String userUuid) {
+		_userUuid = userUuid;
 	}
 
 	@JSON
@@ -778,26 +764,6 @@ public class AssetCategoryModelImpl extends BaseModelImpl<AssetCategory>
 		return _originalVocabularyId;
 	}
 
-	public long getNestedSetsTreeNodeLeft() {
-		return _leftCategoryId;
-	}
-
-	public long getNestedSetsTreeNodeRight() {
-		return _rightCategoryId;
-	}
-
-	public long getNestedSetsTreeNodeScopeId() {
-		return _groupId;
-	}
-
-	public void setNestedSetsTreeNodeLeft(long nestedSetsTreeNodeLeft) {
-		_leftCategoryId = nestedSetsTreeNodeLeft;
-	}
-
-	public void setNestedSetsTreeNodeRight(long nestedSetsTreeNodeRight) {
-		_rightCategoryId = nestedSetsTreeNodeRight;
-	}
-
 	@Override
 	public StagedModelType getStagedModelType() {
 		return new StagedModelType(PortalUtil.getClassNameId(
@@ -858,28 +824,19 @@ public class AssetCategoryModelImpl extends BaseModelImpl<AssetCategory>
 			return StringPool.BLANK;
 		}
 
-		Locale defaultLocale = LocaleUtil.getSiteDefault();
-
-		return LocalizationUtil.getDefaultLanguageId(xml, defaultLocale);
+		return LocalizationUtil.getDefaultLanguageId(xml);
 	}
 
 	@Override
 	public void prepareLocalizedFieldsForImport() throws LocaleException {
-		Locale defaultLocale = LocaleUtil.fromLanguageId(getDefaultLanguageId());
-
-		Locale[] availableLocales = LocaleUtil.fromLanguageIds(getAvailableLanguageIds());
-
-		Locale defaultImportLocale = LocalizationUtil.getDefaultImportLocale(AssetCategory.class.getName(),
-				getPrimaryKey(), defaultLocale, availableLocales);
-
-		prepareLocalizedFieldsForImport(defaultImportLocale);
+		prepareLocalizedFieldsForImport(null);
 	}
 
 	@Override
 	@SuppressWarnings("unused")
 	public void prepareLocalizedFieldsForImport(Locale defaultImportLocale)
 		throws LocaleException {
-		Locale defaultLocale = LocaleUtil.getSiteDefault();
+		Locale defaultLocale = LocaleUtil.getDefault();
 
 		String modelDefaultLanguageId = getDefaultLanguageId();
 
@@ -976,16 +933,6 @@ public class AssetCategoryModelImpl extends BaseModelImpl<AssetCategory>
 	@Override
 	public int hashCode() {
 		return (int)getPrimaryKey();
-	}
-
-	@Override
-	public boolean isEntityCacheEnabled() {
-		return ENTITY_CACHE_ENABLED;
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return FINDER_CACHE_ENABLED;
 	}
 
 	@Override
@@ -1209,8 +1156,8 @@ public class AssetCategoryModelImpl extends BaseModelImpl<AssetCategory>
 		return sb.toString();
 	}
 
-	private static final ClassLoader _classLoader = AssetCategory.class.getClassLoader();
-	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
+	private static ClassLoader _classLoader = AssetCategory.class.getClassLoader();
+	private static Class<?>[] _escapedModelInterfaces = new Class[] {
 			AssetCategory.class
 		};
 	private String _uuid;
@@ -1223,6 +1170,7 @@ public class AssetCategoryModelImpl extends BaseModelImpl<AssetCategory>
 	private long _originalCompanyId;
 	private boolean _setOriginalCompanyId;
 	private long _userId;
+	private String _userUuid;
 	private String _userName;
 	private Date _createDate;
 	private Date _modifiedDate;

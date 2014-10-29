@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,24 +14,15 @@
 
 package com.liferay.portal.kernel.io;
 
-import com.liferay.portal.kernel.io.unsync.UnsyncStringWriter;
-import com.liferay.portal.kernel.test.CodeCoverageAssertor;
-import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.util.StringPool;
 
 import java.io.CharArrayWriter;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.StringWriter;
 import java.io.Writer;
 
-import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
-import java.nio.charset.CharsetDecoder;
-import java.nio.charset.CodingErrorAction;
-
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.junit.Assert;
-import org.junit.ClassRule;
 import org.junit.Test;
 
 /**
@@ -39,169 +30,166 @@ import org.junit.Test;
  */
 public class WriterOutputStreamTest {
 
-	@ClassRule
-	public static CodeCoverageAssertor codeCoverageAssertor =
-		new CodeCoverageAssertor();
-
 	@Test
-	public void testClose() throws IOException {
-		final AtomicBoolean closeAtomicBoolean = new AtomicBoolean();
+	public void testACSIIOutput() throws IOException {
 
-		DummyWriter dummyWriter = new DummyWriter() {
+		// Auto flush
 
-			@Override
-			public void close() {
-				closeAtomicBoolean.set(true);
-			}
+		Writer writer = new StringWriter();
 
-		};
+		OutputStream outputStream = new WriterOutputStream(
+			writer, StringPool.UTF8, true);
 
-		try (WriterOutputStream writerOutputStream = new WriterOutputStream(
-				dummyWriter)) {
+		String[] asciiOutput = {"This ", "is ", "an ", "ACSII ", " test"};
+		byte[][] asciiInput = {
+			asciiOutput[0].getBytes(StringPool.UTF8),
+			asciiOutput[1].getBytes(StringPool.UTF8),
+			asciiOutput[2].getBytes(StringPool.UTF8),
+			asciiOutput[3].getBytes(StringPool.UTF8),
+			asciiOutput[4].getBytes(StringPool.UTF8)};
 
-			Assert.assertFalse(closeAtomicBoolean.get());
-		}
+		String expectedResult = asciiOutput[0];
 
-		Assert.assertTrue(closeAtomicBoolean.get());
+		outputStream.write(asciiInput[0]);
+
+		Assert.assertEquals(expectedResult, writer.toString());
+
+		expectedResult += asciiOutput[1];
+
+		outputStream.write(asciiInput[1]);
+
+		Assert.assertEquals(expectedResult, writer.toString());
+
+		expectedResult += asciiOutput[2];
+
+		outputStream.write(asciiInput[2]);
+
+		Assert.assertEquals(expectedResult, writer.toString());
+
+		expectedResult += asciiOutput[3];
+
+		outputStream.write(asciiInput[3]);
+
+		Assert.assertEquals(expectedResult, writer.toString());
+
+		expectedResult += asciiOutput[4];
+
+		outputStream.write(asciiInput[4]);
+
+		Assert.assertEquals(expectedResult, writer.toString());
+
+		// Do not auto flush
+
+		writer = new StringWriter();
+
+		outputStream = new WriterOutputStream(writer, StringPool.UTF8, false);
+
+		outputStream.write(asciiInput[0]);
+
+		Assert.assertEquals("", writer.toString());
+
+		outputStream.write(asciiInput[1]);
+
+		Assert.assertEquals("", writer.toString());
+
+		outputStream.write(asciiInput[2]);
+
+		Assert.assertEquals("", writer.toString());
+
+		outputStream.write(asciiInput[3]);
+
+		Assert.assertEquals("", writer.toString());
+
+		outputStream.write(asciiInput[4]);
+
+		Assert.assertEquals("", writer.toString());
+
+		outputStream.flush();
+
+		Assert.assertEquals(expectedResult, writer.toString());
 	}
 
 	@Test
-	public void testConstructor() {
-		DummyWriter dummyWriter = new DummyWriter();
+	public void testChineseOutput() throws IOException {
 
-		WriterOutputStream writerOutputStream = new WriterOutputStream(
-			dummyWriter);
+		// Auto flush
 
-		Assert.assertSame(dummyWriter, _getWriter(writerOutputStream));
-		Assert.assertSame(
-			StringPool.DEFAULT_CHARSET_NAME, writerOutputStream.getEncoding());
-		Assert.assertEquals(
-			_getDefaultOutputBufferSize(),
-			_getOutputBufferSize(writerOutputStream));
-		Assert.assertFalse(_isAutoFlush(writerOutputStream));
+		Writer writer = new StringWriter();
 
-		writerOutputStream = new WriterOutputStream(dummyWriter, null);
+		OutputStream outputStream = new WriterOutputStream(
+			writer, StringPool.UTF8, true);
 
-		Assert.assertSame(dummyWriter, _getWriter(writerOutputStream));
-		Assert.assertSame(
-			StringPool.DEFAULT_CHARSET_NAME, writerOutputStream.getEncoding());
-		Assert.assertEquals(
-			_getDefaultOutputBufferSize(),
-			_getOutputBufferSize(writerOutputStream));
-		Assert.assertFalse(_isAutoFlush(writerOutputStream));
+		String[] chineseOutput = {"这是", "一个", "中文", "解码 ", "测试"};
+		byte[][] chineseInput = {
+			chineseOutput[0].getBytes(StringPool.UTF8),
+			chineseOutput[1].getBytes(StringPool.UTF8),
+			chineseOutput[2].getBytes(StringPool.UTF8),
+			chineseOutput[3].getBytes(StringPool.UTF8),
+			chineseOutput[4].getBytes(StringPool.UTF8)};
 
-		String encoding = "US-ASCII";
+		String expectedResult = chineseOutput[0];
 
-		writerOutputStream = new WriterOutputStream(dummyWriter, encoding);
+		outputStream.write(chineseInput[0]);
 
-		Assert.assertSame(dummyWriter, _getWriter(writerOutputStream));
-		Assert.assertSame(encoding, writerOutputStream.getEncoding());
-		Assert.assertEquals(
-			_getDefaultOutputBufferSize(),
-			_getOutputBufferSize(writerOutputStream));
-		Assert.assertFalse(_isAutoFlush(writerOutputStream));
+		Assert.assertEquals(expectedResult, writer.toString());
 
-		writerOutputStream = new WriterOutputStream(
-			dummyWriter, encoding, true);
+		expectedResult += chineseOutput[1];
 
-		Assert.assertSame(dummyWriter, _getWriter(writerOutputStream));
-		Assert.assertSame(encoding, writerOutputStream.getEncoding());
-		Assert.assertEquals(
-			_getDefaultOutputBufferSize(),
-			_getOutputBufferSize(writerOutputStream));
-		Assert.assertTrue(_isAutoFlush(writerOutputStream));
+		outputStream.write(chineseInput[1]);
 
-		writerOutputStream = new WriterOutputStream(dummyWriter, encoding, 32);
+		Assert.assertEquals(expectedResult, writer.toString());
 
-		Assert.assertSame(dummyWriter, _getWriter(writerOutputStream));
-		Assert.assertSame(encoding, writerOutputStream.getEncoding());
-		Assert.assertEquals(1, _getInputBufferSize(writerOutputStream));
-		Assert.assertEquals(32, _getOutputBufferSize(writerOutputStream));
-		Assert.assertFalse(_isAutoFlush(writerOutputStream));
+		expectedResult += chineseOutput[2];
 
-		writerOutputStream = new WriterOutputStream(
-			dummyWriter, encoding, 32, true);
+		outputStream.write(chineseInput[2]);
 
-		Assert.assertSame(dummyWriter, _getWriter(writerOutputStream));
-		Assert.assertSame(encoding, writerOutputStream.getEncoding());
-		Assert.assertEquals(1, _getInputBufferSize(writerOutputStream));
-		Assert.assertEquals(32, _getOutputBufferSize(writerOutputStream));
-		Assert.assertTrue(_isAutoFlush(writerOutputStream));
+		Assert.assertEquals(expectedResult, writer.toString());
 
-		writerOutputStream = new WriterOutputStream(
-			dummyWriter, encoding, 0, true);
+		expectedResult += chineseOutput[3];
 
-		Assert.assertSame(dummyWriter, _getWriter(writerOutputStream));
-		Assert.assertSame(encoding, writerOutputStream.getEncoding());
-		Assert.assertEquals(1, _getInputBufferSize(writerOutputStream));
-		Assert.assertEquals(
-			_getDefaultOutputBufferSize(),
-			_getOutputBufferSize(writerOutputStream));
-		Assert.assertTrue(_isAutoFlush(writerOutputStream));
+		outputStream.write(chineseInput[3]);
 
-		try {
-			new WriterOutputStream(dummyWriter, encoding, 0, false);
+		Assert.assertEquals(expectedResult, writer.toString());
 
-			Assert.fail();
-		}
-		catch (IllegalArgumentException iae) {
-			Assert.assertEquals(
-				"Output buffer size 0 must be a positive number",
-				iae.getMessage());
-		}
+		expectedResult += chineseOutput[4];
+
+		outputStream.write(chineseInput[4]);
+
+		Assert.assertEquals(expectedResult, writer.toString());
+
+		// Do not auto flush
+
+		writer = new StringWriter();
+
+		outputStream = new WriterOutputStream(writer, StringPool.UTF8, false);
+
+		outputStream.write(chineseInput[0]);
+
+		Assert.assertEquals("", writer.toString());
+
+		outputStream.write(chineseInput[1]);
+
+		Assert.assertEquals("", writer.toString());
+
+		outputStream.write(chineseInput[2]);
+
+		Assert.assertEquals("", writer.toString());
+
+		outputStream.write(chineseInput[3]);
+
+		Assert.assertEquals("", writer.toString());
+
+		outputStream.write(chineseInput[4]);
+
+		Assert.assertEquals("", writer.toString());
+
+		outputStream.flush();
+
+		Assert.assertEquals(expectedResult, writer.toString());
 	}
 
 	@Test
-	public void testFlush() throws IOException {
-		final AtomicBoolean flushed = new AtomicBoolean();
-
-		CharArrayWriter charArrayWriter = new CharArrayWriter() {
-
-			@Override
-			public void flush() {
-				flushed.set(true);
-			}
-
-		};
-
-		WriterOutputStream writerOutputStream = new WriterOutputStream(
-			charArrayWriter, StringPool.UTF8, 2);
-
-		Assert.assertFalse(flushed.get());
-
-		writerOutputStream.write('a');
-
-		Assert.assertFalse(flushed.get());
-
-		Assert.assertEquals(0, charArrayWriter.size());
-
-		writerOutputStream.write('b');
-
-		Assert.assertFalse(flushed.get());
-
-		Assert.assertEquals(0, charArrayWriter.size());
-
-		writerOutputStream.write('c');
-
-		Assert.assertFalse(flushed.get());
-
-		Assert.assertEquals("ab", charArrayWriter.toString());
-
-		writerOutputStream.write('d');
-
-		Assert.assertFalse(flushed.get());
-
-		Assert.assertEquals("ab", charArrayWriter.toString());
-
-		writerOutputStream.flush();
-
-		Assert.assertTrue(flushed.get());
-
-		Assert.assertEquals("abcd", charArrayWriter.toString());
-	}
-
-	@Test
-	public void testWrite() throws IOException {
+	public void testNonAlignOutput() throws IOException {
 		CharArrayWriter charArrayWriter = new CharArrayWriter();
 
 		WriterOutputStream writerOutputStream = new WriterOutputStream(
@@ -209,10 +197,10 @@ public class WriterOutputStreamTest {
 
 		int charNumber = 0;
 
-		String unalignedOutput = "非对齐测试中文输出";
-		byte[] unalignedInput = unalignedOutput.getBytes(StringPool.UTF8);
+		String nonAlignOutput = "非对齐测试中文输出";
+		byte[] nonAlignInput = nonAlignOutput.getBytes(StringPool.UTF8);
 
-		for (byte b : unalignedInput) {
+		for (byte b : nonAlignInput) {
 			writerOutputStream.write(b);
 
 			int currentCharNumber = charArrayWriter.size();
@@ -221,163 +209,10 @@ public class WriterOutputStreamTest {
 				charNumber = currentCharNumber;
 
 				Assert.assertEquals(
-					unalignedOutput.charAt(charNumber - 1),
+					nonAlignOutput.charAt(charNumber - 1),
 					charArrayWriter.toCharArray()[charNumber - 1]);
 			}
 		}
-
-		Assert.assertEquals(unalignedOutput, charArrayWriter.toString());
-	}
-
-	@Test
-	public void testWriteBlock() throws IOException {
-		_testWriteBlock(false);
-		_testWriteBlock(true);
-	}
-
-	@Test
-	public void testWriteBlockUnaligned() throws IOException {
-		CharArrayWriter charArrayWriter = new CharArrayWriter();
-
-		String unalignedOutput = "非对齐测试中文输出";
-
-		try (WriterOutputStream writerOutputStream = new WriterOutputStream(
-				charArrayWriter, StringPool.UTF8, true)) {
-
-			byte[] unalignedInput = unalignedOutput.getBytes(StringPool.UTF8);
-
-			writerOutputStream.write(unalignedInput[0]);
-			writerOutputStream.write(
-				unalignedInput, 1, unalignedInput.length - 2);
-			writerOutputStream.write(unalignedInput[unalignedInput.length - 1]);
-		}
-
-		Assert.assertEquals(unalignedOutput, charArrayWriter.toString());
-	}
-
-	@Test
-	public void testWriteError() {
-		WriterOutputStream writerOutputStream = new WriterOutputStream(
-			new DummyWriter(), "US-ASCII");
-
-		CharsetDecoder charsetDecoder = ReflectionTestUtil.getFieldValue(
-			writerOutputStream, "_charsetDecoder");
-
-		charsetDecoder.onMalformedInput(CodingErrorAction.REPORT);
-
-		try {
-			writerOutputStream.write(new byte[]{-1, -2, -3, -4});
-
-			Assert.fail();
-		}
-		catch (IOException ioe) {
-			Assert.assertEquals(
-				"Unexcepted coder result MALFORMED[1]", ioe.getMessage());
-		}
-	}
-
-	private int _getDefaultOutputBufferSize() {
-		return ReflectionTestUtil.getFieldValue(
-			WriterOutputStream.class, "_DEFAULT_OUTPUT_BUFFER_SIZE");
-	}
-
-	private int _getInputBufferSize(WriterOutputStream writerOutputStream) {
-		ByteBuffer inputByteBuffer = ReflectionTestUtil.getFieldValue(
-			writerOutputStream, "_inputByteBuffer");
-
-		return inputByteBuffer.capacity();
-	}
-
-	private int _getOutputBufferSize(WriterOutputStream writerOutputStream) {
-		CharBuffer outputBuffer = ReflectionTestUtil.getFieldValue(
-			writerOutputStream, "_outputCharBuffer");
-
-		return outputBuffer.capacity();
-	}
-
-	private Writer _getWriter(WriterOutputStream writerOutputStream) {
-		return ReflectionTestUtil.getFieldValue(writerOutputStream, "_writer");
-	}
-
-	private boolean _isAutoFlush(WriterOutputStream writerOutputStream) {
-		return ReflectionTestUtil.getFieldValue(
-			writerOutputStream, "_autoFlush");
-	}
-
-	private void _testWriteBlock(boolean autoFlush) throws IOException {
-		final AtomicBoolean flushed = new AtomicBoolean();
-
-		UnsyncStringWriter unsyncStringWriter = new UnsyncStringWriter() {
-
-			@Override
-			public void flush() {
-				flushed.set(true);
-			}
-
-		};
-
-		WriterOutputStream writerOutputStream = new WriterOutputStream(
-			unsyncStringWriter, "US-ASCII", 2, autoFlush);
-
-		writerOutputStream.write(
-			new byte[] {
-				(byte)'a', (byte)'b', (byte)'c', (byte)'d', (byte)'e',
-				(byte)'f', (byte)'g'},
-			1, 5);
-
-		Assert.assertFalse(flushed.get());
-
-		if (!autoFlush) {
-			writerOutputStream.flush();
-
-			Assert.assertTrue(flushed.get());
-
-			flushed.set(false);
-		}
-
-		Assert.assertEquals("bcdef", unsyncStringWriter.toString());
-
-		unsyncStringWriter.reset();
-
-		writerOutputStream = new WriterOutputStream(
-			unsyncStringWriter, "US-ASCII", 4, autoFlush);
-
-		writerOutputStream.write(
-			new byte[] {
-				(byte)'a', (byte)'b', (byte)'c', (byte)'d', (byte)'e',
-				(byte)'f', (byte)'g'},
-			1, 5);
-
-		Assert.assertFalse(flushed.get());
-
-		if (!autoFlush) {
-			writerOutputStream.flush();
-
-			Assert.assertTrue(flushed.get());
-
-			flushed.set(false);
-		}
-
-		Assert.assertEquals("bcdef", unsyncStringWriter.toString());
-
-		unsyncStringWriter.reset();
-
-		writerOutputStream = new WriterOutputStream(
-			unsyncStringWriter, "US-ASCII", autoFlush);
-
-		writerOutputStream.write(new byte[]{(byte)'a', (byte)'b', (byte)'c'});
-
-		Assert.assertFalse(flushed.get());
-
-		if (!autoFlush) {
-			writerOutputStream.flush();
-
-			Assert.assertTrue(flushed.get());
-
-			flushed.set(false);
-		}
-
-		Assert.assertEquals("abc", unsyncStringWriter.toString());
 	}
 
 }

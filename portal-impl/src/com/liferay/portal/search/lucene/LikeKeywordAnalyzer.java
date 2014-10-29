@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,7 +14,6 @@
 
 package com.liferay.portal.search.lucene;
 
-import java.io.IOException;
 import java.io.Reader;
 
 import org.apache.lucene.analysis.Analyzer;
@@ -31,15 +30,7 @@ public class LikeKeywordAnalyzer extends Analyzer {
 	}
 
 	@Override
-	public final TokenStream reusableTokenStream(
-			String fieldName, Reader reader)
-		throws IOException {
-
-		return _analyzer.reusableTokenStream(fieldName, reader);
-	}
-
-	@Override
-	public final TokenStream tokenStream(String token, Reader reader) {
+	public TokenStream tokenStream(String token, Reader reader) {
 		return _analyzer.tokenStream(token, reader);
 	}
 

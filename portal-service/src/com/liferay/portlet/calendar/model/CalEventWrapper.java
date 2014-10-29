@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -221,84 +221,44 @@ public class CalEventWrapper implements CalEvent, ModelWrapper<CalEvent> {
 		}
 	}
 
+	/**
+	* Returns the primary key of this cal event.
+	*
+	* @return the primary key of this cal event
+	*/
 	@Override
-	public java.lang.Object clone() {
-		return new CalEventWrapper((CalEvent)_calEvent.clone());
-	}
-
-	@Override
-	public int compareTo(com.liferay.portlet.calendar.model.CalEvent calEvent) {
-		return _calEvent.compareTo(calEvent);
+	public long getPrimaryKey() {
+		return _calEvent.getPrimaryKey();
 	}
 
 	/**
-	* Returns the all day of this cal event.
+	* Sets the primary key of this cal event.
 	*
-	* @return the all day of this cal event
+	* @param primaryKey the primary key of this cal event
 	*/
 	@Override
-	public boolean getAllDay() {
-		return _calEvent.getAllDay();
+	public void setPrimaryKey(long primaryKey) {
+		_calEvent.setPrimaryKey(primaryKey);
 	}
 
 	/**
-	* Returns the company ID of this cal event.
+	* Returns the uuid of this cal event.
 	*
-	* @return the company ID of this cal event
+	* @return the uuid of this cal event
 	*/
 	@Override
-	public long getCompanyId() {
-		return _calEvent.getCompanyId();
+	public java.lang.String getUuid() {
+		return _calEvent.getUuid();
 	}
 
 	/**
-	* Returns the create date of this cal event.
+	* Sets the uuid of this cal event.
 	*
-	* @return the create date of this cal event
+	* @param uuid the uuid of this cal event
 	*/
 	@Override
-	public java.util.Date getCreateDate() {
-		return _calEvent.getCreateDate();
-	}
-
-	/**
-	* Returns the description of this cal event.
-	*
-	* @return the description of this cal event
-	*/
-	@Override
-	public java.lang.String getDescription() {
-		return _calEvent.getDescription();
-	}
-
-	/**
-	* Returns the duration hour of this cal event.
-	*
-	* @return the duration hour of this cal event
-	*/
-	@Override
-	public int getDurationHour() {
-		return _calEvent.getDurationHour();
-	}
-
-	/**
-	* Returns the duration minute of this cal event.
-	*
-	* @return the duration minute of this cal event
-	*/
-	@Override
-	public int getDurationMinute() {
-		return _calEvent.getDurationMinute();
-	}
-
-	/**
-	* Returns the end date of this cal event.
-	*
-	* @return the end date of this cal event
-	*/
-	@Override
-	public java.util.Date getEndDate() {
-		return _calEvent.getEndDate();
+	public void setUuid(java.lang.String uuid) {
+		_calEvent.setUuid(uuid);
 	}
 
 	/**
@@ -311,19 +271,14 @@ public class CalEventWrapper implements CalEvent, ModelWrapper<CalEvent> {
 		return _calEvent.getEventId();
 	}
 
-	@Override
-	public com.liferay.portlet.expando.model.ExpandoBridge getExpandoBridge() {
-		return _calEvent.getExpandoBridge();
-	}
-
 	/**
-	* Returns the first reminder of this cal event.
+	* Sets the event ID of this cal event.
 	*
-	* @return the first reminder of this cal event
+	* @param eventId the event ID of this cal event
 	*/
 	@Override
-	public int getFirstReminder() {
-		return _calEvent.getFirstReminder();
+	public void setEventId(long eventId) {
+		_calEvent.setEventId(eventId);
 	}
 
 	/**
@@ -337,233 +292,23 @@ public class CalEventWrapper implements CalEvent, ModelWrapper<CalEvent> {
 	}
 
 	/**
-	* Returns the location of this cal event.
+	* Sets the group ID of this cal event.
 	*
-	* @return the location of this cal event
+	* @param groupId the group ID of this cal event
 	*/
 	@Override
-	public java.lang.String getLocation() {
-		return _calEvent.getLocation();
+	public void setGroupId(long groupId) {
+		_calEvent.setGroupId(groupId);
 	}
 
 	/**
-	* Returns the modified date of this cal event.
+	* Returns the company ID of this cal event.
 	*
-	* @return the modified date of this cal event
+	* @return the company ID of this cal event
 	*/
 	@Override
-	public java.util.Date getModifiedDate() {
-		return _calEvent.getModifiedDate();
-	}
-
-	/**
-	* Returns the primary key of this cal event.
-	*
-	* @return the primary key of this cal event
-	*/
-	@Override
-	public long getPrimaryKey() {
-		return _calEvent.getPrimaryKey();
-	}
-
-	@Override
-	public java.io.Serializable getPrimaryKeyObj() {
-		return _calEvent.getPrimaryKeyObj();
-	}
-
-	/**
-	* Returns the recurrence of this cal event.
-	*
-	* @return the recurrence of this cal event
-	*/
-	@Override
-	public java.lang.String getRecurrence() {
-		return _calEvent.getRecurrence();
-	}
-
-	@Override
-	public com.liferay.portal.kernel.cal.TZSRecurrence getRecurrenceObj() {
-		return _calEvent.getRecurrenceObj();
-	}
-
-	/**
-	* Returns the remind by of this cal event.
-	*
-	* @return the remind by of this cal event
-	*/
-	@Override
-	public int getRemindBy() {
-		return _calEvent.getRemindBy();
-	}
-
-	/**
-	* Returns the repeating of this cal event.
-	*
-	* @return the repeating of this cal event
-	*/
-	@Override
-	public boolean getRepeating() {
-		return _calEvent.getRepeating();
-	}
-
-	/**
-	* Returns the second reminder of this cal event.
-	*
-	* @return the second reminder of this cal event
-	*/
-	@Override
-	public int getSecondReminder() {
-		return _calEvent.getSecondReminder();
-	}
-
-	/**
-	* Returns the start date of this cal event.
-	*
-	* @return the start date of this cal event
-	*/
-	@Override
-	public java.util.Date getStartDate() {
-		return _calEvent.getStartDate();
-	}
-
-	/**
-	* Returns the time zone sensitive of this cal event.
-	*
-	* @return the time zone sensitive of this cal event
-	*/
-	@Override
-	public boolean getTimeZoneSensitive() {
-		return _calEvent.getTimeZoneSensitive();
-	}
-
-	/**
-	* Returns the title of this cal event.
-	*
-	* @return the title of this cal event
-	*/
-	@Override
-	public java.lang.String getTitle() {
-		return _calEvent.getTitle();
-	}
-
-	/**
-	* Returns the type of this cal event.
-	*
-	* @return the type of this cal event
-	*/
-	@Override
-	public java.lang.String getType() {
-		return _calEvent.getType();
-	}
-
-	/**
-	* Returns the user ID of this cal event.
-	*
-	* @return the user ID of this cal event
-	*/
-	@Override
-	public long getUserId() {
-		return _calEvent.getUserId();
-	}
-
-	/**
-	* Returns the user name of this cal event.
-	*
-	* @return the user name of this cal event
-	*/
-	@Override
-	public java.lang.String getUserName() {
-		return _calEvent.getUserName();
-	}
-
-	/**
-	* Returns the user uuid of this cal event.
-	*
-	* @return the user uuid of this cal event
-	*/
-	@Override
-	public java.lang.String getUserUuid() {
-		return _calEvent.getUserUuid();
-	}
-
-	/**
-	* Returns the uuid of this cal event.
-	*
-	* @return the uuid of this cal event
-	*/
-	@Override
-	public java.lang.String getUuid() {
-		return _calEvent.getUuid();
-	}
-
-	@Override
-	public int hashCode() {
-		return _calEvent.hashCode();
-	}
-
-	/**
-	* Returns <code>true</code> if this cal event is all day.
-	*
-	* @return <code>true</code> if this cal event is all day; <code>false</code> otherwise
-	*/
-	@Override
-	public boolean isAllDay() {
-		return _calEvent.isAllDay();
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _calEvent.isCachedModel();
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _calEvent.isEscapedModel();
-	}
-
-	@Override
-	public boolean isNew() {
-		return _calEvent.isNew();
-	}
-
-	/**
-	* Returns <code>true</code> if this cal event is repeating.
-	*
-	* @return <code>true</code> if this cal event is repeating; <code>false</code> otherwise
-	*/
-	@Override
-	public boolean isRepeating() {
-		return _calEvent.isRepeating();
-	}
-
-	/**
-	* Returns <code>true</code> if this cal event is time zone sensitive.
-	*
-	* @return <code>true</code> if this cal event is time zone sensitive; <code>false</code> otherwise
-	*/
-	@Override
-	public boolean isTimeZoneSensitive() {
-		return _calEvent.isTimeZoneSensitive();
-	}
-
-	@Override
-	public void persist() {
-		_calEvent.persist();
-	}
-
-	/**
-	* Sets whether this cal event is all day.
-	*
-	* @param allDay the all day of this cal event
-	*/
-	@Override
-	public void setAllDay(boolean allDay) {
-		_calEvent.setAllDay(allDay);
-	}
-
-	@Override
-	public void setCachedModel(boolean cachedModel) {
-		_calEvent.setCachedModel(cachedModel);
+	public long getCompanyId() {
+		return _calEvent.getCompanyId();
 	}
 
 	/**
@@ -577,6 +322,78 @@ public class CalEventWrapper implements CalEvent, ModelWrapper<CalEvent> {
 	}
 
 	/**
+	* Returns the user ID of this cal event.
+	*
+	* @return the user ID of this cal event
+	*/
+	@Override
+	public long getUserId() {
+		return _calEvent.getUserId();
+	}
+
+	/**
+	* Sets the user ID of this cal event.
+	*
+	* @param userId the user ID of this cal event
+	*/
+	@Override
+	public void setUserId(long userId) {
+		_calEvent.setUserId(userId);
+	}
+
+	/**
+	* Returns the user uuid of this cal event.
+	*
+	* @return the user uuid of this cal event
+	* @throws SystemException if a system exception occurred
+	*/
+	@Override
+	public java.lang.String getUserUuid()
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return _calEvent.getUserUuid();
+	}
+
+	/**
+	* Sets the user uuid of this cal event.
+	*
+	* @param userUuid the user uuid of this cal event
+	*/
+	@Override
+	public void setUserUuid(java.lang.String userUuid) {
+		_calEvent.setUserUuid(userUuid);
+	}
+
+	/**
+	* Returns the user name of this cal event.
+	*
+	* @return the user name of this cal event
+	*/
+	@Override
+	public java.lang.String getUserName() {
+		return _calEvent.getUserName();
+	}
+
+	/**
+	* Sets the user name of this cal event.
+	*
+	* @param userName the user name of this cal event
+	*/
+	@Override
+	public void setUserName(java.lang.String userName) {
+		_calEvent.setUserName(userName);
+	}
+
+	/**
+	* Returns the create date of this cal event.
+	*
+	* @return the create date of this cal event
+	*/
+	@Override
+	public java.util.Date getCreateDate() {
+		return _calEvent.getCreateDate();
+	}
+
+	/**
 	* Sets the create date of this cal event.
 	*
 	* @param createDate the create date of this cal event
@@ -584,6 +401,56 @@ public class CalEventWrapper implements CalEvent, ModelWrapper<CalEvent> {
 	@Override
 	public void setCreateDate(java.util.Date createDate) {
 		_calEvent.setCreateDate(createDate);
+	}
+
+	/**
+	* Returns the modified date of this cal event.
+	*
+	* @return the modified date of this cal event
+	*/
+	@Override
+	public java.util.Date getModifiedDate() {
+		return _calEvent.getModifiedDate();
+	}
+
+	/**
+	* Sets the modified date of this cal event.
+	*
+	* @param modifiedDate the modified date of this cal event
+	*/
+	@Override
+	public void setModifiedDate(java.util.Date modifiedDate) {
+		_calEvent.setModifiedDate(modifiedDate);
+	}
+
+	/**
+	* Returns the title of this cal event.
+	*
+	* @return the title of this cal event
+	*/
+	@Override
+	public java.lang.String getTitle() {
+		return _calEvent.getTitle();
+	}
+
+	/**
+	* Sets the title of this cal event.
+	*
+	* @param title the title of this cal event
+	*/
+	@Override
+	public void setTitle(java.lang.String title) {
+		_calEvent.setTitle(title);
+	}
+
+	/**
+	* Returns the description of this cal event.
+	*
+	* @return the description of this cal event
+	*/
+	@Override
+	public java.lang.String getDescription() {
+		return _calEvent.getDescription();
 	}
 
 	/**
@@ -597,23 +464,53 @@ public class CalEventWrapper implements CalEvent, ModelWrapper<CalEvent> {
 	}
 
 	/**
-	* Sets the duration hour of this cal event.
+	* Returns the location of this cal event.
 	*
-	* @param durationHour the duration hour of this cal event
+	* @return the location of this cal event
 	*/
 	@Override
-	public void setDurationHour(int durationHour) {
-		_calEvent.setDurationHour(durationHour);
+	public java.lang.String getLocation() {
+		return _calEvent.getLocation();
 	}
 
 	/**
-	* Sets the duration minute of this cal event.
+	* Sets the location of this cal event.
 	*
-	* @param durationMinute the duration minute of this cal event
+	* @param location the location of this cal event
 	*/
 	@Override
-	public void setDurationMinute(int durationMinute) {
-		_calEvent.setDurationMinute(durationMinute);
+	public void setLocation(java.lang.String location) {
+		_calEvent.setLocation(location);
+	}
+
+	/**
+	* Returns the start date of this cal event.
+	*
+	* @return the start date of this cal event
+	*/
+	@Override
+	public java.util.Date getStartDate() {
+		return _calEvent.getStartDate();
+	}
+
+	/**
+	* Sets the start date of this cal event.
+	*
+	* @param startDate the start date of this cal event
+	*/
+	@Override
+	public void setStartDate(java.util.Date startDate) {
+		_calEvent.setStartDate(startDate);
+	}
+
+	/**
+	* Returns the end date of this cal event.
+	*
+	* @return the end date of this cal event
+	*/
+	@Override
+	public java.util.Date getEndDate() {
+		return _calEvent.getEndDate();
 	}
 
 	/**
@@ -627,13 +524,273 @@ public class CalEventWrapper implements CalEvent, ModelWrapper<CalEvent> {
 	}
 
 	/**
-	* Sets the event ID of this cal event.
+	* Returns the duration hour of this cal event.
 	*
-	* @param eventId the event ID of this cal event
+	* @return the duration hour of this cal event
 	*/
 	@Override
-	public void setEventId(long eventId) {
-		_calEvent.setEventId(eventId);
+	public int getDurationHour() {
+		return _calEvent.getDurationHour();
+	}
+
+	/**
+	* Sets the duration hour of this cal event.
+	*
+	* @param durationHour the duration hour of this cal event
+	*/
+	@Override
+	public void setDurationHour(int durationHour) {
+		_calEvent.setDurationHour(durationHour);
+	}
+
+	/**
+	* Returns the duration minute of this cal event.
+	*
+	* @return the duration minute of this cal event
+	*/
+	@Override
+	public int getDurationMinute() {
+		return _calEvent.getDurationMinute();
+	}
+
+	/**
+	* Sets the duration minute of this cal event.
+	*
+	* @param durationMinute the duration minute of this cal event
+	*/
+	@Override
+	public void setDurationMinute(int durationMinute) {
+		_calEvent.setDurationMinute(durationMinute);
+	}
+
+	/**
+	* Returns the all day of this cal event.
+	*
+	* @return the all day of this cal event
+	*/
+	@Override
+	public boolean getAllDay() {
+		return _calEvent.getAllDay();
+	}
+
+	/**
+	* Returns <code>true</code> if this cal event is all day.
+	*
+	* @return <code>true</code> if this cal event is all day; <code>false</code> otherwise
+	*/
+	@Override
+	public boolean isAllDay() {
+		return _calEvent.isAllDay();
+	}
+
+	/**
+	* Sets whether this cal event is all day.
+	*
+	* @param allDay the all day of this cal event
+	*/
+	@Override
+	public void setAllDay(boolean allDay) {
+		_calEvent.setAllDay(allDay);
+	}
+
+	/**
+	* Returns the time zone sensitive of this cal event.
+	*
+	* @return the time zone sensitive of this cal event
+	*/
+	@Override
+	public boolean getTimeZoneSensitive() {
+		return _calEvent.getTimeZoneSensitive();
+	}
+
+	/**
+	* Returns <code>true</code> if this cal event is time zone sensitive.
+	*
+	* @return <code>true</code> if this cal event is time zone sensitive; <code>false</code> otherwise
+	*/
+	@Override
+	public boolean isTimeZoneSensitive() {
+		return _calEvent.isTimeZoneSensitive();
+	}
+
+	/**
+	* Sets whether this cal event is time zone sensitive.
+	*
+	* @param timeZoneSensitive the time zone sensitive of this cal event
+	*/
+	@Override
+	public void setTimeZoneSensitive(boolean timeZoneSensitive) {
+		_calEvent.setTimeZoneSensitive(timeZoneSensitive);
+	}
+
+	/**
+	* Returns the type of this cal event.
+	*
+	* @return the type of this cal event
+	*/
+	@Override
+	public java.lang.String getType() {
+		return _calEvent.getType();
+	}
+
+	/**
+	* Sets the type of this cal event.
+	*
+	* @param type the type of this cal event
+	*/
+	@Override
+	public void setType(java.lang.String type) {
+		_calEvent.setType(type);
+	}
+
+	/**
+	* Returns the repeating of this cal event.
+	*
+	* @return the repeating of this cal event
+	*/
+	@Override
+	public boolean getRepeating() {
+		return _calEvent.getRepeating();
+	}
+
+	/**
+	* Returns <code>true</code> if this cal event is repeating.
+	*
+	* @return <code>true</code> if this cal event is repeating; <code>false</code> otherwise
+	*/
+	@Override
+	public boolean isRepeating() {
+		return _calEvent.isRepeating();
+	}
+
+	/**
+	* Sets whether this cal event is repeating.
+	*
+	* @param repeating the repeating of this cal event
+	*/
+	@Override
+	public void setRepeating(boolean repeating) {
+		_calEvent.setRepeating(repeating);
+	}
+
+	/**
+	* Returns the recurrence of this cal event.
+	*
+	* @return the recurrence of this cal event
+	*/
+	@Override
+	public java.lang.String getRecurrence() {
+		return _calEvent.getRecurrence();
+	}
+
+	/**
+	* Sets the recurrence of this cal event.
+	*
+	* @param recurrence the recurrence of this cal event
+	*/
+	@Override
+	public void setRecurrence(java.lang.String recurrence) {
+		_calEvent.setRecurrence(recurrence);
+	}
+
+	/**
+	* Returns the remind by of this cal event.
+	*
+	* @return the remind by of this cal event
+	*/
+	@Override
+	public int getRemindBy() {
+		return _calEvent.getRemindBy();
+	}
+
+	/**
+	* Sets the remind by of this cal event.
+	*
+	* @param remindBy the remind by of this cal event
+	*/
+	@Override
+	public void setRemindBy(int remindBy) {
+		_calEvent.setRemindBy(remindBy);
+	}
+
+	/**
+	* Returns the first reminder of this cal event.
+	*
+	* @return the first reminder of this cal event
+	*/
+	@Override
+	public int getFirstReminder() {
+		return _calEvent.getFirstReminder();
+	}
+
+	/**
+	* Sets the first reminder of this cal event.
+	*
+	* @param firstReminder the first reminder of this cal event
+	*/
+	@Override
+	public void setFirstReminder(int firstReminder) {
+		_calEvent.setFirstReminder(firstReminder);
+	}
+
+	/**
+	* Returns the second reminder of this cal event.
+	*
+	* @return the second reminder of this cal event
+	*/
+	@Override
+	public int getSecondReminder() {
+		return _calEvent.getSecondReminder();
+	}
+
+	/**
+	* Sets the second reminder of this cal event.
+	*
+	* @param secondReminder the second reminder of this cal event
+	*/
+	@Override
+	public void setSecondReminder(int secondReminder) {
+		_calEvent.setSecondReminder(secondReminder);
+	}
+
+	@Override
+	public boolean isNew() {
+		return _calEvent.isNew();
+	}
+
+	@Override
+	public void setNew(boolean n) {
+		_calEvent.setNew(n);
+	}
+
+	@Override
+	public boolean isCachedModel() {
+		return _calEvent.isCachedModel();
+	}
+
+	@Override
+	public void setCachedModel(boolean cachedModel) {
+		_calEvent.setCachedModel(cachedModel);
+	}
+
+	@Override
+	public boolean isEscapedModel() {
+		return _calEvent.isEscapedModel();
+	}
+
+	@Override
+	public java.io.Serializable getPrimaryKeyObj() {
+		return _calEvent.getPrimaryKeyObj();
+	}
+
+	@Override
+	public void setPrimaryKeyObj(java.io.Serializable primaryKeyObj) {
+		_calEvent.setPrimaryKeyObj(primaryKeyObj);
+	}
+
+	@Override
+	public com.liferay.portlet.expando.model.ExpandoBridge getExpandoBridge() {
+		return _calEvent.getExpandoBridge();
 	}
 
 	@Override
@@ -654,190 +811,19 @@ public class CalEventWrapper implements CalEvent, ModelWrapper<CalEvent> {
 		_calEvent.setExpandoBridgeAttributes(serviceContext);
 	}
 
-	/**
-	* Sets the first reminder of this cal event.
-	*
-	* @param firstReminder the first reminder of this cal event
-	*/
 	@Override
-	public void setFirstReminder(int firstReminder) {
-		_calEvent.setFirstReminder(firstReminder);
-	}
-
-	/**
-	* Sets the group ID of this cal event.
-	*
-	* @param groupId the group ID of this cal event
-	*/
-	@Override
-	public void setGroupId(long groupId) {
-		_calEvent.setGroupId(groupId);
-	}
-
-	/**
-	* Sets the location of this cal event.
-	*
-	* @param location the location of this cal event
-	*/
-	@Override
-	public void setLocation(java.lang.String location) {
-		_calEvent.setLocation(location);
-	}
-
-	/**
-	* Sets the modified date of this cal event.
-	*
-	* @param modifiedDate the modified date of this cal event
-	*/
-	@Override
-	public void setModifiedDate(java.util.Date modifiedDate) {
-		_calEvent.setModifiedDate(modifiedDate);
+	public java.lang.Object clone() {
+		return new CalEventWrapper((CalEvent)_calEvent.clone());
 	}
 
 	@Override
-	public void setNew(boolean n) {
-		_calEvent.setNew(n);
-	}
-
-	/**
-	* Sets the primary key of this cal event.
-	*
-	* @param primaryKey the primary key of this cal event
-	*/
-	@Override
-	public void setPrimaryKey(long primaryKey) {
-		_calEvent.setPrimaryKey(primaryKey);
+	public int compareTo(com.liferay.portlet.calendar.model.CalEvent calEvent) {
+		return _calEvent.compareTo(calEvent);
 	}
 
 	@Override
-	public void setPrimaryKeyObj(java.io.Serializable primaryKeyObj) {
-		_calEvent.setPrimaryKeyObj(primaryKeyObj);
-	}
-
-	/**
-	* Sets the recurrence of this cal event.
-	*
-	* @param recurrence the recurrence of this cal event
-	*/
-	@Override
-	public void setRecurrence(java.lang.String recurrence) {
-		_calEvent.setRecurrence(recurrence);
-	}
-
-	@Override
-	public void setRecurrenceObj(
-		com.liferay.portal.kernel.cal.TZSRecurrence recurrenceObj) {
-		_calEvent.setRecurrenceObj(recurrenceObj);
-	}
-
-	/**
-	* Sets the remind by of this cal event.
-	*
-	* @param remindBy the remind by of this cal event
-	*/
-	@Override
-	public void setRemindBy(int remindBy) {
-		_calEvent.setRemindBy(remindBy);
-	}
-
-	/**
-	* Sets whether this cal event is repeating.
-	*
-	* @param repeating the repeating of this cal event
-	*/
-	@Override
-	public void setRepeating(boolean repeating) {
-		_calEvent.setRepeating(repeating);
-	}
-
-	/**
-	* Sets the second reminder of this cal event.
-	*
-	* @param secondReminder the second reminder of this cal event
-	*/
-	@Override
-	public void setSecondReminder(int secondReminder) {
-		_calEvent.setSecondReminder(secondReminder);
-	}
-
-	/**
-	* Sets the start date of this cal event.
-	*
-	* @param startDate the start date of this cal event
-	*/
-	@Override
-	public void setStartDate(java.util.Date startDate) {
-		_calEvent.setStartDate(startDate);
-	}
-
-	/**
-	* Sets whether this cal event is time zone sensitive.
-	*
-	* @param timeZoneSensitive the time zone sensitive of this cal event
-	*/
-	@Override
-	public void setTimeZoneSensitive(boolean timeZoneSensitive) {
-		_calEvent.setTimeZoneSensitive(timeZoneSensitive);
-	}
-
-	/**
-	* Sets the title of this cal event.
-	*
-	* @param title the title of this cal event
-	*/
-	@Override
-	public void setTitle(java.lang.String title) {
-		_calEvent.setTitle(title);
-	}
-
-	/**
-	* Sets the type of this cal event.
-	*
-	* @param type the type of this cal event
-	*/
-	@Override
-	public void setType(java.lang.String type) {
-		_calEvent.setType(type);
-	}
-
-	/**
-	* Sets the user ID of this cal event.
-	*
-	* @param userId the user ID of this cal event
-	*/
-	@Override
-	public void setUserId(long userId) {
-		_calEvent.setUserId(userId);
-	}
-
-	/**
-	* Sets the user name of this cal event.
-	*
-	* @param userName the user name of this cal event
-	*/
-	@Override
-	public void setUserName(java.lang.String userName) {
-		_calEvent.setUserName(userName);
-	}
-
-	/**
-	* Sets the user uuid of this cal event.
-	*
-	* @param userUuid the user uuid of this cal event
-	*/
-	@Override
-	public void setUserUuid(java.lang.String userUuid) {
-		_calEvent.setUserUuid(userUuid);
-	}
-
-	/**
-	* Sets the uuid of this cal event.
-	*
-	* @param uuid the uuid of this cal event
-	*/
-	@Override
-	public void setUuid(java.lang.String uuid) {
-		_calEvent.setUuid(uuid);
+	public int hashCode() {
+		return _calEvent.hashCode();
 	}
 
 	@Override
@@ -851,18 +837,35 @@ public class CalEventWrapper implements CalEvent, ModelWrapper<CalEvent> {
 	}
 
 	@Override
-	public java.lang.String toString() {
-		return _calEvent.toString();
-	}
-
-	@Override
 	public com.liferay.portlet.calendar.model.CalEvent toUnescapedModel() {
 		return new CalEventWrapper(_calEvent.toUnescapedModel());
 	}
 
 	@Override
+	public java.lang.String toString() {
+		return _calEvent.toString();
+	}
+
+	@Override
 	public java.lang.String toXmlString() {
 		return _calEvent.toXmlString();
+	}
+
+	@Override
+	public void persist()
+		throws com.liferay.portal.kernel.exception.SystemException {
+		_calEvent.persist();
+	}
+
+	@Override
+	public com.liferay.portal.kernel.cal.TZSRecurrence getRecurrenceObj() {
+		return _calEvent.getRecurrenceObj();
+	}
+
+	@Override
+	public void setRecurrenceObj(
+		com.liferay.portal.kernel.cal.TZSRecurrence recurrenceObj) {
+		_calEvent.setRecurrenceObj(recurrenceObj);
 	}
 
 	@Override
@@ -892,7 +895,6 @@ public class CalEventWrapper implements CalEvent, ModelWrapper<CalEvent> {
 	/**
 	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedModel}
 	 */
-	@Deprecated
 	public CalEvent getWrappedCalEvent() {
 		return _calEvent;
 	}
@@ -903,19 +905,9 @@ public class CalEventWrapper implements CalEvent, ModelWrapper<CalEvent> {
 	}
 
 	@Override
-	public boolean isEntityCacheEnabled() {
-		return _calEvent.isEntityCacheEnabled();
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return _calEvent.isFinderCacheEnabled();
-	}
-
-	@Override
 	public void resetOriginalValues() {
 		_calEvent.resetOriginalValues();
 	}
 
-	private final CalEvent _calEvent;
+	private CalEvent _calEvent;
 }

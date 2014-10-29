@@ -57,7 +57,7 @@ AUI.add(
 
 			A.each(
 				params,
-				function(item, index) {
+				function(item, index, collection) {
 					if (Lang.isValue(item)) {
 						if (instance._isReservedParam(index)) {
 							instance.reservedParams[index] = item;
@@ -157,23 +157,10 @@ AUI.add(
 				return instance;
 			},
 
-			setParameters: function(parameters) {
-				var instance = this;
-
-				A.each(
-					parameters,
-					function(item, index) {
-						instance.setParameter(index, item);
-					}
-				);
-
-				return instance;
-			},
-
 			setPlid: function(plid) {
 				var instance = this;
 
-				instance.reservedParams.p_l_id = plid;
+				instance.reservedParams.p_l_id =  plid;
 
 				return instance;
 			},
@@ -246,7 +233,7 @@ AUI.add(
 
 				A.each(
 					reservedParams,
-					function(item, index) {
+					function(item, index, collection) {
 						if (Lang.isValue(item)) {
 							resultURL.setParameter(index, item);
 						}
@@ -255,7 +242,7 @@ AUI.add(
 
 				A.each(
 					instance.params,
-					function(item, index) {
+					function(item, index, collection) {
 						if (Lang.isValue(item)) {
 							resultURL.setParameter(namespacePrefix + index, item);
 						}
@@ -269,7 +256,7 @@ AUI.add(
 				var value = resultURL.toString();
 
 				if (options.escapeXML) {
-					value = Lang.String.escapeHTML(value);
+					value = Util.escapeHTML(value);
 				}
 
 				return value;
@@ -282,7 +269,7 @@ AUI.add(
 
 				A.each(
 					instance.reservedParams,
-					function(item, index) {
+					function(item, index, collection) {
 						if (index === paramName) {
 							result = true;
 						}

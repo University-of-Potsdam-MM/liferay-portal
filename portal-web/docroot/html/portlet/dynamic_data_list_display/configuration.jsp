@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,6 +18,8 @@
 
 <%
 int cur = ParamUtil.getInteger(request, SearchContainer.DEFAULT_CUR_PARAM);
+
+String redirect = ParamUtil.getString(request, "redirect");
 
 DDLRecordSet selRecordSet = null;
 
@@ -37,7 +39,6 @@ request.setAttribute("record_set_action.jsp-selRecordSet", selRecordSet);
 %>
 
 <liferay-portlet:actionURL portletConfiguration="true" var="configurationActionURL" />
-
 <liferay-portlet:renderURL portletConfiguration="true" varImpl="configurationRenderURL" />
 
 <aui:form action="<%= configurationActionURL %>" method="post" name="fm1">
@@ -107,7 +108,20 @@ request.setAttribute("record_set_action.jsp-selRecordSet", selRecordSet);
 
 			</aui:select>
 
-			<aui:input helpMessage="check-to-allow-users-to-add-records-to-the-list" name="editable" onChange='<%= "document." + renderResponse.getNamespace() + "fm." + renderResponse.getNamespace() + "editable.value = this.checked;" %>' type="checkbox" value="<%= editable %>" />
+			<%
+			String editableHelpMessage = null;
+
+			Group scopeGroup = themeDisplay.getScopeGroup();
+
+			if (scopeGroup.isInStagingPortlet(portletDisplay.getId())) {
+				editableHelpMessage = "check-to-allow-users-to-add-records-to-the-list-once-this-application-is-published-to-live";
+			}
+			else {
+				editableHelpMessage = "check-to-allow-users-to-add-records-to-the-list";
+			}
+			%>
+
+			<aui:input helpMessage="<%= editableHelpMessage %>" name="editable" onChange='<%= "document." + renderResponse.getNamespace() + "fm." + renderResponse.getNamespace() + "editable.value = this.checked;" %>' type="checkbox" value="<%= editable %>" />
 
 			<aui:input helpMessage="check-to-view-the-list-records-in-a-spreadsheet" label="spreadsheet-view" name="spreadsheet" onChange='<%= "document." + renderResponse.getNamespace() + "fm." + renderResponse.getNamespace() + "spreadsheet.value = this.checked;" %>' type="checkbox" value="<%= spreadsheet %>" />
 		</aui:fieldset>
@@ -145,7 +159,7 @@ request.setAttribute("record_set_action.jsp-selRecordSet", selRecordSet);
 				sb.append("selectRecordSet('");
 				sb.append(recordSet.getRecordSetId());
 				sb.append("','");
-				sb.append(HtmlUtil.escapeJS(recordSet.getName(locale)));
+				sb.append(recordSet.getName(locale));
 				sb.append("');");
 
 				String rowURL = sb.toString();
@@ -155,7 +169,6 @@ request.setAttribute("record_set_action.jsp-selRecordSet", selRecordSet);
 
 				<liferay-ui:search-container-column-jsp
 					align="right"
-					cssClass="entry-action"
 					path="/html/portlet/dynamic_data_lists/record_set_action.jsp"
 				/>
 			</liferay-ui:search-container-row>
@@ -179,7 +192,9 @@ request.setAttribute("record_set_action.jsp-selRecordSet", selRecordSet);
 	<aui:input name="preferences--spreadsheet--" type="hidden" value="<%= spreadsheet %>" />
 
 	<aui:fieldset>
-		<aui:input name="portletId" type="resource" value="<%= portletResource %>" />
+		<aui:field-wrapper label="portlet-id">
+			<liferay-ui:input-resource url="<%= portletResource %>" />
+		</aui:field-wrapper>
 	</aui:fieldset>
 
 	<aui:button-row>
@@ -195,8 +210,8 @@ request.setAttribute("record_set_action.jsp-selRecordSet", selRecordSet);
 			var A = AUI();
 
 			document.<portlet:namespace />fm.<portlet:namespace />recordSetId.value = recordSetId;
-			document.<portlet:namespace />fm.<portlet:namespace />displayDDMTemplateId.value = '';
-			document.<portlet:namespace />fm.<portlet:namespace />formDDMTemplateId.value = '';
+			document.<portlet:namespace />fm.<portlet:namespace />displayDDMTemplateId.value = "";
+			document.<portlet:namespace />fm.<portlet:namespace />formDDMTemplateId.value = "";
 
 			A.one('.displaying-record-set-id-holder').show();
 			A.one('.displaying-help-message-holder').hide();

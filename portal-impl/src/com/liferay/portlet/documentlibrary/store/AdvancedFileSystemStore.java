@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -22,7 +22,6 @@ import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.util.PropsValues;
 import com.liferay.portlet.documentlibrary.util.DLUtil;
 
 import java.io.File;
@@ -32,7 +31,7 @@ import java.util.List;
 
 /**
  * <p>
- * See https://issues.liferay.com/browse/LPS-1976.
+ * See http://issues.liferay.com/browse/LPS-1976.
  * </p>
  *
  * @author Jorge Ferrer
@@ -63,7 +62,7 @@ public class AdvancedFileSystemStore extends FileSystemStore {
 	public void updateFile(
 			long companyId, long repositoryId, String fileName,
 			String newFileName)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		super.updateFile(companyId, repositoryId, fileName, newFileName);
 
@@ -280,11 +279,6 @@ public class AdvancedFileSystemStore extends FileSystemStore {
 		}
 
 		return headVersionLabel;
-	}
-
-	@Override
-	protected String getRootDirName() {
-		return PropsValues.DL_STORE_ADVANCED_FILE_SYSTEM_ROOT_DIR;
 	}
 
 	private static final String _HOOK_EXTENSION = "afsh";

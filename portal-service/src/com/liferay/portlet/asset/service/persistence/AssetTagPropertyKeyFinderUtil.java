@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -24,16 +24,18 @@ import com.liferay.portal.kernel.util.ReferenceRegistry;
  */
 @ProviderType
 public class AssetTagPropertyKeyFinderUtil {
-	public static int countByGroupId(long groupId) {
+	public static int countByGroupId(long groupId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getFinder().countByGroupId(groupId);
 	}
 
-	public static java.lang.String[] findByGroupId(long groupId) {
+	public static java.lang.String[] findByGroupId(long groupId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getFinder().findByGroupId(groupId);
 	}
 
 	public static java.lang.String[] findByGroupId(long groupId, int start,
-		int end) {
+		int end) throws com.liferay.portal.kernel.exception.SystemException {
 		return getFinder().findByGroupId(groupId, start, end);
 	}
 

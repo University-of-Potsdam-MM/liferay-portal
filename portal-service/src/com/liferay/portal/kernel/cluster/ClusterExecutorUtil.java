@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,6 +14,7 @@
 
 package com.liferay.portal.kernel.cluster;
 
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.pacl.permission.PortalRuntimePermission;
@@ -50,8 +51,8 @@ public class ClusterExecutorUtil {
 		clusterExecutor.destroy();
 	}
 
-	public static FutureClusterResponses execute(
-		ClusterRequest clusterRequest) {
+	public static FutureClusterResponses execute(ClusterRequest clusterRequest)
+		throws SystemException {
 
 		ClusterExecutor clusterExecutor = getClusterExecutor();
 
@@ -63,8 +64,9 @@ public class ClusterExecutorUtil {
 	}
 
 	public static void execute(
-		ClusterRequest clusterRequest,
-		ClusterResponseCallback clusterResponseCallback) {
+			ClusterRequest clusterRequest,
+			ClusterResponseCallback clusterResponseCallback)
+		throws SystemException {
 
 		ClusterExecutor clusterExecutor = getClusterExecutor();
 
@@ -76,9 +78,10 @@ public class ClusterExecutorUtil {
 	}
 
 	public static void execute(
-		ClusterRequest clusterRequest,
-		ClusterResponseCallback clusterResponseCallback, long timeout,
-		TimeUnit timeUnit) {
+			ClusterRequest clusterRequest,
+			ClusterResponseCallback clusterResponseCallback, long timeout,
+			TimeUnit timeUnit)
+		throws SystemException {
 
 		ClusterExecutor clusterExecutor = getClusterExecutor();
 
@@ -124,7 +127,7 @@ public class ClusterExecutorUtil {
 		return clusterExecutor.getClusterNodes();
 	}
 
-	public static ClusterNode getLocalClusterNode() {
+	public static ClusterNode getLocalClusterNode() throws SystemException {
 		ClusterExecutor clusterExecutor = getClusterExecutor();
 
 		if (clusterExecutor == null) {

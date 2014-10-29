@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,7 +14,6 @@
 
 package com.liferay.util.axis;
 
-import com.liferay.portal.kernel.exception.LoggedExceptionInInitializerError;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.servlet.BaseFilter;
@@ -52,7 +51,7 @@ public class AxisCleanUpFilter extends BaseFilter {
 		finally {
 			try {
 				ThreadLocal<?> cacheThreadLocal =
-					(ThreadLocal<?>)_CACHE_FIELD.get(null);
+					(ThreadLocal<?>)_cacheField.get(null);
 
 				if (cacheThreadLocal != null) {
 					cacheThreadLocal.remove();
@@ -64,17 +63,17 @@ public class AxisCleanUpFilter extends BaseFilter {
 		}
 	}
 
-	private static final Field _CACHE_FIELD;
-
 	private static Log _log = LogFactoryUtil.getLog(AxisCleanUpFilter.class);
+
+	private static Field _cacheField;
 
 	static {
 		try {
-			_CACHE_FIELD = ReflectionUtil.getDeclaredField(
+			_cacheField = ReflectionUtil.getDeclaredField(
 				MethodCache.class, "cache");
 		}
 		catch (Exception e) {
-			throw new LoggedExceptionInInitializerError(e);
+			_log.error(e, e);
 		}
 	}
 

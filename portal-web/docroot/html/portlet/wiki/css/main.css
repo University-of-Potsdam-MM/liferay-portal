@@ -1,35 +1,24 @@
-@import "compass";
-@import "mixins";
-
 .portlet-wiki {
 	.wiki-body {
-		@include hyphens;
-
-		overflow: auto;
-
-		@include respond-to(phone, tablet) {
-			@include experimental(overflow-scrolling, touch);
-		}
-
 		ol ol {
 			list-style: decimal outside;
 		}
 
 		pre {
-			background : #FFF;
-			border: 1px dashed #2F6FAB;
+			background : #fff;
+			border: 1px dashed #2f6fab;
 			margin: 5px 0;
 			padding: 0.5em;
 		}
 	}
 
 	a.createpage {
-		color: #F00;
+		color: #f00;
 	}
 
 	.toc {
-		background-color: #F9F9F9;
-		border: 1px solid #AAA;
+		border: 1px solid #aaa;
+		background-color: #f9f9f9;
 		padding: 0 1em;
 
 		h4 {
@@ -61,7 +50,7 @@
 	}
 
 	.page-categories {
-		color: #7D7D7D;
+		color: #7d7d7d;
 	}
 
 	.taglib-discussion {
@@ -69,31 +58,31 @@
 	}
 
 	.page-tags {
-		color: #7D7D7D;
+		color: #7d7d7d;
 	}
 
-	.portlet-body {
-		h1.page-title .return-to-page {
-			background: url(@theme_image_path@/wiki/return_to_page.png) no-repeat 0 50%;
-			padding-left: 20px;
-			text-decoration: none;
-		}
+	.portlet-body h2 a.hashlink,
+	.portlet-body h3 a.hashlink,
+	.portlet-body h4 a.hashlink {
+		color: #DDE0E1;
+		font-size: 12px;
+		text-decoration: none;
+	}
 
-		h2, h3, h4 {
-			a.hashlink {
-				color: #DDE0E1;
-				font-size: 12px;
-				text-decoration: none;
-			}
+	.portlet-body h2:hover a.hashlink,
+	.portlet-body h3:hover a.hashlink,
+	.portlet-body h4:hover a.hashlink {
+		color: #777;
+	}
 
-			&:hover a.hashlink {
-				color: #777;
-			}
-		}
+	.portlet-body h1.page-title .return-to-page {
+		background: url(@theme_image_path@/wiki/return_to_page.png) no-repeat 0 50%;
+		padding-left: 20px;
+		text-decoration: none;
 	}
 
 	.preview {
-		background: #FFC;
+		background: #ffc;
 		border: 1px dotted gray;
 		padding: 3px;
 	}
@@ -108,61 +97,118 @@
 
 	.child-pages {
 		margin: 2em 0;
-
-		h2 {
-			background-color: #DDD;
-			border-width: 0;
-			font-weight: normal;
-			margin: 0 0 0.5em;
-			padding: 0.2em;
-		}
-
-		h3 {
-			font-size: 1.2em;
-			margin-bottom: 0.3em;
-		}
-
-		ul {
-			margin-top: 0;
-		}
-
-		li {
-			font-size: 1.1em;
-			font-weight: bold;
-		}
 	}
 
-	.content-body {
-		.wiki-code {
-			background: #FFF;
-			border: 1px solid #777;
-			font-family: monospace;
-			white-space: pre;
-		}
+	.child-pages h2 {
+		background-color: #DDD;
+		border-width: 0;
+		font-weight: normal;
+		margin: 0 0 0.5em;
+		padding: 0.2em;
+	}
 
-		.code-lines {
-			border-right: 1px solid #CCC;
-			color: #000;
-			margin-right: 5px;
-			padding: 0 5px;
-		}
+	.child-pages h3 {
+		font-size: 1.2em;
+		margin-bottom: 0.3em;
+	}
 
-		a.external-link {
-			background: transparent url(@theme_image_path@/wiki/external.png) right top no-repeat;
-			padding-right: 10px;
-			text-decoration: none;
+	.child-pages ul {
+		margin-top: 0;
+	}
 
-			&:hover {
-				background: transparent url(@theme_image_path@/wiki/external.png) right top no-repeat;
-				padding-right: 11px;
-				text-decoration: underline;
-			}
-		}
+	.child-pages li {
+		font-weight: bold;
+		font-size: 1.1em;
+	}
+
+	.content-body .wiki-code {
+		background: #fff;
+		border: 1px solid #777;
+		font-family: monospace;
+		white-space: pre;
+	}
+
+	.content-body .code-lines {
+		border-right: 1px solid #ccc;
+		color: #000;
+		margin-right: 5px;
+		padding: 0 5px;
+	}
+
+	.content-body a.external-link {
+		background: transparent url(@theme_image_path@/wiki/external.png) right top no-repeat;
+		text-decoration: none;
+		padding-right: 10px;
+	}
+
+	.content-body a.external-link:hover {
+		background: transparent url(@theme_image_path@/wiki/external.png) right top no-repeat;
+		text-decoration: underline;
+		padding-right: 11px;
+	}
+
+	.history-navigation .central-info a.change-mode {
+		font-weight: bold;
+	}
+
+	.history-navigation .central-info span.change-mode {
+		color: #999;
+		font-weight: bold;
+	}
+
+	.history-navigation .central-info {
+		float: left;
+		padding-left: 10px;
+		padding-right: 10px;
+		text-align: center;
+		width: 66%;
+	}
+
+	.history-navigation .central-title {
+		font-weight: bold;
+		padding-right: 20px;
+	}
+
+	.history-navigation .central-username {
+		font-weight: bold;
+	}
+
+	.history-navigation .next {
+		background-image: url(@theme_image_path@/arrows/paging_next.png);
+		background-position: 100% 0;
+		float: right;
+		padding-right: 15px;
+	}
+
+	.history-navigation .previous {
+		background-image: url(@theme_image_path@/arrows/paging_previous.png);
+		float: left;
+		padding-left: 15px;
+	}
+
+	.history-navigation a, .history-navigation span {
+		background: url() no-repeat;
+	}
+
+	.history-navigation span.next {
+		background-position: 100% 100%;
+	}
+
+	.history-navigation span.previous {
+		background-position: 0 100%;
+	}
+
+	.history-navigation {
+		background: #eee;
+		border-top: 1px solid #ccc;
+		margin: 15px 0 20px;
+		overflow: hidden;
+		padding: 5px;
 	}
 
 	.node-current {
-		font-weight: bold;
 		text-decoration: none;
+		font-weight: bold;
 	}
 
 	.page-actions {
@@ -170,32 +216,32 @@
 
 		&:after {
 			clear: both;
-			content: '';
+			content: ".";
 			display: block;
 			height: 0;
 			visibility: hidden;
 		}
+	}
 
-		.article-actions {
-			border-right: 1px solid #999;
-			float: left;
-			margin-right: 10px;
-			padding-right: 10px;
-		}
+	.page-actions .article-actions {
+		border-right: 1px solid #999;
+		float: left;
+		margin-right: 10px;
+		padding-right: 10px;
+	}
 
-		.stats {
-			color: #999;
-		}
+	.page-actions .stats {
+		color: #999;
+	}
 
-		&.top-actions {
-			margin-bottom: 15px;
-			margin-top: 0;
-			text-align: right;
+	.page-actions.top-actions {
+		margin-bottom: 15px;
+		margin-top: 0;
+		text-align: right;
+	}
 
-			img {
-				margin-left: 5px;
-			}
-		}
+	.page-actions.top-actions img {
+		margin-left: 5px;
 	}
 
 	.page-activities {
@@ -220,26 +266,24 @@
 
 	.page-info {
 		width: 100%;
+	}
 
-		tr {
-			th, td {
-				border: 1px solid #CCC;
-				border-left-width: 0;
-				border-right-width: 0;
-				padding: 0.3em 1em;
-			}
-		}
+	.page-info tr th, .page-info tr td {
+		border: 1px solid #ccc;
+		border-left: none;
+		border-right: none;
+		padding: 0.3em 1em;
+	}
+
+	.page-old-version a {
+		color: #f93;
 	}
 
 	.page-old-version {
-		color: #F93;
+		color: #f93;
 		line-height: 1.2em;
 		margin: -1em 0 1.4em 0;
 		width: auto;
-
-		a {
-			color: #F93;
-		}
 	}
 
 	.page-ratings {
@@ -247,7 +291,7 @@
 	}
 
 	.page-redirect {
-		color: #7D7D7D;
+		color: #7d7d7d;
 		cursor: pointer;
 		line-height: 1.2em;
 		margin: -1em 0 1.4em 0;
@@ -267,17 +311,13 @@
 		padding-left: 10px;
 	}
 
-	.syntax-help {
-		h4 {
-			margin-bottom: 0.5em;
-		}
+	.syntax-help h4 {
+		margin-bottom: 0.5em;
+	}
 
-		pre {
-			margin-bottom: 1em;
-			margin-left: 1em;
-
-			@include word-break(normal);
-		}
+	.syntax-help pre {
+		margin-left: 1em;
+		margin-bottom: 1em;
 	}
 
 	.top-links {
@@ -285,14 +325,14 @@
 	}
 
 	.top-links-nodes {
-		border: 1px solid #DDD;
+		border: 1px solid #ddd;
 		float: left;
 		list-style-type: none;
 		margin: 0 0.5em 0.5em;
 		padding: 0.2em 0.5em;
 
 		.top-link-node {
-			border-right: 1px solid #AAA;
+			border-right: 1px solid #aaa;
 			display: inline-block;
 			list-style-type: none;
 			margin: 0.3em;
@@ -319,7 +359,7 @@
 	}
 
 	.subscription-info tr td {
-		border-width: 0;
+		border: none;
 		padding: 0.1em 10px 0.1em 0;
 	}
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portlet.mobiledevicerules.service.impl;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.model.SystemEventConstants;
@@ -39,7 +40,7 @@ public class MDRRuleLocalServiceImpl extends MDRRuleLocalServiceBaseImpl {
 			long ruleGroupId, Map<Locale, String> nameMap,
 			Map<Locale, String> descriptionMap, String type,
 			String typeSettings, ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		User user = userPersistence.findByPrimaryKey(
 			serviceContext.getUserId());
@@ -79,7 +80,7 @@ public class MDRRuleLocalServiceImpl extends MDRRuleLocalServiceBaseImpl {
 			Map<Locale, String> descriptionMap, String type,
 			UnicodeProperties typeSettingsProperties,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return addRule(
 			ruleGroupId, nameMap, descriptionMap, type,
@@ -89,7 +90,7 @@ public class MDRRuleLocalServiceImpl extends MDRRuleLocalServiceBaseImpl {
 	@Override
 	public MDRRule copyRule(
 			long ruleId, long ruleGroupId, ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		MDRRule rule = mdrRulePersistence.findByPrimaryKey(ruleId);
 
@@ -99,7 +100,7 @@ public class MDRRuleLocalServiceImpl extends MDRRuleLocalServiceBaseImpl {
 	@Override
 	public MDRRule copyRule(
 			MDRRule rule, long ruleGroupId, ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		MDRRuleGroup ruleGroup = mdrRuleGroupPersistence.findByPrimaryKey(
 			ruleGroupId);
@@ -113,7 +114,7 @@ public class MDRRuleLocalServiceImpl extends MDRRuleLocalServiceBaseImpl {
 	}
 
 	@Override
-	public void deleteRule(long ruleId) {
+	public void deleteRule(long ruleId) throws SystemException {
 		MDRRule rule = mdrRulePersistence.fetchByPrimaryKey(ruleId);
 
 		if (rule != null) {
@@ -123,7 +124,7 @@ public class MDRRuleLocalServiceImpl extends MDRRuleLocalServiceBaseImpl {
 
 	@Override
 	@SystemEvent(type = SystemEventConstants.TYPE_DELETE)
-	public void deleteRule(MDRRule rule) {
+	public void deleteRule(MDRRule rule) throws SystemException {
 		mdrRulePersistence.remove(rule);
 
 		MDRRuleGroup ruleGroup = mdrRuleGroupPersistence.fetchByPrimaryKey(
@@ -137,7 +138,7 @@ public class MDRRuleLocalServiceImpl extends MDRRuleLocalServiceBaseImpl {
 	}
 
 	@Override
-	public void deleteRules(long ruleGroupId) {
+	public void deleteRules(long ruleGroupId) throws SystemException {
 		List<MDRRule> rules = mdrRulePersistence.findByRuleGroupId(ruleGroupId);
 
 		for (MDRRule rule : rules) {
@@ -146,27 +147,31 @@ public class MDRRuleLocalServiceImpl extends MDRRuleLocalServiceBaseImpl {
 	}
 
 	@Override
-	public MDRRule fetchRule(long ruleId) {
+	public MDRRule fetchRule(long ruleId) throws SystemException {
 		return mdrRulePersistence.fetchByPrimaryKey(ruleId);
 	}
 
 	@Override
-	public MDRRule getRule(long ruleId) throws PortalException {
+	public MDRRule getRule(long ruleId)
+		throws PortalException, SystemException {
+
 		return mdrRulePersistence.findByPrimaryKey(ruleId);
 	}
 
 	@Override
-	public List<MDRRule> getRules(long ruleGroupId) {
+	public List<MDRRule> getRules(long ruleGroupId) throws SystemException {
 		return mdrRulePersistence.findByRuleGroupId(ruleGroupId);
 	}
 
 	@Override
-	public List<MDRRule> getRules(long ruleGroupId, int start, int end) {
+	public List<MDRRule> getRules(long ruleGroupId, int start, int end)
+		throws SystemException {
+
 		return mdrRulePersistence.findByRuleGroupId(ruleGroupId, start, end);
 	}
 
 	@Override
-	public int getRulesCount(long ruleGroupId) {
+	public int getRulesCount(long ruleGroupId) throws SystemException {
 		return mdrRulePersistence.countByRuleGroupId(ruleGroupId);
 	}
 
@@ -175,7 +180,7 @@ public class MDRRuleLocalServiceImpl extends MDRRuleLocalServiceBaseImpl {
 			long ruleId, Map<Locale, String> nameMap,
 			Map<Locale, String> descriptionMap, String type,
 			String typeSettings, ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		MDRRule rule = mdrRulePersistence.findByPrimaryKey(ruleId);
 
@@ -203,7 +208,7 @@ public class MDRRuleLocalServiceImpl extends MDRRuleLocalServiceBaseImpl {
 			Map<Locale, String> descriptionMap, String type,
 			UnicodeProperties typeSettingsProperties,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return updateRule(
 			ruleId, nameMap, descriptionMap, type,

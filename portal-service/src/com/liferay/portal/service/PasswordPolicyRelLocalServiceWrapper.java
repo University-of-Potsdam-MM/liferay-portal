@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -32,30 +32,18 @@ public class PasswordPolicyRelLocalServiceWrapper
 		_passwordPolicyRelLocalService = passwordPolicyRelLocalService;
 	}
 
-	@Override
-	public com.liferay.portal.model.PasswordPolicyRel addPasswordPolicyRel(
-		long passwordPolicyId, java.lang.String className, long classPK) {
-		return _passwordPolicyRelLocalService.addPasswordPolicyRel(passwordPolicyId,
-			className, classPK);
-	}
-
 	/**
 	* Adds the password policy rel to the database. Also notifies the appropriate model listeners.
 	*
 	* @param passwordPolicyRel the password policy rel
 	* @return the password policy rel that was added
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
 	public com.liferay.portal.model.PasswordPolicyRel addPasswordPolicyRel(
-		com.liferay.portal.model.PasswordPolicyRel passwordPolicyRel) {
+		com.liferay.portal.model.PasswordPolicyRel passwordPolicyRel)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return _passwordPolicyRelLocalService.addPasswordPolicyRel(passwordPolicyRel);
-	}
-
-	@Override
-	public void addPasswordPolicyRels(long passwordPolicyId,
-		java.lang.String className, long[] classPKs) {
-		_passwordPolicyRelLocalService.addPasswordPolicyRels(passwordPolicyId,
-			className, classPKs);
 	}
 
 	/**
@@ -70,17 +58,20 @@ public class PasswordPolicyRelLocalServiceWrapper
 		return _passwordPolicyRelLocalService.createPasswordPolicyRel(passwordPolicyRelId);
 	}
 
+	/**
+	* Deletes the password policy rel with the primary key from the database. Also notifies the appropriate model listeners.
+	*
+	* @param passwordPolicyRelId the primary key of the password policy rel
+	* @return the password policy rel that was removed
+	* @throws PortalException if a password policy rel with the primary key could not be found
+	* @throws SystemException if a system exception occurred
+	*/
 	@Override
-	public void deletePasswordPolicyRel(java.lang.String className, long classPK) {
-		_passwordPolicyRelLocalService.deletePasswordPolicyRel(className,
-			classPK);
-	}
-
-	@Override
-	public void deletePasswordPolicyRel(long passwordPolicyId,
-		java.lang.String className, long classPK) {
-		_passwordPolicyRelLocalService.deletePasswordPolicyRel(passwordPolicyId,
-			className, classPK);
+	public com.liferay.portal.model.PasswordPolicyRel deletePasswordPolicyRel(
+		long passwordPolicyRelId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _passwordPolicyRelLocalService.deletePasswordPolicyRel(passwordPolicyRelId);
 	}
 
 	/**
@@ -88,47 +79,13 @@ public class PasswordPolicyRelLocalServiceWrapper
 	*
 	* @param passwordPolicyRel the password policy rel
 	* @return the password policy rel that was removed
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
 	public com.liferay.portal.model.PasswordPolicyRel deletePasswordPolicyRel(
-		com.liferay.portal.model.PasswordPolicyRel passwordPolicyRel) {
+		com.liferay.portal.model.PasswordPolicyRel passwordPolicyRel)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return _passwordPolicyRelLocalService.deletePasswordPolicyRel(passwordPolicyRel);
-	}
-
-	/**
-	* Deletes the password policy rel with the primary key from the database. Also notifies the appropriate model listeners.
-	*
-	* @param passwordPolicyRelId the primary key of the password policy rel
-	* @return the password policy rel that was removed
-	* @throws PortalException if a password policy rel with the primary key could not be found
-	*/
-	@Override
-	public com.liferay.portal.model.PasswordPolicyRel deletePasswordPolicyRel(
-		long passwordPolicyRelId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _passwordPolicyRelLocalService.deletePasswordPolicyRel(passwordPolicyRelId);
-	}
-
-	@Override
-	public void deletePasswordPolicyRels(long passwordPolicyId) {
-		_passwordPolicyRelLocalService.deletePasswordPolicyRels(passwordPolicyId);
-	}
-
-	@Override
-	public void deletePasswordPolicyRels(long passwordPolicyId,
-		java.lang.String className, long[] classPKs) {
-		_passwordPolicyRelLocalService.deletePasswordPolicyRels(passwordPolicyId,
-			className, classPKs);
-	}
-
-	/**
-	* @throws PortalException
-	*/
-	@Override
-	public com.liferay.portal.model.PersistedModel deletePersistedModel(
-		com.liferay.portal.model.PersistedModel persistedModel)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _passwordPolicyRelLocalService.deletePersistedModel(persistedModel);
 	}
 
 	@Override
@@ -141,10 +98,13 @@ public class PasswordPolicyRelLocalServiceWrapper
 	*
 	* @param dynamicQuery the dynamic query
 	* @return the matching rows
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
-	public <T> java.util.List<T> dynamicQuery(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery) {
+	@SuppressWarnings("rawtypes")
+	public java.util.List dynamicQuery(
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return _passwordPolicyRelLocalService.dynamicQuery(dynamicQuery);
 	}
 
@@ -159,11 +119,13 @@ public class PasswordPolicyRelLocalServiceWrapper
 	* @param start the lower bound of the range of model instances
 	* @param end the upper bound of the range of model instances (not inclusive)
 	* @return the range of matching rows
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
-	public <T> java.util.List<T> dynamicQuery(
+	@SuppressWarnings("rawtypes")
+	public java.util.List dynamicQuery(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
-		int end) {
+		int end) throws com.liferay.portal.kernel.exception.SystemException {
 		return _passwordPolicyRelLocalService.dynamicQuery(dynamicQuery, start,
 			end);
 	}
@@ -180,12 +142,15 @@ public class PasswordPolicyRelLocalServiceWrapper
 	* @param end the upper bound of the range of model instances (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching rows
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
-	public <T> java.util.List<T> dynamicQuery(
+	@SuppressWarnings("rawtypes")
+	public java.util.List dynamicQuery(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
 		int end,
-		com.liferay.portal.kernel.util.OrderByComparator<T> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return _passwordPolicyRelLocalService.dynamicQuery(dynamicQuery, start,
 			end, orderByComparator);
 	}
@@ -195,10 +160,12 @@ public class PasswordPolicyRelLocalServiceWrapper
 	*
 	* @param dynamicQuery the dynamic query
 	* @return the number of rows that match the dynamic query
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
 	public long dynamicQueryCount(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery) {
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return _passwordPolicyRelLocalService.dynamicQueryCount(dynamicQuery);
 	}
 
@@ -208,57 +175,22 @@ public class PasswordPolicyRelLocalServiceWrapper
 	* @param dynamicQuery the dynamic query
 	* @param projection the projection to apply to the query
 	* @return the number of rows that match the dynamic query
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
 	public long dynamicQueryCount(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery,
-		com.liferay.portal.kernel.dao.orm.Projection projection) {
+		com.liferay.portal.kernel.dao.orm.Projection projection)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return _passwordPolicyRelLocalService.dynamicQueryCount(dynamicQuery,
 			projection);
 	}
 
 	@Override
 	public com.liferay.portal.model.PasswordPolicyRel fetchPasswordPolicyRel(
-		java.lang.String className, long classPK) {
-		return _passwordPolicyRelLocalService.fetchPasswordPolicyRel(className,
-			classPK);
-	}
-
-	@Override
-	public com.liferay.portal.model.PasswordPolicyRel fetchPasswordPolicyRel(
-		long passwordPolicyRelId) {
+		long passwordPolicyRelId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return _passwordPolicyRelLocalService.fetchPasswordPolicyRel(passwordPolicyRelId);
-	}
-
-	@Override
-	public com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery getActionableDynamicQuery() {
-		return _passwordPolicyRelLocalService.getActionableDynamicQuery();
-	}
-
-	/**
-	* Returns the Spring bean ID for this bean.
-	*
-	* @return the Spring bean ID for this bean
-	*/
-	@Override
-	public java.lang.String getBeanIdentifier() {
-		return _passwordPolicyRelLocalService.getBeanIdentifier();
-	}
-
-	@Override
-	public com.liferay.portal.model.PasswordPolicyRel getPasswordPolicyRel(
-		java.lang.String className, long classPK)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _passwordPolicyRelLocalService.getPasswordPolicyRel(className,
-			classPK);
-	}
-
-	@Override
-	public com.liferay.portal.model.PasswordPolicyRel getPasswordPolicyRel(
-		long passwordPolicyId, java.lang.String className, long classPK)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _passwordPolicyRelLocalService.getPasswordPolicyRel(passwordPolicyId,
-			className, classPK);
 	}
 
 	/**
@@ -267,12 +199,22 @@ public class PasswordPolicyRelLocalServiceWrapper
 	* @param passwordPolicyRelId the primary key of the password policy rel
 	* @return the password policy rel
 	* @throws PortalException if a password policy rel with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
 	public com.liferay.portal.model.PasswordPolicyRel getPasswordPolicyRel(
 		long passwordPolicyRelId)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return _passwordPolicyRelLocalService.getPasswordPolicyRel(passwordPolicyRelId);
+	}
+
+	@Override
+	public com.liferay.portal.model.PersistedModel getPersistedModel(
+		java.io.Serializable primaryKeyObj)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _passwordPolicyRelLocalService.getPersistedModel(primaryKeyObj);
 	}
 
 	/**
@@ -285,10 +227,12 @@ public class PasswordPolicyRelLocalServiceWrapper
 	* @param start the lower bound of the range of password policy rels
 	* @param end the upper bound of the range of password policy rels (not inclusive)
 	* @return the range of password policy rels
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
 	public java.util.List<com.liferay.portal.model.PasswordPolicyRel> getPasswordPolicyRels(
-		int start, int end) {
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return _passwordPolicyRelLocalService.getPasswordPolicyRels(start, end);
 	}
 
@@ -296,24 +240,36 @@ public class PasswordPolicyRelLocalServiceWrapper
 	* Returns the number of password policy rels.
 	*
 	* @return the number of password policy rels
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
-	public int getPasswordPolicyRelsCount() {
+	public int getPasswordPolicyRelsCount()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return _passwordPolicyRelLocalService.getPasswordPolicyRelsCount();
 	}
 
+	/**
+	* Updates the password policy rel in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
+	*
+	* @param passwordPolicyRel the password policy rel
+	* @return the password policy rel that was updated
+	* @throws SystemException if a system exception occurred
+	*/
 	@Override
-	public com.liferay.portal.model.PersistedModel getPersistedModel(
-		java.io.Serializable primaryKeyObj)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _passwordPolicyRelLocalService.getPersistedModel(primaryKeyObj);
+	public com.liferay.portal.model.PasswordPolicyRel updatePasswordPolicyRel(
+		com.liferay.portal.model.PasswordPolicyRel passwordPolicyRel)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return _passwordPolicyRelLocalService.updatePasswordPolicyRel(passwordPolicyRel);
 	}
 
+	/**
+	* Returns the Spring bean ID for this bean.
+	*
+	* @return the Spring bean ID for this bean
+	*/
 	@Override
-	public boolean hasPasswordPolicyRel(long passwordPolicyId,
-		java.lang.String className, long classPK) {
-		return _passwordPolicyRelLocalService.hasPasswordPolicyRel(passwordPolicyId,
-			className, classPK);
+	public java.lang.String getBeanIdentifier() {
+		return _passwordPolicyRelLocalService.getBeanIdentifier();
 	}
 
 	/**
@@ -326,22 +282,88 @@ public class PasswordPolicyRelLocalServiceWrapper
 		_passwordPolicyRelLocalService.setBeanIdentifier(beanIdentifier);
 	}
 
-	/**
-	* Updates the password policy rel in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
-	*
-	* @param passwordPolicyRel the password policy rel
-	* @return the password policy rel that was updated
-	*/
 	@Override
-	public com.liferay.portal.model.PasswordPolicyRel updatePasswordPolicyRel(
-		com.liferay.portal.model.PasswordPolicyRel passwordPolicyRel) {
-		return _passwordPolicyRelLocalService.updatePasswordPolicyRel(passwordPolicyRel);
+	public com.liferay.portal.model.PasswordPolicyRel addPasswordPolicyRel(
+		long passwordPolicyId, java.lang.String className, long classPK)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return _passwordPolicyRelLocalService.addPasswordPolicyRel(passwordPolicyId,
+			className, classPK);
+	}
+
+	@Override
+	public void addPasswordPolicyRels(long passwordPolicyId,
+		java.lang.String className, long[] classPKs)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		_passwordPolicyRelLocalService.addPasswordPolicyRels(passwordPolicyId,
+			className, classPKs);
+	}
+
+	@Override
+	public void deletePasswordPolicyRel(long passwordPolicyId,
+		java.lang.String className, long classPK)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		_passwordPolicyRelLocalService.deletePasswordPolicyRel(passwordPolicyId,
+			className, classPK);
+	}
+
+	@Override
+	public void deletePasswordPolicyRel(java.lang.String className, long classPK)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		_passwordPolicyRelLocalService.deletePasswordPolicyRel(className,
+			classPK);
+	}
+
+	@Override
+	public void deletePasswordPolicyRels(long passwordPolicyId)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		_passwordPolicyRelLocalService.deletePasswordPolicyRels(passwordPolicyId);
+	}
+
+	@Override
+	public void deletePasswordPolicyRels(long passwordPolicyId,
+		java.lang.String className, long[] classPKs)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		_passwordPolicyRelLocalService.deletePasswordPolicyRels(passwordPolicyId,
+			className, classPKs);
+	}
+
+	@Override
+	public com.liferay.portal.model.PasswordPolicyRel fetchPasswordPolicyRel(
+		java.lang.String className, long classPK)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return _passwordPolicyRelLocalService.fetchPasswordPolicyRel(className,
+			classPK);
+	}
+
+	@Override
+	public com.liferay.portal.model.PasswordPolicyRel getPasswordPolicyRel(
+		long passwordPolicyId, java.lang.String className, long classPK)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _passwordPolicyRelLocalService.getPasswordPolicyRel(passwordPolicyId,
+			className, classPK);
+	}
+
+	@Override
+	public com.liferay.portal.model.PasswordPolicyRel getPasswordPolicyRel(
+		java.lang.String className, long classPK)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _passwordPolicyRelLocalService.getPasswordPolicyRel(className,
+			classPK);
+	}
+
+	@Override
+	public boolean hasPasswordPolicyRel(long passwordPolicyId,
+		java.lang.String className, long classPK)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return _passwordPolicyRelLocalService.hasPasswordPolicyRel(passwordPolicyId,
+			className, classPK);
 	}
 
 	/**
 	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedService}
 	 */
-	@Deprecated
 	public PasswordPolicyRelLocalService getWrappedPasswordPolicyRelLocalService() {
 		return _passwordPolicyRelLocalService;
 	}
@@ -349,7 +371,6 @@ public class PasswordPolicyRelLocalServiceWrapper
 	/**
 	 * @deprecated As of 6.1.0, replaced by {@link #setWrappedService}
 	 */
-	@Deprecated
 	public void setWrappedPasswordPolicyRelLocalService(
 		PasswordPolicyRelLocalService passwordPolicyRelLocalService) {
 		_passwordPolicyRelLocalService = passwordPolicyRelLocalService;

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -20,7 +20,6 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.mobile.device.Device;
 import com.liferay.portal.kernel.mobile.device.UnknownDevice;
-import com.liferay.portal.kernel.portlet.PortletRequestModel;
 import com.liferay.portal.kernel.template.StringTemplateResource;
 import com.liferay.portal.kernel.template.Template;
 import com.liferay.portal.kernel.template.TemplateConstants;
@@ -42,7 +41,6 @@ import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.kernel.xml.Attribute;
 import com.liferay.portal.kernel.xml.Document;
 import com.liferay.portal.kernel.xml.DocumentException;
 import com.liferay.portal.kernel.xml.Element;
@@ -103,43 +101,8 @@ public class Transformer {
 
 		this(errorTemplatePropertyKey, restricted);
 
-		ClassLoader classLoader = PortalClassLoaderUtil.getClassLoader();
-
-		Set<String> transformerListenerClassNames = SetUtil.fromArray(
+		_transformerListenerClassNames = SetUtil.fromArray(
 			PropsUtil.getArray(transformerListenerPropertyKey));
-
-		for (String transformerListenerClassName :
-				transformerListenerClassNames) {
-
-			try {
-				if (_log.isDebugEnabled()) {
-					_log.debug(
-						"Instantiating transformer listener " +
-							transformerListenerClassName);
-				}
-
-				TransformerListener transformerListener =
-					(TransformerListener)InstanceFactory.newInstance(
-						classLoader, transformerListenerClassName);
-
-				_transformerListeners.add(transformerListener);
-			}
-			catch (Exception e) {
-				_log.error(e, e);
-			}
-		}
-	}
-
-	public String doTransform(
-			ThemeDisplay themeDisplay, Map<String, String> tokens,
-			String viewMode, String languageId, Document document,
-			PortletRequestModel portletRequestModel, String script,
-			String langType)
-		throws Exception {
-
-		return transform(
-			themeDisplay, tokens, viewMode, languageId, document,
-			portletRequestModel, script, langType, true);
 	}
 
 	public String transform(
@@ -187,6 +150,7 @@ public class Transformer {
 
 			String templatesPath = getTemplatesPath(companyId, scopeGroupId);
 
+			template.put("journalTemplatesPath", templatesPath);
 			template.put(
 				"permissionChecker",
 				PermissionThreadLocal.getPermissionChecker());
@@ -200,9 +164,8 @@ public class Transformer {
 			// Deprecated variables
 
 			template.put("groupId", scopeGroupId);
-			template.put("journalTemplatesPath", templatesPath);
 
-			mergeTemplate(template, unsyncStringWriter, false);
+			mergeTemplate(template, unsyncStringWriter);
 		}
 		catch (Exception e) {
 			throw new TransformException("Unhandled exception", e);
@@ -213,14 +176,223 @@ public class Transformer {
 
 	public String transform(
 			ThemeDisplay themeDisplay, Map<String, String> tokens,
-			String viewMode, String languageId, Document document,
-			PortletRequestModel portletRequestModel, String script,
+			String viewMode, String languageId, String xml, String script,
 			String langType)
 		throws Exception {
 
-		return transform(
-			themeDisplay, tokens, viewMode, languageId, document,
-			portletRequestModel, script, langType, false);
+		// Setup listeners
+
+		if (_log.isDebugEnabled()) {
+			_log.debug("Language " + languageId);
+		}
+
+		if (Validator.isNull(viewMode)) {
+			viewMode = Constants.VIEW;
+		}
+
+		if (_logTokens.isDebugEnabled()) {
+			String tokensString = PropertiesUtil.list(tokens);
+
+			_logTokens.debug(tokensString);
+		}
+
+		if (_logTransformBefore.isDebugEnabled()) {
+			_logTransformBefore.debug(xml);
+		}
+
+		List<TransformerListener> transformerListeners =
+			new ArrayList<TransformerListener>();
+
+		for (String transformerListenersClassName :
+				_transformerListenerClassNames) {
+
+			TransformerListener transformerListener = null;
+
+			try {
+				if (_log.isDebugEnabled()) {
+					_log.debug(
+						"Instantiate listener " +
+							transformerListenersClassName);
+				}
+
+				ClassLoader classLoader =
+					PortalClassLoaderUtil.getClassLoader();
+
+				transformerListener =
+					(TransformerListener)InstanceFactory.newInstance(
+						classLoader, transformerListenersClassName);
+
+				transformerListeners.add(transformerListener);
+			}
+			catch (Exception e) {
+				_log.error(e, e);
+			}
+
+			// Modify XML
+
+			if (_logXmlBeforeListener.isDebugEnabled()) {
+				_logXmlBeforeListener.debug(xml);
+			}
+
+			if (transformerListener != null) {
+				xml = transformerListener.onXml(xml, languageId, tokens);
+
+				if (_logXmlAfterListener.isDebugEnabled()) {
+					_logXmlAfterListener.debug(xml);
+				}
+			}
+
+			// Modify script
+
+			if (_logScriptBeforeListener.isDebugEnabled()) {
+				_logScriptBeforeListener.debug(script);
+			}
+
+			if (transformerListener != null) {
+				script = transformerListener.onScript(
+					script, xml, languageId, tokens);
+
+				if (_logScriptAfterListener.isDebugEnabled()) {
+					_logScriptAfterListener.debug(script);
+				}
+			}
+		}
+
+		// Transform
+
+		String output = null;
+
+		if (Validator.isNull(langType)) {
+			output = LocalizationUtil.getLocalization(xml, languageId);
+		}
+		else {
+			long companyId = 0;
+			long companyGroupId = 0;
+			long articleGroupId = 0;
+
+			if (tokens != null) {
+				companyId = GetterUtil.getLong(tokens.get("company_id"));
+				companyGroupId = GetterUtil.getLong(
+					tokens.get("company_group_id"));
+				articleGroupId = GetterUtil.getLong(
+					tokens.get("article_group_id"));
+			}
+
+			long scopeGroupId = 0;
+			long siteGroupId = 0;
+
+			if (themeDisplay != null) {
+				companyId = themeDisplay.getCompanyId();
+				companyGroupId = themeDisplay.getCompanyGroupId();
+				scopeGroupId = themeDisplay.getScopeGroupId();
+				siteGroupId = themeDisplay.getSiteGroupId();
+			}
+
+			String templateId = tokens.get("template_id");
+
+			templateId = getTemplateId(
+				templateId, companyId, companyGroupId, articleGroupId);
+
+			Template template = getTemplate(
+				templateId, tokens, languageId, xml, script, langType);
+
+			UnsyncStringWriter unsyncStringWriter = new UnsyncStringWriter();
+
+			try {
+				if (Validator.isNotNull(xml)) {
+					Document document = SAXReaderUtil.read(xml);
+
+					Element rootElement = document.getRootElement();
+
+					List<TemplateNode> templateNodes = getTemplateNodes(
+						themeDisplay, rootElement);
+
+					if (templateNodes != null) {
+						for (TemplateNode templateNode : templateNodes) {
+							template.put(templateNode.getName(), templateNode);
+						}
+					}
+
+					Element requestElement = rootElement.element("request");
+
+					template.put(
+						"request", insertRequestVariables(requestElement));
+
+					template.put("xmlRequest", requestElement.asXML());
+				}
+
+				template.put("articleGroupId", articleGroupId);
+				template.put("company", getCompany(themeDisplay, companyId));
+				template.put("companyId", companyId);
+				template.put("device", getDevice(themeDisplay));
+
+				String templatesPath = getTemplatesPath(
+					companyId, articleGroupId);
+
+				template.put("journalTemplatesPath", templatesPath);
+
+				Locale locale = LocaleUtil.fromLanguageId(languageId);
+
+				template.put("locale", locale);
+
+				template.put(
+					"permissionChecker",
+					PermissionThreadLocal.getPermissionChecker());
+				template.put(
+					"randomNamespace",
+					StringUtil.randomId() + StringPool.UNDERLINE);
+				template.put("scopeGroupId", scopeGroupId);
+				template.put("siteGroupId", siteGroupId);
+				template.put("templatesPath", templatesPath);
+				template.put("viewMode", viewMode);
+
+				// Deprecated variables
+
+				template.put("groupId", articleGroupId);
+
+				mergeTemplate(template, unsyncStringWriter);
+			}
+			catch (Exception e) {
+				if (e instanceof DocumentException) {
+					throw new TransformException(
+						"Unable to read XML document", e);
+				}
+				else if (e instanceof IOException) {
+					throw new TransformException("Error reading template", e);
+				}
+				else if (e instanceof TransformException) {
+					throw (TransformException)e;
+				}
+				else {
+					throw new TransformException("Unhandled exception", e);
+				}
+			}
+
+			output = unsyncStringWriter.toString();
+		}
+
+		// Postprocess output
+
+		for (TransformerListener transformerListener : transformerListeners) {
+
+			// Modify output
+
+			if (_logOutputBeforeListener.isDebugEnabled()) {
+				_logOutputBeforeListener.debug(output);
+			}
+
+			output = transformerListener.onOutput(output, languageId, tokens);
+
+			if (_logOutputAfterListener.isDebugEnabled()) {
+				_logOutputAfterListener.debug(output);
+			}
+		}
+
+		if (_logTransfromAfter.isDebugEnabled()) {
+			_logTransfromAfter.debug(output);
+		}
+
+		return output;
 	}
 
 	protected Company getCompany(ThemeDisplay themeDisplay, long companyId)
@@ -261,7 +433,7 @@ public class Transformer {
 
 	protected Template getTemplate(
 			String templateId, Map<String, String> tokens, String languageId,
-			Document document, String script, String langType)
+			String xml, String script, String langType)
 		throws Exception {
 
 		TemplateResource templateResource = null;
@@ -271,7 +443,7 @@ public class Transformer {
 				tokens, languageId);
 
 			templateResource = new XSLTemplateResource(
-				templateId, script, xslURIResolver, document.asXML());
+				templateId, script, xslURIResolver, xml);
 		}
 		else {
 			templateResource = new StringTemplateResource(templateId, script);
@@ -352,17 +524,8 @@ public class Transformer {
 			String type = dynamicElementElement.attributeValue(
 				"type", StringPool.BLANK);
 
-			Map<String, String> attributes = new HashMap<String, String>();
-
-			if (dynamicContentElement != null) {
-				for (Attribute attribute : dynamicContentElement.attributes()) {
-					attributes.put(attribute.getName(), attribute.getValue());
-				}
-			}
-
 			TemplateNode templateNode = new TemplateNode(
-				themeDisplay, name, StringUtil.stripCDATA(data), type,
-				attributes);
+				themeDisplay, name, stripCDATA(data), type);
 
 			if (dynamicElementElement.element("dynamic-element") != null) {
 				templateNode.appendChildren(
@@ -376,7 +539,7 @@ public class Transformer {
 
 				for (Element optionElement : optionElements) {
 					templateNode.appendOption(
-						StringUtil.stripCDATA(optionElement.getText()));
+						stripCDATA(optionElement.getText()));
 				}
 			}
 
@@ -461,8 +624,7 @@ public class Transformer {
 	}
 
 	protected void mergeTemplate(
-			Template template, UnsyncStringWriter unsyncStringWriter,
-			boolean propagateException)
+			Template template, UnsyncStringWriter unsyncStringWriter)
 		throws Exception {
 
 		VelocityTaglib velocityTaglib = (VelocityTaglib)template.get(
@@ -472,12 +634,7 @@ public class Transformer {
 			velocityTaglib.setTemplate(template);
 		}
 
-		if (propagateException) {
-			template.doProcessTemplate(unsyncStringWriter);
-		}
-		else {
-			template.processTemplate(unsyncStringWriter);
-		}
+		template.processTemplate(unsyncStringWriter);
 	}
 
 	protected void prepareTemplate(ThemeDisplay themeDisplay, Template template)
@@ -490,216 +647,16 @@ public class Transformer {
 		template.prepare(themeDisplay.getRequest());
 	}
 
-	protected String transform(
-			ThemeDisplay themeDisplay, Map<String, String> tokens,
-			String viewMode, String languageId, Document document,
-			PortletRequestModel portletRequestModel, String script,
-			String langType, boolean propagateException)
-		throws Exception {
+	protected String stripCDATA(String s) {
+		if (s.startsWith(StringPool.CDATA_OPEN) &&
+			s.endsWith(StringPool.CDATA_CLOSE)) {
 
-		// Setup listeners
-
-		if (_log.isDebugEnabled()) {
-			_log.debug("Language " + languageId);
+			s = s.substring(
+				StringPool.CDATA_OPEN.length(),
+				s.length() - StringPool.CDATA_CLOSE.length());
 		}
 
-		if (Validator.isNull(viewMode)) {
-			viewMode = Constants.VIEW;
-		}
-
-		if (_logTokens.isDebugEnabled()) {
-			String tokensString = PropertiesUtil.list(tokens);
-
-			_logTokens.debug(tokensString);
-		}
-
-		if (_logTransformBefore.isDebugEnabled()) {
-			_logTransformBefore.debug(document);
-		}
-
-		for (TransformerListener transformerListener : _transformerListeners) {
-
-			// Modify XML
-
-			if (_logXmlBeforeListener.isDebugEnabled()) {
-				_logXmlBeforeListener.debug(document);
-			}
-
-			if (transformerListener != null) {
-				document = transformerListener.onXml(
-					document, languageId, tokens);
-
-				if (_logXmlAfterListener.isDebugEnabled()) {
-					_logXmlAfterListener.debug(document);
-				}
-			}
-
-			// Modify script
-
-			if (_logScriptBeforeListener.isDebugEnabled()) {
-				_logScriptBeforeListener.debug(script);
-			}
-
-			if (transformerListener != null) {
-				script = transformerListener.onScript(
-					script, document, languageId, tokens);
-
-				if (_logScriptAfterListener.isDebugEnabled()) {
-					_logScriptAfterListener.debug(script);
-				}
-			}
-		}
-
-		// Transform
-
-		String output = null;
-
-		if (Validator.isNull(langType)) {
-			output = LocalizationUtil.getLocalization(
-				document.asXML(), languageId);
-		}
-		else {
-			long companyId = 0;
-			long companyGroupId = 0;
-			long articleGroupId = 0;
-
-			if (tokens != null) {
-				companyId = GetterUtil.getLong(tokens.get("company_id"));
-				companyGroupId = GetterUtil.getLong(
-					tokens.get("company_group_id"));
-				articleGroupId = GetterUtil.getLong(
-					tokens.get("article_group_id"));
-			}
-
-			long scopeGroupId = 0;
-			long siteGroupId = 0;
-
-			if (themeDisplay != null) {
-				companyId = themeDisplay.getCompanyId();
-				companyGroupId = themeDisplay.getCompanyGroupId();
-				scopeGroupId = themeDisplay.getScopeGroupId();
-				siteGroupId = themeDisplay.getSiteGroupId();
-			}
-
-			String templateId = tokens.get("template_id");
-
-			templateId = getTemplateId(
-				templateId, companyId, companyGroupId, articleGroupId);
-
-			Template template = getTemplate(
-				templateId, tokens, languageId, document, script, langType);
-
-			UnsyncStringWriter unsyncStringWriter = new UnsyncStringWriter();
-
-			try {
-				if (document != null) {
-					Element rootElement = document.getRootElement();
-
-					List<TemplateNode> templateNodes = getTemplateNodes(
-						themeDisplay, rootElement);
-
-					if (templateNodes != null) {
-						for (TemplateNode templateNode : templateNodes) {
-							template.put(templateNode.getName(), templateNode);
-						}
-					}
-
-					if (portletRequestModel != null) {
-						template.put("request", portletRequestModel.toMap());
-
-						if (langType.equals(TemplateConstants.LANG_TYPE_XSL)) {
-							Document requestDocument = SAXReaderUtil.read(
-								portletRequestModel.toXML());
-
-							Element requestElement =
-								requestDocument.getRootElement();
-
-							template.put("xmlRequest", requestElement.asXML());
-						}
-					}
-					else {
-						Element requestElement = rootElement.element("request");
-
-						template.put(
-							"request", insertRequestVariables(requestElement));
-
-						if (langType.equals(TemplateConstants.LANG_TYPE_XSL)) {
-							template.put("xmlRequest", requestElement.asXML());
-						}
-					}
-				}
-
-				template.put("articleGroupId", articleGroupId);
-				template.put("company", getCompany(themeDisplay, companyId));
-				template.put("companyId", companyId);
-				template.put("device", getDevice(themeDisplay));
-
-				String templatesPath = getTemplatesPath(
-					companyId, articleGroupId);
-
-				Locale locale = LocaleUtil.fromLanguageId(languageId);
-
-				template.put("locale", locale);
-
-				template.put(
-					"permissionChecker",
-					PermissionThreadLocal.getPermissionChecker());
-				template.put(
-					"randomNamespace",
-					StringUtil.randomId() + StringPool.UNDERLINE);
-				template.put("scopeGroupId", scopeGroupId);
-				template.put("siteGroupId", siteGroupId);
-				template.put("templatesPath", templatesPath);
-				template.put("viewMode", viewMode);
-
-				// Deprecated variables
-
-				template.put("groupId", articleGroupId);
-				template.put("journalTemplatesPath", templatesPath);
-
-				mergeTemplate(template, unsyncStringWriter, propagateException);
-			}
-			catch (Exception e) {
-				if (e instanceof DocumentException) {
-					throw new TransformException(
-						"Unable to read XML document", e);
-				}
-				else if (e instanceof IOException) {
-					throw new TransformException("Error reading template", e);
-				}
-				else if (e instanceof TransformException) {
-					throw (TransformException)e;
-				}
-				else {
-					throw new TransformException("Unhandled exception", e);
-				}
-			}
-
-			output = unsyncStringWriter.toString();
-		}
-
-		// Postprocess output
-
-		for (TransformerListener transformerListener : _transformerListeners) {
-
-			// Modify output
-
-			if (_logOutputBeforeListener.isDebugEnabled()) {
-				_logOutputBeforeListener.debug(output);
-			}
-
-			output = transformerListener.onOutput(output, languageId, tokens);
-
-			if (_logOutputAfterListener.isDebugEnabled()) {
-				_logOutputAfterListener.debug(output);
-			}
-		}
-
-		if (_logTransfromAfter.isDebugEnabled()) {
-			_logTransfromAfter.debug(output);
-		}
-
-		return output;
+		return s;
 	}
 
 	private static Log _log = LogFactoryUtil.getLog(Transformer.class);
@@ -726,7 +683,6 @@ public class Transformer {
 	private Map<String, String> _errorTemplateIds =
 		new HashMap<String, String>();
 	private boolean _restricted;
-	private Set<TransformerListener> _transformerListeners =
-		new HashSet<TransformerListener>();
+	private Set<String> _transformerListenerClassNames = new HashSet<String>();
 
 }

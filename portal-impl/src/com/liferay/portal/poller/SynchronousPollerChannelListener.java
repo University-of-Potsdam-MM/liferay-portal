@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -21,6 +21,7 @@ import com.liferay.portal.kernel.notifications.ChannelException;
 import com.liferay.portal.kernel.notifications.ChannelHubManagerUtil;
 import com.liferay.portal.kernel.notifications.ChannelListener;
 import com.liferay.portal.kernel.notifications.NotificationEvent;
+import com.liferay.portal.util.PropsValues;
 
 import java.util.List;
 
@@ -29,6 +30,15 @@ import java.util.List;
  */
 public class SynchronousPollerChannelListener implements ChannelListener {
 
+	public SynchronousPollerChannelListener(
+		long companyId, long userId,
+		JSONObject pollerResponseHeaderJSONObject) {
+
+		_companyId = companyId;
+		_userId = userId;
+		_pollerResponseHeaderJSONObject = pollerResponseHeaderJSONObject;
+	}
+
 	@Override
 	public synchronized void channelListenerRemoved(long channelId) {
 		_complete = true;
@@ -36,9 +46,7 @@ public class SynchronousPollerChannelListener implements ChannelListener {
 		this.notify();
 	}
 
-	public synchronized String getNotificationEvents(
-			long companyId, long userId,
-			JSONObject pollerResponseHeaderJSONObject, long timeout)
+	public synchronized String getNotificationEvents(long timeout)
 		throws ChannelException {
 
 		try {
@@ -49,13 +57,19 @@ public class SynchronousPollerChannelListener implements ChannelListener {
 		catch (InterruptedException ie) {
 		}
 
+		try {
+			Thread.sleep(PropsValues.POLLER_NOTIFICATIONS_TIMEOUT);
+		}
+		catch (InterruptedException ie) {
+		}
+
 		List<NotificationEvent> notificationEvents =
 			ChannelHubManagerUtil.fetchNotificationEvents(
-				companyId, userId, true);
+				_companyId, _userId, true);
 
 		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
 
-		jsonArray.put(pollerResponseHeaderJSONObject);
+		jsonArray.put(_pollerResponseHeaderJSONObject);
 
 		for (NotificationEvent notificationEvent : notificationEvents) {
 			jsonArray.put(notificationEvent.toJSONObject());
@@ -71,6 +85,9 @@ public class SynchronousPollerChannelListener implements ChannelListener {
 		this.notify();
 	}
 
+	private long _companyId;
 	private boolean _complete;
+	private JSONObject _pollerResponseHeaderJSONObject;
+	private long _userId;
 
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -46,20 +46,12 @@ public class ClusterGroupLocalServiceUtil {
 	*
 	* @param clusterGroup the cluster group
 	* @return the cluster group that was added
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.ClusterGroup addClusterGroup(
-		com.liferay.portal.model.ClusterGroup clusterGroup) {
+		com.liferay.portal.model.ClusterGroup clusterGroup)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().addClusterGroup(clusterGroup);
-	}
-
-	public static com.liferay.portal.model.ClusterGroup addClusterGroup(
-		java.lang.String name, java.util.List<java.lang.String> clusterNodeIds) {
-		return getService().addClusterGroup(name, clusterNodeIds);
-	}
-
-	public static com.liferay.portal.model.ClusterGroup addWholeClusterGroup(
-		java.lang.String name) {
-		return getService().addWholeClusterGroup(name);
 	}
 
 	/**
@@ -74,36 +66,31 @@ public class ClusterGroupLocalServiceUtil {
 	}
 
 	/**
-	* Deletes the cluster group from the database. Also notifies the appropriate model listeners.
-	*
-	* @param clusterGroup the cluster group
-	* @return the cluster group that was removed
-	*/
-	public static com.liferay.portal.model.ClusterGroup deleteClusterGroup(
-		com.liferay.portal.model.ClusterGroup clusterGroup) {
-		return getService().deleteClusterGroup(clusterGroup);
-	}
-
-	/**
 	* Deletes the cluster group with the primary key from the database. Also notifies the appropriate model listeners.
 	*
 	* @param clusterGroupId the primary key of the cluster group
 	* @return the cluster group that was removed
 	* @throws PortalException if a cluster group with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.ClusterGroup deleteClusterGroup(
 		long clusterGroupId)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getService().deleteClusterGroup(clusterGroupId);
 	}
 
 	/**
-	* @throws PortalException
+	* Deletes the cluster group from the database. Also notifies the appropriate model listeners.
+	*
+	* @param clusterGroup the cluster group
+	* @return the cluster group that was removed
+	* @throws SystemException if a system exception occurred
 	*/
-	public static com.liferay.portal.model.PersistedModel deletePersistedModel(
-		com.liferay.portal.model.PersistedModel persistedModel)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().deletePersistedModel(persistedModel);
+	public static com.liferay.portal.model.ClusterGroup deleteClusterGroup(
+		com.liferay.portal.model.ClusterGroup clusterGroup)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().deleteClusterGroup(clusterGroup);
 	}
 
 	public static com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery() {
@@ -115,9 +102,12 @@ public class ClusterGroupLocalServiceUtil {
 	*
 	* @param dynamicQuery the dynamic query
 	* @return the matching rows
+	* @throws SystemException if a system exception occurred
 	*/
-	public static <T> java.util.List<T> dynamicQuery(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery) {
+	@SuppressWarnings("rawtypes")
+	public static java.util.List dynamicQuery(
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().dynamicQuery(dynamicQuery);
 	}
 
@@ -132,10 +122,12 @@ public class ClusterGroupLocalServiceUtil {
 	* @param start the lower bound of the range of model instances
 	* @param end the upper bound of the range of model instances (not inclusive)
 	* @return the range of matching rows
+	* @throws SystemException if a system exception occurred
 	*/
-	public static <T> java.util.List<T> dynamicQuery(
+	@SuppressWarnings("rawtypes")
+	public static java.util.List dynamicQuery(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
-		int end) {
+		int end) throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().dynamicQuery(dynamicQuery, start, end);
 	}
 
@@ -151,11 +143,14 @@ public class ClusterGroupLocalServiceUtil {
 	* @param end the upper bound of the range of model instances (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching rows
+	* @throws SystemException if a system exception occurred
 	*/
-	public static <T> java.util.List<T> dynamicQuery(
+	@SuppressWarnings("rawtypes")
+	public static java.util.List dynamicQuery(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
 		int end,
-		com.liferay.portal.kernel.util.OrderByComparator<T> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService()
 				   .dynamicQuery(dynamicQuery, start, end, orderByComparator);
 	}
@@ -165,9 +160,11 @@ public class ClusterGroupLocalServiceUtil {
 	*
 	* @param dynamicQuery the dynamic query
 	* @return the number of rows that match the dynamic query
+	* @throws SystemException if a system exception occurred
 	*/
 	public static long dynamicQueryCount(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery) {
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().dynamicQueryCount(dynamicQuery);
 	}
 
@@ -177,29 +174,19 @@ public class ClusterGroupLocalServiceUtil {
 	* @param dynamicQuery the dynamic query
 	* @param projection the projection to apply to the query
 	* @return the number of rows that match the dynamic query
+	* @throws SystemException if a system exception occurred
 	*/
 	public static long dynamicQueryCount(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery,
-		com.liferay.portal.kernel.dao.orm.Projection projection) {
+		com.liferay.portal.kernel.dao.orm.Projection projection)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().dynamicQueryCount(dynamicQuery, projection);
 	}
 
 	public static com.liferay.portal.model.ClusterGroup fetchClusterGroup(
-		long clusterGroupId) {
+		long clusterGroupId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().fetchClusterGroup(clusterGroupId);
-	}
-
-	public static com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery getActionableDynamicQuery() {
-		return getService().getActionableDynamicQuery();
-	}
-
-	/**
-	* Returns the Spring bean ID for this bean.
-	*
-	* @return the Spring bean ID for this bean
-	*/
-	public static java.lang.String getBeanIdentifier() {
-		return getService().getBeanIdentifier();
 	}
 
 	/**
@@ -208,11 +195,20 @@ public class ClusterGroupLocalServiceUtil {
 	* @param clusterGroupId the primary key of the cluster group
 	* @return the cluster group
 	* @throws PortalException if a cluster group with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.ClusterGroup getClusterGroup(
 		long clusterGroupId)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getService().getClusterGroup(clusterGroupId);
+	}
+
+	public static com.liferay.portal.model.PersistedModel getPersistedModel(
+		java.io.Serializable primaryKeyObj)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getService().getPersistedModel(primaryKeyObj);
 	}
 
 	/**
@@ -225,9 +221,11 @@ public class ClusterGroupLocalServiceUtil {
 	* @param start the lower bound of the range of cluster groups
 	* @param end the upper bound of the range of cluster groups (not inclusive)
 	* @return the range of cluster groups
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portal.model.ClusterGroup> getClusterGroups(
-		int start, int end) {
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().getClusterGroups(start, end);
 	}
 
@@ -235,15 +233,33 @@ public class ClusterGroupLocalServiceUtil {
 	* Returns the number of cluster groups.
 	*
 	* @return the number of cluster groups
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int getClusterGroupsCount() {
+	public static int getClusterGroupsCount()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().getClusterGroupsCount();
 	}
 
-	public static com.liferay.portal.model.PersistedModel getPersistedModel(
-		java.io.Serializable primaryKeyObj)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().getPersistedModel(primaryKeyObj);
+	/**
+	* Updates the cluster group in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
+	*
+	* @param clusterGroup the cluster group
+	* @return the cluster group that was updated
+	* @throws SystemException if a system exception occurred
+	*/
+	public static com.liferay.portal.model.ClusterGroup updateClusterGroup(
+		com.liferay.portal.model.ClusterGroup clusterGroup)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().updateClusterGroup(clusterGroup);
+	}
+
+	/**
+	* Returns the Spring bean ID for this bean.
+	*
+	* @return the Spring bean ID for this bean
+	*/
+	public static java.lang.String getBeanIdentifier() {
+		return getService().getBeanIdentifier();
 	}
 
 	/**
@@ -255,15 +271,16 @@ public class ClusterGroupLocalServiceUtil {
 		getService().setBeanIdentifier(beanIdentifier);
 	}
 
-	/**
-	* Updates the cluster group in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
-	*
-	* @param clusterGroup the cluster group
-	* @return the cluster group that was updated
-	*/
-	public static com.liferay.portal.model.ClusterGroup updateClusterGroup(
-		com.liferay.portal.model.ClusterGroup clusterGroup) {
-		return getService().updateClusterGroup(clusterGroup);
+	public static com.liferay.portal.model.ClusterGroup addClusterGroup(
+		java.lang.String name, java.util.List<java.lang.String> clusterNodeIds)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().addClusterGroup(name, clusterNodeIds);
+	}
+
+	public static com.liferay.portal.model.ClusterGroup addWholeClusterGroup(
+		java.lang.String name)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().addWholeClusterGroup(name);
 	}
 
 	public static ClusterGroupLocalService getService() {
@@ -280,7 +297,6 @@ public class ClusterGroupLocalServiceUtil {
 	/**
 	 * @deprecated As of 6.2.0
 	 */
-	@Deprecated
 	public void setService(ClusterGroupLocalService service) {
 	}
 

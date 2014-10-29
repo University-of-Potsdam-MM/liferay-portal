@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -25,7 +25,7 @@ Folder folder = (Folder)request.getAttribute(WebKeys.DOCUMENT_LIBRARY_FOLDER);
 	<%
 	int status = WorkflowConstants.STATUS_APPROVED;
 
-	if (permissionChecker.isContentReviewer(user.getCompanyId(), scopeGroupId)) {
+	if (permissionChecker.isCompanyAdmin() || permissionChecker.isGroupAdmin(scopeGroupId)) {
 		status = WorkflowConstants.STATUS_ANY;
 	}
 
@@ -42,23 +42,15 @@ Folder folder = (Folder)request.getAttribute(WebKeys.DOCUMENT_LIBRARY_FOLDER);
 			</c:if>
 
 			<div class="lfr-asset-metadata">
-				<div class="icon-calendar lfr-asset-icon">
-					<%= LanguageUtil.format(request, "last-updated-x", dateFormatDateTime.format(folder.getModifiedDate()), false) %>
+				<div class="lfr-asset-icon lfr-asset-date">
+					<%= LanguageUtil.format(pageContext, "last-updated-x", dateFormatDateTime.format(folder.getModifiedDate())) %>
 				</div>
 
-				<%
-				AssetRendererFactory dlFolderAssetRendererFactory = AssetRendererFactoryRegistryUtil.getAssetRendererFactoryByClassName(DLFolder.class.getName());
-				%>
-
-				<div class="<%= dlFolderAssetRendererFactory.getIconCssClass() %> lfr-asset-icon">
+				<div class="lfr-asset-icon lfr-asset-subfolders">
 					<%= foldersCount %> <liferay-ui:message key='<%= (foldersCount == 1) ? "subfolder" : "subfolders" %>' />
 				</div>
 
-				<%
-				AssetRendererFactory dlFileEntryAssetRendererFactory = AssetRendererFactoryRegistryUtil.getAssetRendererFactoryByClassName(DLFileEntry.class.getName());
-				%>
-
-				<div class="<%= dlFileEntryAssetRendererFactory.getIconCssClass() %> last lfr-asset-icon">
+				<div class="lfr-asset-icon lfr-asset-items last">
 					<%= fileEntriesCount %> <liferay-ui:message key='<%= (fileEntriesCount == 1) ? "document" : "documents" %>' />
 				</div>
 			</div>

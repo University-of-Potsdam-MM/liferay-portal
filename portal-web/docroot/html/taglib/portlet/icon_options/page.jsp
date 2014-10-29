@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -83,7 +83,7 @@
 
 			<liferay-ui:icon
 				cssClass='<%= portletDisplay.getNamespace() + "expose-as-widget" %>'
-				iconCssClass="icon-plus-sign"
+				image="../aui/plus-sign"
 				label="<%= true %>"
 				message="add-to-any-website"
 				url="<%= widgetHREF %>"
@@ -92,7 +92,7 @@
 
 		<c:if test="<%= facebookShowAddAppLink %>">
 			<liferay-ui:icon
-				iconCssClass="icon-facebook"
+				image="../aui/facebook"
 				label="<%= true %>"
 				message="add-to-facebook"
 				method="get"
@@ -108,7 +108,7 @@
 
 			<liferay-ui:icon
 				cssClass='<%= portletDisplay.getNamespace() + "expose-as-widget" %>'
-				iconCssClass="icon-plus-sign"
+				image="../aui/plus-sign"
 				label="<%= true %>"
 				message="add-to-igoogle"
 				url="<%= googleGadgetHREF %>"
@@ -122,7 +122,7 @@
 			%>
 
 			<liferay-ui:icon
-				iconCssClass="icon-plus-sign"
+				image="../aui/plus-sign"
 				label="<%= true %>"
 				message="add-to-netvibes"
 				method="get"
@@ -132,7 +132,7 @@
 
 		<c:if test="<%= appShowShareWithFriendsLink %>">
 			<liferay-ui:icon
-				iconCssClass="icon-share"
+				image="../aui/share"
 				label="<%= true %>"
 				message="share-this-application-with-friends"
 				method="get"

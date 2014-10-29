@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,6 +18,7 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.bean.PortalBeanLocatorUtil;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ReferenceRegistry;
 import com.liferay.portal.service.ServiceContext;
@@ -63,7 +64,8 @@ public class AnnouncementsFlagUtil {
 	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#countWithDynamicQuery(DynamicQuery)
 	 */
-	public static long countWithDynamicQuery(DynamicQuery dynamicQuery) {
+	public static long countWithDynamicQuery(DynamicQuery dynamicQuery)
+		throws SystemException {
 		return getPersistence().countWithDynamicQuery(dynamicQuery);
 	}
 
@@ -71,7 +73,7 @@ public class AnnouncementsFlagUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#findWithDynamicQuery(DynamicQuery)
 	 */
 	public static List<AnnouncementsFlag> findWithDynamicQuery(
-		DynamicQuery dynamicQuery) {
+		DynamicQuery dynamicQuery) throws SystemException {
 		return getPersistence().findWithDynamicQuery(dynamicQuery);
 	}
 
@@ -79,7 +81,8 @@ public class AnnouncementsFlagUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#findWithDynamicQuery(DynamicQuery, int, int)
 	 */
 	public static List<AnnouncementsFlag> findWithDynamicQuery(
-		DynamicQuery dynamicQuery, int start, int end) {
+		DynamicQuery dynamicQuery, int start, int end)
+		throws SystemException {
 		return getPersistence().findWithDynamicQuery(dynamicQuery, start, end);
 	}
 
@@ -88,7 +91,7 @@ public class AnnouncementsFlagUtil {
 	 */
 	public static List<AnnouncementsFlag> findWithDynamicQuery(
 		DynamicQuery dynamicQuery, int start, int end,
-		OrderByComparator<AnnouncementsFlag> orderByComparator) {
+		OrderByComparator orderByComparator) throws SystemException {
 		return getPersistence()
 				   .findWithDynamicQuery(dynamicQuery, start, end,
 			orderByComparator);
@@ -97,7 +100,8 @@ public class AnnouncementsFlagUtil {
 	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel)
 	 */
-	public static AnnouncementsFlag update(AnnouncementsFlag announcementsFlag) {
+	public static AnnouncementsFlag update(AnnouncementsFlag announcementsFlag)
+		throws SystemException {
 		return getPersistence().update(announcementsFlag);
 	}
 
@@ -105,7 +109,8 @@ public class AnnouncementsFlagUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, ServiceContext)
 	 */
 	public static AnnouncementsFlag update(
-		AnnouncementsFlag announcementsFlag, ServiceContext serviceContext) {
+		AnnouncementsFlag announcementsFlag, ServiceContext serviceContext)
+		throws SystemException {
 		return getPersistence().update(announcementsFlag, serviceContext);
 	}
 
@@ -114,9 +119,11 @@ public class AnnouncementsFlagUtil {
 	*
 	* @param entryId the entry ID
 	* @return the matching announcements flags
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.announcements.model.AnnouncementsFlag> findByEntryId(
-		long entryId) {
+		long entryId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByEntryId(entryId);
 	}
 
@@ -131,9 +138,11 @@ public class AnnouncementsFlagUtil {
 	* @param start the lower bound of the range of announcements flags
 	* @param end the upper bound of the range of announcements flags (not inclusive)
 	* @return the range of matching announcements flags
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.announcements.model.AnnouncementsFlag> findByEntryId(
-		long entryId, int start, int end) {
+		long entryId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByEntryId(entryId, start, end);
 	}
 
@@ -149,10 +158,12 @@ public class AnnouncementsFlagUtil {
 	* @param end the upper bound of the range of announcements flags (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching announcements flags
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.announcements.model.AnnouncementsFlag> findByEntryId(
 		long entryId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.announcements.model.AnnouncementsFlag> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByEntryId(entryId, start, end, orderByComparator);
 	}
@@ -164,11 +175,13 @@ public class AnnouncementsFlagUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching announcements flag
 	* @throws com.liferay.portlet.announcements.NoSuchFlagException if a matching announcements flag could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.announcements.model.AnnouncementsFlag findByEntryId_First(
 		long entryId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.announcements.model.AnnouncementsFlag> orderByComparator)
-		throws com.liferay.portlet.announcements.NoSuchFlagException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.announcements.NoSuchFlagException {
 		return getPersistence().findByEntryId_First(entryId, orderByComparator);
 	}
 
@@ -178,10 +191,12 @@ public class AnnouncementsFlagUtil {
 	* @param entryId the entry ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching announcements flag, or <code>null</code> if a matching announcements flag could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.announcements.model.AnnouncementsFlag fetchByEntryId_First(
 		long entryId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.announcements.model.AnnouncementsFlag> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByEntryId_First(entryId, orderByComparator);
 	}
 
@@ -192,11 +207,13 @@ public class AnnouncementsFlagUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching announcements flag
 	* @throws com.liferay.portlet.announcements.NoSuchFlagException if a matching announcements flag could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.announcements.model.AnnouncementsFlag findByEntryId_Last(
 		long entryId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.announcements.model.AnnouncementsFlag> orderByComparator)
-		throws com.liferay.portlet.announcements.NoSuchFlagException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.announcements.NoSuchFlagException {
 		return getPersistence().findByEntryId_Last(entryId, orderByComparator);
 	}
 
@@ -206,10 +223,12 @@ public class AnnouncementsFlagUtil {
 	* @param entryId the entry ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching announcements flag, or <code>null</code> if a matching announcements flag could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.announcements.model.AnnouncementsFlag fetchByEntryId_Last(
 		long entryId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.announcements.model.AnnouncementsFlag> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByEntryId_Last(entryId, orderByComparator);
 	}
 
@@ -221,11 +240,13 @@ public class AnnouncementsFlagUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next announcements flag
 	* @throws com.liferay.portlet.announcements.NoSuchFlagException if a announcements flag with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.announcements.model.AnnouncementsFlag[] findByEntryId_PrevAndNext(
 		long flagId, long entryId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.announcements.model.AnnouncementsFlag> orderByComparator)
-		throws com.liferay.portlet.announcements.NoSuchFlagException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.announcements.NoSuchFlagException {
 		return getPersistence()
 				   .findByEntryId_PrevAndNext(flagId, entryId, orderByComparator);
 	}
@@ -234,8 +255,10 @@ public class AnnouncementsFlagUtil {
 	* Removes all the announcements flags where entryId = &#63; from the database.
 	*
 	* @param entryId the entry ID
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByEntryId(long entryId) {
+	public static void removeByEntryId(long entryId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeByEntryId(entryId);
 	}
 
@@ -244,8 +267,10 @@ public class AnnouncementsFlagUtil {
 	*
 	* @param entryId the entry ID
 	* @return the number of matching announcements flags
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByEntryId(long entryId) {
+	public static int countByEntryId(long entryId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByEntryId(entryId);
 	}
 
@@ -257,10 +282,12 @@ public class AnnouncementsFlagUtil {
 	* @param value the value
 	* @return the matching announcements flag
 	* @throws com.liferay.portlet.announcements.NoSuchFlagException if a matching announcements flag could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.announcements.model.AnnouncementsFlag findByU_E_V(
 		long userId, long entryId, int value)
-		throws com.liferay.portlet.announcements.NoSuchFlagException {
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.announcements.NoSuchFlagException {
 		return getPersistence().findByU_E_V(userId, entryId, value);
 	}
 
@@ -271,9 +298,11 @@ public class AnnouncementsFlagUtil {
 	* @param entryId the entry ID
 	* @param value the value
 	* @return the matching announcements flag, or <code>null</code> if a matching announcements flag could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.announcements.model.AnnouncementsFlag fetchByU_E_V(
-		long userId, long entryId, int value) {
+		long userId, long entryId, int value)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByU_E_V(userId, entryId, value);
 	}
 
@@ -285,9 +314,11 @@ public class AnnouncementsFlagUtil {
 	* @param value the value
 	* @param retrieveFromCache whether to use the finder cache
 	* @return the matching announcements flag, or <code>null</code> if a matching announcements flag could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.announcements.model.AnnouncementsFlag fetchByU_E_V(
-		long userId, long entryId, int value, boolean retrieveFromCache) {
+		long userId, long entryId, int value, boolean retrieveFromCache)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByU_E_V(userId, entryId, value, retrieveFromCache);
 	}
@@ -299,10 +330,12 @@ public class AnnouncementsFlagUtil {
 	* @param entryId the entry ID
 	* @param value the value
 	* @return the announcements flag that was removed
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.announcements.model.AnnouncementsFlag removeByU_E_V(
 		long userId, long entryId, int value)
-		throws com.liferay.portlet.announcements.NoSuchFlagException {
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.announcements.NoSuchFlagException {
 		return getPersistence().removeByU_E_V(userId, entryId, value);
 	}
 
@@ -313,8 +346,10 @@ public class AnnouncementsFlagUtil {
 	* @param entryId the entry ID
 	* @param value the value
 	* @return the number of matching announcements flags
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByU_E_V(long userId, long entryId, int value) {
+	public static int countByU_E_V(long userId, long entryId, int value)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByU_E_V(userId, entryId, value);
 	}
 
@@ -355,15 +390,18 @@ public class AnnouncementsFlagUtil {
 	* @param flagId the primary key of the announcements flag
 	* @return the announcements flag that was removed
 	* @throws com.liferay.portlet.announcements.NoSuchFlagException if a announcements flag with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.announcements.model.AnnouncementsFlag remove(
 		long flagId)
-		throws com.liferay.portlet.announcements.NoSuchFlagException {
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.announcements.NoSuchFlagException {
 		return getPersistence().remove(flagId);
 	}
 
 	public static com.liferay.portlet.announcements.model.AnnouncementsFlag updateImpl(
-		com.liferay.portlet.announcements.model.AnnouncementsFlag announcementsFlag) {
+		com.liferay.portlet.announcements.model.AnnouncementsFlag announcementsFlag)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().updateImpl(announcementsFlag);
 	}
 
@@ -373,10 +411,12 @@ public class AnnouncementsFlagUtil {
 	* @param flagId the primary key of the announcements flag
 	* @return the announcements flag
 	* @throws com.liferay.portlet.announcements.NoSuchFlagException if a announcements flag with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.announcements.model.AnnouncementsFlag findByPrimaryKey(
 		long flagId)
-		throws com.liferay.portlet.announcements.NoSuchFlagException {
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.announcements.NoSuchFlagException {
 		return getPersistence().findByPrimaryKey(flagId);
 	}
 
@@ -385,23 +425,21 @@ public class AnnouncementsFlagUtil {
 	*
 	* @param flagId the primary key of the announcements flag
 	* @return the announcements flag, or <code>null</code> if a announcements flag with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.announcements.model.AnnouncementsFlag fetchByPrimaryKey(
-		long flagId) {
+		long flagId) throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByPrimaryKey(flagId);
-	}
-
-	public static java.util.Map<java.io.Serializable, com.liferay.portlet.announcements.model.AnnouncementsFlag> fetchByPrimaryKeys(
-		java.util.Set<java.io.Serializable> primaryKeys) {
-		return getPersistence().fetchByPrimaryKeys(primaryKeys);
 	}
 
 	/**
 	* Returns all the announcements flags.
 	*
 	* @return the announcements flags
+	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portlet.announcements.model.AnnouncementsFlag> findAll() {
+	public static java.util.List<com.liferay.portlet.announcements.model.AnnouncementsFlag> findAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll();
 	}
 
@@ -415,9 +453,11 @@ public class AnnouncementsFlagUtil {
 	* @param start the lower bound of the range of announcements flags
 	* @param end the upper bound of the range of announcements flags (not inclusive)
 	* @return the range of announcements flags
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.announcements.model.AnnouncementsFlag> findAll(
-		int start, int end) {
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll(start, end);
 	}
 
@@ -432,17 +472,22 @@ public class AnnouncementsFlagUtil {
 	* @param end the upper bound of the range of announcements flags (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of announcements flags
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.announcements.model.AnnouncementsFlag> findAll(
 		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.announcements.model.AnnouncementsFlag> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll(start, end, orderByComparator);
 	}
 
 	/**
 	* Removes all the announcements flags from the database.
+	*
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeAll() {
+	public static void removeAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeAll();
 	}
 
@@ -450,8 +495,10 @@ public class AnnouncementsFlagUtil {
 	* Returns the number of announcements flags.
 	*
 	* @return the number of announcements flags
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countAll() {
+	public static int countAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countAll();
 	}
 
@@ -469,7 +516,6 @@ public class AnnouncementsFlagUtil {
 	/**
 	 * @deprecated As of 6.2.0
 	 */
-	@Deprecated
 	public void setPersistence(AnnouncementsFlagPersistence persistence) {
 	}
 

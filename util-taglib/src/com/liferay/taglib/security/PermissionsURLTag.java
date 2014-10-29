@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -33,6 +33,7 @@ import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
+import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.TagSupport;
 
 /**
@@ -40,12 +41,15 @@ import javax.servlet.jsp.tagext.TagSupport;
  */
 public class PermissionsURLTag extends TagSupport {
 
-	public static String doTag(
+	public static void doTag(
 			String redirect, String modelResource,
 			String modelResourceDescription, Object resourceGroupId,
-			String resourcePrimKey, String windowState, int[] roleTypes,
-			HttpServletRequest request)
+			String resourcePrimKey, String windowState, String var,
+			int[] roleTypes, PageContext pageContext)
 		throws Exception {
+
+		HttpServletRequest request =
+			(HttpServletRequest)pageContext.getRequest();
 
 		ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
 			WebKeys.THEME_DISPLAY);
@@ -118,25 +122,25 @@ public class PermissionsURLTag extends TagSupport {
 			portletURL.setParameter("roleTypes", StringUtil.merge(roleTypes));
 		}
 
-		return portletURL.toString();
+		String portletURLToString = portletURL.toString();
+
+		if (Validator.isNotNull(var)) {
+			pageContext.setAttribute(var, portletURLToString);
+		}
+		else {
+			JspWriter jspWriter = pageContext.getOut();
+
+			jspWriter.write(portletURLToString);
+		}
 	}
 
 	@Override
 	public int doEndTag() throws JspException {
 		try {
-			String portletURLToString = doTag(
+			doTag(
 				_redirect, _modelResource, _modelResourceDescription,
-				_resourceGroupId, _resourcePrimKey, _windowState, _roleTypes,
-				(HttpServletRequest)pageContext.getRequest());
-
-			if (Validator.isNotNull(_var)) {
-				pageContext.setAttribute(_var, portletURLToString);
-			}
-			else {
-				JspWriter jspWriter = pageContext.getOut();
-
-				jspWriter.write(portletURLToString);
-			}
+				_resourceGroupId, _resourcePrimKey, _windowState, _var,
+				_roleTypes, pageContext);
 		}
 		catch (Exception e) {
 			throw new JspException(e);

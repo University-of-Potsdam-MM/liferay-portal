@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,12 +14,11 @@
 
 package com.liferay.portal.service.persistence;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Property;
 import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.lar.ExportImportHelperUtil;
 import com.liferay.portal.kernel.lar.ManifestSummary;
 import com.liferay.portal.kernel.lar.PortletDataContext;
@@ -30,21 +29,18 @@ import com.liferay.portal.util.PortalUtil;
 
 /**
  * @author Brian Wing Shun Chan
- * @deprecated As of 7.0.0, replaced by {@link com.liferay.portal.service.RoleLocalServiceUtil#getExportActionableDynamicQuery()}
  * @generated
  */
-@Deprecated
-@ProviderType
 public class RoleExportActionableDynamicQuery extends RoleActionableDynamicQuery {
 	public RoleExportActionableDynamicQuery(
-		PortletDataContext portletDataContext) {
+		PortletDataContext portletDataContext) throws SystemException {
 		_portletDataContext = portletDataContext;
 
 		setCompanyId(_portletDataContext.getCompanyId());
 	}
 
 	@Override
-	public long performCount() throws PortalException {
+	public long performCount() throws PortalException, SystemException {
 		ManifestSummary manifestSummary = _portletDataContext.getManifestSummary();
 
 		StagedModelType stagedModelType = getStagedModelType();
@@ -82,7 +78,9 @@ public class RoleExportActionableDynamicQuery extends RoleActionableDynamicQuery
 	}
 
 	@Override
-	protected void performAction(Object object) throws PortalException {
+	@SuppressWarnings("unused")
+	protected void performAction(Object object)
+		throws PortalException, SystemException {
 		Role stagedModel = (Role)object;
 
 		StagedModelDataHandlerUtil.exportStagedModel(_portletDataContext,

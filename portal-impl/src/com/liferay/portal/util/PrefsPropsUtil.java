@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portal.util;
 
 import com.liferay.portal.kernel.bean.BeanReference;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -34,14 +35,17 @@ import javax.portlet.PortletPreferences;
  */
 public class PrefsPropsUtil {
 
-	public static boolean getBoolean(long companyId, String name) {
+	public static boolean getBoolean(long companyId, String name)
+		throws SystemException {
+
 		PortletPreferences preferences = getPreferences(companyId, true);
 
 		return getBoolean(preferences, companyId, name);
 	}
 
 	public static boolean getBoolean(
-		long companyId, String name, boolean defaultValue) {
+			long companyId, String name, boolean defaultValue)
+		throws SystemException {
 
 		PortletPreferences preferences = getPreferences(companyId, true);
 
@@ -62,19 +66,23 @@ public class PrefsPropsUtil {
 			getString(preferences, companyId, name, defaultValue));
 	}
 
-	public static boolean getBoolean(String name) {
+	public static boolean getBoolean(String name) throws SystemException {
 		PortletPreferences preferences = getPreferences(true);
 
 		return getBoolean(preferences, 0, name);
 	}
 
-	public static boolean getBoolean(String name, boolean defaultValue) {
+	public static boolean getBoolean(String name, boolean defaultValue)
+		throws SystemException {
+
 		PortletPreferences preferences = getPreferences(true);
 
 		return getBoolean(preferences, 0, name, defaultValue);
 	}
 
-	public static String getContent(long companyId, String name) {
+	public static String getContent(long companyId, String name)
+		throws SystemException {
+
 		PortletPreferences preferences = getPreferences(companyId, true);
 
 		return getContent(preferences, companyId, name);
@@ -93,20 +101,23 @@ public class PrefsPropsUtil {
 		}
 	}
 
-	public static String getContent(String name) {
+	public static String getContent(String name) throws SystemException {
 		PortletPreferences preferences = getPreferences(true);
 
 		return getContent(preferences, 0, name);
 	}
 
-	public static double getDouble(long companyId, String name) {
+	public static double getDouble(long companyId, String name)
+		throws SystemException {
+
 		PortletPreferences preferences = getPreferences(companyId, true);
 
 		return getDouble(preferences, companyId, name);
 	}
 
 	public static double getDouble(
-		long companyId, String name, double defaultValue) {
+			long companyId, String name, double defaultValue)
+		throws SystemException {
 
 		PortletPreferences preferences = getPreferences(companyId, true);
 
@@ -127,26 +138,30 @@ public class PrefsPropsUtil {
 			getString(preferences, companyId, name, defaultValue));
 	}
 
-	public static double getDouble(String name) {
+	public static double getDouble(String name) throws SystemException {
 		PortletPreferences preferences = getPreferences(true);
 
 		return getDouble(preferences, 0, name);
 	}
 
-	public static double getDouble(String name, double defaultValue) {
+	public static double getDouble(String name, double defaultValue)
+		throws SystemException {
+
 		PortletPreferences preferences = getPreferences(true);
 
 		return getDouble(preferences, 0, name, defaultValue);
 	}
 
-	public static int getInteger(long companyId, String name) {
+	public static int getInteger(long companyId, String name)
+		throws SystemException {
+
 		PortletPreferences preferences = getPreferences(companyId, true);
 
 		return getInteger(preferences, companyId, name);
 	}
 
-	public static int getInteger(
-		long companyId, String name, int defaultValue) {
+	public static int getInteger(long companyId, String name, int defaultValue)
+		throws SystemException {
 
 		PortletPreferences preferences = getPreferences(companyId, true);
 
@@ -167,25 +182,31 @@ public class PrefsPropsUtil {
 			getString(preferences, companyId, name, defaultValue));
 	}
 
-	public static int getInteger(String name) {
+	public static int getInteger(String name) throws SystemException {
 		PortletPreferences preferences = getPreferences(true);
 
 		return getInteger(preferences, 0, name);
 	}
 
-	public static int getInteger(String name, int defaultValue) {
+	public static int getInteger(String name, int defaultValue)
+		throws SystemException {
+
 		PortletPreferences preferences = getPreferences(true);
 
 		return getInteger(preferences, 0, name, defaultValue);
 	}
 
-	public static long getLong(long companyId, String name) {
+	public static long getLong(long companyId, String name)
+		throws SystemException {
+
 		PortletPreferences preferences = getPreferences(companyId, true);
 
 		return getLong(preferences, companyId, name);
 	}
 
-	public static long getLong(long companyId, String name, long defaultValue) {
+	public static long getLong(long companyId, String name, long defaultValue)
+		throws SystemException {
+
 		PortletPreferences preferences = getPreferences(companyId, true);
 
 		return getLong(preferences, companyId, name, defaultValue);
@@ -205,23 +226,27 @@ public class PrefsPropsUtil {
 			getString(preferences, companyId, name, defaultValue));
 	}
 
-	public static long getLong(String name) {
+	public static long getLong(String name) throws SystemException {
 		PortletPreferences preferences = getPreferences(true);
 
 		return getLong(preferences, 0, name);
 	}
 
-	public static long getLong(String name, long defaultValue) {
+	public static long getLong(String name, long defaultValue)
+		throws SystemException {
+
 		PortletPreferences preferences = getPreferences(true);
 
 		return getLong(preferences, 0, name, defaultValue);
 	}
 
-	public static PortletPreferences getPreferences() {
+	public static PortletPreferences getPreferences() throws SystemException {
 		return getPreferences(false);
 	}
 
-	public static PortletPreferences getPreferences(boolean readOnly) {
+	public static PortletPreferences getPreferences(boolean readOnly)
+		throws SystemException {
+
 		PortalPreferencesWrapper portalPreferencesWrapper =
 			PortalPreferencesWrapperCacheUtil.get(
 				PortletKeys.PREFS_OWNER_ID_DEFAULT,
@@ -240,12 +265,15 @@ public class PrefsPropsUtil {
 			PortletKeys.PREFS_OWNER_TYPE_COMPANY);
 	}
 
-	public static PortletPreferences getPreferences(long companyId) {
+	public static PortletPreferences getPreferences(long companyId)
+		throws SystemException {
+
 		return getPreferences(companyId, false);
 	}
 
 	public static PortletPreferences getPreferences(
-		long companyId, boolean readOnly) {
+			long companyId, boolean readOnly)
+		throws SystemException {
 
 		long ownerId = companyId;
 		int ownerType = PortletKeys.PREFS_OWNER_TYPE_COMPANY;
@@ -290,22 +318,25 @@ public class PrefsPropsUtil {
 		return newProperties;
 	}
 
-	public static Properties getProperties(
-		String prefix, boolean removePrefix) {
+	public static Properties getProperties(String prefix, boolean removePrefix)
+		throws SystemException {
 
 		PortletPreferences preferences = getPreferences(true);
 
 		return getProperties(preferences, 0, prefix, removePrefix);
 	}
 
-	public static short getShort(long companyId, String name) {
+	public static short getShort(long companyId, String name)
+		throws SystemException {
+
 		PortletPreferences preferences = getPreferences(companyId, true);
 
 		return getShort(preferences, companyId, name);
 	}
 
 	public static short getShort(
-		long companyId, String name, short defaultValue) {
+			long companyId, String name, short defaultValue)
+		throws SystemException {
 
 		PortletPreferences preferences = getPreferences(companyId, true);
 
@@ -326,26 +357,31 @@ public class PrefsPropsUtil {
 			getString(preferences, companyId, name, defaultValue));
 	}
 
-	public static short getShort(String name) {
+	public static short getShort(String name) throws SystemException {
 		PortletPreferences preferences = getPreferences(true);
 
 		return getShort(preferences, 0, name);
 	}
 
-	public static short getShort(String name, short defaultValue) {
+	public static short getShort(String name, short defaultValue)
+		throws SystemException {
+
 		PortletPreferences preferences = getPreferences(true);
 
 		return getShort(preferences, 0, name, defaultValue);
 	}
 
-	public static String getString(long companyId, String name) {
+	public static String getString(long companyId, String name)
+		throws SystemException {
+
 		PortletPreferences preferences = getPreferences(companyId, true);
 
 		return getString(preferences, companyId, name);
 	}
 
 	public static String getString(
-		long companyId, String name, String defaultValue) {
+			long companyId, String name, String defaultValue)
+		throws SystemException {
 
 		PortletPreferences preferences = getPreferences(companyId, true);
 
@@ -442,20 +478,23 @@ public class PrefsPropsUtil {
 		}
 	}
 
-	public static String getString(String name) {
+	public static String getString(String name) throws SystemException {
 		PortletPreferences preferences = getPreferences(true);
 
 		return getString(preferences, 0, name);
 	}
 
-	public static String getString(String name, String defaultValue) {
+	public static String getString(String name, String defaultValue)
+		throws SystemException {
+
 		PortletPreferences preferences = getPreferences(true);
 
 		return getString(preferences, 0, name, defaultValue);
 	}
 
 	public static String[] getStringArray(
-		long companyId, String name, String delimiter) {
+			long companyId, String name, String delimiter)
+		throws SystemException {
 
 		PortletPreferences preferences = getPreferences(companyId, true);
 
@@ -463,7 +502,9 @@ public class PrefsPropsUtil {
 	}
 
 	public static String[] getStringArray(
-		long companyId, String name, String delimiter, String[] defaultValue) {
+			long companyId, String name, String delimiter,
+			String[] defaultValue)
+		throws SystemException {
 
 		PortletPreferences preferences = getPreferences(companyId, true);
 
@@ -496,21 +537,26 @@ public class PrefsPropsUtil {
 		}
 	}
 
-	public static String[] getStringArray(String name, String delimiter) {
+	public static String[] getStringArray(String name, String delimiter)
+		throws SystemException {
+
 		PortletPreferences preferences = getPreferences(true);
 
 		return getStringArray(preferences, 0, name, delimiter);
 	}
 
 	public static String[] getStringArray(
-		String name, String delimiter, String[] defaultValue) {
+			String name, String delimiter, String[] defaultValue)
+		throws SystemException {
 
 		PortletPreferences preferences = getPreferences(true);
 
 		return getStringArray(preferences, 0, name, delimiter, defaultValue);
 	}
 
-	public static String getStringFromNames(long companyId, String... names) {
+	public static String getStringFromNames(long companyId, String... names)
+		throws SystemException {
+
 		for (String name : names) {
 			String value = getString(companyId, name);
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -20,15 +20,15 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.model.Group;
-import com.liferay.portal.test.listeners.MainServletExecutionTestListener;
-import com.liferay.portal.test.runners.LiferayIntegrationJUnitTestRunner;
+import com.liferay.portal.test.EnvironmentExecutionTestListener;
+import com.liferay.portal.test.LiferayIntegrationJUnitTestRunner;
 import com.liferay.portal.util.BaseJsonClientTestCase;
-import com.liferay.portal.util.test.GroupTestUtil;
+import com.liferay.portal.util.GroupTestUtil;
 import com.liferay.portlet.documentlibrary.model.DLFolderConstants;
 
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.MultipartEntity;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -39,7 +39,7 @@ import org.junit.runner.RunWith;
 /**
  * @author Alexander Chow
  */
-@ExecutionTestListeners(listeners = {MainServletExecutionTestListener.class})
+@ExecutionTestListeners(listeners = {EnvironmentExecutionTestListener.class})
 @RunWith(LiferayIntegrationJUnitTestRunner.class)
 public class DLAppServiceJsonTest extends BaseJsonClientTestCase {
 
@@ -52,21 +52,20 @@ public class DLAppServiceJsonTest extends BaseJsonClientTestCase {
 
 		HttpPost httpPost = new HttpPost(_URL_DELETE_FOLDER);
 
-		MultipartEntityBuilder multipartEntityBuilder =
-			getMultipartEntityBuilder(
-				new String[] {"repositoryId", "parentFolderId", "name"},
-				new Object[] {
-					_group.getGroupId(),
-					DLFolderConstants.DEFAULT_PARENT_FOLDER_ID, name
-				});
+		MultipartEntity multipartEntity = getMultipartEntity(
+			new String[] {"repositoryId", "parentFolderId", "name"},
+			new Object[] {
+				_group.getGroupId(), DLFolderConstants.DEFAULT_PARENT_FOLDER_ID,
+				name
+			});
 
-		httpPost.setEntity(multipartEntityBuilder.build());
+		httpPost.setEntity(multipartEntity);
 
 		executeRequest(httpPost);
 
 		httpPost = new HttpPost(_URL_ADD_FOLDER);
 
-		multipartEntityBuilder = getMultipartEntityBuilder(
+		multipartEntity = getMultipartEntity(
 			new String[] {
 				"repositoryId", "parentFolderId", "name", "description"
 			},
@@ -75,7 +74,7 @@ public class DLAppServiceJsonTest extends BaseJsonClientTestCase {
 				name, description
 			});
 
-		httpPost.setEntity(multipartEntityBuilder.build());
+		httpPost.setEntity(multipartEntity);
 
 		String responseContent = executeRequest(httpPost);
 
@@ -92,11 +91,10 @@ public class DLAppServiceJsonTest extends BaseJsonClientTestCase {
 		if (_folderId != 0) {
 			HttpPost httpPost = new HttpPost(_URL_DELETE_FOLDER);
 
-			MultipartEntityBuilder multipartEntityBuilder =
-				getMultipartEntityBuilder(
-					new String[] {"folderId"}, new Object[] {_folderId});
+			MultipartEntity multipartEntity = getMultipartEntity(
+				new String[] {"folderId"}, new Object[] {_folderId});
 
-			httpPost.setEntity(multipartEntityBuilder.build());
+			httpPost.setEntity(multipartEntity);
 
 			executeRequest(httpPost);
 		}
@@ -122,11 +120,10 @@ public class DLAppServiceJsonTest extends BaseJsonClientTestCase {
 
 		HttpPost httpPost = new HttpPost(_URL_DELETE_FILE_ENTRY);
 
-		MultipartEntityBuilder multipartEntityBuilder =
-			getMultipartEntityBuilder(
-				new String[] {"fileEntryId"}, new Object[] {fileEntryId});
+		MultipartEntity multipartEntity = getMultipartEntity(
+			new String[] { "fileEntryId" }, new Object[] { fileEntryId });
 
-		httpPost.setEntity(multipartEntityBuilder.build());
+		httpPost.setEntity(multipartEntity);
 
 		responseContent = executeRequest(httpPost);
 
@@ -144,7 +141,7 @@ public class DLAppServiceJsonTest extends BaseJsonClientTestCase {
 
 		String url = StringUtil.replace(
 			_URL_GET_FILE_ENTRY_BY_UUID_AND_GROUP_ID,
-			new String[] {_UUID, _GROUP_ID}, new String[] {uuid, groupId});
+			new String[] { _UUID, _GROUP_ID }, new String[] { uuid, groupId });
 
 		HttpGet httpGet = new HttpGet(url);
 
@@ -163,21 +160,20 @@ public class DLAppServiceJsonTest extends BaseJsonClientTestCase {
 
 		HttpPost httpPost = new HttpPost(_URL_ADD_FILE_ENTRY);
 
-		MultipartEntityBuilder multipartEntityBuilder =
-			getMultipartEntityBuilder(
-				new String[] {
-					"repositoryId", "folderId", "sourceFileName", "mimeType",
-					"title", "description", "changeLog"
-				},
-				new Object[] {
-					repositoryId, folderId, title, mimeType, title, description,
-					changeLog
-				});
+		MultipartEntity multipartEntity = getMultipartEntity(
+			new String[] {
+				"repositoryId", "folderId", "sourceFileName", "mimeType",
+				"title", "description", "changeLog"
+			},
+			new Object[] {
+				repositoryId, folderId, title, mimeType, title, description,
+				changeLog
+			});
 
-		multipartEntityBuilder.addPart(
+		multipartEntity.addPart(
 			"file", getByteArrayBody(bytes, mimeType, title));
 
-		httpPost.setEntity(multipartEntityBuilder.build());
+		httpPost.setEntity(multipartEntity);
 
 		return executeRequest(httpPost);
 	}

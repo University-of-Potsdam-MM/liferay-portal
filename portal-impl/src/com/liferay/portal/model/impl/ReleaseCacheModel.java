@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,12 +14,9 @@
 
 package com.liferay.portal.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.CacheModel;
-import com.liferay.portal.model.MVCCModel;
 import com.liferay.portal.model.Release;
 
 import java.io.Externalizable;
@@ -36,26 +33,12 @@ import java.util.Date;
  * @see Release
  * @generated
  */
-@ProviderType
-public class ReleaseCacheModel implements CacheModel<Release>, Externalizable,
-	MVCCModel {
-	@Override
-	public long getMvccVersion() {
-		return mvccVersion;
-	}
-
-	@Override
-	public void setMvccVersion(long mvccVersion) {
-		this.mvccVersion = mvccVersion;
-	}
-
+public class ReleaseCacheModel implements CacheModel<Release>, Externalizable {
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(21);
+		StringBundler sb = new StringBundler(19);
 
-		sb.append("{mvccVersion=");
-		sb.append(mvccVersion);
-		sb.append(", releaseId=");
+		sb.append("{releaseId=");
 		sb.append(releaseId);
 		sb.append(", createDate=");
 		sb.append(createDate);
@@ -82,7 +65,6 @@ public class ReleaseCacheModel implements CacheModel<Release>, Externalizable,
 	public Release toEntityModel() {
 		ReleaseImpl releaseImpl = new ReleaseImpl();
 
-		releaseImpl.setMvccVersion(mvccVersion);
 		releaseImpl.setReleaseId(releaseId);
 
 		if (createDate == Long.MIN_VALUE) {
@@ -132,7 +114,6 @@ public class ReleaseCacheModel implements CacheModel<Release>, Externalizable,
 
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
-		mvccVersion = objectInput.readLong();
 		releaseId = objectInput.readLong();
 		createDate = objectInput.readLong();
 		modifiedDate = objectInput.readLong();
@@ -147,7 +128,6 @@ public class ReleaseCacheModel implements CacheModel<Release>, Externalizable,
 	@Override
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
-		objectOutput.writeLong(mvccVersion);
 		objectOutput.writeLong(releaseId);
 		objectOutput.writeLong(createDate);
 		objectOutput.writeLong(modifiedDate);
@@ -172,7 +152,6 @@ public class ReleaseCacheModel implements CacheModel<Release>, Externalizable,
 		}
 	}
 
-	public long mvccVersion;
 	public long releaseId;
 	public long createDate;
 	public long modifiedDate;

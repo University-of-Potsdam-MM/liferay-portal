@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -13,8 +13,6 @@
  */
 
 package com.liferay.portal.service.http;
-
-import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -51,12 +49,12 @@ import com.liferay.portal.service.ResourcePermissionServiceUtil;
  * @see com.liferay.portal.service.ResourcePermissionServiceUtil
  * @generated
  */
-@ProviderType
 public class ResourcePermissionServiceHttp {
 	public static void addResourcePermission(HttpPrincipal httpPrincipal,
 		long groupId, long companyId, java.lang.String name, int scope,
 		java.lang.String primKey, long roleId, java.lang.String actionId)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(ResourcePermissionServiceUtil.class,
 					"addResourcePermission",
@@ -73,6 +71,10 @@ public class ResourcePermissionServiceHttp {
 					throw (com.liferay.portal.kernel.exception.PortalException)e;
 				}
 
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
+				}
+
 				throw new com.liferay.portal.kernel.exception.SystemException(e);
 			}
 		}
@@ -86,7 +88,8 @@ public class ResourcePermissionServiceHttp {
 	public static void removeResourcePermission(HttpPrincipal httpPrincipal,
 		long groupId, long companyId, java.lang.String name, int scope,
 		java.lang.String primKey, long roleId, java.lang.String actionId)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(ResourcePermissionServiceUtil.class,
 					"removeResourcePermission",
@@ -103,6 +106,10 @@ public class ResourcePermissionServiceHttp {
 					throw (com.liferay.portal.kernel.exception.PortalException)e;
 				}
 
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
+				}
+
 				throw new com.liferay.portal.kernel.exception.SystemException(e);
 			}
 		}
@@ -116,7 +123,8 @@ public class ResourcePermissionServiceHttp {
 	public static void removeResourcePermissions(HttpPrincipal httpPrincipal,
 		long groupId, long companyId, java.lang.String name, int scope,
 		long roleId, java.lang.String actionId)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(ResourcePermissionServiceUtil.class,
 					"removeResourcePermissions",
@@ -133,6 +141,10 @@ public class ResourcePermissionServiceHttp {
 					throw (com.liferay.portal.kernel.exception.PortalException)e;
 				}
 
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
+				}
+
 				throw new com.liferay.portal.kernel.exception.SystemException(e);
 			}
 		}
@@ -147,7 +159,8 @@ public class ResourcePermissionServiceHttp {
 		HttpPrincipal httpPrincipal, long groupId, long companyId,
 		java.lang.String name, java.lang.String primKey, long roleId,
 		java.lang.String[] actionIds)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(ResourcePermissionServiceUtil.class,
 					"setIndividualResourcePermissions",
@@ -164,6 +177,10 @@ public class ResourcePermissionServiceHttp {
 					throw (com.liferay.portal.kernel.exception.PortalException)e;
 				}
 
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
+				}
+
 				throw new com.liferay.portal.kernel.exception.SystemException(e);
 			}
 		}
@@ -178,7 +195,8 @@ public class ResourcePermissionServiceHttp {
 		HttpPrincipal httpPrincipal, long groupId, long companyId,
 		java.lang.String name, java.lang.String primKey,
 		java.util.Map<java.lang.Long, java.lang.String[]> roleIdsToActionIds)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(ResourcePermissionServiceUtil.class,
 					"setIndividualResourcePermissions",
@@ -193,6 +211,10 @@ public class ResourcePermissionServiceHttp {
 			catch (Exception e) {
 				if (e instanceof com.liferay.portal.kernel.exception.PortalException) {
 					throw (com.liferay.portal.kernel.exception.PortalException)e;
+				}
+
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
 				}
 
 				throw new com.liferay.portal.kernel.exception.SystemException(e);

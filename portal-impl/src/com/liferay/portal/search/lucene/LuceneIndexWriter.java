@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -142,7 +142,7 @@ public class LuceneIndexWriter extends BaseIndexWriter {
 	private void _addLuceneFieldable(
 		org.apache.lucene.document.Document luceneDocument, String name,
 		boolean numeric, Class<? extends Number> numericClass,
-		boolean tokenized, boolean sortable, float boost, String value) {
+		boolean tokenized, float boost, String value) {
 
 		org.apache.lucene.document.Fieldable luceneFieldable = null;
 
@@ -156,12 +156,6 @@ public class LuceneIndexWriter extends BaseIndexWriter {
 			else {
 				luceneFieldable = LuceneFields.getKeyword(name, value);
 			}
-		}
-
-		if (sortable) {
-			String sortableFieldName = DocumentImpl.getSortableFieldName(name);
-
-			luceneFieldable = LuceneFields.getKeyword(sortableFieldName, value);
 		}
 
 		luceneFieldable.setBoost(boost);
@@ -192,7 +186,7 @@ public class LuceneIndexWriter extends BaseIndexWriter {
 
 					_addLuceneFieldable(
 						luceneDocument, name, numeric, numericClass, tokenized,
-						field.isSortable(), boost, value);
+						boost, value);
 				}
 			}
 			else {
@@ -218,7 +212,7 @@ public class LuceneIndexWriter extends BaseIndexWriter {
 					if (languageId.equals(defaultLanguageId)) {
 						_addLuceneFieldable(
 							luceneDocument, name, numeric, numericClass,
-							tokenized, field.isSortable(), boost, value);
+							tokenized, boost, value);
 					}
 
 					String localizedName = DocumentImpl.getLocalizedName(
@@ -226,7 +220,7 @@ public class LuceneIndexWriter extends BaseIndexWriter {
 
 					_addLuceneFieldable(
 						luceneDocument, localizedName, numeric, numericClass,
-						tokenized, field.isSortable(), boost, value);
+						tokenized, boost, value);
 				}
 			}
 		}

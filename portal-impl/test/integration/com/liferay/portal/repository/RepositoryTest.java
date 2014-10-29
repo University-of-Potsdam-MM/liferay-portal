@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -19,6 +19,7 @@ import com.liferay.portal.kernel.repository.LocalRepository;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.test.ExecutionTestListeners;
+import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.UnicodeProperties;
@@ -29,16 +30,15 @@ import com.liferay.portal.repository.liferayrepository.LiferayRepository;
 import com.liferay.portal.service.RepositoryLocalServiceUtil;
 import com.liferay.portal.service.RepositoryServiceUtil;
 import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.test.DeleteAfterTestRun;
-import com.liferay.portal.test.listeners.MainServletExecutionTestListener;
-import com.liferay.portal.test.runners.LiferayIntegrationJUnitTestRunner;
+import com.liferay.portal.test.LiferayIntegrationJUnitTestRunner;
+import com.liferay.portal.test.MainServletExecutionTestListener;
+import com.liferay.portal.test.TransactionalExecutionTestListener;
+import com.liferay.portal.util.GroupTestUtil;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.PortletKeys;
-import com.liferay.portal.util.test.GroupTestUtil;
-import com.liferay.portal.util.test.TestPropsValues;
+import com.liferay.portal.util.TestPropsValues;
 import com.liferay.portlet.documentlibrary.model.DLFolder;
 import com.liferay.portlet.documentlibrary.model.DLFolderConstants;
-import com.liferay.portlet.documentlibrary.service.DLAppLocalServiceUtil;
 import com.liferay.portlet.documentlibrary.service.DLAppServiceUtil;
 import com.liferay.portlet.documentlibrary.service.DLFolderServiceUtil;
 
@@ -52,7 +52,11 @@ import org.junit.runner.RunWith;
 /**
  * @author Alexander Chow
  */
-@ExecutionTestListeners(listeners = {MainServletExecutionTestListener.class})
+@ExecutionTestListeners(
+	listeners = {
+		MainServletExecutionTestListener.class,
+		TransactionalExecutionTestListener.class
+	})
 @RunWith(LiferayIntegrationJUnitTestRunner.class)
 public class RepositoryTest {
 
@@ -62,11 +66,13 @@ public class RepositoryTest {
 	}
 
 	@Test
+	@Transactional
 	public void testAddAndDeleteFileEntries() throws Exception {
 		addAndDeleteFileEntries(false);
 	}
 
 	@Test
+	@Transactional
 	public void testAddAndDeleteFileEntriesInHiddenRepository()
 		throws Exception {
 
@@ -74,11 +80,13 @@ public class RepositoryTest {
 	}
 
 	@Test
+	@Transactional
 	public void testAddAndDeleteHiddenRepositories() throws Exception {
 		addAndDeleteRepositories(true);
 	}
 
 	@Test
+	@Transactional
 	public void testAddAndDeleteRepositories() throws Exception {
 		addAndDeleteRepositories(false);
 	}
@@ -174,7 +182,7 @@ public class RepositoryTest {
 
 		// Delete repositories
 
-		DLAppLocalServiceUtil.deleteAllRepositories(_group.getGroupId());
+		RepositoryLocalServiceUtil.deleteRepositories(_group.getGroupId());
 
 		for (int i = 0; i < repositoryIds.length; i++) {
 			long repositoryId = repositoryIds[i];
@@ -245,7 +253,7 @@ public class RepositoryTest {
 
 		// Delete repositories
 
-		DLAppLocalServiceUtil.deleteAllRepositories(_group.getGroupId());
+		RepositoryLocalServiceUtil.deleteRepositories(_group.getGroupId());
 
 		for (long repositoryId : repositoryIds) {
 			try {
@@ -268,7 +276,6 @@ public class RepositoryTest {
 	private static final String _TEST_CONTENT =
 		"LIFERAY\nEnterprise. Open Source. For Life.";
 
-	@DeleteAfterTestRun
 	private Group _group;
 
 }

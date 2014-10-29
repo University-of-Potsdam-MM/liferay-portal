@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portlet.softwarecatalog.service.impl;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.User;
 import com.liferay.portal.service.ServiceContext;
@@ -36,7 +37,7 @@ public class SCFrameworkVersionLocalServiceImpl
 	public SCFrameworkVersion addFrameworkVersion(
 			long userId, String name, String url, boolean active, int priority,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		// Framework version
 
@@ -86,7 +87,7 @@ public class SCFrameworkVersionLocalServiceImpl
 	public void addFrameworkVersionResources(
 			long frameworkVersionId, boolean addGroupPermissions,
 			boolean addGuestPermissions)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		SCFrameworkVersion frameworkVersion =
 			scFrameworkVersionPersistence.findByPrimaryKey(frameworkVersionId);
@@ -99,7 +100,7 @@ public class SCFrameworkVersionLocalServiceImpl
 	public void addFrameworkVersionResources(
 			long frameworkVersionId, String[] groupPermissions,
 			String[] guestPermissions)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		SCFrameworkVersion frameworkVersion =
 			scFrameworkVersionPersistence.findByPrimaryKey(frameworkVersionId);
@@ -112,7 +113,7 @@ public class SCFrameworkVersionLocalServiceImpl
 	public void addFrameworkVersionResources(
 			SCFrameworkVersion frameworkVersion, boolean addGroupPermissions,
 			boolean addGuestPermissions)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		resourceLocalService.addResources(
 			frameworkVersion.getCompanyId(), frameworkVersion.getGroupId(),
@@ -125,7 +126,7 @@ public class SCFrameworkVersionLocalServiceImpl
 	public void addFrameworkVersionResources(
 			SCFrameworkVersion frameworkVersion, String[] groupPermissions,
 			String[] guestPermissions)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		resourceLocalService.addModelResources(
 			frameworkVersion.getCompanyId(), frameworkVersion.getGroupId(),
@@ -136,7 +137,7 @@ public class SCFrameworkVersionLocalServiceImpl
 
 	@Override
 	public void deleteFrameworkVersion(long frameworkVersionId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		SCFrameworkVersion frameworkVersion =
 			scFrameworkVersionPersistence.findByPrimaryKey(frameworkVersionId);
@@ -145,12 +146,14 @@ public class SCFrameworkVersionLocalServiceImpl
 	}
 
 	@Override
-	public void deleteFrameworkVersion(SCFrameworkVersion frameworkVersion) {
+	public void deleteFrameworkVersion(SCFrameworkVersion frameworkVersion)
+		throws SystemException {
+
 		scFrameworkVersionPersistence.remove(frameworkVersion);
 	}
 
 	@Override
-	public void deleteFrameworkVersions(long groupId) {
+	public void deleteFrameworkVersions(long groupId) throws SystemException {
 		List<SCFrameworkVersion> frameworkVersions =
 			scFrameworkVersionPersistence.findByGroupId(groupId);
 
@@ -161,7 +164,7 @@ public class SCFrameworkVersionLocalServiceImpl
 
 	@Override
 	public SCFrameworkVersion getFrameworkVersion(long frameworkVersionId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return scFrameworkVersionPersistence.findByPrimaryKey(
 			frameworkVersionId);
@@ -169,14 +172,16 @@ public class SCFrameworkVersionLocalServiceImpl
 
 	@Override
 	public List<SCFrameworkVersion> getFrameworkVersions(
-		long groupId, boolean active) {
+			long groupId, boolean active)
+		throws SystemException {
 
 		return scFrameworkVersionPersistence.findByG_A(groupId, active);
 	}
 
 	@Override
 	public List<SCFrameworkVersion> getFrameworkVersions(
-		long groupId, boolean active, int start, int end) {
+			long groupId, boolean active, int start, int end)
+		throws SystemException {
 
 		return scFrameworkVersionPersistence.findByG_A(
 			groupId, active, start, end);
@@ -184,24 +189,28 @@ public class SCFrameworkVersionLocalServiceImpl
 
 	@Override
 	public List<SCFrameworkVersion> getFrameworkVersions(
-		long groupId, int start, int end) {
+			long groupId, int start, int end)
+		throws SystemException {
 
 		return scFrameworkVersionPersistence.findByGroupId(groupId, start, end);
 	}
 
 	@Override
-	public int getFrameworkVersionsCount(long groupId) {
+	public int getFrameworkVersionsCount(long groupId) throws SystemException {
 		return scFrameworkVersionPersistence.countByGroupId(groupId);
 	}
 
 	@Override
-	public int getFrameworkVersionsCount(long groupId, boolean active) {
+	public int getFrameworkVersionsCount(long groupId, boolean active)
+		throws SystemException {
+
 		return scFrameworkVersionPersistence.countByG_A(groupId, active);
 	}
 
 	@Override
 	public List<SCFrameworkVersion> getProductVersionFrameworkVersions(
-		long productVersionId) {
+			long productVersionId)
+		throws SystemException {
 
 		return scProductVersionPersistence.getSCFrameworkVersions(
 			productVersionId);
@@ -211,7 +220,7 @@ public class SCFrameworkVersionLocalServiceImpl
 	public SCFrameworkVersion updateFrameworkVersion(
 			long frameworkVersionId, String name, String url, boolean active,
 			int priority)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		validate(name);
 

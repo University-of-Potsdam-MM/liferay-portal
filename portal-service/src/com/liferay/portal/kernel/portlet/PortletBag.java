@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,15 +14,12 @@
 
 package com.liferay.portal.kernel.portlet;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.atom.AtomCollectionAdapter;
 import com.liferay.portal.kernel.lar.PortletDataHandler;
 import com.liferay.portal.kernel.lar.StagedModelDataHandler;
 import com.liferay.portal.kernel.notifications.UserNotificationHandler;
 import com.liferay.portal.kernel.poller.PollerProcessor;
 import com.liferay.portal.kernel.pop.MessageListener;
-import com.liferay.portal.kernel.scheduler.SchedulerEntry;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.OpenSearch;
 import com.liferay.portal.kernel.servlet.URLEncoder;
@@ -34,13 +31,13 @@ import com.liferay.portal.kernel.xmlrpc.Method;
 import com.liferay.portal.security.permission.PermissionPropagator;
 import com.liferay.portlet.ControlPanelEntry;
 import com.liferay.portlet.asset.model.AssetRendererFactory;
-import com.liferay.portlet.dynamicdatamapping.util.DDMDisplay;
 import com.liferay.portlet.expando.model.CustomAttributesDisplay;
 import com.liferay.portlet.social.model.SocialActivityInterpreter;
 import com.liferay.portlet.social.model.SocialRequestInterpreter;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import javax.portlet.Portlet;
@@ -51,77 +48,69 @@ import javax.servlet.ServletContext;
 /**
  * @author Brian Wing Shun Chan
  */
-@ProviderType
 public interface PortletBag extends Cloneable {
 
 	public Object clone();
-
-	public void destroy();
 
 	public List<AssetRendererFactory> getAssetRendererFactoryInstances();
 
 	public List<AtomCollectionAdapter<?>> getAtomCollectionAdapterInstances();
 
-	public List<ConfigurationAction> getConfigurationActionInstances();
+	public ConfigurationAction getConfigurationActionInstance();
 
-	public List<ControlPanelEntry> getControlPanelEntryInstances();
+	public ControlPanelEntry getControlPanelEntryInstance();
 
 	public List<CustomAttributesDisplay> getCustomAttributesDisplayInstances();
 
-	public List<DDMDisplay> getDdmDisplayInstances();
-
-	public FriendlyURLMapperTracker getFriendlyURLMapperTracker();
+	public FriendlyURLMapper getFriendlyURLMapperInstance();
 
 	public List<Indexer> getIndexerInstances();
 
-	public List<OpenSearch> getOpenSearchInstances();
+	public OpenSearch getOpenSearchInstance();
 
-	public List<PermissionPropagator> getPermissionPropagatorInstances();
+	public PermissionPropagator getPermissionPropagatorInstance();
 
-	public List<PollerProcessor> getPollerProcessorInstances();
+	public PollerProcessor getPollerProcessorInstance();
 
-	public List<MessageListener> getPopMessageListenerInstances();
+	public MessageListener getPopMessageListenerInstance();
 
-	public List<PortletDataHandler> getPortletDataHandlerInstances();
+	public PortletDataHandler getPortletDataHandlerInstance();
 
 	public Portlet getPortletInstance();
 
-	public List<PortletLayoutListener> getPortletLayoutListenerInstances();
+	public PortletLayoutListener getPortletLayoutListenerInstance();
 
 	public String getPortletName();
 
-	public List<PreferencesValidator> getPreferencesValidatorInstances();
+	public PreferencesValidator getPreferencesValidatorInstance();
 
 	public ResourceBundle getResourceBundle(Locale locale);
 
-	public ResourceBundleTracker getResourceBundleTracker();
-
-	public List<SchedulerEntry> getSchedulerEntryInstances();
+	public Map<String, ResourceBundle> getResourceBundles();
 
 	public ServletContext getServletContext();
 
 	public List<SocialActivityInterpreter>
 		getSocialActivityInterpreterInstances();
 
-	public List<SocialRequestInterpreter>
-		getSocialRequestInterpreterInstances();
+	public SocialRequestInterpreter getSocialRequestInterpreterInstance();
 
 	public List<StagedModelDataHandler<?>> getStagedModelDataHandlerInstances();
 
-	public List<TemplateHandler> getTemplateHandlerInstances();
+	public TemplateHandler getTemplateHandlerInstance();
 
 	public List<TrashHandler> getTrashHandlerInstances();
 
-	public List<URLEncoder> getURLEncoderInstances();
+	public URLEncoder getURLEncoderInstance();
 
 	public List<UserNotificationHandler>
 		getUserNotificationHandlerInstances();
 
-	public List<WebDAVStorage> getWebDAVStorageInstances();
+	public WebDAVStorage getWebDAVStorageInstance();
 
-	public List<WorkflowHandler<?>> getWorkflowHandlerInstances();
+	public List<WorkflowHandler> getWorkflowHandlerInstances();
 
-	public List<Method> getXmlRpcMethodInstances();
+	public Method getXmlRpcMethodInstance();
 
 	public void setPortletInstance(Portlet portletInstance);
 

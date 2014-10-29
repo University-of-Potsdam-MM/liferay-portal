@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,9 +18,9 @@ import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.security.auth.AccessControlContext;
+import com.liferay.portal.security.auth.AuthSettingsUtil;
 import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portal.security.permission.PermissionThreadLocal;
-import com.liferay.portal.security.sso.SSOUtil;
 
 import java.lang.reflect.Method;
 
@@ -71,7 +71,7 @@ public class AccessControlAdvisorImpl implements AccessControlAdvisor {
 
 		Set<String> hostsAllowedSet = SetUtil.fromArray(hostsAllowed);
 
-		if (!SSOUtil.isAccessAllowed(request, hostsAllowedSet)) {
+		if (!AuthSettingsUtil.isAccessAllowed(request, hostsAllowedSet)) {
 			throw new SecurityException(
 				"Access denied for " + request.getRemoteAddr());
 		}

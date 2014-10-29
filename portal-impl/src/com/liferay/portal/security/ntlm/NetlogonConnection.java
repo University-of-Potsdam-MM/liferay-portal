@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -41,6 +41,20 @@ import jcifs.util.MD4;
  * @author Michael C. Han
  */
 public class NetlogonConnection {
+
+	public NetlogonConnection() {
+		if (_negotiateFlags == 0) {
+			String negotiateFlags = PropsValues.NTLM_AUTH_NEGOTIATE_FLAGS;
+
+			if (negotiateFlags.startsWith("0x")) {
+				_negotiateFlags = Integer.valueOf(
+					negotiateFlags.substring(2), 16);
+			}
+			else {
+				_negotiateFlags = 0x600FFFFF;
+			}
+		}
+	}
 
 	public NetlogonAuthenticator computeNetlogonAuthenticator() {
 		int timestamp = (int)System.currentTimeMillis();
@@ -100,7 +114,7 @@ public class NetlogonConnection {
 			new NetrServerAuthenticate3(
 				domainControllerName, ntlmServiceAccount.getAccountName(), 2,
 				ntlmServiceAccount.getComputerName(), clientCredential,
-				new byte[8], _NEGOTIATE_FLAGS);
+				new byte[8], _negotiateFlags);
 
 		dcerpcHandle.sendrecv(netrServerAuthenticate3);
 
@@ -180,18 +194,7 @@ public class NetlogonConnection {
 		return hmact64.digest();
 	}
 
-	private static final int _NEGOTIATE_FLAGS;
-
-	static {
-		String negotiateFlags = PropsValues.NTLM_AUTH_NEGOTIATE_FLAGS;
-
-		if (negotiateFlags.startsWith("0x")) {
-			_NEGOTIATE_FLAGS = Integer.valueOf(negotiateFlags.substring(2), 16);
-		}
-		else {
-			_NEGOTIATE_FLAGS = 0x600FFFFF;
-		}
-	}
+	private static int _negotiateFlags;
 
 	private byte[] _clientCredential;
 	private DcerpcHandle _dcerpcHandle;

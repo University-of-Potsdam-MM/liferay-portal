@@ -3,8 +3,6 @@ package ${packagePath}.model;
 import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.util.Accessor;
-import com.liferay.portal.kernel.util.LocaleThreadLocal;
-import com.liferay.portal.model.NestedSetsTreeNodeModel;
 import com.liferay.portal.model.PermissionedModel;
 import com.liferay.portal.model.PersistedModel;
 import com.liferay.portal.model.TreeModel;
@@ -19,17 +17,16 @@ import com.liferay.portal.model.TreeModel;
  * @generated
  */
 
-@ProviderType
+<#if pluginName == "">
+	@ProviderType
+</#if>
+
 public interface ${entity.name} extends
 	${entity.name}Model
 
 	<#assign overrideColumnNames = []>
 
 	<#if entity.hasLocalService() && entity.hasColumns()>
-		<#if entity.isHierarchicalTree()>
-			, NestedSetsTreeNodeModel
-		</#if>
-
 		<#if entity.isPermissionedModel()>
 			, PermissionedModel
 		<#else>
@@ -59,16 +56,6 @@ public interface ${entity.name} extends
 				return ${entity.varName}.getUuid();
 			}
 
-			@Override
-			public Class<String> getAttributeClass() {
-				return String.class;
-			}
-
-			@Override
-			public Class<${entity.name}> getTypeClass() {
-				return ${entity.name}.class;
-			}
-
 		};
 	</#if>
 
@@ -78,17 +65,7 @@ public interface ${entity.name} extends
 
 				@Override
 				public ${serviceBuilder.getPrimitiveObj(column.type)} get(${entity.name} ${entity.varName}) {
-					return ${entity.varName}.get${column.methodName}(<#if column.isLocalized()>LocaleThreadLocal.getThemeDisplayLocale()</#if>);
-				}
-
-				@Override
-				public Class<${serviceBuilder.getPrimitiveObj(column.type)}> getAttributeClass() {
-					return ${serviceBuilder.getPrimitiveObj(column.type)}.class;
-				}
-
-				@Override
-				public Class<${entity.name}> getTypeClass() {
-					return ${entity.name}.class;
+					return ${entity.varName}.get${column.methodName}();
 				}
 
 			};

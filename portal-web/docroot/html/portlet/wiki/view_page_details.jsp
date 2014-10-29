@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -43,7 +43,7 @@ editPageURL.setParameter("nodeId", String.valueOf(node.getNodeId()));
 editPageURL.setParameter("title", wikiPage.getTitle());
 
 PortalUtil.addPortletBreadcrumbEntry(request, wikiPage.getTitle(), viewPageURL.toString());
-PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.get(request, "details"), currentURL);
+PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.get(pageContext, "details"), currentURL);
 %>
 
 <liferay-util:include page="/html/portlet/wiki/top_links.jsp" />
@@ -134,7 +134,7 @@ PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.get(request, "details
 			%>
 
 				<liferay-ui:icon
-					iconCssClass="<%= DLUtil.getFileIconCssClass(conversion) %>"
+					image='<%= "../file_system/small/" + conversion %>'
 					label="<%= true %>"
 					message="<%= StringUtil.toUpperCase(conversion) %>"
 					method="get"
@@ -150,23 +150,23 @@ PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.get(request, "details
 	</tr>
 </c:if>
 
-<c:if test="<%= wikiPortletInstanceSettings.isEnableRSS() %>">
+<c:if test="<%= enableRSS %>">
 	<tr>
 		<th class="table-header">
 			<liferay-ui:message key="rss-subscription" />
 		</th>
 		<td class="table-cell">
 			<liferay-ui:rss
-				delta="<%= wikiPortletInstanceSettings.getRssDelta() %>"
-				displayStyle="<%= wikiPortletInstanceSettings.getRssDisplayStyle() %>"
-				feedType="<%= wikiPortletInstanceSettings.getRssFeedType() %>"
+				delta="<%= rssDelta %>"
+				displayStyle="<%= rssDisplayStyle %>"
+				feedType="<%= rssFeedType %>"
 				url='<%= themeDisplay.getPathMain() + "/wiki/rss?p_l_id=" + plid + "&companyId=" + company.getCompanyId() + "&nodeId=" + wikiPage.getNodeId() + "&title=" + wikiPage.getTitle() %>'
 			/>
 		</td>
 	</tr>
 </c:if>
 
-<c:if test="<%= (WikiPagePermission.contains(permissionChecker, wikiPage, ActionKeys.SUBSCRIBE) || WikiNodePermission.contains(permissionChecker, node, ActionKeys.SUBSCRIBE)) && (wikiSettings.isEmailPageAddedEnabled() || wikiSettings.isEmailPageUpdatedEnabled()) %>">
+<c:if test="<%= (WikiPagePermission.contains(permissionChecker, wikiPage, ActionKeys.SUBSCRIBE) || WikiNodePermission.contains(permissionChecker, node, ActionKeys.SUBSCRIBE)) && (WikiUtil.getEmailPageAddedEnabled(portletPreferences) || WikiUtil.getEmailPageUpdatedEnabled(portletPreferences)) %>">
 	<tr>
 		<th class="table-header">
 			<liferay-ui:message key="email-subscription" />
@@ -191,9 +191,8 @@ PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.get(request, "details
 								</portlet:actionURL>
 
 								<liferay-ui:icon
-									iconCssClass="icon-remove-sign"
+									image="unsubscribe"
 									label="<%= true %>"
-									message="unsubscribe"
 									url="<%= unsubscribeURL %>"
 								/>
 							</td>
@@ -212,9 +211,8 @@ PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.get(request, "details
 								</portlet:actionURL>
 
 								<liferay-ui:icon
-									iconCssClass="icon-ok-sign"
+									image="subscribe"
 									label="<%= true %>"
-									message="subscribe"
 									url="<%= subscribeURL %>"
 								/>
 							</td>
@@ -239,9 +237,8 @@ PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.get(request, "details
 								</portlet:actionURL>
 
 								<liferay-ui:icon
-									iconCssClass="icon-remove-sign"
+									image="unsubscribe"
 									label="<%= true %>"
-									message="unsubscribe"
 									url="<%= unsubscribeURL %>"
 								/>
 							</td>
@@ -259,9 +256,8 @@ PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.get(request, "details
 								</portlet:actionURL>
 
 								<liferay-ui:icon
-									iconCssClass="icon-ok-sign"
+									image="subscribe"
 									label="<%= true %>"
-									message="subscribe"
 									url="<%= subscribeURL %>"
 								/>
 							</td>
@@ -292,9 +288,8 @@ PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.get(request, "details
 					/>
 
 					<liferay-ui:icon
-						iconCssClass="icon-lock"
+						image="permissions"
 						label="<%= true %>"
-						message="permissions"
 						method="get"
 						url="<%= permissionsURL %>"
 						useDialog="<%= true %>"
@@ -316,9 +311,8 @@ PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.get(request, "details
 					%>
 
 					<liferay-ui:icon
-						iconCssClass="icon-copy"
+						image="copy"
 						label="<%= true %>"
-						message="copy"
 						url="<%= copyPageURL.toString() %>"
 					/>
 				</c:if>
@@ -333,7 +327,7 @@ PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.get(request, "details
 					%>
 
 					<liferay-ui:icon
-						iconCssClass="icon-move"
+						image="forward"
 						label="<%= true %>"
 						message="move"
 						url="<%= movePageURL.toString() %>"

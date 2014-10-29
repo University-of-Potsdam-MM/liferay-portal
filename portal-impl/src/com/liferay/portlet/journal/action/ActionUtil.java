@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,12 +14,9 @@
 
 package com.liferay.portlet.journal.action;
 
-import com.liferay.portal.kernel.json.JSONFactoryUtil;
-import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
@@ -27,11 +24,6 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnicodeFormatter;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
-import com.liferay.portal.kernel.xml.Document;
-import com.liferay.portal.kernel.xml.Element;
-import com.liferay.portal.kernel.xml.Node;
-import com.liferay.portal.kernel.xml.SAXReaderUtil;
-import com.liferay.portal.kernel.xml.XPath;
 import com.liferay.portal.security.permission.ActionKeys;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextFactory;
@@ -206,7 +198,7 @@ public class ActionUtil {
 			article = JournalArticleServiceUtil.getLatestArticle(
 				groupId, className, classPK);
 		}
-		else {
+		else if (Validator.isNotNull(structureId)) {
 			DDMStructure ddmStructure = null;
 
 			try {
@@ -292,11 +284,11 @@ public class ActionUtil {
 		Fields fields = DDMUtil.getFields(
 			ddmStructure.getStructureId(), serviceContext);
 
-		String content = JournalConverterUtil.getContent(ddmStructure, fields);
+		Map<String, byte[]> images = getImages(fields, locale);
 
-		Map<String, byte[]> images = getImages(content, fields, locale);
-
-		return new Object[] {content, images};
+		return new Object[] {
+			JournalConverterUtil.getContent(ddmStructure, fields), images
+		};
 	}
 
 	public static void getFeed(HttpServletRequest request) throws Exception {
@@ -386,8 +378,12 @@ public class ActionUtil {
 		long classNameId = ParamUtil.getLong(request, "classNameId");
 		String structureId = ParamUtil.getString(request, "structureId");
 
-		DDMStructure ddmStructure = DDMStructureServiceUtil.getStructure(
-			groupId, classNameId, structureId);
+		DDMStructure ddmStructure = null;
+
+		if (Validator.isNotNull(structureId)) {
+			ddmStructure = DDMStructureServiceUtil.getStructure(
+				groupId, classNameId, structureId);
+		}
 
 		request.setAttribute(WebKeys.JOURNAL_STRUCTURE, ddmStructure);
 	}
@@ -437,31 +433,7 @@ public class ActionUtil {
 		JournalUtil.addRecentDDMTemplate(portletRequest, ddmTemplate);
 	}
 
-	protected static String getElementInstanceId(
-			String content, String fieldName, int index)
-		throws Exception {
-
-		Document document = SAXReaderUtil.read(content);
-
-		String xPathExpression =
-			"//dynamic-element[@name = " +
-				HtmlUtil.escapeXPathAttribute(fieldName) + "]";
-
-		XPath xPath = SAXReaderUtil.createXPath(xPathExpression);
-
-		List<Node> nodes = xPath.selectNodes(document);
-
-		if (index > nodes.size()) {
-			return StringPool.BLANK;
-		}
-
-		Element dynamicElementElement = (Element)nodes.get(index);
-
-		return dynamicElementElement.attributeValue("instance-id");
-	}
-
-	protected static Map<String, byte[]> getImages(
-			String content, Fields fields, Locale locale)
+	protected static Map<String, byte[]> getImages(Fields fields, Locale locale)
 		throws Exception {
 
 		Map<String, byte[]> images = new HashMap<String, byte[]>();
@@ -476,9 +448,14 @@ public class ActionUtil {
 			List<Serializable> values = field.getValues(locale);
 
 			for (int i = 0; i < values.size(); i++) {
+				String content = (String)values.get(i);
+
+				if (content.equals("update")) {
+					continue;
+				}
+
 				StringBundler sb = new StringBundler(6);
 
-				sb.append(getElementInstanceId(content, field.getName(), i));
 				sb.append(StringPool.UNDERLINE);
 				sb.append(field.getName());
 				sb.append(StringPool.UNDERLINE);
@@ -486,12 +463,7 @@ public class ActionUtil {
 				sb.append(StringPool.UNDERLINE);
 				sb.append(LanguageUtil.getLanguageId(locale));
 
-				JSONObject jsonObject = JSONFactoryUtil.createJSONObject(
-					(String)values.get(i));
-
-				String data = jsonObject.getString("data");
-
-				images.put(sb.toString(), UnicodeFormatter.hexToBytes(data));
+				images.put(sb.toString(), UnicodeFormatter.hexToBytes(content));
 			}
 		}
 

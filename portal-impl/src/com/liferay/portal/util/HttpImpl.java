@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -234,13 +234,7 @@ public class HttpImpl implements Http {
 		sb.append(encodeURL(value));
 		sb.append(anchor);
 
-		String result = sb.toString();
-
-		if (result.length() > URL_MAXIMUM_LENGTH) {
-			result = shortenURL(result, 2);
-		}
-
-		return result;
+		return sb.toString();
 	}
 
 	@Override
@@ -261,17 +255,13 @@ public class HttpImpl implements Http {
 		return decodeURL(url, false);
 	}
 
-	/**
-	 * @deprecated As of 7.0.0, replaced by {@link #decodeURL(String)}
-	 */
-	@Deprecated
 	@Override
 	public String decodeURL(String url, boolean unescapeSpaces) {
 		if (Validator.isNull(url)) {
 			return url;
 		}
 
-		return URLCodec.decodeURL(url, StringPool.UTF8);
+		return URLCodec.decodeURL(url, StringPool.UTF8, unescapeSpaces);
 	}
 
 	public void destroy() {
@@ -451,7 +441,6 @@ public class HttpImpl implements Http {
 	 * @deprecated As of 6.1.0, replaced by {@link
 	 *             #getHostConfiguration(String)}
 	 */
-	@Deprecated
 	public HostConfiguration getHostConfig(String location) throws IOException {
 		return getHostConfiguration(location);
 	}
@@ -746,19 +735,7 @@ public class HttpImpl implements Http {
 				String value = StringPool.BLANK;
 
 				if (kvp.length > 1) {
-					try {
-						value = decodeURL(kvp[1]);
-					}
-					catch (IllegalArgumentException iae) {
-						if (_log.isInfoEnabled()) {
-							_log.info(
-								"Skipping parameter with key " + key +
-									" because of invalid value " + kvp[1],
-								iae);
-						}
-
-						continue;
-					}
+					value = decodeURL(kvp[1]);
 				}
 
 				List<String> values = tempParameterMap.get(key);
@@ -851,10 +828,6 @@ public class HttpImpl implements Http {
 
 			if (secure) {
 				protocol = Http.HTTPS;
-			}
-
-			if (port == -1) {
-				port = urlObj.getPort();
 			}
 
 			urlObj = new URL(
@@ -965,39 +938,6 @@ public class HttpImpl implements Http {
 	}
 
 	@Override
-	public String removePathParameters(String uri) {
-		if (Validator.isNull(uri)) {
-			return uri;
-		}
-
-		int pos = uri.indexOf(StringPool.SEMICOLON);
-
-		if (pos == -1) {
-			return uri;
-		}
-
-		String[] uriParts = StringUtil.split(
-			uri.substring(1), StringPool.SLASH);
-
-		StringBundler sb = new StringBundler(uriParts.length * 2);
-
-		for (String uriPart : uriParts) {
-			pos = uriPart.indexOf(StringPool.SEMICOLON);
-
-			if (pos == -1) {
-				sb.append(StringPool.SLASH);
-				sb.append(uriPart);
-			}
-			else {
-				sb.append(StringPool.SLASH);
-				sb.append(uriPart.substring(0, pos));
-			}
-		}
-
-		return sb.toString();
-	}
-
-	@Override
 	public String removeProtocol(String url) {
 		if (Validator.isNull(url)) {
 			return url;
@@ -1078,67 +1018,6 @@ public class HttpImpl implements Http {
 	}
 
 	@Override
-	public String shortenURL(String url, int count) {
-		if (count == 0) {
-			return null;
-		}
-
-		StringBundler sb = new StringBundler();
-
-		String[] params = url.split(StringPool.AMPERSAND);
-
-		for (int i = 0; i < params.length; i++) {
-			String param = params[i];
-
-			if (param.contains("_backURL=") || param.contains("_redirect=") ||
-				param.contains("_returnToFullPageURL=") ||
-				param.startsWith("redirect")) {
-
-				int pos = param.indexOf(StringPool.EQUAL);
-
-				String qName = param.substring(0, pos);
-
-				String redirect = param.substring(pos + 1);
-
-				try {
-					redirect = decodeURL(redirect);
-				}
-				catch (IllegalArgumentException iae) {
-					if (_log.isDebugEnabled()) {
-						_log.debug(
-							"Skipping undecodable parameter " + param, iae);
-					}
-
-					continue;
-				}
-
-				String newURL = shortenURL(redirect, count - 1);
-
-				if (newURL != null) {
-					newURL = encodeURL(newURL);
-
-					sb.append(qName);
-					sb.append(StringPool.EQUAL);
-					sb.append(newURL);
-
-					if (i < (params.length - 1)) {
-						sb.append(StringPool.AMPERSAND);
-					}
-				}
-			}
-			else {
-				sb.append(param);
-
-				if (i < (params.length - 1)) {
-					sb.append(StringPool.AMPERSAND);
-				}
-			}
-		}
-
-		return sb.toString();
-	}
-
-	@Override
 	public byte[] URLtoByteArray(Http.Options options) throws IOException {
 		return URLtoByteArray(
 			options.getLocation(), options.getMethod(), options.getHeaders(),
@@ -1213,22 +1092,26 @@ public class HttpImpl implements Http {
 
 		URLConnection urlConnection = url.openConnection();
 
-		try (InputStream inputStream = urlConnection.getInputStream();
-			UnsyncByteArrayOutputStream unsyncByteArrayOutputStream =
-				new UnsyncByteArrayOutputStream()) {
+		InputStream inputStream = urlConnection.getInputStream();
 
-			byte[] bytes = new byte[512];
+		UnsyncByteArrayOutputStream unsyncByteArrayOutputStream =
+			new UnsyncByteArrayOutputStream();
 
-			for (int i = inputStream.read(bytes, 0, 512); i != -1;
+		byte[] bytes = new byte[512];
+
+		for (int i = inputStream.read(bytes, 0, 512); i != -1;
 				i = inputStream.read(bytes, 0, 512)) {
 
-				unsyncByteArrayOutputStream.write(bytes, 0, i);
-			}
-
-			xml = new String(
-				unsyncByteArrayOutputStream.unsafeGetByteArray(), 0,
-				unsyncByteArrayOutputStream.size());
+			unsyncByteArrayOutputStream.write(bytes, 0, i);
 		}
+
+		xml = new String(
+			unsyncByteArrayOutputStream.unsafeGetByteArray(), 0,
+			unsyncByteArrayOutputStream.size());
+
+		inputStream.close();
+
+		unsyncByteArrayOutputStream.close();
 
 		return xml;
 	}
@@ -1470,9 +1353,9 @@ public class HttpImpl implements Http {
 				 method.equals(Http.Method.PUT)) &&
 				((body != null) ||
 				 ((fileParts != null) && !fileParts.isEmpty()) ||
-				 ((parts != null) && !parts.isEmpty())) &&
-				!hasRequestHeader(httpMethod, HttpHeaders.CONTENT_TYPE)) {
-
+				 ((parts != null) && !parts.isEmpty()))) {
+			}
+			else if (!hasRequestHeader(httpMethod, HttpHeaders.CONTENT_TYPE)) {
 				httpMethod.addRequestHeader(
 					HttpHeaders.CONTENT_TYPE,
 					ContentTypes.APPLICATION_X_WWW_FORM_URLENCODED_UTF8);
@@ -1560,20 +1443,20 @@ public class HttpImpl implements Http {
 							portletRequest, inputStream, contentLength,
 							progressId);
 
-					try (UnsyncByteArrayOutputStream
-							unsyncByteArrayOutputStream =
-								new UnsyncByteArrayOutputStream(
-									contentLength)) {
+					UnsyncByteArrayOutputStream unsyncByteArrayOutputStream =
+						new UnsyncByteArrayOutputStream(contentLength);
 
+					try {
 						progressInputStream.readAll(
-							unsyncByteArrayOutputStream);
-
-						bytes =
-							unsyncByteArrayOutputStream.unsafeGetByteArray();
+						unsyncByteArrayOutputStream);
 					}
 					finally {
 						progressInputStream.clearProgress();
 					}
+
+					bytes = unsyncByteArrayOutputStream.unsafeGetByteArray();
+
+					unsyncByteArrayOutputStream.close();
 				}
 				else {
 					bytes = FileUtil.getBytes(inputStream);

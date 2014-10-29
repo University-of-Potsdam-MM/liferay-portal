@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -16,7 +16,6 @@ package com.liferay.taglib.portlet;
 
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.portlet.DummyPortletURL;
 import com.liferay.portal.kernel.portlet.LiferayPortletConfig;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.portlet.LiferayPortletURL;
@@ -36,27 +35,30 @@ import java.util.Set;
 import javax.portlet.ActionRequest;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
-import javax.portlet.PortletURL;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
+import javax.servlet.jsp.PageContext;
 
 /**
  * @author Brian Wing Shun Chan
  */
 public class ActionURLTag extends ParamAndPropertyAncestorTagImpl {
 
-	public static PortletURL doTag(
+	public static void doTag(
 			String lifecycle, String windowState, String portletMode,
-			Boolean secure, Boolean copyCurrentRenderParameters,
-			Boolean escapeXml, String name, String resourceID,
-			String cacheability, long plid, long refererPlid,
+			String var, String varImpl, Boolean secure,
+			Boolean copyCurrentRenderParameters, Boolean escapeXml, String name,
+			String resourceID, String cacheability, long plid, long refererPlid,
 			String portletName, Boolean anchor, Boolean encrypt,
 			long doAsGroupId, long doAsUserId, Boolean portletConfiguration,
 			Map<String, String[]> parameterMap,
-			Set<String> removedParameterNames, HttpServletRequest request)
+			Set<String> removedParameterNames, PageContext pageContext)
 		throws Exception {
+
+		HttpServletRequest request =
+			(HttpServletRequest)pageContext.getRequest();
 
 		if (portletName == null) {
 			portletName = _getPortletName(request);
@@ -70,7 +72,7 @@ public class ActionURLTag extends ParamAndPropertyAncestorTagImpl {
 				"Render response is null because this tag is not being " +
 					"called within the context of a portlet");
 
-			return DummyPortletURL.getInstance();
+			return;
 		}
 
 		if (Validator.isNotNull(windowState)) {
@@ -158,31 +160,31 @@ public class ActionURLTag extends ParamAndPropertyAncestorTagImpl {
 
 		liferayPortletURL.setRemovedParameterNames(removedParameterNames);
 
-		return liferayPortletURL;
+		String portletURLToString = liferayPortletURL.toString();
+
+		if (Validator.isNotNull(var)) {
+			pageContext.setAttribute(var, portletURLToString);
+		}
+		else if (Validator.isNotNull(varImpl)) {
+			pageContext.setAttribute(varImpl, liferayPortletURL);
+		}
+		else {
+			JspWriter jspWriter = pageContext.getOut();
+
+			jspWriter.write(portletURLToString);
+		}
 	}
 
 	@Override
 	public int doEndTag() throws JspException {
 		try {
-			PortletURL portletURL = doTag(
-				getLifecycle(), _windowState, _portletMode, _secure,
-				_copyCurrentRenderParameters, _escapeXml, _name, _resourceID,
-				_cacheability, _plid, _refererPlid, _portletName, _anchor,
-				_encrypt, _doAsGroupId, _doAsUserId, _portletConfiguration,
-				getParams(), getRemovedParameterNames(),
-				(HttpServletRequest)pageContext.getRequest());
-
-			if (Validator.isNotNull(_var)) {
-				pageContext.setAttribute(_var, portletURL.toString());
-			}
-			else if (Validator.isNotNull(_varImpl)) {
-				pageContext.setAttribute(_varImpl, portletURL);
-			}
-			else {
-				JspWriter jspWriter = pageContext.getOut();
-
-				jspWriter.write(portletURL.toString());
-			}
+			doTag(
+				getLifecycle(), _windowState, _portletMode, _var, _varImpl,
+				_secure, _copyCurrentRenderParameters, _escapeXml, _name,
+				_resourceID, _cacheability, _plid, _refererPlid, _portletName,
+				_anchor, _encrypt, _doAsGroupId, _doAsUserId,
+				_portletConfiguration, getParams(), getRemovedParameterNames(),
+				pageContext);
 
 			return EVAL_PAGE;
 		}

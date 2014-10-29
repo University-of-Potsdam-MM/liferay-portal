@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -59,7 +59,12 @@ request.setAttribute("view.jsp-viewCategory", Boolean.TRUE.toString());
 request.setAttribute("view.jsp-portletURL", portletURL);
 %>
 
-<liferay-ui:trash-undo />
+<portlet:actionURL var="undoTrashURL">
+	<portlet:param name="struts_action" value="/message_boards/edit_entry" />
+	<portlet:param name="<%= Constants.CMD %>" value="<%= Constants.RESTORE %>" />
+</portlet:actionURL>
+
+<liferay-ui:trash-undo portletURL="<%= undoTrashURL %>" />
 
 <liferay-util:include page="/html/portlet/message_boards/top_links.jsp" />
 
@@ -159,7 +164,7 @@ request.setAttribute("view.jsp-portletURL", portletURL);
 					/>
 				</c:if>
 
-				<c:if test="<%= MBCategoryPermission.contains(permissionChecker, category, ActionKeys.SUBSCRIBE) && (mbSettings.isEmailMessageAddedEnabled() || mbSettings.isEmailMessageUpdatedEnabled()) %>">
+				<c:if test="<%= MBCategoryPermission.contains(permissionChecker, category, ActionKeys.SUBSCRIBE) && (MBUtil.getEmailMessageAddedEnabled(portletPreferences) || MBUtil.getEmailMessageUpdatedEnabled(portletPreferences)) %>">
 					<c:choose>
 						<c:when test="<%= (categorySubscriptionClassPKs != null) && categorySubscriptionClassPKs.contains(category.getCategoryId()) %>">
 							<portlet:actionURL var="unsubscribeURL">
@@ -170,9 +175,8 @@ request.setAttribute("view.jsp-portletURL", portletURL);
 							</portlet:actionURL>
 
 							<liferay-ui:icon
-								iconCssClass="icon-remove-sign"
+								image="unsubscribe"
 								label="<%= true %>"
-								message="unsubscribe"
 								url="<%= unsubscribeURL %>"
 							/>
 						</c:when>
@@ -185,9 +189,8 @@ request.setAttribute("view.jsp-portletURL", portletURL);
 							</portlet:actionURL>
 
 							<liferay-ui:icon
-								iconCssClass="icon-ok-sign"
+								image="subscribe"
 								label="<%= true %>"
-								message="subscribe"
 								url="<%= subscribeURL %>"
 							/>
 						</c:otherwise>
@@ -197,7 +200,7 @@ request.setAttribute("view.jsp-portletURL", portletURL);
 
 			<%
 			long parentCategoryId = category.getParentCategoryId();
-			String parentCategoryName = LanguageUtil.get(request, "message-boards-home");
+			String parentCategoryName = LanguageUtil.get(pageContext, "message-boards-home");
 
 			if (!category.isRoot()) {
 				MBCategory parentCategory = MBCategoryLocalServiceUtil.getCategory(parentCategoryId);
@@ -220,7 +223,7 @@ request.setAttribute("view.jsp-portletURL", portletURL);
 			/>
 		</c:if>
 
-		<div class="displayStyle-<%= HtmlUtil.escapeAttribute(displayStyle) %>">
+		<div class="displayStyle-<%= displayStyle %>">
 			<liferay-util:include page='<%= "/html/portlet/message_boards/view_category_" + displayStyle + ".jsp" %>' />
 		</div>
 
@@ -311,8 +314,8 @@ request.setAttribute("view.jsp-portletURL", portletURL);
 		</c:if>
 
 		<%
-		PortalUtil.setPageSubtitle(LanguageUtil.get(request, StringUtil.replace(topLink, StringPool.UNDERLINE, StringPool.DASH)), request);
-		PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.get(request, TextFormatter.format(topLink, TextFormatter.O)), portletURL.toString());
+		PortalUtil.setPageSubtitle(LanguageUtil.get(pageContext, StringUtil.replace(topLink, StringPool.UNDERLINE, StringPool.DASH)), request);
+		PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.get(pageContext, TextFormatter.format(topLink, TextFormatter.O)), portletURL.toString());
 		%>
 
 	</c:when>
@@ -367,8 +370,8 @@ request.setAttribute("view.jsp-portletURL", portletURL);
 		</liferay-ui:panel-container>
 
 		<%
-		PortalUtil.setPageSubtitle(LanguageUtil.get(request, StringUtil.replace(topLink, StringPool.UNDERLINE, StringPool.DASH)), request);
-		PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.get(request, TextFormatter.format(topLink, TextFormatter.O)), portletURL.toString());
+		PortalUtil.setPageSubtitle(LanguageUtil.get(pageContext, StringUtil.replace(topLink, StringPool.UNDERLINE, StringPool.DASH)), request);
+		PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.get(pageContext, TextFormatter.format(topLink, TextFormatter.O)), portletURL.toString());
 		%>
 
 	</c:when>
@@ -439,7 +442,6 @@ request.setAttribute("view.jsp-portletURL", portletURL);
 
 				<liferay-ui:search-container-column-jsp
 					align="right"
-					cssClass="entry-action"
 					path="/html/portlet/message_boards/ban_user_action.jsp"
 				/>
 			</liferay-ui:search-container-row>
@@ -448,8 +450,8 @@ request.setAttribute("view.jsp-portletURL", portletURL);
 		</liferay-ui:search-container>
 
 		<%
-		PortalUtil.setPageSubtitle(LanguageUtil.get(request, StringUtil.replace(topLink, StringPool.UNDERLINE, StringPool.DASH)), request);
-		PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.get(request, TextFormatter.format(topLink, TextFormatter.O)), portletURL.toString());
+		PortalUtil.setPageSubtitle(LanguageUtil.get(pageContext, StringUtil.replace(topLink, StringPool.UNDERLINE, StringPool.DASH)), request);
+		PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.get(pageContext, TextFormatter.format(topLink, TextFormatter.O)), portletURL.toString());
 		%>
 
 	</c:when>

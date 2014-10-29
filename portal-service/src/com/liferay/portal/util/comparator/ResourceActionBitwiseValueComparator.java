@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -20,8 +20,7 @@ import com.liferay.portal.model.ResourceAction;
 /**
  * @author Shuyang Zhou
  */
-public class ResourceActionBitwiseValueComparator
-	extends OrderByComparator<ResourceAction> {
+public class ResourceActionBitwiseValueComparator extends OrderByComparator {
 
 	public static final String ORDER_BY_ASC = "bitwiseValue ASC";
 
@@ -38,8 +37,9 @@ public class ResourceActionBitwiseValueComparator
 	}
 
 	@Override
-	public int compare(
-		ResourceAction resourceAction1, ResourceAction resourceAction2) {
+	public int compare(Object obj1, Object obj2) {
+		ResourceAction resourceAction1 = (ResourceAction)obj1;
+		ResourceAction resourceAction2 = (ResourceAction)obj2;
 
 		int value =
 			(int)(resourceAction1.getBitwiseValue() -

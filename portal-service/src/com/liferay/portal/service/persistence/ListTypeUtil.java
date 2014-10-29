@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,6 +18,7 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.bean.PortalBeanLocatorUtil;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ReferenceRegistry;
 import com.liferay.portal.model.ListType;
@@ -62,14 +63,16 @@ public class ListTypeUtil {
 	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#countWithDynamicQuery(DynamicQuery)
 	 */
-	public static long countWithDynamicQuery(DynamicQuery dynamicQuery) {
+	public static long countWithDynamicQuery(DynamicQuery dynamicQuery)
+		throws SystemException {
 		return getPersistence().countWithDynamicQuery(dynamicQuery);
 	}
 
 	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#findWithDynamicQuery(DynamicQuery)
 	 */
-	public static List<ListType> findWithDynamicQuery(DynamicQuery dynamicQuery) {
+	public static List<ListType> findWithDynamicQuery(DynamicQuery dynamicQuery)
+		throws SystemException {
 		return getPersistence().findWithDynamicQuery(dynamicQuery);
 	}
 
@@ -77,7 +80,8 @@ public class ListTypeUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#findWithDynamicQuery(DynamicQuery, int, int)
 	 */
 	public static List<ListType> findWithDynamicQuery(
-		DynamicQuery dynamicQuery, int start, int end) {
+		DynamicQuery dynamicQuery, int start, int end)
+		throws SystemException {
 		return getPersistence().findWithDynamicQuery(dynamicQuery, start, end);
 	}
 
@@ -86,7 +90,7 @@ public class ListTypeUtil {
 	 */
 	public static List<ListType> findWithDynamicQuery(
 		DynamicQuery dynamicQuery, int start, int end,
-		OrderByComparator<ListType> orderByComparator) {
+		OrderByComparator orderByComparator) throws SystemException {
 		return getPersistence()
 				   .findWithDynamicQuery(dynamicQuery, start, end,
 			orderByComparator);
@@ -95,7 +99,7 @@ public class ListTypeUtil {
 	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel)
 	 */
-	public static ListType update(ListType listType) {
+	public static ListType update(ListType listType) throws SystemException {
 		return getPersistence().update(listType);
 	}
 
@@ -103,7 +107,7 @@ public class ListTypeUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, ServiceContext)
 	 */
 	public static ListType update(ListType listType,
-		ServiceContext serviceContext) {
+		ServiceContext serviceContext) throws SystemException {
 		return getPersistence().update(listType, serviceContext);
 	}
 
@@ -112,9 +116,11 @@ public class ListTypeUtil {
 	*
 	* @param type the type
 	* @return the matching list types
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portal.model.ListType> findByType(
-		java.lang.String type) {
+		java.lang.String type)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByType(type);
 	}
 
@@ -129,9 +135,11 @@ public class ListTypeUtil {
 	* @param start the lower bound of the range of list types
 	* @param end the upper bound of the range of list types (not inclusive)
 	* @return the range of matching list types
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portal.model.ListType> findByType(
-		java.lang.String type, int start, int end) {
+		java.lang.String type, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByType(type, start, end);
 	}
 
@@ -147,10 +155,12 @@ public class ListTypeUtil {
 	* @param end the upper bound of the range of list types (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching list types
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portal.model.ListType> findByType(
 		java.lang.String type, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.ListType> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByType(type, start, end, orderByComparator);
 	}
 
@@ -161,11 +171,13 @@ public class ListTypeUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching list type
 	* @throws com.liferay.portal.NoSuchListTypeException if a matching list type could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.ListType findByType_First(
 		java.lang.String type,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.ListType> orderByComparator)
-		throws com.liferay.portal.NoSuchListTypeException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchListTypeException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByType_First(type, orderByComparator);
 	}
 
@@ -175,10 +187,12 @@ public class ListTypeUtil {
 	* @param type the type
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching list type, or <code>null</code> if a matching list type could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.ListType fetchByType_First(
 		java.lang.String type,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.ListType> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByType_First(type, orderByComparator);
 	}
 
@@ -189,11 +203,13 @@ public class ListTypeUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching list type
 	* @throws com.liferay.portal.NoSuchListTypeException if a matching list type could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.ListType findByType_Last(
 		java.lang.String type,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.ListType> orderByComparator)
-		throws com.liferay.portal.NoSuchListTypeException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchListTypeException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByType_Last(type, orderByComparator);
 	}
 
@@ -203,10 +219,12 @@ public class ListTypeUtil {
 	* @param type the type
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching list type, or <code>null</code> if a matching list type could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.ListType fetchByType_Last(
 		java.lang.String type,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.ListType> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByType_Last(type, orderByComparator);
 	}
 
@@ -218,11 +236,13 @@ public class ListTypeUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next list type
 	* @throws com.liferay.portal.NoSuchListTypeException if a list type with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.ListType[] findByType_PrevAndNext(
 		int listTypeId, java.lang.String type,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.ListType> orderByComparator)
-		throws com.liferay.portal.NoSuchListTypeException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchListTypeException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByType_PrevAndNext(listTypeId, type, orderByComparator);
 	}
@@ -231,8 +251,10 @@ public class ListTypeUtil {
 	* Removes all the list types where type = &#63; from the database.
 	*
 	* @param type the type
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByType(java.lang.String type) {
+	public static void removeByType(java.lang.String type)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeByType(type);
 	}
 
@@ -241,8 +263,10 @@ public class ListTypeUtil {
 	*
 	* @param type the type
 	* @return the number of matching list types
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByType(java.lang.String type) {
+	public static int countByType(java.lang.String type)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByType(type);
 	}
 
@@ -281,14 +305,17 @@ public class ListTypeUtil {
 	* @param listTypeId the primary key of the list type
 	* @return the list type that was removed
 	* @throws com.liferay.portal.NoSuchListTypeException if a list type with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.ListType remove(int listTypeId)
-		throws com.liferay.portal.NoSuchListTypeException {
+		throws com.liferay.portal.NoSuchListTypeException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().remove(listTypeId);
 	}
 
 	public static com.liferay.portal.model.ListType updateImpl(
-		com.liferay.portal.model.ListType listType) {
+		com.liferay.portal.model.ListType listType)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().updateImpl(listType);
 	}
 
@@ -298,9 +325,12 @@ public class ListTypeUtil {
 	* @param listTypeId the primary key of the list type
 	* @return the list type
 	* @throws com.liferay.portal.NoSuchListTypeException if a list type with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.ListType findByPrimaryKey(
-		int listTypeId) throws com.liferay.portal.NoSuchListTypeException {
+		int listTypeId)
+		throws com.liferay.portal.NoSuchListTypeException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByPrimaryKey(listTypeId);
 	}
 
@@ -309,23 +339,22 @@ public class ListTypeUtil {
 	*
 	* @param listTypeId the primary key of the list type
 	* @return the list type, or <code>null</code> if a list type with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.ListType fetchByPrimaryKey(
-		int listTypeId) {
+		int listTypeId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByPrimaryKey(listTypeId);
-	}
-
-	public static java.util.Map<java.io.Serializable, com.liferay.portal.model.ListType> fetchByPrimaryKeys(
-		java.util.Set<java.io.Serializable> primaryKeys) {
-		return getPersistence().fetchByPrimaryKeys(primaryKeys);
 	}
 
 	/**
 	* Returns all the list types.
 	*
 	* @return the list types
+	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portal.model.ListType> findAll() {
+	public static java.util.List<com.liferay.portal.model.ListType> findAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll();
 	}
 
@@ -339,9 +368,11 @@ public class ListTypeUtil {
 	* @param start the lower bound of the range of list types
 	* @param end the upper bound of the range of list types (not inclusive)
 	* @return the range of list types
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portal.model.ListType> findAll(
-		int start, int end) {
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll(start, end);
 	}
 
@@ -356,17 +387,22 @@ public class ListTypeUtil {
 	* @param end the upper bound of the range of list types (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of list types
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portal.model.ListType> findAll(
 		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.ListType> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll(start, end, orderByComparator);
 	}
 
 	/**
 	* Removes all the list types from the database.
+	*
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeAll() {
+	public static void removeAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeAll();
 	}
 
@@ -374,8 +410,10 @@ public class ListTypeUtil {
 	* Returns the number of list types.
 	*
 	* @return the number of list types
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countAll() {
+	public static int countAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countAll();
 	}
 
@@ -393,7 +431,6 @@ public class ListTypeUtil {
 	/**
 	 * @deprecated As of 6.2.0
 	 */
-	@Deprecated
 	public void setPersistence(ListTypePersistence persistence) {
 	}
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portal.kernel.search;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.repository.model.FileEntry;
@@ -33,8 +34,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import javax.portlet.PortletRequest;
-import javax.portlet.PortletResponse;
 import javax.portlet.PortletURL;
 
 /**
@@ -44,13 +43,6 @@ public class SearchResultUtil {
 
 	public static List<SearchResult> getSearchResults(
 		Hits hits, Locale locale, PortletURL portletURL) {
-
-		return getSearchResults(hits, locale, portletURL, null, null);
-	}
-
-	public static List<SearchResult> getSearchResults(
-		Hits hits, Locale locale, PortletURL portletURL,
-		PortletRequest portletRequest, PortletResponse portletResponse) {
 
 		List<SearchResult> searchResults = new ArrayList<SearchResult>();
 
@@ -111,8 +103,7 @@ public class SearchResultUtil {
 				if (fileEntry != null) {
 					Summary summary = getSummary(
 						document, DLFileEntry.class.getName(),
-						fileEntry.getFileEntryId(), locale, portletURL,
-						portletRequest, portletResponse);
+						fileEntry.getFileEntryId(), locale, portletURL);
 
 					searchResult.addFileEntry(fileEntry, summary);
 				}
@@ -129,8 +120,7 @@ public class SearchResultUtil {
 
 				if ((mbMessage == null) && (fileEntry == null)) {
 					Summary summary = getSummary(
-						document, className, classPK, locale, portletURL,
-						portletRequest, portletResponse);
+						document, className, classPK, locale, portletURL);
 
 					searchResult.setSummary(summary);
 				}
@@ -157,17 +147,15 @@ public class SearchResultUtil {
 
 	protected static Summary getSummary(
 			Document document, String className, long classPK, Locale locale,
-			PortletURL portletURL, PortletRequest portletRequest,
-			PortletResponse portletResponse)
-		throws PortalException {
+			PortletURL portletURL)
+		throws PortalException, SystemException {
 
 		Indexer indexer = IndexerRegistryUtil.getIndexer(className);
 
 		if (indexer != null) {
 			String snippet = document.get(Field.SNIPPET);
 
-			return indexer.getSummary(
-				document, snippet, portletURL, portletRequest, portletResponse);
+			return indexer.getSummary(document, locale, snippet, portletURL);
 		}
 
 		return getSummary(className, classPK, locale, portletURL);
@@ -176,7 +164,7 @@ public class SearchResultUtil {
 	protected static Summary getSummary(
 			String className, long classPK, Locale locale,
 			PortletURL portletURL)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		AssetRendererFactory assetRendererFactory =
 			AssetRendererFactoryRegistryUtil.getAssetRendererFactoryByClassName(
@@ -197,13 +185,11 @@ public class SearchResultUtil {
 			assetRenderer.getTitle(locale),
 			assetRenderer.getSearchSummary(locale), portletURL);
 
-		summary.setMaxContentLength(SUMMARY_MAX_CONTENT_LENGTH);
+		summary.setMaxContentLength(200);
 		summary.setPortletURL(portletURL);
 
 		return summary;
 	}
-
-	protected static final int SUMMARY_MAX_CONTENT_LENGTH = 200;
 
 	private static Log _log = LogFactoryUtil.getLog(SearchResultUtil.class);
 

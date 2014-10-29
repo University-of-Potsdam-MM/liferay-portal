@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -20,7 +20,7 @@ import com.liferay.portlet.trash.model.TrashEntry;
 /**
  * @author Sergio González
  */
-public class EntryTypeComparator extends OrderByComparator<TrashEntry> {
+public class EntryTypeComparator extends OrderByComparator {
 
 	public static final String ORDER_BY_ASC = "classNameId ASC";
 
@@ -37,7 +37,10 @@ public class EntryTypeComparator extends OrderByComparator<TrashEntry> {
 	}
 
 	@Override
-	public int compare(TrashEntry entry1, TrashEntry entry2) {
+	public int compare(Object obj1, Object obj2) {
+		TrashEntry entry1 = (TrashEntry)obj1;
+		TrashEntry entry2 = (TrashEntry)obj2;
+
 		int value = 0;
 
 		if (entry1.getClassNameId() > entry2.getClassNameId()) {

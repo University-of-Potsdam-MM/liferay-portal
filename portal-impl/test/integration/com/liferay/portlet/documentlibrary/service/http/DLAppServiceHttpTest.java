@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -21,11 +21,11 @@ import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.service.http.HttpPrincipalTestUtil;
-import com.liferay.portal.test.listeners.MainServletExecutionTestListener;
-import com.liferay.portal.test.runners.LiferayIntegrationJUnitTestRunner;
-import com.liferay.portal.util.test.GroupTestUtil;
-import com.liferay.portal.util.test.ServiceContextTestUtil;
+import com.liferay.portal.service.ServiceTestUtil;
+import com.liferay.portal.test.EnvironmentExecutionTestListener;
+import com.liferay.portal.test.LiferayIntegrationJUnitTestRunner;
+import com.liferay.portal.util.GroupTestUtil;
+import com.liferay.portal.util.TestPropsValues;
 import com.liferay.portlet.documentlibrary.model.DLFolderConstants;
 
 import org.junit.After;
@@ -36,7 +36,7 @@ import org.junit.runner.RunWith;
 /**
  * @author Alexander Chow
  */
-@ExecutionTestListeners(listeners = {MainServletExecutionTestListener.class})
+@ExecutionTestListeners(listeners = {EnvironmentExecutionTestListener.class})
 @RunWith(LiferayIntegrationJUnitTestRunner.class)
 public class DLAppServiceHttpTest {
 
@@ -47,19 +47,19 @@ public class DLAppServiceHttpTest {
 		String name = "Test Folder";
 		String description = "This is a test folder.";
 
-		ServiceContext serviceContext =
-			ServiceContextTestUtil.getServiceContext(_group.getGroupId());
+		ServiceContext serviceContext = ServiceTestUtil.getServiceContext(
+			_group.getGroupId());
 
 		try {
 			DLAppServiceHttp.deleteFolder(
-				HttpPrincipalTestUtil.getHttpPrincipal(), _group.getGroupId(),
+				TestPropsValues.getHttpPrincipal(), _group.getGroupId(),
 				DLFolderConstants.DEFAULT_PARENT_FOLDER_ID, name);
 		}
 		catch (Exception e) {
 		}
 
 		_folder = DLAppServiceHttp.addFolder(
-			HttpPrincipalTestUtil.getHttpPrincipal(), _group.getGroupId(),
+			TestPropsValues.getHttpPrincipal(), _group.getGroupId(),
 			DLFolderConstants.DEFAULT_PARENT_FOLDER_ID, name, description,
 			serviceContext);
 	}
@@ -69,8 +69,7 @@ public class DLAppServiceHttpTest {
 		try {
 			if (_folder != null) {
 				DLAppServiceHttp.deleteFolder(
-					HttpPrincipalTestUtil.getHttpPrincipal(),
-					_folder.getFolderId());
+					TestPropsValues.getHttpPrincipal(), _folder.getFolderId());
 			}
 		}
 		catch (Exception e) {
@@ -87,8 +86,7 @@ public class DLAppServiceHttpTest {
 		FileEntry fileEntry = addFileEntry("Test Delete.txt");
 
 		DLAppServiceHttp.deleteFileEntry(
-			HttpPrincipalTestUtil.getHttpPrincipal(),
-			fileEntry.getFileEntryId());
+			TestPropsValues.getHttpPrincipal(), fileEntry.getFileEntryId());
 	}
 
 	@Test
@@ -96,7 +94,7 @@ public class DLAppServiceHttpTest {
 		FileEntry fileEntry = addFileEntry("Test Get.txt");
 
 		DLAppServiceHttp.getFileEntryByUuidAndGroupId(
-			HttpPrincipalTestUtil.getHttpPrincipal(), fileEntry.getUuid(),
+			TestPropsValues.getHttpPrincipal(), fileEntry.getUuid(),
 			fileEntry.getGroupId());
 	}
 
@@ -106,13 +104,13 @@ public class DLAppServiceHttpTest {
 		String changeLog = StringPool.BLANK;
 		byte[] bytes = _CONTENT.getBytes();
 
-		ServiceContext serviceContext =
-			ServiceContextTestUtil.getServiceContext(_group.getGroupId());
+		ServiceContext serviceContext = ServiceTestUtil.getServiceContext(
+			_group.getGroupId());
 
 		return DLAppServiceHttp.addFileEntry(
-			HttpPrincipalTestUtil.getHttpPrincipal(), _group.getGroupId(),
-			folderId, title, ContentTypes.TEXT_PLAIN, title, description,
-			changeLog, bytes, serviceContext);
+			TestPropsValues.getHttpPrincipal(), _group.getGroupId(), folderId,
+			title, ContentTypes.TEXT_PLAIN, title, description, changeLog,
+			bytes, serviceContext);
 	}
 
 	private static final String _CONTENT =

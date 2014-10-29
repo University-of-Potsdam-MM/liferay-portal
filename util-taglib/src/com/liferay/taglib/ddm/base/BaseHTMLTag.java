@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -30,10 +30,6 @@ public class BaseHTMLTag extends com.liferay.taglib.util.IncludeTag {
 		return super.doStartTag();
 	}
 
-	public boolean getCheckRequired() {
-		return _checkRequired;
-	}
-
 	public long getClassNameId() {
 		return _classNameId;
 	}
@@ -60,16 +56,6 @@ public class BaseHTMLTag extends com.liferay.taglib.util.IncludeTag {
 
 	public java.util.Locale getRequestedLocale() {
 		return _requestedLocale;
-	}
-
-	public boolean getShowEmptyFieldLabel() {
-		return _showEmptyFieldLabel;
-	}
-
-	public void setCheckRequired(boolean checkRequired) {
-		_checkRequired = checkRequired;
-
-		setScopedAttribute("checkRequired", checkRequired);
 	}
 
 	public void setClassNameId(long classNameId) {
@@ -114,15 +100,8 @@ public class BaseHTMLTag extends com.liferay.taglib.util.IncludeTag {
 		setScopedAttribute("requestedLocale", requestedLocale);
 	}
 
-	public void setShowEmptyFieldLabel(boolean showEmptyFieldLabel) {
-		_showEmptyFieldLabel = showEmptyFieldLabel;
-
-		setScopedAttribute("showEmptyFieldLabel", showEmptyFieldLabel);
-	}
-
 	@Override
 	protected void cleanUp() {
-		_checkRequired = true;
 		_classNameId = 0;
 		_classPK = 0;
 		_fields = null;
@@ -130,7 +109,6 @@ public class BaseHTMLTag extends com.liferay.taglib.util.IncludeTag {
 		_readOnly = false;
 		_repeatable = true;
 		_requestedLocale = null;
-		_showEmptyFieldLabel = true;
 	}
 
 	@Override
@@ -145,7 +123,6 @@ public class BaseHTMLTag extends com.liferay.taglib.util.IncludeTag {
 
 	@Override
 	protected void setAttributes(HttpServletRequest request) {
-		setNamespacedAttribute(request, "checkRequired", _checkRequired);
 		setNamespacedAttribute(request, "classNameId", _classNameId);
 		setNamespacedAttribute(request, "classPK", _classPK);
 		setNamespacedAttribute(request, "fields", _fields);
@@ -153,7 +130,6 @@ public class BaseHTMLTag extends com.liferay.taglib.util.IncludeTag {
 		setNamespacedAttribute(request, "readOnly", _readOnly);
 		setNamespacedAttribute(request, "repeatable", _repeatable);
 		setNamespacedAttribute(request, "requestedLocale", _requestedLocale);
-		setNamespacedAttribute(request, "showEmptyFieldLabel", _showEmptyFieldLabel);
 	}
 
 	protected static final String _ATTRIBUTE_NAMESPACE = "ddm:html:";
@@ -164,7 +140,6 @@ public class BaseHTMLTag extends com.liferay.taglib.util.IncludeTag {
 	private static final String _START_PAGE =
 		"/html/taglib/ddm/html/start.jsp";
 
-	private boolean _checkRequired = true;
 	private long _classNameId = 0;
 	private long _classPK = 0;
 	private com.liferay.portlet.dynamicdatamapping.storage.Fields _fields = null;
@@ -172,6 +147,5 @@ public class BaseHTMLTag extends com.liferay.taglib.util.IncludeTag {
 	private boolean _readOnly = false;
 	private boolean _repeatable = true;
 	private java.util.Locale _requestedLocale = null;
-	private boolean _showEmptyFieldLabel = true;
 
 }

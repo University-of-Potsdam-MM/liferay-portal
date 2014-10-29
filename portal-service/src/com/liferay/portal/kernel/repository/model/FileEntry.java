@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,10 +14,8 @@
 
 package com.liferay.portal.kernel.repository.model;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.json.JSON;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.Accessor;
 import com.liferay.portal.model.Lock;
 import com.liferay.portal.security.permission.PermissionChecker;
@@ -30,8 +28,6 @@ import java.util.List;
 /**
  * @author Alexander Chow
  */
-@JSON
-@ProviderType
 public interface FileEntry extends RepositoryModel<FileEntry> {
 
 	public static final Accessor<FileEntry, Long> FILE_ENTRY_ID_ACCESSOR =
@@ -43,39 +39,31 @@ public interface FileEntry extends RepositoryModel<FileEntry> {
 				return fileEntry.getFileEntryId();
 			}
 
-			@Override
-			public Class<Long> getAttributeClass() {
-				return Long.class;
-			}
-
-			@Override
-			public Class<FileEntry> getTypeClass() {
-				return FileEntry.class;
-			}
-
 		};
 
 	public boolean containsPermission(
 			PermissionChecker permissionChecker, String actionId)
-		throws PortalException;
+		throws PortalException, SystemException;
 
 	@Override
 	public long getCompanyId();
 
 	/**
-	 * Returns the content stream of the current file version. In a Liferay
+	 * Retrieves the content stream of the current file version. In a Liferay
 	 * repository, this is the latest approved version. In third-party
-	 * repositories, the latest content stream may be returned, regardless of
-	 * workflow state.
+	 * repositories, this may be the latest content regardless of workflow
+	 * state.
 	 *
-	 * @return the content stream of the current file version
+	 * @return content stream of the current file version
 	 * @throws PortalException if a portal exception occurred
+	 * @throws SystemException if a system exception occurred
 	 * @see    #getFileVersion()
 	 */
-	@JSON(include = false)
-	public InputStream getContentStream() throws PortalException;
+	public InputStream getContentStream()
+		throws PortalException, SystemException;
 
-	public InputStream getContentStream(String version) throws PortalException;
+	public InputStream getContentStream(String version)
+		throws PortalException, SystemException;
 
 	@Override
 	public Date getCreateDate();
@@ -86,24 +74,25 @@ public interface FileEntry extends RepositoryModel<FileEntry> {
 
 	public long getFileEntryId();
 
-	public String getFileName();
-
 	/**
-	 * Returns the current file version. The workflow state of the latest file
-	 * version may affect the file version that is returned. In a Liferay
-	 * repository, the latest approved version is returned; the latest version
-	 * regardless of workflow state can be retrieved by {@link
+	 * Retrieves the current file version. The workflow state of the latest file
+	 * version may affect what is returned by this method. In a Liferay
+	 * repository, this will return the latest approved version; the latest
+	 * version regardless of workflow state can be retrieved by {@link
 	 * #getLatestFileVersion()}. In third-party repositories, these two methods
 	 * may function identically.
 	 *
-	 * @return the current file version
+	 * @return current file version
 	 * @throws PortalException if a portal exception occurred
+	 * @throws SystemException if a system exception occurred
 	 */
-	public FileVersion getFileVersion() throws PortalException;
+	public FileVersion getFileVersion() throws PortalException, SystemException;
 
-	public FileVersion getFileVersion(String version) throws PortalException;
+	public FileVersion getFileVersion(String version)
+		throws PortalException, SystemException;
 
-	public List<FileVersion> getFileVersions(int status);
+	public List<FileVersion> getFileVersions(int status)
+		throws SystemException;
 
 	public Folder getFolder();
 
@@ -114,32 +103,18 @@ public interface FileEntry extends RepositoryModel<FileEntry> {
 
 	public String getIcon();
 
-	public String getIconCssClass();
-
 	/**
-	 * Returns the latest file version. In a Liferay repository, the latest
-	 * version is returned, regardless of workflow state. In third-party
-	 * repositories, the functionality of this method and {@link
-	 * #getFileVersion()} may be identical.
+	 * Retrieves the latest file version. In a Liferay repository, this means
+	 * the latest version regardless of workflow state. In third-party
+	 * repositories, this may have an identical functionality with {@link
+	 * #getFileVersion()}.
 	 *
-	 * @return the latest file version
+	 * @return latest file version
 	 * @throws PortalException if a portal exception occurred
+	 * @throws SystemException if a system exception occurred
 	 */
-	public FileVersion getLatestFileVersion() throws PortalException;
-
-	/**
-	 * Returns the latest file version, optionally bypassing security checks. In
-	 * a Liferay repository, the latest version is returned, regardless of
-	 * workflow state. In third-party repositories, the functionality of this
-	 * method and {@link #getFileVersion()} may be identical.
-	 *
-	 * @param  trusted whether to bypass permission checks. In third-party
-	 *         repositories, this parameter may be ignored.
-	 * @return the latest file version
-	 * @throws PortalException if a portal exception occurred
-	 */
-	public FileVersion getLatestFileVersion(boolean trusted)
-		throws PortalException;
+	public FileVersion getLatestFileVersion()
+		throws PortalException, SystemException;
 
 	public Lock getLock();
 
@@ -165,7 +140,7 @@ public interface FileEntry extends RepositoryModel<FileEntry> {
 	public String getUserName();
 
 	@Override
-	public String getUserUuid();
+	public String getUserUuid() throws SystemException;
 
 	@Override
 	public String getUuid();
@@ -176,7 +151,7 @@ public interface FileEntry extends RepositoryModel<FileEntry> {
 
 	public String getVersionUserName();
 
-	public String getVersionUserUuid();
+	public String getVersionUserUuid() throws SystemException;
 
 	public boolean hasLock();
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -33,11 +33,10 @@ import java.util.Properties;
 public class ColorSchemeImpl implements ColorScheme {
 
 	public ColorSchemeImpl() {
-		this(null, null, null);
 	}
 
 	public ColorSchemeImpl(String colorSchemeId) {
-		this(colorSchemeId, null, null);
+		_colorSchemeId = colorSchemeId;
 	}
 
 	public ColorSchemeImpl(String colorSchemeId, String name, String cssClass) {
@@ -202,7 +201,7 @@ public class ColorSchemeImpl implements ColorScheme {
 
 	private static Log _log = LogFactoryUtil.getLog(ColorSchemeImpl.class);
 
-	private final String _colorSchemeId;
+	private String _colorSchemeId;
 	private String _colorSchemeImagesPath =
 		"${images-path}/color_schemes/${css-class}";
 	private String _cssClass;

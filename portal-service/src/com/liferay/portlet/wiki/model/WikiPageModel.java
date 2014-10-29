@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,10 +18,10 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.bean.AutoEscape;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.trash.TrashHandler;
 import com.liferay.portal.model.BaseModel;
 import com.liferay.portal.model.CacheModel;
-import com.liferay.portal.model.ContainerModel;
 import com.liferay.portal.model.ResourcedModel;
 import com.liferay.portal.model.StagedGroupedModel;
 import com.liferay.portal.model.TrashedModel;
@@ -49,8 +49,8 @@ import java.util.Date;
  * @generated
  */
 @ProviderType
-public interface WikiPageModel extends BaseModel<WikiPage>, ContainerModel,
-	ResourcedModel, StagedGroupedModel, TrashedModel, WorkflowedModel {
+public interface WikiPageModel extends BaseModel<WikiPage>, ResourcedModel,
+	StagedGroupedModel, TrashedModel, WorkflowedModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -173,9 +173,10 @@ public interface WikiPageModel extends BaseModel<WikiPage>, ContainerModel,
 	 * Returns the user uuid of this wiki page.
 	 *
 	 * @return the user uuid of this wiki page
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public String getUserUuid();
+	public String getUserUuid() throws SystemException;
 
 	/**
 	 * Sets the user uuid of this wiki page.
@@ -430,9 +431,10 @@ public interface WikiPageModel extends BaseModel<WikiPage>, ContainerModel,
 	 * Returns the status by user uuid of this wiki page.
 	 *
 	 * @return the status by user uuid of this wiki page
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public String getStatusByUserUuid();
+	public String getStatusByUserUuid() throws SystemException;
 
 	/**
 	 * Sets the status by user uuid of this wiki page.
@@ -479,9 +481,10 @@ public interface WikiPageModel extends BaseModel<WikiPage>, ContainerModel,
 	 * Returns the trash entry created when this wiki page was moved to the Recycle Bin. The trash entry may belong to one of the ancestors of this wiki page.
 	 *
 	 * @return the trash entry created when this wiki page was moved to the Recycle Bin
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public TrashEntry getTrashEntry() throws PortalException;
+	public TrashEntry getTrashEntry() throws PortalException, SystemException;
 
 	/**
 	 * Returns the class primary key of the trash entry for this wiki page.
@@ -511,20 +514,14 @@ public interface WikiPageModel extends BaseModel<WikiPage>, ContainerModel,
 	 * Returns <code>true</code> if the parent of this wiki page is in the Recycle Bin.
 	 *
 	 * @return <code>true</code> if the parent of this wiki page is in the Recycle Bin; <code>false</code> otherwise
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public boolean isInTrashContainer();
 
-	@Override
-	public boolean isInTrashExplicitly();
-
-	@Override
-	public boolean isInTrashImplicitly();
-
 	/**
 	 * @deprecated As of 6.1.0, replaced by {@link #isApproved()}
 	 */
-	@Deprecated
 	@Override
 	public boolean getApproved();
 
@@ -591,46 +588,6 @@ public interface WikiPageModel extends BaseModel<WikiPage>, ContainerModel,
 	 */
 	@Override
 	public boolean isScheduled();
-
-	/**
-	 * Returns the container model ID of this wiki page.
-	 *
-	 * @return the container model ID of this wiki page
-	 */
-	@Override
-	public long getContainerModelId();
-
-	/**
-	 * Sets the container model ID of this wiki page.
-	 *
-	 * @param containerModelId the container model ID of this wiki page
-	 */
-	@Override
-	public void setContainerModelId(long containerModelId);
-
-	/**
-	 * Returns the container name of this wiki page.
-	 *
-	 * @return the container name of this wiki page
-	 */
-	@Override
-	public String getContainerModelName();
-
-	/**
-	 * Returns the parent container model ID of this wiki page.
-	 *
-	 * @return the parent container model ID of this wiki page
-	 */
-	@Override
-	public long getParentContainerModelId();
-
-	/**
-	 * Sets the parent container model ID of this wiki page.
-	 *
-	 * @param parentContainerModelId the parent container model ID of this wiki page
-	 */
-	@Override
-	public void setParentContainerModelId(long parentContainerModelId);
 
 	@Override
 	public boolean isNew();

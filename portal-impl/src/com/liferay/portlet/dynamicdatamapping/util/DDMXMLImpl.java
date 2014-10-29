@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -32,7 +32,7 @@ import com.liferay.portal.kernel.xml.Node;
 import com.liferay.portal.kernel.xml.SAXReaderUtil;
 import com.liferay.portal.kernel.xml.XMLSchema;
 import com.liferay.portal.kernel.xml.XPath;
-import com.liferay.portlet.dynamicdatamapping.StructureDefinitionException;
+import com.liferay.portlet.dynamicdatamapping.StructureXsdException;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.storage.Field;
 import com.liferay.portlet.dynamicdatamapping.storage.FieldConstants;
@@ -55,7 +55,7 @@ import java.util.Locale;
 public class DDMXMLImpl implements DDMXML {
 
 	@Override
-	public String formatXML(Document document) {
+	public String formatXML(Document document) throws SystemException {
 		try {
 			return document.formattedString(_XML_INDENT);
 		}
@@ -65,7 +65,7 @@ public class DDMXMLImpl implements DDMXML {
 	}
 
 	@Override
-	public String formatXML(String xml) {
+	public String formatXML(String xml) throws SystemException {
 
 		// This is only supposed to format your xml, however, it will also
 		// unwantingly change &#169; and other characters like it into their
@@ -88,7 +88,7 @@ public class DDMXMLImpl implements DDMXML {
 
 	@Override
 	public Fields getFields(DDMStructure structure, String xml)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return getFields(structure, null, xml, null);
 	}
@@ -97,7 +97,7 @@ public class DDMXMLImpl implements DDMXML {
 	public Fields getFields(
 			DDMStructure structure, XPath xPath, String xml,
 			List<String> fieldNames)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Document document = null;
 
@@ -174,7 +174,9 @@ public class DDMXMLImpl implements DDMXML {
 	}
 
 	@Override
-	public String getXML(Document document, Fields fields) {
+	public String getXML(Document document, Fields fields)
+		throws SystemException {
+
 		Element rootElement = null;
 
 		try {
@@ -209,7 +211,7 @@ public class DDMXMLImpl implements DDMXML {
 	}
 
 	@Override
-	public String getXML(Fields fields) {
+	public String getXML(Fields fields) throws SystemException {
 		return getXML(null, fields);
 	}
 
@@ -219,8 +221,9 @@ public class DDMXMLImpl implements DDMXML {
 
 	@Override
 	public String updateXMLDefaultLocale(
-		String xml, Locale contentDefaultLocale,
-		Locale contentNewDefaultLocale) {
+			String xml, Locale contentDefaultLocale,
+			Locale contentNewDefaultLocale)
+		throws SystemException {
 
 		try {
 			if (LocaleUtil.equals(
@@ -284,7 +287,7 @@ public class DDMXMLImpl implements DDMXML {
 				_log.debug("Invalid XML content " + e.getMessage(), e);
 			}
 
-			throw new StructureDefinitionException();
+			throw new StructureXsdException();
 		}
 	}
 

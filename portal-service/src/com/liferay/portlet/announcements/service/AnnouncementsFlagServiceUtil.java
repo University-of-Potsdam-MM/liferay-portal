@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -40,15 +40,6 @@ public class AnnouncementsFlagServiceUtil {
 	 *
 	 * Never modify this class directly. Add custom service methods to {@link com.liferay.portlet.announcements.service.impl.AnnouncementsFlagServiceImpl} and rerun ServiceBuilder to regenerate this class.
 	 */
-	public static void addFlag(long entryId, int value)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		getService().addFlag(entryId, value);
-	}
-
-	public static void deleteFlag(long flagId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		getService().deleteFlag(flagId);
-	}
 
 	/**
 	* Returns the Spring bean ID for this bean.
@@ -59,12 +50,6 @@ public class AnnouncementsFlagServiceUtil {
 		return getService().getBeanIdentifier();
 	}
 
-	public static com.liferay.portlet.announcements.model.AnnouncementsFlag getFlag(
-		long entryId, int value)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().getFlag(entryId, value);
-	}
-
 	/**
 	* Sets the Spring bean ID for this bean.
 	*
@@ -72,6 +57,25 @@ public class AnnouncementsFlagServiceUtil {
 	*/
 	public static void setBeanIdentifier(java.lang.String beanIdentifier) {
 		getService().setBeanIdentifier(beanIdentifier);
+	}
+
+	public static void addFlag(long entryId, int value)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		getService().addFlag(entryId, value);
+	}
+
+	public static void deleteFlag(long flagId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		getService().deleteFlag(flagId);
+	}
+
+	public static com.liferay.portlet.announcements.model.AnnouncementsFlag getFlag(
+		long entryId, int value)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getService().getFlag(entryId, value);
 	}
 
 	public static AnnouncementsFlagService getService() {
@@ -88,7 +92,6 @@ public class AnnouncementsFlagServiceUtil {
 	/**
 	 * @deprecated As of 6.2.0
 	 */
-	@Deprecated
 	public void setService(AnnouncementsFlagService service) {
 	}
 

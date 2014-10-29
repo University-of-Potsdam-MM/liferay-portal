@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -46,10 +46,10 @@ public class GetStructureAction extends Action {
 			DDMStructure structure = DDMStructureServiceUtil.getStructure(
 				structureId);
 
-			String definition = structure.getDefinition();
+			String xsd = structure.getXsd();
 
 			ServletResponseUtil.sendFile(
-				request, response, null, definition.getBytes(),
+				request, response, null, xsd.getBytes(),
 				ContentTypes.TEXT_XML_UTF8);
 
 			return null;

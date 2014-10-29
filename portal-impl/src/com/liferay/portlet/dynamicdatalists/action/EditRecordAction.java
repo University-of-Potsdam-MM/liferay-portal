@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -23,11 +23,13 @@ import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextFactory;
 import com.liferay.portal.struts.PortletAction;
+import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
+import com.liferay.portal.util.WebKeys;
 import com.liferay.portlet.documentlibrary.FileSizeException;
 import com.liferay.portlet.dynamicdatalists.NoSuchRecordException;
 import com.liferay.portlet.dynamicdatalists.model.DDLRecord;
-import com.liferay.portlet.dynamicdatalists.service.DDLRecordServiceUtil;
+import com.liferay.portlet.dynamicdatalists.service.DDLRecordLocalServiceUtil;
 import com.liferay.portlet.dynamicdatalists.util.DDLUtil;
 import com.liferay.portlet.dynamicdatamapping.StorageFieldRequiredException;
 
@@ -64,17 +66,10 @@ public class EditRecordAction extends PortletAction {
 				deleteRecord(actionRequest);
 			}
 			else if (cmd.equals(Constants.REVERT)) {
-				revertRecord(actionRequest);
-			}
-			else if (cmd.equals(Constants.TRANSLATE)) {
-				updateRecord(actionRequest);
-
-				setForward(
-					actionRequest,
-					"portlet.dynamic_data_lists.update_translation_redirect");
+				revertRecordVersion(actionRequest);
 			}
 
-			if (Validator.isNotNull(cmd) && !cmd.equals(Constants.TRANSLATE)) {
+			if (Validator.isNotNull(cmd)) {
 				sendRedirect(actionRequest, actionResponse);
 			}
 		}
@@ -129,10 +124,15 @@ public class EditRecordAction extends PortletAction {
 	protected void deleteRecord(ActionRequest actionRequest) throws Exception {
 		long recordId = ParamUtil.getLong(actionRequest, "recordId");
 
-		DDLRecordServiceUtil.deleteRecord(recordId);
+		DDLRecordLocalServiceUtil.deleteRecord(recordId);
 	}
 
-	protected void revertRecord(ActionRequest actionRequest) throws Exception {
+	protected void revertRecordVersion(ActionRequest actionRequest)
+		throws Exception {
+
+		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(
+			WebKeys.THEME_DISPLAY);
+
 		long recordId = ParamUtil.getLong(actionRequest, "recordId");
 
 		String version = ParamUtil.getString(actionRequest, "version");
@@ -140,7 +140,8 @@ public class EditRecordAction extends PortletAction {
 		ServiceContext serviceContext = ServiceContextFactory.getInstance(
 			DDLRecord.class.getName(), actionRequest);
 
-		DDLRecordServiceUtil.revertRecord(recordId, version, serviceContext);
+		DDLRecordLocalServiceUtil.revertRecordVersion(
+			themeDisplay.getUserId(), recordId, version, serviceContext);
 	}
 
 	protected DDLRecord updateRecord(ActionRequest actionRequest)

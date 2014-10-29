@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -50,7 +50,6 @@ public class ClassNameWrapper implements ClassName, ModelWrapper<ClassName> {
 	public Map<String, Object> getModelAttributes() {
 		Map<String, Object> attributes = new HashMap<String, Object>();
 
-		attributes.put("mvccVersion", getMvccVersion());
 		attributes.put("classNameId", getClassNameId());
 		attributes.put("value", getValue());
 
@@ -59,12 +58,6 @@ public class ClassNameWrapper implements ClassName, ModelWrapper<ClassName> {
 
 	@Override
 	public void setModelAttributes(Map<String, Object> attributes) {
-		Long mvccVersion = (Long)attributes.get("mvccVersion");
-
-		if (mvccVersion != null) {
-			setMvccVersion(mvccVersion);
-		}
-
 		Long classNameId = (Long)attributes.get("classNameId");
 
 		if (classNameId != null) {
@@ -78,14 +71,24 @@ public class ClassNameWrapper implements ClassName, ModelWrapper<ClassName> {
 		}
 	}
 
+	/**
+	* Returns the primary key of this class name.
+	*
+	* @return the primary key of this class name
+	*/
 	@Override
-	public java.lang.Object clone() {
-		return new ClassNameWrapper((ClassName)_className.clone());
+	public long getPrimaryKey() {
+		return _className.getPrimaryKey();
 	}
 
+	/**
+	* Sets the primary key of this class name.
+	*
+	* @param primaryKey the primary key of this class name
+	*/
 	@Override
-	public int compareTo(com.liferay.portal.model.ClassName className) {
-		return _className.compareTo(className);
+	public void setPrimaryKey(long primaryKey) {
+		_className.setPrimaryKey(primaryKey);
 	}
 
 	/**
@@ -98,6 +101,11 @@ public class ClassNameWrapper implements ClassName, ModelWrapper<ClassName> {
 		return _className.getClassName();
 	}
 
+	@Override
+	public void setClassName(java.lang.String className) {
+		_className.setClassName(className);
+	}
+
 	/**
 	* Returns the class name ID of this class name.
 	*
@@ -108,34 +116,14 @@ public class ClassNameWrapper implements ClassName, ModelWrapper<ClassName> {
 		return _className.getClassNameId();
 	}
 
-	@Override
-	public com.liferay.portlet.expando.model.ExpandoBridge getExpandoBridge() {
-		return _className.getExpandoBridge();
-	}
-
 	/**
-	* Returns the mvcc version of this class name.
+	* Sets the class name ID of this class name.
 	*
-	* @return the mvcc version of this class name
+	* @param classNameId the class name ID of this class name
 	*/
 	@Override
-	public long getMvccVersion() {
-		return _className.getMvccVersion();
-	}
-
-	/**
-	* Returns the primary key of this class name.
-	*
-	* @return the primary key of this class name
-	*/
-	@Override
-	public long getPrimaryKey() {
-		return _className.getPrimaryKey();
-	}
-
-	@Override
-	public java.io.Serializable getPrimaryKeyObj() {
-		return _className.getPrimaryKeyObj();
+	public void setClassNameId(long classNameId) {
+		_className.setClassNameId(classNameId);
 	}
 
 	/**
@@ -148,19 +136,14 @@ public class ClassNameWrapper implements ClassName, ModelWrapper<ClassName> {
 		return _className.getValue();
 	}
 
+	/**
+	* Sets the value of this class name.
+	*
+	* @param value the value of this class name
+	*/
 	@Override
-	public int hashCode() {
-		return _className.hashCode();
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _className.isCachedModel();
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _className.isEscapedModel();
+	public void setValue(java.lang.String value) {
+		_className.setValue(value);
 	}
 
 	@Override
@@ -169,8 +152,13 @@ public class ClassNameWrapper implements ClassName, ModelWrapper<ClassName> {
 	}
 
 	@Override
-	public void persist() {
-		_className.persist();
+	public void setNew(boolean n) {
+		_className.setNew(n);
+	}
+
+	@Override
+	public boolean isCachedModel() {
+		return _className.isCachedModel();
 	}
 
 	@Override
@@ -179,18 +167,23 @@ public class ClassNameWrapper implements ClassName, ModelWrapper<ClassName> {
 	}
 
 	@Override
-	public void setClassName(java.lang.String className) {
-		_className.setClassName(className);
+	public boolean isEscapedModel() {
+		return _className.isEscapedModel();
 	}
 
-	/**
-	* Sets the class name ID of this class name.
-	*
-	* @param classNameId the class name ID of this class name
-	*/
 	@Override
-	public void setClassNameId(long classNameId) {
-		_className.setClassNameId(classNameId);
+	public java.io.Serializable getPrimaryKeyObj() {
+		return _className.getPrimaryKeyObj();
+	}
+
+	@Override
+	public void setPrimaryKeyObj(java.io.Serializable primaryKeyObj) {
+		_className.setPrimaryKeyObj(primaryKeyObj);
+	}
+
+	@Override
+	public com.liferay.portlet.expando.model.ExpandoBridge getExpandoBridge() {
+		return _className.getExpandoBridge();
 	}
 
 	@Override
@@ -211,44 +204,19 @@ public class ClassNameWrapper implements ClassName, ModelWrapper<ClassName> {
 		_className.setExpandoBridgeAttributes(serviceContext);
 	}
 
-	/**
-	* Sets the mvcc version of this class name.
-	*
-	* @param mvccVersion the mvcc version of this class name
-	*/
 	@Override
-	public void setMvccVersion(long mvccVersion) {
-		_className.setMvccVersion(mvccVersion);
+	public java.lang.Object clone() {
+		return new ClassNameWrapper((ClassName)_className.clone());
 	}
 
 	@Override
-	public void setNew(boolean n) {
-		_className.setNew(n);
-	}
-
-	/**
-	* Sets the primary key of this class name.
-	*
-	* @param primaryKey the primary key of this class name
-	*/
-	@Override
-	public void setPrimaryKey(long primaryKey) {
-		_className.setPrimaryKey(primaryKey);
+	public int compareTo(com.liferay.portal.model.ClassName className) {
+		return _className.compareTo(className);
 	}
 
 	@Override
-	public void setPrimaryKeyObj(java.io.Serializable primaryKeyObj) {
-		_className.setPrimaryKeyObj(primaryKeyObj);
-	}
-
-	/**
-	* Sets the value of this class name.
-	*
-	* @param value the value of this class name
-	*/
-	@Override
-	public void setValue(java.lang.String value) {
-		_className.setValue(value);
+	public int hashCode() {
+		return _className.hashCode();
 	}
 
 	@Override
@@ -262,18 +230,24 @@ public class ClassNameWrapper implements ClassName, ModelWrapper<ClassName> {
 	}
 
 	@Override
-	public java.lang.String toString() {
-		return _className.toString();
-	}
-
-	@Override
 	public com.liferay.portal.model.ClassName toUnescapedModel() {
 		return new ClassNameWrapper(_className.toUnescapedModel());
 	}
 
 	@Override
+	public java.lang.String toString() {
+		return _className.toString();
+	}
+
+	@Override
 	public java.lang.String toXmlString() {
 		return _className.toXmlString();
+	}
+
+	@Override
+	public void persist()
+		throws com.liferay.portal.kernel.exception.SystemException {
+		_className.persist();
 	}
 
 	@Override
@@ -298,7 +272,6 @@ public class ClassNameWrapper implements ClassName, ModelWrapper<ClassName> {
 	/**
 	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedModel}
 	 */
-	@Deprecated
 	public ClassName getWrappedClassName() {
 		return _className;
 	}
@@ -309,19 +282,9 @@ public class ClassNameWrapper implements ClassName, ModelWrapper<ClassName> {
 	}
 
 	@Override
-	public boolean isEntityCacheEnabled() {
-		return _className.isEntityCacheEnabled();
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return _className.isFinderCacheEnabled();
-	}
-
-	@Override
 	public void resetOriginalValues() {
 		_className.resetOriginalValues();
 	}
 
-	private final ClassName _className;
+	private ClassName _className;
 }

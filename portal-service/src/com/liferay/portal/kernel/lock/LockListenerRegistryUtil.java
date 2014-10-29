@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,74 +14,40 @@
 
 package com.liferay.portal.kernel.lock;
 
-import com.liferay.registry.Registry;
-import com.liferay.registry.RegistryUtil;
-import com.liferay.registry.ServiceReference;
-import com.liferay.registry.ServiceTracker;
-import com.liferay.registry.ServiceTrackerCustomizer;
-
-import java.util.HashMap;
-import java.util.Map;
+import com.liferay.portal.kernel.security.pacl.permission.PortalRuntimePermission;
 
 /**
  * @author Alexander Chow
- * @author Peter Fellwock
  */
 public class LockListenerRegistryUtil {
 
 	public static LockListener getLockListener(String className) {
-		return _instance._lockListeners.get(className);
+		return getLockListenerRegistry().getLockListener(className);
 	}
 
-	private LockListenerRegistryUtil() {
-		Registry registry = RegistryUtil.getRegistry();
+	public static LockListenerRegistry getLockListenerRegistry() {
+		PortalRuntimePermission.checkGetBeanProperty(
+			LockListenerRegistryUtil.class);
 
-		_serviceTracker = registry.trackServices(
-			LockListener.class, new LockListenerServiceTrackerCustomizer());
-
-		_serviceTracker.open();
+		return _lockListenerRegistry;
 	}
 
-	private static LockListenerRegistryUtil _instance =
-		new LockListenerRegistryUtil();
-
-	private Map<String, LockListener> _lockListeners =
-		new HashMap<String, LockListener>();
-	private ServiceTracker<?, LockListener> _serviceTracker;
-
-	private class LockListenerServiceTrackerCustomizer
-		implements ServiceTrackerCustomizer<LockListener, LockListener> {
-
-		@Override
-		public LockListener addingService(
-			ServiceReference<LockListener> serviceReference) {
-
-			Registry registry = RegistryUtil.getRegistry();
-
-			LockListener lockListener = registry.getService(serviceReference);
-
-			_lockListeners.put(lockListener.getClassName(), lockListener);
-
-			return lockListener;
-		}
-
-		@Override
-		public void modifiedService(
-			ServiceReference<LockListener> serviceReference,
-			LockListener lockListener) {
-		}
-
-		@Override
-		public void removedService(
-			ServiceReference<LockListener> serviceReference,
-			LockListener lockListener) {
-
-			Registry registry = RegistryUtil.getRegistry();
-
-			registry.ungetService(serviceReference);
-
-			_lockListeners.remove(lockListener);
-		}
+	public static void register(LockListener lockListener) {
+		getLockListenerRegistry().register(lockListener);
 	}
+
+	public static void unregister(LockListener lockListener) {
+		getLockListenerRegistry().unregister(lockListener);
+	}
+
+	public void setLockListenerRegistry(
+		LockListenerRegistry lockListenerRegistry) {
+
+		PortalRuntimePermission.checkSetBeanProperty(getClass());
+
+		_lockListenerRegistry = lockListenerRegistry;
+	}
+
+	private static LockListenerRegistry _lockListenerRegistry;
 
 }

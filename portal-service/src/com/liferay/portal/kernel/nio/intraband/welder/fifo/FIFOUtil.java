@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -49,16 +49,14 @@ public class FIFOUtil {
 	}
 
 	public static boolean isFIFOSupported() {
-		return _FIFO_SUPPORTED;
+		return _fifoSupported;
 	}
-
-	private static final boolean _FIFO_SUPPORTED;
 
 	private static Log _log = LogFactoryUtil.getLog(FIFOUtil.class);
 
-	static {
-		boolean fifoSupport = false;
+	private static boolean _fifoSupported;
 
+	static {
 		try {
 			File tempFIFOFile = new File(
 				System.getProperty("java.io.tmpdir"),
@@ -75,15 +73,15 @@ public class FIFOUtil {
 				}
 			}
 
-			fifoSupport = true;
+			_fifoSupported = true;
 		}
 		catch (Throwable t) {
 			if (_log.isWarnEnabled()) {
 				_log.warn("Unable to detect FIFO support", t);
 			}
-		}
 
-		_FIFO_SUPPORTED = fifoSupport;
+			_fifoSupported = false;
+		}
 	}
 
 }

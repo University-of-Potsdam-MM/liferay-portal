@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -140,18 +140,17 @@ public class BeanReferenceAnnotationBeanPostProcessor
 					catch (BeanLocatorException ble) {
 						StringWriter stringWriter = new StringWriter();
 
-						try (PrintWriter printWriter = new PrintWriter(
-								stringWriter)) {
+						PrintWriter printWriter = new PrintWriter(stringWriter);
 
-							printWriter.print(
-								"BeanFactory could not find bean: ");
+						printWriter.print("BeanFactory could not find bean: ");
 
-							nsbde.printStackTrace(printWriter);
+						nsbde.printStackTrace(printWriter);
 
-							printWriter.print(
-								" and PortalBeanLocator failed with: ");
-							printWriter.append(ble.getMessage());
-						}
+						printWriter.print(
+							" and PortalBeanLocator failed with: ");
+						printWriter.append(ble.getMessage());
+
+						printWriter.close();
 
 						throw new BeanLocatorException(
 							stringWriter.toString(), ble);

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,11 +14,9 @@
 
 package com.liferay.portlet.messageboards.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
-import com.liferay.portal.NoSuchModelException;
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSON;
 import com.liferay.portal.kernel.lar.StagedModelType;
 import com.liferay.portal.kernel.trash.TrashHandler;
@@ -32,10 +30,8 @@ import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.model.CacheModel;
 import com.liferay.portal.model.ContainerModel;
 import com.liferay.portal.model.TrashedModel;
-import com.liferay.portal.model.User;
 import com.liferay.portal.model.impl.BaseModelImpl;
 import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.service.UserLocalServiceUtil;
 import com.liferay.portal.util.PortalUtil;
 
 import com.liferay.portlet.expando.model.ExpandoBridge;
@@ -70,7 +66,6 @@ import java.util.Map;
  * @generated
  */
 @JSON(strict = true)
-@ProviderType
 public class MBCategoryModelImpl extends BaseModelImpl<MBCategory>
 	implements MBCategoryModel {
 	/*
@@ -116,13 +111,12 @@ public class MBCategoryModelImpl extends BaseModelImpl<MBCategory>
 	public static final boolean COLUMN_BITMASK_ENABLED = GetterUtil.getBoolean(com.liferay.portal.util.PropsUtil.get(
 				"value.object.column.bitmask.enabled.com.liferay.portlet.messageboards.model.MBCategory"),
 			true);
-	public static final long CATEGORYID_COLUMN_BITMASK = 1L;
-	public static final long COMPANYID_COLUMN_BITMASK = 2L;
-	public static final long GROUPID_COLUMN_BITMASK = 4L;
-	public static final long PARENTCATEGORYID_COLUMN_BITMASK = 8L;
-	public static final long STATUS_COLUMN_BITMASK = 16L;
-	public static final long UUID_COLUMN_BITMASK = 32L;
-	public static final long NAME_COLUMN_BITMASK = 64L;
+	public static long COMPANYID_COLUMN_BITMASK = 1L;
+	public static long GROUPID_COLUMN_BITMASK = 2L;
+	public static long PARENTCATEGORYID_COLUMN_BITMASK = 4L;
+	public static long STATUS_COLUMN_BITMASK = 8L;
+	public static long UUID_COLUMN_BITMASK = 16L;
+	public static long NAME_COLUMN_BITMASK = 32L;
 
 	/**
 	 * Converts the soap model instance into a normal model instance.
@@ -239,9 +233,6 @@ public class MBCategoryModelImpl extends BaseModelImpl<MBCategory>
 		attributes.put("statusByUserId", getStatusByUserId());
 		attributes.put("statusByUserName", getStatusByUserName());
 		attributes.put("statusDate", getStatusDate());
-
-		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
-		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
 
 		return attributes;
 	}
@@ -395,19 +386,7 @@ public class MBCategoryModelImpl extends BaseModelImpl<MBCategory>
 
 	@Override
 	public void setCategoryId(long categoryId) {
-		_columnBitmask |= CATEGORYID_COLUMN_BITMASK;
-
-		if (!_setOriginalCategoryId) {
-			_setOriginalCategoryId = true;
-
-			_originalCategoryId = _categoryId;
-		}
-
 		_categoryId = categoryId;
-	}
-
-	public long getOriginalCategoryId() {
-		return _originalCategoryId;
 	}
 
 	@JSON
@@ -468,19 +447,13 @@ public class MBCategoryModelImpl extends BaseModelImpl<MBCategory>
 	}
 
 	@Override
-	public String getUserUuid() {
-		try {
-			User user = UserLocalServiceUtil.getUserById(getUserId());
-
-			return user.getUuid();
-		}
-		catch (PortalException pe) {
-			return StringPool.BLANK;
-		}
+	public String getUserUuid() throws SystemException {
+		return PortalUtil.getUserValue(getUserId(), "uuid", _userUuid);
 	}
 
 	@Override
 	public void setUserUuid(String userUuid) {
+		_userUuid = userUuid;
 	}
 
 	@JSON
@@ -662,19 +635,14 @@ public class MBCategoryModelImpl extends BaseModelImpl<MBCategory>
 	}
 
 	@Override
-	public String getStatusByUserUuid() {
-		try {
-			User user = UserLocalServiceUtil.getUserById(getStatusByUserId());
-
-			return user.getUuid();
-		}
-		catch (PortalException pe) {
-			return StringPool.BLANK;
-		}
+	public String getStatusByUserUuid() throws SystemException {
+		return PortalUtil.getUserValue(getStatusByUserId(), "uuid",
+			_statusByUserUuid);
 	}
 
 	@Override
 	public void setStatusByUserUuid(String statusByUserUuid) {
+		_statusByUserUuid = statusByUserUuid;
 	}
 
 	@JSON
@@ -736,7 +704,7 @@ public class MBCategoryModelImpl extends BaseModelImpl<MBCategory>
 	}
 
 	@Override
-	public TrashEntry getTrashEntry() throws PortalException {
+	public TrashEntry getTrashEntry() throws PortalException, SystemException {
 		if (!isInTrash()) {
 			return null;
 		}
@@ -750,16 +718,8 @@ public class MBCategoryModelImpl extends BaseModelImpl<MBCategory>
 
 		TrashHandler trashHandler = getTrashHandler();
 
-		if (!Validator.isNull(trashHandler.getContainerModelClassName(
-						getPrimaryKey()))) {
-			ContainerModel containerModel = null;
-
-			try {
-				containerModel = trashHandler.getParentContainerModel(this);
-			}
-			catch (NoSuchModelException nsme) {
-				return null;
-			}
+		if (!Validator.isNull(trashHandler.getContainerModelClassName())) {
+			ContainerModel containerModel = trashHandler.getParentContainerModel(this);
 
 			while (containerModel != null) {
 				if (containerModel instanceof TrashedModel) {
@@ -768,8 +728,7 @@ public class MBCategoryModelImpl extends BaseModelImpl<MBCategory>
 					return trashedModel.getTrashEntry();
 				}
 
-				trashHandler = TrashHandlerRegistryUtil.getTrashHandler(trashHandler.getContainerModelClassName(
-							containerModel.getContainerModelId()));
+				trashHandler = TrashHandlerRegistryUtil.getTrashHandler(trashHandler.getContainerModelClassName());
 
 				if (trashHandler == null) {
 					return null;
@@ -807,8 +766,7 @@ public class MBCategoryModelImpl extends BaseModelImpl<MBCategory>
 		TrashHandler trashHandler = getTrashHandler();
 
 		if ((trashHandler == null) ||
-				Validator.isNull(trashHandler.getContainerModelClassName(
-						getPrimaryKey()))) {
+				Validator.isNull(trashHandler.getContainerModelClassName())) {
 			return false;
 		}
 
@@ -829,42 +787,9 @@ public class MBCategoryModelImpl extends BaseModelImpl<MBCategory>
 		return false;
 	}
 
-	@Override
-	public boolean isInTrashExplicitly() {
-		if (!isInTrash()) {
-			return false;
-		}
-
-		TrashEntry trashEntry = TrashEntryLocalServiceUtil.fetchEntry(getModelClassName(),
-				getTrashEntryClassPK());
-
-		if (trashEntry != null) {
-			return true;
-		}
-
-		return false;
-	}
-
-	@Override
-	public boolean isInTrashImplicitly() {
-		if (!isInTrash()) {
-			return false;
-		}
-
-		TrashEntry trashEntry = TrashEntryLocalServiceUtil.fetchEntry(getModelClassName(),
-				getTrashEntryClassPK());
-
-		if (trashEntry != null) {
-			return false;
-		}
-
-		return true;
-	}
-
 	/**
 	 * @deprecated As of 6.1.0, replaced by {@link #isApproved}
 	 */
-	@Deprecated
 	@Override
 	public boolean getApproved() {
 		return isApproved();
@@ -1061,24 +986,10 @@ public class MBCategoryModelImpl extends BaseModelImpl<MBCategory>
 	}
 
 	@Override
-	public boolean isEntityCacheEnabled() {
-		return ENTITY_CACHE_ENABLED;
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return FINDER_CACHE_ENABLED;
-	}
-
-	@Override
 	public void resetOriginalValues() {
 		MBCategoryModelImpl mbCategoryModelImpl = this;
 
 		mbCategoryModelImpl._originalUuid = mbCategoryModelImpl._uuid;
-
-		mbCategoryModelImpl._originalCategoryId = mbCategoryModelImpl._categoryId;
-
-		mbCategoryModelImpl._setOriginalCategoryId = false;
 
 		mbCategoryModelImpl._originalGroupId = mbCategoryModelImpl._groupId;
 
@@ -1345,15 +1256,13 @@ public class MBCategoryModelImpl extends BaseModelImpl<MBCategory>
 		return sb.toString();
 	}
 
-	private static final ClassLoader _classLoader = MBCategory.class.getClassLoader();
-	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
+	private static ClassLoader _classLoader = MBCategory.class.getClassLoader();
+	private static Class<?>[] _escapedModelInterfaces = new Class[] {
 			MBCategory.class
 		};
 	private String _uuid;
 	private String _originalUuid;
 	private long _categoryId;
-	private long _originalCategoryId;
-	private boolean _setOriginalCategoryId;
 	private long _groupId;
 	private long _originalGroupId;
 	private boolean _setOriginalGroupId;
@@ -1361,6 +1270,7 @@ public class MBCategoryModelImpl extends BaseModelImpl<MBCategory>
 	private long _originalCompanyId;
 	private boolean _setOriginalCompanyId;
 	private long _userId;
+	private String _userUuid;
 	private String _userName;
 	private Date _createDate;
 	private Date _modifiedDate;
@@ -1377,6 +1287,7 @@ public class MBCategoryModelImpl extends BaseModelImpl<MBCategory>
 	private int _originalStatus;
 	private boolean _setOriginalStatus;
 	private long _statusByUserId;
+	private String _statusByUserUuid;
 	private String _statusByUserName;
 	private Date _statusDate;
 	private long _columnBitmask;

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,16 +18,12 @@ import com.liferay.portal.kernel.dao.jdbc.DataAccess;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.util.PortletKeys;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-
-import javax.portlet.PortletPreferences;
-import javax.portlet.ReadOnlyException;
 
 /**
  * @author Jorge Ferrer
@@ -48,7 +44,7 @@ public abstract class BaseUpgradePortletPreferences extends UpgradeProcess {
 		updatePortletPreferences();
 	}
 
-	protected long getCompanyId(String sql, long primaryKey) throws Exception {
+	protected long getCompanyId(long userId) throws Exception {
 		long companyId = 0;
 
 		Connection con = null;
@@ -58,9 +54,9 @@ public abstract class BaseUpgradePortletPreferences extends UpgradeProcess {
 		try {
 			con = DataAccess.getUpgradeOptimizedConnection();
 
-			ps = con.prepareStatement(sql);
+			ps = con.prepareStatement(_GET_USER);
 
-			ps.setLong(1, primaryKey);
+			ps.setLong(1, userId);
 
 			rs = ps.executeQuery();
 
@@ -85,8 +81,7 @@ public abstract class BaseUpgradePortletPreferences extends UpgradeProcess {
 		try {
 			con = DataAccess.getUpgradeOptimizedConnection();
 
-			ps = con.prepareStatement(
-				"select companyId from Group_ where groupId = ?");
+			ps = con.prepareStatement(_GET_COMPANY_ID);
 
 			ps.setLong(1, groupId);
 
@@ -115,9 +110,7 @@ public abstract class BaseUpgradePortletPreferences extends UpgradeProcess {
 		try {
 			con = DataAccess.getUpgradeOptimizedConnection();
 
-			ps = con.prepareStatement(
-				"select groupId, companyId, privateLayout, layoutId from " +
-					"Layout where plid = ?");
+			ps = con.prepareStatement(_GET_LAYOUT);
 
 			ps.setLong(1, plid);
 
@@ -156,9 +149,7 @@ public abstract class BaseUpgradePortletPreferences extends UpgradeProcess {
 		try {
 			con = DataAccess.getUpgradeOptimizedConnection();
 
-			ps = con.prepareStatement(
-				"select uuid_ from Layout where groupId = ? and " +
-					"privateLayout = ? and layoutId = ?");
+			ps = con.prepareStatement(_GET_LAYOUT_UUID);
 
 			long groupId = (Long)layout[0];
 			boolean privateLayout = (Boolean)layout[2];
@@ -256,13 +247,7 @@ public abstract class BaseUpgradePortletPreferences extends UpgradeProcess {
 
 				long companyId = 0;
 
-				if (ownerType == PortletKeys.PREFS_OWNER_TYPE_ARCHIVED) {
-					companyId = getCompanyId(
-						"select companyId from PortletItem where " +
-							"portletItemId = ?",
-						ownerId);
-				}
-				else if (ownerType == PortletKeys.PREFS_OWNER_TYPE_COMPANY) {
+				if (ownerType == PortletKeys.PREFS_OWNER_TYPE_COMPANY) {
 					companyId = ownerId;
 				}
 				else if (ownerType == PortletKeys.PREFS_OWNER_TYPE_GROUP) {
@@ -279,22 +264,8 @@ public abstract class BaseUpgradePortletPreferences extends UpgradeProcess {
 						companyId = (Long)layout[1];
 					}
 				}
-				else if (ownerType ==
-							PortletKeys.PREFS_OWNER_TYPE_ORGANIZATION) {
-
-					companyId = getCompanyId(
-						"select companyId from Organization_ where " +
-							"organizationId = ?",
-						ownerId);
-				}
 				else if (ownerType == PortletKeys.PREFS_OWNER_TYPE_USER) {
-					companyId = getCompanyId(
-						"select companyId from User_ where userId = ?",
-						ownerId);
-				}
-				else {
-					throw new UnsupportedOperationException(
-						"Unsupported owner type " + ownerType);
+					companyId = getCompanyId(ownerId);
 				}
 
 				if (companyId > 0) {
@@ -340,20 +311,23 @@ public abstract class BaseUpgradePortletPreferences extends UpgradeProcess {
 		}
 	}
 
-	protected void upgradeMultiValuePreference(
-			PortletPreferences portletPreferences, String key)
-		throws ReadOnlyException {
-
-		String value = portletPreferences.getValue(key, StringPool.BLANK);
-
-		if (Validator.isNotNull(value)) {
-			portletPreferences.setValues(key, StringUtil.split(value));
-		}
-	}
-
 	protected abstract String upgradePreferences(
 			long companyId, long ownerId, int ownerType, long plid,
 			String portletId, String xml)
 		throws Exception;
+
+	private static final String _GET_COMPANY_ID =
+		"select companyId from Group_ where groupId = ?";
+
+	private static final String _GET_LAYOUT =
+		"select groupId, companyId, privateLayout, layoutId from Layout " +
+			"where plid = ?";
+
+	private static final String _GET_LAYOUT_UUID =
+		"select uuid_ from Layout where groupId = ? and privateLayout = ? " +
+			"and layoutId = ?";
+
+	private static final String _GET_USER =
+		"select * from User_ where userId = ?";
 
 }

@@ -1,24 +1,17 @@
 AUI.add(
 	'liferay-util-window',
 	function(A) {
-		var DOM = A.DOM;
 		var Lang = A.Lang;
-		var UA = A.UA;
+
+		var DOM = A.DOM;
 
 		var Util = Liferay.Util;
 		var Window = Util.Window;
 
-		var IE9 = (UA.ie == 9);
-
-		var setWidth = function(modal, width) {
-			if (IE9) {
-				modal.set('width', width + 1);
-				modal.set('width', width);
-			}
-		};
-
 		var LiferayModal = A.Component.create(
 			{
+				NAME: A.Modal.NAME,
+
 				ATTRS: {
 					autoHeight: {
 						value: false
@@ -43,8 +36,6 @@ AUI.add(
 
 				EXTENDS: A.Modal,
 
-				NAME: A.Modal.NAME,
-
 				prototype: {
 				}
 			}
@@ -55,15 +46,15 @@ AUI.add(
 			{
 				DEFAULTS: {
 					centered: true,
-					headerContent: '&nbsp;',
 					modal: true,
+					headerContent: '&nbsp;',
 					visible: true,
 					zIndex: Liferay.zIndex.WINDOW
 				},
 
 				IFRAME_SUFFIX: '_iframe_',
 
-				TITLE_TEMPLATE: '<h3 class="modal-title" />',
+				TITLE_TEMPLATE: '<h3 />',
 
 				_winResizeHandler: null,
 
@@ -136,12 +127,6 @@ AUI.add(
 					modal.after(
 						'destroy',
 						function(event) {
-							var openerInFrame = !!modal._opener.frameElement;
-
-							if (IE9 && openerInFrame) {
-								instance._syncWindowsUI();
-							}
-
 							instance._unregister(modal);
 
 							modal = null;
@@ -174,18 +159,12 @@ AUI.add(
 
 										var modalUtil = event.win.Liferay.Util;
 
-										modalUtil.Window._opener = modal._opener;
+										modalUtil.Window._opener = openingWindow;
 
 										modalUtil.Window._name = id;
 									}
 
-									var iframeNode = modal.iframe.node;
-
-									iframeNode.focus();
-
-									if (UA.ios) {
-										iframeNode.attr('scrolling', 'no');
-									}
+									modal.iframe.node.focus();
 								}
 							}
 						)
@@ -202,6 +181,92 @@ AUI.add(
 					if (!config.iframeId) {
 						config.iframeId = config.id + instance.IFRAME_SUFFIX;
 					}
+				},
+
+				_getWindow: function(config) {
+					var instance = this;
+
+					var id = config.id;
+
+					var modalConfig = instance._getWindowConfig(config);
+
+					var dialogIframeConfig = instance._getDialogIframeConfig(config);
+
+					var modal = instance.getById(id);
+
+					if (!modal) {
+						var titleNode = A.Node.create(instance.TITLE_TEMPLATE);
+
+						if (config.stack !== false) {
+							A.mix(
+								modalConfig,
+								{
+									plugins: [Liferay.WidgetZIndex]
+								}
+							);
+						}
+
+						modal = new LiferayModal(
+							A.merge(
+								{
+									headerContent: titleNode,
+									id: id
+								},
+								modalConfig
+							)
+						);
+
+						modal.titleNode = titleNode;
+
+						instance._register(modal);
+
+						instance._bindWindowHooks(modal, config);
+					}
+					else {
+						if (!config.zIndex && modal.hasPlugin('zindex')) {
+							delete modalConfig.zIndex;
+						}
+
+						modal.setAttrs(modalConfig);
+					}
+
+					if (dialogIframeConfig) {
+						modal.plug(A.Plugin.DialogIframe, dialogIframeConfig);
+					}
+
+					if (!Lang.isValue(config.title)) {
+						config.title = instance.DEFAULTS.headerContent;
+					}
+
+					modal.titleNode.html(config.title);
+
+					modal.fillHeight(modal.bodyNode);
+
+					return modal;
+				},
+
+				_getWindowConfig: function(config) {
+					var instance = this;
+
+					var modalConfig = A.merge(instance.DEFAULTS, config.dialog);
+
+					var height = modalConfig.height;
+
+					var width = modalConfig.width;
+
+					if (height === 'auto' || height === '' || height === undefined || height > DOM.winHeight()) {
+						modalConfig.autoHeight = true;
+					}
+
+					if (width === 'auto' || width === '' || width === undefined || width > DOM.winWidth()) {
+						modalConfig.autoWidth = true;
+					}
+
+					modalConfig.id = config.id;
+
+					delete modalConfig.headerContent;
+
+					return modalConfig;
 				},
 
 				_getDialogIframeConfig: function(config) {
@@ -269,101 +334,6 @@ AUI.add(
 					return dialogIframeConfig;
 				},
 
-				_getWindow: function(config) {
-					var instance = this;
-
-					var id = config.id;
-
-					var modalConfig = instance._getWindowConfig(config);
-
-					var dialogIframeConfig = instance._getDialogIframeConfig(config);
-
-					var modal = instance.getById(id);
-
-					if (!modal) {
-						var titleNode = A.Node.create(instance.TITLE_TEMPLATE);
-
-						if (config.stack !== false) {
-							A.mix(
-								modalConfig,
-								{
-									plugins: [Liferay.WidgetZIndex]
-								}
-							);
-						}
-
-						modal = new LiferayModal(
-							A.merge(
-								{
-									headerContent: titleNode,
-									id: id
-								},
-								modalConfig
-							)
-						);
-
-						modal.titleNode = titleNode;
-
-						instance._register(modal);
-
-						instance._bindWindowHooks(modal, config);
-					}
-					else {
-						if (!config.zIndex && modal.hasPlugin('zindex')) {
-							delete modalConfig.zIndex;
-						}
-
-						var openingWindow = config.openingWindow;
-
-						modal._opener = openingWindow;
-						modal._refreshWindow = config.refreshWindow;
-
-						instance._map[id]._opener = openingWindow;
-
-						modal.setAttrs(modalConfig);
-					}
-
-					if (dialogIframeConfig) {
-						modal.plug(A.Plugin.DialogIframe, dialogIframeConfig);
-
-						modal.get('boundingBox').addClass('dialog-iframe-modal');
-					}
-
-					if (!Lang.isValue(config.title)) {
-						config.title = instance.DEFAULTS.headerContent;
-					}
-
-					modal.titleNode.html(config.title);
-
-					modal.fillHeight(modal.bodyNode);
-
-					return modal;
-				},
-
-				_getWindowConfig: function(config) {
-					var instance = this;
-
-					var modalConfig = A.merge(instance.DEFAULTS, config.dialog);
-
-					var height = modalConfig.height;
-
-					var width = modalConfig.width;
-
-					if (height === 'auto' || height === '' || height === undefined || height > DOM.winHeight()) {
-						modalConfig.autoHeight = true;
-					}
-
-					if (width === 'auto' || width === '' || width === undefined || width > DOM.winWidth()) {
-						modalConfig.autoWidth = true;
-					}
-
-					modalConfig.id = config.id;
-
-					delete modalConfig.headerContent;
-
-					return modalConfig;
-				},
-
 				_register: function(modal) {
 					var instance = this;
 
@@ -407,17 +377,7 @@ AUI.add(
 
 						width *= modal.get('autoWidthRatio');
 
-						var widthInitial = modal.get('width');
-
-						if (width != widthInitial) {
-							modal.set('width', width);
-						}
-						else {
-							setWidth(modal, widthInitial);
-						}
-					}
-					else {
-						setWidth(modal, modal.get('width'));
+						modal.set('width', width);
 					}
 				},
 

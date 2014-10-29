@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -30,18 +30,6 @@ public class StagingServiceWrapper implements StagingService,
 		_stagingService = stagingService;
 	}
 
-	@Override
-	public void cleanUpStagingRequest(long stagingRequestId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_stagingService.cleanUpStagingRequest(stagingRequestId);
-	}
-
-	@Override
-	public long createStagingRequest(long groupId, java.lang.String checksum)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _stagingService.createStagingRequest(groupId, checksum);
-	}
-
 	/**
 	* Returns the Spring bean ID for this bean.
 	*
@@ -50,15 +38,6 @@ public class StagingServiceWrapper implements StagingService,
 	@Override
 	public java.lang.String getBeanIdentifier() {
 		return _stagingService.getBeanIdentifier();
-	}
-
-	@Override
-	public void publishStagingRequest(long stagingRequestId,
-		boolean privateLayout,
-		java.util.Map<java.lang.String, java.lang.String[]> parameterMap)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_stagingService.publishStagingRequest(stagingRequestId, privateLayout,
-			parameterMap);
 	}
 
 	/**
@@ -72,9 +51,34 @@ public class StagingServiceWrapper implements StagingService,
 	}
 
 	@Override
+	public void cleanUpStagingRequest(long stagingRequestId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		_stagingService.cleanUpStagingRequest(stagingRequestId);
+	}
+
+	@Override
+	public long createStagingRequest(long groupId, java.lang.String checksum)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _stagingService.createStagingRequest(groupId, checksum);
+	}
+
+	@Override
+	public void publishStagingRequest(long stagingRequestId,
+		boolean privateLayout,
+		java.util.Map<java.lang.String, java.lang.String[]> parameterMap)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		_stagingService.publishStagingRequest(stagingRequestId, privateLayout,
+			parameterMap);
+	}
+
+	@Override
 	public void updateStagingRequest(long stagingRequestId,
 		java.lang.String fileName, byte[] bytes)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		_stagingService.updateStagingRequest(stagingRequestId, fileName, bytes);
 	}
 
@@ -82,7 +86,8 @@ public class StagingServiceWrapper implements StagingService,
 	public com.liferay.portal.kernel.lar.MissingReferences validateStagingRequest(
 		long stagingRequestId, boolean privateLayout,
 		java.util.Map<java.lang.String, java.lang.String[]> parameterMap)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return _stagingService.validateStagingRequest(stagingRequestId,
 			privateLayout, parameterMap);
 	}
@@ -90,7 +95,6 @@ public class StagingServiceWrapper implements StagingService,
 	/**
 	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedService}
 	 */
-	@Deprecated
 	public StagingService getWrappedStagingService() {
 		return _stagingService;
 	}
@@ -98,7 +102,6 @@ public class StagingServiceWrapper implements StagingService,
 	/**
 	 * @deprecated As of 6.1.0, replaced by {@link #setWrappedService}
 	 */
-	@Deprecated
 	public void setWrappedStagingService(StagingService stagingService) {
 		_stagingService = stagingService;
 	}

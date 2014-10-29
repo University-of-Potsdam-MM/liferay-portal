@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,6 +18,7 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.bean.PortalBeanLocatorUtil;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ReferenceRegistry;
 import com.liferay.portal.service.ServiceContext;
@@ -63,7 +64,8 @@ public class SocialActivityCounterUtil {
 	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#countWithDynamicQuery(DynamicQuery)
 	 */
-	public static long countWithDynamicQuery(DynamicQuery dynamicQuery) {
+	public static long countWithDynamicQuery(DynamicQuery dynamicQuery)
+		throws SystemException {
 		return getPersistence().countWithDynamicQuery(dynamicQuery);
 	}
 
@@ -71,7 +73,7 @@ public class SocialActivityCounterUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#findWithDynamicQuery(DynamicQuery)
 	 */
 	public static List<SocialActivityCounter> findWithDynamicQuery(
-		DynamicQuery dynamicQuery) {
+		DynamicQuery dynamicQuery) throws SystemException {
 		return getPersistence().findWithDynamicQuery(dynamicQuery);
 	}
 
@@ -79,7 +81,8 @@ public class SocialActivityCounterUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#findWithDynamicQuery(DynamicQuery, int, int)
 	 */
 	public static List<SocialActivityCounter> findWithDynamicQuery(
-		DynamicQuery dynamicQuery, int start, int end) {
+		DynamicQuery dynamicQuery, int start, int end)
+		throws SystemException {
 		return getPersistence().findWithDynamicQuery(dynamicQuery, start, end);
 	}
 
@@ -88,7 +91,7 @@ public class SocialActivityCounterUtil {
 	 */
 	public static List<SocialActivityCounter> findWithDynamicQuery(
 		DynamicQuery dynamicQuery, int start, int end,
-		OrderByComparator<SocialActivityCounter> orderByComparator) {
+		OrderByComparator orderByComparator) throws SystemException {
 		return getPersistence()
 				   .findWithDynamicQuery(dynamicQuery, start, end,
 			orderByComparator);
@@ -98,7 +101,7 @@ public class SocialActivityCounterUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel)
 	 */
 	public static SocialActivityCounter update(
-		SocialActivityCounter socialActivityCounter) {
+		SocialActivityCounter socialActivityCounter) throws SystemException {
 		return getPersistence().update(socialActivityCounter);
 	}
 
@@ -107,7 +110,7 @@ public class SocialActivityCounterUtil {
 	 */
 	public static SocialActivityCounter update(
 		SocialActivityCounter socialActivityCounter,
-		ServiceContext serviceContext) {
+		ServiceContext serviceContext) throws SystemException {
 		return getPersistence().update(socialActivityCounter, serviceContext);
 	}
 
@@ -116,9 +119,11 @@ public class SocialActivityCounterUtil {
 	*
 	* @param groupId the group ID
 	* @return the matching social activity counters
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.social.model.SocialActivityCounter> findByGroupId(
-		long groupId) {
+		long groupId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByGroupId(groupId);
 	}
 
@@ -133,9 +138,11 @@ public class SocialActivityCounterUtil {
 	* @param start the lower bound of the range of social activity counters
 	* @param end the upper bound of the range of social activity counters (not inclusive)
 	* @return the range of matching social activity counters
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.social.model.SocialActivityCounter> findByGroupId(
-		long groupId, int start, int end) {
+		long groupId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByGroupId(groupId, start, end);
 	}
 
@@ -151,10 +158,12 @@ public class SocialActivityCounterUtil {
 	* @param end the upper bound of the range of social activity counters (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching social activity counters
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.social.model.SocialActivityCounter> findByGroupId(
 		long groupId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialActivityCounter> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByGroupId(groupId, start, end, orderByComparator);
 	}
@@ -166,11 +175,13 @@ public class SocialActivityCounterUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching social activity counter
 	* @throws com.liferay.portlet.social.NoSuchActivityCounterException if a matching social activity counter could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialActivityCounter findByGroupId_First(
 		long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialActivityCounter> orderByComparator)
-		throws com.liferay.portlet.social.NoSuchActivityCounterException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchActivityCounterException {
 		return getPersistence().findByGroupId_First(groupId, orderByComparator);
 	}
 
@@ -180,10 +191,12 @@ public class SocialActivityCounterUtil {
 	* @param groupId the group ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching social activity counter, or <code>null</code> if a matching social activity counter could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialActivityCounter fetchByGroupId_First(
 		long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialActivityCounter> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByGroupId_First(groupId, orderByComparator);
 	}
 
@@ -194,11 +207,13 @@ public class SocialActivityCounterUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching social activity counter
 	* @throws com.liferay.portlet.social.NoSuchActivityCounterException if a matching social activity counter could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialActivityCounter findByGroupId_Last(
 		long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialActivityCounter> orderByComparator)
-		throws com.liferay.portlet.social.NoSuchActivityCounterException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchActivityCounterException {
 		return getPersistence().findByGroupId_Last(groupId, orderByComparator);
 	}
 
@@ -208,10 +223,12 @@ public class SocialActivityCounterUtil {
 	* @param groupId the group ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching social activity counter, or <code>null</code> if a matching social activity counter could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialActivityCounter fetchByGroupId_Last(
 		long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialActivityCounter> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByGroupId_Last(groupId, orderByComparator);
 	}
 
@@ -223,11 +240,13 @@ public class SocialActivityCounterUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next social activity counter
 	* @throws com.liferay.portlet.social.NoSuchActivityCounterException if a social activity counter with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialActivityCounter[] findByGroupId_PrevAndNext(
 		long activityCounterId, long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialActivityCounter> orderByComparator)
-		throws com.liferay.portlet.social.NoSuchActivityCounterException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchActivityCounterException {
 		return getPersistence()
 				   .findByGroupId_PrevAndNext(activityCounterId, groupId,
 			orderByComparator);
@@ -237,8 +256,10 @@ public class SocialActivityCounterUtil {
 	* Removes all the social activity counters where groupId = &#63; from the database.
 	*
 	* @param groupId the group ID
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByGroupId(long groupId) {
+	public static void removeByGroupId(long groupId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeByGroupId(groupId);
 	}
 
@@ -247,8 +268,10 @@ public class SocialActivityCounterUtil {
 	*
 	* @param groupId the group ID
 	* @return the number of matching social activity counters
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByGroupId(long groupId) {
+	public static int countByGroupId(long groupId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByGroupId(groupId);
 	}
 
@@ -258,9 +281,11 @@ public class SocialActivityCounterUtil {
 	* @param classNameId the class name ID
 	* @param classPK the class p k
 	* @return the matching social activity counters
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.social.model.SocialActivityCounter> findByC_C(
-		long classNameId, long classPK) {
+		long classNameId, long classPK)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByC_C(classNameId, classPK);
 	}
 
@@ -276,9 +301,11 @@ public class SocialActivityCounterUtil {
 	* @param start the lower bound of the range of social activity counters
 	* @param end the upper bound of the range of social activity counters (not inclusive)
 	* @return the range of matching social activity counters
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.social.model.SocialActivityCounter> findByC_C(
-		long classNameId, long classPK, int start, int end) {
+		long classNameId, long classPK, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByC_C(classNameId, classPK, start, end);
 	}
 
@@ -295,10 +322,12 @@ public class SocialActivityCounterUtil {
 	* @param end the upper bound of the range of social activity counters (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching social activity counters
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.social.model.SocialActivityCounter> findByC_C(
 		long classNameId, long classPK, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialActivityCounter> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByC_C(classNameId, classPK, start, end,
 			orderByComparator);
@@ -312,11 +341,13 @@ public class SocialActivityCounterUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching social activity counter
 	* @throws com.liferay.portlet.social.NoSuchActivityCounterException if a matching social activity counter could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialActivityCounter findByC_C_First(
 		long classNameId, long classPK,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialActivityCounter> orderByComparator)
-		throws com.liferay.portlet.social.NoSuchActivityCounterException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchActivityCounterException {
 		return getPersistence()
 				   .findByC_C_First(classNameId, classPK, orderByComparator);
 	}
@@ -328,10 +359,12 @@ public class SocialActivityCounterUtil {
 	* @param classPK the class p k
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching social activity counter, or <code>null</code> if a matching social activity counter could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialActivityCounter fetchByC_C_First(
 		long classNameId, long classPK,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialActivityCounter> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByC_C_First(classNameId, classPK, orderByComparator);
 	}
@@ -344,11 +377,13 @@ public class SocialActivityCounterUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching social activity counter
 	* @throws com.liferay.portlet.social.NoSuchActivityCounterException if a matching social activity counter could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialActivityCounter findByC_C_Last(
 		long classNameId, long classPK,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialActivityCounter> orderByComparator)
-		throws com.liferay.portlet.social.NoSuchActivityCounterException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchActivityCounterException {
 		return getPersistence()
 				   .findByC_C_Last(classNameId, classPK, orderByComparator);
 	}
@@ -360,10 +395,12 @@ public class SocialActivityCounterUtil {
 	* @param classPK the class p k
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching social activity counter, or <code>null</code> if a matching social activity counter could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialActivityCounter fetchByC_C_Last(
 		long classNameId, long classPK,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialActivityCounter> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByC_C_Last(classNameId, classPK, orderByComparator);
 	}
@@ -377,11 +414,13 @@ public class SocialActivityCounterUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next social activity counter
 	* @throws com.liferay.portlet.social.NoSuchActivityCounterException if a social activity counter with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialActivityCounter[] findByC_C_PrevAndNext(
 		long activityCounterId, long classNameId, long classPK,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialActivityCounter> orderByComparator)
-		throws com.liferay.portlet.social.NoSuchActivityCounterException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchActivityCounterException {
 		return getPersistence()
 				   .findByC_C_PrevAndNext(activityCounterId, classNameId,
 			classPK, orderByComparator);
@@ -392,8 +431,10 @@ public class SocialActivityCounterUtil {
 	*
 	* @param classNameId the class name ID
 	* @param classPK the class p k
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByC_C(long classNameId, long classPK) {
+	public static void removeByC_C(long classNameId, long classPK)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeByC_C(classNameId, classPK);
 	}
 
@@ -403,8 +444,10 @@ public class SocialActivityCounterUtil {
 	* @param classNameId the class name ID
 	* @param classPK the class p k
 	* @return the number of matching social activity counters
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByC_C(long classNameId, long classPK) {
+	public static int countByC_C(long classNameId, long classPK)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByC_C(classNameId, classPK);
 	}
 
@@ -416,9 +459,11 @@ public class SocialActivityCounterUtil {
 	* @param classPK the class p k
 	* @param ownerType the owner type
 	* @return the matching social activity counters
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.social.model.SocialActivityCounter> findByG_C_C_O(
-		long groupId, long classNameId, long classPK, int ownerType) {
+		long groupId, long classNameId, long classPK, int ownerType)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByG_C_C_O(groupId, classNameId, classPK, ownerType);
 	}
@@ -437,10 +482,11 @@ public class SocialActivityCounterUtil {
 	* @param start the lower bound of the range of social activity counters
 	* @param end the upper bound of the range of social activity counters (not inclusive)
 	* @return the range of matching social activity counters
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.social.model.SocialActivityCounter> findByG_C_C_O(
 		long groupId, long classNameId, long classPK, int ownerType, int start,
-		int end) {
+		int end) throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByG_C_C_O(groupId, classNameId, classPK, ownerType,
 			start, end);
@@ -461,11 +507,13 @@ public class SocialActivityCounterUtil {
 	* @param end the upper bound of the range of social activity counters (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching social activity counters
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.social.model.SocialActivityCounter> findByG_C_C_O(
 		long groupId, long classNameId, long classPK, int ownerType, int start,
 		int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialActivityCounter> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByG_C_C_O(groupId, classNameId, classPK, ownerType,
 			start, end, orderByComparator);
@@ -481,11 +529,13 @@ public class SocialActivityCounterUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching social activity counter
 	* @throws com.liferay.portlet.social.NoSuchActivityCounterException if a matching social activity counter could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialActivityCounter findByG_C_C_O_First(
 		long groupId, long classNameId, long classPK, int ownerType,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialActivityCounter> orderByComparator)
-		throws com.liferay.portlet.social.NoSuchActivityCounterException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchActivityCounterException {
 		return getPersistence()
 				   .findByG_C_C_O_First(groupId, classNameId, classPK,
 			ownerType, orderByComparator);
@@ -500,10 +550,12 @@ public class SocialActivityCounterUtil {
 	* @param ownerType the owner type
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching social activity counter, or <code>null</code> if a matching social activity counter could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialActivityCounter fetchByG_C_C_O_First(
 		long groupId, long classNameId, long classPK, int ownerType,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialActivityCounter> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByG_C_C_O_First(groupId, classNameId, classPK,
 			ownerType, orderByComparator);
@@ -519,11 +571,13 @@ public class SocialActivityCounterUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching social activity counter
 	* @throws com.liferay.portlet.social.NoSuchActivityCounterException if a matching social activity counter could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialActivityCounter findByG_C_C_O_Last(
 		long groupId, long classNameId, long classPK, int ownerType,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialActivityCounter> orderByComparator)
-		throws com.liferay.portlet.social.NoSuchActivityCounterException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchActivityCounterException {
 		return getPersistence()
 				   .findByG_C_C_O_Last(groupId, classNameId, classPK,
 			ownerType, orderByComparator);
@@ -538,10 +592,12 @@ public class SocialActivityCounterUtil {
 	* @param ownerType the owner type
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching social activity counter, or <code>null</code> if a matching social activity counter could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialActivityCounter fetchByG_C_C_O_Last(
 		long groupId, long classNameId, long classPK, int ownerType,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialActivityCounter> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByG_C_C_O_Last(groupId, classNameId, classPK,
 			ownerType, orderByComparator);
@@ -558,12 +614,14 @@ public class SocialActivityCounterUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next social activity counter
 	* @throws com.liferay.portlet.social.NoSuchActivityCounterException if a social activity counter with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialActivityCounter[] findByG_C_C_O_PrevAndNext(
 		long activityCounterId, long groupId, long classNameId, long classPK,
 		int ownerType,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialActivityCounter> orderByComparator)
-		throws com.liferay.portlet.social.NoSuchActivityCounterException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchActivityCounterException {
 		return getPersistence()
 				   .findByG_C_C_O_PrevAndNext(activityCounterId, groupId,
 			classNameId, classPK, ownerType, orderByComparator);
@@ -576,9 +634,11 @@ public class SocialActivityCounterUtil {
 	* @param classNameId the class name ID
 	* @param classPK the class p k
 	* @param ownerType the owner type
+	* @throws SystemException if a system exception occurred
 	*/
 	public static void removeByG_C_C_O(long groupId, long classNameId,
-		long classPK, int ownerType) {
+		long classPK, int ownerType)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence()
 			.removeByG_C_C_O(groupId, classNameId, classPK, ownerType);
 	}
@@ -591,9 +651,11 @@ public class SocialActivityCounterUtil {
 	* @param classPK the class p k
 	* @param ownerType the owner type
 	* @return the number of matching social activity counters
+	* @throws SystemException if a system exception occurred
 	*/
 	public static int countByG_C_C_O(long groupId, long classNameId,
-		long classPK, int ownerType) {
+		long classPK, int ownerType)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .countByG_C_C_O(groupId, classNameId, classPK, ownerType);
 	}
@@ -609,11 +671,13 @@ public class SocialActivityCounterUtil {
 	* @param startPeriod the start period
 	* @return the matching social activity counter
 	* @throws com.liferay.portlet.social.NoSuchActivityCounterException if a matching social activity counter could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialActivityCounter findByG_C_C_N_O_S(
 		long groupId, long classNameId, long classPK, java.lang.String name,
 		int ownerType, int startPeriod)
-		throws com.liferay.portlet.social.NoSuchActivityCounterException {
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchActivityCounterException {
 		return getPersistence()
 				   .findByG_C_C_N_O_S(groupId, classNameId, classPK, name,
 			ownerType, startPeriod);
@@ -629,10 +693,12 @@ public class SocialActivityCounterUtil {
 	* @param ownerType the owner type
 	* @param startPeriod the start period
 	* @return the matching social activity counter, or <code>null</code> if a matching social activity counter could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialActivityCounter fetchByG_C_C_N_O_S(
 		long groupId, long classNameId, long classPK, java.lang.String name,
-		int ownerType, int startPeriod) {
+		int ownerType, int startPeriod)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByG_C_C_N_O_S(groupId, classNameId, classPK, name,
 			ownerType, startPeriod);
@@ -649,10 +715,12 @@ public class SocialActivityCounterUtil {
 	* @param startPeriod the start period
 	* @param retrieveFromCache whether to use the finder cache
 	* @return the matching social activity counter, or <code>null</code> if a matching social activity counter could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialActivityCounter fetchByG_C_C_N_O_S(
 		long groupId, long classNameId, long classPK, java.lang.String name,
-		int ownerType, int startPeriod, boolean retrieveFromCache) {
+		int ownerType, int startPeriod, boolean retrieveFromCache)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByG_C_C_N_O_S(groupId, classNameId, classPK, name,
 			ownerType, startPeriod, retrieveFromCache);
@@ -668,11 +736,13 @@ public class SocialActivityCounterUtil {
 	* @param ownerType the owner type
 	* @param startPeriod the start period
 	* @return the social activity counter that was removed
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialActivityCounter removeByG_C_C_N_O_S(
 		long groupId, long classNameId, long classPK, java.lang.String name,
 		int ownerType, int startPeriod)
-		throws com.liferay.portlet.social.NoSuchActivityCounterException {
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchActivityCounterException {
 		return getPersistence()
 				   .removeByG_C_C_N_O_S(groupId, classNameId, classPK, name,
 			ownerType, startPeriod);
@@ -688,9 +758,11 @@ public class SocialActivityCounterUtil {
 	* @param ownerType the owner type
 	* @param startPeriod the start period
 	* @return the number of matching social activity counters
+	* @throws SystemException if a system exception occurred
 	*/
 	public static int countByG_C_C_N_O_S(long groupId, long classNameId,
-		long classPK, java.lang.String name, int ownerType, int startPeriod) {
+		long classPK, java.lang.String name, int ownerType, int startPeriod)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .countByG_C_C_N_O_S(groupId, classNameId, classPK, name,
 			ownerType, startPeriod);
@@ -707,11 +779,13 @@ public class SocialActivityCounterUtil {
 	* @param endPeriod the end period
 	* @return the matching social activity counter
 	* @throws com.liferay.portlet.social.NoSuchActivityCounterException if a matching social activity counter could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialActivityCounter findByG_C_C_N_O_E(
 		long groupId, long classNameId, long classPK, java.lang.String name,
 		int ownerType, int endPeriod)
-		throws com.liferay.portlet.social.NoSuchActivityCounterException {
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchActivityCounterException {
 		return getPersistence()
 				   .findByG_C_C_N_O_E(groupId, classNameId, classPK, name,
 			ownerType, endPeriod);
@@ -727,10 +801,12 @@ public class SocialActivityCounterUtil {
 	* @param ownerType the owner type
 	* @param endPeriod the end period
 	* @return the matching social activity counter, or <code>null</code> if a matching social activity counter could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialActivityCounter fetchByG_C_C_N_O_E(
 		long groupId, long classNameId, long classPK, java.lang.String name,
-		int ownerType, int endPeriod) {
+		int ownerType, int endPeriod)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByG_C_C_N_O_E(groupId, classNameId, classPK, name,
 			ownerType, endPeriod);
@@ -747,10 +823,12 @@ public class SocialActivityCounterUtil {
 	* @param endPeriod the end period
 	* @param retrieveFromCache whether to use the finder cache
 	* @return the matching social activity counter, or <code>null</code> if a matching social activity counter could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialActivityCounter fetchByG_C_C_N_O_E(
 		long groupId, long classNameId, long classPK, java.lang.String name,
-		int ownerType, int endPeriod, boolean retrieveFromCache) {
+		int ownerType, int endPeriod, boolean retrieveFromCache)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByG_C_C_N_O_E(groupId, classNameId, classPK, name,
 			ownerType, endPeriod, retrieveFromCache);
@@ -766,11 +844,13 @@ public class SocialActivityCounterUtil {
 	* @param ownerType the owner type
 	* @param endPeriod the end period
 	* @return the social activity counter that was removed
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialActivityCounter removeByG_C_C_N_O_E(
 		long groupId, long classNameId, long classPK, java.lang.String name,
 		int ownerType, int endPeriod)
-		throws com.liferay.portlet.social.NoSuchActivityCounterException {
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchActivityCounterException {
 		return getPersistence()
 				   .removeByG_C_C_N_O_E(groupId, classNameId, classPK, name,
 			ownerType, endPeriod);
@@ -786,9 +866,11 @@ public class SocialActivityCounterUtil {
 	* @param ownerType the owner type
 	* @param endPeriod the end period
 	* @return the number of matching social activity counters
+	* @throws SystemException if a system exception occurred
 	*/
 	public static int countByG_C_C_N_O_E(long groupId, long classNameId,
-		long classPK, java.lang.String name, int ownerType, int endPeriod) {
+		long classPK, java.lang.String name, int ownerType, int endPeriod)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .countByG_C_C_N_O_E(groupId, classNameId, classPK, name,
 			ownerType, endPeriod);
@@ -831,15 +913,18 @@ public class SocialActivityCounterUtil {
 	* @param activityCounterId the primary key of the social activity counter
 	* @return the social activity counter that was removed
 	* @throws com.liferay.portlet.social.NoSuchActivityCounterException if a social activity counter with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialActivityCounter remove(
 		long activityCounterId)
-		throws com.liferay.portlet.social.NoSuchActivityCounterException {
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchActivityCounterException {
 		return getPersistence().remove(activityCounterId);
 	}
 
 	public static com.liferay.portlet.social.model.SocialActivityCounter updateImpl(
-		com.liferay.portlet.social.model.SocialActivityCounter socialActivityCounter) {
+		com.liferay.portlet.social.model.SocialActivityCounter socialActivityCounter)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().updateImpl(socialActivityCounter);
 	}
 
@@ -849,10 +934,12 @@ public class SocialActivityCounterUtil {
 	* @param activityCounterId the primary key of the social activity counter
 	* @return the social activity counter
 	* @throws com.liferay.portlet.social.NoSuchActivityCounterException if a social activity counter with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialActivityCounter findByPrimaryKey(
 		long activityCounterId)
-		throws com.liferay.portlet.social.NoSuchActivityCounterException {
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchActivityCounterException {
 		return getPersistence().findByPrimaryKey(activityCounterId);
 	}
 
@@ -861,23 +948,22 @@ public class SocialActivityCounterUtil {
 	*
 	* @param activityCounterId the primary key of the social activity counter
 	* @return the social activity counter, or <code>null</code> if a social activity counter with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialActivityCounter fetchByPrimaryKey(
-		long activityCounterId) {
+		long activityCounterId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByPrimaryKey(activityCounterId);
-	}
-
-	public static java.util.Map<java.io.Serializable, com.liferay.portlet.social.model.SocialActivityCounter> fetchByPrimaryKeys(
-		java.util.Set<java.io.Serializable> primaryKeys) {
-		return getPersistence().fetchByPrimaryKeys(primaryKeys);
 	}
 
 	/**
 	* Returns all the social activity counters.
 	*
 	* @return the social activity counters
+	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portlet.social.model.SocialActivityCounter> findAll() {
+	public static java.util.List<com.liferay.portlet.social.model.SocialActivityCounter> findAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll();
 	}
 
@@ -891,9 +977,11 @@ public class SocialActivityCounterUtil {
 	* @param start the lower bound of the range of social activity counters
 	* @param end the upper bound of the range of social activity counters (not inclusive)
 	* @return the range of social activity counters
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.social.model.SocialActivityCounter> findAll(
-		int start, int end) {
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll(start, end);
 	}
 
@@ -908,17 +996,22 @@ public class SocialActivityCounterUtil {
 	* @param end the upper bound of the range of social activity counters (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of social activity counters
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.social.model.SocialActivityCounter> findAll(
 		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialActivityCounter> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll(start, end, orderByComparator);
 	}
 
 	/**
 	* Removes all the social activity counters from the database.
+	*
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeAll() {
+	public static void removeAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeAll();
 	}
 
@@ -926,8 +1019,10 @@ public class SocialActivityCounterUtil {
 	* Returns the number of social activity counters.
 	*
 	* @return the number of social activity counters
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countAll() {
+	public static int countAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countAll();
 	}
 
@@ -945,7 +1040,6 @@ public class SocialActivityCounterUtil {
 	/**
 	 * @deprecated As of 6.2.0
 	 */
-	@Deprecated
 	public void setPersistence(SocialActivityCounterPersistence persistence) {
 	}
 

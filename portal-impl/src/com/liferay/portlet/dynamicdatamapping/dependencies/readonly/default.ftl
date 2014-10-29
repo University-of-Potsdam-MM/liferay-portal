@@ -1,19 +1,15 @@
 <#include "../init.ftl">
 
-<div class="field-wrapper-content lfr-forms-field-wrapper">
-	<#if hasFieldValue || showEmptyFieldLabel>
+<#if fieldValue?? && fieldValue != "">
+	<div class="lfr-forms-field-wrapper field-wrapper-content">
+		<@aui.input name=namespacedFieldName type="hidden" value=fieldValue />
+
 		<label>
 			<@liferay_ui.message key=escape(label) />
 		</label>
-	</#if>
-
-	<#if hasFieldValue>
-		<#if !disabled>
-			<@aui.input name=namespacedFieldName type="hidden" value=fieldValue />
-		</#if>
 
 		${escape(fieldValue)}
-	</#if>
 
-	${fieldStructure.children}
-</div>
+		${fieldStructure.children}
+	</div>
+</#if>

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -43,9 +43,11 @@ public interface TeamPersistence extends BasePersistence<Team> {
 	*
 	* @param groupId the group ID
 	* @return the matching teams
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.Team> findByGroupId(
-		long groupId);
+		long groupId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns a range of all the teams where groupId = &#63;.
@@ -58,9 +60,11 @@ public interface TeamPersistence extends BasePersistence<Team> {
 	* @param start the lower bound of the range of teams
 	* @param end the upper bound of the range of teams (not inclusive)
 	* @return the range of matching teams
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.Team> findByGroupId(
-		long groupId, int start, int end);
+		long groupId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns an ordered range of all the teams where groupId = &#63;.
@@ -74,10 +78,12 @@ public interface TeamPersistence extends BasePersistence<Team> {
 	* @param end the upper bound of the range of teams (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching teams
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.Team> findByGroupId(
 		long groupId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Team> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the first team in the ordered set where groupId = &#63;.
@@ -86,10 +92,12 @@ public interface TeamPersistence extends BasePersistence<Team> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching team
 	* @throws com.liferay.portal.NoSuchTeamException if a matching team could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.Team findByGroupId_First(long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Team> orderByComparator)
-		throws com.liferay.portal.NoSuchTeamException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchTeamException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the first team in the ordered set where groupId = &#63;.
@@ -97,9 +105,11 @@ public interface TeamPersistence extends BasePersistence<Team> {
 	* @param groupId the group ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching team, or <code>null</code> if a matching team could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.Team fetchByGroupId_First(long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Team> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the last team in the ordered set where groupId = &#63;.
@@ -108,10 +118,12 @@ public interface TeamPersistence extends BasePersistence<Team> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching team
 	* @throws com.liferay.portal.NoSuchTeamException if a matching team could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.Team findByGroupId_Last(long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Team> orderByComparator)
-		throws com.liferay.portal.NoSuchTeamException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchTeamException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the last team in the ordered set where groupId = &#63;.
@@ -119,9 +131,11 @@ public interface TeamPersistence extends BasePersistence<Team> {
 	* @param groupId the group ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching team, or <code>null</code> if a matching team could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.Team fetchByGroupId_Last(long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Team> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the teams before and after the current team in the ordered set where groupId = &#63;.
@@ -131,20 +145,24 @@ public interface TeamPersistence extends BasePersistence<Team> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next team
 	* @throws com.liferay.portal.NoSuchTeamException if a team with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.Team[] findByGroupId_PrevAndNext(
 		long teamId, long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Team> orderByComparator)
-		throws com.liferay.portal.NoSuchTeamException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchTeamException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns all the teams that the user has permission to view where groupId = &#63;.
 	*
 	* @param groupId the group ID
 	* @return the matching teams that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.Team> filterFindByGroupId(
-		long groupId);
+		long groupId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns a range of all the teams that the user has permission to view where groupId = &#63;.
@@ -157,9 +175,11 @@ public interface TeamPersistence extends BasePersistence<Team> {
 	* @param start the lower bound of the range of teams
 	* @param end the upper bound of the range of teams (not inclusive)
 	* @return the range of matching teams that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.Team> filterFindByGroupId(
-		long groupId, int start, int end);
+		long groupId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns an ordered range of all the teams that the user has permissions to view where groupId = &#63;.
@@ -173,10 +193,12 @@ public interface TeamPersistence extends BasePersistence<Team> {
 	* @param end the upper bound of the range of teams (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching teams that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.Team> filterFindByGroupId(
 		long groupId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Team> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the teams before and after the current team in the ordered set of teams that the user has permission to view where groupId = &#63;.
@@ -186,34 +208,42 @@ public interface TeamPersistence extends BasePersistence<Team> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next team
 	* @throws com.liferay.portal.NoSuchTeamException if a team with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.Team[] filterFindByGroupId_PrevAndNext(
 		long teamId, long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Team> orderByComparator)
-		throws com.liferay.portal.NoSuchTeamException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchTeamException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Removes all the teams where groupId = &#63; from the database.
 	*
 	* @param groupId the group ID
+	* @throws SystemException if a system exception occurred
 	*/
-	public void removeByGroupId(long groupId);
+	public void removeByGroupId(long groupId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of teams where groupId = &#63;.
 	*
 	* @param groupId the group ID
 	* @return the number of matching teams
+	* @throws SystemException if a system exception occurred
 	*/
-	public int countByGroupId(long groupId);
+	public int countByGroupId(long groupId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of teams that the user has permission to view where groupId = &#63;.
 	*
 	* @param groupId the group ID
 	* @return the number of matching teams that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
-	public int filterCountByGroupId(long groupId);
+	public int filterCountByGroupId(long groupId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the team where groupId = &#63; and name = &#63; or throws a {@link com.liferay.portal.NoSuchTeamException} if it could not be found.
@@ -222,9 +252,12 @@ public interface TeamPersistence extends BasePersistence<Team> {
 	* @param name the name
 	* @return the matching team
 	* @throws com.liferay.portal.NoSuchTeamException if a matching team could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.Team findByG_N(long groupId,
-		java.lang.String name) throws com.liferay.portal.NoSuchTeamException;
+		java.lang.String name)
+		throws com.liferay.portal.NoSuchTeamException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the team where groupId = &#63; and name = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
@@ -232,9 +265,11 @@ public interface TeamPersistence extends BasePersistence<Team> {
 	* @param groupId the group ID
 	* @param name the name
 	* @return the matching team, or <code>null</code> if a matching team could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.Team fetchByG_N(long groupId,
-		java.lang.String name);
+		java.lang.String name)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the team where groupId = &#63; and name = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
@@ -243,9 +278,11 @@ public interface TeamPersistence extends BasePersistence<Team> {
 	* @param name the name
 	* @param retrieveFromCache whether to use the finder cache
 	* @return the matching team, or <code>null</code> if a matching team could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.Team fetchByG_N(long groupId,
-		java.lang.String name, boolean retrieveFromCache);
+		java.lang.String name, boolean retrieveFromCache)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Removes the team where groupId = &#63; and name = &#63; from the database.
@@ -253,9 +290,12 @@ public interface TeamPersistence extends BasePersistence<Team> {
 	* @param groupId the group ID
 	* @param name the name
 	* @return the team that was removed
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.Team removeByG_N(long groupId,
-		java.lang.String name) throws com.liferay.portal.NoSuchTeamException;
+		java.lang.String name)
+		throws com.liferay.portal.NoSuchTeamException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of teams where groupId = &#63; and name = &#63;.
@@ -263,8 +303,10 @@ public interface TeamPersistence extends BasePersistence<Team> {
 	* @param groupId the group ID
 	* @param name the name
 	* @return the number of matching teams
+	* @throws SystemException if a system exception occurred
 	*/
-	public int countByG_N(long groupId, java.lang.String name);
+	public int countByG_N(long groupId, java.lang.String name)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Caches the team in the entity cache if it is enabled.
@@ -294,12 +336,15 @@ public interface TeamPersistence extends BasePersistence<Team> {
 	* @param teamId the primary key of the team
 	* @return the team that was removed
 	* @throws com.liferay.portal.NoSuchTeamException if a team with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.Team remove(long teamId)
-		throws com.liferay.portal.NoSuchTeamException;
+		throws com.liferay.portal.NoSuchTeamException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	public com.liferay.portal.model.Team updateImpl(
-		com.liferay.portal.model.Team team);
+		com.liferay.portal.model.Team team)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the team with the primary key or throws a {@link com.liferay.portal.NoSuchTeamException} if it could not be found.
@@ -307,28 +352,30 @@ public interface TeamPersistence extends BasePersistence<Team> {
 	* @param teamId the primary key of the team
 	* @return the team
 	* @throws com.liferay.portal.NoSuchTeamException if a team with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.Team findByPrimaryKey(long teamId)
-		throws com.liferay.portal.NoSuchTeamException;
+		throws com.liferay.portal.NoSuchTeamException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the team with the primary key or returns <code>null</code> if it could not be found.
 	*
 	* @param teamId the primary key of the team
 	* @return the team, or <code>null</code> if a team with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
-	public com.liferay.portal.model.Team fetchByPrimaryKey(long teamId);
-
-	@Override
-	public java.util.Map<java.io.Serializable, com.liferay.portal.model.Team> fetchByPrimaryKeys(
-		java.util.Set<java.io.Serializable> primaryKeys);
+	public com.liferay.portal.model.Team fetchByPrimaryKey(long teamId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns all the teams.
 	*
 	* @return the teams
+	* @throws SystemException if a system exception occurred
 	*/
-	public java.util.List<com.liferay.portal.model.Team> findAll();
+	public java.util.List<com.liferay.portal.model.Team> findAll()
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns a range of all the teams.
@@ -340,9 +387,10 @@ public interface TeamPersistence extends BasePersistence<Team> {
 	* @param start the lower bound of the range of teams
 	* @param end the upper bound of the range of teams (not inclusive)
 	* @return the range of teams
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.Team> findAll(int start,
-		int end);
+		int end) throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns an ordered range of all the teams.
@@ -355,38 +403,39 @@ public interface TeamPersistence extends BasePersistence<Team> {
 	* @param end the upper bound of the range of teams (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of teams
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.Team> findAll(int start,
 		int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Team> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Removes all the teams from the database.
+	*
+	* @throws SystemException if a system exception occurred
 	*/
-	public void removeAll();
+	public void removeAll()
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of teams.
 	*
 	* @return the number of teams
+	* @throws SystemException if a system exception occurred
 	*/
-	public int countAll();
-
-	/**
-	* Returns the primaryKeys of users associated with the team.
-	*
-	* @param pk the primary key of the team
-	* @return long[] of the primaryKeys of users associated with the team
-	*/
-	public long[] getUserPrimaryKeys(long pk);
+	public int countAll()
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns all the users associated with the team.
 	*
 	* @param pk the primary key of the team
 	* @return the users associated with the team
+	* @throws SystemException if a system exception occurred
 	*/
-	public java.util.List<com.liferay.portal.model.User> getUsers(long pk);
+	public java.util.List<com.liferay.portal.model.User> getUsers(long pk)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns a range of all the users associated with the team.
@@ -399,9 +448,11 @@ public interface TeamPersistence extends BasePersistence<Team> {
 	* @param start the lower bound of the range of teams
 	* @param end the upper bound of the range of teams (not inclusive)
 	* @return the range of users associated with the team
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.User> getUsers(long pk,
-		int start, int end);
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns an ordered range of all the users associated with the team.
@@ -415,18 +466,22 @@ public interface TeamPersistence extends BasePersistence<Team> {
 	* @param end the upper bound of the range of teams (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of users associated with the team
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.User> getUsers(long pk,
 		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.User> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of users associated with the team.
 	*
 	* @param pk the primary key of the team
 	* @return the number of users associated with the team
+	* @throws SystemException if a system exception occurred
 	*/
-	public int getUsersSize(long pk);
+	public int getUsersSize(long pk)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns <code>true</code> if the user is associated with the team.
@@ -434,123 +489,142 @@ public interface TeamPersistence extends BasePersistence<Team> {
 	* @param pk the primary key of the team
 	* @param userPK the primary key of the user
 	* @return <code>true</code> if the user is associated with the team; <code>false</code> otherwise
+	* @throws SystemException if a system exception occurred
 	*/
-	public boolean containsUser(long pk, long userPK);
+	public boolean containsUser(long pk, long userPK)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns <code>true</code> if the team has any users associated with it.
 	*
 	* @param pk the primary key of the team to check for associations with users
 	* @return <code>true</code> if the team has any users associated with it; <code>false</code> otherwise
+	* @throws SystemException if a system exception occurred
 	*/
-	public boolean containsUsers(long pk);
+	public boolean containsUsers(long pk)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Adds an association between the team and the user. Also notifies the appropriate model listeners and clears the mapping table finder cache.
 	*
 	* @param pk the primary key of the team
 	* @param userPK the primary key of the user
+	* @throws SystemException if a system exception occurred
 	*/
-	public void addUser(long pk, long userPK);
+	public void addUser(long pk, long userPK)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Adds an association between the team and the user. Also notifies the appropriate model listeners and clears the mapping table finder cache.
 	*
 	* @param pk the primary key of the team
 	* @param user the user
+	* @throws SystemException if a system exception occurred
 	*/
-	public void addUser(long pk, com.liferay.portal.model.User user);
+	public void addUser(long pk, com.liferay.portal.model.User user)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Adds an association between the team and the users. Also notifies the appropriate model listeners and clears the mapping table finder cache.
 	*
 	* @param pk the primary key of the team
 	* @param userPKs the primary keys of the users
+	* @throws SystemException if a system exception occurred
 	*/
-	public void addUsers(long pk, long[] userPKs);
+	public void addUsers(long pk, long[] userPKs)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Adds an association between the team and the users. Also notifies the appropriate model listeners and clears the mapping table finder cache.
 	*
 	* @param pk the primary key of the team
 	* @param users the users
+	* @throws SystemException if a system exception occurred
 	*/
 	public void addUsers(long pk,
-		java.util.List<com.liferay.portal.model.User> users);
+		java.util.List<com.liferay.portal.model.User> users)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Clears all associations between the team and its users. Also notifies the appropriate model listeners and clears the mapping table finder cache.
 	*
 	* @param pk the primary key of the team to clear the associated users from
+	* @throws SystemException if a system exception occurred
 	*/
-	public void clearUsers(long pk);
+	public void clearUsers(long pk)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Removes the association between the team and the user. Also notifies the appropriate model listeners and clears the mapping table finder cache.
 	*
 	* @param pk the primary key of the team
 	* @param userPK the primary key of the user
+	* @throws SystemException if a system exception occurred
 	*/
-	public void removeUser(long pk, long userPK);
+	public void removeUser(long pk, long userPK)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Removes the association between the team and the user. Also notifies the appropriate model listeners and clears the mapping table finder cache.
 	*
 	* @param pk the primary key of the team
 	* @param user the user
+	* @throws SystemException if a system exception occurred
 	*/
-	public void removeUser(long pk, com.liferay.portal.model.User user);
+	public void removeUser(long pk, com.liferay.portal.model.User user)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Removes the association between the team and the users. Also notifies the appropriate model listeners and clears the mapping table finder cache.
 	*
 	* @param pk the primary key of the team
 	* @param userPKs the primary keys of the users
+	* @throws SystemException if a system exception occurred
 	*/
-	public void removeUsers(long pk, long[] userPKs);
+	public void removeUsers(long pk, long[] userPKs)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Removes the association between the team and the users. Also notifies the appropriate model listeners and clears the mapping table finder cache.
 	*
 	* @param pk the primary key of the team
 	* @param users the users
+	* @throws SystemException if a system exception occurred
 	*/
 	public void removeUsers(long pk,
-		java.util.List<com.liferay.portal.model.User> users);
+		java.util.List<com.liferay.portal.model.User> users)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Sets the users associated with the team, removing and adding associations as necessary. Also notifies the appropriate model listeners and clears the mapping table finder cache.
 	*
 	* @param pk the primary key of the team
 	* @param userPKs the primary keys of the users to be associated with the team
+	* @throws SystemException if a system exception occurred
 	*/
-	public void setUsers(long pk, long[] userPKs);
+	public void setUsers(long pk, long[] userPKs)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Sets the users associated with the team, removing and adding associations as necessary. Also notifies the appropriate model listeners and clears the mapping table finder cache.
 	*
 	* @param pk the primary key of the team
 	* @param users the users to be associated with the team
+	* @throws SystemException if a system exception occurred
 	*/
 	public void setUsers(long pk,
-		java.util.List<com.liferay.portal.model.User> users);
-
-	/**
-	* Returns the primaryKeys of user groups associated with the team.
-	*
-	* @param pk the primary key of the team
-	* @return long[] of the primaryKeys of user groups associated with the team
-	*/
-	public long[] getUserGroupPrimaryKeys(long pk);
+		java.util.List<com.liferay.portal.model.User> users)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns all the user groups associated with the team.
 	*
 	* @param pk the primary key of the team
 	* @return the user groups associated with the team
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.UserGroup> getUserGroups(
-		long pk);
+		long pk) throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns a range of all the user groups associated with the team.
@@ -563,9 +637,11 @@ public interface TeamPersistence extends BasePersistence<Team> {
 	* @param start the lower bound of the range of teams
 	* @param end the upper bound of the range of teams (not inclusive)
 	* @return the range of user groups associated with the team
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.UserGroup> getUserGroups(
-		long pk, int start, int end);
+		long pk, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns an ordered range of all the user groups associated with the team.
@@ -579,18 +655,22 @@ public interface TeamPersistence extends BasePersistence<Team> {
 	* @param end the upper bound of the range of teams (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of user groups associated with the team
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.UserGroup> getUserGroups(
 		long pk, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.UserGroup> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of user groups associated with the team.
 	*
 	* @param pk the primary key of the team
 	* @return the number of user groups associated with the team
+	* @throws SystemException if a system exception occurred
 	*/
-	public int getUserGroupsSize(long pk);
+	public int getUserGroupsSize(long pk)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns <code>true</code> if the user group is associated with the team.
@@ -598,106 +678,132 @@ public interface TeamPersistence extends BasePersistence<Team> {
 	* @param pk the primary key of the team
 	* @param userGroupPK the primary key of the user group
 	* @return <code>true</code> if the user group is associated with the team; <code>false</code> otherwise
+	* @throws SystemException if a system exception occurred
 	*/
-	public boolean containsUserGroup(long pk, long userGroupPK);
+	public boolean containsUserGroup(long pk, long userGroupPK)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns <code>true</code> if the team has any user groups associated with it.
 	*
 	* @param pk the primary key of the team to check for associations with user groups
 	* @return <code>true</code> if the team has any user groups associated with it; <code>false</code> otherwise
+	* @throws SystemException if a system exception occurred
 	*/
-	public boolean containsUserGroups(long pk);
+	public boolean containsUserGroups(long pk)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Adds an association between the team and the user group. Also notifies the appropriate model listeners and clears the mapping table finder cache.
 	*
 	* @param pk the primary key of the team
 	* @param userGroupPK the primary key of the user group
+	* @throws SystemException if a system exception occurred
 	*/
-	public void addUserGroup(long pk, long userGroupPK);
+	public void addUserGroup(long pk, long userGroupPK)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Adds an association between the team and the user group. Also notifies the appropriate model listeners and clears the mapping table finder cache.
 	*
 	* @param pk the primary key of the team
 	* @param userGroup the user group
+	* @throws SystemException if a system exception occurred
 	*/
 	public void addUserGroup(long pk,
-		com.liferay.portal.model.UserGroup userGroup);
+		com.liferay.portal.model.UserGroup userGroup)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Adds an association between the team and the user groups. Also notifies the appropriate model listeners and clears the mapping table finder cache.
 	*
 	* @param pk the primary key of the team
 	* @param userGroupPKs the primary keys of the user groups
+	* @throws SystemException if a system exception occurred
 	*/
-	public void addUserGroups(long pk, long[] userGroupPKs);
+	public void addUserGroups(long pk, long[] userGroupPKs)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Adds an association between the team and the user groups. Also notifies the appropriate model listeners and clears the mapping table finder cache.
 	*
 	* @param pk the primary key of the team
 	* @param userGroups the user groups
+	* @throws SystemException if a system exception occurred
 	*/
 	public void addUserGroups(long pk,
-		java.util.List<com.liferay.portal.model.UserGroup> userGroups);
+		java.util.List<com.liferay.portal.model.UserGroup> userGroups)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Clears all associations between the team and its user groups. Also notifies the appropriate model listeners and clears the mapping table finder cache.
 	*
 	* @param pk the primary key of the team to clear the associated user groups from
+	* @throws SystemException if a system exception occurred
 	*/
-	public void clearUserGroups(long pk);
+	public void clearUserGroups(long pk)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Removes the association between the team and the user group. Also notifies the appropriate model listeners and clears the mapping table finder cache.
 	*
 	* @param pk the primary key of the team
 	* @param userGroupPK the primary key of the user group
+	* @throws SystemException if a system exception occurred
 	*/
-	public void removeUserGroup(long pk, long userGroupPK);
+	public void removeUserGroup(long pk, long userGroupPK)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Removes the association between the team and the user group. Also notifies the appropriate model listeners and clears the mapping table finder cache.
 	*
 	* @param pk the primary key of the team
 	* @param userGroup the user group
+	* @throws SystemException if a system exception occurred
 	*/
 	public void removeUserGroup(long pk,
-		com.liferay.portal.model.UserGroup userGroup);
+		com.liferay.portal.model.UserGroup userGroup)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Removes the association between the team and the user groups. Also notifies the appropriate model listeners and clears the mapping table finder cache.
 	*
 	* @param pk the primary key of the team
 	* @param userGroupPKs the primary keys of the user groups
+	* @throws SystemException if a system exception occurred
 	*/
-	public void removeUserGroups(long pk, long[] userGroupPKs);
+	public void removeUserGroups(long pk, long[] userGroupPKs)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Removes the association between the team and the user groups. Also notifies the appropriate model listeners and clears the mapping table finder cache.
 	*
 	* @param pk the primary key of the team
 	* @param userGroups the user groups
+	* @throws SystemException if a system exception occurred
 	*/
 	public void removeUserGroups(long pk,
-		java.util.List<com.liferay.portal.model.UserGroup> userGroups);
+		java.util.List<com.liferay.portal.model.UserGroup> userGroups)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Sets the user groups associated with the team, removing and adding associations as necessary. Also notifies the appropriate model listeners and clears the mapping table finder cache.
 	*
 	* @param pk the primary key of the team
 	* @param userGroupPKs the primary keys of the user groups to be associated with the team
+	* @throws SystemException if a system exception occurred
 	*/
-	public void setUserGroups(long pk, long[] userGroupPKs);
+	public void setUserGroups(long pk, long[] userGroupPKs)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Sets the user groups associated with the team, removing and adding associations as necessary. Also notifies the appropriate model listeners and clears the mapping table finder cache.
 	*
 	* @param pk the primary key of the team
 	* @param userGroups the user groups to be associated with the team
+	* @throws SystemException if a system exception occurred
 	*/
 	public void setUserGroups(long pk,
-		java.util.List<com.liferay.portal.model.UserGroup> userGroups);
+		java.util.List<com.liferay.portal.model.UserGroup> userGroups)
+		throws com.liferay.portal.kernel.exception.SystemException;
 }

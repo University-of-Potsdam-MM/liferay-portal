@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -19,22 +19,22 @@
 <%
 String signature = ParamUtil.getString(request, "signature");
 
-Set<String> contextNames = JSONWebServiceActionsManagerUtil.getContextNames();
+Set<String> contextPaths = JSONWebServiceActionsManagerUtil.getContextPaths();
 %>
 
-<c:if test="<%= contextNames.size() > 1 %>">
-	<aui:select cssClass="lfr-api-context" label="context-name" name="contextName">
+<c:if test="<%= contextPaths.size() > 1 %>">
+	<aui:select cssClass="lfr-api-context" label="context-path" name="contextPath">
 
 		<%
-		for (String curContextName : contextNames) {
-			String curContextNameView = curContextName;
+		for (String curContextPath : contextPaths) {
+			String curContextPathView = curContextPath;
 
-			if (Validator.isNull(curContextName)) {
-				curContextNameView = "portal";
+			if (Validator.isNull(curContextPath)) {
+				curContextPathView = StringPool.SLASH;
 			}
 		%>
 
-			<aui:option label="<%= curContextNameView %>" localizeLabel="<%= false %>" selected="<%= contextName.equals(curContextName) %>" value="<%= curContextName %>" />
+			<aui:option label="<%= curContextPathView %>" selected="<%= contextPath.equals(curContextPath) %>" value="<%= curContextPath %>" />
 
 		<%
 		}
@@ -50,7 +50,7 @@ Set<String> contextNames = JSONWebServiceActionsManagerUtil.getContextNames();
 	<%
 	Map<String, Set> jsonWebServiceClasses = new LinkedHashMap<String, Set>();
 
-	List<JSONWebServiceActionMapping> jsonWebServiceActionMappings = JSONWebServiceActionsManagerUtil.getJSONWebServiceActionMappings(contextName);
+	List<JSONWebServiceActionMapping> jsonWebServiceActionMappings = JSONWebServiceActionsManagerUtil.getJSONWebServiceActionMappings(contextPath);
 
 	for (JSONWebServiceActionMapping jsonWebServiceActionMapping : jsonWebServiceActionMappings) {
 		Class<?> actionClass = jsonWebServiceActionMapping.getActionClass();
@@ -63,7 +63,7 @@ Set<String> contextNames = JSONWebServiceActionsManagerUtil.getContextNames();
 
 		Set<JSONWebServiceActionMapping> jsonWebServiceMappings = jsonWebServiceClasses.get(actionClassName);
 
-		if (jsonWebServiceMappings == null) {
+		if (Validator.isNull(jsonWebServiceMappings)) {
 			jsonWebServiceMappings = new LinkedHashSet<JSONWebServiceActionMapping>();
 
 			jsonWebServiceClasses.put(actionClassName, jsonWebServiceMappings);
@@ -86,7 +86,7 @@ Set<String> contextNames = JSONWebServiceActionsManagerUtil.getContextNames();
 	%>
 
 		<liferay-ui:panel collapsible="<%= true %>" extended="<%= true %>" id='<%= "apiService" + jsonWebServiceClassName + "Panel" %>' persistState="<%= true %>" title="<%= panelTitle %>">
-			<ul class="list-unstyled">
+			<ul class="unstyled">
 
 				<%
 				for (JSONWebServiceActionMapping jsonWebServiceActionMapping : jsonWebServiceMappings) {
@@ -105,7 +105,7 @@ Set<String> contextNames = JSONWebServiceActionsManagerUtil.getContextNames();
 						String methodURL = HttpUtil.addParameter(jsonWSContextPath, "signature", serviceSignature);
 						%>
 
-						<a class="lfr-api-service-result method-name" data-metaData="<%= jsonWebServiceClassName %>" href="<%= methodURL %>">
+						<a class="method-name lfr-api-service-result" data-metaData="<%= jsonWebServiceClassName %>" href="<%= methodURL %>">
 							<%= path %>
 						</a>
 					</li>
@@ -132,16 +132,20 @@ Set<String> contextNames = JSONWebServiceActionsManagerUtil.getContextNames();
 
 	var AArray = A.Array;
 
-	<c:if test="<%= contextNames.size() > 1 %>">
-		var contextNameSelector = A.one('#<portlet:namespace />contextName');
+	<c:if test="<%= contextPaths.size() > 1 %>">
+		var contextPathSelector = A.one('#<portlet:namespace />contextPath');
 
-		if (contextNameSelector) {
-			contextNameSelector.on(
+		if (contextPathSelector) {
+			contextPathSelector.on(
 				'change',
 				function(event) {
-					var contextName = contextNameSelector.val();
+					var contextPath = contextPathSelector.val();
 
-					var location = Liferay.Util.addParams('contextName=' + contextName, '<%= jsonWSPath %>');
+					var location = '<%= jsonWSPath %>';
+
+					if (contextPath && (contextPath != '/')) {
+						location = Liferay.Util.addParams('contextPath=' + contextPath, location);
+					}
 
 					window.location.href = location;
 				}
@@ -173,7 +177,7 @@ Set<String> contextNames = JSONWebServiceActionsManagerUtil.getContextNames();
 	var results = [];
 
 	servicesClone.all('.lfr-api-service-result').each(
-		function(item, index) {
+		function(item, index, collection) {
 			results.push(
 				{
 					el: item._node,
@@ -198,7 +202,7 @@ Set<String> contextNames = JSONWebServiceActionsManagerUtil.getContextNames();
 
 				return AArray.filter(
 					results,
-					function(item, index) {
+					function(item, index, collection) {
 						var node = item.raw.node;
 						var guid = node.guid();
 
@@ -223,7 +227,7 @@ Set<String> contextNames = JSONWebServiceActionsManagerUtil.getContextNames();
 
 					cachedResults = AArray.map(
 						results,
-						function(item, index) {
+						function(item, index, collection) {
 							return A.Highlight.all(item.text, queryChars);
 						}
 					);
@@ -265,7 +269,7 @@ Set<String> contextNames = JSONWebServiceActionsManagerUtil.getContextNames();
 				if (query) {
 					AArray.each(
 						results,
-						function(item, index) {
+						function(item, index, collection) {
 							var raw = item.raw;
 							var el = raw.el;
 							var node = raw.node;

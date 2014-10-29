@@ -3,14 +3,13 @@ package ${packagePath}.service.persistence;
 import ${packagePath}.model.${entity.name};
 import ${packagePath}.service.${entity.name}LocalServiceUtil;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Projection;
 import com.liferay.portal.kernel.dao.orm.ProjectionFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.Property;
 import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.lar.ExportImportHelperUtil;
 import com.liferay.portal.kernel.lar.ManifestSummary;
 import com.liferay.portal.kernel.lar.PortletDataContext;
@@ -22,14 +21,11 @@ import com.liferay.portal.util.PortalUtil;
 
 /**
  * @author ${author}
- * @deprecated As of 7.0.0, replaced by {@link ${packagePath}.service.${entity.name}LocalServiceUtil#getExportActionableDynamicQuery()}
  * @generated
  */
-@Deprecated
-@ProviderType
 public class ${entity.name}ExportActionableDynamicQuery extends ${entity.name}ActionableDynamicQuery {
 
-	public ${entity.name}ExportActionableDynamicQuery(PortletDataContext portletDataContext) {
+	public ${entity.name}ExportActionableDynamicQuery(PortletDataContext portletDataContext) throws SystemException {
 		_portletDataContext = portletDataContext;
 
 		setCompanyId(_portletDataContext.getCompanyId());
@@ -40,7 +36,7 @@ public class ${entity.name}ExportActionableDynamicQuery extends ${entity.name}Ac
 	}
 
 	@Override
-	public long performCount() throws PortalException {
+	public long performCount() throws PortalException, SystemException {
 		ManifestSummary manifestSummary = _portletDataContext.getManifestSummary();
 
 		StagedModelType stagedModelType = getStagedModelType();
@@ -89,7 +85,8 @@ public class ${entity.name}ExportActionableDynamicQuery extends ${entity.name}Ac
 	}
 
 	@Override
-	protected void performAction(Object object) throws PortalException {
+	@SuppressWarnings("unused")
+	protected void performAction(Object object) throws PortalException, SystemException {
 		${entity.name} stagedModel = (${entity.name})object;
 
 		StagedModelDataHandlerUtil.exportStagedModel(_portletDataContext, stagedModel);

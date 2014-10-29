@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,18 +14,18 @@
 
 package com.liferay.portlet;
 
-import com.liferay.portal.kernel.io.unsync.UnsyncStringWriter;
 import com.liferay.portal.kernel.template.Template;
 import com.liferay.portal.kernel.template.TemplateConstants;
 import com.liferay.portal.kernel.template.TemplateManagerUtil;
 import com.liferay.portal.kernel.template.TemplateResource;
 import com.liferay.portal.kernel.template.TemplateResourceLoaderUtil;
 import com.liferay.portal.kernel.util.StringBundler;
+import com.liferay.portal.kernel.util.UnsyncPrintWriterPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.struts.StrutsUtil;
 
 import java.io.IOException;
-import java.io.Writer;
+import java.io.PrintWriter;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
@@ -40,6 +40,9 @@ import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 import javax.portlet.ResourceRequest;
 import javax.portlet.ResourceResponse;
+
+import org.apache.velocity.io.VelocityWriter;
+import org.apache.velocity.util.SimplePool;
 
 /**
  * @author Brian Wing Shun Chan
@@ -188,18 +191,50 @@ public class VelocityPortlet extends GenericPortlet {
 			PortletResponse portletResponse)
 		throws Exception {
 
-		Writer writer = null;
-
 		if (portletResponse instanceof MimeResponse) {
 			MimeResponse mimeResponse = (MimeResponse)portletResponse;
 
-			writer = mimeResponse.getWriter();
-		}
-		else {
-			writer = new UnsyncStringWriter();
+			mimeResponse.setContentType(
+				portletRequest.getResponseContentType());
 		}
 
-		template.processTemplate(writer);
+		VelocityWriter velocityWriter = null;
+
+		try {
+			velocityWriter = (VelocityWriter)_writerPool.get();
+
+			PrintWriter output = null;
+
+			if (portletResponse instanceof MimeResponse) {
+				MimeResponse mimeResponse = (MimeResponse)portletResponse;
+
+				output = mimeResponse.getWriter();
+			}
+			else {
+				output = UnsyncPrintWriterPool.borrow(System.out);
+			}
+
+			if (velocityWriter == null) {
+				velocityWriter = new VelocityWriter(output, 4 * 1024, true);
+			}
+			else {
+				velocityWriter.recycle(output);
+			}
+
+			template.processTemplate(velocityWriter);
+		}
+		finally {
+			try {
+				if (velocityWriter != null) {
+					velocityWriter.flush();
+					velocityWriter.recycle(null);
+
+					_writerPool.put(velocityWriter);
+				}
+			}
+			catch (Exception e) {
+			}
+		}
 	}
 
 	protected void prepareTemplate(
@@ -236,6 +271,8 @@ public class VelocityPortlet extends GenericPortlet {
 			template.put("resourceResponse", portletResponse);
 		}
 	}
+
+	private static SimplePool _writerPool = new SimplePool(40);
 
 	private String _actionTemplateId;
 	private String _editTemplateId;

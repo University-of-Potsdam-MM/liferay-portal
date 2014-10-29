@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portlet.softwarecatalog.service.impl;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.util.Http;
@@ -51,7 +52,7 @@ public class SCProductVersionLocalServiceImpl
 			String downloadPageURL, String directDownloadURL,
 			boolean testDirectDownloadURL, boolean repoStoreArtifact,
 			long[] frameworkVersionIds, ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		// Product version
 
@@ -107,7 +108,7 @@ public class SCProductVersionLocalServiceImpl
 
 	@Override
 	public void deleteProductVersion(long productVersionId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		SCProductVersion productVersion =
 			scProductVersionPersistence.findByPrimaryKey(productVersionId);
@@ -116,12 +117,16 @@ public class SCProductVersionLocalServiceImpl
 	}
 
 	@Override
-	public void deleteProductVersion(SCProductVersion productVersion) {
+	public void deleteProductVersion(SCProductVersion productVersion)
+		throws SystemException {
+
 		scProductVersionPersistence.remove(productVersion);
 	}
 
 	@Override
-	public void deleteProductVersions(long productEntryId) {
+	public void deleteProductVersions(long productEntryId)
+		throws SystemException {
+
 		List<SCProductVersion> productVersions =
 			scProductVersionPersistence.findByProductEntryId(productEntryId);
 
@@ -132,7 +137,7 @@ public class SCProductVersionLocalServiceImpl
 
 	@Override
 	public SCProductVersion getProductVersion(long productVersionId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return scProductVersionPersistence.findByPrimaryKey(productVersionId);
 	}
@@ -140,7 +145,7 @@ public class SCProductVersionLocalServiceImpl
 	@Override
 	public SCProductVersion getProductVersionByDirectDownloadURL(
 			String directDownloadURL)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return scProductVersionPersistence.findByDirectDownloadURL(
 			directDownloadURL);
@@ -148,14 +153,17 @@ public class SCProductVersionLocalServiceImpl
 
 	@Override
 	public List<SCProductVersion> getProductVersions(
-		long productEntryId, int start, int end) {
+			long productEntryId, int start, int end)
+		throws SystemException {
 
 		return scProductVersionPersistence.findByProductEntryId(
 			productEntryId, start, end);
 	}
 
 	@Override
-	public int getProductVersionsCount(long productEntryId) {
+	public int getProductVersionsCount(long productEntryId)
+		throws SystemException {
+
 		return scProductVersionPersistence.countByProductEntryId(
 			productEntryId);
 	}
@@ -166,7 +174,7 @@ public class SCProductVersionLocalServiceImpl
 			String downloadPageURL, String directDownloadURL,
 			boolean testDirectDownloadURL, boolean repoStoreArtifact,
 			long[] frameworkVersionIds)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		// Product version
 
@@ -240,7 +248,7 @@ public class SCProductVersionLocalServiceImpl
 			long productVersionId, String version, String changeLog,
 			String downloadPageURL, String directDownloadURL,
 			boolean testDirectDownloadURL, long[] frameworkVersionIds)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		if (Validator.isNull(version)) {
 			throw new ProductVersionNameException();
@@ -261,8 +269,7 @@ public class SCProductVersionLocalServiceImpl
 			if ((productVersion != null) &&
 				(productVersion.getProductVersionId() != productVersionId)) {
 
-				throw new DuplicateProductVersionDirectDownloadURLException(
-					"{productVersionId=" + productVersionId + "}");
+				throw new DuplicateProductVersionDirectDownloadURLException();
 			}
 
 			if (testDirectDownloadURL) {

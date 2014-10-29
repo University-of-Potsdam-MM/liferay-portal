@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -30,6 +30,26 @@ public class ThemeLocalServiceWrapper implements ThemeLocalService,
 		_themeLocalService = themeLocalService;
 	}
 
+	/**
+	* Returns the Spring bean ID for this bean.
+	*
+	* @return the Spring bean ID for this bean
+	*/
+	@Override
+	public java.lang.String getBeanIdentifier() {
+		return _themeLocalService.getBeanIdentifier();
+	}
+
+	/**
+	* Sets the Spring bean ID for this bean.
+	*
+	* @param beanIdentifier the Spring bean ID for this bean
+	*/
+	@Override
+	public void setBeanIdentifier(java.lang.String beanIdentifier) {
+		_themeLocalService.setBeanIdentifier(beanIdentifier);
+	}
+
 	@Override
 	public com.liferay.portal.model.ColorScheme fetchColorScheme(
 		long companyId, java.lang.String themeId, java.lang.String colorSchemeId) {
@@ -43,41 +63,19 @@ public class ThemeLocalServiceWrapper implements ThemeLocalService,
 		return _themeLocalService.fetchTheme(companyId, themeId);
 	}
 
-	/**
-	* Returns the Spring bean ID for this bean.
-	*
-	* @return the Spring bean ID for this bean
-	*/
-	@Override
-	public java.lang.String getBeanIdentifier() {
-		return _themeLocalService.getBeanIdentifier();
-	}
-
 	@Override
 	public com.liferay.portal.model.ColorScheme getColorScheme(long companyId,
 		java.lang.String themeId, java.lang.String colorSchemeId,
-		boolean wapTheme) {
+		boolean wapTheme)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return _themeLocalService.getColorScheme(companyId, themeId,
 			colorSchemeId, wapTheme);
 	}
 
 	@Override
-	public java.util.List<com.liferay.portal.model.Theme> getControlPanelThemes(
-		long companyId, long userId, boolean wapTheme) {
-		return _themeLocalService.getControlPanelThemes(companyId, userId,
-			wapTheme);
-	}
-
-	@Override
-	public java.util.List<com.liferay.portal.model.Theme> getPageThemes(
-		long companyId, long groupId, long userId, boolean wapTheme) {
-		return _themeLocalService.getPageThemes(companyId, groupId, userId,
-			wapTheme);
-	}
-
-	@Override
 	public com.liferay.portal.model.Theme getTheme(long companyId,
-		java.lang.String themeId, boolean wapTheme) {
+		java.lang.String themeId, boolean wapTheme)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return _themeLocalService.getTheme(companyId, themeId, wapTheme);
 	}
 
@@ -87,13 +85,10 @@ public class ThemeLocalServiceWrapper implements ThemeLocalService,
 		return _themeLocalService.getThemes(companyId);
 	}
 
-	/**
-	* @deprecated As of 7.0.0, replaced by {@link #getPageThemes}
-	*/
-	@Deprecated
 	@Override
 	public java.util.List<com.liferay.portal.model.Theme> getThemes(
-		long companyId, long groupId, long userId, boolean wapTheme) {
+		long companyId, long groupId, long userId, boolean wapTheme)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return _themeLocalService.getThemes(companyId, groupId, userId, wapTheme);
 	}
 
@@ -123,16 +118,6 @@ public class ThemeLocalServiceWrapper implements ThemeLocalService,
 			themesPath, loadFromServletContext, xmls, pluginPackage);
 	}
 
-	/**
-	* Sets the Spring bean ID for this bean.
-	*
-	* @param beanIdentifier the Spring bean ID for this bean
-	*/
-	@Override
-	public void setBeanIdentifier(java.lang.String beanIdentifier) {
-		_themeLocalService.setBeanIdentifier(beanIdentifier);
-	}
-
 	@Override
 	public void uninstallThemes(
 		java.util.List<com.liferay.portal.model.Theme> themes) {
@@ -142,7 +127,6 @@ public class ThemeLocalServiceWrapper implements ThemeLocalService,
 	/**
 	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedService}
 	 */
-	@Deprecated
 	public ThemeLocalService getWrappedThemeLocalService() {
 		return _themeLocalService;
 	}
@@ -150,7 +134,6 @@ public class ThemeLocalServiceWrapper implements ThemeLocalService,
 	/**
 	 * @deprecated As of 6.1.0, replaced by {@link #setWrappedService}
 	 */
-	@Deprecated
 	public void setWrappedThemeLocalService(ThemeLocalService themeLocalService) {
 		_themeLocalService = themeLocalService;
 	}

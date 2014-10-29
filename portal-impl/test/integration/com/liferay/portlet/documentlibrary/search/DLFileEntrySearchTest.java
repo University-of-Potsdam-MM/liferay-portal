@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,46 +18,35 @@ import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.search.Hits;
-import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.test.ExecutionTestListeners;
 import com.liferay.portal.kernel.util.ContentTypes;
-import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
-import com.liferay.portal.kernel.util.MimeTypesUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.model.BaseModel;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.search.BaseSearchTestCase;
 import com.liferay.portal.service.ServiceContext;
+import com.liferay.portal.service.ServiceTestUtil;
+import com.liferay.portal.test.LiferayIntegrationJUnitTestRunner;
+import com.liferay.portal.test.MainServletExecutionTestListener;
 import com.liferay.portal.test.Sync;
 import com.liferay.portal.test.SynchronousDestinationExecutionTestListener;
-import com.liferay.portal.test.listeners.MainServletExecutionTestListener;
-import com.liferay.portal.test.runners.LiferayIntegrationJUnitTestRunner;
-import com.liferay.portal.util.test.RandomTestUtil;
-import com.liferay.portal.util.test.SearchContextTestUtil;
-import com.liferay.portal.util.test.ServiceContextTestUtil;
-import com.liferay.portal.util.test.TestPropsValues;
+import com.liferay.portal.util.TestPropsValues;
 import com.liferay.portlet.documentlibrary.model.DLFileEntry;
 import com.liferay.portlet.documentlibrary.model.DLFileEntryType;
 import com.liferay.portlet.documentlibrary.model.DLFolder;
 import com.liferay.portlet.documentlibrary.model.DLFolderConstants;
-import com.liferay.portlet.documentlibrary.service.DLAppLocalServiceUtil;
 import com.liferay.portlet.documentlibrary.service.DLAppServiceUtil;
-import com.liferay.portlet.documentlibrary.service.DLFileEntryLocalServiceUtil;
 import com.liferay.portlet.documentlibrary.service.DLFileEntryTypeLocalServiceUtil;
-import com.liferay.portlet.documentlibrary.util.test.DLAppTestUtil;
+import com.liferay.portlet.documentlibrary.util.DLAppTestUtil;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalServiceUtil;
 import com.liferay.portlet.dynamicdatamapping.storage.Field;
 import com.liferay.portlet.dynamicdatamapping.storage.Fields;
 import com.liferay.portlet.dynamicdatamapping.util.DDMIndexerUtil;
-import com.liferay.portlet.dynamicdatamapping.util.test.DDMStructureTestUtil;
+import com.liferay.portlet.dynamicdatamapping.util.DDMStructureTestUtil;
 
-import java.io.File;
-import java.io.InputStream;
-
-import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -77,53 +66,7 @@ public class DLFileEntrySearchTest extends BaseSearchTestCase {
 	@Ignore()
 	@Override
 	@Test
-	public void testLocalizedSearch() throws Exception {
-	}
-
-	@Ignore()
-	@Override
-	@Test
 	public void testSearchAttachments() throws Exception {
-	}
-
-	@Test
-	public void testSearchTikaRawMetadata() throws Exception {
-		ServiceContext serviceContext =
-			ServiceContextTestUtil.getServiceContext(group.getGroupId());
-
-		SearchContext searchContext = SearchContextTestUtil.getSearchContext(
-			group.getGroupId());
-
-		int initialBaseModelsSearchCount = searchBaseModelsCount(
-			getBaseModelClass(), group.getGroupId(), "Word", searchContext);
-
-		String fileName = "OSX_Test.docx";
-
-		InputStream inputStream = getClass().getResourceAsStream(
-			"dependencies/" + fileName);
-
-		File file = null;
-
-		try {
-			String mimeType = MimeTypesUtil.getContentType(file, fileName);
-
-			file = FileUtil.createTempFile(inputStream);
-
-			DLAppLocalServiceUtil.addFileEntry(
-				serviceContext.getUserId(), serviceContext.getScopeGroupId(),
-				DLFolderConstants.DEFAULT_PARENT_FOLDER_ID, fileName, mimeType,
-				fileName, StringPool.BLANK, StringPool.BLANK, file,
-				serviceContext);
-		}
-		finally {
-			FileUtil.delete(file);
-		}
-
-		Assert.assertEquals(
-			initialBaseModelsSearchCount + 1,
-			searchBaseModelsCount(
-				getBaseModelClass(), group.getGroupId(), "Word",
-				searchContext));
 	}
 
 	@Override
@@ -132,12 +75,10 @@ public class DLFileEntrySearchTest extends BaseSearchTestCase {
 			ServiceContext serviceContext)
 		throws Exception {
 
-		String definition = DDMStructureTestUtil.getSampleStructureDefinition(
-			"name");
+		String xsd = DDMStructureTestUtil.getSampleStructureXSD("name");
 
 		_ddmStructure = DDMStructureTestUtil.addStructure(
-			serviceContext.getScopeGroupId(), DLFileEntry.class.getName(),
-			definition);
+			serviceContext.getScopeGroupId(), DLFileEntry.class.getName(), xsd);
 
 		DLFileEntryType dlFileEntryType =
 			DLFileEntryTypeLocalServiceUtil.addFileEntryType(
@@ -189,11 +130,6 @@ public class DLFileEntrySearchTest extends BaseSearchTestCase {
 	}
 
 	@Override
-	protected void deleteBaseModel(long primaryKey) throws Exception {
-		DLFileEntryLocalServiceUtil.deleteDLFileEntry(primaryKey);
-	}
-
-	@Override
 	protected void expireBaseModelVersions(
 			BaseModel<?> baseModel, boolean expireAllVersions,
 			ServiceContext serviceContext)
@@ -229,7 +165,7 @@ public class DLFileEntrySearchTest extends BaseSearchTestCase {
 
 		Folder folder = DLAppTestUtil.addFolder(
 			(Long)parentBaseModel.getPrimaryKeyObj(),
-			RandomTestUtil.randomString(_FOLDER_NAME_MAX_LENGTH),
+			ServiceTestUtil.randomString(_FOLDER_NAME_MAX_LENGTH),
 			serviceContext);
 
 		return (DLFolder)folder.getModel();
@@ -242,7 +178,7 @@ public class DLFileEntrySearchTest extends BaseSearchTestCase {
 
 		Folder folder = DLAppTestUtil.addFolder(
 			DLFolderConstants.DEFAULT_PARENT_FOLDER_ID,
-			RandomTestUtil.randomString(_FOLDER_NAME_MAX_LENGTH),
+			ServiceTestUtil.randomString(_FOLDER_NAME_MAX_LENGTH),
 			serviceContext);
 
 		return (DLFolder)folder.getModel();
@@ -261,11 +197,6 @@ public class DLFileEntrySearchTest extends BaseSearchTestCase {
 	@Override
 	protected boolean isExpirableAllVersions() {
 		return true;
-	}
-
-	@Override
-	protected void moveBaseModelToTrash(long primaryKey) throws Exception {
-		DLAppServiceUtil.moveFileEntryToTrash(primaryKey);
 	}
 
 	@Override
@@ -305,13 +236,12 @@ public class DLFileEntrySearchTest extends BaseSearchTestCase {
 	protected void updateDDMStructure(ServiceContext serviceContext)
 		throws Exception {
 
-		String definition = DDMStructureTestUtil.getSampleStructureDefinition(
-			"title");
+		String xsd = DDMStructureTestUtil.getSampleStructureXSD("title");
 
 		DDMStructureLocalServiceUtil.updateStructure(
 			_ddmStructure.getStructureId(),
 			_ddmStructure.getParentStructureId(), _ddmStructure.getNameMap(),
-			_ddmStructure.getDescriptionMap(), definition, serviceContext);
+			_ddmStructure.getDescriptionMap(), xsd, serviceContext);
 	}
 
 	private static final int _FOLDER_NAME_MAX_LENGTH = 100;

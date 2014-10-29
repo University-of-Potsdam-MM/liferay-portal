@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,9 @@
 package com.liferay.taglib.ui;
 
 import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.servlet.PortalIncludeUtil;
+import com.liferay.portal.kernel.servlet.taglib.BaseBodyTagSupport;
+import com.liferay.portal.kernel.servlet.taglib.FileAvailabilityUtil;
 import com.liferay.portal.kernel.servlet.taglib.aui.ScriptData;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.IntegerWrapper;
@@ -27,10 +30,7 @@ import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.theme.PortletDisplay;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
-import com.liferay.taglib.BaseBodyTagSupport;
-import com.liferay.taglib.FileAvailabilityUtil;
 import com.liferay.taglib.aui.ScriptTag;
-import com.liferay.taglib.util.PortalIncludeUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
@@ -125,7 +125,7 @@ public class IconMenuTag extends BaseBodyTagSupport implements BodyTag {
 		}
 
 		if (_icon == null) {
-			_icon = "../aui/cog";
+			_icon = themeDisplay.getPathThemeImages() + "/common/tool.png";
 		}
 
 		if (Validator.isNull(_id)) {
@@ -278,7 +278,7 @@ public class IconMenuTag extends BaseBodyTagSupport implements BodyTag {
 
 					if (Validator.isNotNull(_cssClass)) {
 						jspWriter.write(StringPool.SPACE);
-						jspWriter.write(_cssClass);
+						jspWriter.print(_cssClass);
 					}
 
 					jspWriter.write("\" id=\"");
@@ -290,7 +290,7 @@ public class IconMenuTag extends BaseBodyTagSupport implements BodyTag {
 
 					if (Validator.isNotNull(_cssClass)) {
 						jspWriter.write(StringPool.SPACE);
-						jspWriter.write(_cssClass);
+						jspWriter.print(_cssClass);
 					}
 
 					if (_direction.equals("up")) {
@@ -307,7 +307,7 @@ public class IconMenuTag extends BaseBodyTagSupport implements BodyTag {
 					}
 
 					if (_extended) {
-						jspWriter.write(" btn btn-default");
+						jspWriter.write(" btn");
 					}
 
 					if (_select) {
@@ -321,7 +321,7 @@ public class IconMenuTag extends BaseBodyTagSupport implements BodyTag {
 					String message = _message;
 
 					if (_localizeMessage) {
-						message = LanguageUtil.get(request, _message);
+						message = LanguageUtil.get(pageContext, _message);
 					}
 
 					jspWriter.write("\" href=\"javascript:;\" id=\"");
@@ -337,7 +337,7 @@ public class IconMenuTag extends BaseBodyTagSupport implements BodyTag {
 							caret = "icon-caret-left";
 						}
 
-						jspWriter.write("<i class=\"lfr-icon-menu-arrow ");
+						jspWriter.write("<i class=\"");
 						jspWriter.write(caret);
 						jspWriter.write("\"></i> ");
 					}
@@ -351,13 +351,10 @@ public class IconMenuTag extends BaseBodyTagSupport implements BodyTag {
 							jspWriter.write(" <i class=\"icon-");
 							jspWriter.write(
 								_icon.substring(_AUI_PATH.length()));
-							jspWriter.write(" lfr-icon-menu-icon");
-							jspWriter.write("\"></i> ");
+							jspWriter.write("\"></i>");
 						}
 						else {
-							jspWriter.write(
-								"<img alt=\"\" class=\"lfr-icon-menu-icon\" ");
-							jspWriter.write("src=\"");
+							jspWriter.write("<img alt=\"\" src=\"");
 							jspWriter.write(_icon);
 							jspWriter.write("\" /> ");
 						}
@@ -376,7 +373,7 @@ public class IconMenuTag extends BaseBodyTagSupport implements BodyTag {
 							caret = "icon-caret-" + _direction;
 						}
 
-						jspWriter.write(" <i class=\"lfr-icon-menu-arrow ");
+						jspWriter.write("<i class=\"");
 						jspWriter.write(caret);
 						jspWriter.write("\"></i> ");
 					}
@@ -432,7 +429,7 @@ public class IconMenuTag extends BaseBodyTagSupport implements BodyTag {
 	private static final String _AUI_PATH = "../aui/";
 
 	private static final int _DEFAULT_MAX_DISPLAY_ITEMS = GetterUtil.getInteger(
-		PropsUtil.get(PropsKeys.MENU_MAX_DISPLAY_ITEMS));
+		PropsUtil.get(PropsKeys.ICON_MENU_MAX_DISPLAY_ITEMS));
 
 	private static final String _END_PAGE = "/html/taglib/ui/icon_menu/end.jsp";
 

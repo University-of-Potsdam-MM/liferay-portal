@@ -10,7 +10,8 @@
 		<echo message="Make sure the server is listening on ${client.url}." />
 		<echo message="" />
 
-		<remake-dir dir="src" />
+		<delete dir="src" />
+		<mkdir dir="src" />
 
 		<!--
 		<axis-wsdl2java
@@ -77,7 +78,8 @@
 	</target>
 
 	<target name="java2html">
-		<remake-dir dir="src" />
+		<delete dir="src" />
+		<mkdir dir="src" />
 
 		<unjar src="${jar.file}.jar" dest="src" />
 
@@ -85,7 +87,8 @@
 	</target>
 
 	<target name="javadoc">
-		<remake-dir dir="src" />
+		<delete dir="src" />
+		<mkdir dir="src" />
 
 		<unjar src="${project.dir}/lib/portal/${jar.file}.jar" dest="src" />
 

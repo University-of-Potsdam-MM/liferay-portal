@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -22,8 +22,7 @@ import java.util.Date;
 /**
  * @author Shuyang Zhou
  */
-public class WorkflowTaskCompletionDateComparator
-	extends OrderByComparator<WorkflowTask> {
+public class WorkflowTaskCompletionDateComparator extends OrderByComparator {
 
 	public WorkflowTaskCompletionDateComparator(
 		boolean ascending, String orderByAsc, String orderByDesc,
@@ -36,7 +35,10 @@ public class WorkflowTaskCompletionDateComparator
 	}
 
 	@Override
-	public int compare(WorkflowTask workflowTask1, WorkflowTask workflowTask2) {
+	public int compare(Object obj1, Object obj2) {
+		WorkflowTask workflowTask1 = (WorkflowTask)obj1;
+		WorkflowTask workflowTask2 = (WorkflowTask)obj2;
+
 		Date completionDate1 = workflowTask1.getCompletionDate();
 		Date completionDate2 = workflowTask2.getCompletionDate();
 

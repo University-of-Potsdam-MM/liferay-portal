@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,68 +14,47 @@
 
 package com.liferay.portal.jsonwebservice.action;
 
-import com.liferay.portal.json.data.FileData;
-import com.liferay.portal.json.transformer.BeanAnalyzerTransformer;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.javadoc.JavadocManagerUtil;
-import com.liferay.portal.kernel.javadoc.JavadocMethod;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONSerializable;
 import com.liferay.portal.kernel.json.JSONSerializer;
 import com.liferay.portal.kernel.jsonwebservice.JSONWebServiceAction;
 import com.liferay.portal.kernel.jsonwebservice.JSONWebServiceActionMapping;
 import com.liferay.portal.kernel.jsonwebservice.JSONWebServiceActionsManagerUtil;
-import com.liferay.portal.kernel.jsonwebservice.JSONWebServiceNaming;
-import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.MethodParameter;
-import com.liferay.portal.kernel.util.ParamUtil;
-import com.liferay.portal.kernel.util.ReleaseInfo;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.kernel.util.Validator;
 
-import java.io.File;
 import java.io.Serializable;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.TimeZone;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
-import jodd.util.ReflectUtil;
+import jodd.util.Wildcard;
 
 /**
  * @author Igor Spasic
- * @author Raymond Augé
  */
 public class JSONWebServiceDiscoverAction implements JSONWebServiceAction {
 
 	public JSONWebServiceDiscoverAction(HttpServletRequest request) {
 		_basePath = request.getServletPath();
-		_baseURL = String.valueOf(request.getRequestURL());
+		_baseURL = request.getRequestURL().toString();
+		_contextPath = request.getContextPath();
 
-		ServletContext servletContext = request.getServletContext();
+		String discover = request.getParameter("discover");
 
-		_contextName = GetterUtil.getString(
-			ParamUtil.getString(
-				request, "contextName", servletContext.getServletContextName()),
-			StringPool.BLANK);
-		_jsonWebServiceNaming =
-			JSONWebServiceActionsManagerUtil.getJSONWebServiceNaming();
+		_discover = StringUtil.split(discover);
 	}
 
 	@Override
@@ -87,12 +66,18 @@ public class JSONWebServiceDiscoverAction implements JSONWebServiceAction {
 	public Object invoke() throws Exception {
 		Map<String, Object> resultsMap = new LinkedHashMap<String, Object>();
 
-		resultsMap.put("contextName", _contextName);
+		List<Map<String, Object>> jsonWebServiceActionMappingMaps =
+			_buildJsonWebServiceActionMappingMaps();
+
+		resultsMap.put("actions", jsonWebServiceActionMappingMaps);
+
+		resultsMap.put("context", _contextPath);
 		resultsMap.put("basePath", _basePath);
 		resultsMap.put("baseURL", _baseURL);
-		resultsMap.put("services", _buildJsonWebServiceActionMappingMaps());
-		resultsMap.put("types", _buildTypes());
-		resultsMap.put("version", ReleaseInfo.getVersion());
+
+		if (_discover.length > 0) {
+			resultsMap.put("discover", _discover);
+		}
 
 		return new DiscoveryContent(resultsMap);
 	}
@@ -108,8 +93,6 @@ public class JSONWebServiceDiscoverAction implements JSONWebServiceAction {
 			JSONSerializer jsonSerializer =
 				JSONFactoryUtil.createJSONSerializer();
 
-			jsonSerializer.include("types");
-
 			return jsonSerializer.serializeDeep(_resultsMap);
 		}
 
@@ -122,7 +105,7 @@ public class JSONWebServiceDiscoverAction implements JSONWebServiceAction {
 
 		List<JSONWebServiceActionMapping> jsonWebServiceActionMappings =
 			JSONWebServiceActionsManagerUtil.getJSONWebServiceActionMappings(
-				_contextName);
+				_contextPath);
 
 		List<Map<String, Object>> jsonWebServiceActionMappingMaps =
 			new ArrayList<Map<String, Object>>(
@@ -133,31 +116,15 @@ public class JSONWebServiceDiscoverAction implements JSONWebServiceAction {
 
 			String path = jsonWebServiceActionMapping.getPath();
 
+			if (!_isAcceptPath(path)) {
+				continue;
+			}
+
 			Map<String, Object> jsonWebServiceActionMappingMap =
 				new LinkedHashMap<String, Object>();
 
-			if (jsonWebServiceActionMapping.isDeprecated()) {
-				jsonWebServiceActionMappingMap.put("deprecated", Boolean.TRUE);
-			}
-
-			JavadocMethod javadocMethod =
-				JavadocManagerUtil.lookupJavadocMethod(
-					jsonWebServiceActionMapping.getRealActionMethod());
-
-			if (javadocMethod != null) {
-				String methodComment = javadocMethod.getComment();
-
-				if (methodComment != null) {
-					jsonWebServiceActionMappingMap.put(
-						"description", javadocMethod.getComment());
-				}
-			}
-
 			jsonWebServiceActionMappingMap.put(
 				"method", jsonWebServiceActionMapping.getMethod());
-
-			jsonWebServiceActionMappingMap.put(
-				"name", _getName(jsonWebServiceActionMapping));
 
 			MethodParameter[] methodParameters =
 				jsonWebServiceActionMapping.getMethodParameters();
@@ -165,9 +132,7 @@ public class JSONWebServiceDiscoverAction implements JSONWebServiceAction {
 			List<Map<String, String>> parametersList =
 				new ArrayList<Map<String, String>>(methodParameters.length);
 
-			for (int i = 0; i < methodParameters.length; i++) {
-				MethodParameter methodParameter = methodParameters[i];
-
+			for (MethodParameter methodParameter : methodParameters) {
 				Class<?>[] genericTypes = null;
 
 				try {
@@ -180,20 +145,10 @@ public class JSONWebServiceDiscoverAction implements JSONWebServiceAction {
 				Map<String, String> parameterMap =
 					new HashMap<String, String>();
 
-				if (javadocMethod != null) {
-					String parameterComment = javadocMethod.getParameterComment(
-						i);
-
-					if (!Validator.isBlank(parameterComment)) {
-						parameterMap.put("description", parameterComment);
-					}
-				}
-
 				parameterMap.put("name", methodParameter.getName());
 				parameterMap.put(
 					"type",
-					_formatType(
-						methodParameter.getType(), genericTypes, false));
+					_formatType(methodParameter.getType(), genericTypes));
 
 				parametersList.add(parameterMap);
 			}
@@ -202,26 +157,10 @@ public class JSONWebServiceDiscoverAction implements JSONWebServiceAction {
 
 			jsonWebServiceActionMappingMap.put("path", path);
 
-			Map<String, String> returnsMap =
-				new LinkedHashMap<String, String>();
-
-			if (javadocMethod != null) {
-				String returnComment = javadocMethod.getReturnComment();
-
-				if (!Validator.isBlank(returnComment)) {
-					returnsMap.put("description", returnComment);
-				}
-			}
-
 			Method actionMethod = jsonWebServiceActionMapping.getActionMethod();
 
-			returnsMap.put(
-				"type",
-				_formatType(
-					actionMethod.getReturnType(),
-					_getGenericReturnTypes(jsonWebServiceActionMapping), true));
-
-			jsonWebServiceActionMappingMap.put("returns", returnsMap);
+			jsonWebServiceActionMappingMap.put(
+				"response", _formatType(actionMethod.getReturnType(), null));
 
 			jsonWebServiceActionMappingMaps.add(jsonWebServiceActionMappingMap);
 		}
@@ -229,146 +168,40 @@ public class JSONWebServiceDiscoverAction implements JSONWebServiceAction {
 		return jsonWebServiceActionMappingMaps;
 	}
 
-	private List<Map<String, String>> _buildPropertiesList(Class<?> type) {
-		try {
-			BeanAnalyzerTransformer beanAnalyzerTransformer =
-				new BeanAnalyzerTransformer(type) {
-
-					@Override
-					protected String getTypeName(Class<?> type) {
-						return _formatType(type, null, false);
-					}
-
-				};
-
-			return beanAnalyzerTransformer.collect();
-		}
-		catch (Exception e) {
-			return null;
-		}
-	}
-
-	private List<Map<String, Object>> _buildTypes() {
-		List<Map<String, Object>> types = new ArrayList<Map<String, Object>>();
-
-		for (int i = 0; i < _types.size(); i++) {
-			Class<?> type = _types.get(i);
-
-			Map<String, Object> map = new LinkedHashMap<String, Object>();
-
-			types.add(map);
-
-			Class<?> modelType = type;
-
-			if (type.isInterface()) {
-				try {
-					Class<?> clazz = getClass();
-
-					ClassLoader classLoader = clazz.getClassLoader();
-
-					String modelImplClassName =
-						_jsonWebServiceNaming.convertModelClassToImplClassName(
-							type);
-
-					modelType = classLoader.loadClass(modelImplClassName);
-				}
-				catch (ClassNotFoundException cnfe) {
-				}
-			}
-
-			if (modelType.isInterface() ||
-				Modifier.isAbstract(modelType.getModifiers())) {
-
-				map.put("interface", Boolean.TRUE);
-			}
-
-			List<Map<String, String>> propertiesList = _buildPropertiesList(
-				modelType);
-
-			if (propertiesList != null) {
-				map.put("properties", propertiesList);
-			}
-
-			map.put("type", type.getName());
-		}
-
-		return types;
-	}
-
-	private String _formatType(
-		Class<?> type, Class<?>[] genericTypes, boolean returnType) {
-
+	private String _formatType(Class<?> type, Class<?>[] genericTypes) {
 		if (type.isArray()) {
 			Class<?> componentType = type.getComponentType();
 
-			return _formatType(componentType, genericTypes, returnType) + "[]";
+			return _formatType(componentType, genericTypes) + "[]";
 		}
 
 		if (type.isPrimitive()) {
 			return type.getSimpleName();
 		}
-
-		if (type.equals(Boolean.class)) {
-			return "boolean";
-		}
-		else if (type.equals(Class.class)) {
-			if (!returnType) {
-				return "string";
-			}
-		}
 		else if (type.equals(Date.class)) {
 			return "long";
 		}
-		else if (type.equals(File.class)) {
-			if (!returnType) {
-				return "file";
-			}
-			else {
-				type = FileData.class;
-			}
-		}
-		else if (type.equals(Locale.class) || type.equals(String.class) ||
-				 type.equals(TimeZone.class)) {
-
+		else if (type.equals(Locale.class) || type.equals(String.class)) {
 			return "string";
 		}
 		else if (type.equals(Object.class) || type.equals(Serializable.class)) {
-			return "map";
-		}
-		else if (ReflectUtil.isTypeOf(type, Number.class)) {
-			String typeName = null;
-
-			if (type == Character.class) {
-				typeName = "char";
-			}
-			else if (type == Integer.class) {
-				typeName = "int";
-			}
-			else {
-				typeName = StringUtil.toLowerCase(type.getSimpleName());
-			}
-
-			return typeName;
+			return "object";
 		}
 
 		String typeName = type.getName();
 
-		if ((type == Collection.class) ||
-			ReflectUtil.isTypeOf(type, List.class)) {
-
+		if (type.equals(List.class)) {
 			typeName = "list";
 		}
-		else if (ReflectUtil.isTypeOf(type, Map.class)) {
+		else if (type.equals(Map.class)) {
 			typeName = "map";
 		}
 		else {
-			if (!_types.contains(type)) {
-				_types.add(type);
-			}
+			_types.add(type);
 		}
 
 		if (genericTypes == null) {
-			return typeName;
+			return "object<" + typeName + ">";
 		}
 
 		StringBundler sb = new StringBundler(genericTypes.length * 2 + 1);
@@ -382,12 +215,7 @@ public class JSONWebServiceDiscoverAction implements JSONWebServiceAction {
 				sb.append(StringPool.COMMA);
 			}
 
-			if (genericType == null) {
-				sb.append(StringPool.STAR);
-			}
-			else {
-				sb.append(_formatType(genericType, null, returnType));
-			}
+			sb.append(_formatType(genericType, null));
 		}
 
 		sb.append(StringPool.GREATER_THAN);
@@ -395,52 +223,23 @@ public class JSONWebServiceDiscoverAction implements JSONWebServiceAction {
 		return typeName + sb.toString();
 	}
 
-	private Class<?>[] _getGenericReturnTypes(
-		JSONWebServiceActionMapping jsonWebServiceActionMapping) {
-
-		Method realActionMethod =
-			jsonWebServiceActionMapping.getRealActionMethod();
-
-		Type genericReturnType = realActionMethod.getGenericReturnType();
-
-		if (!(genericReturnType instanceof ParameterizedType)) {
-			return null;
+	private boolean _isAcceptPath(String path) {
+		if (_discover.length == 0) {
+			return true;
 		}
 
-		ParameterizedType parameterizedType =
-			(ParameterizedType)genericReturnType;
-
-		Type[] genericTypes = parameterizedType.getActualTypeArguments();
-
-		Class<?>[] genericReturnTypes = new Class[genericTypes.length];
-
-		for (int i = 0; i < genericTypes.length; i++) {
-			Type genericType = genericTypes[i];
-
-			genericReturnTypes[i] = ReflectUtil.getRawType(
-				genericType, jsonWebServiceActionMapping.getActionClass());
+		if (Wildcard.matchOne(path, _discover) != -1) {
+			return true;
 		}
-
-		return genericReturnTypes;
-	}
-
-	private String _getName(
-		JSONWebServiceActionMapping jsonWebServiceActionMapping) {
-
-		Class<?> clazz = jsonWebServiceActionMapping.getActionClass();
-
-		String className =
-			_jsonWebServiceNaming.convertServiceClassToSimpleName(clazz);
-
-		Method method = jsonWebServiceActionMapping.getRealActionMethod();
-
-		return className.concat(StringPool.POUND).concat(method.getName());
+		else {
+			return false;
+		}
 	}
 
 	private String _basePath;
 	private String _baseURL;
-	private String _contextName;
-	private JSONWebServiceNaming _jsonWebServiceNaming;
+	private String _contextPath;
+	private String[] _discover;
 	private List<Class<?>> _types = new ArrayList<Class<?>>();
 
 }

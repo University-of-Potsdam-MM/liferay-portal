@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,6 +14,7 @@
 
 package com.liferay.portlet.softwarecatalog.model.impl;
 
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion;
@@ -32,7 +33,9 @@ public class SCProductVersionImpl extends SCProductVersionBaseImpl {
 	}
 
 	@Override
-	public List<SCFrameworkVersion> getFrameworkVersions() {
+	public List<SCFrameworkVersion> getFrameworkVersions()
+		throws SystemException {
+
 		return SCFrameworkVersionLocalServiceUtil.
 			getProductVersionFrameworkVersions(getProductVersionId());
 	}

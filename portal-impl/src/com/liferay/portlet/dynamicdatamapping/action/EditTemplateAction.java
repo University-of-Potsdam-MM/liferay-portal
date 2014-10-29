@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,18 +14,18 @@
 
 package com.liferay.portlet.dynamicdatamapping.action;
 
-import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.template.TemplateConstants;
 import com.liferay.portal.kernel.upload.UploadPortletRequest;
 import com.liferay.portal.kernel.util.Constants;
-import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.LocalizationUtil;
-import com.liferay.portal.kernel.util.MimeTypesUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.StreamUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.security.auth.PrincipalException;
@@ -45,9 +45,10 @@ import com.liferay.portlet.dynamicdatamapping.TemplateSmallImageSizeException;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplateConstants;
 import com.liferay.portlet.dynamicdatamapping.service.DDMTemplateServiceUtil;
-import com.liferay.portlet.dynamicdatamapping.util.DDMXSDUtil;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 
 import java.util.Locale;
 import java.util.Map;
@@ -199,25 +200,6 @@ public class EditTemplateAction extends PortletAction {
 		}
 	}
 
-	protected String getFileScriptContent(
-			UploadPortletRequest uploadPortletRequest)
-		throws Exception {
-
-		File file = uploadPortletRequest.getFile("script");
-
-		if (file == null) {
-			return null;
-		}
-
-		String fileScriptContent = FileUtil.read(file);
-
-		if (Validator.isNotNull(fileScriptContent) && !isValidFile(file)) {
-			throw new TemplateScriptException();
-		}
-
-		return fileScriptContent;
-	}
-
 	protected String getSaveAndContinueRedirect(
 			PortletConfig portletConfig, ActionRequest actionRequest,
 			DDMTemplate template, String redirect)
@@ -226,8 +208,6 @@ public class EditTemplateAction extends PortletAction {
 		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
 
-		String portletResourceNamespace = ParamUtil.getString(
-			actionRequest, "portletResourceNamespace");
 		long classNameId = ParamUtil.getLong(actionRequest, "classNameId");
 		long classPK = ParamUtil.getLong(actionRequest, "classPK");
 		String structureAvailableFields = ParamUtil.getString(
@@ -241,8 +221,6 @@ public class EditTemplateAction extends PortletAction {
 		portletURL.setParameter(
 			"struts_action", "/dynamic_data_mapping/edit_template");
 		portletURL.setParameter("redirect", redirect, false);
-		portletURL.setParameter(
-			"portletResourceNamespace", portletResourceNamespace, false);
 		portletURL.setParameter(
 			"templateId", String.valueOf(template.getTemplateId()), false);
 		portletURL.setParameter(
@@ -258,42 +236,26 @@ public class EditTemplateAction extends PortletAction {
 		return portletURL.toString();
 	}
 
-	protected String getScript(UploadPortletRequest uploadPortletRequest)
-		throws Exception {
+	protected String getScript(UploadPortletRequest uploadPortletRequest) {
+		InputStream inputStream = null;
 
-		String fileScriptContent = getFileScriptContent(uploadPortletRequest);
+		try {
+			inputStream = uploadPortletRequest.getFileAsStream("script");
 
-		if (Validator.isNotNull(fileScriptContent)) {
-			return fileScriptContent;
-		}
-
-		String scriptContent = ParamUtil.getString(
-			uploadPortletRequest, "scriptContent");
-
-		String type = ParamUtil.getString(uploadPortletRequest, "type");
-
-		if (type.equals(DDMTemplateConstants.TEMPLATE_TYPE_FORM)) {
-			try {
-				scriptContent = DDMXSDUtil.getXSD(scriptContent);
-			}
-			catch (PortalException pe) {
-				throw new TemplateScriptException();
+			if (inputStream != null) {
+				return new String(FileUtil.getBytes(inputStream));
 			}
 		}
-
-		return scriptContent;
-	}
-
-	protected boolean isValidFile(File file) {
-		String contentType = MimeTypesUtil.getContentType(file);
-
-		if (contentType.equals(ContentTypes.APPLICATION_XSLT_XML) ||
-			contentType.startsWith(ContentTypes.TEXT)) {
-
-			return true;
+		catch (IOException ioe) {
+			if (_log.isWarnEnabled()) {
+				_log.warn(ioe, ioe);
+			}
+		}
+		finally {
+			StreamUtil.cleanUp(inputStream);
 		}
 
-		return false;
+		return null;
 	}
 
 	protected DDMTemplate updateTemplate(ActionRequest actionRequest)
@@ -308,8 +270,6 @@ public class EditTemplateAction extends PortletAction {
 		long classNameId = ParamUtil.getLong(
 			uploadPortletRequest, "classNameId");
 		long classPK = ParamUtil.getLong(uploadPortletRequest, "classPK");
-		String templateKey = ParamUtil.getString(
-			uploadPortletRequest, "templateKey");
 		Map<Locale, String> nameMap = LocalizationUtil.getLocalizationMap(
 			uploadPortletRequest, "name");
 		Map<Locale, String> descriptionMap =
@@ -321,6 +281,12 @@ public class EditTemplateAction extends PortletAction {
 			uploadPortletRequest, "language", TemplateConstants.LANG_TYPE_VM);
 
 		String script = getScript(uploadPortletRequest);
+		String scriptContent = ParamUtil.getString(
+			uploadPortletRequest, "scriptContent");
+
+		if (Validator.isNull(script)) {
+			script = scriptContent;
+		}
 
 		boolean cacheable = ParamUtil.getBoolean(
 			uploadPortletRequest, "cacheable");
@@ -337,9 +303,9 @@ public class EditTemplateAction extends PortletAction {
 
 		if (templateId <= 0) {
 			template = DDMTemplateServiceUtil.addTemplate(
-				groupId, classNameId, classPK, templateKey, nameMap,
-				descriptionMap, type, mode, language, script, cacheable,
-				smallImage, smallImageURL, smallImageFile, serviceContext);
+				groupId, classNameId, classPK, null, nameMap, descriptionMap,
+				type, mode, language, script, cacheable, smallImage,
+				smallImageURL, smallImageFile, serviceContext);
 		}
 		else {
 			template = DDMTemplateServiceUtil.updateTemplate(
@@ -368,5 +334,7 @@ public class EditTemplateAction extends PortletAction {
 
 		return template;
 	}
+
+	private static Log _log = LogFactoryUtil.getLog(EditTemplateAction.class);
 
 }

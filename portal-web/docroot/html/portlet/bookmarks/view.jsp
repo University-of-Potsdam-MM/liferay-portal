@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -65,7 +65,12 @@ if (folder != null) {
 }
 %>
 
-<liferay-ui:trash-undo />
+<portlet:actionURL var="undoTrashURL">
+	<portlet:param name="struts_action" value="/bookmarks/edit_entry" />
+	<portlet:param name="<%= Constants.CMD %>" value="<%= Constants.RESTORE %>" />
+</portlet:actionURL>
+
+<liferay-ui:trash-undo portletURL="<%= undoTrashURL %>" />
 
 <liferay-util:include page="/html/portlet/bookmarks/top_links.jsp" />
 
@@ -82,7 +87,27 @@ if (folder != null) {
 	<c:when test='<%= topLink.equals("home") %>'>
 		<aui:row>
 			<c:if test="<%= folder != null %>">
+
+				<%
+				long parentFolderId = folder.getParentFolderId();
+				String parentFolderName = LanguageUtil.get(pageContext, "home");
+
+				if (!folder.isRoot()) {
+					BookmarksFolder parentFolder = BookmarksFolderLocalServiceUtil.getBookmarksFolder(parentFolderId);
+
+					parentFolderId = parentFolder.getFolderId();
+					parentFolderName = parentFolder.getName();
+				}
+				%>
+
+				<portlet:renderURL var="backURL">
+					<portlet:param name="struts_action" value="/bookmarks/view" />
+					<portlet:param name="folderId" value="<%= String.valueOf(parentFolderId) %>" />
+				</portlet:renderURL>
+
 				<liferay-ui:header
+					backLabel="<%= parentFolderName %>"
+					backURL="<%= backURL.toString() %>"
 					localizeTitle="<%= false %>"
 					title="<%= folder.getName() %>"
 				/>
@@ -98,21 +123,15 @@ if (folder != null) {
 						</div>
 
 						<div class="lfr-asset-metadata">
-							<div class="icon-calendar lfr-asset-icon">
-								<%= LanguageUtil.format(request, "last-updated-x", dateFormatDate.format(folder.getModifiedDate()), false) %>
+							<div class="lfr-asset-icon lfr-asset-date">
+								<%= LanguageUtil.format(pageContext, "last-updated-x", dateFormatDate.format(folder.getModifiedDate())) %>
 							</div>
 
-							<%
-							AssetRendererFactory bookmarksEntryAssetRendererFactory = AssetRendererFactoryRegistryUtil.getAssetRendererFactoryByClassName(BookmarksEntry.class.getName());
-
-							AssetRendererFactory bookmarksFolderAssetRendererFactory = AssetRendererFactoryRegistryUtil.getAssetRendererFactoryByClassName(BookmarksFolder.class.getName());
-							%>
-
-							<div class="<%= bookmarksFolderAssetRendererFactory.getIconCssClass() %> lfr-asset-icon">
+							<div class="lfr-asset-icon lfr-asset-subfolders">
 								<%= foldersCount %> <liferay-ui:message key='<%= (foldersCount == 1) ? "subfolder" : "subfolders" %>' />
 							</div>
 
-							<div class="<%= bookmarksEntryAssetRendererFactory.getIconCssClass() %> last lfr-asset-icon">
+							<div class="lfr-asset-icon lfr-asset-items last">
 								<%= entriesCount %> <liferay-ui:message key='<%= (entriesCount == 1) ? "entry" : "entries" %>' />
 							</div>
 						</div>
@@ -131,7 +150,7 @@ if (folder != null) {
 						<liferay-ui:panel collapsible="<%= true %>" extended="<%= true %>" id="bookmarksEntriesFoldersListingPanel" persistState="<%= true %>" title='<%= (folder != null) ? "subfolders" : "folders" %>'>
 							<liferay-ui:search-container
 								curParam="cur1"
-								delta="<%= bookmarksSettings.getFoldersPerPage() %>"
+								delta="<%= foldersPerPage %>"
 								deltaConfigurable="<%= false %>"
 								headerNames="<%= StringUtil.merge(folderColumns) %>"
 								iteratorURL="<%= portletURL %>"
@@ -176,7 +195,7 @@ if (folder != null) {
 					/>
 
 					<div class="lfr-asset-name">
-						<h4><%= (folder != null) ? HtmlUtil.escape(folder.getName()) : LanguageUtil.get(request, "home") %></h4>
+						<h4><%= (folder != null) ? HtmlUtil.escape(folder.getName()) : LanguageUtil.get(pageContext, "home") %></h4>
 					</div>
 				</div>
 
@@ -189,7 +208,7 @@ if (folder != null) {
 		</aui:row>
 
 		<%
-		if (!defaultFolderView && (folder != null) && (portletName.equals(PortletKeys.BOOKMARKS) || portletName.equals(PortletKeys.BOOKMARKS_ADMIN))) {
+		if (!defaultFolderView && (folder != null) && portletName.equals(PortletKeys.BOOKMARKS)) {
 			PortalUtil.setPageSubtitle(folder.getName(), request);
 			PortalUtil.setPageDescription(folder.getDescription(), request);
 		}
@@ -211,7 +230,7 @@ if (folder != null) {
 			%>
 
 			<liferay-ui:search-container
-				delta="<%= bookmarksSettings.getEntriesPerPage() %>"
+				delta="<%= entriesPerPage %>"
 				deltaConfigurable="<%= false %>"
 				emptyResultsMessage="there-are-no-entries"
 				iteratorURL="<%= portletURL %>"
@@ -251,10 +270,10 @@ if (folder != null) {
 
 		<%
 		if (!layout.isTypeControlPanel()) {
-			PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.get(request, topLink), currentURL);
+			PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.get(pageContext, topLink), currentURL);
 		}
 
-		PortalUtil.setPageSubtitle(LanguageUtil.get(request, StringUtil.replace(topLink, StringPool.UNDERLINE, StringPool.DASH)), request);
+		PortalUtil.setPageSubtitle(LanguageUtil.get(pageContext, StringUtil.replace(topLink, StringPool.UNDERLINE, StringPool.DASH)), request);
 		%>
 
 	</c:when>

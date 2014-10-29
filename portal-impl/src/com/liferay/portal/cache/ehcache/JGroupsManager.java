@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -41,7 +41,7 @@ import org.jgroups.View;
 
 /**
  * <p>
- * See https://issues.liferay.com/browse/LPS-11061.
+ * See http://issues.liferay.com/browse/LPS-11061.
  * </p>
  *
  * @author Tina Tian
@@ -52,21 +52,17 @@ public class JGroupsManager implements CacheManagerPeerProvider, CachePeer {
 		CacheManager cacheManager, String clusterName,
 		String channelProperties) {
 
-		_cacheManager = cacheManager;
-
-		JChannel jChannel = null;
-
 		try {
-			jChannel = new JChannel(channelProperties);
+			_jChannel = new JChannel(channelProperties);
 
-			jChannel.setReceiver(new EhcacheJGroupsReceiver());
+			_jChannel.setReceiver(new EhcacheJGroupsReceiver());
 
-			jChannel.connect(clusterName);
+			_jChannel.connect(clusterName);
 
 			if (_log.isInfoEnabled()) {
 				_log.info(
 					"Create a new channel with properties " +
-						jChannel.getProperties());
+						_jChannel.getProperties());
 			}
 		}
 		catch (Exception e) {
@@ -75,7 +71,7 @@ public class JGroupsManager implements CacheManagerPeerProvider, CachePeer {
 			}
 		}
 
-		_jChannel = jChannel;
+		_cacheManager = cacheManager;
 	}
 
 	@Override
@@ -239,35 +235,20 @@ public class JGroupsManager implements CacheManagerPeerProvider, CachePeer {
 		}
 
 		int event = jGroupEventMessage.getEvent();
-
-		if (event == JGroupEventMessage.REMOVE_ALL) {
-			cache.removeAll(true);
-
-			return;
-		}
-
 		Serializable key = jGroupEventMessage.getSerializableKey();
-
-		if (key == null) {
-			throw new NullPointerException("Key is null");
-		}
 
 		if ((event == JGroupEventMessage.REMOVE) &&
 			(cache.getQuiet(key) != null)) {
 
 			cache.remove(key, true);
 		}
+		else if (event == JGroupEventMessage.REMOVE_ALL) {
+			cache.removeAll(true);
+		}
 		else if (event == JGroupEventMessage.PUT) {
 			Element element = jGroupEventMessage.getElement();
 
-			Object value = element.getObjectValue();
-
-			if (value == null) {
-				cache.remove(key, true);
-			}
-			else {
-				cache.put(new Element(key, value), true);
-			}
+			cache.put(new Element(key, element.getObjectValue()), true);
 		}
 	}
 
@@ -275,8 +256,8 @@ public class JGroupsManager implements CacheManagerPeerProvider, CachePeer {
 
 	private static Log _log = LogFactoryUtil.getLog(JGroupsManager.class);
 
-	private final CacheManager _cacheManager;
-	private final JChannel _jChannel;
+	private CacheManager _cacheManager;
+	private JChannel _jChannel;
 
 	private class EhcacheJGroupsReceiver extends BaseReceiver {
 

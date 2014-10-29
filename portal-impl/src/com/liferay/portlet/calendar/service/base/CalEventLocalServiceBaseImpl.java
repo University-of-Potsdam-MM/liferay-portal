@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,34 +14,21 @@
 
 package com.liferay.portlet.calendar.service.base;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.bean.IdentifiableBean;
-import com.liferay.portal.kernel.dao.db.DB;
-import com.liferay.portal.kernel.dao.db.DBFactoryUtil;
 import com.liferay.portal.kernel.dao.jdbc.SqlUpdate;
 import com.liferay.portal.kernel.dao.jdbc.SqlUpdateFactoryUtil;
-import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
-import com.liferay.portal.kernel.dao.orm.DefaultActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
-import com.liferay.portal.kernel.dao.orm.ExportActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Projection;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.lar.ExportImportHelperUtil;
-import com.liferay.portal.kernel.lar.ManifestSummary;
-import com.liferay.portal.kernel.lar.PortletDataContext;
-import com.liferay.portal.kernel.lar.StagedModelDataHandlerUtil;
-import com.liferay.portal.kernel.lar.StagedModelType;
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.model.PersistedModel;
 import com.liferay.portal.service.BaseLocalServiceImpl;
 import com.liferay.portal.service.PersistedModelLocalServiceRegistry;
-import com.liferay.portal.service.persistence.ClassNamePersistence;
 import com.liferay.portal.service.persistence.CompanyPersistence;
 import com.liferay.portal.service.persistence.GroupFinder;
 import com.liferay.portal.service.persistence.GroupPersistence;
@@ -50,7 +37,6 @@ import com.liferay.portal.service.persistence.PortletPreferencesPersistence;
 import com.liferay.portal.service.persistence.SubscriptionPersistence;
 import com.liferay.portal.service.persistence.UserFinder;
 import com.liferay.portal.service.persistence.UserPersistence;
-import com.liferay.portal.util.PortalUtil;
 
 import com.liferay.portlet.asset.service.persistence.AssetEntryFinder;
 import com.liferay.portlet.asset.service.persistence.AssetEntryPersistence;
@@ -85,7 +71,6 @@ import javax.sql.DataSource;
  * @see com.liferay.portlet.calendar.service.CalEventLocalServiceUtil
  * @generated
  */
-@ProviderType
 public abstract class CalEventLocalServiceBaseImpl extends BaseLocalServiceImpl
 	implements CalEventLocalService, IdentifiableBean {
 	/*
@@ -99,10 +84,11 @@ public abstract class CalEventLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 *
 	 * @param calEvent the cal event
 	 * @return the cal event that was added
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
-	public CalEvent addCalEvent(CalEvent calEvent) {
+	public CalEvent addCalEvent(CalEvent calEvent) throws SystemException {
 		calEvent.setNew(true);
 
 		return calEventPersistence.update(calEvent);
@@ -125,10 +111,12 @@ public abstract class CalEventLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * @param eventId the primary key of the cal event
 	 * @return the cal event that was removed
 	 * @throws PortalException if a cal event with the primary key could not be found
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.DELETE)
 	@Override
-	public CalEvent deleteCalEvent(long eventId) throws PortalException {
+	public CalEvent deleteCalEvent(long eventId)
+		throws PortalException, SystemException {
 		return calEventPersistence.remove(eventId);
 	}
 
@@ -137,10 +125,11 @@ public abstract class CalEventLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 *
 	 * @param calEvent the cal event
 	 * @return the cal event that was removed
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.DELETE)
 	@Override
-	public CalEvent deleteCalEvent(CalEvent calEvent) {
+	public CalEvent deleteCalEvent(CalEvent calEvent) throws SystemException {
 		return calEventPersistence.remove(calEvent);
 	}
 
@@ -157,9 +146,12 @@ public abstract class CalEventLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 *
 	 * @param dynamicQuery the dynamic query
 	 * @return the matching rows
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery) {
+	@SuppressWarnings("rawtypes")
+	public List dynamicQuery(DynamicQuery dynamicQuery)
+		throws SystemException {
 		return calEventPersistence.findWithDynamicQuery(dynamicQuery);
 	}
 
@@ -174,10 +166,12 @@ public abstract class CalEventLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * @param start the lower bound of the range of model instances
 	 * @param end the upper bound of the range of model instances (not inclusive)
 	 * @return the range of matching rows
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
-		int end) {
+	@SuppressWarnings("rawtypes")
+	public List dynamicQuery(DynamicQuery dynamicQuery, int start, int end)
+		throws SystemException {
 		return calEventPersistence.findWithDynamicQuery(dynamicQuery, start, end);
 	}
 
@@ -193,10 +187,12 @@ public abstract class CalEventLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * @param end the upper bound of the range of model instances (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching rows
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
-		int end, OrderByComparator<T> orderByComparator) {
+	@SuppressWarnings("rawtypes")
+	public List dynamicQuery(DynamicQuery dynamicQuery, int start, int end,
+		OrderByComparator orderByComparator) throws SystemException {
 		return calEventPersistence.findWithDynamicQuery(dynamicQuery, start,
 			end, orderByComparator);
 	}
@@ -206,9 +202,11 @@ public abstract class CalEventLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 *
 	 * @param dynamicQuery the dynamic query
 	 * @return the number of rows that match the dynamic query
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public long dynamicQueryCount(DynamicQuery dynamicQuery) {
+	public long dynamicQueryCount(DynamicQuery dynamicQuery)
+		throws SystemException {
 		return calEventPersistence.countWithDynamicQuery(dynamicQuery);
 	}
 
@@ -218,17 +216,32 @@ public abstract class CalEventLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * @param dynamicQuery the dynamic query
 	 * @param projection the projection to apply to the query
 	 * @return the number of rows that match the dynamic query
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public long dynamicQueryCount(DynamicQuery dynamicQuery,
-		Projection projection) {
+		Projection projection) throws SystemException {
 		return calEventPersistence.countWithDynamicQuery(dynamicQuery,
 			projection);
 	}
 
 	@Override
-	public CalEvent fetchCalEvent(long eventId) {
+	public CalEvent fetchCalEvent(long eventId) throws SystemException {
 		return calEventPersistence.fetchByPrimaryKey(eventId);
+	}
+
+	/**
+	 * Returns the cal event with the matching UUID and company.
+	 *
+	 * @param uuid the cal event's UUID
+	 * @param  companyId the primary key of the company
+	 * @return the matching cal event, or <code>null</code> if a matching cal event could not be found
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public CalEvent fetchCalEventByUuidAndCompanyId(String uuid, long companyId)
+		throws SystemException {
+		return calEventPersistence.fetchByUuid_C_First(uuid, companyId, null);
 	}
 
 	/**
@@ -237,9 +250,11 @@ public abstract class CalEventLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * @param uuid the cal event's UUID
 	 * @param groupId the primary key of the group
 	 * @return the matching cal event, or <code>null</code> if a matching cal event could not be found
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public CalEvent fetchCalEventByUuidAndGroupId(String uuid, long groupId) {
+	public CalEvent fetchCalEventByUuidAndGroupId(String uuid, long groupId)
+		throws SystemException {
 		return calEventPersistence.fetchByUUID_G(uuid, groupId);
 	}
 
@@ -249,116 +264,33 @@ public abstract class CalEventLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * @param eventId the primary key of the cal event
 	 * @return the cal event
 	 * @throws PortalException if a cal event with the primary key could not be found
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public CalEvent getCalEvent(long eventId) throws PortalException {
+	public CalEvent getCalEvent(long eventId)
+		throws PortalException, SystemException {
 		return calEventPersistence.findByPrimaryKey(eventId);
 	}
 
 	@Override
-	public ActionableDynamicQuery getActionableDynamicQuery() {
-		ActionableDynamicQuery actionableDynamicQuery = new DefaultActionableDynamicQuery();
-
-		actionableDynamicQuery.setBaseLocalService(com.liferay.portlet.calendar.service.CalEventLocalServiceUtil.getService());
-		actionableDynamicQuery.setClass(CalEvent.class);
-		actionableDynamicQuery.setClassLoader(getClassLoader());
-
-		actionableDynamicQuery.setPrimaryKeyPropertyName("eventId");
-
-		return actionableDynamicQuery;
-	}
-
-	protected void initActionableDynamicQuery(
-		ActionableDynamicQuery actionableDynamicQuery) {
-		actionableDynamicQuery.setBaseLocalService(com.liferay.portlet.calendar.service.CalEventLocalServiceUtil.getService());
-		actionableDynamicQuery.setClass(CalEvent.class);
-		actionableDynamicQuery.setClassLoader(getClassLoader());
-
-		actionableDynamicQuery.setPrimaryKeyPropertyName("eventId");
-	}
-
-	@Override
-	public ExportActionableDynamicQuery getExportActionableDynamicQuery(
-		final PortletDataContext portletDataContext) {
-		final ExportActionableDynamicQuery exportActionableDynamicQuery = new ExportActionableDynamicQuery() {
-				@Override
-				public long performCount() throws PortalException {
-					ManifestSummary manifestSummary = portletDataContext.getManifestSummary();
-
-					StagedModelType stagedModelType = getStagedModelType();
-
-					long modelAdditionCount = super.performCount();
-
-					manifestSummary.addModelAdditionCount(stagedModelType.toString(),
-						modelAdditionCount);
-
-					long modelDeletionCount = ExportImportHelperUtil.getModelDeletionCount(portletDataContext,
-							stagedModelType);
-
-					manifestSummary.addModelDeletionCount(stagedModelType.toString(),
-						modelDeletionCount);
-
-					return modelAdditionCount;
-				}
-			};
-
-		initActionableDynamicQuery(exportActionableDynamicQuery);
-
-		exportActionableDynamicQuery.setAddCriteriaMethod(new ActionableDynamicQuery.AddCriteriaMethod() {
-				@Override
-				public void addCriteria(DynamicQuery dynamicQuery) {
-					portletDataContext.addDateRangeCriteria(dynamicQuery,
-						"modifiedDate");
-				}
-			});
-
-		exportActionableDynamicQuery.setCompanyId(portletDataContext.getCompanyId());
-
-		exportActionableDynamicQuery.setGroupId(portletDataContext.getScopeGroupId());
-
-		exportActionableDynamicQuery.setPerformActionMethod(new ActionableDynamicQuery.PerformActionMethod() {
-				@Override
-				public void performAction(Object object)
-					throws PortalException {
-					CalEvent stagedModel = (CalEvent)object;
-
-					StagedModelDataHandlerUtil.exportStagedModel(portletDataContext,
-						stagedModel);
-				}
-			});
-		exportActionableDynamicQuery.setStagedModelType(new StagedModelType(
-				PortalUtil.getClassNameId(CalEvent.class.getName())));
-
-		return exportActionableDynamicQuery;
-	}
-
-	/**
-	 * @throws PortalException
-	 */
-	@Override
-	public PersistedModel deletePersistedModel(PersistedModel persistedModel)
-		throws PortalException {
-		return calEventLocalService.deleteCalEvent((CalEvent)persistedModel);
-	}
-
-	@Override
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
-		throws PortalException {
+		throws PortalException, SystemException {
 		return calEventPersistence.findByPrimaryKey(primaryKeyObj);
 	}
 
+	/**
+	 * Returns the cal event with the matching UUID and company.
+	 *
+	 * @param uuid the cal event's UUID
+	 * @param  companyId the primary key of the company
+	 * @return the matching cal event
+	 * @throws PortalException if a matching cal event could not be found
+	 * @throws SystemException if a system exception occurred
+	 */
 	@Override
-	public List<CalEvent> getCalEventsByUuidAndCompanyId(String uuid,
-		long companyId) {
-		return calEventPersistence.findByUuid_C(uuid, companyId);
-	}
-
-	@Override
-	public List<CalEvent> getCalEventsByUuidAndCompanyId(String uuid,
-		long companyId, int start, int end,
-		OrderByComparator<CalEvent> orderByComparator) {
-		return calEventPersistence.findByUuid_C(uuid, companyId, start, end,
-			orderByComparator);
+	public CalEvent getCalEventByUuidAndCompanyId(String uuid, long companyId)
+		throws PortalException, SystemException {
+		return calEventPersistence.findByUuid_C_First(uuid, companyId, null);
 	}
 
 	/**
@@ -368,10 +300,11 @@ public abstract class CalEventLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * @param groupId the primary key of the group
 	 * @return the matching cal event
 	 * @throws PortalException if a matching cal event could not be found
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public CalEvent getCalEventByUuidAndGroupId(String uuid, long groupId)
-		throws PortalException {
+		throws PortalException, SystemException {
 		return calEventPersistence.findByUUID_G(uuid, groupId);
 	}
 
@@ -385,9 +318,11 @@ public abstract class CalEventLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * @param start the lower bound of the range of cal events
 	 * @param end the upper bound of the range of cal events (not inclusive)
 	 * @return the range of cal events
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public List<CalEvent> getCalEvents(int start, int end) {
+	public List<CalEvent> getCalEvents(int start, int end)
+		throws SystemException {
 		return calEventPersistence.findAll(start, end);
 	}
 
@@ -395,9 +330,10 @@ public abstract class CalEventLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * Returns the number of cal events.
 	 *
 	 * @return the number of cal events
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public int getCalEventsCount() {
+	public int getCalEventsCount() throws SystemException {
 		return calEventPersistence.countAll();
 	}
 
@@ -406,10 +342,11 @@ public abstract class CalEventLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 *
 	 * @param calEvent the cal event
 	 * @return the cal event that was updated
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
-	public CalEvent updateCalEvent(CalEvent calEvent) {
+	public CalEvent updateCalEvent(CalEvent calEvent) throws SystemException {
 		return calEventPersistence.update(calEvent);
 	}
 
@@ -503,63 +440,6 @@ public abstract class CalEventLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 */
 	public void setMailService(com.liferay.mail.service.MailService mailService) {
 		this.mailService = mailService;
-	}
-
-	/**
-	 * Returns the class name local service.
-	 *
-	 * @return the class name local service
-	 */
-	public com.liferay.portal.service.ClassNameLocalService getClassNameLocalService() {
-		return classNameLocalService;
-	}
-
-	/**
-	 * Sets the class name local service.
-	 *
-	 * @param classNameLocalService the class name local service
-	 */
-	public void setClassNameLocalService(
-		com.liferay.portal.service.ClassNameLocalService classNameLocalService) {
-		this.classNameLocalService = classNameLocalService;
-	}
-
-	/**
-	 * Returns the class name remote service.
-	 *
-	 * @return the class name remote service
-	 */
-	public com.liferay.portal.service.ClassNameService getClassNameService() {
-		return classNameService;
-	}
-
-	/**
-	 * Sets the class name remote service.
-	 *
-	 * @param classNameService the class name remote service
-	 */
-	public void setClassNameService(
-		com.liferay.portal.service.ClassNameService classNameService) {
-		this.classNameService = classNameService;
-	}
-
-	/**
-	 * Returns the class name persistence.
-	 *
-	 * @return the class name persistence
-	 */
-	public ClassNamePersistence getClassNamePersistence() {
-		return classNamePersistence;
-	}
-
-	/**
-	 * Sets the class name persistence.
-	 *
-	 * @param classNamePersistence the class name persistence
-	 */
-	public void setClassNamePersistence(
-		ClassNamePersistence classNamePersistence) {
-		this.classNamePersistence = classNamePersistence;
 	}
 
 	/**
@@ -1333,18 +1213,13 @@ public abstract class CalEventLocalServiceBaseImpl extends BaseLocalServiceImpl
 	}
 
 	/**
-	 * Performs a SQL query.
+	 * Performs an SQL query.
 	 *
 	 * @param sql the sql query
 	 */
-	protected void runSQL(String sql) {
+	protected void runSQL(String sql) throws SystemException {
 		try {
 			DataSource dataSource = calEventPersistence.getDataSource();
-
-			DB db = DBFactoryUtil.getDB();
-
-			sql = db.buildSQL(sql);
-			sql = PortalUtil.transformSQL(sql);
 
 			SqlUpdate sqlUpdate = SqlUpdateFactoryUtil.getSqlUpdate(dataSource,
 					sql, new int[0]);
@@ -1366,12 +1241,6 @@ public abstract class CalEventLocalServiceBaseImpl extends BaseLocalServiceImpl
 	protected com.liferay.counter.service.CounterLocalService counterLocalService;
 	@BeanReference(type = com.liferay.mail.service.MailService.class)
 	protected com.liferay.mail.service.MailService mailService;
-	@BeanReference(type = com.liferay.portal.service.ClassNameLocalService.class)
-	protected com.liferay.portal.service.ClassNameLocalService classNameLocalService;
-	@BeanReference(type = com.liferay.portal.service.ClassNameService.class)
-	protected com.liferay.portal.service.ClassNameService classNameService;
-	@BeanReference(type = ClassNamePersistence.class)
-	protected ClassNamePersistence classNamePersistence;
 	@BeanReference(type = com.liferay.portal.service.CompanyLocalService.class)
 	protected com.liferay.portal.service.CompanyLocalService companyLocalService;
 	@BeanReference(type = com.liferay.portal.service.CompanyService.class)

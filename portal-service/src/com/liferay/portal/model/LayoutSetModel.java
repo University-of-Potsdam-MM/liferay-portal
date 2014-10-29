@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -39,7 +39,7 @@ import java.util.Date;
  * @generated
  */
 @ProviderType
-public interface LayoutSetModel extends BaseModel<LayoutSet>, MVCCModel {
+public interface LayoutSetModel extends BaseModel<LayoutSet> {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -59,22 +59,6 @@ public interface LayoutSetModel extends BaseModel<LayoutSet>, MVCCModel {
 	 * @param primaryKey the primary key of this layout set
 	 */
 	public void setPrimaryKey(long primaryKey);
-
-	/**
-	 * Returns the mvcc version of this layout set.
-	 *
-	 * @return the mvcc version of this layout set
-	 */
-	@Override
-	public long getMvccVersion();
-
-	/**
-	 * Sets the mvcc version of this layout set.
-	 *
-	 * @param mvccVersion the mvcc version of this layout set
-	 */
-	@Override
-	public void setMvccVersion(long mvccVersion);
 
 	/**
 	 * Returns the layout set ID of this layout set.
@@ -166,6 +150,27 @@ public interface LayoutSetModel extends BaseModel<LayoutSet>, MVCCModel {
 	 * @param privateLayout the private layout of this layout set
 	 */
 	public void setPrivateLayout(boolean privateLayout);
+
+	/**
+	 * Returns the logo of this layout set.
+	 *
+	 * @return the logo of this layout set
+	 */
+	public boolean getLogo();
+
+	/**
+	 * Returns <code>true</code> if this layout set is logo.
+	 *
+	 * @return <code>true</code> if this layout set is logo; <code>false</code> otherwise
+	 */
+	public boolean isLogo();
+
+	/**
+	 * Sets whether this layout set is logo.
+	 *
+	 * @param logo the logo of this layout set
+	 */
+	public void setLogo(boolean logo);
 
 	/**
 	 * Returns the logo ID of this layout set.

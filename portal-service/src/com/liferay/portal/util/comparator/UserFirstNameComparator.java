@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -20,7 +20,7 @@ import com.liferay.portal.model.User;
 /**
  * @author Brian Wing Shun Chan
  */
-public class UserFirstNameComparator extends OrderByComparator<User> {
+public class UserFirstNameComparator extends OrderByComparator {
 
 	public static final String ORDER_BY_ASC =
 		"firstName ASC, middleName ASC, lastName ASC";
@@ -41,7 +41,10 @@ public class UserFirstNameComparator extends OrderByComparator<User> {
 	}
 
 	@Override
-	public int compare(User user1, User user2) {
+	public int compare(Object obj1, Object obj2) {
+		User user1 = (User)obj1;
+		User user2 = (User)obj2;
+
 		String firstName1 = user1.getFirstName();
 		String firstName2 = user2.getFirstName();
 

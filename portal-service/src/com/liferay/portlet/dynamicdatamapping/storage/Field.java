@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portlet.dynamicdatamapping.storage;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.ListUtil;
@@ -116,13 +117,13 @@ public class Field implements Serializable {
 		return _valuesMap.keySet();
 	}
 
-	public String getDataType() throws PortalException {
+	public String getDataType() throws PortalException, SystemException {
 		DDMStructure ddmStructure = getDDMStructure();
 
 		return ddmStructure.getFieldDataType(_name);
 	}
 
-	public DDMStructure getDDMStructure() {
+	public DDMStructure getDDMStructure() throws SystemException {
 		return DDMStructureLocalServiceUtil.fetchStructure(_ddmStructureId);
 	}
 
@@ -138,21 +139,23 @@ public class Field implements Serializable {
 		return _name;
 	}
 
-	public String getRenderedValue(Locale locale) throws PortalException {
+	public String getRenderedValue(Locale locale)
+		throws PortalException, SystemException {
+
 		FieldRenderer fieldRenderer = getFieldRenderer();
 
 		return fieldRenderer.render(this, locale);
 	}
 
 	public String getRenderedValue(Locale locale, int valueIndex)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		FieldRenderer fieldRenderer = getFieldRenderer();
 
 		return fieldRenderer.render(this, locale, valueIndex);
 	}
 
-	public String getType() throws PortalException {
+	public String getType() throws PortalException, SystemException {
 		DDMStructure ddmStructure = getDDMStructure();
 
 		return ddmStructure.getFieldType(_name);
@@ -178,7 +181,9 @@ public class Field implements Serializable {
 				return values.get(0);
 			}
 
-			if (values.size() > 1) {
+			boolean repeatable = isRepeatable();
+
+			if (repeatable) {
 				return FieldConstants.getSerializable(getDataType(), values);
 			}
 
@@ -220,7 +225,7 @@ public class Field implements Serializable {
 		}
 	}
 
-	public boolean isRepeatable() throws PortalException {
+	public boolean isRepeatable() throws PortalException, SystemException {
 		DDMStructure ddmStructure = getDDMStructure();
 
 		return ddmStructure.isFieldRepeatable(_name);
@@ -270,7 +275,9 @@ public class Field implements Serializable {
 		_valuesMap = valuesMap;
 	}
 
-	protected FieldRenderer getFieldRenderer() throws PortalException {
+	protected FieldRenderer getFieldRenderer()
+		throws PortalException, SystemException {
+
 		DDMStructure ddmStructure = getDDMStructure();
 
 		String dataType = null;

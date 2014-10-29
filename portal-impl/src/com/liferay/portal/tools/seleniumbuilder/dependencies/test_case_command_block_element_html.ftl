@@ -1,5 +1,3 @@
-<#assign testCaseCommand = testCaseCommandElement.attributeValue("name")>
-
 <li id="${testCaseName?uncap_first}TestCase${testCaseCommand}">
 	<#assign lineFolds = lineFolds + 1>
 
@@ -11,54 +9,24 @@
 		<div class="expand-line">
 			<h3 class="testCaseCommand">${testCaseName}#${testCaseCommand}
 				<#if testCaseCommandElement.attributeValue("depends")??>
-					[depends: ${testCaseCommandElement.attributeValue("depends")}]
-				</#if>
-
-				<#if testCaseCommandElement.attributeValue("known-issues")??>
-					<#assign knownIssues = testCaseCommandElement.attributeValue("known-issues")>
-
-					[Known Issues:
-						<#list knownIssues?split(",") as knownIssue>
-							<a href="https://issues.liferay.com/browse/${knownIssue}">${knownIssue}</a>
-
-							<#if knownIssue_has_next>
-								,
-							</#if>
-						</#list>
-					]
+					[depends ~ ${testCaseCommandElement.attributeValue("depends")}]
 				</#if>
 			</h3>
 		</div>
 	</div>
 
 	<ul id="collapseToggle${lineFolds}" class="collapse">
-		<#if testCaseRootElement.elements("property")??>
-			<#assign testCasePropertyElements = testCaseRootElement.elements("property")>
+		<#assign testCaseVarElements = testCaseRootElement.elements("var")>
 
-			<#list testCasePropertyElements as testCasePropertyElement>
-				<#assign lineNumber = testCasePropertyElement.attributeValue("line-number")>
+		<#list testCaseVarElements as testCaseVarElement>
+			<#assign lineNumber = testCaseVarElement.attributeValue("line-number")>
 
-				<li id="${testCaseName?uncap_first}TestCase${lineNumber}">
-					<#assign displayElement = testCasePropertyElement>
+			<li id="${testCaseName?uncap_first}TestCase${lineNumber}">
+				<#assign displayElement = testCaseVarElement>
 
-					<#include "element_whole_html.ftl">
-				</li>
-			</#list>
-		</#if>
-
-		<#if testCaseRootElement.elements("var")??>
-			<#assign testCaseVarElements = testCaseRootElement.elements("var")>
-
-			<#list testCaseVarElements as testCaseVarElement>
-				<#assign lineNumber = testCaseVarElement.attributeValue("line-number")>
-
-				<li id="${testCaseName?uncap_first}TestCase${lineNumber}">
-					<#assign displayElement = testCaseVarElement>
-
-					<#include "element_whole_html.ftl">
-				</li>
-			</#list>
-		</#if>
+				<#include "element_whole_html.ftl">
+			</li>
+		</#list>
 
 		<#if testCaseRootElement.element("set-up")??>
 			<#assign testCaseSetupElement = testCaseRootElement.element("set-up")>
@@ -70,17 +38,9 @@
 
 				<#include "element_open_html.ftl">
 
-				<#assign blockElement = testCaseSetupElement>
+				<#assign testCaseBlockElement = testCaseSetupElement>
 
-				<#assign void = testCaseNameStack.push(testCaseName)>
-
-				<#assign void = blockLevelStack.push("testcase")>
-
-				<#include "block_element_html.ftl">
-
-				<#assign void = blockLevelStack.pop()>
-
-				<#assign void = testCaseNameStack.pop()>
+				<#include "test_case_block_element_html.ftl">
 
 				<#assign displayElement = testCaseSetupElement>
 
@@ -90,18 +50,14 @@
 
 		<#assign lineNumber = testCaseCommandElement.attributeValue("line-number")>
 
-		<li id="${testCaseNameStack.peek()?uncap_first}TestCase${lineNumber}">
+		<li id="${testCaseName?uncap_first}TestCase${lineNumber}">
 			<#assign displayElement = testCaseCommandElement>
 
 			<#include "element_open_html.ftl">
 
-			<#assign void = blockLevelStack.push("testcase")>
+			<#assign testCaseBlockElement = testCaseCommandElement>
 
-			<#assign blockElement = testCaseCommandElement>
-
-			<#include "block_element_html.ftl">
-
-			<#assign void = blockLevelStack.pop()>
+			<#include "test_case_block_element_html.ftl">
 
 			<#assign displayElement = testCaseCommandElement>
 
@@ -118,17 +74,9 @@
 
 				<#include "element_open_html.ftl">
 
-				<#assign void = testCaseNameStack.push(testCaseName)>
+				<#assign testCaseBlockElement = testCaseTearDownElement>
 
-				<#assign void = blockLevelStack.push("testcase")>
-
-				<#assign blockElement = testCaseTearDownElement>
-
-				<#include "block_element_html.ftl">
-
-				<#assign void = blockLevelStack.pop()>
-
-				<#assign void = testCaseNameStack.pop()>
+				<#include "test_case_block_element_html.ftl">
 
 				<#assign displayElement = testCaseTearDownElement>
 

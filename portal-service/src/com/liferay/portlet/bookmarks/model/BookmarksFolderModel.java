@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,6 +18,7 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.bean.AutoEscape;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.trash.TrashHandler;
 import com.liferay.portal.model.BaseModel;
 import com.liferay.portal.model.CacheModel;
@@ -153,9 +154,10 @@ public interface BookmarksFolderModel extends BaseModel<BookmarksFolder>,
 	 * Returns the user uuid of this bookmarks folder.
 	 *
 	 * @return the user uuid of this bookmarks folder
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public String getUserUuid();
+	public String getUserUuid() throws SystemException;
 
 	/**
 	 * Sets the user uuid of this bookmarks folder.
@@ -323,9 +325,10 @@ public interface BookmarksFolderModel extends BaseModel<BookmarksFolder>,
 	 * Returns the status by user uuid of this bookmarks folder.
 	 *
 	 * @return the status by user uuid of this bookmarks folder
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public String getStatusByUserUuid();
+	public String getStatusByUserUuid() throws SystemException;
 
 	/**
 	 * Sets the status by user uuid of this bookmarks folder.
@@ -372,9 +375,10 @@ public interface BookmarksFolderModel extends BaseModel<BookmarksFolder>,
 	 * Returns the trash entry created when this bookmarks folder was moved to the Recycle Bin. The trash entry may belong to one of the ancestors of this bookmarks folder.
 	 *
 	 * @return the trash entry created when this bookmarks folder was moved to the Recycle Bin
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public TrashEntry getTrashEntry() throws PortalException;
+	public TrashEntry getTrashEntry() throws PortalException, SystemException;
 
 	/**
 	 * Returns the class primary key of the trash entry for this bookmarks folder.
@@ -404,20 +408,14 @@ public interface BookmarksFolderModel extends BaseModel<BookmarksFolder>,
 	 * Returns <code>true</code> if the parent of this bookmarks folder is in the Recycle Bin.
 	 *
 	 * @return <code>true</code> if the parent of this bookmarks folder is in the Recycle Bin; <code>false</code> otherwise
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public boolean isInTrashContainer();
 
-	@Override
-	public boolean isInTrashExplicitly();
-
-	@Override
-	public boolean isInTrashImplicitly();
-
 	/**
 	 * @deprecated As of 6.1.0, replaced by {@link #isApproved()}
 	 */
-	@Deprecated
 	@Override
 	public boolean getApproved();
 

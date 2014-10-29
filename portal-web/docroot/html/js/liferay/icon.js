@@ -32,11 +32,9 @@ AUI.add(
 			_forcePost: function(event) {
 				var instance = this;
 
-				if (!Liferay.Surface || !Liferay.Surface.app) {
-					Liferay.Util.forcePost(event.currentTarget);
+				Liferay.Util.forcePost(event.currentTarget);
 
-					event.preventDefault();
-				}
+				event.preventDefault();
 			},
 
 			_onMouseHover: function(event, src) {

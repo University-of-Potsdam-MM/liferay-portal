@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -16,6 +16,7 @@ package com.liferay.portlet.messageboards.model.impl;
 
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.parsers.bbcode.BBCodeTranslatorUtil;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.Folder;
@@ -47,7 +48,9 @@ public class MBMessageImpl extends MBMessageBaseImpl {
 	}
 
 	@Override
-	public Folder addAttachmentsFolder() throws PortalException {
+	public Folder addAttachmentsFolder()
+		throws PortalException, SystemException {
+
 		if (_attachmentsFolderId !=
 				DLFolderConstants.DEFAULT_PARENT_FOLDER_ID) {
 
@@ -78,19 +81,21 @@ public class MBMessageImpl extends MBMessageBaseImpl {
 	}
 
 	@Override
-	public String[] getAssetTagNames() {
+	public String[] getAssetTagNames() throws SystemException {
 		return AssetTagLocalServiceUtil.getTagNames(
 			MBMessage.class.getName(), getMessageId());
 	}
 
 	@Override
-	public List<FileEntry> getAttachmentsFileEntries() throws PortalException {
+	public List<FileEntry> getAttachmentsFileEntries()
+		throws PortalException, SystemException {
+
 		return getAttachmentsFileEntries(QueryUtil.ALL_POS, QueryUtil.ALL_POS);
 	}
 
 	@Override
 	public List<FileEntry> getAttachmentsFileEntries(int start, int end)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		List<FileEntry> fileEntries = new ArrayList<FileEntry>();
 
@@ -106,7 +111,9 @@ public class MBMessageImpl extends MBMessageBaseImpl {
 	}
 
 	@Override
-	public int getAttachmentsFileEntriesCount() throws PortalException {
+	public int getAttachmentsFileEntriesCount()
+		throws PortalException, SystemException {
+
 		int attachmentsFileEntriesCount = 0;
 
 		long attachmentsFolderId = getAttachmentsFolderId();
@@ -122,7 +129,9 @@ public class MBMessageImpl extends MBMessageBaseImpl {
 	}
 
 	@Override
-	public long getAttachmentsFolderId() throws PortalException {
+	public long getAttachmentsFolderId()
+		throws PortalException, SystemException {
+
 		if (_attachmentsFolderId !=
 				DLFolderConstants.DEFAULT_PARENT_FOLDER_ID) {
 
@@ -176,13 +185,13 @@ public class MBMessageImpl extends MBMessageBaseImpl {
 	}
 
 	@Override
-	public MBCategory getCategory() throws PortalException {
+	public MBCategory getCategory() throws PortalException, SystemException {
 		return MBCategoryLocalServiceUtil.getCategory(getCategoryId());
 	}
 
 	@Override
 	public List<FileEntry> getDeletedAttachmentsFileEntries()
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return getDeletedAttachmentsFileEntries(
 			QueryUtil.ALL_POS, QueryUtil.ALL_POS);
@@ -190,7 +199,7 @@ public class MBMessageImpl extends MBMessageBaseImpl {
 
 	@Override
 	public List<FileEntry> getDeletedAttachmentsFileEntries(int start, int end)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		List<FileEntry> fileEntries = new ArrayList<FileEntry>();
 
@@ -206,7 +215,9 @@ public class MBMessageImpl extends MBMessageBaseImpl {
 	}
 
 	@Override
-	public int getDeletedAttachmentsFileEntriesCount() throws PortalException {
+	public int getDeletedAttachmentsFileEntriesCount()
+		throws PortalException, SystemException {
+
 		int deletedAttachmentsFileEntriesCount = 0;
 
 		long attachmentsFolderId = getAttachmentsFolderId();
@@ -222,12 +233,14 @@ public class MBMessageImpl extends MBMessageBaseImpl {
 	}
 
 	@Override
-	public MBThread getThread() throws PortalException {
+	public MBThread getThread() throws PortalException, SystemException {
 		return MBThreadLocalServiceUtil.getThread(getThreadId());
 	}
 
 	@Override
-	public long getThreadAttachmentsFolderId() throws PortalException {
+	public long getThreadAttachmentsFolderId()
+		throws PortalException, SystemException {
+
 		return getThread().getAttachmentsFolderId();
 	}
 

@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -17,12 +17,11 @@
 <%@ include file="/html/portlet/layouts_admin/init.jsp" %>
 
 <%
-Group group = layoutsAdminDisplayContext.getGroup();
-Layout selLayout = layoutsAdminDisplayContext.getSelLayout();
+Group group = (Group)request.getAttribute("edit_pages.jsp-group");
+boolean privateLayout = ((Boolean)request.getAttribute("edit_pages.jsp-privateLayout")).booleanValue();
+Layout selLayout = (Layout)request.getAttribute("edit_pages.jsp-selLayout");
 
-LayoutType selLayoutType = selLayout.getLayoutType();
-
-String[] types = LayoutTypeControllerTracker.getTypes();
+LayoutTypePortletImpl selLayoutTypePortlet = new LayoutTypePortletImpl(selLayout);
 
 Locale defaultLocale = LocaleUtil.getDefault();
 String defaultLanguageId = LocaleUtil.toLanguageId(defaultLocale);
@@ -38,7 +37,7 @@ String defaultLanguageId = LocaleUtil.toLanguageId(defaultLocale);
 StringBuilder friendlyURLBase = new StringBuilder();
 %>
 
-<c:if test="<%= !group.isLayoutPrototype() && selLayoutType.isURLFriendliable() %>">
+<c:if test="<%= !group.isLayoutPrototype() && PortalUtil.isLayoutFriendliable(selLayout) %>">
 
 	<%
 	friendlyURLBase.append(themeDisplay.getPortalURL());
@@ -48,39 +47,52 @@ StringBuilder friendlyURLBase = new StringBuilder();
 	String virtualHostname = layoutSet.getVirtualHostname();
 
 	if (Validator.isNull(virtualHostname) || (friendlyURLBase.indexOf(virtualHostname) == -1)) {
-		friendlyURLBase.append(group.getPathFriendlyURL(layoutsAdminDisplayContext.isPrivateLayout(), themeDisplay));
+		friendlyURLBase.append(group.getPathFriendlyURL(privateLayout, themeDisplay));
 		friendlyURLBase.append(group.getFriendlyURL());
 	}
 	%>
 
-	<liferay-ui:error exception="<%= LayoutFriendlyURLException.class %>" focusField="friendlyURL">
+	<liferay-ui:error exception="<%= LayoutFriendlyURLException.class %>">
 
 		<%
-		Locale exceptionLocale = null;
 		LayoutFriendlyURLException lfurle = (LayoutFriendlyURLException)errorException;
 		%>
 
-		<%@ include file="/html/portlet/layouts_admin/error_friendly_url_exception.jspf" %>
-	</liferay-ui:error>
+		<c:if test="<%= lfurle.getType() == LayoutFriendlyURLException.ADJACENT_SLASHES %>">
+			<liferay-ui:message key="please-enter-a-friendly-url-that-does-not-have-adjacent-slashes" />
+		</c:if>
 
-	<liferay-ui:error exception="<%= LayoutFriendlyURLsException.class %>" focusField="friendlyURL">
+		<c:if test="<%= lfurle.getType() == LayoutFriendlyURLException.DOES_NOT_START_WITH_SLASH %>">
+			<liferay-ui:message key="please-enter-a-friendly-url-that-begins-with-a-slash" />
+		</c:if>
 
-		<%
-		LayoutFriendlyURLsException lfurlse = (LayoutFriendlyURLsException)errorException;
+		<c:if test="<%= lfurle.getType() == LayoutFriendlyURLException.DUPLICATE %>">
+			<liferay-ui:message key="please-enter-a-unique-friendly-url" />
+		</c:if>
 
-		Map<Locale, Exception> localizedExceptionsMap = lfurlse.getLocalizedExceptionsMap();
+		<c:if test="<%= lfurle.getType() == LayoutFriendlyURLException.ENDS_WITH_SLASH %>">
+			<liferay-ui:message key="please-enter-a-friendly-url-that-does-not-end-with-a-slash" />
+		</c:if>
 
-		for (Map.Entry<Locale, Exception> entry : localizedExceptionsMap.entrySet()) {
-			Locale exceptionLocale = entry.getKey();
-			LayoutFriendlyURLException lfurle = (LayoutFriendlyURLException)entry.getValue();
-		%>
+		<c:if test="<%= lfurle.getType() == LayoutFriendlyURLException.INVALID_CHARACTERS %>">
+			<liferay-ui:message key="please-enter-a-friendly-url-with-valid-characters" />
+		</c:if>
 
-			<%@ include file="/html/portlet/layouts_admin/error_friendly_url_exception.jspf" %>
+		<c:if test="<%= lfurle.getType() == LayoutFriendlyURLException.KEYWORD_CONFLICT %>">
+			<%= LanguageUtil.format(pageContext, "please-enter-a-friendly-url-that-does-not-conflict-with-the-keyword-x", lfurle.getKeywordConflict()) %>
+		</c:if>
 
-		<%
-		}
-		%>
+		<c:if test="<%= lfurle.getType() == LayoutFriendlyURLException.POSSIBLE_DUPLICATE %>">
+			<liferay-ui:message key="the-friendly-url-may-conflict-with-another-page" />
+		</c:if>
 
+		<c:if test="<%= lfurle.getType() == LayoutFriendlyURLException.TOO_DEEP %>">
+			<liferay-ui:message key="the-friendly-url-has-too-many-slashes" />
+		</c:if>
+
+		<c:if test="<%= lfurle.getType() == LayoutFriendlyURLException.TOO_SHORT %>">
+			<liferay-ui:message key="please-enter-a-friendly-url-that-is-at-least-two-characters-long" />
+		</c:if>
 	</liferay-ui:error>
 </c:if>
 
@@ -91,16 +103,16 @@ StringBuilder friendlyURLBase = new StringBuilder();
 		<c:when test="<%= !group.isLayoutPrototype() %>">
 			<aui:input name="name" />
 
-			<div class="form-group">
+			<div class="control-group">
 				<aui:input helpMessage="if-checked-this-page-wont-show-up-in-the-navigation-menu" label="hide-from-navigation-menu" name="hidden" />
 			</div>
 
 			<c:choose>
-				<c:when test="<%= selLayoutType.isURLFriendliable() %>">
-					<aui:field-wrapper cssClass="input-flex-add-on" helpMessage='<%= LanguageUtil.format(request, "for-example-x", "<em>/news</em>", false) %>' label="friendly-url" name="friendlyURL">
-						<span class="input-group-addon" id="<portlet:namespace />urlBase"><liferay-ui:message key="<%= StringUtil.shorten(friendlyURLBase.toString(), 40) %>" /></span>
+				<c:when test="<%= PortalUtil.isLayoutFriendliable(selLayout) %>">
+					<aui:field-wrapper cssClass="input-append input-flex-add-on input-prepend" helpMessage='<%= LanguageUtil.format(pageContext, "for-example-x", "<em>/news</em>") %>' label="friendly-url" name="friendlyURL">
+						<span class="add-on" id="<portlet:namespace />urlBase"><liferay-ui:message key="<%= StringUtil.shorten(friendlyURLBase.toString(), 40) %>" /></span>
 
-						<liferay-ui:input-localized availableLocales="<%= LanguageUtil.getAvailableLocales(themeDisplay.getSiteGroupId()) %>" cssClass="form-control" defaultLanguageId="<%= LocaleUtil.toLanguageId(themeDisplay.getSiteDefaultLocale()) %>" name="friendlyURL" xml="<%= selLayout.getFriendlyURLsXML() %>" />
+						<liferay-ui:input-localized availableLocales="<%= LanguageUtil.getAvailableLocales(themeDisplay.getSiteGroupId()) %>" cssClass="input-medium" name="friendlyURL" xml="<%= selLayout.getFriendlyURLsXML() %>" />
 					</aui:field-wrapper>
 				</c:when>
 				<c:otherwise>
@@ -114,10 +126,10 @@ StringBuilder friendlyURLBase = new StringBuilder();
 				LayoutSetPrototype layoutSetPrototype = LayoutSetPrototypeLocalServiceUtil.getLayoutSetPrototype(group.getClassPK());
 
 				boolean layoutSetPrototypeUpdateable = GetterUtil.getBoolean(layoutSetPrototype.getSettingsProperty("layoutsUpdateable"), true);
-				boolean layoutUpdateable = GetterUtil.getBoolean(selLayoutType.getTypeSettingsProperty("layoutUpdateable"), true);
+				boolean layoutUpdateable = GetterUtil.getBoolean(selLayoutTypePortlet.getTypeSettingsProperty("layoutUpdateable"), true);
 				%>
 
-				<aui:input disabled="<%= !layoutSetPrototypeUpdateable %>" helpMessage="allow-site-administrators-to-modify-this-page-for-their-site-help" label="allow-site-administrators-to-modify-this-page-for-their-site" name="TypeSettingsProperties--layoutUpdateable--" type="checkbox" value="<%= layoutUpdateable %>" />
+				<aui:input disabled="<%= !layoutSetPrototypeUpdateable %>" helpMessage="allow-site-administrators-to-modify-this-page-for-their-site-help" label="allow-site-administrators-to-modify-this-page-for-their-site" name="layoutUpdateable" type="checkbox" value="<%= layoutUpdateable %>" />
 			</c:if>
 		</c:when>
 		<c:otherwise>
@@ -134,7 +146,7 @@ StringBuilder friendlyURLBase = new StringBuilder();
 
 		<aui:input name="layoutPrototypeUuid" type="hidden" value="<%= selLayout.getLayoutPrototypeUuid() %>" />
 
-		<aui:input label='<%= LanguageUtil.format(request, "automatically-apply-changes-done-to-the-page-template-x", HtmlUtil.escape(layoutPrototype.getName(user.getLocale())), false) %>' name="layoutPrototypeLinkEnabled" type="checkbox" value="<%= selLayout.isLayoutPrototypeLinkEnabled() %>" />
+		<aui:input label='<%= LanguageUtil.format(pageContext, "automatically-apply-changes-done-to-the-page-template-x", HtmlUtil.escape(layoutPrototype.getName(user.getLocale()))) %>' name="layoutPrototypeLinkEnabled" type="checkbox" value="<%= selLayout.isLayoutPrototypeLinkEnabled() %>" />
 
 		<div class='<%= selLayout.isLayoutPrototypeLinkEnabled() ? "" : "hide" %>' id="<portlet:namespace/>layoutPrototypeMergeAlert">
 
@@ -152,18 +164,16 @@ StringBuilder friendlyURLBase = new StringBuilder();
 		<aui:select name="type">
 
 			<%
-			for (String type : types) {
-				if (type.equals("article") && (group.isLayoutPrototype() || group.isLayoutSetPrototype())) {
+			for (int i = 0; i < PropsValues.LAYOUT_TYPES.length; i++) {
+				if (PropsValues.LAYOUT_TYPES[i].equals("article") && (group.isLayoutPrototype() || group.isLayoutSetPrototype())) {
 					continue;
 				}
-
-				LayoutTypeController layoutTypeController = LayoutTypeControllerTracker.getLayoutTypeController(type);
 			%>
 
-				<aui:option disabled="<%= selLayout.isFirstParent() && !layoutTypeController.isFirstPageable() %>" label='<%= "layout.types." + type %>' selected="<%= selLayout.getType().equals(type) %>" value="<%= type %>" />
+				<aui:option disabled="<%= selLayout.isFirstParent() && !PortalUtil.isLayoutFirstPageable(PropsValues.LAYOUT_TYPES[i]) %>" label='<%= "layout.types." + PropsValues.LAYOUT_TYPES[i] %>' selected="<%= selLayout.getType().equals(PropsValues.LAYOUT_TYPES[i]) %>" value="<%= PropsValues.LAYOUT_TYPES[i] %>" />
 
 			<%
-				}
+			}
 			%>
 
 		</aui:select>
@@ -171,21 +181,21 @@ StringBuilder friendlyURLBase = new StringBuilder();
 		<div id="<portlet:namespace />layoutTypeForm">
 
 			<%
-			for (String type : types) {
-				if (type.equals("article") && (group.isLayoutPrototype() || group.isLayoutSetPrototype())) {
+			for (int i = 0; i < PropsValues.LAYOUT_TYPES.length; i++) {
+				String curLayoutType = PropsValues.LAYOUT_TYPES[i];
+
+				if (PropsValues.LAYOUT_TYPES[i].equals("article") && (group.isLayoutPrototype() || group.isLayoutSetPrototype())) {
 					continue;
 				}
-
-				LayoutTypeController layoutTypeController = LayoutTypeControllerTracker.getLayoutTypeController(type);
 			%>
 
-				<div class="layout-type-form layout-type-form-<%= type %> <%= selLayout.getType().equals(type) ? "" : "hide" %>">
+				<div class="layout-type-form layout-type-form-<%= curLayoutType %> <%= selLayout.getType().equals(PropsValues.LAYOUT_TYPES[i]) ? "" : "hide" %>">
 
 					<%
 					request.setAttribute(WebKeys.SEL_LAYOUT, selLayout);
 					%>
 
-					<liferay-util:include page="<%= layoutTypeController.getEditPage() %>">
+					<liferay-util:include page="<%= StrutsUtil.TEXT_HTML_DIR + PortalUtil.getLayoutEditPage(curLayoutType) %>">
 						<liferay-util:param name="idPrefix" value="details" />
 					</liferay-util:include>
 				</div>
@@ -199,8 +209,8 @@ StringBuilder friendlyURLBase = new StringBuilder();
 </aui:fieldset>
 
 <aui:script>
-	Liferay.Util.toggleBoxes('<portlet:namespace />layoutPrototypeLinkEnabled','<portlet:namespace />layoutPrototypeMergeAlert');
-	Liferay.Util.toggleBoxes('<portlet:namespace />layoutPrototypeLinkEnabled','<portlet:namespace />typeOptions', true);
+	Liferay.Util.toggleBoxes('<portlet:namespace />layoutPrototypeLinkEnabledCheckbox','<portlet:namespace />layoutPrototypeMergeAlert');
+	Liferay.Util.toggleBoxes('<portlet:namespace />layoutPrototypeLinkEnabledCheckbox','<portlet:namespace />typeOptions', true);
 </aui:script>
 
 <aui:script use="aui-base">
@@ -219,7 +229,7 @@ StringBuilder friendlyURLBase = new StringBuilder();
 
 				item.toggle(visible);
 
-				item.all('input, select, textarea').attr('disabled', disabled);
+				item.all('input, select, textarea').set('disabled', disabled);
 			}
 		);
 
@@ -228,7 +238,7 @@ StringBuilder friendlyURLBase = new StringBuilder();
 		}
 	}
 
-	toggleLayoutTypeFields('<%= HtmlUtil.escapeJS(selLayout.getType()) %>');
+	toggleLayoutTypeFields('<%= selLayout.getType() %>');
 
 	var typeSelector = A.one('#<portlet:namespace />type');
 

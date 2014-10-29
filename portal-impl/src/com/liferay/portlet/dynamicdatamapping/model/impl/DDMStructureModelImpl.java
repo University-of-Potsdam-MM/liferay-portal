@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,11 +14,9 @@
 
 package com.liferay.portlet.dynamicdatamapping.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.LocaleException;
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
-import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSON;
 import com.liferay.portal.kernel.lar.StagedModelType;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -29,10 +27,8 @@ import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.CacheModel;
-import com.liferay.portal.model.User;
 import com.liferay.portal.model.impl.BaseModelImpl;
 import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.service.UserLocalServiceUtil;
 import com.liferay.portal.util.PortalUtil;
 
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
@@ -68,7 +64,6 @@ import java.util.TreeSet;
  * @generated
  */
 @JSON(strict = true)
-@ProviderType
 public class DDMStructureModelImpl extends BaseModelImpl<DDMStructure>
 	implements DDMStructureModel {
 	/*
@@ -91,11 +86,11 @@ public class DDMStructureModelImpl extends BaseModelImpl<DDMStructure>
 			{ "structureKey", Types.VARCHAR },
 			{ "name", Types.VARCHAR },
 			{ "description", Types.VARCHAR },
-			{ "definition", Types.CLOB },
+			{ "xsd", Types.CLOB },
 			{ "storageType", Types.VARCHAR },
 			{ "type_", Types.INTEGER }
 		};
-	public static final String TABLE_SQL_CREATE = "create table DDMStructure (uuid_ VARCHAR(75) null,structureId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,parentStructureId LONG,classNameId LONG,structureKey VARCHAR(75) null,name STRING null,description STRING null,definition TEXT null,storageType VARCHAR(75) null,type_ INTEGER)";
+	public static final String TABLE_SQL_CREATE = "create table DDMStructure (uuid_ VARCHAR(75) null,structureId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,parentStructureId LONG,classNameId LONG,structureKey VARCHAR(75) null,name STRING null,description STRING null,xsd TEXT null,storageType VARCHAR(75) null,type_ INTEGER)";
 	public static final String TABLE_SQL_DROP = "drop table DDMStructure";
 	public static final String ORDER_BY_JPQL = " ORDER BY ddmStructure.structureId ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY DDMStructure.structureId ASC";
@@ -111,15 +106,15 @@ public class DDMStructureModelImpl extends BaseModelImpl<DDMStructure>
 	public static final boolean COLUMN_BITMASK_ENABLED = GetterUtil.getBoolean(com.liferay.portal.util.PropsUtil.get(
 				"value.object.column.bitmask.enabled.com.liferay.portlet.dynamicdatamapping.model.DDMStructure"),
 			true);
-	public static final long CLASSNAMEID_COLUMN_BITMASK = 1L;
-	public static final long COMPANYID_COLUMN_BITMASK = 2L;
-	public static final long DESCRIPTION_COLUMN_BITMASK = 4L;
-	public static final long GROUPID_COLUMN_BITMASK = 8L;
-	public static final long NAME_COLUMN_BITMASK = 16L;
-	public static final long PARENTSTRUCTUREID_COLUMN_BITMASK = 32L;
-	public static final long STRUCTUREKEY_COLUMN_BITMASK = 64L;
-	public static final long UUID_COLUMN_BITMASK = 128L;
-	public static final long STRUCTUREID_COLUMN_BITMASK = 256L;
+	public static long CLASSNAMEID_COLUMN_BITMASK = 1L;
+	public static long COMPANYID_COLUMN_BITMASK = 2L;
+	public static long DESCRIPTION_COLUMN_BITMASK = 4L;
+	public static long GROUPID_COLUMN_BITMASK = 8L;
+	public static long NAME_COLUMN_BITMASK = 16L;
+	public static long PARENTSTRUCTUREID_COLUMN_BITMASK = 32L;
+	public static long STRUCTUREKEY_COLUMN_BITMASK = 64L;
+	public static long UUID_COLUMN_BITMASK = 128L;
+	public static long STRUCTUREID_COLUMN_BITMASK = 256L;
 
 	/**
 	 * Converts the soap model instance into a normal model instance.
@@ -147,7 +142,7 @@ public class DDMStructureModelImpl extends BaseModelImpl<DDMStructure>
 		model.setStructureKey(soapModel.getStructureKey());
 		model.setName(soapModel.getName());
 		model.setDescription(soapModel.getDescription());
-		model.setDefinition(soapModel.getDefinition());
+		model.setXsd(soapModel.getXsd());
 		model.setStorageType(soapModel.getStorageType());
 		model.setType(soapModel.getType());
 
@@ -186,18 +181,6 @@ public class DDMStructureModelImpl extends BaseModelImpl<DDMStructure>
 	public static final boolean FINDER_CACHE_ENABLED_DLFILEENTRYTYPES_DDMSTRUCTURES =
 		GetterUtil.getBoolean(com.liferay.portal.util.PropsUtil.get(
 				"value.object.finder.cache.enabled.DLFileEntryTypes_DDMStructures"),
-			true);
-	public static final String MAPPING_TABLE_JOURNALFOLDERS_DDMSTRUCTURES_NAME = "JournalFolders_DDMStructures";
-	public static final Object[][] MAPPING_TABLE_JOURNALFOLDERS_DDMSTRUCTURES_COLUMNS =
-		{
-			{ "structureId", Types.BIGINT },
-			{ "folderId", Types.BIGINT }
-		};
-	public static final String MAPPING_TABLE_JOURNALFOLDERS_DDMSTRUCTURES_SQL_CREATE =
-		"create table JournalFolders_DDMStructures (structureId LONG not null,folderId LONG not null,primary key (structureId, folderId))";
-	public static final boolean FINDER_CACHE_ENABLED_JOURNALFOLDERS_DDMSTRUCTURES =
-		GetterUtil.getBoolean(com.liferay.portal.util.PropsUtil.get(
-				"value.object.finder.cache.enabled.JournalFolders_DDMStructures"),
 			true);
 	public static final long LOCK_EXPIRATION_TIME = GetterUtil.getLong(com.liferay.portal.util.PropsUtil.get(
 				"lock.expiration.time.com.liferay.portlet.dynamicdatamapping.model.DDMStructure"));
@@ -252,12 +235,9 @@ public class DDMStructureModelImpl extends BaseModelImpl<DDMStructure>
 		attributes.put("structureKey", getStructureKey());
 		attributes.put("name", getName());
 		attributes.put("description", getDescription());
-		attributes.put("definition", getDefinition());
+		attributes.put("xsd", getXsd());
 		attributes.put("storageType", getStorageType());
 		attributes.put("type", getType());
-
-		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
-		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
 
 		return attributes;
 	}
@@ -342,10 +322,10 @@ public class DDMStructureModelImpl extends BaseModelImpl<DDMStructure>
 			setDescription(description);
 		}
 
-		String definition = (String)attributes.get("definition");
+		String xsd = (String)attributes.get("xsd");
 
-		if (definition != null) {
-			setDefinition(definition);
+		if (xsd != null) {
+			setXsd(xsd);
 		}
 
 		String storageType = (String)attributes.get("storageType");
@@ -454,19 +434,13 @@ public class DDMStructureModelImpl extends BaseModelImpl<DDMStructure>
 	}
 
 	@Override
-	public String getUserUuid() {
-		try {
-			User user = UserLocalServiceUtil.getUserById(getUserId());
-
-			return user.getUuid();
-		}
-		catch (PortalException pe) {
-			return StringPool.BLANK;
-		}
+	public String getUserUuid() throws SystemException {
+		return PortalUtil.getUserValue(getUserId(), "uuid", _userUuid);
 	}
 
 	@Override
 	public void setUserUuid(String userUuid) {
+		_userUuid = userUuid;
 	}
 
 	@JSON
@@ -823,18 +797,18 @@ public class DDMStructureModelImpl extends BaseModelImpl<DDMStructure>
 
 	@JSON
 	@Override
-	public String getDefinition() {
-		if (_definition == null) {
+	public String getXsd() {
+		if (_xsd == null) {
 			return StringPool.BLANK;
 		}
 		else {
-			return _definition;
+			return _xsd;
 		}
 	}
 
 	@Override
-	public void setDefinition(String definition) {
-		_definition = definition;
+	public void setXsd(String xsd) {
+		_xsd = xsd;
 	}
 
 	@JSON
@@ -864,20 +838,27 @@ public class DDMStructureModelImpl extends BaseModelImpl<DDMStructure>
 		_type = type;
 	}
 
-	public com.liferay.portlet.dynamicdatamapping.model.DDMForm getDDMForm() {
+	public com.liferay.portal.kernel.xml.Document getDocument() {
 		return null;
 	}
 
-	public void setDDMForm(
-		com.liferay.portlet.dynamicdatamapping.model.DDMForm ddmForm) {
+	public void setDocument(com.liferay.portal.kernel.xml.Document document) {
 	}
 
-	public com.liferay.portlet.dynamicdatamapping.model.DDMForm getFullHierarchyDDMForm() {
+	public java.util.Map<java.lang.String, java.util.Map<java.lang.String, java.util.Map<java.lang.String, java.lang.String>>> getLocalizedFieldsMap() {
 		return null;
 	}
 
-	public void setFullHierarchyDDMForm(
-		com.liferay.portlet.dynamicdatamapping.model.DDMForm fullHierarchyDDMForm) {
+	public void setLocalizedFieldsMap(
+		java.util.Map<java.lang.String, java.util.Map<java.lang.String, java.util.Map<java.lang.String, java.lang.String>>> localizedFieldsMap) {
+	}
+
+	public java.util.Map<java.lang.String, java.util.Map<java.lang.String, java.util.Map<java.lang.String, java.lang.String>>> getLocalizedTransientFieldsMap() {
+		return null;
+	}
+
+	public void setLocalizedTransientFieldsMap(
+		java.util.Map<java.lang.String, java.util.Map<java.lang.String, java.util.Map<java.lang.String, java.lang.String>>> localizedTransientFieldsMap) {
 	}
 
 	@Override
@@ -940,28 +921,19 @@ public class DDMStructureModelImpl extends BaseModelImpl<DDMStructure>
 			return StringPool.BLANK;
 		}
 
-		Locale defaultLocale = LocaleUtil.getSiteDefault();
-
-		return LocalizationUtil.getDefaultLanguageId(xml, defaultLocale);
+		return LocalizationUtil.getDefaultLanguageId(xml);
 	}
 
 	@Override
 	public void prepareLocalizedFieldsForImport() throws LocaleException {
-		Locale defaultLocale = LocaleUtil.fromLanguageId(getDefaultLanguageId());
-
-		Locale[] availableLocales = LocaleUtil.fromLanguageIds(getAvailableLanguageIds());
-
-		Locale defaultImportLocale = LocalizationUtil.getDefaultImportLocale(DDMStructure.class.getName(),
-				getPrimaryKey(), defaultLocale, availableLocales);
-
-		prepareLocalizedFieldsForImport(defaultImportLocale);
+		prepareLocalizedFieldsForImport(null);
 	}
 
 	@Override
 	@SuppressWarnings("unused")
 	public void prepareLocalizedFieldsForImport(Locale defaultImportLocale)
 		throws LocaleException {
-		Locale defaultLocale = LocaleUtil.getSiteDefault();
+		Locale defaultLocale = LocaleUtil.getDefault();
 
 		String modelDefaultLanguageId = getDefaultLanguageId();
 
@@ -1012,7 +984,7 @@ public class DDMStructureModelImpl extends BaseModelImpl<DDMStructure>
 		ddmStructureImpl.setStructureKey(getStructureKey());
 		ddmStructureImpl.setName(getName());
 		ddmStructureImpl.setDescription(getDescription());
-		ddmStructureImpl.setDefinition(getDefinition());
+		ddmStructureImpl.setXsd(getXsd());
 		ddmStructureImpl.setStorageType(getStorageType());
 		ddmStructureImpl.setType(getType());
 
@@ -1064,16 +1036,6 @@ public class DDMStructureModelImpl extends BaseModelImpl<DDMStructure>
 	}
 
 	@Override
-	public boolean isEntityCacheEnabled() {
-		return ENTITY_CACHE_ENABLED;
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return FINDER_CACHE_ENABLED;
-	}
-
-	@Override
 	public void resetOriginalValues() {
 		DDMStructureModelImpl ddmStructureModelImpl = this;
 
@@ -1100,10 +1062,6 @@ public class DDMStructureModelImpl extends BaseModelImpl<DDMStructure>
 		ddmStructureModelImpl._originalName = ddmStructureModelImpl._name;
 
 		ddmStructureModelImpl._originalDescription = ddmStructureModelImpl._description;
-
-		setDDMForm(null);
-
-		setFullHierarchyDDMForm(null);
 
 		ddmStructureModelImpl._columnBitmask = 0;
 	}
@@ -1182,12 +1140,12 @@ public class DDMStructureModelImpl extends BaseModelImpl<DDMStructure>
 			ddmStructureCacheModel.description = null;
 		}
 
-		ddmStructureCacheModel.definition = getDefinition();
+		ddmStructureCacheModel.xsd = getXsd();
 
-		String definition = ddmStructureCacheModel.definition;
+		String xsd = ddmStructureCacheModel.xsd;
 
-		if ((definition != null) && (definition.length() == 0)) {
-			ddmStructureCacheModel.definition = null;
+		if ((xsd != null) && (xsd.length() == 0)) {
+			ddmStructureCacheModel.xsd = null;
 		}
 
 		ddmStructureCacheModel.storageType = getStorageType();
@@ -1200,9 +1158,11 @@ public class DDMStructureModelImpl extends BaseModelImpl<DDMStructure>
 
 		ddmStructureCacheModel.type = getType();
 
-		ddmStructureCacheModel._ddmForm = getDDMForm();
+		ddmStructureCacheModel._document = getDocument();
 
-		ddmStructureCacheModel._fullHierarchyDDMForm = getFullHierarchyDDMForm();
+		ddmStructureCacheModel._localizedFieldsMap = getLocalizedFieldsMap();
+
+		ddmStructureCacheModel._localizedTransientFieldsMap = getLocalizedTransientFieldsMap();
 
 		return ddmStructureCacheModel;
 	}
@@ -1237,8 +1197,8 @@ public class DDMStructureModelImpl extends BaseModelImpl<DDMStructure>
 		sb.append(getName());
 		sb.append(", description=");
 		sb.append(getDescription());
-		sb.append(", definition=");
-		sb.append(getDefinition());
+		sb.append(", xsd=");
+		sb.append(getXsd());
 		sb.append(", storageType=");
 		sb.append(getStorageType());
 		sb.append(", type=");
@@ -1309,8 +1269,8 @@ public class DDMStructureModelImpl extends BaseModelImpl<DDMStructure>
 		sb.append(getDescription());
 		sb.append("]]></column-value></column>");
 		sb.append(
-			"<column><column-name>definition</column-name><column-value><![CDATA[");
-		sb.append(getDefinition());
+			"<column><column-name>xsd</column-name><column-value><![CDATA[");
+		sb.append(getXsd());
 		sb.append("]]></column-value></column>");
 		sb.append(
 			"<column><column-name>storageType</column-name><column-value><![CDATA[");
@@ -1326,8 +1286,8 @@ public class DDMStructureModelImpl extends BaseModelImpl<DDMStructure>
 		return sb.toString();
 	}
 
-	private static final ClassLoader _classLoader = DDMStructure.class.getClassLoader();
-	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
+	private static ClassLoader _classLoader = DDMStructure.class.getClassLoader();
+	private static Class<?>[] _escapedModelInterfaces = new Class[] {
 			DDMStructure.class
 		};
 	private String _uuid;
@@ -1340,6 +1300,7 @@ public class DDMStructureModelImpl extends BaseModelImpl<DDMStructure>
 	private long _originalCompanyId;
 	private boolean _setOriginalCompanyId;
 	private long _userId;
+	private String _userUuid;
 	private String _userName;
 	private Date _createDate;
 	private Date _modifiedDate;
@@ -1357,7 +1318,7 @@ public class DDMStructureModelImpl extends BaseModelImpl<DDMStructure>
 	private String _description;
 	private String _descriptionCurrentLanguageId;
 	private String _originalDescription;
-	private String _definition;
+	private String _xsd;
 	private String _storageType;
 	private int _type;
 	private long _columnBitmask;

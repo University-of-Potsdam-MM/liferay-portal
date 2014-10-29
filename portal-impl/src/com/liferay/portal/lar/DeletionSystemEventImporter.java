@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -39,10 +39,6 @@ import org.xml.sax.InputSource;
  * @author Zsolt Berentey
  */
 public class DeletionSystemEventImporter {
-
-	public static DeletionSystemEventImporter getInstance() {
-		return _instance;
-	}
 
 	public void importDeletionSystemEvents(
 			final PortletDataContext portletDataContext)
@@ -113,13 +109,7 @@ public class DeletionSystemEventImporter {
 		}
 	}
 
-	private DeletionSystemEventImporter() {
-	}
-
 	private static Log _log = LogFactoryUtil.getLog(
 		DeletionSystemEventImporter.class);
-
-	private static DeletionSystemEventImporter _instance =
-		new DeletionSystemEventImporter();
 
 }

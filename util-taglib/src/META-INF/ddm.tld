@@ -9,10 +9,10 @@
 		<tag-class>com.liferay.taglib.ddm.HTMLTag</tag-class>
 		<body-content>JSP</body-content>
 		<attribute>
-			<name>checkRequired</name>
+			<name>fieldName</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
-			<type>boolean</type>
+			<type>java.lang.String</type>
 		</attribute>
 		<attribute>
 			<name>classNameId</name>
@@ -56,18 +56,18 @@
 			<rtexprvalue>true</rtexprvalue>
 			<type>java.util.Locale</type>
 		</attribute>
-		<attribute>
-			<name>showEmptyFieldLabel</name>
-			<required>false</required>
-			<rtexprvalue>true</rtexprvalue>
-			<type>boolean</type>
-		</attribute>
 		<dynamic-attributes>true</dynamic-attributes>
 	</tag>
 	<tag>
 		<name>html-field</name>
 		<tag-class>com.liferay.taglib.ddm.HTMLFieldTag</tag-class>
 		<body-content>JSP</body-content>
+		<attribute>
+			<name>fieldName</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>java.lang.String</type>
+		</attribute>
 		<attribute>
 			<name>classNameId</name>
 			<required>true</required>
@@ -109,12 +109,6 @@
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 			<type>java.util.Locale</type>
-		</attribute>
-		<attribute>
-			<name>showEmptyFieldLabel</name>
-			<required>false</required>
-			<rtexprvalue>true</rtexprvalue>
-			<type>boolean</type>
 		</attribute>
 		<dynamic-attributes>true</dynamic-attributes>
 	</tag>

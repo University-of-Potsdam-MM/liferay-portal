@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -51,7 +51,6 @@ import com.liferay.portal.security.permission.ResourceBlockIdsBag;
 import com.liferay.portal.service.PersistedModelLocalService;
 import com.liferay.portal.service.PersistedModelLocalServiceRegistryUtil;
 import com.liferay.portal.service.base.ResourceBlockLocalServiceBaseImpl;
-import com.liferay.portal.util.PropsValues;
 import com.liferay.util.dao.orm.CustomSQLUtil;
 
 import java.sql.Connection;
@@ -77,7 +76,7 @@ public class ResourceBlockLocalServiceImpl
 	@Override
 	public void addCompanyScopePermission(
 			long companyId, String name, long roleId, String actionId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		updateCompanyScopePermissions(
 			companyId, name, roleId, getActionId(name, actionId),
@@ -86,7 +85,8 @@ public class ResourceBlockLocalServiceImpl
 
 	@Override
 	public void addCompanyScopePermissions(
-		long companyId, String name, long roleId, long actionIdsLong) {
+			long companyId, String name, long roleId, long actionIdsLong)
+		throws SystemException {
 
 		updateCompanyScopePermissions(
 			companyId, name, roleId, actionIdsLong,
@@ -97,7 +97,7 @@ public class ResourceBlockLocalServiceImpl
 	public void addGroupScopePermission(
 			long companyId, long groupId, String name, long roleId,
 			String actionId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		updateGroupScopePermissions(
 			companyId, groupId, name, roleId, getActionId(name, actionId),
@@ -106,8 +106,9 @@ public class ResourceBlockLocalServiceImpl
 
 	@Override
 	public void addGroupScopePermissions(
-		long companyId, long groupId, String name, long roleId,
-		long actionIdsLong) {
+			long companyId, long groupId, String name, long roleId,
+			long actionIdsLong)
+		throws SystemException {
 
 		updateGroupScopePermissions(
 			companyId, groupId, name, roleId, actionIdsLong,
@@ -118,7 +119,7 @@ public class ResourceBlockLocalServiceImpl
 	public void addIndividualScopePermission(
 			long companyId, long groupId, String name, long primKey,
 			long roleId, String actionId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		PermissionedModel permissionedModel = getPermissionedModel(
 			name, primKey);
@@ -132,7 +133,7 @@ public class ResourceBlockLocalServiceImpl
 	public void addIndividualScopePermission(
 			long companyId, long groupId, String name,
 			PermissionedModel permissionedModel, long roleId, String actionId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		updateIndividualScopePermissions(
 			companyId, groupId, name, permissionedModel, roleId,
@@ -143,7 +144,7 @@ public class ResourceBlockLocalServiceImpl
 	public void addIndividualScopePermissions(
 			long companyId, long groupId, String name, long primKey,
 			long roleId, long actionIdsLong)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		PermissionedModel permissionedModel = getPermissionedModel(
 			name, primKey);
@@ -155,8 +156,10 @@ public class ResourceBlockLocalServiceImpl
 
 	@Override
 	public void addIndividualScopePermissions(
-		long companyId, long groupId, String name,
-		PermissionedModel permissionedModel, long roleId, long actionIdsLong) {
+			long companyId, long groupId, String name,
+			PermissionedModel permissionedModel, long roleId,
+			long actionIdsLong)
+		throws SystemException {
 
 		updateIndividualScopePermissions(
 			companyId, groupId, name, permissionedModel, roleId, actionIdsLong,
@@ -175,11 +178,13 @@ public class ResourceBlockLocalServiceImpl
 	 * @param  resourceBlockPermissionsContainer the resource block's
 	 *         permissions container
 	 * @return the new resource block
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public ResourceBlock addResourceBlock(
-		long companyId, long groupId, String name, String permissionsHash,
-		ResourceBlockPermissionsContainer resourceBlockPermissionsContainer) {
+			long companyId, long groupId, String name, String permissionsHash,
+			ResourceBlockPermissionsContainer resourceBlockPermissionsContainer)
+		throws SystemException {
 
 		long resourceBlockId = counterLocalService.increment(
 			ResourceBlock.class.getName());
@@ -203,7 +208,7 @@ public class ResourceBlockLocalServiceImpl
 
 	@Override
 	public ResourceBlock deleteResourceBlock(long resourceBlockId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		ResourceBlock resourceBlock = resourceBlockPersistence.findByPrimaryKey(
 			resourceBlockId);
@@ -212,7 +217,9 @@ public class ResourceBlockLocalServiceImpl
 	}
 
 	@Override
-	public ResourceBlock deleteResourceBlock(ResourceBlock resourceBlock) {
+	public ResourceBlock deleteResourceBlock(ResourceBlock resourceBlock)
+		throws SystemException {
+
 		resourceBlockPermissionLocalService.deleteResourceBlockPermissions(
 			resourceBlock.getPrimaryKey());
 
@@ -246,7 +253,9 @@ public class ResourceBlockLocalServiceImpl
 	}
 
 	@Override
-	public List<String> getActionIds(String name, long actionIdsLong) {
+	public List<String> getActionIds(String name, long actionIdsLong)
+		throws SystemException {
+
 		List<ResourceAction> resourceActions =
 			resourceActionLocalService.getResourceActions(name);
 
@@ -265,7 +274,8 @@ public class ResourceBlockLocalServiceImpl
 
 	@Override
 	public List<String> getCompanyScopePermissions(
-		ResourceBlock resourceBlock, long roleId) {
+			ResourceBlock resourceBlock, long roleId)
+		throws SystemException {
 
 		long actionIdsLong =
 			resourceTypePermissionLocalService.getCompanyScopeActionIds(
@@ -276,7 +286,8 @@ public class ResourceBlockLocalServiceImpl
 
 	@Override
 	public List<String> getGroupScopePermissions(
-		ResourceBlock resourceBlock, long roleId) {
+			ResourceBlock resourceBlock, long roleId)
+		throws SystemException {
 
 		long actionIdsLong =
 			resourceTypePermissionLocalService.getGroupScopeActionIds(
@@ -288,7 +299,7 @@ public class ResourceBlockLocalServiceImpl
 
 	@Override
 	public PermissionedModel getPermissionedModel(String name, long primKey)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		PersistedModelLocalService persistedModelLocalService =
 			PersistedModelLocalServiceRegistryUtil.
@@ -310,8 +321,8 @@ public class ResourceBlockLocalServiceImpl
 	}
 
 	@Override
-	public List<String> getPermissions(
-		ResourceBlock resourceBlock, long roleId) {
+	public List<String> getPermissions(ResourceBlock resourceBlock, long roleId)
+		throws SystemException {
 
 		ResourceBlockPermissionsContainer resourceBlockPermissionsContainer =
 			resourceBlockPermissionLocalService.
@@ -326,7 +337,7 @@ public class ResourceBlockLocalServiceImpl
 
 	@Override
 	public ResourceBlock getResourceBlock(String name, long primKey)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		PermissionedModel permissionedModel = getPermissionedModel(
 			name, primKey);
@@ -347,7 +358,8 @@ public class ResourceBlockLocalServiceImpl
 
 	@Override
 	public ResourceBlockIdsBag getResourceBlockIdsBag(
-		long companyId, long groupId, String name, long[] roleIds) {
+			long companyId, long groupId, String name, long[] roleIds)
+		throws SystemException {
 
 		return resourceBlockFinder.findByC_G_N_R(
 			companyId, groupId, name, roleIds);
@@ -357,7 +369,7 @@ public class ResourceBlockLocalServiceImpl
 	public boolean hasPermission(
 			String name, long primKey, String actionId,
 			ResourceBlockIdsBag resourceBlockIdsBag)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		PermissionedModel permissionedModel = getPermissionedModel(
 			name, primKey);
@@ -389,14 +401,15 @@ public class ResourceBlockLocalServiceImpl
 		isolation = Isolation.READ_COMMITTED,
 		propagation = Propagation.REQUIRES_NEW)
 	public void releasePermissionedModelResourceBlock(
-		PermissionedModel permissionedModel) {
+			PermissionedModel permissionedModel)
+		throws SystemException {
 
 		releaseResourceBlock(permissionedModel.getResourceBlockId());
 	}
 
 	@Override
 	public void releasePermissionedModelResourceBlock(String name, long primKey)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		PermissionedModel permissionedModel = getPermissionedModel(
 			name, primKey);
@@ -410,19 +423,22 @@ public class ResourceBlockLocalServiceImpl
 	 * zero.
 	 *
 	 * @param  resourceBlockId the primary key of the resource block
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	@Transactional(
 		isolation = Isolation.READ_COMMITTED,
 		propagation = Propagation.REQUIRES_NEW)
-	public void releaseResourceBlock(long resourceBlockId) {
+	public void releaseResourceBlock(long resourceBlockId)
+		throws SystemException {
+
 		Session session = resourceBlockPersistence.openSession();
 
 		while (true) {
 			try {
 				String sql = CustomSQLUtil.get(_RELEASE_RESOURCE_BLOCK);
 
-				SQLQuery sqlQuery = session.createSynchronizedSQLQuery(sql);
+				SQLQuery sqlQuery = session.createSQLQuery(sql);
 
 				QueryPos qPos = QueryPos.getInstance(sqlQuery);
 
@@ -435,7 +451,7 @@ public class ResourceBlockLocalServiceImpl
 					if (resourceBlock.getReferenceCount() == 0) {
 						sql = CustomSQLUtil.get(_DELETE_RESOURCE_BLOCK);
 
-						sqlQuery = session.createSynchronizedSQLQuery(sql);
+						sqlQuery = session.createSQLQuery(sql);
 
 						qPos = QueryPos.getInstance(sqlQuery);
 
@@ -465,18 +481,22 @@ public class ResourceBlockLocalServiceImpl
 	 * zero.
 	 *
 	 * @param  resourceBlock the resource block
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	@Transactional(
 		isolation = Isolation.READ_COMMITTED,
 		propagation = Propagation.REQUIRES_NEW)
-	public void releaseResourceBlock(ResourceBlock resourceBlock) {
+	public void releaseResourceBlock(ResourceBlock resourceBlock)
+		throws SystemException {
+
 		releaseResourceBlock(resourceBlock.getResourceBlockId());
 	}
 
 	@Override
 	public void removeAllGroupScopePermissions(
-		long companyId, String name, long roleId, long actionIdsLong) {
+			long companyId, String name, long roleId, long actionIdsLong)
+		throws SystemException {
 
 		List<ResourceTypePermission> resourceTypePermissions =
 			resourceTypePermissionLocalService.
@@ -494,7 +514,7 @@ public class ResourceBlockLocalServiceImpl
 	@Override
 	public void removeAllGroupScopePermissions(
 			long companyId, String name, long roleId, String actionId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		removeAllGroupScopePermissions(
 			companyId, name, roleId, getActionId(name, actionId));
@@ -503,7 +523,7 @@ public class ResourceBlockLocalServiceImpl
 	@Override
 	public void removeCompanyScopePermission(
 			long companyId, String name, long roleId, String actionId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		updateCompanyScopePermissions(
 			companyId, name, roleId, getActionId(name, actionId),
@@ -512,7 +532,8 @@ public class ResourceBlockLocalServiceImpl
 
 	@Override
 	public void removeCompanyScopePermissions(
-		long companyId, String name, long roleId, long actionIdsLong) {
+			long companyId, String name, long roleId, long actionIdsLong)
+		throws SystemException {
 
 		updateCompanyScopePermissions(
 			companyId, name, roleId, actionIdsLong,
@@ -523,7 +544,7 @@ public class ResourceBlockLocalServiceImpl
 	public void removeGroupScopePermission(
 			long companyId, long groupId, String name, long roleId,
 			String actionId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		updateGroupScopePermissions(
 			companyId, groupId, name, roleId, getActionId(name, actionId),
@@ -532,8 +553,9 @@ public class ResourceBlockLocalServiceImpl
 
 	@Override
 	public void removeGroupScopePermissions(
-		long companyId, long groupId, String name, long roleId,
-		long actionIdsLong) {
+			long companyId, long groupId, String name, long roleId,
+			long actionIdsLong)
+		throws SystemException {
 
 		updateGroupScopePermissions(
 			companyId, groupId, name, roleId, actionIdsLong,
@@ -544,7 +566,7 @@ public class ResourceBlockLocalServiceImpl
 	public void removeIndividualScopePermission(
 			long companyId, long groupId, String name, long primKey,
 			long roleId, String actionId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		PermissionedModel permissionedModel = getPermissionedModel(
 			name, primKey);
@@ -559,7 +581,7 @@ public class ResourceBlockLocalServiceImpl
 	public void removeIndividualScopePermission(
 			long companyId, long groupId, String name,
 			PermissionedModel permissionedModel, long roleId, String actionId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		updateIndividualScopePermissions(
 			companyId, groupId, name, permissionedModel, roleId,
@@ -571,7 +593,7 @@ public class ResourceBlockLocalServiceImpl
 	public void removeIndividualScopePermissions(
 			long companyId, long groupId, String name, long primKey,
 			long roleId, long actionIdsLong)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		PermissionedModel permissionedModel = getPermissionedModel(
 			name, primKey);
@@ -583,8 +605,10 @@ public class ResourceBlockLocalServiceImpl
 
 	@Override
 	public void removeIndividualScopePermissions(
-		long companyId, long groupId, String name,
-		PermissionedModel permissionedModel, long roleId, long actionIdsLong) {
+			long companyId, long groupId, String name,
+			PermissionedModel permissionedModel, long roleId,
+			long actionIdsLong)
+		throws SystemException {
 
 		updateIndividualScopePermissions(
 			companyId, groupId, name, permissionedModel, roleId, actionIdsLong,
@@ -594,7 +618,7 @@ public class ResourceBlockLocalServiceImpl
 	@Override
 	public void setCompanyScopePermissions(
 			long companyId, String name, long roleId, List<String> actionIds)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		checkGuestSupportedPermission(companyId, name, roleId, actionIds);
 
@@ -605,7 +629,8 @@ public class ResourceBlockLocalServiceImpl
 
 	@Override
 	public void setCompanyScopePermissions(
-		long companyId, String name, long roleId, long actionIdsLong) {
+			long companyId, String name, long roleId, long actionIdsLong)
+		throws SystemException {
 
 		updateCompanyScopePermissions(
 			companyId, name, roleId, actionIdsLong,
@@ -616,7 +641,7 @@ public class ResourceBlockLocalServiceImpl
 	public void setGroupScopePermissions(
 			long companyId, long groupId, String name, long roleId,
 			List<String> actionIds)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		checkGuestSupportedPermission(companyId, name, roleId, actionIds);
 
@@ -627,8 +652,9 @@ public class ResourceBlockLocalServiceImpl
 
 	@Override
 	public void setGroupScopePermissions(
-		long companyId, long groupId, String name, long roleId,
-		long actionIdsLong) {
+			long companyId, long groupId, String name, long roleId,
+			long actionIdsLong)
+		throws SystemException {
 
 		updateGroupScopePermissions(
 			companyId, groupId, name, roleId, actionIdsLong,
@@ -639,7 +665,7 @@ public class ResourceBlockLocalServiceImpl
 	public void setIndividualScopePermissions(
 			long companyId, long groupId, String name, long primKey,
 			long roleId, List<String> actionIds)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		PermissionedModel permissionedModel = getPermissionedModel(
 			name, primKey);
@@ -655,7 +681,7 @@ public class ResourceBlockLocalServiceImpl
 	public void setIndividualScopePermissions(
 			long companyId, long groupId, String name, long primKey,
 			long roleId, long actionIdsLong)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		PermissionedModel permissionedModel = getPermissionedModel(
 			name, primKey);
@@ -669,7 +695,7 @@ public class ResourceBlockLocalServiceImpl
 	public void setIndividualScopePermissions(
 			long companyId, long groupId, String name, long primKey,
 			Map<Long, String[]> roleIdsToActionIds)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		boolean flushEnabled = PermissionThreadLocal.isFlushEnabled();
 
@@ -706,7 +732,7 @@ public class ResourceBlockLocalServiceImpl
 			long companyId, long groupId, String name,
 			PermissionedModel permissionedModel, long roleId,
 			List<String> actionIds)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		checkGuestSupportedPermission(companyId, name, roleId, actionIds);
 
@@ -717,8 +743,10 @@ public class ResourceBlockLocalServiceImpl
 
 	@Override
 	public void setIndividualScopePermissions(
-		long companyId, long groupId, String name,
-		PermissionedModel permissionedModel, long roleId, long actionIdsLong) {
+			long companyId, long groupId, String name,
+			PermissionedModel permissionedModel, long roleId,
+			long actionIdsLong)
+		throws SystemException {
 
 		updateIndividualScopePermissions(
 			companyId, groupId, name, permissionedModel, roleId, actionIdsLong,
@@ -727,8 +755,9 @@ public class ResourceBlockLocalServiceImpl
 
 	@Override
 	public void updateCompanyScopePermissions(
-		long companyId, String name, long roleId, long actionIdsLong,
-		int operator) {
+			long companyId, String name, long roleId, long actionIdsLong,
+			int operator)
+		throws SystemException {
 
 		resourceTypePermissionLocalService.
 			updateCompanyScopeResourceTypePermissions(
@@ -744,8 +773,9 @@ public class ResourceBlockLocalServiceImpl
 
 	@Override
 	public void updateGroupScopePermissions(
-		long companyId, long groupId, String name, long roleId,
-		long actionIdsLong, int operator) {
+			long companyId, long groupId, String name, long roleId,
+			long actionIdsLong, int operator)
+		throws SystemException {
 
 		resourceTypePermissionLocalService.
 			updateGroupScopeResourceTypePermissions(
@@ -761,9 +791,10 @@ public class ResourceBlockLocalServiceImpl
 
 	@Override
 	public void updateIndividualScopePermissions(
-		long companyId, long groupId, String name,
-		PermissionedModel permissionedModel, long roleId, long actionIdsLong,
-		int operator) {
+			long companyId, long groupId, String name,
+			PermissionedModel permissionedModel, long roleId,
+			long actionIdsLong, int operator)
+		throws SystemException {
 
 		ResourceBlock resourceBlock =
 			resourceBlockPersistence.fetchByPrimaryKey(
@@ -820,9 +851,10 @@ public class ResourceBlockLocalServiceImpl
 		isolation = Isolation.READ_COMMITTED,
 		propagation = Propagation.REQUIRES_NEW)
 	public ResourceBlock updateResourceBlockId(
-		long companyId, long groupId, String name,
-		final PermissionedModel permissionedModel, String permissionsHash,
-		ResourceBlockPermissionsContainer resourceBlockPermissionsContainer) {
+			long companyId, long groupId, String name,
+			final PermissionedModel permissionedModel, String permissionsHash,
+			ResourceBlockPermissionsContainer resourceBlockPermissionsContainer)
+		throws SystemException {
 
 		ResourceBlock resourceBlock = null;
 
@@ -838,9 +870,7 @@ public class ResourceBlockLocalServiceImpl
 
 					// On success, manually flush to enforce database row lock
 
-					if (PropsValues.SPRING_HIBERNATE_SESSION_DELEGATED) {
-						resourceBlockPersistence.flush();
-					}
+					resourceBlockPersistence.flush();
 				}
 				catch (SystemException se) {
 					if (_log.isWarnEnabled()) {
@@ -885,7 +915,7 @@ public class ResourceBlockLocalServiceImpl
 			try {
 				String sql = CustomSQLUtil.get(_RETAIN_RESOURCE_BLOCK);
 
-				SQLQuery sqlQuery = session.createSynchronizedSQLQuery(sql);
+				SQLQuery sqlQuery = session.createSQLQuery(sql);
 
 				QueryPos qPos = QueryPos.getInstance(sqlQuery);
 
@@ -947,7 +977,7 @@ public class ResourceBlockLocalServiceImpl
 
 	@Override
 	public void verifyResourceBlockId(long companyId, String name, long primKey)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		PermissionedModel permissionedModel = getPermissionedModel(
 			name, primKey);
@@ -987,7 +1017,7 @@ public class ResourceBlockLocalServiceImpl
 
 	protected void checkGuestSupportedPermission(
 			long companyId, String name, long roleId, List<String> actionIds)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		if (!isGuestRole(companyId, roleId)) {
 			return;
@@ -1005,7 +1035,7 @@ public class ResourceBlockLocalServiceImpl
 	}
 
 	protected boolean isGuestRole(long companyId, long roleId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Role guestRole = roleLocalService.getRole(
 			companyId, RoleConstants.GUEST);
@@ -1018,8 +1048,9 @@ public class ResourceBlockLocalServiceImpl
 	}
 
 	protected void updatePermissions(
-		List<ResourceBlock> resourceBlocks, long roleId, long actionIdsLong,
-		int operator) {
+			List<ResourceBlock> resourceBlocks, long roleId, long actionIdsLong,
+			int operator)
+		throws SystemException {
 
 		for (ResourceBlock resourceBlock : resourceBlocks) {
 			resourceBlockPermissionLocalService.updateResourceBlockPermission(
@@ -1029,7 +1060,9 @@ public class ResourceBlockLocalServiceImpl
 		}
 	}
 
-	protected void updatePermissionsHash(ResourceBlock resourceBlock) {
+	protected void updatePermissionsHash(ResourceBlock resourceBlock)
+		throws SystemException {
+
 		ResourceBlockPermissionsContainer resourceBlockPermissionsContainer =
 			resourceBlockPermissionLocalService.
 			getResourceBlockPermissionsContainer(resourceBlock.getPrimaryKey());

@@ -148,7 +148,7 @@ AUI.add(
 												}
 											}
 										},
-										height: 430,
+										height: 390,
 										width: 560
 									},
 									id: NAME,

@@ -4,6 +4,8 @@ AUI.add(
 		var Lang = A.Lang;
 		var PositionAlign = A.WidgetPositionAlign;
 
+		var CKCONFIG = CKEDITOR.config;
+
 		var ALIGN = 'align';
 
 		var BOUNDING_BOX = 'boundingBox';
@@ -50,20 +52,6 @@ AUI.add(
 						instance.after('destroy', instance._destructor, instance);
 
 						instance.after(['saveFailure', 'saveSuccess'], instance._updateNoticePosition, instance);
-
-						A.one('#' + instance.get(EDITOR_NAME)).delegate(
-							'click',
-							function(event) {
-								if (event.shiftKey) {
-									var clone = event.currentTarget.clone();
-
-									A.getBody().append(clone);
-
-									clone.simulate('click');
-								}
-							},
-							'a'
-						);
 					},
 
 					isContentDirty: function() {
@@ -99,19 +87,11 @@ AUI.add(
 					},
 
 					_getAutoSaveTimeout: function() {
-						var instance = this;
-
-						var editor = instance.get(EDITOR);
-
-						return editor.config.autoSaveTimeout;
+						return CKCONFIG.autoSaveTimeout;
 					},
 
 					_getCloseNoticeTimeout: function() {
-						var instance = this;
-
-						var editor = instance.get(EDITOR);
-
-						return editor.config.closeNoticeTimeout;
+						return CKCONFIG.closeNoticeTimeout;
 					},
 
 					_onEditorBlur: function() {
@@ -205,6 +185,6 @@ AUI.add(
 	},
 	'',
 	{
-		requires: ['array-invoke', 'liferay-inline-editor-base', 'node-event-simulate', 'overlay', 'yui-later']
+		requires: ['array-invoke', 'liferay-inline-editor-base', 'overlay', 'yui-later']
 	}
 );

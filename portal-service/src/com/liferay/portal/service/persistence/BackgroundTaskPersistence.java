@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -43,9 +43,11 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	*
 	* @param groupId the group ID
 	* @return the matching background tasks
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.BackgroundTask> findByGroupId(
-		long groupId);
+		long groupId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns a range of all the background tasks where groupId = &#63;.
@@ -58,9 +60,11 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param start the lower bound of the range of background tasks
 	* @param end the upper bound of the range of background tasks (not inclusive)
 	* @return the range of matching background tasks
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.BackgroundTask> findByGroupId(
-		long groupId, int start, int end);
+		long groupId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns an ordered range of all the background tasks where groupId = &#63;.
@@ -74,10 +78,12 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param end the upper bound of the range of background tasks (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching background tasks
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.BackgroundTask> findByGroupId(
 		long groupId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the first background task in the ordered set where groupId = &#63;.
@@ -86,11 +92,13 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching background task
 	* @throws com.liferay.portal.NoSuchBackgroundTaskException if a matching background task could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.BackgroundTask findByGroupId_First(
 		long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator)
-		throws com.liferay.portal.NoSuchBackgroundTaskException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchBackgroundTaskException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the first background task in the ordered set where groupId = &#63;.
@@ -98,10 +106,12 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param groupId the group ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching background task, or <code>null</code> if a matching background task could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.BackgroundTask fetchByGroupId_First(
 		long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the last background task in the ordered set where groupId = &#63;.
@@ -110,11 +120,13 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching background task
 	* @throws com.liferay.portal.NoSuchBackgroundTaskException if a matching background task could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.BackgroundTask findByGroupId_Last(
 		long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator)
-		throws com.liferay.portal.NoSuchBackgroundTaskException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchBackgroundTaskException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the last background task in the ordered set where groupId = &#63;.
@@ -122,10 +134,12 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param groupId the group ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching background task, or <code>null</code> if a matching background task could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.BackgroundTask fetchByGroupId_Last(
 		long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the background tasks before and after the current background task in the ordered set where groupId = &#63;.
@@ -135,35 +149,43 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next background task
 	* @throws com.liferay.portal.NoSuchBackgroundTaskException if a background task with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.BackgroundTask[] findByGroupId_PrevAndNext(
 		long backgroundTaskId, long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator)
-		throws com.liferay.portal.NoSuchBackgroundTaskException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchBackgroundTaskException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Removes all the background tasks where groupId = &#63; from the database.
 	*
 	* @param groupId the group ID
+	* @throws SystemException if a system exception occurred
 	*/
-	public void removeByGroupId(long groupId);
+	public void removeByGroupId(long groupId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of background tasks where groupId = &#63;.
 	*
 	* @param groupId the group ID
 	* @return the number of matching background tasks
+	* @throws SystemException if a system exception occurred
 	*/
-	public int countByGroupId(long groupId);
+	public int countByGroupId(long groupId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns all the background tasks where companyId = &#63;.
 	*
 	* @param companyId the company ID
 	* @return the matching background tasks
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.BackgroundTask> findByCompanyId(
-		long companyId);
+		long companyId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns a range of all the background tasks where companyId = &#63;.
@@ -176,9 +198,11 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param start the lower bound of the range of background tasks
 	* @param end the upper bound of the range of background tasks (not inclusive)
 	* @return the range of matching background tasks
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.BackgroundTask> findByCompanyId(
-		long companyId, int start, int end);
+		long companyId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns an ordered range of all the background tasks where companyId = &#63;.
@@ -192,10 +216,12 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param end the upper bound of the range of background tasks (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching background tasks
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.BackgroundTask> findByCompanyId(
 		long companyId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the first background task in the ordered set where companyId = &#63;.
@@ -204,11 +230,13 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching background task
 	* @throws com.liferay.portal.NoSuchBackgroundTaskException if a matching background task could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.BackgroundTask findByCompanyId_First(
 		long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator)
-		throws com.liferay.portal.NoSuchBackgroundTaskException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchBackgroundTaskException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the first background task in the ordered set where companyId = &#63;.
@@ -216,10 +244,12 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching background task, or <code>null</code> if a matching background task could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.BackgroundTask fetchByCompanyId_First(
 		long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the last background task in the ordered set where companyId = &#63;.
@@ -228,11 +258,13 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching background task
 	* @throws com.liferay.portal.NoSuchBackgroundTaskException if a matching background task could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.BackgroundTask findByCompanyId_Last(
 		long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator)
-		throws com.liferay.portal.NoSuchBackgroundTaskException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchBackgroundTaskException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the last background task in the ordered set where companyId = &#63;.
@@ -240,10 +272,12 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching background task, or <code>null</code> if a matching background task could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.BackgroundTask fetchByCompanyId_Last(
 		long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the background tasks before and after the current background task in the ordered set where companyId = &#63;.
@@ -253,35 +287,42 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next background task
 	* @throws com.liferay.portal.NoSuchBackgroundTaskException if a background task with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.BackgroundTask[] findByCompanyId_PrevAndNext(
 		long backgroundTaskId, long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator)
-		throws com.liferay.portal.NoSuchBackgroundTaskException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchBackgroundTaskException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Removes all the background tasks where companyId = &#63; from the database.
 	*
 	* @param companyId the company ID
+	* @throws SystemException if a system exception occurred
 	*/
-	public void removeByCompanyId(long companyId);
+	public void removeByCompanyId(long companyId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of background tasks where companyId = &#63;.
 	*
 	* @param companyId the company ID
 	* @return the number of matching background tasks
+	* @throws SystemException if a system exception occurred
 	*/
-	public int countByCompanyId(long companyId);
+	public int countByCompanyId(long companyId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns all the background tasks where status = &#63;.
 	*
 	* @param status the status
 	* @return the matching background tasks
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.BackgroundTask> findByStatus(
-		int status);
+		int status) throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns a range of all the background tasks where status = &#63;.
@@ -294,9 +335,11 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param start the lower bound of the range of background tasks
 	* @param end the upper bound of the range of background tasks (not inclusive)
 	* @return the range of matching background tasks
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.BackgroundTask> findByStatus(
-		int status, int start, int end);
+		int status, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns an ordered range of all the background tasks where status = &#63;.
@@ -310,10 +353,12 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param end the upper bound of the range of background tasks (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching background tasks
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.BackgroundTask> findByStatus(
 		int status, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the first background task in the ordered set where status = &#63;.
@@ -322,11 +367,13 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching background task
 	* @throws com.liferay.portal.NoSuchBackgroundTaskException if a matching background task could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.BackgroundTask findByStatus_First(
 		int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator)
-		throws com.liferay.portal.NoSuchBackgroundTaskException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchBackgroundTaskException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the first background task in the ordered set where status = &#63;.
@@ -334,10 +381,12 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param status the status
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching background task, or <code>null</code> if a matching background task could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.BackgroundTask fetchByStatus_First(
 		int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the last background task in the ordered set where status = &#63;.
@@ -346,11 +395,13 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching background task
 	* @throws com.liferay.portal.NoSuchBackgroundTaskException if a matching background task could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.BackgroundTask findByStatus_Last(
 		int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator)
-		throws com.liferay.portal.NoSuchBackgroundTaskException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchBackgroundTaskException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the last background task in the ordered set where status = &#63;.
@@ -358,10 +409,12 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param status the status
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching background task, or <code>null</code> if a matching background task could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.BackgroundTask fetchByStatus_Last(
 		int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the background tasks before and after the current background task in the ordered set where status = &#63;.
@@ -371,26 +424,32 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next background task
 	* @throws com.liferay.portal.NoSuchBackgroundTaskException if a background task with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.BackgroundTask[] findByStatus_PrevAndNext(
 		long backgroundTaskId, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator)
-		throws com.liferay.portal.NoSuchBackgroundTaskException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchBackgroundTaskException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Removes all the background tasks where status = &#63; from the database.
 	*
 	* @param status the status
+	* @throws SystemException if a system exception occurred
 	*/
-	public void removeByStatus(int status);
+	public void removeByStatus(int status)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of background tasks where status = &#63;.
 	*
 	* @param status the status
 	* @return the number of matching background tasks
+	* @throws SystemException if a system exception occurred
 	*/
-	public int countByStatus(int status);
+	public int countByStatus(int status)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns all the background tasks where groupId = &#63; and taskExecutorClassName = &#63;.
@@ -398,9 +457,11 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param groupId the group ID
 	* @param taskExecutorClassName the task executor class name
 	* @return the matching background tasks
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.BackgroundTask> findByG_T(
-		long groupId, java.lang.String taskExecutorClassName);
+		long groupId, java.lang.String taskExecutorClassName)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns a range of all the background tasks where groupId = &#63; and taskExecutorClassName = &#63;.
@@ -414,9 +475,11 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param start the lower bound of the range of background tasks
 	* @param end the upper bound of the range of background tasks (not inclusive)
 	* @return the range of matching background tasks
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.BackgroundTask> findByG_T(
-		long groupId, java.lang.String taskExecutorClassName, int start, int end);
+		long groupId, java.lang.String taskExecutorClassName, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns an ordered range of all the background tasks where groupId = &#63; and taskExecutorClassName = &#63;.
@@ -431,11 +494,13 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param end the upper bound of the range of background tasks (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching background tasks
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.BackgroundTask> findByG_T(
 		long groupId, java.lang.String taskExecutorClassName, int start,
 		int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the first background task in the ordered set where groupId = &#63; and taskExecutorClassName = &#63;.
@@ -445,11 +510,13 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching background task
 	* @throws com.liferay.portal.NoSuchBackgroundTaskException if a matching background task could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.BackgroundTask findByG_T_First(
 		long groupId, java.lang.String taskExecutorClassName,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator)
-		throws com.liferay.portal.NoSuchBackgroundTaskException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchBackgroundTaskException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the first background task in the ordered set where groupId = &#63; and taskExecutorClassName = &#63;.
@@ -458,10 +525,12 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param taskExecutorClassName the task executor class name
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching background task, or <code>null</code> if a matching background task could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.BackgroundTask fetchByG_T_First(
 		long groupId, java.lang.String taskExecutorClassName,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the last background task in the ordered set where groupId = &#63; and taskExecutorClassName = &#63;.
@@ -471,11 +540,13 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching background task
 	* @throws com.liferay.portal.NoSuchBackgroundTaskException if a matching background task could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.BackgroundTask findByG_T_Last(
 		long groupId, java.lang.String taskExecutorClassName,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator)
-		throws com.liferay.portal.NoSuchBackgroundTaskException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchBackgroundTaskException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the last background task in the ordered set where groupId = &#63; and taskExecutorClassName = &#63;.
@@ -484,10 +555,12 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param taskExecutorClassName the task executor class name
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching background task, or <code>null</code> if a matching background task could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.BackgroundTask fetchByG_T_Last(
 		long groupId, java.lang.String taskExecutorClassName,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the background tasks before and after the current background task in the ordered set where groupId = &#63; and taskExecutorClassName = &#63;.
@@ -498,12 +571,14 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next background task
 	* @throws com.liferay.portal.NoSuchBackgroundTaskException if a background task with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.BackgroundTask[] findByG_T_PrevAndNext(
 		long backgroundTaskId, long groupId,
 		java.lang.String taskExecutorClassName,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator)
-		throws com.liferay.portal.NoSuchBackgroundTaskException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchBackgroundTaskException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns all the background tasks where groupId = &#63; and taskExecutorClassName = any &#63;.
@@ -515,9 +590,11 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param groupId the group ID
 	* @param taskExecutorClassNames the task executor class names
 	* @return the matching background tasks
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.BackgroundTask> findByG_T(
-		long groupId, java.lang.String[] taskExecutorClassNames);
+		long groupId, java.lang.String[] taskExecutorClassNames)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns a range of all the background tasks where groupId = &#63; and taskExecutorClassName = any &#63;.
@@ -531,10 +608,11 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param start the lower bound of the range of background tasks
 	* @param end the upper bound of the range of background tasks (not inclusive)
 	* @return the range of matching background tasks
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.BackgroundTask> findByG_T(
 		long groupId, java.lang.String[] taskExecutorClassNames, int start,
-		int end);
+		int end) throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns an ordered range of all the background tasks where groupId = &#63; and taskExecutorClassName = any &#63;.
@@ -549,19 +627,23 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param end the upper bound of the range of background tasks (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching background tasks
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.BackgroundTask> findByG_T(
 		long groupId, java.lang.String[] taskExecutorClassNames, int start,
 		int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Removes all the background tasks where groupId = &#63; and taskExecutorClassName = &#63; from the database.
 	*
 	* @param groupId the group ID
 	* @param taskExecutorClassName the task executor class name
+	* @throws SystemException if a system exception occurred
 	*/
-	public void removeByG_T(long groupId, java.lang.String taskExecutorClassName);
+	public void removeByG_T(long groupId, java.lang.String taskExecutorClassName)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of background tasks where groupId = &#63; and taskExecutorClassName = &#63;.
@@ -569,8 +651,10 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param groupId the group ID
 	* @param taskExecutorClassName the task executor class name
 	* @return the number of matching background tasks
+	* @throws SystemException if a system exception occurred
 	*/
-	public int countByG_T(long groupId, java.lang.String taskExecutorClassName);
+	public int countByG_T(long groupId, java.lang.String taskExecutorClassName)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of background tasks where groupId = &#63; and taskExecutorClassName = any &#63;.
@@ -578,9 +662,11 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param groupId the group ID
 	* @param taskExecutorClassNames the task executor class names
 	* @return the number of matching background tasks
+	* @throws SystemException if a system exception occurred
 	*/
 	public int countByG_T(long groupId,
-		java.lang.String[] taskExecutorClassNames);
+		java.lang.String[] taskExecutorClassNames)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns all the background tasks where groupId = &#63; and status = &#63;.
@@ -588,9 +674,11 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param groupId the group ID
 	* @param status the status
 	* @return the matching background tasks
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.BackgroundTask> findByG_S(
-		long groupId, int status);
+		long groupId, int status)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns a range of all the background tasks where groupId = &#63; and status = &#63;.
@@ -604,9 +692,11 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param start the lower bound of the range of background tasks
 	* @param end the upper bound of the range of background tasks (not inclusive)
 	* @return the range of matching background tasks
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.BackgroundTask> findByG_S(
-		long groupId, int status, int start, int end);
+		long groupId, int status, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns an ordered range of all the background tasks where groupId = &#63; and status = &#63;.
@@ -621,10 +711,12 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param end the upper bound of the range of background tasks (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching background tasks
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.BackgroundTask> findByG_S(
 		long groupId, int status, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the first background task in the ordered set where groupId = &#63; and status = &#63;.
@@ -634,11 +726,13 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching background task
 	* @throws com.liferay.portal.NoSuchBackgroundTaskException if a matching background task could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.BackgroundTask findByG_S_First(
 		long groupId, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator)
-		throws com.liferay.portal.NoSuchBackgroundTaskException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchBackgroundTaskException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the first background task in the ordered set where groupId = &#63; and status = &#63;.
@@ -647,10 +741,12 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param status the status
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching background task, or <code>null</code> if a matching background task could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.BackgroundTask fetchByG_S_First(
 		long groupId, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the last background task in the ordered set where groupId = &#63; and status = &#63;.
@@ -660,11 +756,13 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching background task
 	* @throws com.liferay.portal.NoSuchBackgroundTaskException if a matching background task could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.BackgroundTask findByG_S_Last(
 		long groupId, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator)
-		throws com.liferay.portal.NoSuchBackgroundTaskException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchBackgroundTaskException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the last background task in the ordered set where groupId = &#63; and status = &#63;.
@@ -673,10 +771,12 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param status the status
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching background task, or <code>null</code> if a matching background task could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.BackgroundTask fetchByG_S_Last(
 		long groupId, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the background tasks before and after the current background task in the ordered set where groupId = &#63; and status = &#63;.
@@ -687,19 +787,23 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next background task
 	* @throws com.liferay.portal.NoSuchBackgroundTaskException if a background task with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.BackgroundTask[] findByG_S_PrevAndNext(
 		long backgroundTaskId, long groupId, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator)
-		throws com.liferay.portal.NoSuchBackgroundTaskException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchBackgroundTaskException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Removes all the background tasks where groupId = &#63; and status = &#63; from the database.
 	*
 	* @param groupId the group ID
 	* @param status the status
+	* @throws SystemException if a system exception occurred
 	*/
-	public void removeByG_S(long groupId, int status);
+	public void removeByG_S(long groupId, int status)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of background tasks where groupId = &#63; and status = &#63;.
@@ -707,8 +811,10 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param groupId the group ID
 	* @param status the status
 	* @return the number of matching background tasks
+	* @throws SystemException if a system exception occurred
 	*/
-	public int countByG_S(long groupId, int status);
+	public int countByG_S(long groupId, int status)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns all the background tasks where taskExecutorClassName = &#63; and status = &#63;.
@@ -716,9 +822,11 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param taskExecutorClassName the task executor class name
 	* @param status the status
 	* @return the matching background tasks
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.BackgroundTask> findByT_S(
-		java.lang.String taskExecutorClassName, int status);
+		java.lang.String taskExecutorClassName, int status)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns a range of all the background tasks where taskExecutorClassName = &#63; and status = &#63;.
@@ -732,9 +840,11 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param start the lower bound of the range of background tasks
 	* @param end the upper bound of the range of background tasks (not inclusive)
 	* @return the range of matching background tasks
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.BackgroundTask> findByT_S(
-		java.lang.String taskExecutorClassName, int status, int start, int end);
+		java.lang.String taskExecutorClassName, int status, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns an ordered range of all the background tasks where taskExecutorClassName = &#63; and status = &#63;.
@@ -749,10 +859,12 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param end the upper bound of the range of background tasks (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching background tasks
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.BackgroundTask> findByT_S(
 		java.lang.String taskExecutorClassName, int status, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the first background task in the ordered set where taskExecutorClassName = &#63; and status = &#63;.
@@ -762,11 +874,13 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching background task
 	* @throws com.liferay.portal.NoSuchBackgroundTaskException if a matching background task could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.BackgroundTask findByT_S_First(
 		java.lang.String taskExecutorClassName, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator)
-		throws com.liferay.portal.NoSuchBackgroundTaskException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchBackgroundTaskException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the first background task in the ordered set where taskExecutorClassName = &#63; and status = &#63;.
@@ -775,10 +889,12 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param status the status
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching background task, or <code>null</code> if a matching background task could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.BackgroundTask fetchByT_S_First(
 		java.lang.String taskExecutorClassName, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the last background task in the ordered set where taskExecutorClassName = &#63; and status = &#63;.
@@ -788,11 +904,13 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching background task
 	* @throws com.liferay.portal.NoSuchBackgroundTaskException if a matching background task could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.BackgroundTask findByT_S_Last(
 		java.lang.String taskExecutorClassName, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator)
-		throws com.liferay.portal.NoSuchBackgroundTaskException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchBackgroundTaskException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the last background task in the ordered set where taskExecutorClassName = &#63; and status = &#63;.
@@ -801,10 +919,12 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param status the status
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching background task, or <code>null</code> if a matching background task could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.BackgroundTask fetchByT_S_Last(
 		java.lang.String taskExecutorClassName, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the background tasks before and after the current background task in the ordered set where taskExecutorClassName = &#63; and status = &#63;.
@@ -815,12 +935,14 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next background task
 	* @throws com.liferay.portal.NoSuchBackgroundTaskException if a background task with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.BackgroundTask[] findByT_S_PrevAndNext(
 		long backgroundTaskId, java.lang.String taskExecutorClassName,
 		int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator)
-		throws com.liferay.portal.NoSuchBackgroundTaskException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchBackgroundTaskException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns all the background tasks where taskExecutorClassName = any &#63; and status = &#63;.
@@ -832,9 +954,11 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param taskExecutorClassNames the task executor class names
 	* @param status the status
 	* @return the matching background tasks
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.BackgroundTask> findByT_S(
-		java.lang.String[] taskExecutorClassNames, int status);
+		java.lang.String[] taskExecutorClassNames, int status)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns a range of all the background tasks where taskExecutorClassName = any &#63; and status = &#63;.
@@ -848,10 +972,11 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param start the lower bound of the range of background tasks
 	* @param end the upper bound of the range of background tasks (not inclusive)
 	* @return the range of matching background tasks
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.BackgroundTask> findByT_S(
 		java.lang.String[] taskExecutorClassNames, int status, int start,
-		int end);
+		int end) throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns an ordered range of all the background tasks where taskExecutorClassName = any &#63; and status = &#63;.
@@ -866,19 +991,23 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param end the upper bound of the range of background tasks (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching background tasks
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.BackgroundTask> findByT_S(
 		java.lang.String[] taskExecutorClassNames, int status, int start,
 		int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Removes all the background tasks where taskExecutorClassName = &#63; and status = &#63; from the database.
 	*
 	* @param taskExecutorClassName the task executor class name
 	* @param status the status
+	* @throws SystemException if a system exception occurred
 	*/
-	public void removeByT_S(java.lang.String taskExecutorClassName, int status);
+	public void removeByT_S(java.lang.String taskExecutorClassName, int status)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of background tasks where taskExecutorClassName = &#63; and status = &#63;.
@@ -886,8 +1015,10 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param taskExecutorClassName the task executor class name
 	* @param status the status
 	* @return the number of matching background tasks
+	* @throws SystemException if a system exception occurred
 	*/
-	public int countByT_S(java.lang.String taskExecutorClassName, int status);
+	public int countByT_S(java.lang.String taskExecutorClassName, int status)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of background tasks where taskExecutorClassName = any &#63; and status = &#63;.
@@ -895,8 +1026,10 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param taskExecutorClassNames the task executor class names
 	* @param status the status
 	* @return the number of matching background tasks
+	* @throws SystemException if a system exception occurred
 	*/
-	public int countByT_S(java.lang.String[] taskExecutorClassNames, int status);
+	public int countByT_S(java.lang.String[] taskExecutorClassNames, int status)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns all the background tasks where groupId = &#63; and name = &#63; and taskExecutorClassName = &#63;.
@@ -905,10 +1038,12 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param name the name
 	* @param taskExecutorClassName the task executor class name
 	* @return the matching background tasks
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.BackgroundTask> findByG_N_T(
 		long groupId, java.lang.String name,
-		java.lang.String taskExecutorClassName);
+		java.lang.String taskExecutorClassName)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns a range of all the background tasks where groupId = &#63; and name = &#63; and taskExecutorClassName = &#63;.
@@ -923,10 +1058,12 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param start the lower bound of the range of background tasks
 	* @param end the upper bound of the range of background tasks (not inclusive)
 	* @return the range of matching background tasks
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.BackgroundTask> findByG_N_T(
 		long groupId, java.lang.String name,
-		java.lang.String taskExecutorClassName, int start, int end);
+		java.lang.String taskExecutorClassName, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns an ordered range of all the background tasks where groupId = &#63; and name = &#63; and taskExecutorClassName = &#63;.
@@ -942,11 +1079,13 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param end the upper bound of the range of background tasks (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching background tasks
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.BackgroundTask> findByG_N_T(
 		long groupId, java.lang.String name,
 		java.lang.String taskExecutorClassName, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the first background task in the ordered set where groupId = &#63; and name = &#63; and taskExecutorClassName = &#63;.
@@ -957,12 +1096,14 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching background task
 	* @throws com.liferay.portal.NoSuchBackgroundTaskException if a matching background task could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.BackgroundTask findByG_N_T_First(
 		long groupId, java.lang.String name,
 		java.lang.String taskExecutorClassName,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator)
-		throws com.liferay.portal.NoSuchBackgroundTaskException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchBackgroundTaskException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the first background task in the ordered set where groupId = &#63; and name = &#63; and taskExecutorClassName = &#63;.
@@ -972,11 +1113,13 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param taskExecutorClassName the task executor class name
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching background task, or <code>null</code> if a matching background task could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.BackgroundTask fetchByG_N_T_First(
 		long groupId, java.lang.String name,
 		java.lang.String taskExecutorClassName,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the last background task in the ordered set where groupId = &#63; and name = &#63; and taskExecutorClassName = &#63;.
@@ -987,12 +1130,14 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching background task
 	* @throws com.liferay.portal.NoSuchBackgroundTaskException if a matching background task could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.BackgroundTask findByG_N_T_Last(
 		long groupId, java.lang.String name,
 		java.lang.String taskExecutorClassName,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator)
-		throws com.liferay.portal.NoSuchBackgroundTaskException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchBackgroundTaskException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the last background task in the ordered set where groupId = &#63; and name = &#63; and taskExecutorClassName = &#63;.
@@ -1002,11 +1147,13 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param taskExecutorClassName the task executor class name
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching background task, or <code>null</code> if a matching background task could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.BackgroundTask fetchByG_N_T_Last(
 		long groupId, java.lang.String name,
 		java.lang.String taskExecutorClassName,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the background tasks before and after the current background task in the ordered set where groupId = &#63; and name = &#63; and taskExecutorClassName = &#63;.
@@ -1018,12 +1165,14 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next background task
 	* @throws com.liferay.portal.NoSuchBackgroundTaskException if a background task with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.BackgroundTask[] findByG_N_T_PrevAndNext(
 		long backgroundTaskId, long groupId, java.lang.String name,
 		java.lang.String taskExecutorClassName,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator)
-		throws com.liferay.portal.NoSuchBackgroundTaskException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchBackgroundTaskException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Removes all the background tasks where groupId = &#63; and name = &#63; and taskExecutorClassName = &#63; from the database.
@@ -1031,9 +1180,11 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param groupId the group ID
 	* @param name the name
 	* @param taskExecutorClassName the task executor class name
+	* @throws SystemException if a system exception occurred
 	*/
 	public void removeByG_N_T(long groupId, java.lang.String name,
-		java.lang.String taskExecutorClassName);
+		java.lang.String taskExecutorClassName)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of background tasks where groupId = &#63; and name = &#63; and taskExecutorClassName = &#63;.
@@ -1042,9 +1193,11 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param name the name
 	* @param taskExecutorClassName the task executor class name
 	* @return the number of matching background tasks
+	* @throws SystemException if a system exception occurred
 	*/
 	public int countByG_N_T(long groupId, java.lang.String name,
-		java.lang.String taskExecutorClassName);
+		java.lang.String taskExecutorClassName)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns all the background tasks where groupId = &#63; and taskExecutorClassName = &#63; and completed = &#63;.
@@ -1053,9 +1206,11 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param taskExecutorClassName the task executor class name
 	* @param completed the completed
 	* @return the matching background tasks
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.BackgroundTask> findByG_T_C(
-		long groupId, java.lang.String taskExecutorClassName, boolean completed);
+		long groupId, java.lang.String taskExecutorClassName, boolean completed)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns a range of all the background tasks where groupId = &#63; and taskExecutorClassName = &#63; and completed = &#63;.
@@ -1070,10 +1225,12 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param start the lower bound of the range of background tasks
 	* @param end the upper bound of the range of background tasks (not inclusive)
 	* @return the range of matching background tasks
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.BackgroundTask> findByG_T_C(
 		long groupId, java.lang.String taskExecutorClassName,
-		boolean completed, int start, int end);
+		boolean completed, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns an ordered range of all the background tasks where groupId = &#63; and taskExecutorClassName = &#63; and completed = &#63;.
@@ -1089,11 +1246,13 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param end the upper bound of the range of background tasks (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching background tasks
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.BackgroundTask> findByG_T_C(
 		long groupId, java.lang.String taskExecutorClassName,
 		boolean completed, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the first background task in the ordered set where groupId = &#63; and taskExecutorClassName = &#63; and completed = &#63;.
@@ -1104,12 +1263,14 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching background task
 	* @throws com.liferay.portal.NoSuchBackgroundTaskException if a matching background task could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.BackgroundTask findByG_T_C_First(
 		long groupId, java.lang.String taskExecutorClassName,
 		boolean completed,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator)
-		throws com.liferay.portal.NoSuchBackgroundTaskException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchBackgroundTaskException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the first background task in the ordered set where groupId = &#63; and taskExecutorClassName = &#63; and completed = &#63;.
@@ -1119,11 +1280,13 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param completed the completed
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching background task, or <code>null</code> if a matching background task could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.BackgroundTask fetchByG_T_C_First(
 		long groupId, java.lang.String taskExecutorClassName,
 		boolean completed,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the last background task in the ordered set where groupId = &#63; and taskExecutorClassName = &#63; and completed = &#63;.
@@ -1134,12 +1297,14 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching background task
 	* @throws com.liferay.portal.NoSuchBackgroundTaskException if a matching background task could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.BackgroundTask findByG_T_C_Last(
 		long groupId, java.lang.String taskExecutorClassName,
 		boolean completed,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator)
-		throws com.liferay.portal.NoSuchBackgroundTaskException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchBackgroundTaskException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the last background task in the ordered set where groupId = &#63; and taskExecutorClassName = &#63; and completed = &#63;.
@@ -1149,11 +1314,13 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param completed the completed
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching background task, or <code>null</code> if a matching background task could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.BackgroundTask fetchByG_T_C_Last(
 		long groupId, java.lang.String taskExecutorClassName,
 		boolean completed,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the background tasks before and after the current background task in the ordered set where groupId = &#63; and taskExecutorClassName = &#63; and completed = &#63;.
@@ -1165,12 +1332,14 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next background task
 	* @throws com.liferay.portal.NoSuchBackgroundTaskException if a background task with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.BackgroundTask[] findByG_T_C_PrevAndNext(
 		long backgroundTaskId, long groupId,
 		java.lang.String taskExecutorClassName, boolean completed,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator)
-		throws com.liferay.portal.NoSuchBackgroundTaskException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchBackgroundTaskException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns all the background tasks where groupId = &#63; and taskExecutorClassName = any &#63; and completed = &#63;.
@@ -1183,10 +1352,12 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param taskExecutorClassNames the task executor class names
 	* @param completed the completed
 	* @return the matching background tasks
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.BackgroundTask> findByG_T_C(
 		long groupId, java.lang.String[] taskExecutorClassNames,
-		boolean completed);
+		boolean completed)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns a range of all the background tasks where groupId = &#63; and taskExecutorClassName = any &#63; and completed = &#63;.
@@ -1201,10 +1372,12 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param start the lower bound of the range of background tasks
 	* @param end the upper bound of the range of background tasks (not inclusive)
 	* @return the range of matching background tasks
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.BackgroundTask> findByG_T_C(
 		long groupId, java.lang.String[] taskExecutorClassNames,
-		boolean completed, int start, int end);
+		boolean completed, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns an ordered range of all the background tasks where groupId = &#63; and taskExecutorClassName = any &#63; and completed = &#63;.
@@ -1220,11 +1393,13 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param end the upper bound of the range of background tasks (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching background tasks
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.BackgroundTask> findByG_T_C(
 		long groupId, java.lang.String[] taskExecutorClassNames,
 		boolean completed, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Removes all the background tasks where groupId = &#63; and taskExecutorClassName = &#63; and completed = &#63; from the database.
@@ -1232,9 +1407,11 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param groupId the group ID
 	* @param taskExecutorClassName the task executor class name
 	* @param completed the completed
+	* @throws SystemException if a system exception occurred
 	*/
 	public void removeByG_T_C(long groupId,
-		java.lang.String taskExecutorClassName, boolean completed);
+		java.lang.String taskExecutorClassName, boolean completed)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of background tasks where groupId = &#63; and taskExecutorClassName = &#63; and completed = &#63;.
@@ -1243,9 +1420,11 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param taskExecutorClassName the task executor class name
 	* @param completed the completed
 	* @return the number of matching background tasks
+	* @throws SystemException if a system exception occurred
 	*/
 	public int countByG_T_C(long groupId,
-		java.lang.String taskExecutorClassName, boolean completed);
+		java.lang.String taskExecutorClassName, boolean completed)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of background tasks where groupId = &#63; and taskExecutorClassName = any &#63; and completed = &#63;.
@@ -1254,9 +1433,11 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param taskExecutorClassNames the task executor class names
 	* @param completed the completed
 	* @return the number of matching background tasks
+	* @throws SystemException if a system exception occurred
 	*/
 	public int countByG_T_C(long groupId,
-		java.lang.String[] taskExecutorClassNames, boolean completed);
+		java.lang.String[] taskExecutorClassNames, boolean completed)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns all the background tasks where groupId = &#63; and taskExecutorClassName = &#63; and status = &#63;.
@@ -1265,9 +1446,11 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param taskExecutorClassName the task executor class name
 	* @param status the status
 	* @return the matching background tasks
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.BackgroundTask> findByG_T_S(
-		long groupId, java.lang.String taskExecutorClassName, int status);
+		long groupId, java.lang.String taskExecutorClassName, int status)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns a range of all the background tasks where groupId = &#63; and taskExecutorClassName = &#63; and status = &#63;.
@@ -1282,10 +1465,12 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param start the lower bound of the range of background tasks
 	* @param end the upper bound of the range of background tasks (not inclusive)
 	* @return the range of matching background tasks
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.BackgroundTask> findByG_T_S(
 		long groupId, java.lang.String taskExecutorClassName, int status,
-		int start, int end);
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns an ordered range of all the background tasks where groupId = &#63; and taskExecutorClassName = &#63; and status = &#63;.
@@ -1301,11 +1486,13 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param end the upper bound of the range of background tasks (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching background tasks
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.BackgroundTask> findByG_T_S(
 		long groupId, java.lang.String taskExecutorClassName, int status,
 		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the first background task in the ordered set where groupId = &#63; and taskExecutorClassName = &#63; and status = &#63;.
@@ -1316,11 +1503,13 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching background task
 	* @throws com.liferay.portal.NoSuchBackgroundTaskException if a matching background task could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.BackgroundTask findByG_T_S_First(
 		long groupId, java.lang.String taskExecutorClassName, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator)
-		throws com.liferay.portal.NoSuchBackgroundTaskException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchBackgroundTaskException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the first background task in the ordered set where groupId = &#63; and taskExecutorClassName = &#63; and status = &#63;.
@@ -1330,10 +1519,12 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param status the status
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching background task, or <code>null</code> if a matching background task could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.BackgroundTask fetchByG_T_S_First(
 		long groupId, java.lang.String taskExecutorClassName, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the last background task in the ordered set where groupId = &#63; and taskExecutorClassName = &#63; and status = &#63;.
@@ -1344,11 +1535,13 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching background task
 	* @throws com.liferay.portal.NoSuchBackgroundTaskException if a matching background task could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.BackgroundTask findByG_T_S_Last(
 		long groupId, java.lang.String taskExecutorClassName, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator)
-		throws com.liferay.portal.NoSuchBackgroundTaskException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchBackgroundTaskException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the last background task in the ordered set where groupId = &#63; and taskExecutorClassName = &#63; and status = &#63;.
@@ -1358,10 +1551,12 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param status the status
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching background task, or <code>null</code> if a matching background task could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.BackgroundTask fetchByG_T_S_Last(
 		long groupId, java.lang.String taskExecutorClassName, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the background tasks before and after the current background task in the ordered set where groupId = &#63; and taskExecutorClassName = &#63; and status = &#63;.
@@ -1373,12 +1568,14 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next background task
 	* @throws com.liferay.portal.NoSuchBackgroundTaskException if a background task with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.BackgroundTask[] findByG_T_S_PrevAndNext(
 		long backgroundTaskId, long groupId,
 		java.lang.String taskExecutorClassName, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator)
-		throws com.liferay.portal.NoSuchBackgroundTaskException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchBackgroundTaskException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns all the background tasks where groupId = &#63; and taskExecutorClassName = any &#63; and status = &#63;.
@@ -1391,9 +1588,11 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param taskExecutorClassNames the task executor class names
 	* @param status the status
 	* @return the matching background tasks
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.BackgroundTask> findByG_T_S(
-		long groupId, java.lang.String[] taskExecutorClassNames, int status);
+		long groupId, java.lang.String[] taskExecutorClassNames, int status)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns a range of all the background tasks where groupId = &#63; and taskExecutorClassName = any &#63; and status = &#63;.
@@ -1408,10 +1607,12 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param start the lower bound of the range of background tasks
 	* @param end the upper bound of the range of background tasks (not inclusive)
 	* @return the range of matching background tasks
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.BackgroundTask> findByG_T_S(
 		long groupId, java.lang.String[] taskExecutorClassNames, int status,
-		int start, int end);
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns an ordered range of all the background tasks where groupId = &#63; and taskExecutorClassName = any &#63; and status = &#63;.
@@ -1427,11 +1628,13 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param end the upper bound of the range of background tasks (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching background tasks
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.BackgroundTask> findByG_T_S(
 		long groupId, java.lang.String[] taskExecutorClassNames, int status,
 		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Removes all the background tasks where groupId = &#63; and taskExecutorClassName = &#63; and status = &#63; from the database.
@@ -1439,9 +1642,11 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param groupId the group ID
 	* @param taskExecutorClassName the task executor class name
 	* @param status the status
+	* @throws SystemException if a system exception occurred
 	*/
 	public void removeByG_T_S(long groupId,
-		java.lang.String taskExecutorClassName, int status);
+		java.lang.String taskExecutorClassName, int status)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of background tasks where groupId = &#63; and taskExecutorClassName = &#63; and status = &#63;.
@@ -1450,9 +1655,11 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param taskExecutorClassName the task executor class name
 	* @param status the status
 	* @return the number of matching background tasks
+	* @throws SystemException if a system exception occurred
 	*/
 	public int countByG_T_S(long groupId,
-		java.lang.String taskExecutorClassName, int status);
+		java.lang.String taskExecutorClassName, int status)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of background tasks where groupId = &#63; and taskExecutorClassName = any &#63; and status = &#63;.
@@ -1461,9 +1668,11 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param taskExecutorClassNames the task executor class names
 	* @param status the status
 	* @return the number of matching background tasks
+	* @throws SystemException if a system exception occurred
 	*/
 	public int countByG_T_S(long groupId,
-		java.lang.String[] taskExecutorClassNames, int status);
+		java.lang.String[] taskExecutorClassNames, int status)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns all the background tasks where groupId = &#63; and name = &#63; and taskExecutorClassName = &#63; and completed = &#63;.
@@ -1473,10 +1682,12 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param taskExecutorClassName the task executor class name
 	* @param completed the completed
 	* @return the matching background tasks
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.BackgroundTask> findByG_N_T_C(
 		long groupId, java.lang.String name,
-		java.lang.String taskExecutorClassName, boolean completed);
+		java.lang.String taskExecutorClassName, boolean completed)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns a range of all the background tasks where groupId = &#63; and name = &#63; and taskExecutorClassName = &#63; and completed = &#63;.
@@ -1492,11 +1703,12 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param start the lower bound of the range of background tasks
 	* @param end the upper bound of the range of background tasks (not inclusive)
 	* @return the range of matching background tasks
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.BackgroundTask> findByG_N_T_C(
 		long groupId, java.lang.String name,
 		java.lang.String taskExecutorClassName, boolean completed, int start,
-		int end);
+		int end) throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns an ordered range of all the background tasks where groupId = &#63; and name = &#63; and taskExecutorClassName = &#63; and completed = &#63;.
@@ -1513,12 +1725,14 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param end the upper bound of the range of background tasks (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching background tasks
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.BackgroundTask> findByG_N_T_C(
 		long groupId, java.lang.String name,
 		java.lang.String taskExecutorClassName, boolean completed, int start,
 		int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the first background task in the ordered set where groupId = &#63; and name = &#63; and taskExecutorClassName = &#63; and completed = &#63;.
@@ -1530,12 +1744,14 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching background task
 	* @throws com.liferay.portal.NoSuchBackgroundTaskException if a matching background task could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.BackgroundTask findByG_N_T_C_First(
 		long groupId, java.lang.String name,
 		java.lang.String taskExecutorClassName, boolean completed,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator)
-		throws com.liferay.portal.NoSuchBackgroundTaskException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchBackgroundTaskException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the first background task in the ordered set where groupId = &#63; and name = &#63; and taskExecutorClassName = &#63; and completed = &#63;.
@@ -1546,11 +1762,13 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param completed the completed
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching background task, or <code>null</code> if a matching background task could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.BackgroundTask fetchByG_N_T_C_First(
 		long groupId, java.lang.String name,
 		java.lang.String taskExecutorClassName, boolean completed,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the last background task in the ordered set where groupId = &#63; and name = &#63; and taskExecutorClassName = &#63; and completed = &#63;.
@@ -1562,12 +1780,14 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching background task
 	* @throws com.liferay.portal.NoSuchBackgroundTaskException if a matching background task could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.BackgroundTask findByG_N_T_C_Last(
 		long groupId, java.lang.String name,
 		java.lang.String taskExecutorClassName, boolean completed,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator)
-		throws com.liferay.portal.NoSuchBackgroundTaskException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchBackgroundTaskException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the last background task in the ordered set where groupId = &#63; and name = &#63; and taskExecutorClassName = &#63; and completed = &#63;.
@@ -1578,11 +1798,13 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param completed the completed
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching background task, or <code>null</code> if a matching background task could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.BackgroundTask fetchByG_N_T_C_Last(
 		long groupId, java.lang.String name,
 		java.lang.String taskExecutorClassName, boolean completed,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the background tasks before and after the current background task in the ordered set where groupId = &#63; and name = &#63; and taskExecutorClassName = &#63; and completed = &#63;.
@@ -1595,12 +1817,14 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next background task
 	* @throws com.liferay.portal.NoSuchBackgroundTaskException if a background task with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.BackgroundTask[] findByG_N_T_C_PrevAndNext(
 		long backgroundTaskId, long groupId, java.lang.String name,
 		java.lang.String taskExecutorClassName, boolean completed,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator)
-		throws com.liferay.portal.NoSuchBackgroundTaskException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchBackgroundTaskException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Removes all the background tasks where groupId = &#63; and name = &#63; and taskExecutorClassName = &#63; and completed = &#63; from the database.
@@ -1609,9 +1833,11 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param name the name
 	* @param taskExecutorClassName the task executor class name
 	* @param completed the completed
+	* @throws SystemException if a system exception occurred
 	*/
 	public void removeByG_N_T_C(long groupId, java.lang.String name,
-		java.lang.String taskExecutorClassName, boolean completed);
+		java.lang.String taskExecutorClassName, boolean completed)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of background tasks where groupId = &#63; and name = &#63; and taskExecutorClassName = &#63; and completed = &#63;.
@@ -1621,9 +1847,11 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param taskExecutorClassName the task executor class name
 	* @param completed the completed
 	* @return the number of matching background tasks
+	* @throws SystemException if a system exception occurred
 	*/
 	public int countByG_N_T_C(long groupId, java.lang.String name,
-		java.lang.String taskExecutorClassName, boolean completed);
+		java.lang.String taskExecutorClassName, boolean completed)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Caches the background task in the entity cache if it is enabled.
@@ -1655,12 +1883,15 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param backgroundTaskId the primary key of the background task
 	* @return the background task that was removed
 	* @throws com.liferay.portal.NoSuchBackgroundTaskException if a background task with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.BackgroundTask remove(long backgroundTaskId)
-		throws com.liferay.portal.NoSuchBackgroundTaskException;
+		throws com.liferay.portal.NoSuchBackgroundTaskException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	public com.liferay.portal.model.BackgroundTask updateImpl(
-		com.liferay.portal.model.BackgroundTask backgroundTask);
+		com.liferay.portal.model.BackgroundTask backgroundTask)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the background task with the primary key or throws a {@link com.liferay.portal.NoSuchBackgroundTaskException} if it could not be found.
@@ -1668,30 +1899,32 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param backgroundTaskId the primary key of the background task
 	* @return the background task
 	* @throws com.liferay.portal.NoSuchBackgroundTaskException if a background task with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.BackgroundTask findByPrimaryKey(
 		long backgroundTaskId)
-		throws com.liferay.portal.NoSuchBackgroundTaskException;
+		throws com.liferay.portal.NoSuchBackgroundTaskException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the background task with the primary key or returns <code>null</code> if it could not be found.
 	*
 	* @param backgroundTaskId the primary key of the background task
 	* @return the background task, or <code>null</code> if a background task with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.BackgroundTask fetchByPrimaryKey(
-		long backgroundTaskId);
-
-	@Override
-	public java.util.Map<java.io.Serializable, com.liferay.portal.model.BackgroundTask> fetchByPrimaryKeys(
-		java.util.Set<java.io.Serializable> primaryKeys);
+		long backgroundTaskId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns all the background tasks.
 	*
 	* @return the background tasks
+	* @throws SystemException if a system exception occurred
 	*/
-	public java.util.List<com.liferay.portal.model.BackgroundTask> findAll();
+	public java.util.List<com.liferay.portal.model.BackgroundTask> findAll()
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns a range of all the background tasks.
@@ -1703,9 +1936,11 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param start the lower bound of the range of background tasks
 	* @param end the upper bound of the range of background tasks (not inclusive)
 	* @return the range of background tasks
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.BackgroundTask> findAll(
-		int start, int end);
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns an ordered range of all the background tasks.
@@ -1718,20 +1953,27 @@ public interface BackgroundTaskPersistence extends BasePersistence<BackgroundTas
 	* @param end the upper bound of the range of background tasks (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of background tasks
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.BackgroundTask> findAll(
 		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.BackgroundTask> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Removes all the background tasks from the database.
+	*
+	* @throws SystemException if a system exception occurred
 	*/
-	public void removeAll();
+	public void removeAll()
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of background tasks.
 	*
 	* @return the number of background tasks
+	* @throws SystemException if a system exception occurred
 	*/
-	public int countAll();
+	public int countAll()
+		throws com.liferay.portal.kernel.exception.SystemException;
 }

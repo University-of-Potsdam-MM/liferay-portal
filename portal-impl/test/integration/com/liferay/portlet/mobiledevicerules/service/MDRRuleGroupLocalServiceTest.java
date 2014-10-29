@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -16,20 +16,21 @@ package com.liferay.portlet.mobiledevicerules.service;
 
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.test.ExecutionTestListeners;
+import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.Company;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.Layout;
 import com.liferay.portal.service.CompanyLocalServiceUtil;
-import com.liferay.portal.test.DeleteAfterTestRun;
-import com.liferay.portal.test.listeners.MainServletExecutionTestListener;
-import com.liferay.portal.test.runners.LiferayIntegrationJUnitTestRunner;
-import com.liferay.portal.util.test.GroupTestUtil;
-import com.liferay.portal.util.test.LayoutTestUtil;
-import com.liferay.portal.util.test.RandomTestUtil;
-import com.liferay.portal.util.test.TestPropsValues;
+import com.liferay.portal.service.ServiceTestUtil;
+import com.liferay.portal.test.LiferayIntegrationJUnitTestRunner;
+import com.liferay.portal.test.MainServletExecutionTestListener;
+import com.liferay.portal.test.TransactionalCallbackAwareExecutionTestListener;
+import com.liferay.portal.util.GroupTestUtil;
+import com.liferay.portal.util.LayoutTestUtil;
+import com.liferay.portal.util.TestPropsValues;
 import com.liferay.portlet.mobiledevicerules.model.MDRRuleGroup;
-import com.liferay.portlet.mobiledevicerules.util.test.MDRTestUtil;
+import com.liferay.portlet.mobiledevicerules.util.MDRTestUtil;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -42,8 +43,13 @@ import org.junit.runner.RunWith;
 /**
  * @author Manuel de la Peña
  */
-@ExecutionTestListeners(listeners = {MainServletExecutionTestListener.class})
+@ExecutionTestListeners(
+	listeners = {
+		MainServletExecutionTestListener.class,
+		TransactionalCallbackAwareExecutionTestListener.class
+	})
 @RunWith(LiferayIntegrationJUnitTestRunner.class)
+@Transactional
 public class MDRRuleGroupLocalServiceTest {
 
 	@Before
@@ -54,8 +60,6 @@ public class MDRRuleGroupLocalServiceTest {
 		Group companyGroup = company.getGroup();
 
 		_ruleGroup = MDRTestUtil.addRuleGroup(companyGroup.getGroupId());
-
-		_group = GroupTestUtil.addGroup();
 	}
 
 	@Test
@@ -71,8 +75,10 @@ public class MDRRuleGroupLocalServiceTest {
 	protected void testSelectableRuleGroups(boolean includeGlobalGroup)
 		throws Exception {
 
+		Group group = GroupTestUtil.addGroup();
+
 		Layout layout = LayoutTestUtil.addLayout(
-			_group.getGroupId(), RandomTestUtil.randomString());
+			group.getGroupId(), ServiceTestUtil.randomString());
 
 		LinkedHashMap<String, Object> params =
 			new LinkedHashMap<String, Object>();
@@ -93,9 +99,6 @@ public class MDRRuleGroupLocalServiceTest {
 			Assert.assertFalse(ruleGroups.contains(_ruleGroup));
 		}
 	}
-
-	@DeleteAfterTestRun
-	private Group _group;
 
 	private MDRRuleGroup _ruleGroup;
 

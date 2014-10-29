@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -32,36 +32,6 @@ public class UserGroupGroupRoleServiceWrapper
 		_userGroupGroupRoleService = userGroupGroupRoleService;
 	}
 
-	@Override
-	public void addUserGroupGroupRoles(long userGroupId, long groupId,
-		long[] roleIds)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_userGroupGroupRoleService.addUserGroupGroupRoles(userGroupId, groupId,
-			roleIds);
-	}
-
-	@Override
-	public void addUserGroupGroupRoles(long[] userGroupIds, long groupId,
-		long roleId) throws com.liferay.portal.kernel.exception.PortalException {
-		_userGroupGroupRoleService.addUserGroupGroupRoles(userGroupIds,
-			groupId, roleId);
-	}
-
-	@Override
-	public void deleteUserGroupGroupRoles(long userGroupId, long groupId,
-		long[] roleIds)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_userGroupGroupRoleService.deleteUserGroupGroupRoles(userGroupId,
-			groupId, roleIds);
-	}
-
-	@Override
-	public void deleteUserGroupGroupRoles(long[] userGroupIds, long groupId,
-		long roleId) throws com.liferay.portal.kernel.exception.PortalException {
-		_userGroupGroupRoleService.deleteUserGroupGroupRoles(userGroupIds,
-			groupId, roleId);
-	}
-
 	/**
 	* Returns the Spring bean ID for this bean.
 	*
@@ -82,10 +52,45 @@ public class UserGroupGroupRoleServiceWrapper
 		_userGroupGroupRoleService.setBeanIdentifier(beanIdentifier);
 	}
 
+	@Override
+	public void addUserGroupGroupRoles(long userGroupId, long groupId,
+		long[] roleIds)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		_userGroupGroupRoleService.addUserGroupGroupRoles(userGroupId, groupId,
+			roleIds);
+	}
+
+	@Override
+	public void addUserGroupGroupRoles(long[] userGroupIds, long groupId,
+		long roleId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		_userGroupGroupRoleService.addUserGroupGroupRoles(userGroupIds,
+			groupId, roleId);
+	}
+
+	@Override
+	public void deleteUserGroupGroupRoles(long userGroupId, long groupId,
+		long[] roleIds)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		_userGroupGroupRoleService.deleteUserGroupGroupRoles(userGroupId,
+			groupId, roleIds);
+	}
+
+	@Override
+	public void deleteUserGroupGroupRoles(long[] userGroupIds, long groupId,
+		long roleId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		_userGroupGroupRoleService.deleteUserGroupGroupRoles(userGroupIds,
+			groupId, roleId);
+	}
+
 	/**
 	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedService}
 	 */
-	@Deprecated
 	public UserGroupGroupRoleService getWrappedUserGroupGroupRoleService() {
 		return _userGroupGroupRoleService;
 	}
@@ -93,7 +98,6 @@ public class UserGroupGroupRoleServiceWrapper
 	/**
 	 * @deprecated As of 6.1.0, replaced by {@link #setWrappedService}
 	 */
-	@Deprecated
 	public void setWrappedUserGroupGroupRoleService(
 		UserGroupGroupRoleService userGroupGroupRoleService) {
 		_userGroupGroupRoleService = userGroupGroupRoleService;

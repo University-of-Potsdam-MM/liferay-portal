@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -24,8 +24,6 @@ public class MissingReferenceException extends PortalException {
 
 	public MissingReferenceException() {
 		super();
-
-		_missingReferences = null;
 	}
 
 	public MissingReferenceException(MissingReferences missingReferences) {
@@ -36,26 +34,20 @@ public class MissingReferenceException extends PortalException {
 
 	public MissingReferenceException(String msg) {
 		super(msg);
-
-		_missingReferences = null;
 	}
 
 	public MissingReferenceException(String msg, Throwable cause) {
 		super(msg, cause);
-
-		_missingReferences = null;
 	}
 
 	public MissingReferenceException(Throwable cause) {
 		super(cause);
-
-		_missingReferences = null;
 	}
 
 	public MissingReferences getMissingReferences() {
 		return _missingReferences;
 	}
 
-	private final MissingReferences _missingReferences;
+	private MissingReferences _missingReferences;
 
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -29,6 +29,7 @@ import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.UniqueList;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.xml.Document;
 import com.liferay.portal.kernel.xml.Element;
@@ -46,7 +47,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -64,7 +64,8 @@ public class LayoutTemplateLocalServiceImpl
 
 	@Override
 	public String getContent(
-		String layoutTemplateId, boolean standard, String themeId) {
+			String layoutTemplateId, boolean standard, String themeId)
+		throws SystemException {
 
 		LayoutTemplate layoutTemplate = getLayoutTemplate(
 			layoutTemplateId, standard, themeId);
@@ -217,7 +218,8 @@ public class LayoutTemplateLocalServiceImpl
 
 	@Override
 	public String getWapContent(
-		String layoutTemplateId, boolean standard, String themeId) {
+			String layoutTemplateId, boolean standard, String themeId)
+		throws SystemException {
 
 		LayoutTemplate layoutTemplate = getLayoutTemplate(
 			layoutTemplateId, standard, themeId);
@@ -267,8 +269,7 @@ public class LayoutTemplateLocalServiceImpl
 		String servletContextName, ServletContext servletContext, String[] xmls,
 		PluginPackage pluginPackage) {
 
-		Set<LayoutTemplate> layoutTemplates =
-			new LinkedHashSet<LayoutTemplate>();
+		List<LayoutTemplate> layoutTemplates = new UniqueList<LayoutTemplate>();
 
 		try {
 			for (String xml : xmls) {
@@ -282,7 +283,7 @@ public class LayoutTemplateLocalServiceImpl
 			_log.error(e, e);
 		}
 
-		return new ArrayList<LayoutTemplate>(layoutTemplates);
+		return layoutTemplates;
 	}
 
 	@Override
@@ -347,14 +348,10 @@ public class LayoutTemplateLocalServiceImpl
 
 			layoutTemplateModel.setStandard(standard);
 			layoutTemplateModel.setThemeId(themeId);
-
-			String templateName = GetterUtil.getString(
-				layoutTemplateElement.attributeValue("name"));
-
-			if (Validator.isNotNull(templateName)) {
-				layoutTemplateModel.setName(templateName);
-			}
-
+			layoutTemplateModel.setName(
+				GetterUtil.getString(
+					layoutTemplateElement.attributeValue("name"),
+					layoutTemplateModel.getName()));
 			layoutTemplateModel.setTemplatePath(
 				GetterUtil.getString(
 					layoutTemplateElement.elementText("template-path"),

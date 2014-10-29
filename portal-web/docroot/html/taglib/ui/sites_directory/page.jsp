@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -47,7 +47,7 @@
 	}
 	%>
 
-	<div class="nav-menu sites-directory-taglib">
+	<div class="sites-directory-taglib nav-menu">
 		<c:choose>
 			<c:when test="<%= hidden %>">
 				<div class="alert alert-info">
@@ -75,13 +75,13 @@
 									List<Group> childGroups = null;
 
 									if (rootGroup != null) {
-										childGroups = rootGroup.getChildrenWithLayouts(true, QueryUtil.ALL_POS, QueryUtil.ALL_POS, new GroupNameComparator(true));
+										childGroups = rootGroup.getChildrenWithLayouts(true, QueryUtil.ALL_POS, QueryUtil.ALL_POS);
 									}
 									else {
-										childGroups = GroupLocalServiceUtil.getLayoutsGroups(group.getCompanyId(), GroupConstants.DEFAULT_LIVE_GROUP_ID, true, QueryUtil.ALL_POS, QueryUtil.ALL_POS, new GroupNameComparator(true));
+										childGroups = GroupLocalServiceUtil.getLayoutsGroups(group.getCompanyId(), GroupConstants.DEFAULT_LIVE_GROUP_ID, true, QueryUtil.ALL_POS, QueryUtil.ALL_POS);
 									}
 
-									Set<Group> visibleGroups = new LinkedHashSet<Group>();
+									List<Group> visibleGroups = new UniqueList<Group>();
 
 									for (Group childGroup : childGroups) {
 										if (childGroup.hasPublicLayouts()) {
@@ -98,7 +98,7 @@
 									%>
 
 									<liferay-ui:search-container-results
-										results="<%= ListUtil.subList(new ArrayList<Group>(visibleGroups), searchContainer.getStart(), searchContainer.getEnd()) %>"
+										results="<%= ListUtil.subList(visibleGroups, searchContainer.getStart(), searchContainer.getEnd()) %>"
 									/>
 
 									<liferay-ui:search-container-row
@@ -131,7 +131,7 @@
 										/>
 									</liferay-ui:search-container-row>
 
-									<liferay-ui:search-paginator searchContainer="<%= searchContainer %>" />
+									<liferay-ui:search-iterator />
 								</liferay-ui:search-container>
 							</c:otherwise>
 						</c:choose>
@@ -160,10 +160,27 @@ private void _buildSitesList(Group rootGroup, Group curGroup, List<Group> branch
 	List<Group> childGroups = null;
 
 	if (rootGroup != null) {
-		childGroups = rootGroup.getChildrenWithLayouts(true, QueryUtil.ALL_POS, QueryUtil.ALL_POS, new GroupNameComparator(true));
+		childGroups = rootGroup.getChildrenWithLayouts(true, QueryUtil.ALL_POS, QueryUtil.ALL_POS);
 	}
 	else {
-		childGroups = GroupLocalServiceUtil.getLayoutsGroups(curGroup.getCompanyId(), GroupConstants.DEFAULT_LIVE_GROUP_ID, true, QueryUtil.ALL_POS, QueryUtil.ALL_POS, new GroupNameComparator(true));
+		childGroups = GroupLocalServiceUtil.getLayoutsGroups(curGroup.getCompanyId(), GroupConstants.DEFAULT_LIVE_GROUP_ID, true, QueryUtil.ALL_POS, QueryUtil.ALL_POS);
+	}
+
+	List<Group> visibleGroups = new UniqueList<Group>();
+
+	for (Group childGroup : childGroups) {
+		if (childGroup.hasPublicLayouts()) {
+			visibleGroups.add(childGroup);
+		}
+		else {
+			User user = themeDisplay.getUser();
+
+			List<Group> mySiteGroups = user.getMySiteGroups(true, QueryUtil.ALL_POS);
+
+			if (mySiteGroups.contains(childGroup)) {
+				visibleGroups.add(childGroup);
+			}
+		}
 	}
 
 	if (childGroups.isEmpty()) {

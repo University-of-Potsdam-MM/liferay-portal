@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -22,18 +22,22 @@ import aQute.bnd.annotation.ProviderType;
 @ProviderType
 public interface DLFileEntryTypeFinder {
 	public int countByKeywords(long companyId, long[] groupIds,
-		java.lang.String keywords, boolean includeBasicFileEntryType);
+		java.lang.String keywords, boolean includeBasicFileEntryType)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	public int filterCountByKeywords(long companyId, long[] groupIds,
-		java.lang.String keywords, boolean includeBasicFileEntryType);
+		java.lang.String keywords, boolean includeBasicFileEntryType)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	public java.util.List<com.liferay.portlet.documentlibrary.model.DLFileEntryType> filterFindByKeywords(
 		long companyId, long[] groupIds, java.lang.String keywords,
 		boolean includeBasicFileEntryType, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.documentlibrary.model.DLFileEntryType> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	public java.util.List<com.liferay.portlet.documentlibrary.model.DLFileEntryType> findByKeywords(
 		long companyId, long[] groupIds, java.lang.String keywords,
 		boolean includeBasicFileEntryType, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.documentlibrary.model.DLFileEntryType> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -95,8 +95,6 @@ public class PropsUtil {
 	}
 
 	private PropsUtil() {
-		Configuration configuration = null;
-
 		try {
 
 			// Default liferay home directory
@@ -165,32 +163,32 @@ public class PropsUtil {
 
 			// Liferay home directory
 
-			configuration = new ConfigurationImpl(
+			_configuration = new ConfigurationImpl(
 				PropsUtil.class.getClassLoader(), PropsFiles.PORTAL);
+
+			String liferayHome = _get(PropsKeys.LIFERAY_HOME);
+
+			if (_log.isDebugEnabled()) {
+				_log.debug("Configured Liferay home " + liferayHome);
+			}
+
+			SystemProperties.set(PropsKeys.LIFERAY_HOME, liferayHome);
+
+			// Ehcache disk directory
+
+			SystemProperties.set(
+				"ehcache.disk.store.dir", liferayHome + "/data/ehcache");
+
+			if (GetterUtil.getBoolean(
+					SystemProperties.get("company-id-properties"))) {
+
+				_configurations = new HashMap<Long, Configuration>();
+			}
 		}
 		catch (Exception e) {
-			_log.error("Unable to initialize PropsUtil", e);
-		}
-
-		_configuration = configuration;
-
-		String liferayHome = _get(PropsKeys.LIFERAY_HOME);
-
-		if (_log.isDebugEnabled()) {
-			_log.debug("Configured Liferay home " + liferayHome);
-		}
-
-		SystemProperties.set(PropsKeys.LIFERAY_HOME, liferayHome);
-
-		// Ehcache disk directory
-
-		SystemProperties.set(
-			"ehcache.disk.store.dir", liferayHome + "/data/ehcache");
-
-		if (GetterUtil.getBoolean(
-				SystemProperties.get("company-id-properties"))) {
-
-			_configurations = new HashMap<Long, Configuration>();
+			if (_log.isErrorEnabled()) {
+				_log.error("Unable to initialize PropsUtil", e);
+			}
 		}
 	}
 
@@ -344,7 +342,7 @@ public class PropsUtil {
 
 	private static PropsUtil _instance = new PropsUtil();
 
-	private final Configuration _configuration;
+	private Configuration _configuration;
 	private Map<Long, Configuration> _configurations;
 
 }

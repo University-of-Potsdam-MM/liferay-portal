@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -35,39 +35,31 @@ public interface Group extends GroupModel, PersistedModel, TreeModel {
 	public void clearStagingGroup();
 
 	public java.util.List<com.liferay.portal.model.Group> getAncestors()
-		throws com.liferay.portal.kernel.exception.PortalException;
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	public java.util.List<com.liferay.portal.model.Group> getChildren(
-		boolean site);
-
-	/**
-	* @deprecated As of 7.0.0, replaced by {@link
-	#getChildrenWithLayouts(boolean, int, int, OrderByComparator}
-	*/
-	@java.lang.Deprecated()
-	public java.util.List<com.liferay.portal.model.Group> getChildrenWithLayouts(
-		boolean site, int start, int end);
+		boolean site)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	public java.util.List<com.liferay.portal.model.Group> getChildrenWithLayouts(
-		boolean site, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Group> obc);
+		boolean site, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
-	public int getChildrenWithLayoutsCount(boolean site);
+	public int getChildrenWithLayoutsCount(boolean site)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	public long getDefaultPrivatePlid();
 
 	public long getDefaultPublicPlid();
 
-	public java.util.List<com.liferay.portal.model.Group> getDescendants(
-		boolean site);
-
 	public java.lang.String getDescriptiveName()
-		throws com.liferay.portal.kernel.exception.PortalException;
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	public java.lang.String getDescriptiveName(java.util.Locale locale)
-		throws com.liferay.portal.kernel.exception.PortalException;
-
-	public java.lang.String getIconCssClass();
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	public java.lang.String getIconURL(
 		com.liferay.portal.theme.ThemeDisplay themeDisplay);
@@ -83,7 +75,8 @@ public interface Group extends GroupModel, PersistedModel, TreeModel {
 	public long getOrganizationId();
 
 	public com.liferay.portal.model.Group getParentGroup()
-		throws com.liferay.portal.kernel.exception.PortalException;
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	public com.liferay.portal.kernel.util.UnicodeProperties getParentLiveGroupTypeSettingsProperties();
 
@@ -98,11 +91,10 @@ public interface Group extends GroupModel, PersistedModel, TreeModel {
 
 	public int getPublicLayoutsPageCount();
 
-	public long getRemoteLiveGroupId();
-
 	public java.lang.String getScopeDescriptiveName(
 		com.liferay.portal.theme.ThemeDisplay themeDisplay)
-		throws com.liferay.portal.kernel.exception.PortalException;
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	public java.lang.String getScopeLabel(
 		com.liferay.portal.theme.ThemeDisplay themeDisplay);
@@ -115,9 +107,6 @@ public interface Group extends GroupModel, PersistedModel, TreeModel {
 
 	public java.lang.String getTypeSettingsProperty(java.lang.String key);
 
-	public java.lang.String getUnambiguousName(java.lang.String name,
-		java.util.Locale locale);
-
 	public boolean hasAncestor(long groupId);
 
 	public boolean hasLocalOrRemoteStagingGroup();
@@ -126,20 +115,13 @@ public interface Group extends GroupModel, PersistedModel, TreeModel {
 
 	public boolean hasPublicLayouts();
 
-	public boolean hasRemoteStagingGroup();
-
 	public boolean hasStagingGroup();
 
-	/**
-	* @deprecated As of 7.0.0, replaced by {@link #hasAncestor}
-	*/
-	@java.lang.Deprecated()
 	public boolean isChild(long groupId);
 
 	/**
 	* @deprecated As of 6.1.0, renamed to {@link #isRegularSite}
 	*/
-	@java.lang.Deprecated()
 	public boolean isCommunity();
 
 	public boolean isCompany();
@@ -169,7 +151,8 @@ public interface Group extends GroupModel, PersistedModel, TreeModel {
 	public boolean isShowSite(
 		com.liferay.portal.security.permission.PermissionChecker permissionChecker,
 		boolean privateSite)
-		throws com.liferay.portal.kernel.exception.PortalException;
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	public boolean isStaged();
 

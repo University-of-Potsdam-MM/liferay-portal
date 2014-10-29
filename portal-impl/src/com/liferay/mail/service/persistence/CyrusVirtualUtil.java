@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -17,6 +17,7 @@ package com.liferay.mail.service.persistence;
 import com.liferay.mail.NoSuchCyrusVirtualException;
 import com.liferay.mail.model.CyrusVirtual;
 import com.liferay.portal.kernel.bean.PortalBeanLocatorUtil;
+import com.liferay.portal.kernel.exception.SystemException;
 
 import java.util.List;
 
@@ -26,12 +27,14 @@ import java.util.List;
 public class CyrusVirtualUtil {
 
 	public static CyrusVirtual findByPrimaryKey(String emailAddress)
-		throws NoSuchCyrusVirtualException {
+		throws NoSuchCyrusVirtualException, SystemException {
 
 		return getPersistence().findByPrimaryKey(emailAddress);
 	}
 
-	public static List<CyrusVirtual> findByUserId(long userId) {
+	public static List<CyrusVirtual> findByUserId(long userId)
+		throws SystemException {
+
 		return getPersistence().findByUserId(userId);
 	}
 
@@ -46,16 +49,16 @@ public class CyrusVirtualUtil {
 	}
 
 	public static void remove(String emailAddress)
-		throws NoSuchCyrusVirtualException {
+		throws NoSuchCyrusVirtualException, SystemException {
 
 		getPersistence().remove(emailAddress);
 	}
 
-	public static void removeByUserId(long userId) {
+	public static void removeByUserId(long userId) throws SystemException {
 		getPersistence().removeByUserId(userId);
 	}
 
-	public static void update(CyrusVirtual user) {
+	public static void update(CyrusVirtual user) throws SystemException {
 		getPersistence().update(user);
 	}
 

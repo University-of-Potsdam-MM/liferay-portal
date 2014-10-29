@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -217,14 +217,6 @@ public class ChannelHubManagerUtil {
 			companyId, userId, notificationEventUuids);
 	}
 
-	public static void sendClusterNotificationEvent(
-			long companyId, long userId, NotificationEvent notificationEvent)
-		throws ChannelException {
-
-		getChannelHubManager().sendClusterNotificationEvent(
-			companyId, userId, notificationEvent);
-	}
-
 	public static void sendNotificationEvent(
 			long companyId, long userId, NotificationEvent notificationEvent)
 		throws ChannelException {
@@ -240,14 +232,6 @@ public class ChannelHubManagerUtil {
 
 		getChannelHubManager().sendNotificationEvents(
 			companyId, userId, notificationEvents);
-	}
-
-	public static void storeNotificationEvent(
-			long companyId, long userId, NotificationEvent notificationEvent)
-		throws ChannelException {
-
-		getChannelHubManager().storeNotificationEvent(
-			companyId, userId, notificationEvent);
 	}
 
 	public static void unregisterChannelListener(

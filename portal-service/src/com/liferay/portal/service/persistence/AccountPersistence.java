@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -67,12 +67,15 @@ public interface AccountPersistence extends BasePersistence<Account> {
 	* @param accountId the primary key of the account
 	* @return the account that was removed
 	* @throws com.liferay.portal.NoSuchAccountException if a account with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.Account remove(long accountId)
-		throws com.liferay.portal.NoSuchAccountException;
+		throws com.liferay.portal.NoSuchAccountException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	public com.liferay.portal.model.Account updateImpl(
-		com.liferay.portal.model.Account account);
+		com.liferay.portal.model.Account account)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the account with the primary key or throws a {@link com.liferay.portal.NoSuchAccountException} if it could not be found.
@@ -80,28 +83,30 @@ public interface AccountPersistence extends BasePersistence<Account> {
 	* @param accountId the primary key of the account
 	* @return the account
 	* @throws com.liferay.portal.NoSuchAccountException if a account with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.Account findByPrimaryKey(long accountId)
-		throws com.liferay.portal.NoSuchAccountException;
+		throws com.liferay.portal.NoSuchAccountException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the account with the primary key or returns <code>null</code> if it could not be found.
 	*
 	* @param accountId the primary key of the account
 	* @return the account, or <code>null</code> if a account with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
-	public com.liferay.portal.model.Account fetchByPrimaryKey(long accountId);
-
-	@Override
-	public java.util.Map<java.io.Serializable, com.liferay.portal.model.Account> fetchByPrimaryKeys(
-		java.util.Set<java.io.Serializable> primaryKeys);
+	public com.liferay.portal.model.Account fetchByPrimaryKey(long accountId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns all the accounts.
 	*
 	* @return the accounts
+	* @throws SystemException if a system exception occurred
 	*/
-	public java.util.List<com.liferay.portal.model.Account> findAll();
+	public java.util.List<com.liferay.portal.model.Account> findAll()
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns a range of all the accounts.
@@ -113,9 +118,10 @@ public interface AccountPersistence extends BasePersistence<Account> {
 	* @param start the lower bound of the range of accounts
 	* @param end the upper bound of the range of accounts (not inclusive)
 	* @return the range of accounts
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.Account> findAll(int start,
-		int end);
+		int end) throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns an ordered range of all the accounts.
@@ -128,20 +134,27 @@ public interface AccountPersistence extends BasePersistence<Account> {
 	* @param end the upper bound of the range of accounts (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of accounts
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.Account> findAll(int start,
 		int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Account> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Removes all the accounts from the database.
+	*
+	* @throws SystemException if a system exception occurred
 	*/
-	public void removeAll();
+	public void removeAll()
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of accounts.
 	*
 	* @return the number of accounts
+	* @throws SystemException if a system exception occurred
 	*/
-	public int countAll();
+	public int countAll()
+		throws com.liferay.portal.kernel.exception.SystemException;
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,13 +14,6 @@
 
 package com.liferay.portlet.social.service.impl;
 
-import com.liferay.portal.kernel.json.JSONException;
-import com.liferay.portal.kernel.json.JSONFactoryUtil;
-import com.liferay.portal.kernel.json.JSONObject;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portlet.social.model.SocialRequest;
@@ -28,19 +21,9 @@ import com.liferay.portlet.social.model.SocialRequestFeedEntry;
 import com.liferay.portlet.social.model.SocialRequestInterpreter;
 import com.liferay.portlet.social.model.impl.SocialRequestInterpreterImpl;
 import com.liferay.portlet.social.service.base.SocialRequestInterpreterLocalServiceBaseImpl;
-import com.liferay.registry.Filter;
-import com.liferay.registry.Registry;
-import com.liferay.registry.RegistryUtil;
-import com.liferay.registry.ServiceReference;
-import com.liferay.registry.ServiceRegistration;
-import com.liferay.registry.ServiceTracker;
-import com.liferay.registry.ServiceTrackerCustomizer;
-import com.liferay.registry.collections.ServiceRegistrationMap;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * The social request interpreter local service. Social request interpreters are
@@ -73,35 +56,7 @@ public class SocialRequestInterpreterLocalServiceImpl
 	public void addRequestInterpreter(
 		SocialRequestInterpreter requestInterpreter) {
 
-		Registry registry = RegistryUtil.getRegistry();
-
-		Map<String, Object> properties = new HashMap<String, Object>();
-
-		SocialRequestInterpreterImpl requestInterpreterImpl =
-			(SocialRequestInterpreterImpl)requestInterpreter;
-
-		properties.put(
-			"javax.portlet.name", requestInterpreterImpl.getPortletId());
-
-		ServiceRegistration<SocialRequestInterpreter> serviceRegistration =
-			registry.registerService(
-				SocialRequestInterpreter.class, requestInterpreter, properties);
-
-		_serviceRegistrations.put(requestInterpreter, serviceRegistration);
-	}
-
-	@Override
-	public void afterPropertiesSet() {
-		Registry registry = RegistryUtil.getRegistry();
-
-		Filter filter = registry.getFilter(
-			"(&(javax.portlet.name=*)(objectClass=" +
-				SocialRequestInterpreter.class.getName() + "))");
-
-		_serviceTracker = registry.trackServices(
-			filter, new SocialRequestInterpreterServiceTrackerCustomizer());
-
-		_serviceTracker.open();
+		_requestInterpreters.add(requestInterpreter);
 	}
 
 	/**
@@ -114,11 +69,8 @@ public class SocialRequestInterpreterLocalServiceImpl
 	public void deleteRequestInterpreter(
 		SocialRequestInterpreter requestInterpreter) {
 
-		ServiceRegistration<SocialRequestInterpreter> serviceRegistration =
-			_serviceRegistrations.remove(requestInterpreter);
-
-		if (serviceRegistration != null) {
-			serviceRegistration.unregister();
+		if (requestInterpreter != null) {
+			_requestInterpreters.remove(requestInterpreter);
 		}
 	}
 
@@ -148,7 +100,7 @@ public class SocialRequestInterpreterLocalServiceImpl
 			SocialRequestInterpreterImpl requestInterpreter =
 				(SocialRequestInterpreterImpl)_requestInterpreters.get(i);
 
-			if (matches(requestInterpreter, className, request)) {
+			if (requestInterpreter.hasClassName(className)) {
 				SocialRequestFeedEntry requestFeedEntry =
 					requestInterpreter.interpret(request, themeDisplay);
 
@@ -188,7 +140,7 @@ public class SocialRequestInterpreterLocalServiceImpl
 			SocialRequestInterpreterImpl requestInterpreter =
 				(SocialRequestInterpreterImpl)_requestInterpreters.get(i);
 
-			if (matches(requestInterpreter, className, request)) {
+			if (requestInterpreter.hasClassName(className)) {
 				boolean value = requestInterpreter.processConfirmation(
 					request, themeDisplay);
 
@@ -224,7 +176,7 @@ public class SocialRequestInterpreterLocalServiceImpl
 			SocialRequestInterpreterImpl requestInterpreter =
 				(SocialRequestInterpreterImpl)_requestInterpreters.get(i);
 
-			if (matches(requestInterpreter, className, request)) {
+			if (requestInterpreter.hasClassName(className)) {
 				boolean value = requestInterpreter.processRejection(
 					request, themeDisplay);
 
@@ -235,95 +187,7 @@ public class SocialRequestInterpreterLocalServiceImpl
 		}
 	}
 
-	protected String getSocialRequestPortletId(SocialRequest request) {
-		try {
-			JSONObject extraDataJSONObject = JSONFactoryUtil.createJSONObject(
-				request.getExtraData());
-
-			return extraDataJSONObject.getString("portletId");
-		}
-		catch (JSONException jsone) {
-			_log.error(
-				"Unable to create JSON object from " + request.getExtraData());
-
-			return StringPool.BLANK;
-		}
-	}
-
-	protected boolean matches(
-		SocialRequestInterpreterImpl requestInterpreter, String className,
-		SocialRequest request) {
-
-		if (!requestInterpreter.hasClassName(className)) {
-			return false;
-		}
-
-		String requestPortletId = getSocialRequestPortletId(request);
-
-		if (Validator.isNull(requestPortletId) ||
-			requestPortletId.equals(requestInterpreter.getPortletId())) {
-
-			return true;
-		}
-
-		return false;
-	}
-
-	private static Log _log = LogFactoryUtil.getLog(
-		SocialRequestInterpreterLocalServiceImpl.class);
-
 	private List<SocialRequestInterpreter> _requestInterpreters =
-		new CopyOnWriteArrayList<SocialRequestInterpreter>();
-	private ServiceRegistrationMap<SocialRequestInterpreter>
-		_serviceRegistrations =
-			new ServiceRegistrationMap<SocialRequestInterpreter>();
-	private ServiceTracker<SocialRequestInterpreter, SocialRequestInterpreter>
-		_serviceTracker;
-
-	private class SocialRequestInterpreterServiceTrackerCustomizer
-		implements ServiceTrackerCustomizer
-			<SocialRequestInterpreter, SocialRequestInterpreter> {
-
-		@Override
-		public SocialRequestInterpreter addingService(
-			ServiceReference<SocialRequestInterpreter> serviceReference) {
-
-			Registry registry = RegistryUtil.getRegistry();
-
-			SocialRequestInterpreter requestInterpreter = registry.getService(
-				serviceReference);
-
-			String portletId = (String)serviceReference.getProperty(
-				"javax.portlet.name");
-
-			if (!(requestInterpreter instanceof SocialRequestInterpreterImpl)) {
-				requestInterpreter = new SocialRequestInterpreterImpl(
-					portletId, requestInterpreter);
-			}
-
-			_requestInterpreters.add(requestInterpreter);
-
-			return requestInterpreter;
-		}
-
-		@Override
-		public void modifiedService(
-			ServiceReference<SocialRequestInterpreter> serviceReference,
-			SocialRequestInterpreter requestInterpreter) {
-		}
-
-		@Override
-		public void removedService(
-			ServiceReference<SocialRequestInterpreter> serviceReference,
-			SocialRequestInterpreter requestInterpreter) {
-
-			Registry registry = RegistryUtil.getRegistry();
-
-			registry.ungetService(serviceReference);
-
-			_requestInterpreters.remove(requestInterpreter);
-		}
-
-	}
+		new ArrayList<SocialRequestInterpreter>();
 
 }

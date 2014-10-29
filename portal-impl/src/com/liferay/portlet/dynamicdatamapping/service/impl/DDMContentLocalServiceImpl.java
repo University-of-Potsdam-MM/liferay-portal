@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,14 +15,15 @@
 package com.liferay.portlet.dynamicdatamapping.service.impl;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.xml.DocumentException;
 import com.liferay.portal.kernel.xml.SAXReaderUtil;
 import com.liferay.portal.model.User;
 import com.liferay.portal.service.ServiceContext;
-import com.liferay.portlet.dynamicdatamapping.ContentDataException;
 import com.liferay.portlet.dynamicdatamapping.ContentException;
 import com.liferay.portlet.dynamicdatamapping.ContentNameException;
+import com.liferay.portlet.dynamicdatamapping.ContentXmlException;
 import com.liferay.portlet.dynamicdatamapping.model.DDMContent;
 import com.liferay.portlet.dynamicdatamapping.service.base.DDMContentLocalServiceBaseImpl;
 import com.liferay.portlet.dynamicdatamapping.util.DDMXMLUtil;
@@ -39,21 +40,21 @@ public class DDMContentLocalServiceImpl extends DDMContentLocalServiceBaseImpl {
 	@Override
 	public DDMContent addContent(
 			long userId, long groupId, String name, String description,
-			String data, ServiceContext serviceContext)
-		throws PortalException {
+			String xml, ServiceContext serviceContext)
+		throws PortalException, SystemException {
 
 		User user = userPersistence.findByPrimaryKey(userId);
 
 		try {
-			data = DDMXMLUtil.formatXML(data);
+			xml = DDMXMLUtil.formatXML(xml);
 		}
 		catch (Exception e) {
-			throw new ContentDataException(e);
+			throw new ContentXmlException(e);
 		}
 
 		Date now = new Date();
 
-		validate(name, data);
+		validate(name, xml);
 
 		long contentId = counterLocalService.increment();
 
@@ -68,7 +69,7 @@ public class DDMContentLocalServiceImpl extends DDMContentLocalServiceBaseImpl {
 		content.setModifiedDate(serviceContext.getModifiedDate(now));
 		content.setName(name);
 		content.setDescription(description);
-		content.setData(data);
+		content.setXml(xml);
 
 		ddmContentPersistence.update(content);
 
@@ -76,12 +77,12 @@ public class DDMContentLocalServiceImpl extends DDMContentLocalServiceBaseImpl {
 	}
 
 	@Override
-	public void deleteContent(DDMContent content) {
+	public void deleteContent(DDMContent content) throws SystemException {
 		ddmContentPersistence.remove(content);
 	}
 
 	@Override
-	public void deleteContents(long groupId) {
+	public void deleteContents(long groupId) throws SystemException {
 		List<DDMContent> contents = ddmContentPersistence.findByGroupId(
 			groupId);
 
@@ -91,51 +92,55 @@ public class DDMContentLocalServiceImpl extends DDMContentLocalServiceBaseImpl {
 	}
 
 	@Override
-	public DDMContent getContent(long contentId) throws PortalException {
+	public DDMContent getContent(long contentId)
+		throws PortalException, SystemException {
+
 		return ddmContentPersistence.findByPrimaryKey(contentId);
 	}
 
 	@Override
-	public List<DDMContent> getContents() {
+	public List<DDMContent> getContents() throws SystemException {
 		return ddmContentPersistence.findAll();
 	}
 
 	@Override
-	public List<DDMContent> getContents(long groupId) {
+	public List<DDMContent> getContents(long groupId) throws SystemException {
 		return ddmContentPersistence.findByGroupId(groupId);
 	}
 
 	@Override
-	public List<DDMContent> getContents(long groupId, int start, int end) {
+	public List<DDMContent> getContents(long groupId, int start, int end)
+		throws SystemException {
+
 		return ddmContentPersistence.findByGroupId(groupId, start, end);
 	}
 
 	@Override
-	public int getContentsCount(long groupId) {
+	public int getContentsCount(long groupId) throws SystemException {
 		return ddmContentPersistence.countByGroupId(groupId);
 	}
 
 	@Override
 	public DDMContent updateContent(
-			long contentId, String name, String description, String data,
+			long contentId, String name, String description, String xml,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		try {
-			data = DDMXMLUtil.formatXML(data);
+			xml = DDMXMLUtil.formatXML(xml);
 		}
 		catch (Exception e) {
-			throw new ContentDataException();
+			throw new ContentXmlException();
 		}
 
-		validate(name, data);
+		validate(name, xml);
 
 		DDMContent content = ddmContentPersistence.findByPrimaryKey(contentId);
 
 		content.setModifiedDate(serviceContext.getModifiedDate(null));
 		content.setName(name);
 		content.setDescription(description);
-		content.setData(data);
+		content.setXml(xml);
 
 		ddmContentPersistence.update(content);
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -40,9 +40,6 @@ public class QuartzLocalServiceUtil {
 	 *
 	 * Never modify this class directly. Add custom service methods to {@link com.liferay.portal.service.impl.QuartzLocalServiceImpl} and rerun ServiceBuilder to regenerate this class.
 	 */
-	public static void checkQuartzTables() {
-		getService().checkQuartzTables();
-	}
 
 	/**
 	* Returns the Spring bean ID for this bean.
@@ -62,6 +59,11 @@ public class QuartzLocalServiceUtil {
 		getService().setBeanIdentifier(beanIdentifier);
 	}
 
+	public static void checkQuartzTables()
+		throws com.liferay.portal.kernel.exception.SystemException {
+		getService().checkQuartzTables();
+	}
+
 	public static QuartzLocalService getService() {
 		if (_service == null) {
 			_service = (QuartzLocalService)PortalBeanLocatorUtil.locate(QuartzLocalService.class.getName());
@@ -76,7 +78,6 @@ public class QuartzLocalServiceUtil {
 	/**
 	 * @deprecated As of 6.2.0
 	 */
-	@Deprecated
 	public void setService(QuartzLocalService service) {
 	}
 

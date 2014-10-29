@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,12 +14,9 @@
 
 package com.liferay.portal.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.CacheModel;
-import com.liferay.portal.model.MVCCModel;
 import com.liferay.portal.model.Organization;
 
 import java.io.Externalizable;
@@ -36,26 +33,13 @@ import java.util.Date;
  * @see Organization
  * @generated
  */
-@ProviderType
 public class OrganizationCacheModel implements CacheModel<Organization>,
-	Externalizable, MVCCModel {
-	@Override
-	public long getMvccVersion() {
-		return mvccVersion;
-	}
-
-	@Override
-	public void setMvccVersion(long mvccVersion) {
-		this.mvccVersion = mvccVersion;
-	}
-
+	Externalizable {
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(37);
+		StringBundler sb = new StringBundler(33);
 
-		sb.append("{mvccVersion=");
-		sb.append(mvccVersion);
-		sb.append(", uuid=");
+		sb.append("{uuid=");
 		sb.append(uuid);
 		sb.append(", organizationId=");
 		sb.append(organizationId);
@@ -87,8 +71,6 @@ public class OrganizationCacheModel implements CacheModel<Organization>,
 		sb.append(statusId);
 		sb.append(", comments=");
 		sb.append(comments);
-		sb.append(", logoId=");
-		sb.append(logoId);
 		sb.append("}");
 
 		return sb.toString();
@@ -97,8 +79,6 @@ public class OrganizationCacheModel implements CacheModel<Organization>,
 	@Override
 	public Organization toEntityModel() {
 		OrganizationImpl organizationImpl = new OrganizationImpl();
-
-		organizationImpl.setMvccVersion(mvccVersion);
 
 		if (uuid == null) {
 			organizationImpl.setUuid(StringPool.BLANK);
@@ -167,8 +147,6 @@ public class OrganizationCacheModel implements CacheModel<Organization>,
 			organizationImpl.setComments(comments);
 		}
 
-		organizationImpl.setLogoId(logoId);
-
 		organizationImpl.resetOriginalValues();
 
 		return organizationImpl;
@@ -176,7 +154,6 @@ public class OrganizationCacheModel implements CacheModel<Organization>,
 
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
-		mvccVersion = objectInput.readLong();
 		uuid = objectInput.readUTF();
 		organizationId = objectInput.readLong();
 		companyId = objectInput.readLong();
@@ -193,14 +170,11 @@ public class OrganizationCacheModel implements CacheModel<Organization>,
 		countryId = objectInput.readLong();
 		statusId = objectInput.readInt();
 		comments = objectInput.readUTF();
-		logoId = objectInput.readLong();
 	}
 
 	@Override
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
-		objectOutput.writeLong(mvccVersion);
-
 		if (uuid == null) {
 			objectOutput.writeUTF(StringPool.BLANK);
 		}
@@ -255,11 +229,8 @@ public class OrganizationCacheModel implements CacheModel<Organization>,
 		else {
 			objectOutput.writeUTF(comments);
 		}
-
-		objectOutput.writeLong(logoId);
 	}
 
-	public long mvccVersion;
 	public String uuid;
 	public long organizationId;
 	public long companyId;
@@ -276,5 +247,4 @@ public class OrganizationCacheModel implements CacheModel<Organization>,
 	public long countryId;
 	public int statusId;
 	public String comments;
-	public long logoId;
 }

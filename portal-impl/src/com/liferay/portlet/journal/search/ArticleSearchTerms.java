@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -33,7 +33,7 @@ public class ArticleSearchTerms extends ArticleDisplayTerms {
 		articleId = DAOParamUtil.getString(portletRequest, ARTICLE_ID);
 		content = DAOParamUtil.getString(portletRequest, CONTENT);
 		description = DAOParamUtil.getString(portletRequest, DESCRIPTION);
-		status = ParamUtil.getInteger(portletRequest, STATUS);
+		status = ParamUtil.getString(portletRequest, STATUS);
 		structureId = DAOParamUtil.getString(portletRequest, STRUCTURE_ID);
 		templateId = DAOParamUtil.getString(portletRequest, TEMPLATE_ID);
 		title = DAOParamUtil.getString(portletRequest, TITLE);
@@ -44,11 +44,29 @@ public class ArticleSearchTerms extends ArticleDisplayTerms {
 	}
 
 	public Date getReviewDate() {
-		if (status == WorkflowConstants.STATUS_PENDING) {
+		if (status.equals("review")) {
 			return new Date();
 		}
 		else {
 			return null;
+		}
+	}
+
+	public int getStatusCode() {
+		if (status.equals("approved")) {
+			return WorkflowConstants.STATUS_APPROVED;
+		}
+		else if (status.equals("draft")) {
+			return WorkflowConstants.STATUS_DRAFT;
+		}
+		else if (status.equals("expired")) {
+			return WorkflowConstants.STATUS_EXPIRED;
+		}
+		else if (status.equals("pending")) {
+			return WorkflowConstants.STATUS_PENDING;
+		}
+		else {
+			return WorkflowConstants.STATUS_ANY;
 		}
 	}
 
@@ -70,7 +88,7 @@ public class ArticleSearchTerms extends ArticleDisplayTerms {
 	}
 
 	@Override
-	public void setStatus(int status) {
+	public void setStatus(String status) {
 		this.status = status;
 	}
 

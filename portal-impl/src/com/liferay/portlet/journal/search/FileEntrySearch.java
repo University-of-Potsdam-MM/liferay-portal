@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -29,9 +29,7 @@ import javax.portlet.PortletURL;
  */
 public class FileEntrySearch extends SearchContainer<FileEntry> {
 
-	public static final String EMPTY_RESULTS_MESSAGE = "there-are-no-documents";
-
-	public static List<String> headerNames = new ArrayList<String>();
+	static List<String> headerNames = new ArrayList<String>();
 
 	static {
 		headerNames.add("document");
@@ -39,6 +37,8 @@ public class FileEntrySearch extends SearchContainer<FileEntry> {
 		headerNames.add("downloads");
 		headerNames.add("locked");
 	}
+
+	public static final String EMPTY_RESULTS_MESSAGE = "there-are-no-documents";
 
 	public FileEntrySearch(
 		PortletRequest portletRequest, FileEntryDisplayTerms displayTerms,

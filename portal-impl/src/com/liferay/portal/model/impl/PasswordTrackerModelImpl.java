@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,10 +14,8 @@
 
 package com.liferay.portal.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
-import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.DateUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
@@ -26,9 +24,8 @@ import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.CacheModel;
 import com.liferay.portal.model.PasswordTracker;
 import com.liferay.portal.model.PasswordTrackerModel;
-import com.liferay.portal.model.User;
 import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.service.UserLocalServiceUtil;
+import com.liferay.portal.util.PortalUtil;
 
 import com.liferay.portlet.expando.model.ExpandoBridge;
 import com.liferay.portlet.expando.util.ExpandoBridgeFactoryUtil;
@@ -54,7 +51,6 @@ import java.util.Map;
  * @see com.liferay.portal.model.PasswordTrackerModel
  * @generated
  */
-@ProviderType
 public class PasswordTrackerModelImpl extends BaseModelImpl<PasswordTracker>
 	implements PasswordTrackerModel {
 	/*
@@ -64,13 +60,12 @@ public class PasswordTrackerModelImpl extends BaseModelImpl<PasswordTracker>
 	 */
 	public static final String TABLE_NAME = "PasswordTracker";
 	public static final Object[][] TABLE_COLUMNS = {
-			{ "mvccVersion", Types.BIGINT },
 			{ "passwordTrackerId", Types.BIGINT },
 			{ "userId", Types.BIGINT },
 			{ "createDate", Types.TIMESTAMP },
 			{ "password_", Types.VARCHAR }
 		};
-	public static final String TABLE_SQL_CREATE = "create table PasswordTracker (mvccVersion LONG default 0,passwordTrackerId LONG not null primary key,userId LONG,createDate DATE null,password_ VARCHAR(75) null)";
+	public static final String TABLE_SQL_CREATE = "create table PasswordTracker (passwordTrackerId LONG not null primary key,userId LONG,createDate DATE null,password_ VARCHAR(75) null)";
 	public static final String TABLE_SQL_DROP = "drop table PasswordTracker";
 	public static final String ORDER_BY_JPQL = " ORDER BY passwordTracker.userId DESC, passwordTracker.createDate DESC";
 	public static final String ORDER_BY_SQL = " ORDER BY PasswordTracker.userId DESC, PasswordTracker.createDate DESC";
@@ -86,8 +81,8 @@ public class PasswordTrackerModelImpl extends BaseModelImpl<PasswordTracker>
 	public static final boolean COLUMN_BITMASK_ENABLED = GetterUtil.getBoolean(com.liferay.portal.util.PropsUtil.get(
 				"value.object.column.bitmask.enabled.com.liferay.portal.model.PasswordTracker"),
 			true);
-	public static final long USERID_COLUMN_BITMASK = 1L;
-	public static final long CREATEDATE_COLUMN_BITMASK = 2L;
+	public static long USERID_COLUMN_BITMASK = 1L;
+	public static long CREATEDATE_COLUMN_BITMASK = 2L;
 	public static final long LOCK_EXPIRATION_TIME = GetterUtil.getLong(com.liferay.portal.util.PropsUtil.get(
 				"lock.expiration.time.com.liferay.portal.model.PasswordTracker"));
 
@@ -128,26 +123,16 @@ public class PasswordTrackerModelImpl extends BaseModelImpl<PasswordTracker>
 	public Map<String, Object> getModelAttributes() {
 		Map<String, Object> attributes = new HashMap<String, Object>();
 
-		attributes.put("mvccVersion", getMvccVersion());
 		attributes.put("passwordTrackerId", getPasswordTrackerId());
 		attributes.put("userId", getUserId());
 		attributes.put("createDate", getCreateDate());
 		attributes.put("password", getPassword());
-
-		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
-		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
 
 		return attributes;
 	}
 
 	@Override
 	public void setModelAttributes(Map<String, Object> attributes) {
-		Long mvccVersion = (Long)attributes.get("mvccVersion");
-
-		if (mvccVersion != null) {
-			setMvccVersion(mvccVersion);
-		}
-
 		Long passwordTrackerId = (Long)attributes.get("passwordTrackerId");
 
 		if (passwordTrackerId != null) {
@@ -171,16 +156,6 @@ public class PasswordTrackerModelImpl extends BaseModelImpl<PasswordTracker>
 		if (password != null) {
 			setPassword(password);
 		}
-	}
-
-	@Override
-	public long getMvccVersion() {
-		return _mvccVersion;
-	}
-
-	@Override
-	public void setMvccVersion(long mvccVersion) {
-		_mvccVersion = mvccVersion;
 	}
 
 	@Override
@@ -212,19 +187,13 @@ public class PasswordTrackerModelImpl extends BaseModelImpl<PasswordTracker>
 	}
 
 	@Override
-	public String getUserUuid() {
-		try {
-			User user = UserLocalServiceUtil.getUserById(getUserId());
-
-			return user.getUuid();
-		}
-		catch (PortalException pe) {
-			return StringPool.BLANK;
-		}
+	public String getUserUuid() throws SystemException {
+		return PortalUtil.getUserValue(getUserId(), "uuid", _userUuid);
 	}
 
 	@Override
 	public void setUserUuid(String userUuid) {
+		_userUuid = userUuid;
 	}
 
 	public long getOriginalUserId() {
@@ -289,7 +258,6 @@ public class PasswordTrackerModelImpl extends BaseModelImpl<PasswordTracker>
 	public Object clone() {
 		PasswordTrackerImpl passwordTrackerImpl = new PasswordTrackerImpl();
 
-		passwordTrackerImpl.setMvccVersion(getMvccVersion());
 		passwordTrackerImpl.setPasswordTrackerId(getPasswordTrackerId());
 		passwordTrackerImpl.setUserId(getUserId());
 		passwordTrackerImpl.setCreateDate(getCreateDate());
@@ -360,16 +328,6 @@ public class PasswordTrackerModelImpl extends BaseModelImpl<PasswordTracker>
 	}
 
 	@Override
-	public boolean isEntityCacheEnabled() {
-		return ENTITY_CACHE_ENABLED;
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return FINDER_CACHE_ENABLED;
-	}
-
-	@Override
 	public void resetOriginalValues() {
 		PasswordTrackerModelImpl passwordTrackerModelImpl = this;
 
@@ -383,8 +341,6 @@ public class PasswordTrackerModelImpl extends BaseModelImpl<PasswordTracker>
 	@Override
 	public CacheModel<PasswordTracker> toCacheModel() {
 		PasswordTrackerCacheModel passwordTrackerCacheModel = new PasswordTrackerCacheModel();
-
-		passwordTrackerCacheModel.mvccVersion = getMvccVersion();
 
 		passwordTrackerCacheModel.passwordTrackerId = getPasswordTrackerId();
 
@@ -412,11 +368,9 @@ public class PasswordTrackerModelImpl extends BaseModelImpl<PasswordTracker>
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(11);
+		StringBundler sb = new StringBundler(9);
 
-		sb.append("{mvccVersion=");
-		sb.append(getMvccVersion());
-		sb.append(", passwordTrackerId=");
+		sb.append("{passwordTrackerId=");
 		sb.append(getPasswordTrackerId());
 		sb.append(", userId=");
 		sb.append(getUserId());
@@ -431,16 +385,12 @@ public class PasswordTrackerModelImpl extends BaseModelImpl<PasswordTracker>
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(19);
+		StringBundler sb = new StringBundler(16);
 
 		sb.append("<model><model-name>");
 		sb.append("com.liferay.portal.model.PasswordTracker");
 		sb.append("</model-name>");
 
-		sb.append(
-			"<column><column-name>mvccVersion</column-name><column-value><![CDATA[");
-		sb.append(getMvccVersion());
-		sb.append("]]></column-value></column>");
 		sb.append(
 			"<column><column-name>passwordTrackerId</column-name><column-value><![CDATA[");
 		sb.append(getPasswordTrackerId());
@@ -463,13 +413,13 @@ public class PasswordTrackerModelImpl extends BaseModelImpl<PasswordTracker>
 		return sb.toString();
 	}
 
-	private static final ClassLoader _classLoader = PasswordTracker.class.getClassLoader();
-	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
+	private static ClassLoader _classLoader = PasswordTracker.class.getClassLoader();
+	private static Class<?>[] _escapedModelInterfaces = new Class[] {
 			PasswordTracker.class
 		};
-	private long _mvccVersion;
 	private long _passwordTrackerId;
 	private long _userId;
+	private String _userUuid;
 	private long _originalUserId;
 	private boolean _setOriginalUserId;
 	private Date _createDate;

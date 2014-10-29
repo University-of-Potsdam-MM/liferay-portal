@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -13,8 +13,6 @@
  */
 
 package com.liferay.portal.service.http;
-
-import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -51,10 +49,10 @@ import com.liferay.portal.service.ClassNameServiceUtil;
  * @see com.liferay.portal.service.ClassNameServiceUtil
  * @generated
  */
-@ProviderType
 public class ClassNameServiceHttp {
 	public static com.liferay.portal.model.ClassName fetchClassName(
-		HttpPrincipal httpPrincipal, java.lang.String value) {
+		HttpPrincipal httpPrincipal, java.lang.String value)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(ClassNameServiceUtil.class,
 					"fetchClassName", _fetchClassNameParameterTypes0);
@@ -67,6 +65,10 @@ public class ClassNameServiceHttp {
 				returnObj = TunnelUtil.invoke(httpPrincipal, methodHandler);
 			}
 			catch (Exception e) {
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
+				}
+
 				throw new com.liferay.portal.kernel.exception.SystemException(e);
 			}
 
@@ -80,7 +82,8 @@ public class ClassNameServiceHttp {
 	}
 
 	public static long fetchClassNameId(HttpPrincipal httpPrincipal,
-		java.lang.Class<?> clazz) {
+		java.lang.Class<?> clazz)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(ClassNameServiceUtil.class,
 					"fetchClassNameId", _fetchClassNameIdParameterTypes1);
@@ -106,7 +109,8 @@ public class ClassNameServiceHttp {
 	}
 
 	public static long fetchClassNameId(HttpPrincipal httpPrincipal,
-		java.lang.String value) {
+		java.lang.String value)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(ClassNameServiceUtil.class,
 					"fetchClassNameId", _fetchClassNameIdParameterTypes2);

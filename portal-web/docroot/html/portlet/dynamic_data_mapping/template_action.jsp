@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -22,8 +22,8 @@ ResultRow row = (ResultRow)request.getAttribute(WebKeys.SEARCH_CONTAINER_RESULT_
 DDMTemplate template = (DDMTemplate)row.getObject();
 %>
 
-<liferay-ui:icon-menu direction="down" icon="<%= StringPool.BLANK %>" message="<%= StringPool.BLANK %>" showExpanded="<%= false %>" showWhenSingleIcon="<%= false %>">
-	<c:if test="<%= DDMTemplatePermission.contains(permissionChecker, scopeGroupId, template, refererPortletName, ActionKeys.UPDATE) %>">
+<liferay-ui:icon-menu showExpanded="<%= false %>" showWhenSingleIcon="<%= false %>">
+	<c:if test="<%= DDMTemplatePermission.contains(permissionChecker, template, refererPortletName, ActionKeys.UPDATE) %>">
 		<portlet:renderURL var="editURL">
 			<portlet:param name="struts_action" value="/dynamic_data_mapping/edit_template" />
 			<portlet:param name="redirect" value="<%= currentURL %>" />
@@ -34,13 +34,12 @@ DDMTemplate template = (DDMTemplate)row.getObject();
 		</portlet:renderURL>
 
 		<liferay-ui:icon
-			iconCssClass="icon-edit"
-			message="edit"
+			image="edit"
 			url="<%= editURL %>"
 		/>
 	</c:if>
 
-	<c:if test="<%= DDMTemplatePermission.contains(permissionChecker, scopeGroupId, template, refererPortletName, ActionKeys.PERMISSIONS) %>">
+	<c:if test="<%= DDMTemplatePermission.contains(permissionChecker, template, refererPortletName, ActionKeys.PERMISSIONS) %>">
 		<liferay-security:permissionsURL
 			modelResource="<%= DDMTemplate.class.getName() %>"
 			modelResourceDescription="<%= template.getName(locale) %>"
@@ -49,8 +48,7 @@ DDMTemplate template = (DDMTemplate)row.getObject();
 		/>
 
 		<liferay-ui:icon
-			iconCssClass="icon-lock"
-			message="permissions"
+			image="permissions"
 			url="<%= permissionsURL %>"
 		/>
 	</c:if>
@@ -74,13 +72,12 @@ DDMTemplate template = (DDMTemplate)row.getObject();
 		%>
 
 		<liferay-ui:icon
-			iconCssClass="icon-copy"
-			message="copy"
+			image="copy"
 			url="<%= sb.toString() %>"
 		/>
 	</c:if>
 
-	<c:if test="<%= DDMTemplatePermission.contains(permissionChecker, scopeGroupId, template, refererPortletName, ActionKeys.DELETE) %>">
+	<c:if test="<%= DDMTemplatePermission.contains(permissionChecker, template, refererPortletName, ActionKeys.DELETE) %>">
 		<portlet:actionURL var="deleteURL">
 			<portlet:param name="struts_action" value="/dynamic_data_mapping/edit_template" />
 			<portlet:param name="<%= Constants.CMD %>" value="<%= Constants.DELETE %>" />

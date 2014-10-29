@@ -1,8 +1,8 @@
 package ${packagePath}.service.http;
 
-import ${packagePath}.service.${entity.name}ServiceUtil;
-
 import aQute.bnd.annotation.ProviderType;
+
+import ${packagePath}.service.${entity.name}ServiceUtil;
 
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -63,11 +63,10 @@ import java.util.Map;
  * @generated
  */
 
-<#if classDeprecated>
-	@Deprecated
+<#if pluginName == "">
+	@ProviderType
 </#if>
 
-@ProviderType
 public class ${entity.name}ServiceSoap {
 
 	<#assign hasMethods = false>
@@ -83,11 +82,6 @@ public class ${entity.name}ServiceSoap {
 			<#assign soapModelName = packagePath + ".model." + entity.name + "Soap">
 
 			${serviceBuilder.getJavadocComment(method)}
-
-			<#if serviceBuilder.hasAnnotation(method, "Deprecated")>
-				@Deprecated
-			</#if>
-
 			public static
 
 			<#if returnValueName == extendedModelName>

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -58,7 +58,7 @@ public class DocumentConversionUtil {
 	public static File convert(
 			String id, InputStream inputStream, String sourceExtension,
 			String targetExtension)
-		throws IOException {
+		throws IOException, SystemException {
 
 		return _instance._convert(
 			id, inputStream, sourceExtension, targetExtension);
@@ -162,7 +162,7 @@ public class DocumentConversionUtil {
 	private File _convert(
 			String id, InputStream inputStream, String sourceExtension,
 			String targetExtension)
-		throws IOException {
+		throws IOException, SystemException {
 
 		if (!isEnabled()) {
 			return null;
@@ -269,7 +269,7 @@ public class DocumentConversionUtil {
 		return conversions;
 	}
 
-	private DocumentConverter _getDocumentConverter() {
+	private DocumentConverter _getDocumentConverter() throws SystemException {
 		if ((_openOfficeConnection != null) && (_documentConverter != null)) {
 			return _documentConverter;
 		}
@@ -371,7 +371,9 @@ public class DocumentConversionUtil {
 		}
 	}
 
-	private void _validate(String targetExtension, String id) {
+	private void _validate(String targetExtension, String id)
+		throws SystemException {
+
 		if (!Validator.isFileExtension(targetExtension)) {
 			throw new SystemException("Invalid extension: " + targetExtension);
 		}

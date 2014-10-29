@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -25,14 +25,16 @@ import com.liferay.portal.kernel.util.ReferenceRegistry;
 @ProviderType
 public class DLFileEntryTypeFinderUtil {
 	public static int countByKeywords(long companyId, long[] groupIds,
-		java.lang.String keywords, boolean includeBasicFileEntryType) {
+		java.lang.String keywords, boolean includeBasicFileEntryType)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getFinder()
 				   .countByKeywords(companyId, groupIds, keywords,
 			includeBasicFileEntryType);
 	}
 
 	public static int filterCountByKeywords(long companyId, long[] groupIds,
-		java.lang.String keywords, boolean includeBasicFileEntryType) {
+		java.lang.String keywords, boolean includeBasicFileEntryType)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getFinder()
 				   .filterCountByKeywords(companyId, groupIds, keywords,
 			includeBasicFileEntryType);
@@ -41,7 +43,8 @@ public class DLFileEntryTypeFinderUtil {
 	public static java.util.List<com.liferay.portlet.documentlibrary.model.DLFileEntryType> filterFindByKeywords(
 		long companyId, long[] groupIds, java.lang.String keywords,
 		boolean includeBasicFileEntryType, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.documentlibrary.model.DLFileEntryType> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getFinder()
 				   .filterFindByKeywords(companyId, groupIds, keywords,
 			includeBasicFileEntryType, start, end, orderByComparator);
@@ -50,7 +53,8 @@ public class DLFileEntryTypeFinderUtil {
 	public static java.util.List<com.liferay.portlet.documentlibrary.model.DLFileEntryType> findByKeywords(
 		long companyId, long[] groupIds, java.lang.String keywords,
 		boolean includeBasicFileEntryType, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.documentlibrary.model.DLFileEntryType> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getFinder()
 				   .findByKeywords(companyId, groupIds, keywords,
 			includeBasicFileEntryType, start, end, orderByComparator);

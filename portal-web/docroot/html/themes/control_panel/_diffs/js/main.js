@@ -2,15 +2,7 @@ Liferay.Util.portletTitleEdit = function() {
 };
 
 if (!themeDisplay.isStatePopUp()) {
-	AUI().ready(
-		'aui-live-search-deprecated',
-		'aui-overlay-context-panel-deprecated',
-		'event-mouseenter',
-		'liferay-message',
-		'liferay-panel-search',
-		'liferay-store',
-		'node-focusmanager',
-		'transition',
+	AUI().ready('aui-live-search-deprecated', 'aui-overlay-context-panel-deprecated', 'event-mouseenter', 'liferay-message', 'liferay-store', 'node-focusmanager', 'transition',
 		function(A) {
 			var body = A.getBody();
 
@@ -146,15 +138,44 @@ if (!themeDisplay.isStatePopUp()) {
 				_createLiveSearch: function() {
 					var instance = this;
 
-					new Liferay.PanelSearch(
+					var searchPanelInput = instance._searchPanelInput;
+
+					var liveSearch = new A.LiveSearch(
 						{
-							categorySelector: '.panel-page-category',
-							inputNode: instance._searchPanelInput,
-							nodeList: '#controlPanelMenuAddContentPanelContainer',
-							nodeSelector: 'li',
-							togglerId: '_160_controlPanelMenuAddContentPanelContainer'
+							input: searchPanelInput,
+							nodes: SELECTOR_SEARCH_NODES,
+
+							data: function(node) {
+								return node.text();
+							},
+
+							on: {
+								search: function(event) {
+									if (trim(liveSearch.get('searchValue'))) {
+										body.addClass(CSS_SEARCH_PANEL_ACTIVE);
+
+										instance._searchActive = true;
+									}
+								}
+							},
+
+							after: {
+								search: function(event) {
+									instance._searchActive = true;
+
+									instance._refreshFocusManagerTask();
+
+									if (!trim(liveSearch.get('searchValue'))) {
+										body.removeClass(CSS_SEARCH_PANEL_ACTIVE);
+
+										instance._searchActive = false;
+									}
+								}
+							}
 						}
 					);
+
+					instance._liveSearch = liveSearch;
 				},
 
 				_focusSearchBar: function(event) {
@@ -192,7 +213,7 @@ if (!themeDisplay.isStatePopUp()) {
 				_panelHolderHandleClick: function(event) {
 					var currentTarget = event.currentTarget;
 
-					var accordionGroup = currentTarget.ancestor();
+					var accordionGroup = currentTarget.ancestor('.accordion-group');
 
 					accordionGroup.toggleClass('open');
 

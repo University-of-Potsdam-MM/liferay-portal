@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portlet.shopping.service.impl;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -47,7 +48,7 @@ public class ShoppingCartLocalServiceImpl
 	extends ShoppingCartLocalServiceBaseImpl {
 
 	@Override
-	public void deleteGroupCarts(long groupId) {
+	public void deleteGroupCarts(long groupId) throws SystemException {
 		List<ShoppingCart> carts = shoppingCartPersistence.findByGroupId(
 			groupId);
 
@@ -57,7 +58,7 @@ public class ShoppingCartLocalServiceImpl
 	}
 
 	@Override
-	public void deleteUserCarts(long userId) {
+	public void deleteUserCarts(long userId) throws SystemException {
 		List<ShoppingCart> shoppingCarts = shoppingCartPersistence.findByUserId(
 			userId);
 
@@ -68,14 +69,14 @@ public class ShoppingCartLocalServiceImpl
 
 	@Override
 	public ShoppingCart getCart(long userId, long groupId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return shoppingCartPersistence.findByG_U(groupId, userId);
 	}
 
 	@Override
-	public Map<ShoppingCartItem, Integer> getItems(
-		long groupId, String itemIds) {
+	public Map<ShoppingCartItem, Integer> getItems(long groupId, String itemIds)
+		throws SystemException {
 
 		Map<ShoppingCartItem, Integer> items =
 			new TreeMap<ShoppingCartItem, Integer>();
@@ -117,7 +118,7 @@ public class ShoppingCartLocalServiceImpl
 	public ShoppingCart updateCart(
 			long userId, long groupId, String itemIds, String couponCodes,
 			int altShipping, boolean insure)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		List<Long> badItemIds = new ArrayList<Long>();
 
@@ -150,7 +151,7 @@ public class ShoppingCartLocalServiceImpl
 			}
 		}
 
-		if (!badItemIds.isEmpty()) {
+		if (badItemIds.size() > 0) {
 			throw new CartMinQuantityException(
 				StringUtil.merge(
 					badItemIds.toArray(new Long[badItemIds.size()])));
@@ -249,7 +250,7 @@ public class ShoppingCartLocalServiceImpl
 			}
 
 			if (item == null) {
-				itemIds = StringUtil.removeFromList(itemIds, itemIdsArray[i]);
+				itemIds = StringUtil.remove(itemIds, itemIdsArray[i]);
 			}
 		}
 

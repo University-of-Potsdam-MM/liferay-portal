@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -37,8 +37,7 @@ import java.io.Serializable;
  * @generated
  */
 @ProviderType
-public interface ClassNameModel extends BaseModel<ClassName>, MVCCModel,
-	TypedModel {
+public interface ClassNameModel extends BaseModel<ClassName>, TypedModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -58,22 +57,6 @@ public interface ClassNameModel extends BaseModel<ClassName>, MVCCModel,
 	 * @param primaryKey the primary key of this class name
 	 */
 	public void setPrimaryKey(long primaryKey);
-
-	/**
-	 * Returns the mvcc version of this class name.
-	 *
-	 * @return the mvcc version of this class name
-	 */
-	@Override
-	public long getMvccVersion();
-
-	/**
-	 * Sets the mvcc version of this class name.
-	 *
-	 * @param mvccVersion the mvcc version of this class name
-	 */
-	@Override
-	public void setMvccVersion(long mvccVersion);
 
 	/**
 	 * Returns the fully qualified class name of this class name.

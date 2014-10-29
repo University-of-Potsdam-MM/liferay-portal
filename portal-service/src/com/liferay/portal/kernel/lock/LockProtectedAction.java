@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portal.kernel.lock;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.model.Lock;
@@ -40,7 +41,7 @@ public class LockProtectedAction<T> {
 		return _returnValue;
 	}
 
-	public void performAction() throws PortalException {
+	public void performAction() throws PortalException, SystemException {
 		Lock lock = null;
 
 		while (true) {
@@ -94,7 +95,9 @@ public class LockProtectedAction<T> {
 	}
 
 	@SuppressWarnings("unused")
-	protected T performProtectedAction() throws PortalException {
+	protected T performProtectedAction()
+		throws PortalException, SystemException {
+
 		return null;
 	}
 

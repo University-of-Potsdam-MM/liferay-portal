@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -21,8 +21,7 @@ import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.jsp.PageContext;
 
 /**
  * @author Eduardo Garcia
@@ -46,13 +45,11 @@ public interface PortletDisplayTemplate {
 		String language);
 
 	public String renderDDMTemplate(
-			HttpServletRequest request, HttpServletResponse response,
-			long ddmTemplateId, List<?> entries)
+			PageContext pageContext, long ddmTemplateId, List<?> entries)
 		throws Exception;
 
 	public String renderDDMTemplate(
-			HttpServletRequest request, HttpServletResponse response,
-			long ddmTemplateId, List<?> entries,
+			PageContext pageContext, long ddmTemplateId, List<?> entries,
 			Map<String, Object> contextObjects)
 		throws Exception;
 

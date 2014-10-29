@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,29 +15,28 @@
 package com.liferay.portlet.announcements.util;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.PropsUtil;
+import com.liferay.portal.kernel.util.UniqueList;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.Organization;
 import com.liferay.portal.model.Role;
 import com.liferay.portal.model.RoleConstants;
-import com.liferay.portal.model.Team;
 import com.liferay.portal.model.User;
 import com.liferay.portal.model.UserGroup;
 import com.liferay.portal.service.GroupLocalServiceUtil;
 import com.liferay.portal.service.OrganizationLocalServiceUtil;
 import com.liferay.portal.service.RoleLocalServiceUtil;
-import com.liferay.portal.service.TeamLocalServiceUtil;
 import com.liferay.portal.service.UserGroupLocalServiceUtil;
 import com.liferay.portal.service.UserLocalServiceUtil;
 import com.liferay.portal.util.PortalUtil;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author Raymond Augé
@@ -45,7 +44,7 @@ import java.util.Set;
 public class AnnouncementsUtil {
 
 	public static LinkedHashMap<Long, long[]> getAnnouncementScopes(long userId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		LinkedHashMap<Long, long[]> scopes = new LinkedHashMap<Long, long[]>();
 
@@ -113,11 +112,13 @@ public class AnnouncementsUtil {
 
 		// Role announcements
 
-		Set<Role> roles = new LinkedHashSet<Role>();
+		List<Role> roles = new UniqueList<Role>();
 
 		if (!groupsList.isEmpty()) {
-			roles.addAll(
-				RoleLocalServiceUtil.getUserRelatedRoles(userId, groupsList));
+			roles = RoleLocalServiceUtil.getUserRelatedRoles(
+				userId, groupsList);
+
+			roles = ListUtil.copy(roles);
 
 			for (Group group : groupsList) {
 				roles.addAll(
@@ -129,13 +130,9 @@ public class AnnouncementsUtil {
 			}
 		}
 		else {
-			roles.addAll(RoleLocalServiceUtil.getUserRoles(userId));
-		}
+			roles = RoleLocalServiceUtil.getUserRoles(userId);
 
-		List<Team> teams = TeamLocalServiceUtil.getUserTeams(userId);
-
-		for (Team team : teams) {
-			roles.add(team.getRole());
+			roles = ListUtil.copy(roles);
 		}
 
 		if (_PERMISSIONS_CHECK_GUEST_ENABLED) {
@@ -147,7 +144,7 @@ public class AnnouncementsUtil {
 			roles.add(guestRole);
 		}
 
-		if (!roles.isEmpty()) {
+		if (roles.size() > 0) {
 			scopes.put(_ROLE_CLASS_NAME_ID, _getRoleIds(roles));
 		}
 
@@ -180,7 +177,7 @@ public class AnnouncementsUtil {
 		return organizationIds;
 	}
 
-	private static long[] _getRoleIds(Set<Role> roles) {
+	private static long[] _getRoleIds(List<Role> roles) {
 		long[] roleIds = new long[roles.size()];
 
 		int i = 0;

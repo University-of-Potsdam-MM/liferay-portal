@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -13,8 +13,6 @@
  */
 
 package com.liferay.portal.model.impl;
-
-import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -49,7 +47,6 @@ import java.util.Map;
  * @see com.liferay.portal.model.ResourceTypePermissionModel
  * @generated
  */
-@ProviderType
 public class ResourceTypePermissionModelImpl extends BaseModelImpl<ResourceTypePermission>
 	implements ResourceTypePermissionModel {
 	/*
@@ -59,7 +56,6 @@ public class ResourceTypePermissionModelImpl extends BaseModelImpl<ResourceTypeP
 	 */
 	public static final String TABLE_NAME = "ResourceTypePermission";
 	public static final Object[][] TABLE_COLUMNS = {
-			{ "mvccVersion", Types.BIGINT },
 			{ "resourceTypePermissionId", Types.BIGINT },
 			{ "companyId", Types.BIGINT },
 			{ "groupId", Types.BIGINT },
@@ -67,7 +63,7 @@ public class ResourceTypePermissionModelImpl extends BaseModelImpl<ResourceTypeP
 			{ "roleId", Types.BIGINT },
 			{ "actionIds", Types.BIGINT }
 		};
-	public static final String TABLE_SQL_CREATE = "create table ResourceTypePermission (mvccVersion LONG default 0,resourceTypePermissionId LONG not null primary key,companyId LONG,groupId LONG,name VARCHAR(75) null,roleId LONG,actionIds LONG)";
+	public static final String TABLE_SQL_CREATE = "create table ResourceTypePermission (resourceTypePermissionId LONG not null primary key,companyId LONG,groupId LONG,name VARCHAR(75) null,roleId LONG,actionIds LONG)";
 	public static final String TABLE_SQL_DROP = "drop table ResourceTypePermission";
 	public static final String ORDER_BY_JPQL = " ORDER BY resourceTypePermission.resourceTypePermissionId ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY ResourceTypePermission.resourceTypePermissionId ASC";
@@ -83,11 +79,11 @@ public class ResourceTypePermissionModelImpl extends BaseModelImpl<ResourceTypeP
 	public static final boolean COLUMN_BITMASK_ENABLED = GetterUtil.getBoolean(com.liferay.portal.util.PropsUtil.get(
 				"value.object.column.bitmask.enabled.com.liferay.portal.model.ResourceTypePermission"),
 			true);
-	public static final long COMPANYID_COLUMN_BITMASK = 1L;
-	public static final long GROUPID_COLUMN_BITMASK = 2L;
-	public static final long NAME_COLUMN_BITMASK = 4L;
-	public static final long ROLEID_COLUMN_BITMASK = 8L;
-	public static final long RESOURCETYPEPERMISSIONID_COLUMN_BITMASK = 16L;
+	public static long COMPANYID_COLUMN_BITMASK = 1L;
+	public static long GROUPID_COLUMN_BITMASK = 2L;
+	public static long NAME_COLUMN_BITMASK = 4L;
+	public static long ROLEID_COLUMN_BITMASK = 8L;
+	public static long RESOURCETYPEPERMISSIONID_COLUMN_BITMASK = 16L;
 	public static final long LOCK_EXPIRATION_TIME = GetterUtil.getLong(com.liferay.portal.util.PropsUtil.get(
 				"lock.expiration.time.com.liferay.portal.model.ResourceTypePermission"));
 
@@ -128,7 +124,6 @@ public class ResourceTypePermissionModelImpl extends BaseModelImpl<ResourceTypeP
 	public Map<String, Object> getModelAttributes() {
 		Map<String, Object> attributes = new HashMap<String, Object>();
 
-		attributes.put("mvccVersion", getMvccVersion());
 		attributes.put("resourceTypePermissionId", getResourceTypePermissionId());
 		attributes.put("companyId", getCompanyId());
 		attributes.put("groupId", getGroupId());
@@ -136,20 +131,11 @@ public class ResourceTypePermissionModelImpl extends BaseModelImpl<ResourceTypeP
 		attributes.put("roleId", getRoleId());
 		attributes.put("actionIds", getActionIds());
 
-		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
-		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
-
 		return attributes;
 	}
 
 	@Override
 	public void setModelAttributes(Map<String, Object> attributes) {
-		Long mvccVersion = (Long)attributes.get("mvccVersion");
-
-		if (mvccVersion != null) {
-			setMvccVersion(mvccVersion);
-		}
-
 		Long resourceTypePermissionId = (Long)attributes.get(
 				"resourceTypePermissionId");
 
@@ -186,16 +172,6 @@ public class ResourceTypePermissionModelImpl extends BaseModelImpl<ResourceTypeP
 		if (actionIds != null) {
 			setActionIds(actionIds);
 		}
-	}
-
-	@Override
-	public long getMvccVersion() {
-		return _mvccVersion;
-	}
-
-	@Override
-	public void setMvccVersion(long mvccVersion) {
-		_mvccVersion = mvccVersion;
 	}
 
 	@Override
@@ -340,7 +316,6 @@ public class ResourceTypePermissionModelImpl extends BaseModelImpl<ResourceTypeP
 	public Object clone() {
 		ResourceTypePermissionImpl resourceTypePermissionImpl = new ResourceTypePermissionImpl();
 
-		resourceTypePermissionImpl.setMvccVersion(getMvccVersion());
 		resourceTypePermissionImpl.setResourceTypePermissionId(getResourceTypePermissionId());
 		resourceTypePermissionImpl.setCompanyId(getCompanyId());
 		resourceTypePermissionImpl.setGroupId(getGroupId());
@@ -396,16 +371,6 @@ public class ResourceTypePermissionModelImpl extends BaseModelImpl<ResourceTypeP
 	}
 
 	@Override
-	public boolean isEntityCacheEnabled() {
-		return ENTITY_CACHE_ENABLED;
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return FINDER_CACHE_ENABLED;
-	}
-
-	@Override
 	public void resetOriginalValues() {
 		ResourceTypePermissionModelImpl resourceTypePermissionModelImpl = this;
 
@@ -430,8 +395,6 @@ public class ResourceTypePermissionModelImpl extends BaseModelImpl<ResourceTypeP
 	public CacheModel<ResourceTypePermission> toCacheModel() {
 		ResourceTypePermissionCacheModel resourceTypePermissionCacheModel = new ResourceTypePermissionCacheModel();
 
-		resourceTypePermissionCacheModel.mvccVersion = getMvccVersion();
-
 		resourceTypePermissionCacheModel.resourceTypePermissionId = getResourceTypePermissionId();
 
 		resourceTypePermissionCacheModel.companyId = getCompanyId();
@@ -455,11 +418,9 @@ public class ResourceTypePermissionModelImpl extends BaseModelImpl<ResourceTypeP
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(15);
+		StringBundler sb = new StringBundler(13);
 
-		sb.append("{mvccVersion=");
-		sb.append(getMvccVersion());
-		sb.append(", resourceTypePermissionId=");
+		sb.append("{resourceTypePermissionId=");
 		sb.append(getResourceTypePermissionId());
 		sb.append(", companyId=");
 		sb.append(getCompanyId());
@@ -478,16 +439,12 @@ public class ResourceTypePermissionModelImpl extends BaseModelImpl<ResourceTypeP
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(25);
+		StringBundler sb = new StringBundler(22);
 
 		sb.append("<model><model-name>");
 		sb.append("com.liferay.portal.model.ResourceTypePermission");
 		sb.append("</model-name>");
 
-		sb.append(
-			"<column><column-name>mvccVersion</column-name><column-value><![CDATA[");
-		sb.append(getMvccVersion());
-		sb.append("]]></column-value></column>");
 		sb.append(
 			"<column><column-name>resourceTypePermissionId</column-name><column-value><![CDATA[");
 		sb.append(getResourceTypePermissionId());
@@ -518,11 +475,10 @@ public class ResourceTypePermissionModelImpl extends BaseModelImpl<ResourceTypeP
 		return sb.toString();
 	}
 
-	private static final ClassLoader _classLoader = ResourceTypePermission.class.getClassLoader();
-	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
+	private static ClassLoader _classLoader = ResourceTypePermission.class.getClassLoader();
+	private static Class<?>[] _escapedModelInterfaces = new Class[] {
 			ResourceTypePermission.class
 		};
-	private long _mvccVersion;
 	private long _resourceTypePermissionId;
 	private long _companyId;
 	private long _originalCompanyId;

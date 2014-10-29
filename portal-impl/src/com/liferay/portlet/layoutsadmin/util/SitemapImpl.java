@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portlet.layoutsadmin.util;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.security.pacl.DoPrivileged;
 import com.liferay.portal.kernel.util.DateUtil;
@@ -68,14 +69,14 @@ public class SitemapImpl implements Sitemap {
 	@Override
 	public String getSitemap(
 			long groupId, boolean privateLayout, ThemeDisplay themeDisplay)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Document document = SAXReaderUtil.createDocument();
 
 		document.setXMLEncoding(StringPool.UTF8);
 
 		Element rootElement = document.addElement(
-			"urlset", "http://www.sitemaps.org/schemas/sitemap/0.9");
+			"urlset", "http://www.google.com/schemas/sitemap/0.9");
 
 		rootElement.addAttribute("xmlns:xhtml", "http://www.w3.org/1999/xhtml");
 
@@ -166,8 +167,7 @@ public class SitemapImpl implements Sitemap {
 				Locale locale = entry.getKey();
 				String href = entry.getValue();
 
-				Element alternateURLElement = urlElement.addElement(
-					"xhtml:link", "http://www.w3.org/1999/xhtml");
+				Element alternateURLElement = urlElement.addElement("link");
 
 				alternateURLElement.addAttribute("href", href);
 				alternateURLElement.addAttribute(
@@ -175,8 +175,7 @@ public class SitemapImpl implements Sitemap {
 				alternateURLElement.addAttribute("rel", "alternate");
 			}
 
-			Element alternateURLElement = urlElement.addElement(
-				"xhtml:link", "http://www.w3.org/1999/xhtml");
+			Element alternateURLElement = urlElement.addElement("link");
 
 			alternateURLElement.addAttribute("rel", "alternate");
 			alternateURLElement.addAttribute("hreflang", "x-default");
@@ -186,7 +185,7 @@ public class SitemapImpl implements Sitemap {
 
 	protected Map<Locale, String> getAlternateURLs(
 			String canonicalURL, ThemeDisplay themeDisplay, Layout layout)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Map<Locale, String> alternateURLs = new HashMap<Locale, String>();
 
@@ -205,7 +204,7 @@ public class SitemapImpl implements Sitemap {
 
 	protected void visitArticles(
 			Element element, Layout layout, ThemeDisplay themeDisplay)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		List<JournalArticle> journalArticles =
 			JournalArticleServiceUtil.getArticlesByLayoutUuid(
@@ -274,7 +273,7 @@ public class SitemapImpl implements Sitemap {
 
 	protected void visitLayout(
 			Element element, Layout layout, ThemeDisplay themeDisplay)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		UnicodeProperties typeSettingsProperties =
 			layout.getTypeSettingsProperties();
@@ -321,7 +320,7 @@ public class SitemapImpl implements Sitemap {
 
 	protected void visitLayouts(
 			Element element, List<Layout> layouts, ThemeDisplay themeDisplay)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		for (Layout layout : layouts) {
 			visitLayout(element, layout, themeDisplay);

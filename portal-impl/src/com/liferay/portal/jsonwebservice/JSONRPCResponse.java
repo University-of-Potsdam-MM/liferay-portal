@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -32,15 +32,17 @@ public class JSONRPCResponse implements JSONSerializable {
 	public JSONRPCResponse(
 		JSONRPCRequest jsonRPCRequest, Object result, Exception exception) {
 
+		_id = jsonRPCRequest.getId();
+
 		_jsonrpc = GetterUtil.getString(jsonRPCRequest.getJsonrpc());
 
-		Error error = null;
-
 		if (!_jsonrpc.equals("2.0")) {
-			error = new Error(-32700, "Invalid JSON RPC version " + _jsonrpc);
-			result = null;
+			_error = new Error(-32700, "Invalid JSON RPC version " + _jsonrpc);
 		}
-		else if (exception != null) {
+		else if (exception == null) {
+			_result = result;
+		}
+		else {
 			int code = -32603;
 
 			String message = null;
@@ -60,13 +62,8 @@ public class JSONRPCResponse implements JSONSerializable {
 				message = exception.toString();
 			}
 
-			error = new Error(code, message);
-			result = null;
+			_error = new Error(code, message);
 		}
-
-		_error = error;
-		_id = jsonRPCRequest.getId();
-		_result = result;
 	}
 
 	@Override
@@ -117,9 +114,9 @@ public class JSONRPCResponse implements JSONSerializable {
 
 	}
 
-	private final Error _error;
-	private final Integer _id;
-	private final String _jsonrpc;
-	private final Object _result;
+	private Error _error;
+	private Integer _id;
+	private String _jsonrpc;
+	private Object _result;
 
 }

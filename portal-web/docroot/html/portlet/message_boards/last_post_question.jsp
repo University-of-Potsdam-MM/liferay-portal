@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -25,30 +25,16 @@ MBMessage message = (MBMessage)objArray[0];
 
 MBThread thread = message.getThread();
 
-User userDisplay = UserLocalServiceUtil.fetchUserById(thread.getLastPostByUserId());
+User userDisplay = UserLocalServiceUtil.getUserById(thread.getLastPostByUserId());
 %>
 
 <div class="user-info">
 	<div class="portrait">
-		<c:choose>
-			<c:when test="<%= message.isAnonymous() || (userDisplay == null) %>">
-				<img alt="<liferay-ui:message escapeAttribute="<%= true %>" key="generic-portrait" />" class="avatar" src="<%= UserConstants.getPortraitURL(themeDisplay.getPathImage(), true, 0, StringPool.BLANK) %>" width="60" /></a>
-			</c:when>
-			<c:otherwise>
-				<a href="<%= userDisplay.getDisplayURL(themeDisplay) %>"><img alt="<%= HtmlUtil.escapeAttribute(userDisplay.getFullName()) %>" class="avatar" src="<%= userDisplay.getPortraitURL(themeDisplay) %>" width="60" /></a>
-			</c:otherwise>
-		</c:choose>
+		<a href="<%= userDisplay.getDisplayURL(themeDisplay) %>"><img alt="<%= (userDisplay != null) ? HtmlUtil.escapeAttribute(userDisplay.getFullName()) : LanguageUtil.get(pageContext, "generic-portrait") %>" class="avatar" src=" <%= userDisplay.getPortraitURL(themeDisplay) %>" width="60" /></a>
 	</div>
 
 	<div class="username">
-		<c:choose>
-			<c:when test="<%= message.isAnonymous() || (userDisplay == null) %>">
-				<liferay-ui:message key="anonymous" />
-			</c:when>
-			<c:otherwise>
-				<a href="<%= userDisplay.getDisplayURL(themeDisplay) %>"><%= HtmlUtil.escape(PortalUtil.getUserName(thread.getLastPostByUserId(), StringPool.BLANK)) %></a>
-			</c:otherwise>
-		</c:choose>
+		<a href="<%= userDisplay.getDisplayURL(themeDisplay) %>"><%= HtmlUtil.escape(PortalUtil.getUserName(thread.getLastPostByUserId(), StringPool.BLANK)) %></a>
 	</div>
 
 	<div class="time">
@@ -60,9 +46,9 @@ User userDisplay = UserLocalServiceUtil.fetchUserById(thread.getLastPostByUserId
 		%>
 
 		<liferay-ui:icon
-			iconCssClass="icon-time"
+			image="../aui/time"
 			label="<%= true %>"
-			message='<%= LanguageUtil.format(request, "x-ago", LanguageUtil.getTimeDescription(request, lastPostAgo, true), false) %>'
+			message='<%= LanguageUtil.format(pageContext, "x-ago", LanguageUtil.getTimeDescription(pageContext, lastPostAgo, true)) %>'
 		/>
 	</div>
 </div>

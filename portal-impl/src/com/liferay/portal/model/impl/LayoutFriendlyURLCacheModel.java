@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,13 +14,10 @@
 
 package com.liferay.portal.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.CacheModel;
 import com.liferay.portal.model.LayoutFriendlyURL;
-import com.liferay.portal.model.MVCCModel;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -36,26 +33,13 @@ import java.util.Date;
  * @see LayoutFriendlyURL
  * @generated
  */
-@ProviderType
 public class LayoutFriendlyURLCacheModel implements CacheModel<LayoutFriendlyURL>,
-	Externalizable, MVCCModel {
-	@Override
-	public long getMvccVersion() {
-		return mvccVersion;
-	}
-
-	@Override
-	public void setMvccVersion(long mvccVersion) {
-		this.mvccVersion = mvccVersion;
-	}
-
+	Externalizable {
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(27);
+		StringBundler sb = new StringBundler(25);
 
-		sb.append("{mvccVersion=");
-		sb.append(mvccVersion);
-		sb.append(", uuid=");
+		sb.append("{uuid=");
 		sb.append(uuid);
 		sb.append(", layoutFriendlyURLId=");
 		sb.append(layoutFriendlyURLId);
@@ -87,8 +71,6 @@ public class LayoutFriendlyURLCacheModel implements CacheModel<LayoutFriendlyURL
 	@Override
 	public LayoutFriendlyURL toEntityModel() {
 		LayoutFriendlyURLImpl layoutFriendlyURLImpl = new LayoutFriendlyURLImpl();
-
-		layoutFriendlyURLImpl.setMvccVersion(mvccVersion);
 
 		if (uuid == null) {
 			layoutFriendlyURLImpl.setUuid(StringPool.BLANK);
@@ -147,7 +129,6 @@ public class LayoutFriendlyURLCacheModel implements CacheModel<LayoutFriendlyURL
 
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
-		mvccVersion = objectInput.readLong();
 		uuid = objectInput.readUTF();
 		layoutFriendlyURLId = objectInput.readLong();
 		groupId = objectInput.readLong();
@@ -165,8 +146,6 @@ public class LayoutFriendlyURLCacheModel implements CacheModel<LayoutFriendlyURL
 	@Override
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
-		objectOutput.writeLong(mvccVersion);
-
 		if (uuid == null) {
 			objectOutput.writeUTF(StringPool.BLANK);
 		}
@@ -206,7 +185,6 @@ public class LayoutFriendlyURLCacheModel implements CacheModel<LayoutFriendlyURL
 		}
 	}
 
-	public long mvccVersion;
 	public String uuid;
 	public long layoutFriendlyURLId;
 	public long groupId;

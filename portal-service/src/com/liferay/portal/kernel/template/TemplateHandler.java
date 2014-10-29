@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,8 +14,6 @@
 
 package com.liferay.portal.kernel.template;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.xml.Element;
 
 import java.util.List;
@@ -25,118 +23,63 @@ import java.util.Map;
 /**
  * @author Juan Fernández
  */
-@ProviderType
 public interface TemplateHandler {
 
 	/**
-	 * Returns the template handler's class name.
+	 * Returns the class name of the template handler.
 	 *
-	 * @return the template handler's class name
+	 * @return the class name of the template handler
 	 */
 	public String getClassName();
 
 	/**
-	 * Returns the elements containing the information of the portlet display
-	 * templates to be installed by default.
+	 * Returns a list of elements containing the information of the portlet
+	 * display templates to be installed by default.
 	 *
-	 * @return the elements containing the information of the portlet display
-	 *         templates to be installed by default. These templates are
-	 *         installed when registering the portlet.
+	 * @return a list of elements containing the information of the portlet
+	 *         display templates to be installed by default. These templates
+	 *         will be installed when registering the portlet
 	 * @throws Exception if an exception occurred assembling the default
 	 *         template elements
 	 */
 	public List<Element> getDefaultTemplateElements() throws Exception;
 
 	/**
-	 * Returns the template handler's name.
+	 * Returns the name of the template handler.
 	 *
 	 * @param  locale the locale of the template handler name to get
-	 * @return the template handler's name
+	 * @return the name of the template handler
 	 */
 	public String getName(Locale locale);
 
 	/**
-	 * Returns the name of the resource associated with the template.
+	 * Returns the name of the resource the template is associated with.
 	 * Permissions on the resource are checked when adding a new template.
 	 *
-	 * @return the name of the resource associated with the template
+	 * @return the name of the resource
 	 */
 	public String getResourceName();
 
-	/**
-	 * Returns the restricted variables that are excluded from the template's
-	 * context.
-	 *
-	 * @param  language the template's scripting language. Acceptable values for
-	 *         the FreeMarker, Velocity, or XSL languages are {@link
-	 *         TemplateConstants.LANG_TYPE_FTL}, {@link
-	 *         TemplateConstants.LANG_TYPE_VM}, or {@link
-	 *         TemplateConstants.LANG_TYPE_XSL}, respectively.
-	 * @return the restricted variables that are excluded from the template's
-	 *         context
-	 */
 	public String[] getRestrictedVariables(String language);
 
 	/**
-	 * Returns initial template content for helping the user create a new
-	 * template.
+	 * Returns the path to the help template.
 	 *
-	 * @param  language the template's scripting language. Acceptable values for
-	 *         the FreeMarker, Velocity, or XSL languages are {@link
-	 *         TemplateConstants.LANG_TYPE_FTL}, {@link
-	 *         TemplateConstants.LANG_TYPE_VM}, or {@link
-	 *         TemplateConstants.LANG_TYPE_XSL}, respectively.
-	 * @return initial template content for helping the user create a new
-	 *         template
-	 */
-	public String getTemplatesHelpContent(String language);
-
-	/**
-	 * Returns the path to the template's help content.
-	 *
-	 * @param  language the template's scripting language. Acceptable values for
-	 *         the FreeMarker, Velocity, or XSL languages are {@link
-	 *         TemplateConstants.LANG_TYPE_FTL}, {@link
-	 *         TemplateConstants.LANG_TYPE_VM}, or {@link
-	 *         TemplateConstants.LANG_TYPE_XSL}, respectively.
-	 * @return the path to the template's help content
+	 * @param  language the language of the template
+	 * @return the path to the help template. This template will be shown as a
+	 *         help message when the user creates a new template.
 	 */
 	public String getTemplatesHelpPath(String language);
 
 	/**
-	 * Returns the name of the property in <code>portal.properties</code> that
-	 * defines the path to the template's help content.
+	 * Returns the name of the property in portal.properties that defines the
+	 * path to the help of template.
 	 *
-	 * @return the name of the property in <code>portal.properties</code> that
-	 *         defines the path to the template's help content
+	 * @return the name of the property in portal.properties that defines the
+	 *         path to the help template.
 	 */
 	public String getTemplatesHelpPropertyKey();
 
-	/**
-	 * Returns the template's map of script variable groups for which hints are
-	 * displayed in the template editor palette.
-	 *
-	 * <p>
-	 * Script variables can be grouped arbitrarily. As examples, a group of
-	 * entity fields could be mapped to the keyword <code>Fields</code>, or a
-	 * group of general variables portal variables could be mapped to the phrase
-	 * <code>General Variables</code>, etc.
-	 * </p>
-	 *
-	 * @param  classPK the primary key of the entity that defines the variable
-	 *         groups for the template. For example, consider specifying the
-	 *         primary key of the structure associated to the template.
-	 * @param  language the template's scripting language. Acceptable values for
-	 *         the FreeMarker, Velocity, or XSL languages are {@link
-	 *         TemplateConstants.LANG_TYPE_FTL}, {@link
-	 *         TemplateConstants.LANG_TYPE_VM}, or {@link
-	 *         TemplateConstants.LANG_TYPE_XSL}, respectively.
-	 * @param  locale the locale of the variable groups to get
-	 * @return the template's map of script variable groups for which hints are
-	 *         displayed in the template editor palette
-	 * @throws Exception if an exception occurred retrieving the template
-	 *         variable groups
-	 */
 	public Map<String, TemplateVariableGroup> getTemplateVariableGroups(
 			long classPK, String language, Locale locale)
 		throws Exception;

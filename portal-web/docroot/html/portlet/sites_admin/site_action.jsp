@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -35,16 +35,11 @@ else {
 
 	GroupSearchTerms searchTerms = (GroupSearchTerms)request.getAttribute("view_tree.jspf-searchTerms");
 
-	List<String> organizationNames = SitesUtil.getOrganizationNames(group, user);
-
-	organizationUser = !organizationNames.isEmpty();
-
-	List<String> userGroupNames = SitesUtil.getUserGroupNames(group, user);
-
-	userGroupUser = !userGroupNames.isEmpty();
+	organizationUser = SitesUtil.isOrganizationUser(company.getCompanyId(), group, user, new ArrayList<String>());
+	userGroupUser = SitesUtil.isUserGroupUser(company.getCompanyId(), group, user, new ArrayList<String>());
 }
 
-boolean hasUpdatePermission = GroupPermissionUtil.contains(permissionChecker, group, ActionKeys.UPDATE);
+boolean hasUpdatePermission = GroupPermissionUtil.contains(permissionChecker, group.getGroupId(), ActionKeys.UPDATE);
 
 boolean view = false;
 
@@ -53,7 +48,7 @@ if (row == null) {
 }
 %>
 
-<liferay-ui:icon-menu direction="down" icon="<%= StringPool.BLANK %>" message="<%= StringPool.BLANK %>" showExpanded="<%= view %>" showWhenSingleIcon="<%= true %>">
+<liferay-ui:icon-menu showExpanded="<%= view %>" showWhenSingleIcon="<%= true %>">
 
 	<%
 	ThemeDisplay siteThemeDisplay = (ThemeDisplay)themeDisplay.clone();
@@ -65,7 +60,7 @@ if (row == null) {
 
 	<c:if test="<%= siteAdministrationURL != null %>">
 		<liferay-ui:icon
-			iconCssClass="icon-cog"
+			image="configuration"
 			message="site-administration"
 			method="get"
 			url="<%= siteAdministrationURL.toString() %>"
@@ -87,13 +82,13 @@ if (row == null) {
 			</liferay-portlet:renderURL>
 
 			<liferay-ui:icon
-				iconCssClass="icon-search"
+				image="view"
 				message="view-child-sites"
 				url="<%= viewSubsitesURL %>"
 			/>
 		</c:if>
 
-		<c:if test="<%= !group.isCompany() && (PortalPermissionUtil.contains(permissionChecker, ActionKeys.ADD_COMMUNITY) || GroupPermissionUtil.contains(permissionChecker, group, ActionKeys.ADD_COMMUNITY)) %>">
+		<c:if test="<%= !group.isCompany() && (PortalPermissionUtil.contains(permissionChecker, ActionKeys.ADD_COMMUNITY) || GroupPermissionUtil.contains(permissionChecker, group.getGroupId(), ActionKeys.ADD_COMMUNITY)) %>">
 			<liferay-portlet:renderURL varImpl="addSiteURL">
 				<portlet:param name="struts_action" value="/sites_admin/edit_site" />
 				<portlet:param name="<%= Constants.CMD %>" value="<%= Constants.ADD %>" />
@@ -103,7 +98,7 @@ if (row == null) {
 			</liferay-portlet:renderURL>
 
 			<liferay-ui:icon
-				iconCssClass="icon-plus"
+				image="site_icon"
 				message="add-child-site"
 				method="get"
 				url="<%= addSiteURL.toString() %>"
@@ -120,11 +115,11 @@ if (row == null) {
 		</liferay-portlet:renderURL>
 
 		<%
-		String taglibExportURL = "javascript:Liferay.Util.openWindow({id: '" + renderResponse.getNamespace() + "exportDialog', title: '" + HtmlUtil.escapeJS(LanguageUtil.get(request, "export")) + "', uri: '" + HtmlUtil.escapeJS(exportURL.toString()) + "'});";
+		String taglibExportURL = "javascript:Liferay.Util.openWindow({id: '" + renderResponse.getNamespace() + "exportDialog', title: '" + UnicodeLanguageUtil.get(pageContext, "export") + "', uri: '" + HtmlUtil.escapeURL(exportURL.toString()) + "'});";
 		%>
 
 		<liferay-ui:icon
-			iconCssClass="icon-arrow-down"
+			image="export"
 			message="export"
 			url="<%= taglibExportURL %>"
 		/>
@@ -137,16 +132,16 @@ if (row == null) {
 		</liferay-portlet:renderURL>
 
 		<%
-		String taglibImportURL = "javascript:Liferay.Util.openWindow({id: '" + renderResponse.getNamespace() + "importDialog', title: '" + HtmlUtil.escapeJS(LanguageUtil.get(request, "import")) + "', uri: '" + HtmlUtil.escapeJS(importURL.toString()) + "'});";
+		String taglibImportURL = "javascript:Liferay.Util.openWindow({id: '" + renderResponse.getNamespace() + "importDialog', title: '" + UnicodeLanguageUtil.get(pageContext, "import") + "', uri: '" + HtmlUtil.escapeURL(importURL.toString()) + "'});";
 		%>
 
 		<liferay-ui:icon
-			iconCssClass="icon-arrow-up"
+			image="download"
 			message="import"
 			url="<%= taglibImportURL %>"
 		/>
 
-		<liferay-staging:menu extended="<%= true %>" onlyActions="<%= true %>" showManageBranches="<%= false %>" />
+		<liferay-ui:staging extended="<%= true %>" groupId="<%= group.getGroupId() %>" onlyActions="<%= true %>" showManageBranches="<%= false %>" />
 	</c:if>
 
 	<c:if test="<%= group.getPublicLayoutsPageCount() > 0 %>">
@@ -158,7 +153,7 @@ if (row == null) {
 		</portlet:actionURL>
 
 		<liferay-ui:icon
-			iconCssClass="icon-search"
+			image="view"
 			message="go-to-public-pages"
 			target="_blank"
 			url="<%= viewPublicPagesURL %>"
@@ -174,7 +169,7 @@ if (row == null) {
 		</portlet:actionURL>
 
 		<liferay-ui:icon
-			iconCssClass="icon-search"
+			image="view"
 			message="go-to-private-pages"
 			target="_blank"
 			url="<%= viewPrivatePagesURL %>"
@@ -191,8 +186,7 @@ if (row == null) {
 		</portlet:actionURL>
 
 		<liferay-ui:icon
-			iconCssClass="icon-external-link-sign"
-			message="leave"
+			image="leave"
 			url="<%= leaveURL %>"
 		/>
 	</c:if>
@@ -211,15 +205,14 @@ if (row == null) {
 			</c:when>
 			<c:otherwise>
 				<liferay-ui:icon
-					iconCssClass="icon-ok-sign"
-					message="activate"
+					image="activate"
 					url="<%= activateURL %>"
 				/>
 			</c:otherwise>
 		</c:choose>
 	</c:if>
 
-	<c:if test="<%= !group.isCompany() && GroupPermissionUtil.contains(permissionChecker, group, ActionKeys.DELETE) && !PortalUtil.isSystemGroup(group.getName()) %>">
+	<c:if test="<%= !group.isCompany() && GroupPermissionUtil.contains(permissionChecker, group.getGroupId(), ActionKeys.DELETE) && !PortalUtil.isSystemGroup(group.getName()) %>">
 		<portlet:actionURL var="deleteURL">
 			<portlet:param name="struts_action" value="/sites_admin/edit_site" />
 			<portlet:param name="<%= Constants.CMD %>" value="<%= Constants.DELETE %>" />

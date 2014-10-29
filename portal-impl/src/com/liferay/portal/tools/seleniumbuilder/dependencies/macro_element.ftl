@@ -4,23 +4,19 @@
 
 <#assign void = macroNameStack.push(macro?substring(0, x))>
 
-<#assign variableContext = variableContextStack.peek()>
-
 <#if macroElement.getName() == "execute">
 	executeScopeVariables = new HashMap<String, String>();
 
-	executeScopeVariables.putAll(${variableContext});
+	executeScopeVariables.putAll(commandScopeVariables);
 
 	<#if macroElement.element("var")??>
 		<#assign varElements = macroElement.elements("var")>
 
-		<#assign void = variableContextStack.push("executeScopeVariables")>
+		<#assign context = "executeScopeVariables">
 
 		<#list varElements as varElement>
 			<#include "var_element.ftl">
 		</#list>
-
-		<#assign void = variableContextStack.pop()>
 	</#if>
 </#if>
 

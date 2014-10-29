@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -27,17 +27,16 @@ DDLRecord record = (DDLRecord)row.getObject();
 
 long formDDMTemplateId = GetterUtil.getLong((String)row.getParameter("formDDMTemplateId"));
 
-boolean hasDeletePermission = GetterUtil.getBoolean((String)row.getParameter("hasDeletePermission"));
-boolean hasUpdatePermission = GetterUtil.getBoolean((String)row.getParameter("hasUpdatePermission"));
+boolean editable = GetterUtil.getBoolean((String)row.getParameter("editable"));
 
 DDLRecordVersion recordVersion = record.getRecordVersion();
 
-if (hasUpdatePermission) {
+if (editable) {
 	recordVersion = record.getLatestRecordVersion();
 }
 %>
 
-<liferay-ui:icon-menu icon="<%= StringPool.BLANK %>" message="<%= StringPool.BLANK %>">
+<liferay-ui:icon-menu>
 	<c:if test="<%= DDLRecordSetPermission.contains(permissionChecker, record.getRecordSet(), ActionKeys.VIEW) %>">
 		<portlet:renderURL var="viewRecordURL" windowState="<%= WindowState.MAXIMIZED.toString() %>">
 			<portlet:param name="struts_action" value="/dynamic_data_lists/view_record" />
@@ -48,13 +47,12 @@ if (hasUpdatePermission) {
 		</portlet:renderURL>
 
 		<liferay-ui:icon
-			iconCssClass="icon-search"
-			message="view[action]"
+			image="view"
 			url="<%= viewRecordURL %>"
 		/>
 	</c:if>
 
-	<c:if test="<%= hasUpdatePermission %>">
+	<c:if test="<%= DDLRecordSetPermission.contains(permissionChecker, record.getRecordSet(), ActionKeys.UPDATE) %>">
 		<portlet:renderURL var="editRecordURL" windowState="<%= WindowState.MAXIMIZED.toString() %>">
 			<portlet:param name="struts_action" value="/dynamic_data_lists/edit_record" />
 			<portlet:param name="<%= Constants.CMD %>" value="<%= Constants.UPDATE %>" />
@@ -64,13 +62,12 @@ if (hasUpdatePermission) {
 		</portlet:renderURL>
 
 		<liferay-ui:icon
-			iconCssClass="icon-edit"
-			message="edit"
+			image="edit"
 			url="<%= editRecordURL %>"
 		/>
 	</c:if>
 
-	<c:if test="<%= hasDeletePermission %>">
+	<c:if test="<%= DDLRecordSetPermission.contains(permissionChecker, record.getRecordSet(), ActionKeys.DELETE) %>">
 		<portlet:actionURL var="deleteRecordURL">
 			<portlet:param name="struts_action" value="/dynamic_data_mapping_list/edit_record" />
 			<portlet:param name="<%= Constants.CMD %>" value="<%= Constants.DELETE %>" />

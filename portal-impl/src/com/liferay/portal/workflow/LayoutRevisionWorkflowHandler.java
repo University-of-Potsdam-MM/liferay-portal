@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portal.workflow;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.workflow.BaseWorkflowHandler;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
@@ -32,8 +33,7 @@ import java.util.Map;
 /**
  * @author Raymond Augé
  */
-public class LayoutRevisionWorkflowHandler
-	extends BaseWorkflowHandler<LayoutRevision> {
+public class LayoutRevisionWorkflowHandler extends BaseWorkflowHandler {
 
 	@Override
 	public String getClassName() {
@@ -46,9 +46,9 @@ public class LayoutRevisionWorkflowHandler
 	}
 
 	@Override
-	public LayoutRevision updateStatus(
+	public Object updateStatus(
 			int status, Map<String, Serializable> workflowContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		long userId = GetterUtil.getLong(
 			(String)workflowContext.get(WorkflowConstants.CONTEXT_USER_ID));

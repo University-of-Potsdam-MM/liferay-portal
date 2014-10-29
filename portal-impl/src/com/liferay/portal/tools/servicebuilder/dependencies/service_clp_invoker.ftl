@@ -2,8 +2,6 @@ package ${packagePath}.service.base;
 
 import ${packagePath}.service.${entity.name}${sessionTypeName}ServiceUtil;
 
-import aQute.bnd.annotation.ProviderType;
-
 import java.util.Arrays;
 
 /**
@@ -13,12 +11,6 @@ import java.util.Arrays;
 </#if>
  * @generated
  */
-
-<#if classDeprecated>
-	@Deprecated
-</#if>
-
-@ProviderType
 public class ${entity.name}${sessionTypeName}ServiceClpInvoker {
 
 	public ${entity.name}${sessionTypeName}ServiceClpInvoker() {
@@ -64,8 +56,6 @@ public class ${entity.name}${sessionTypeName}ServiceClpInvoker {
 
 						<#if (parameterTypeName == "boolean") || (parameterTypeName == "double") || (parameterTypeName == "float") || (parameterTypeName == "int") || (parameterTypeName == "long") || (parameterTypeName == "short")>
 							((${serviceBuilder.getPrimitiveObj(parameter.type)})arguments[${parameter_index}])${serviceBuilder.getPrimitiveObjValue(serviceBuilder.getPrimitiveObj(parameter.type))}
-						<#elseif (method.name == "dynamicQuery") && (parameterTypeName == "com.liferay.portal.kernel.util.OrderByComparator<T>")>
-							(com.liferay.portal.kernel.util.OrderByComparator<?>)arguments[${parameter_index}]
 						<#else>
 							(${parameterTypeName})arguments[${parameter_index}]
 						</#if>

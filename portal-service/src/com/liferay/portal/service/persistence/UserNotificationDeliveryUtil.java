@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,6 +18,7 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.bean.PortalBeanLocatorUtil;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ReferenceRegistry;
 import com.liferay.portal.model.UserNotificationDelivery;
@@ -63,7 +64,8 @@ public class UserNotificationDeliveryUtil {
 	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#countWithDynamicQuery(DynamicQuery)
 	 */
-	public static long countWithDynamicQuery(DynamicQuery dynamicQuery) {
+	public static long countWithDynamicQuery(DynamicQuery dynamicQuery)
+		throws SystemException {
 		return getPersistence().countWithDynamicQuery(dynamicQuery);
 	}
 
@@ -71,7 +73,7 @@ public class UserNotificationDeliveryUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#findWithDynamicQuery(DynamicQuery)
 	 */
 	public static List<UserNotificationDelivery> findWithDynamicQuery(
-		DynamicQuery dynamicQuery) {
+		DynamicQuery dynamicQuery) throws SystemException {
 		return getPersistence().findWithDynamicQuery(dynamicQuery);
 	}
 
@@ -79,7 +81,8 @@ public class UserNotificationDeliveryUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#findWithDynamicQuery(DynamicQuery, int, int)
 	 */
 	public static List<UserNotificationDelivery> findWithDynamicQuery(
-		DynamicQuery dynamicQuery, int start, int end) {
+		DynamicQuery dynamicQuery, int start, int end)
+		throws SystemException {
 		return getPersistence().findWithDynamicQuery(dynamicQuery, start, end);
 	}
 
@@ -88,7 +91,7 @@ public class UserNotificationDeliveryUtil {
 	 */
 	public static List<UserNotificationDelivery> findWithDynamicQuery(
 		DynamicQuery dynamicQuery, int start, int end,
-		OrderByComparator<UserNotificationDelivery> orderByComparator) {
+		OrderByComparator orderByComparator) throws SystemException {
 		return getPersistence()
 				   .findWithDynamicQuery(dynamicQuery, start, end,
 			orderByComparator);
@@ -98,7 +101,8 @@ public class UserNotificationDeliveryUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel)
 	 */
 	public static UserNotificationDelivery update(
-		UserNotificationDelivery userNotificationDelivery) {
+		UserNotificationDelivery userNotificationDelivery)
+		throws SystemException {
 		return getPersistence().update(userNotificationDelivery);
 	}
 
@@ -107,7 +111,7 @@ public class UserNotificationDeliveryUtil {
 	 */
 	public static UserNotificationDelivery update(
 		UserNotificationDelivery userNotificationDelivery,
-		ServiceContext serviceContext) {
+		ServiceContext serviceContext) throws SystemException {
 		return getPersistence().update(userNotificationDelivery, serviceContext);
 	}
 
@@ -116,9 +120,10 @@ public class UserNotificationDeliveryUtil {
 	*
 	* @param userId the user ID
 	* @return the matching user notification deliveries
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portal.model.UserNotificationDelivery> findByUserId(
-		long userId) {
+		long userId) throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByUserId(userId);
 	}
 
@@ -133,9 +138,11 @@ public class UserNotificationDeliveryUtil {
 	* @param start the lower bound of the range of user notification deliveries
 	* @param end the upper bound of the range of user notification deliveries (not inclusive)
 	* @return the range of matching user notification deliveries
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portal.model.UserNotificationDelivery> findByUserId(
-		long userId, int start, int end) {
+		long userId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByUserId(userId, start, end);
 	}
 
@@ -151,10 +158,12 @@ public class UserNotificationDeliveryUtil {
 	* @param end the upper bound of the range of user notification deliveries (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching user notification deliveries
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portal.model.UserNotificationDelivery> findByUserId(
 		long userId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.UserNotificationDelivery> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByUserId(userId, start, end, orderByComparator);
 	}
@@ -166,11 +175,13 @@ public class UserNotificationDeliveryUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching user notification delivery
 	* @throws com.liferay.portal.NoSuchUserNotificationDeliveryException if a matching user notification delivery could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserNotificationDelivery findByUserId_First(
 		long userId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.UserNotificationDelivery> orderByComparator)
-		throws com.liferay.portal.NoSuchUserNotificationDeliveryException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchUserNotificationDeliveryException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByUserId_First(userId, orderByComparator);
 	}
 
@@ -180,10 +191,12 @@ public class UserNotificationDeliveryUtil {
 	* @param userId the user ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching user notification delivery, or <code>null</code> if a matching user notification delivery could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserNotificationDelivery fetchByUserId_First(
 		long userId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.UserNotificationDelivery> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByUserId_First(userId, orderByComparator);
 	}
 
@@ -194,11 +207,13 @@ public class UserNotificationDeliveryUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching user notification delivery
 	* @throws com.liferay.portal.NoSuchUserNotificationDeliveryException if a matching user notification delivery could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserNotificationDelivery findByUserId_Last(
 		long userId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.UserNotificationDelivery> orderByComparator)
-		throws com.liferay.portal.NoSuchUserNotificationDeliveryException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchUserNotificationDeliveryException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByUserId_Last(userId, orderByComparator);
 	}
 
@@ -208,10 +223,12 @@ public class UserNotificationDeliveryUtil {
 	* @param userId the user ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching user notification delivery, or <code>null</code> if a matching user notification delivery could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserNotificationDelivery fetchByUserId_Last(
 		long userId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.UserNotificationDelivery> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByUserId_Last(userId, orderByComparator);
 	}
 
@@ -223,11 +240,13 @@ public class UserNotificationDeliveryUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next user notification delivery
 	* @throws com.liferay.portal.NoSuchUserNotificationDeliveryException if a user notification delivery with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserNotificationDelivery[] findByUserId_PrevAndNext(
 		long userNotificationDeliveryId, long userId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.UserNotificationDelivery> orderByComparator)
-		throws com.liferay.portal.NoSuchUserNotificationDeliveryException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchUserNotificationDeliveryException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByUserId_PrevAndNext(userNotificationDeliveryId,
 			userId, orderByComparator);
@@ -237,8 +256,10 @@ public class UserNotificationDeliveryUtil {
 	* Removes all the user notification deliveries where userId = &#63; from the database.
 	*
 	* @param userId the user ID
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByUserId(long userId) {
+	public static void removeByUserId(long userId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeByUserId(userId);
 	}
 
@@ -247,8 +268,10 @@ public class UserNotificationDeliveryUtil {
 	*
 	* @param userId the user ID
 	* @return the number of matching user notification deliveries
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByUserId(long userId) {
+	public static int countByUserId(long userId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByUserId(userId);
 	}
 
@@ -262,11 +285,13 @@ public class UserNotificationDeliveryUtil {
 	* @param deliveryType the delivery type
 	* @return the matching user notification delivery
 	* @throws com.liferay.portal.NoSuchUserNotificationDeliveryException if a matching user notification delivery could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserNotificationDelivery findByU_P_C_N_D(
 		long userId, java.lang.String portletId, long classNameId,
 		int notificationType, int deliveryType)
-		throws com.liferay.portal.NoSuchUserNotificationDeliveryException {
+		throws com.liferay.portal.NoSuchUserNotificationDeliveryException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByU_P_C_N_D(userId, portletId, classNameId,
 			notificationType, deliveryType);
@@ -281,10 +306,12 @@ public class UserNotificationDeliveryUtil {
 	* @param notificationType the notification type
 	* @param deliveryType the delivery type
 	* @return the matching user notification delivery, or <code>null</code> if a matching user notification delivery could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserNotificationDelivery fetchByU_P_C_N_D(
 		long userId, java.lang.String portletId, long classNameId,
-		int notificationType, int deliveryType) {
+		int notificationType, int deliveryType)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByU_P_C_N_D(userId, portletId, classNameId,
 			notificationType, deliveryType);
@@ -300,10 +327,12 @@ public class UserNotificationDeliveryUtil {
 	* @param deliveryType the delivery type
 	* @param retrieveFromCache whether to use the finder cache
 	* @return the matching user notification delivery, or <code>null</code> if a matching user notification delivery could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserNotificationDelivery fetchByU_P_C_N_D(
 		long userId, java.lang.String portletId, long classNameId,
-		int notificationType, int deliveryType, boolean retrieveFromCache) {
+		int notificationType, int deliveryType, boolean retrieveFromCache)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByU_P_C_N_D(userId, portletId, classNameId,
 			notificationType, deliveryType, retrieveFromCache);
@@ -318,11 +347,13 @@ public class UserNotificationDeliveryUtil {
 	* @param notificationType the notification type
 	* @param deliveryType the delivery type
 	* @return the user notification delivery that was removed
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserNotificationDelivery removeByU_P_C_N_D(
 		long userId, java.lang.String portletId, long classNameId,
 		int notificationType, int deliveryType)
-		throws com.liferay.portal.NoSuchUserNotificationDeliveryException {
+		throws com.liferay.portal.NoSuchUserNotificationDeliveryException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .removeByU_P_C_N_D(userId, portletId, classNameId,
 			notificationType, deliveryType);
@@ -337,9 +368,11 @@ public class UserNotificationDeliveryUtil {
 	* @param notificationType the notification type
 	* @param deliveryType the delivery type
 	* @return the number of matching user notification deliveries
+	* @throws SystemException if a system exception occurred
 	*/
 	public static int countByU_P_C_N_D(long userId, java.lang.String portletId,
-		long classNameId, int notificationType, int deliveryType) {
+		long classNameId, int notificationType, int deliveryType)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .countByU_P_C_N_D(userId, portletId, classNameId,
 			notificationType, deliveryType);
@@ -382,15 +415,18 @@ public class UserNotificationDeliveryUtil {
 	* @param userNotificationDeliveryId the primary key of the user notification delivery
 	* @return the user notification delivery that was removed
 	* @throws com.liferay.portal.NoSuchUserNotificationDeliveryException if a user notification delivery with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserNotificationDelivery remove(
 		long userNotificationDeliveryId)
-		throws com.liferay.portal.NoSuchUserNotificationDeliveryException {
+		throws com.liferay.portal.NoSuchUserNotificationDeliveryException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().remove(userNotificationDeliveryId);
 	}
 
 	public static com.liferay.portal.model.UserNotificationDelivery updateImpl(
-		com.liferay.portal.model.UserNotificationDelivery userNotificationDelivery) {
+		com.liferay.portal.model.UserNotificationDelivery userNotificationDelivery)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().updateImpl(userNotificationDelivery);
 	}
 
@@ -400,10 +436,12 @@ public class UserNotificationDeliveryUtil {
 	* @param userNotificationDeliveryId the primary key of the user notification delivery
 	* @return the user notification delivery
 	* @throws com.liferay.portal.NoSuchUserNotificationDeliveryException if a user notification delivery with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserNotificationDelivery findByPrimaryKey(
 		long userNotificationDeliveryId)
-		throws com.liferay.portal.NoSuchUserNotificationDeliveryException {
+		throws com.liferay.portal.NoSuchUserNotificationDeliveryException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByPrimaryKey(userNotificationDeliveryId);
 	}
 
@@ -412,23 +450,22 @@ public class UserNotificationDeliveryUtil {
 	*
 	* @param userNotificationDeliveryId the primary key of the user notification delivery
 	* @return the user notification delivery, or <code>null</code> if a user notification delivery with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserNotificationDelivery fetchByPrimaryKey(
-		long userNotificationDeliveryId) {
+		long userNotificationDeliveryId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByPrimaryKey(userNotificationDeliveryId);
-	}
-
-	public static java.util.Map<java.io.Serializable, com.liferay.portal.model.UserNotificationDelivery> fetchByPrimaryKeys(
-		java.util.Set<java.io.Serializable> primaryKeys) {
-		return getPersistence().fetchByPrimaryKeys(primaryKeys);
 	}
 
 	/**
 	* Returns all the user notification deliveries.
 	*
 	* @return the user notification deliveries
+	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portal.model.UserNotificationDelivery> findAll() {
+	public static java.util.List<com.liferay.portal.model.UserNotificationDelivery> findAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll();
 	}
 
@@ -442,9 +479,11 @@ public class UserNotificationDeliveryUtil {
 	* @param start the lower bound of the range of user notification deliveries
 	* @param end the upper bound of the range of user notification deliveries (not inclusive)
 	* @return the range of user notification deliveries
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portal.model.UserNotificationDelivery> findAll(
-		int start, int end) {
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll(start, end);
 	}
 
@@ -459,17 +498,22 @@ public class UserNotificationDeliveryUtil {
 	* @param end the upper bound of the range of user notification deliveries (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of user notification deliveries
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portal.model.UserNotificationDelivery> findAll(
 		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.UserNotificationDelivery> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll(start, end, orderByComparator);
 	}
 
 	/**
 	* Removes all the user notification deliveries from the database.
+	*
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeAll() {
+	public static void removeAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeAll();
 	}
 
@@ -477,8 +521,10 @@ public class UserNotificationDeliveryUtil {
 	* Returns the number of user notification deliveries.
 	*
 	* @return the number of user notification deliveries
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countAll() {
+	public static int countAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countAll();
 	}
 
@@ -496,7 +542,6 @@ public class UserNotificationDeliveryUtil {
 	/**
 	 * @deprecated As of 6.2.0
 	 */
-	@Deprecated
 	public void setPersistence(UserNotificationDeliveryPersistence persistence) {
 	}
 

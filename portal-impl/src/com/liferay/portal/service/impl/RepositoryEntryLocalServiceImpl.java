@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portal.service.impl;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.model.RepositoryEntry;
 import com.liferay.portal.model.User;
 import com.liferay.portal.service.ServiceContext;
@@ -35,7 +36,7 @@ public class RepositoryEntryLocalServiceImpl
 	public RepositoryEntry addRepositoryEntry(
 			long userId, long groupId, long repositoryId, String mappedId,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		User user = userPersistence.findByPrimaryKey(userId);
 		Date now = new Date();
@@ -61,14 +62,16 @@ public class RepositoryEntryLocalServiceImpl
 	}
 
 	@Override
-	public List<RepositoryEntry> getRepositoryEntries(long repositoryId) {
+	public List<RepositoryEntry> getRepositoryEntries(long repositoryId)
+		throws SystemException {
+
 		return repositoryEntryPersistence.findByRepositoryId(repositoryId);
 	}
 
 	@Override
 	public RepositoryEntry updateRepositoryEntry(
 			long repositoryEntryId, String mappedId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		RepositoryEntry repositoryEntry =
 			repositoryEntryPersistence.findByPrimaryKey(repositoryEntryId);

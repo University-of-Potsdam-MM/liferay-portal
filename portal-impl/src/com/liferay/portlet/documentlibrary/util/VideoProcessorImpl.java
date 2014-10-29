@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -23,9 +23,8 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.messaging.DestinationNames;
 import com.liferay.portal.kernel.process.ClassPathUtil;
 import com.liferay.portal.kernel.process.ProcessCallable;
-import com.liferay.portal.kernel.process.ProcessChannel;
 import com.liferay.portal.kernel.process.ProcessException;
-import com.liferay.portal.kernel.process.ProcessExecutorUtil;
+import com.liferay.portal.kernel.process.ProcessExecutor;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.FileVersion;
 import com.liferay.portal.kernel.util.FileUtil;
@@ -306,9 +305,9 @@ public class VideoProcessorImpl
 
 			RenderedImage renderedImage = imageBag.getRenderedImage();
 
-			storeThumbnailImage(
+			storeThumbnailmage(
 				fileVersion, renderedImage, THUMBNAIL_INDEX_CUSTOM_1);
-			storeThumbnailImage(
+			storeThumbnailmage(
 				fileVersion, renderedImage, THUMBNAIL_INDEX_CUSTOM_2);
 		}
 	}
@@ -317,9 +316,13 @@ public class VideoProcessorImpl
 			FileVersion fileVersion, File file, int height, int width)
 		throws Exception {
 
-		StopWatch stopWatch = new StopWatch();
+		StopWatch stopWatch = null;
 
-		stopWatch.start();
+		if (_log.isInfoEnabled()) {
+			stopWatch = new StopWatch();
+
+			stopWatch.start();
+		}
 
 		String tempFileId = DLUtil.getTempFileId(
 			fileVersion.getFileEntryId(), fileVersion.getVersion());
@@ -339,13 +342,8 @@ public class VideoProcessorImpl
 							PropsValues.
 								DL_FILE_ENTRY_THUMBNAIL_VIDEO_FRAME_PERCENTAGE);
 
-					ProcessChannel<String> processChannel =
-						ProcessExecutorUtil.execute(
-							ClassPathUtil.getPortalProcessConfig(),
-							processCallable);
-
-					Future<String> future =
-						processChannel.getProcessNoticeableFuture();
+					Future<String> future = ProcessExecutor.execute(
+						ClassPathUtil.getPortalClassPath(), processCallable);
 
 					String processIdentity = String.valueOf(
 						fileVersion.getFileVersionId());
@@ -382,8 +380,7 @@ public class VideoProcessorImpl
 			if (_log.isInfoEnabled()) {
 				_log.info(
 					"Xuggler generated a thumbnail for " +
-						fileVersion.getTitle() + " in " + stopWatch.getTime() +
-							" ms");
+						fileVersion.getTitle() + " in " + stopWatch);
 			}
 		}
 		catch (Exception e) {
@@ -501,9 +498,13 @@ public class VideoProcessorImpl
 			return;
 		}
 
-		StopWatch stopWatch = new StopWatch();
+		StopWatch stopWatch = null;
 
-		stopWatch.start();
+		if (_log.isInfoEnabled()) {
+			stopWatch = new StopWatch();
+
+			stopWatch.start();
+		}
 
 		if (PropsValues.DL_FILE_ENTRY_PREVIEW_FORK_PROCESS_ENABLED) {
 			ProcessCallable<String> processCallable =
@@ -517,12 +518,10 @@ public class VideoProcessorImpl
 						PropsKeys.DL_FILE_ENTRY_PREVIEW_VIDEO, false),
 					PropsUtil.getProperties(PropsKeys.XUGGLER_FFPRESET, true));
 
-			ProcessChannel<String> processChannel = ProcessExecutorUtil.execute(
-				ClassPathUtil.getPortalProcessConfig(), processCallable);
+			Future<String> future = ProcessExecutor.execute(
+				ClassPathUtil.getPortalClassPath(), processCallable);
 
-			Future<String> future = processChannel.getProcessNoticeableFuture();
-
-			String processIdentity = String.valueOf(
+			String processIdentity = Long.toString(
 				fileVersion.getFileVersionId());
 
 			futures.put(processIdentity, future);
@@ -547,8 +546,7 @@ public class VideoProcessorImpl
 		if (_log.isInfoEnabled()) {
 			_log.info(
 				"Xuggler generated a " + containerType + " preview video for " +
-					fileVersion.getTitle() + " in " + stopWatch.getTime() +
-						" ms");
+					fileVersion.getTitle() + " in " + stopWatch);
 		}
 	}
 

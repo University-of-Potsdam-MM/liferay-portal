@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -13,8 +13,6 @@
  */
 
 package com.liferay.counter.model.impl;
-
-import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.counter.model.Counter;
 import com.liferay.counter.model.CounterModel;
@@ -47,7 +45,6 @@ import java.util.Map;
  * @see com.liferay.counter.model.CounterModel
  * @generated
  */
-@ProviderType
 public class CounterModelImpl extends BaseModelImpl<Counter>
 	implements CounterModel {
 	/*
@@ -116,9 +113,6 @@ public class CounterModelImpl extends BaseModelImpl<Counter>
 
 		attributes.put("name", getName());
 		attributes.put("currentId", getCurrentId());
-
-		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
-		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
 
 		return attributes;
 	}
@@ -220,16 +214,6 @@ public class CounterModelImpl extends BaseModelImpl<Counter>
 	}
 
 	@Override
-	public boolean isEntityCacheEnabled() {
-		return ENTITY_CACHE_ENABLED;
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return FINDER_CACHE_ENABLED;
-	}
-
-	@Override
 	public void resetOriginalValues() {
 	}
 
@@ -285,8 +269,8 @@ public class CounterModelImpl extends BaseModelImpl<Counter>
 		return sb.toString();
 	}
 
-	private static final ClassLoader _classLoader = Counter.class.getClassLoader();
-	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
+	private static ClassLoader _classLoader = Counter.class.getClassLoader();
+	private static Class<?>[] _escapedModelInterfaces = new Class[] {
 			Counter.class
 		};
 	private String _name;

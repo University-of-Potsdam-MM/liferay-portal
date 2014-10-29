@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -26,7 +26,7 @@ ResultRow row = (ResultRow)request.getAttribute(WebKeys.SEARCH_CONTAINER_RESULT_
 LayoutPrototype layoutPrototype = (LayoutPrototype)row.getObject();
 %>
 
-<liferay-ui:icon-menu direction="down" icon="<%= StringPool.BLANK %>" message="<%= StringPool.BLANK %>" showWhenSingleIcon="<%= true %>">
+<liferay-ui:icon-menu>
 	<c:if test="<%= LayoutPrototypePermissionUtil.contains(permissionChecker, layoutPrototype.getLayoutPrototypeId(), ActionKeys.UPDATE) %>">
 		<portlet:renderURL var="editURL">
 			<portlet:param name="struts_action" value="/layout_prototypes/edit_layout_prototype" />
@@ -35,8 +35,7 @@ LayoutPrototype layoutPrototype = (LayoutPrototype)row.getObject();
 		</portlet:renderURL>
 
 		<liferay-ui:icon
-			iconCssClass="icon-edit"
-			message="edit"
+			image="edit"
 			url="<%= editURL %>"
 		/>
 	</c:if>
@@ -51,11 +50,23 @@ LayoutPrototype layoutPrototype = (LayoutPrototype)row.getObject();
 		/>
 
 		<liferay-ui:icon
-			iconCssClass="icon-lock"
-			message="permissions"
+			image="permissions"
 			method="get"
 			url="<%= permissionsURL %>"
 			useDialog="<%= true %>"
+		/>
+	</c:if>
+
+	<c:if test="<%= LayoutPrototypePermissionUtil.contains(permissionChecker, layoutPrototype.getLayoutPrototypeId(), ActionKeys.DELETE) %>">
+		<portlet:actionURL var="deleteURL">
+			<portlet:param name="struts_action" value="/layout_prototypes/edit_layout_prototype" />
+			<portlet:param name="<%= Constants.CMD %>" value="<%= Constants.DELETE %>" />
+			<portlet:param name="redirect" value="<%= redirect %>" />
+			<portlet:param name="layoutPrototypeIds" value="<%= String.valueOf(layoutPrototype.getLayoutPrototypeId()) %>" />
+		</portlet:actionURL>
+
+		<liferay-ui:icon-delete
+			url="<%= deleteURL %>"
 		/>
 	</c:if>
 
@@ -70,8 +81,7 @@ LayoutPrototype layoutPrototype = (LayoutPrototype)row.getObject();
 
 		<liferay-ui:icon
 			cssClass="export-layout-prototype layout-prototype-action"
-			iconCssClass="icon-arrow-down"
-			message="export"
+			image="export"
 			method="get"
 			url="<%= exportURL %>"
 		/>
@@ -88,23 +98,10 @@ LayoutPrototype layoutPrototype = (LayoutPrototype)row.getObject();
 
 		<liferay-ui:icon
 			cssClass="import-layout-prototype layout-prototype-action"
-			iconCssClass="icon-arrow-up"
+			image="add"
 			message="import"
 			method="get"
 			url="<%= importURL %>"
-		/>
-	</c:if>
-
-	<c:if test="<%= LayoutPrototypePermissionUtil.contains(permissionChecker, layoutPrototype.getLayoutPrototypeId(), ActionKeys.DELETE) %>">
-		<portlet:actionURL var="deleteURL">
-			<portlet:param name="struts_action" value="/layout_prototypes/edit_layout_prototype" />
-			<portlet:param name="<%= Constants.CMD %>" value="<%= Constants.DELETE %>" />
-			<portlet:param name="redirect" value="<%= redirect %>" />
-			<portlet:param name="layoutPrototypeIds" value="<%= String.valueOf(layoutPrototype.getLayoutPrototypeId()) %>" />
-		</portlet:actionURL>
-
-		<liferay-ui:icon-delete
-			url="<%= deleteURL %>"
 		/>
 	</c:if>
 </liferay-ui:icon-menu>

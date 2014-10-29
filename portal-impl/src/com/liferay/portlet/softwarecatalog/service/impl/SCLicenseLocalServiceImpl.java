@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portlet.softwarecatalog.service.impl;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portlet.softwarecatalog.LicenseNameException;
 import com.liferay.portlet.softwarecatalog.RequiredLicenseException;
@@ -33,7 +34,7 @@ public class SCLicenseLocalServiceImpl extends SCLicenseLocalServiceBaseImpl {
 	public SCLicense addLicense(
 			String name, String url, boolean openSource, boolean active,
 			boolean recommended)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		validate(name);
 
@@ -53,7 +54,9 @@ public class SCLicenseLocalServiceImpl extends SCLicenseLocalServiceBaseImpl {
 	}
 
 	@Override
-	public void deleteLicense(long licenseId) throws PortalException {
+	public void deleteLicense(long licenseId)
+		throws PortalException, SystemException {
+
 		SCLicense license = scLicensePersistence.findByPrimaryKey(licenseId);
 
 		if (scLicensePersistence.getSCProductEntriesSize(licenseId) > 0) {
@@ -64,49 +67,60 @@ public class SCLicenseLocalServiceImpl extends SCLicenseLocalServiceBaseImpl {
 	}
 
 	@Override
-	public void deleteLicense(SCLicense license) {
+	public void deleteLicense(SCLicense license) throws SystemException {
 		scLicensePersistence.remove(license);
 	}
 
 	@Override
-	public SCLicense getLicense(long licenseId) throws PortalException {
+	public SCLicense getLicense(long licenseId)
+		throws PortalException, SystemException {
+
 		return scLicensePersistence.findByPrimaryKey(licenseId);
 	}
 
 	@Override
-	public List<SCLicense> getLicenses() {
+	public List<SCLicense> getLicenses() throws SystemException {
 		return scLicensePersistence.findAll();
 	}
 
 	@Override
-	public List<SCLicense> getLicenses(boolean active, boolean recommended) {
+	public List<SCLicense> getLicenses(boolean active, boolean recommended)
+		throws SystemException {
+
 		return scLicensePersistence.findByA_R(active, recommended);
 	}
 
 	@Override
 	public List<SCLicense> getLicenses(
-		boolean active, boolean recommended, int start, int end) {
+			boolean active, boolean recommended, int start, int end)
+		throws SystemException {
 
 		return scLicensePersistence.findByA_R(active, recommended, start, end);
 	}
 
 	@Override
-	public List<SCLicense> getLicenses(int start, int end) {
+	public List<SCLicense> getLicenses(int start, int end)
+		throws SystemException {
+
 		return scLicensePersistence.findAll(start, end);
 	}
 
 	@Override
-	public int getLicensesCount() {
+	public int getLicensesCount() throws SystemException {
 		return scLicensePersistence.countAll();
 	}
 
 	@Override
-	public int getLicensesCount(boolean active, boolean recommended) {
+	public int getLicensesCount(boolean active, boolean recommended)
+		throws SystemException {
+
 		return scLicensePersistence.countByA_R(active, recommended);
 	}
 
 	@Override
-	public List<SCLicense> getProductEntryLicenses(long productEntryId) {
+	public List<SCLicense> getProductEntryLicenses(long productEntryId)
+		throws SystemException {
+
 		return scProductEntryPersistence.getSCLicenses(productEntryId);
 	}
 
@@ -114,7 +128,7 @@ public class SCLicenseLocalServiceImpl extends SCLicenseLocalServiceBaseImpl {
 	public SCLicense updateLicense(
 			long licenseId, String name, String url, boolean openSource,
 			boolean active, boolean recommended)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		validate(name);
 

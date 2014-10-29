@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,15 +14,14 @@
 
 package com.liferay.portal.search;
 
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.search.BaseIndexerPostProcessor;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.Indexer;
-import com.liferay.portal.kernel.search.IndexerPostProcessor;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.search.Query;
-import com.liferay.portal.kernel.search.QueryConfig;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.SearchEngineUtil;
 import com.liferay.portal.kernel.search.Sort;
@@ -31,16 +30,14 @@ import com.liferay.portal.kernel.test.ExecutionTestListeners;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
-import com.liferay.portal.model.Group;
 import com.liferay.portal.model.User;
-import com.liferay.portal.test.DeleteAfterTestRun;
+import com.liferay.portal.service.ServiceTestUtil;
+import com.liferay.portal.test.EnvironmentExecutionTestListener;
+import com.liferay.portal.test.LiferayIntegrationJUnitTestRunner;
 import com.liferay.portal.test.Sync;
 import com.liferay.portal.test.SynchronousDestinationExecutionTestListener;
-import com.liferay.portal.test.listeners.MainServletExecutionTestListener;
-import com.liferay.portal.test.runners.LiferayIntegrationJUnitTestRunner;
-import com.liferay.portal.util.test.GroupTestUtil;
-import com.liferay.portal.util.test.SearchContextTestUtil;
-import com.liferay.portal.util.test.UserTestUtil;
+import com.liferay.portal.test.TransactionalExecutionTestListener;
+import com.liferay.portal.util.UserTestUtil;
 import com.liferay.portlet.usersadmin.util.UserIndexer;
 
 import java.util.ArrayList;
@@ -49,7 +46,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -60,8 +56,9 @@ import org.junit.runner.RunWith;
  */
 @ExecutionTestListeners(
 	listeners = {
-		MainServletExecutionTestListener.class,
-		SynchronousDestinationExecutionTestListener.class
+		EnvironmentExecutionTestListener.class,
+		SynchronousDestinationExecutionTestListener.class,
+		TransactionalExecutionTestListener.class
 	})
 @RunWith(LiferayIntegrationJUnitTestRunner.class)
 @Sync
@@ -69,35 +66,34 @@ public class DocumentImplTest {
 
 	@Before
 	public void setUp() throws Exception {
-		_group = GroupTestUtil.addGroup();
-
 		_indexer = IndexerRegistryUtil.getIndexer(UserIndexer.class);
 
-		_indexerPostProcessor = new BaseIndexerPostProcessor() {
+		_indexer.registerIndexerPostProcessor(
+			new BaseIndexerPostProcessor() {
 
-			@Override
-			public void postProcessDocument(Document document, Object obj)
-				throws Exception {
+				@Override
+				public void postProcessDocument(Document document, Object obj)
+					throws Exception {
 
-				String screenName = document.get("screenName");
+					String screenName = document.get("screenName");
 
-				document.addNumber(
-					_FIELD_DOUBLE_ARRAY, _doubleArrays.get(screenName));
-				document.addNumber(
-					_FIELD_FLOAT_ARRAY, _floatArrays.get(screenName));
-				document.addNumber(
-					_FIELD_INTEGER_ARRAY, _integerArrays.get(screenName));
-				document.addNumber(
-					_FIELD_LONG_ARRAY, _longArrays.get(screenName));
-				document.addNumber(_FIELD_DOUBLE, _doubles.get(screenName));
-				document.addNumber(_FIELD_FLOAT, _floats.get(screenName));
-				document.addNumber(_FIELD_INTEGER, _integers.get(screenName));
-				document.addNumber(_FIELD_LONG, _longs.get(screenName));
+					document.addNumber(
+						_FIELD_DOUBLE_ARRAY, _doubleArrays.get(screenName));
+					document.addNumber(
+						_FIELD_FLOAT_ARRAY, _floatArrays.get(screenName));
+					document.addNumber(
+						_FIELD_INTEGER_ARRAY, _integerArrays.get(screenName));
+					document.addNumber(
+						_FIELD_LONG_ARRAY, _longArrays.get(screenName));
+					document.addNumber(_FIELD_DOUBLE, _doubles.get(screenName));
+					document.addNumber(_FIELD_FLOAT, _floats.get(screenName));
+					document.addNumber(
+						_FIELD_INTEGER, _integers.get(screenName));
+					document.addNumber(_FIELD_LONG, _longs.get(screenName));
+				}
+
 			}
-
-		};
-
-		_indexer.registerIndexerPostProcessor(_indexerPostProcessor);
+		);
 
 		populateNumbers();
 
@@ -110,11 +106,6 @@ public class DocumentImplTest {
 
 			_indexer.reindex(user);
 		}
-	}
-
-	@After
-	public void tearDown() throws Exception {
-		_indexer.unregisterIndexerPostProcessor(_indexerPostProcessor);
 	}
 
 	@Test
@@ -236,15 +227,11 @@ public class DocumentImplTest {
 	protected SearchContext buildSearchContext(String keywords)
 		throws Exception {
 
-		SearchContext searchContext = SearchContextTestUtil.getSearchContext();
+		SearchContext searchContext = ServiceTestUtil.getSearchContext();
 
 		searchContext.setAttribute(Field.STATUS, WorkflowConstants.STATUS_ANY);
 		searchContext.setKeywords(keywords);
 		searchContext.setGroupIds(new long[] {});
-
-		QueryConfig queryConfig = searchContext.getQueryConfig();
-
-		queryConfig.setSelectedFieldNames(getSelectedFieldNames());
 
 		return searchContext;
 	}
@@ -252,7 +239,7 @@ public class DocumentImplTest {
 	protected void checkSearchContext(SearchContext searchContext)
 		throws Exception {
 
-		Hits results = _indexer.search(searchContext, getSelectedFieldNames());
+		Hits results = _indexer.search(searchContext);
 
 		for (Document document : results.getDocs()) {
 			String screenName = document.get("screenName");
@@ -300,15 +287,11 @@ public class DocumentImplTest {
 			SearchContext searchContext, Sort sort, String[] screenNames)
 		throws Exception {
 
-		QueryConfig queryConfig = searchContext.getQueryConfig();
-
-		queryConfig.setSelectedFieldNames(getSelectedFieldNames());
-
-		searchContext.setSorts(sort);
-
 		Query query = _indexer.getFullQuery(searchContext);
 
-		Hits results = SearchEngineUtil.search(searchContext, query);
+		Hits results = SearchEngineUtil.search(
+			searchContext.getSearchEngineId(), searchContext.getCompanyId(),
+			query, sort, QueryUtil.ALL_POS, QueryUtil.ALL_POS);
 
 		Assert.assertEquals(screenNames.length, results.getLength());
 
@@ -378,14 +361,6 @@ public class DocumentImplTest {
 		}
 
 		return list.toArray(new Long[list.size()]);
-	}
-
-	protected String[] getSelectedFieldNames() {
-		return new String[] {
-			_FIELD_DOUBLE, _FIELD_DOUBLE_ARRAY, _FIELD_FLOAT,
-			_FIELD_FLOAT_ARRAY, _FIELD_INTEGER, _FIELD_INTEGER_ARRAY,
-			_FIELD_LONG, _FIELD_LONG_ARRAY, "screenName"
-		};
 	}
 
 	protected void populateNumberArrays(
@@ -516,12 +491,7 @@ public class DocumentImplTest {
 	private Map<String, Double> _doubles = new HashMap<String, Double>();
 	private Map<String, Float[]> _floatArrays = new HashMap<String, Float[]>();
 	private Map<String, Float> _floats = new HashMap<String, Float>();
-
-	@DeleteAfterTestRun
-	private Group _group;
-
 	private Indexer _indexer;
-	private IndexerPostProcessor _indexerPostProcessor;
 	private Map<String, Integer[]> _integerArrays =
 		new HashMap<String, Integer[]>();
 	private Map<String, Integer> _integers = new HashMap<String, Integer>();

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -31,32 +31,6 @@ public class ResourceBlockServiceWrapper implements ResourceBlockService,
 		_resourceBlockService = resourceBlockService;
 	}
 
-	@Override
-	public void addCompanyScopePermission(long scopeGroupId, long companyId,
-		java.lang.String name, long roleId, java.lang.String actionId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_resourceBlockService.addCompanyScopePermission(scopeGroupId,
-			companyId, name, roleId, actionId);
-	}
-
-	@Override
-	public void addGroupScopePermission(long scopeGroupId, long companyId,
-		long groupId, java.lang.String name, long roleId,
-		java.lang.String actionId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_resourceBlockService.addGroupScopePermission(scopeGroupId, companyId,
-			groupId, name, roleId, actionId);
-	}
-
-	@Override
-	public void addIndividualScopePermission(long companyId, long groupId,
-		java.lang.String name, long primKey, long roleId,
-		java.lang.String actionId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_resourceBlockService.addIndividualScopePermission(companyId, groupId,
-			name, primKey, roleId, actionId);
-	}
-
 	/**
 	* Returns the Spring bean ID for this bean.
 	*
@@ -65,41 +39,6 @@ public class ResourceBlockServiceWrapper implements ResourceBlockService,
 	@Override
 	public java.lang.String getBeanIdentifier() {
 		return _resourceBlockService.getBeanIdentifier();
-	}
-
-	@Override
-	public void removeAllGroupScopePermissions(long scopeGroupId,
-		long companyId, java.lang.String name, long roleId,
-		java.lang.String actionId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_resourceBlockService.removeAllGroupScopePermissions(scopeGroupId,
-			companyId, name, roleId, actionId);
-	}
-
-	@Override
-	public void removeCompanyScopePermission(long scopeGroupId, long companyId,
-		java.lang.String name, long roleId, java.lang.String actionId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_resourceBlockService.removeCompanyScopePermission(scopeGroupId,
-			companyId, name, roleId, actionId);
-	}
-
-	@Override
-	public void removeGroupScopePermission(long scopeGroupId, long companyId,
-		long groupId, java.lang.String name, long roleId,
-		java.lang.String actionId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_resourceBlockService.removeGroupScopePermission(scopeGroupId,
-			companyId, groupId, name, roleId, actionId);
-	}
-
-	@Override
-	public void removeIndividualScopePermission(long companyId, long groupId,
-		java.lang.String name, long primKey, long roleId,
-		java.lang.String actionId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_resourceBlockService.removeIndividualScopePermission(companyId,
-			groupId, name, primKey, roleId, actionId);
 	}
 
 	/**
@@ -113,10 +52,79 @@ public class ResourceBlockServiceWrapper implements ResourceBlockService,
 	}
 
 	@Override
+	public void addCompanyScopePermission(long scopeGroupId, long companyId,
+		java.lang.String name, long roleId, java.lang.String actionId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		_resourceBlockService.addCompanyScopePermission(scopeGroupId,
+			companyId, name, roleId, actionId);
+	}
+
+	@Override
+	public void addGroupScopePermission(long scopeGroupId, long companyId,
+		long groupId, java.lang.String name, long roleId,
+		java.lang.String actionId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		_resourceBlockService.addGroupScopePermission(scopeGroupId, companyId,
+			groupId, name, roleId, actionId);
+	}
+
+	@Override
+	public void addIndividualScopePermission(long companyId, long groupId,
+		java.lang.String name, long primKey, long roleId,
+		java.lang.String actionId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		_resourceBlockService.addIndividualScopePermission(companyId, groupId,
+			name, primKey, roleId, actionId);
+	}
+
+	@Override
+	public void removeAllGroupScopePermissions(long scopeGroupId,
+		long companyId, java.lang.String name, long roleId,
+		java.lang.String actionId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		_resourceBlockService.removeAllGroupScopePermissions(scopeGroupId,
+			companyId, name, roleId, actionId);
+	}
+
+	@Override
+	public void removeCompanyScopePermission(long scopeGroupId, long companyId,
+		java.lang.String name, long roleId, java.lang.String actionId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		_resourceBlockService.removeCompanyScopePermission(scopeGroupId,
+			companyId, name, roleId, actionId);
+	}
+
+	@Override
+	public void removeGroupScopePermission(long scopeGroupId, long companyId,
+		long groupId, java.lang.String name, long roleId,
+		java.lang.String actionId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		_resourceBlockService.removeGroupScopePermission(scopeGroupId,
+			companyId, groupId, name, roleId, actionId);
+	}
+
+	@Override
+	public void removeIndividualScopePermission(long companyId, long groupId,
+		java.lang.String name, long primKey, long roleId,
+		java.lang.String actionId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		_resourceBlockService.removeIndividualScopePermission(companyId,
+			groupId, name, primKey, roleId, actionId);
+	}
+
+	@Override
 	public void setCompanyScopePermissions(long scopeGroupId, long companyId,
 		java.lang.String name, long roleId,
 		java.util.List<java.lang.String> actionIds)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		_resourceBlockService.setCompanyScopePermissions(scopeGroupId,
 			companyId, name, roleId, actionIds);
 	}
@@ -125,7 +133,8 @@ public class ResourceBlockServiceWrapper implements ResourceBlockService,
 	public void setGroupScopePermissions(long scopeGroupId, long companyId,
 		long groupId, java.lang.String name, long roleId,
 		java.util.List<java.lang.String> actionIds)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		_resourceBlockService.setGroupScopePermissions(scopeGroupId, companyId,
 			groupId, name, roleId, actionIds);
 	}
@@ -134,7 +143,8 @@ public class ResourceBlockServiceWrapper implements ResourceBlockService,
 	public void setIndividualScopePermissions(long companyId, long groupId,
 		java.lang.String name, long primKey, long roleId,
 		java.util.List<java.lang.String> actionIds)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		_resourceBlockService.setIndividualScopePermissions(companyId, groupId,
 			name, primKey, roleId, actionIds);
 	}
@@ -143,7 +153,8 @@ public class ResourceBlockServiceWrapper implements ResourceBlockService,
 	public void setIndividualScopePermissions(long companyId, long groupId,
 		java.lang.String name, long primKey,
 		java.util.Map<java.lang.Long, java.lang.String[]> roleIdsToActionIds)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		_resourceBlockService.setIndividualScopePermissions(companyId, groupId,
 			name, primKey, roleIdsToActionIds);
 	}
@@ -151,7 +162,6 @@ public class ResourceBlockServiceWrapper implements ResourceBlockService,
 	/**
 	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedService}
 	 */
-	@Deprecated
 	public ResourceBlockService getWrappedResourceBlockService() {
 		return _resourceBlockService;
 	}
@@ -159,7 +169,6 @@ public class ResourceBlockServiceWrapper implements ResourceBlockService,
 	/**
 	 * @deprecated As of 6.1.0, replaced by {@link #setWrappedService}
 	 */
-	@Deprecated
 	public void setWrappedResourceBlockService(
 		ResourceBlockService resourceBlockService) {
 		_resourceBlockService = resourceBlockService;

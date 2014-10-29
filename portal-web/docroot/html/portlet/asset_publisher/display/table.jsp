@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -22,6 +22,7 @@ List results = (List)request.getAttribute("view.jsp-results");
 int assetEntryIndex = ((Integer)request.getAttribute("view.jsp-assetEntryIndex")).intValue();
 
 AssetEntry assetEntry = (AssetEntry)request.getAttribute("view.jsp-assetEntry");
+AssetRendererFactory assetRendererFactory = (AssetRendererFactory)request.getAttribute("view.jsp-assetRendererFactory");
 AssetRenderer assetRenderer = (AssetRenderer)request.getAttribute("view.jsp-assetRenderer");
 
 Group stageableGroup = themeDisplay.getScopeGroup();
@@ -36,11 +37,31 @@ if (Validator.isNull(title)) {
 	title = assetRenderer.getTitle(locale);
 }
 
+boolean show = ((Boolean)request.getAttribute("view.jsp-show")).booleanValue();
+
 PortletURL editPortletURL = assetRenderer.getURLEdit(liferayPortletRequest, liferayPortletResponse);
 
-boolean viewInContext = ((Boolean)request.getAttribute("view.jsp-viewInContext")).booleanValue();
+PortletURL viewFullContentURL = renderResponse.createRenderURL();
 
-String viewURL = AssetPublisherHelperUtil.getAssetViewURL(liferayPortletRequest, liferayPortletResponse, assetEntry, viewInContext);
+viewFullContentURL.setParameter("struts_action", "/asset_publisher/view_content");
+viewFullContentURL.setParameter("assetEntryId", String.valueOf(assetEntry.getEntryId()));
+viewFullContentURL.setParameter("type", assetRendererFactory.getType());
+
+if (Validator.isNotNull(assetRenderer.getUrlTitle())) {
+	if (assetRenderer.getGroupId() != scopeGroupId) {
+		viewFullContentURL.setParameter("groupId", String.valueOf(assetRenderer.getGroupId()));
+	}
+
+	viewFullContentURL.setParameter("urlTitle", assetRenderer.getUrlTitle());
+}
+
+String viewFullContentURLString = viewFullContentURL.toString();
+
+viewFullContentURLString = HttpUtil.setParameter(viewFullContentURLString, "redirect", currentURL);
+
+String viewURL = viewInContext ? assetRenderer.getURLViewInContext(liferayPortletRequest, liferayPortletResponse, viewFullContentURLString) : viewFullContentURL.toString();
+
+viewURL = _checkViewURL(assetEntry, viewInContext, viewURL, currentURL, themeDisplay);
 
 request.setAttribute("view.jsp-showIconLabel", false);
 %>
@@ -54,8 +75,6 @@ request.setAttribute("view.jsp-showIconLabel", false);
 		</th>
 
 		<%
-		String[] metadataFields = assetPublisherDisplayContext.getMetadataFields();
-
 		for (int m = 0; m < metadataFields.length; m++) {
 		%>
 
@@ -67,7 +86,7 @@ request.setAttribute("view.jsp-showIconLabel", false);
 		}
 		%>
 
-		<c:if test="<%= !stageableGroup.hasStagingGroup() %>">
+		<c:if test="<%= assetRenderer.hasEditPermission(permissionChecker) && (editPortletURL != null) && !stageableGroup.hasStagingGroup() %>">
 			<th class="table-header"></th>
 		</c:if>
 	</tr>
@@ -89,8 +108,6 @@ request.setAttribute("view.jsp-showIconLabel", false);
 	</td>
 
 	<%
-	String[] metadataFields = assetPublisherDisplayContext.getMetadataFields();
-
 	for (int m = 0; m < metadataFields.length; m++) {
 		String value = null;
 
@@ -166,11 +183,9 @@ request.setAttribute("view.jsp-showIconLabel", false);
 	}
 	%>
 
-	<c:if test="<%= !stageableGroup.hasStagingGroup() %>">
+	<c:if test="<%= assetRenderer.hasEditPermission(permissionChecker) && (editPortletURL != null) && !stageableGroup.hasStagingGroup() %>">
 		<td class="table-cell">
-			<c:if test="<%= assetRenderer.hasEditPermission(permissionChecker) && (editPortletURL != null) %>">
-				<liferay-util:include page="/html/portlet/asset_publisher/asset_actions.jsp" />
-			</c:if>
+			<liferay-util:include page="/html/portlet/asset_publisher/asset_actions.jsp" />
 		</td>
 	</c:if>
 </tr>

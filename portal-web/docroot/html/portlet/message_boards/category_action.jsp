@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -22,37 +22,10 @@ ResultRow row = (ResultRow)request.getAttribute(WebKeys.SEARCH_CONTAINER_RESULT_
 MBCategory category = (MBCategory)row.getObject();
 
 Set<Long> categorySubscriptionClassPKs = (Set<Long>)row.getParameter("categorySubscriptionClassPKs");
-
-boolean defaultParentCategory = false;
-
-if (category.getCategoryId() == MBCategoryConstants.DEFAULT_PARENT_CATEGORY_ID) {
-	defaultParentCategory = true;
-}
-
-String modelResource = null;
-String modelResourceDescription = null;
-String resourcePrimKey = null;
-
-boolean showPermissionsURL = false;
-
-if (!defaultParentCategory) {
-	modelResource = MBCategory.class.getName();
-	modelResourceDescription = category.getName();
-	resourcePrimKey = String.valueOf(category.getCategoryId());
-
-	showPermissionsURL = MBCategoryPermission.contains(permissionChecker, category, ActionKeys.PERMISSIONS);
-}
-else {
-	modelResource = "com.liferay.portlet.messageboards";
-	modelResourceDescription = themeDisplay.getScopeGroupName();
-	resourcePrimKey = String.valueOf(scopeGroupId);
-
-	showPermissionsURL = MBPermission.contains(permissionChecker, scopeGroupId, ActionKeys.PERMISSIONS);
-}
 %>
 
-<liferay-ui:icon-menu icon="<%= StringPool.BLANK %>" message="<%= StringPool.BLANK %>">
-	<c:if test="<%= !defaultParentCategory && MBCategoryPermission.contains(permissionChecker, category, ActionKeys.UPDATE) %>">
+<liferay-ui:icon-menu>
+	<c:if test="<%= MBCategoryPermission.contains(permissionChecker, category, ActionKeys.UPDATE) %>">
 		<portlet:renderURL var="editURL">
 			<portlet:param name="struts_action" value="/message_boards/edit_category" />
 			<portlet:param name="redirect" value="<%= currentURL %>" />
@@ -60,8 +33,7 @@ else {
 		</portlet:renderURL>
 
 		<liferay-ui:icon
-			iconCssClass="icon-edit"
-			message="edit"
+			image="edit"
 			url="<%= editURL %>"
 		/>
 
@@ -72,24 +44,23 @@ else {
 		</portlet:renderURL>
 
 		<liferay-ui:icon
-			iconCssClass="icon-move"
+			image="submit"
 			message="move"
 			url="<%= moveURL %>"
 		/>
 	</c:if>
 
-	<c:if test="<%= showPermissionsURL %>">
+	<c:if test="<%= MBCategoryPermission.contains(permissionChecker, category, ActionKeys.PERMISSIONS) %>">
 		<liferay-security:permissionsURL
-			modelResource="<%= modelResource %>"
-			modelResourceDescription="<%= modelResourceDescription %>"
-			resourcePrimKey="<%= resourcePrimKey %>"
+			modelResource="<%= MBCategory.class.getName() %>"
+			modelResourceDescription="<%= category.getName() %>"
+			resourcePrimKey="<%= String.valueOf(category.getCategoryId()) %>"
 			var="permissionsURL"
 			windowState="<%= LiferayWindowState.POP_UP.toString() %>"
 		/>
 
 		<liferay-ui:icon
-			iconCssClass="icon-lock"
-			message="permissions"
+			image="permissions"
 			method="get"
 			url="<%= permissionsURL %>"
 			useDialog="<%= true %>"
@@ -97,6 +68,7 @@ else {
 	</c:if>
 
 	<c:if test="<%= portletName.equals(PortletKeys.MESSAGE_BOARDS) %>">
+
 		<c:if test="<%= enableRSS %>">
 
 			<%
@@ -116,26 +88,9 @@ else {
 			/>
 		</c:if>
 
-		<%
-		long categorySubscriptionClassPK = 0;
-
-		boolean hasSubscriptionPermission = false;
-
-		if (!defaultParentCategory) {
-			categorySubscriptionClassPK = category.getCategoryId();
-
-			hasSubscriptionPermission = MBCategoryPermission.contains(permissionChecker, category, ActionKeys.SUBSCRIBE);
-		}
-		else {
-			categorySubscriptionClassPK = scopeGroupId;
-
-			hasSubscriptionPermission = MBPermission.contains(permissionChecker, scopeGroupId, ActionKeys.SUBSCRIBE);
-		}
-		%>
-
-		<c:if test="<%= hasSubscriptionPermission && (mbSettings.isEmailMessageAddedEnabled() || mbSettings.isEmailMessageUpdatedEnabled()) %>">
+		<c:if test="<%= MBCategoryPermission.contains(permissionChecker, category, ActionKeys.SUBSCRIBE) && (MBUtil.getEmailMessageAddedEnabled(portletPreferences) || MBUtil.getEmailMessageUpdatedEnabled(portletPreferences)) %>">
 			<c:choose>
-				<c:when test="<%= (categorySubscriptionClassPKs != null) && categorySubscriptionClassPKs.contains(categorySubscriptionClassPK) %>">
+				<c:when test="<%= (categorySubscriptionClassPKs != null) && categorySubscriptionClassPKs.contains(category.getCategoryId()) %>">
 					<portlet:actionURL var="unsubscribeURL">
 						<portlet:param name="struts_action" value="/message_boards/edit_category" />
 						<portlet:param name="<%= Constants.CMD %>" value="<%= Constants.UNSUBSCRIBE %>" />
@@ -144,8 +99,7 @@ else {
 					</portlet:actionURL>
 
 					<liferay-ui:icon
-						iconCssClass="icon-remove-sign"
-						message="unsubscribe"
+						image="unsubscribe"
 						url="<%= unsubscribeURL %>"
 					/>
 				</c:when>
@@ -158,8 +112,7 @@ else {
 					</portlet:actionURL>
 
 					<liferay-ui:icon
-						iconCssClass="icon-ok-sign"
-						message="subscribe"
+						image="subscribe"
 						url="<%= subscribeURL %>"
 					/>
 				</c:otherwise>
@@ -167,7 +120,7 @@ else {
 		</c:if>
 	</c:if>
 
-	<c:if test="<%= !defaultParentCategory && MBCategoryPermission.contains(permissionChecker, category, ActionKeys.DELETE) %>">
+	<c:if test="<%= MBCategoryPermission.contains(permissionChecker, category, ActionKeys.DELETE) %>">
 		<portlet:actionURL var="deleteURL">
 			<portlet:param name="struts_action" value="/message_boards/edit_category" />
 			<portlet:param name="<%= Constants.CMD %>" value="<%= TrashUtil.isTrashEnabled(scopeGroupId) ? Constants.MOVE_TO_TRASH : Constants.DELETE %>" />

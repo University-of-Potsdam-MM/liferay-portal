@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portlet.journal.service.impl;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.jsonwebservice.JSONWebService;
 import com.liferay.portal.kernel.jsonwebservice.JSONWebServiceMode;
 import com.liferay.portal.security.permission.ActionKeys;
@@ -38,7 +39,7 @@ public class JournalFeedServiceImpl extends JournalFeedServiceBaseImpl {
 			String targetLayoutFriendlyUrl, String targetPortletId,
 			String contentField, String feedType, double feedVersion,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		JournalPermission.check(
 			getPermissionChecker(), groupId, ActionKeys.ADD_FEED);
@@ -51,7 +52,9 @@ public class JournalFeedServiceImpl extends JournalFeedServiceBaseImpl {
 	}
 
 	@Override
-	public void deleteFeed(long feedId) throws PortalException {
+	public void deleteFeed(long feedId)
+		throws PortalException, SystemException {
+
 		JournalFeedPermission.check(
 			getPermissionChecker(), feedId, ActionKeys.DELETE);
 
@@ -61,15 +64,18 @@ public class JournalFeedServiceImpl extends JournalFeedServiceBaseImpl {
 	/**
 	 * @deprecated As of 6.2.0, replaced by {@link #deleteFeed(long, String)}
 	 */
-	@Deprecated
 	@JSONWebService(mode = JSONWebServiceMode.IGNORE)
 	@Override
-	public void deleteFeed(long groupId, long feedId) throws PortalException {
+	public void deleteFeed(long groupId, long feedId)
+		throws PortalException, SystemException {
+
 		deleteFeed(groupId, String.valueOf(feedId));
 	}
 
 	@Override
-	public void deleteFeed(long groupId, String feedId) throws PortalException {
+	public void deleteFeed(long groupId, String feedId)
+		throws PortalException, SystemException {
+
 		JournalFeedPermission.check(
 			getPermissionChecker(), groupId, feedId, ActionKeys.DELETE);
 
@@ -77,7 +83,9 @@ public class JournalFeedServiceImpl extends JournalFeedServiceBaseImpl {
 	}
 
 	@Override
-	public JournalFeed getFeed(long feedId) throws PortalException {
+	public JournalFeed getFeed(long feedId)
+		throws PortalException, SystemException {
+
 		JournalFeedPermission.check(
 			getPermissionChecker(), feedId, ActionKeys.VIEW);
 
@@ -87,18 +95,17 @@ public class JournalFeedServiceImpl extends JournalFeedServiceBaseImpl {
 	/**
 	 * @deprecated As of 6.2.0, replaced by {@link #getFeed(long, String)}
 	 */
-	@Deprecated
 	@JSONWebService(mode = JSONWebServiceMode.IGNORE)
 	@Override
 	public JournalFeed getFeed(long groupId, long feedId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return getFeed(groupId, String.valueOf(feedId));
 	}
 
 	@Override
 	public JournalFeed getFeed(long groupId, String feedId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		JournalFeedPermission.check(
 			getPermissionChecker(), groupId, feedId, ActionKeys.VIEW);
@@ -114,7 +121,7 @@ public class JournalFeedServiceImpl extends JournalFeedServiceBaseImpl {
 			String orderByType, String targetLayoutFriendlyUrl,
 			String targetPortletId, String contentField, String feedType,
 			double feedVersion, ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		JournalFeedPermission.check(
 			getPermissionChecker(), groupId, feedId, ActionKeys.UPDATE);

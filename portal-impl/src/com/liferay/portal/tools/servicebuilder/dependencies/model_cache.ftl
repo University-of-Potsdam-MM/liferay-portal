@@ -2,21 +2,16 @@ package ${packagePath}.model.impl;
 
 import ${packagePath}.model.${entity.name};
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.CacheModel;
-import com.liferay.portal.model.MVCCModel;
 
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
-import java.io.Serializable;
 
 import java.util.Date;
-import java.util.Map;
 
 /**
  * The cache model class for representing ${entity.name} in entity cache.
@@ -25,25 +20,7 @@ import java.util.Map;
  * @see ${entity.name}
  * @generated
  */
-@ProviderType
-public class ${entity.name}CacheModel implements CacheModel<${entity.name}>, Externalizable
-	<#if entity.isMvccEnabled()>
-		, MVCCModel
-	</#if>
-
-	{
-
-	<#if entity.isMvccEnabled()>
-		@Override
-		public long getMvccVersion() {
-			return mvccVersion;
-		}
-
-		@Override
-		public void setMvccVersion(long mvccVersion) {
-			this.mvccVersion = mvccVersion;
-		}
-	</#if>
+public class ${entity.name}CacheModel implements CacheModel<${entity.name}>, Externalizable {
 
 	@Override
 	public String toString() {
@@ -99,7 +76,7 @@ public class ${entity.name}CacheModel implements CacheModel<${entity.name}>, Ext
 		${entity.varName}Impl.resetOriginalValues();
 
 		<#list cacheFields as cacheField>
-			<#assign methodName = serviceBuilder.getCacheFieldMethodName(cacheField)>
+			<#assign methodName = textFormatter.format(serviceBuilder.getVariableName(cacheField), 6)>
 
 			${entity.varName}Impl.set${methodName}(${cacheField.name});
 		</#list>
@@ -138,7 +115,7 @@ public class ${entity.name}CacheModel implements CacheModel<${entity.name}>, Ext
 			<#elseif column.type == "String">
 				${column.name} = objectInput.readUTF();
 			<#elseif column.type != "Blob">
-				${column.name} = (${column.genericizedType})objectInput.readObject();
+				${column.name} = (${column.type})objectInput.readObject();
 			</#if>
 		</#list>
 
@@ -176,7 +153,7 @@ public class ${entity.name}CacheModel implements CacheModel<${entity.name}>, Ext
 			<#if column.type == "Date">
 				public long ${column.name};
 			<#else>
-				public ${column.genericizedType} ${column.name};
+				public ${column.type} ${column.name};
 			</#if>
 		</#if>
 	</#list>

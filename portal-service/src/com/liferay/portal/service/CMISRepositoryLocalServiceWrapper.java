@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -42,12 +42,6 @@ public class CMISRepositoryLocalServiceWrapper
 		return _cmisRepositoryLocalService.getBeanIdentifier();
 	}
 
-	@Override
-	public java.lang.Object getSession(long repositoryId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _cmisRepositoryLocalService.getSession(repositoryId);
-	}
-
 	/**
 	* Sets the Spring bean ID for this bean.
 	*
@@ -59,30 +53,39 @@ public class CMISRepositoryLocalServiceWrapper
 	}
 
 	@Override
+	public java.lang.Object getSession(long repositoryId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _cmisRepositoryLocalService.getSession(repositoryId);
+	}
+
+	@Override
 	public com.liferay.portal.kernel.repository.model.FileEntry toFileEntry(
 		long repositoryId, java.lang.Object object)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return _cmisRepositoryLocalService.toFileEntry(repositoryId, object);
 	}
 
 	@Override
 	public com.liferay.portal.kernel.repository.model.FileVersion toFileVersion(
 		long repositoryId, java.lang.Object object)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return _cmisRepositoryLocalService.toFileVersion(repositoryId, object);
 	}
 
 	@Override
 	public com.liferay.portal.kernel.repository.model.Folder toFolder(
 		long repositoryId, java.lang.Object object)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return _cmisRepositoryLocalService.toFolder(repositoryId, object);
 	}
 
 	/**
 	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedService}
 	 */
-	@Deprecated
 	public CMISRepositoryLocalService getWrappedCMISRepositoryLocalService() {
 		return _cmisRepositoryLocalService;
 	}
@@ -90,7 +93,6 @@ public class CMISRepositoryLocalServiceWrapper
 	/**
 	 * @deprecated As of 6.1.0, replaced by {@link #setWrappedService}
 	 */
-	@Deprecated
 	public void setWrappedCMISRepositoryLocalService(
 		CMISRepositoryLocalService cmisRepositoryLocalService) {
 		_cmisRepositoryLocalService = cmisRepositoryLocalService;

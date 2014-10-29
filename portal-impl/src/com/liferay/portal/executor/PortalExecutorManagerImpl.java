@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,7 +14,6 @@
 
 package com.liferay.portal.executor;
 
-import com.liferay.portal.kernel.concurrent.NoticeableFuture;
 import com.liferay.portal.kernel.concurrent.ThreadPoolExecutor;
 import com.liferay.portal.kernel.executor.PortalExecutorFactory;
 import com.liferay.portal.kernel.executor.PortalExecutorManager;
@@ -44,7 +43,7 @@ public class PortalExecutorManagerImpl implements PortalExecutorManager {
 	}
 
 	@Override
-	public <T> NoticeableFuture<T> execute(String name, Callable<T> callable) {
+	public <T> Future<T> execute(String name, Callable<T> callable) {
 		ThreadPoolExecutor threadPoolExecutor = getPortalExecutor(name);
 
 		return threadPoolExecutor.submit(callable);

@@ -1,15 +1,14 @@
-@import "mixins";
-
 .taglib-ratings {
 	&.stars {
-		margin: 1.5em 0 0;
+		overflow: hidden;
+		padding-top: 10px;
 
 		.liferay-rating-score {
 			padding-left: 15px;
 		}
 
 		.liferay-rating-vote, .liferay-rating-score {
-			display: inline-block;
+			float: left;
 		}
 	}
 
@@ -23,26 +22,15 @@
 
 	&.thumbs {
 		float: left;
-		margin: 10px 0;
+		margin: 0;
 
 		.thumbrating {
 			height: 20px;
 
 			.rating-label {
-				display: inline-block;
 				padding: 0 5px;
 			}
-
-			@include respond-to(phone, tablet) {
-				a {
-					font-size: 1.5em;
-				}
-			}
 		}
-	}
-
-	.rating-element {
-		padding-right: 4px;
 	}
 
 	.rating-input-container .rating-input {

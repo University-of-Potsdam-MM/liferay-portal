@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -16,7 +16,6 @@ package com.liferay.portal.kernel.templateparser;
 
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.xml.Document;
 
 import java.util.Map;
 
@@ -38,7 +37,7 @@ public abstract class BaseTransformerListener implements TransformerListener {
 
 	@Override
 	public String onScript(
-		String script, Document document, String languageId,
+		String script, String xml, String languageId,
 		Map<String, String> tokens) {
 
 		if (_log.isDebugEnabled()) {
@@ -49,14 +48,14 @@ public abstract class BaseTransformerListener implements TransformerListener {
 	}
 
 	@Override
-	public Document onXml(
-		Document document, String languageId, Map<String, String> tokens) {
+	public String onXml(
+		String xml, String languageId, Map<String, String> tokens) {
 
 		if (_log.isDebugEnabled()) {
 			_log.debug("onXml");
 		}
 
-		return document;
+		return xml;
 	}
 
 	private static Log _log = LogFactoryUtil.getLog(

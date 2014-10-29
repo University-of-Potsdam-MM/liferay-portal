@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -98,20 +98,20 @@ BookmarksUtil.addPortletBreadcrumbEntries(entry, request, renderResponse);
 		</liferay-ui:custom-attributes-available>
 
 		<div class="lfr-asset-metadata">
-			<div class="icon-user lfr-asset-icon">
-				<%= LanguageUtil.format(request, "created-by-x", HtmlUtil.escape(PortalUtil.getUserName(entry.getUserId(), themeDisplay.getScopeGroupName())), false) %>
+			<div class="lfr-asset-icon lfr-asset-author">
+				<%= LanguageUtil.format(pageContext, "created-by-x", HtmlUtil.escape(PortalUtil.getUserName(entry.getUserId(), themeDisplay.getScopeGroupName()))) %>
 			</div>
 
-			<div class="icon-calendar lfr-asset-icon">
+			<div class="lfr-asset-icon lfr-asset-date">
 				<%= dateFormatDate.format(entry.getCreateDate()) %>
 			</div>
 
-			<div class="last lfr-asset-icon lfr-asset-downloads">
+			<div class="lfr-asset-icon lfr-asset-downloads last">
 				<%= entry.getVisits() %> <liferay-ui:message key="visits" />
 			</div>
 		</div>
 
-		<c:if test="<%= bookmarksSettings.isEnableRelatedAssets() %>">
+		<c:if test="<%= enableRelatedAssets %>">
 			<div class="entry-links">
 				<liferay-ui:asset-links
 					assetEntryId="<%= layoutAssetEntry.getEntryId() %>"

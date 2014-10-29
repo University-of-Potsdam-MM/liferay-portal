@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -36,6 +36,7 @@ if (layoutRevision.getLayoutRevisionId() == layoutRevisionId) {
 	<c:if test="<%= !layoutRevision.isPending() && LayoutPermissionUtil.contains(permissionChecker, layoutRevision.getPlid(), ActionKeys.UPDATE) %>">
 		<c:if test="<%= pendingLayoutRevisions.isEmpty() && !layoutRevision.isHead() %>">
 			<portlet:actionURL var="publishURL">
+				<portlet:param name="struts_action" value="/staging_bar/edit_layouts" />
 				<portlet:param name="<%= Constants.CMD %>" value="update_layout_revision" />
 				<portlet:param name="redirect" value="<%= PortalUtil.getLayoutFullURL(themeDisplay) %>" />
 				<portlet:param name="groupId" value="<%= String.valueOf(layoutRevision.getGroupId()) %>" />
@@ -49,7 +50,7 @@ if (layoutRevision.getLayoutRevisionId() == layoutRevisionId) {
 			%>
 
 			<liferay-ui:icon
-				iconCssClass='<%= WorkflowDefinitionLinkLocalServiceUtil.hasWorkflowDefinitionLink(themeDisplay.getCompanyId(), scopeGroupId, LayoutRevision.class.getName()) ? "icon-random" : "icon-check" %>'
+				image='<%= WorkflowDefinitionLinkLocalServiceUtil.hasWorkflowDefinitionLink(themeDisplay.getCompanyId(), scopeGroupId, LayoutRevision.class.getName()) ? "../aui/shuffle" : "../aui/circle-check" %>'
 				message='<%= WorkflowDefinitionLinkLocalServiceUtil.hasWorkflowDefinitionLink(themeDisplay.getCompanyId(), scopeGroupId, LayoutRevision.class.getName()) ? "submit-for-publication" : "mark-as-ready-for-publication" %>'
 				url="<%= taglibURL %>"
 			/>
@@ -60,6 +61,7 @@ if (layoutRevision.getLayoutRevisionId() == layoutRevisionId) {
 				<portlet:param name="struts_action" value="/staging_bar/edit_layouts" />
 				<portlet:param name="<%= Constants.CMD %>" value="update_layout_revision" />
 				<portlet:param name="redirect" value="<%= PortalUtil.getLayoutFullURL(themeDisplay) %>" />
+				<portlet:param name="groupId" value="<%= String.valueOf(layoutRevision.getGroupId()) %>" />
 				<portlet:param name="layoutRevisionId" value="<%= String.valueOf(layoutRevision.getLayoutRevisionId()) %>" />
 				<portlet:param name="major" value="true" />
 				<portlet:param name="workflowAction" value="<%= String.valueOf(WorkflowConstants.ACTION_SAVE_DRAFT) %>" />
@@ -70,7 +72,7 @@ if (layoutRevision.getLayoutRevisionId() == layoutRevisionId) {
 			%>
 
 			<liferay-ui:icon
-				iconCssClass="icon-save"
+				image="export"
 				message="save"
 				url="<%= taglibURL %>"
 			/>
@@ -81,6 +83,7 @@ if (layoutRevision.getLayoutRevisionId() == layoutRevisionId) {
 				<portlet:param name="struts_action" value="/staging_bar/edit_layouts" />
 				<portlet:param name="<%= Constants.CMD %>" value="delete_layout_revision" />
 				<portlet:param name="redirect" value="<%= PortalUtil.getLayoutFullURL(themeDisplay) %>" />
+				<portlet:param name="groupId" value="<%= String.valueOf(layoutRevision.getGroupId()) %>" />
 				<portlet:param name="layoutRevisionId" value="<%= String.valueOf(layoutRevision.getLayoutRevisionId()) %>" />
 				<portlet:param name="updateRecentLayoutRevisionId" value="<%= String.valueOf(updateRecentLayoutRevisionId) %>" />
 			</portlet:actionURL>

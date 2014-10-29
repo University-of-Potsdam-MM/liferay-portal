@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -21,12 +21,12 @@ import com.liferay.portal.model.BaseModel;
 import com.liferay.portal.model.ClassedModel;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.service.ServiceContext;
+import com.liferay.portal.service.ServiceTestUtil;
+import com.liferay.portal.test.LiferayIntegrationJUnitTestRunner;
+import com.liferay.portal.test.MainServletExecutionTestListener;
 import com.liferay.portal.test.Sync;
 import com.liferay.portal.test.SynchronousDestinationExecutionTestListener;
-import com.liferay.portal.test.listeners.MainServletExecutionTestListener;
-import com.liferay.portal.test.runners.LiferayIntegrationJUnitTestRunner;
-import com.liferay.portal.util.test.RandomTestUtil;
-import com.liferay.portal.util.test.TestPropsValues;
+import com.liferay.portal.util.TestPropsValues;
 import com.liferay.portlet.bookmarks.model.BookmarksFolder;
 import com.liferay.portlet.bookmarks.model.BookmarksFolderConstants;
 import com.liferay.portlet.bookmarks.service.BookmarksFolderLocalServiceUtil;
@@ -48,6 +48,12 @@ import org.junit.runner.RunWith;
 @RunWith(LiferayIntegrationJUnitTestRunner.class)
 @Sync
 public class BookmarksFolderTrashHandlerTest extends BaseTrashHandlerTestCase {
+
+	@Ignore()
+	@Override
+	@Test
+	public void testDeleteTrashVersions() throws Exception {
+	}
 
 	@Ignore()
 	@Override
@@ -162,21 +168,11 @@ public class BookmarksFolderTrashHandlerTest extends BaseTrashHandlerTestCase {
 	protected int getNotInTrashBaseModelsCount(BaseModel<?> parentBaseModel)
 		throws Exception {
 
-		BookmarksFolder parentFolder = (BookmarksFolder)parentBaseModel;
+		BookmarksFolder parentDLFolder = (BookmarksFolder)parentBaseModel;
 
 		return BookmarksFolderLocalServiceUtil.getFoldersCount(
-			parentFolder.getGroupId(), parentFolder.getFolderId(),
+			parentDLFolder.getGroupId(), parentDLFolder.getFolderId(),
 			WorkflowConstants.STATUS_APPROVED);
-	}
-
-	@Override
-	protected BaseModel<?> getParentBaseModel(
-			Group group, long parentBaseModelId, ServiceContext serviceContext)
-		throws Exception {
-
-		return BookmarksFolderLocalServiceUtil.addFolder(
-			TestPropsValues.getUserId(), parentBaseModelId,
-			RandomTestUtil.randomString(), StringPool.BLANK, serviceContext);
 	}
 
 	@Override
@@ -184,9 +180,10 @@ public class BookmarksFolderTrashHandlerTest extends BaseTrashHandlerTestCase {
 			Group group, ServiceContext serviceContext)
 		throws Exception {
 
-		return getParentBaseModel(
-			group, BookmarksFolderConstants.DEFAULT_PARENT_FOLDER_ID,
-			serviceContext);
+		return BookmarksFolderLocalServiceUtil.addFolder(
+			TestPropsValues.getUserId(),
+			BookmarksFolderConstants.DEFAULT_PARENT_FOLDER_ID,
+			ServiceTestUtil.randomString(), StringPool.BLANK, serviceContext);
 	}
 
 	@Override
@@ -225,25 +222,6 @@ public class BookmarksFolderTrashHandlerTest extends BaseTrashHandlerTestCase {
 		throws Exception {
 
 		BookmarksFolderServiceUtil.moveFolderToTrash(primaryKey);
-	}
-
-	@Override
-	protected BaseModel<?> updateBaseModel(
-			long primaryKey, ServiceContext serviceContext)
-		throws Exception {
-
-		BookmarksFolder folder = BookmarksFolderLocalServiceUtil.getFolder(
-			primaryKey);
-
-		if (serviceContext.getWorkflowAction() ==
-				WorkflowConstants.ACTION_SAVE_DRAFT) {
-
-			folder = BookmarksFolderLocalServiceUtil.updateStatus(
-				TestPropsValues.getUserId(), folder,
-				WorkflowConstants.STATUS_DRAFT);
-		}
-
-		return folder;
 	}
 
 }

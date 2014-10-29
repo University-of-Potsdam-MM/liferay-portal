@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -21,6 +21,7 @@ import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.lar.BaseStagedModelDataHandler;
 import com.liferay.portal.kernel.lar.ExportImportPathUtil;
 import com.liferay.portal.kernel.lar.PortletDataContext;
@@ -59,24 +60,16 @@ public class RoleStagedModelDataHandler
 	@Override
 	public void deleteStagedModel(
 			String uuid, long groupId, String className, String extraData)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Group group = GroupLocalServiceUtil.getGroup(groupId);
 
-		Role role = fetchStagedModelByUuidAndCompanyId(
+		Role role = RoleLocalServiceUtil.fetchRoleByUuidAndCompanyId(
 			uuid, group.getCompanyId());
 
 		if (role != null) {
 			RoleLocalServiceUtil.deleteRole(role);
 		}
-	}
-
-	@Override
-	public Role fetchStagedModelByUuidAndCompanyId(
-		String uuid, long companyId) {
-
-		return RoleLocalServiceUtil.fetchRoleByUuidAndCompanyId(
-			uuid, companyId);
 	}
 
 	@Override
@@ -90,7 +83,8 @@ public class RoleStagedModelDataHandler
 	}
 
 	protected void deleteRolePermissions(
-		PortletDataContext portletDataContext, Role importedRole) {
+			PortletDataContext portletDataContext, Role importedRole)
+		throws SystemException {
 
 		List<ResourcePermission> resourcePermissions =
 			ResourcePermissionLocalServiceUtil.getRoleResourcePermissions(
@@ -169,7 +163,7 @@ public class RoleStagedModelDataHandler
 		ServiceContext serviceContext = portletDataContext.createServiceContext(
 			role);
 
-		Role existingRole = fetchStagedModelByUuidAndCompanyId(
+		Role existingRole = RoleLocalServiceUtil.fetchRoleByUuidAndCompanyId(
 			role.getUuid(), portletDataContext.getCompanyId());
 
 		if (existingRole == null) {
@@ -219,7 +213,8 @@ public class RoleStagedModelDataHandler
 	}
 
 	protected List<ResourceTypePermission> getResourceTypePermissions(
-		PortletDataContext portletDataContext, Role importedRole) {
+			PortletDataContext portletDataContext, Role importedRole)
+		throws SystemException {
 
 		DynamicQuery dynamicQuery =
 			ResourceTypePermissionLocalServiceUtil.dynamicQuery();
@@ -257,7 +252,7 @@ public class RoleStagedModelDataHandler
 	protected void importResourceBlock(
 			PortletDataContext portletDataContext, Role importedRole,
 			Permission permission)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		int scope = permission.getScope();
 
@@ -298,7 +293,7 @@ public class RoleStagedModelDataHandler
 	protected void importResourcePermissions(
 			PortletDataContext portletDataContext, Role importedRole,
 			Permission permission)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		int scope = permission.getScope();
 
@@ -306,7 +301,7 @@ public class RoleStagedModelDataHandler
 			ResourcePermissionServiceUtil.addResourcePermission(
 				portletDataContext.getCompanyGroupId(),
 				portletDataContext.getCompanyId(), permission.getName(), scope,
-				String.valueOf(portletDataContext.getCompanyId()),
+				String.valueOf(portletDataContext.getCompanyGroupId()),
 				importedRole.getRoleId(), permission.getActionId());
 		}
 		else if (scope == ResourceConstants.SCOPE_GROUP) {

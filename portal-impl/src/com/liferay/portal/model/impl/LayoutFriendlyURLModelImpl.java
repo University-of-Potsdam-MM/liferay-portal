@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,10 +14,8 @@
 
 package com.liferay.portal.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
-import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.lar.StagedModelType;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
@@ -26,9 +24,7 @@ import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.CacheModel;
 import com.liferay.portal.model.LayoutFriendlyURL;
 import com.liferay.portal.model.LayoutFriendlyURLModel;
-import com.liferay.portal.model.User;
 import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.service.UserLocalServiceUtil;
 import com.liferay.portal.util.PortalUtil;
 
 import com.liferay.portlet.expando.model.ExpandoBridge;
@@ -55,7 +51,6 @@ import java.util.Map;
  * @see com.liferay.portal.model.LayoutFriendlyURLModel
  * @generated
  */
-@ProviderType
 public class LayoutFriendlyURLModelImpl extends BaseModelImpl<LayoutFriendlyURL>
 	implements LayoutFriendlyURLModel {
 	/*
@@ -65,7 +60,6 @@ public class LayoutFriendlyURLModelImpl extends BaseModelImpl<LayoutFriendlyURL>
 	 */
 	public static final String TABLE_NAME = "LayoutFriendlyURL";
 	public static final Object[][] TABLE_COLUMNS = {
-			{ "mvccVersion", Types.BIGINT },
 			{ "uuid_", Types.VARCHAR },
 			{ "layoutFriendlyURLId", Types.BIGINT },
 			{ "groupId", Types.BIGINT },
@@ -79,7 +73,7 @@ public class LayoutFriendlyURLModelImpl extends BaseModelImpl<LayoutFriendlyURL>
 			{ "friendlyURL", Types.VARCHAR },
 			{ "languageId", Types.VARCHAR }
 		};
-	public static final String TABLE_SQL_CREATE = "create table LayoutFriendlyURL (mvccVersion LONG default 0,uuid_ VARCHAR(75) null,layoutFriendlyURLId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,plid LONG,privateLayout BOOLEAN,friendlyURL VARCHAR(255) null,languageId VARCHAR(75) null)";
+	public static final String TABLE_SQL_CREATE = "create table LayoutFriendlyURL (uuid_ VARCHAR(75) null,layoutFriendlyURLId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,plid LONG,privateLayout BOOLEAN,friendlyURL VARCHAR(255) null,languageId VARCHAR(75) null)";
 	public static final String TABLE_SQL_DROP = "drop table LayoutFriendlyURL";
 	public static final String ORDER_BY_JPQL = " ORDER BY layoutFriendlyURL.layoutFriendlyURLId ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY LayoutFriendlyURL.layoutFriendlyURLId ASC";
@@ -95,14 +89,14 @@ public class LayoutFriendlyURLModelImpl extends BaseModelImpl<LayoutFriendlyURL>
 	public static final boolean COLUMN_BITMASK_ENABLED = GetterUtil.getBoolean(com.liferay.portal.util.PropsUtil.get(
 				"value.object.column.bitmask.enabled.com.liferay.portal.model.LayoutFriendlyURL"),
 			true);
-	public static final long COMPANYID_COLUMN_BITMASK = 1L;
-	public static final long FRIENDLYURL_COLUMN_BITMASK = 2L;
-	public static final long GROUPID_COLUMN_BITMASK = 4L;
-	public static final long LANGUAGEID_COLUMN_BITMASK = 8L;
-	public static final long PLID_COLUMN_BITMASK = 16L;
-	public static final long PRIVATELAYOUT_COLUMN_BITMASK = 32L;
-	public static final long UUID_COLUMN_BITMASK = 64L;
-	public static final long LAYOUTFRIENDLYURLID_COLUMN_BITMASK = 128L;
+	public static long COMPANYID_COLUMN_BITMASK = 1L;
+	public static long FRIENDLYURL_COLUMN_BITMASK = 2L;
+	public static long GROUPID_COLUMN_BITMASK = 4L;
+	public static long LANGUAGEID_COLUMN_BITMASK = 8L;
+	public static long PLID_COLUMN_BITMASK = 16L;
+	public static long PRIVATELAYOUT_COLUMN_BITMASK = 32L;
+	public static long UUID_COLUMN_BITMASK = 64L;
+	public static long LAYOUTFRIENDLYURLID_COLUMN_BITMASK = 128L;
 	public static final long LOCK_EXPIRATION_TIME = GetterUtil.getLong(com.liferay.portal.util.PropsUtil.get(
 				"lock.expiration.time.com.liferay.portal.model.LayoutFriendlyURL"));
 
@@ -143,7 +137,6 @@ public class LayoutFriendlyURLModelImpl extends BaseModelImpl<LayoutFriendlyURL>
 	public Map<String, Object> getModelAttributes() {
 		Map<String, Object> attributes = new HashMap<String, Object>();
 
-		attributes.put("mvccVersion", getMvccVersion());
 		attributes.put("uuid", getUuid());
 		attributes.put("layoutFriendlyURLId", getLayoutFriendlyURLId());
 		attributes.put("groupId", getGroupId());
@@ -157,20 +150,11 @@ public class LayoutFriendlyURLModelImpl extends BaseModelImpl<LayoutFriendlyURL>
 		attributes.put("friendlyURL", getFriendlyURL());
 		attributes.put("languageId", getLanguageId());
 
-		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
-		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
-
 		return attributes;
 	}
 
 	@Override
 	public void setModelAttributes(Map<String, Object> attributes) {
-		Long mvccVersion = (Long)attributes.get("mvccVersion");
-
-		if (mvccVersion != null) {
-			setMvccVersion(mvccVersion);
-		}
-
 		String uuid = (String)attributes.get("uuid");
 
 		if (uuid != null) {
@@ -242,16 +226,6 @@ public class LayoutFriendlyURLModelImpl extends BaseModelImpl<LayoutFriendlyURL>
 		if (languageId != null) {
 			setLanguageId(languageId);
 		}
-	}
-
-	@Override
-	public long getMvccVersion() {
-		return _mvccVersion;
-	}
-
-	@Override
-	public void setMvccVersion(long mvccVersion) {
-		_mvccVersion = mvccVersion;
 	}
 
 	@Override
@@ -342,19 +316,13 @@ public class LayoutFriendlyURLModelImpl extends BaseModelImpl<LayoutFriendlyURL>
 	}
 
 	@Override
-	public String getUserUuid() {
-		try {
-			User user = UserLocalServiceUtil.getUserById(getUserId());
-
-			return user.getUuid();
-		}
-		catch (PortalException pe) {
-			return StringPool.BLANK;
-		}
+	public String getUserUuid() throws SystemException {
+		return PortalUtil.getUserValue(getUserId(), "uuid", _userUuid);
 	}
 
 	@Override
 	public void setUserUuid(String userUuid) {
+		_userUuid = userUuid;
 	}
 
 	@Override
@@ -528,7 +496,6 @@ public class LayoutFriendlyURLModelImpl extends BaseModelImpl<LayoutFriendlyURL>
 	public Object clone() {
 		LayoutFriendlyURLImpl layoutFriendlyURLImpl = new LayoutFriendlyURLImpl();
 
-		layoutFriendlyURLImpl.setMvccVersion(getMvccVersion());
 		layoutFriendlyURLImpl.setUuid(getUuid());
 		layoutFriendlyURLImpl.setLayoutFriendlyURLId(getLayoutFriendlyURLId());
 		layoutFriendlyURLImpl.setGroupId(getGroupId());
@@ -590,16 +557,6 @@ public class LayoutFriendlyURLModelImpl extends BaseModelImpl<LayoutFriendlyURL>
 	}
 
 	@Override
-	public boolean isEntityCacheEnabled() {
-		return ENTITY_CACHE_ENABLED;
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return FINDER_CACHE_ENABLED;
-	}
-
-	@Override
 	public void resetOriginalValues() {
 		LayoutFriendlyURLModelImpl layoutFriendlyURLModelImpl = this;
 
@@ -631,8 +588,6 @@ public class LayoutFriendlyURLModelImpl extends BaseModelImpl<LayoutFriendlyURL>
 	@Override
 	public CacheModel<LayoutFriendlyURL> toCacheModel() {
 		LayoutFriendlyURLCacheModel layoutFriendlyURLCacheModel = new LayoutFriendlyURLCacheModel();
-
-		layoutFriendlyURLCacheModel.mvccVersion = getMvccVersion();
 
 		layoutFriendlyURLCacheModel.uuid = getUuid();
 
@@ -701,11 +656,9 @@ public class LayoutFriendlyURLModelImpl extends BaseModelImpl<LayoutFriendlyURL>
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(27);
+		StringBundler sb = new StringBundler(25);
 
-		sb.append("{mvccVersion=");
-		sb.append(getMvccVersion());
-		sb.append(", uuid=");
+		sb.append("{uuid=");
 		sb.append(getUuid());
 		sb.append(", layoutFriendlyURLId=");
 		sb.append(getLayoutFriendlyURLId());
@@ -736,16 +689,12 @@ public class LayoutFriendlyURLModelImpl extends BaseModelImpl<LayoutFriendlyURL>
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(43);
+		StringBundler sb = new StringBundler(40);
 
 		sb.append("<model><model-name>");
 		sb.append("com.liferay.portal.model.LayoutFriendlyURL");
 		sb.append("</model-name>");
 
-		sb.append(
-			"<column><column-name>mvccVersion</column-name><column-value><![CDATA[");
-		sb.append(getMvccVersion());
-		sb.append("]]></column-value></column>");
 		sb.append(
 			"<column><column-name>uuid</column-name><column-value><![CDATA[");
 		sb.append(getUuid());
@@ -800,11 +749,10 @@ public class LayoutFriendlyURLModelImpl extends BaseModelImpl<LayoutFriendlyURL>
 		return sb.toString();
 	}
 
-	private static final ClassLoader _classLoader = LayoutFriendlyURL.class.getClassLoader();
-	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
+	private static ClassLoader _classLoader = LayoutFriendlyURL.class.getClassLoader();
+	private static Class<?>[] _escapedModelInterfaces = new Class[] {
 			LayoutFriendlyURL.class
 		};
-	private long _mvccVersion;
 	private String _uuid;
 	private String _originalUuid;
 	private long _layoutFriendlyURLId;
@@ -815,6 +763,7 @@ public class LayoutFriendlyURLModelImpl extends BaseModelImpl<LayoutFriendlyURL>
 	private long _originalCompanyId;
 	private boolean _setOriginalCompanyId;
 	private long _userId;
+	private String _userUuid;
 	private String _userName;
 	private Date _createDate;
 	private Date _modifiedDate;

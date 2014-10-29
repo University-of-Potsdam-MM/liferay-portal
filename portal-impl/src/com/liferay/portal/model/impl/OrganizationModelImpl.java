@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,10 +14,8 @@
 
 package com.liferay.portal.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
-import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSON;
 import com.liferay.portal.kernel.lar.StagedModelType;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -28,9 +26,7 @@ import com.liferay.portal.model.CacheModel;
 import com.liferay.portal.model.Organization;
 import com.liferay.portal.model.OrganizationModel;
 import com.liferay.portal.model.OrganizationSoap;
-import com.liferay.portal.model.User;
 import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.service.UserLocalServiceUtil;
 import com.liferay.portal.util.PortalUtil;
 
 import com.liferay.portlet.expando.model.ExpandoBridge;
@@ -60,7 +56,6 @@ import java.util.Map;
  * @generated
  */
 @JSON(strict = true)
-@ProviderType
 public class OrganizationModelImpl extends BaseModelImpl<Organization>
 	implements OrganizationModel {
 	/*
@@ -70,7 +65,6 @@ public class OrganizationModelImpl extends BaseModelImpl<Organization>
 	 */
 	public static final String TABLE_NAME = "Organization_";
 	public static final Object[][] TABLE_COLUMNS = {
-			{ "mvccVersion", Types.BIGINT },
 			{ "uuid_", Types.VARCHAR },
 			{ "organizationId", Types.BIGINT },
 			{ "companyId", Types.BIGINT },
@@ -86,10 +80,9 @@ public class OrganizationModelImpl extends BaseModelImpl<Organization>
 			{ "regionId", Types.BIGINT },
 			{ "countryId", Types.BIGINT },
 			{ "statusId", Types.INTEGER },
-			{ "comments", Types.VARCHAR },
-			{ "logoId", Types.BIGINT }
+			{ "comments", Types.VARCHAR }
 		};
-	public static final String TABLE_SQL_CREATE = "create table Organization_ (mvccVersion LONG default 0,uuid_ VARCHAR(75) null,organizationId LONG not null primary key,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,parentOrganizationId LONG,treePath STRING null,name VARCHAR(100) null,type_ VARCHAR(75) null,recursable BOOLEAN,regionId LONG,countryId LONG,statusId INTEGER,comments STRING null,logoId LONG)";
+	public static final String TABLE_SQL_CREATE = "create table Organization_ (uuid_ VARCHAR(75) null,organizationId LONG not null primary key,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,parentOrganizationId LONG,treePath STRING null,name VARCHAR(100) null,type_ VARCHAR(75) null,recursable BOOLEAN,regionId LONG,countryId LONG,statusId INTEGER,comments STRING null)";
 	public static final String TABLE_SQL_DROP = "drop table Organization_";
 	public static final String ORDER_BY_JPQL = " ORDER BY organization.name ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY Organization_.name ASC";
@@ -105,12 +98,12 @@ public class OrganizationModelImpl extends BaseModelImpl<Organization>
 	public static final boolean COLUMN_BITMASK_ENABLED = GetterUtil.getBoolean(com.liferay.portal.util.PropsUtil.get(
 				"value.object.column.bitmask.enabled.com.liferay.portal.model.Organization"),
 			true);
-	public static final long COMPANYID_COLUMN_BITMASK = 1L;
-	public static final long NAME_COLUMN_BITMASK = 2L;
-	public static final long ORGANIZATIONID_COLUMN_BITMASK = 4L;
-	public static final long PARENTORGANIZATIONID_COLUMN_BITMASK = 8L;
-	public static final long TREEPATH_COLUMN_BITMASK = 16L;
-	public static final long UUID_COLUMN_BITMASK = 32L;
+	public static long COMPANYID_COLUMN_BITMASK = 1L;
+	public static long NAME_COLUMN_BITMASK = 2L;
+	public static long ORGANIZATIONID_COLUMN_BITMASK = 4L;
+	public static long PARENTORGANIZATIONID_COLUMN_BITMASK = 8L;
+	public static long TREEPATH_COLUMN_BITMASK = 16L;
+	public static long UUID_COLUMN_BITMASK = 32L;
 
 	/**
 	 * Converts the soap model instance into a normal model instance.
@@ -125,7 +118,6 @@ public class OrganizationModelImpl extends BaseModelImpl<Organization>
 
 		Organization model = new OrganizationImpl();
 
-		model.setMvccVersion(soapModel.getMvccVersion());
 		model.setUuid(soapModel.getUuid());
 		model.setOrganizationId(soapModel.getOrganizationId());
 		model.setCompanyId(soapModel.getCompanyId());
@@ -142,7 +134,6 @@ public class OrganizationModelImpl extends BaseModelImpl<Organization>
 		model.setCountryId(soapModel.getCountryId());
 		model.setStatusId(soapModel.getStatusId());
 		model.setComments(soapModel.getComments());
-		model.setLogoId(soapModel.getLogoId());
 
 		return model;
 	}
@@ -177,8 +168,8 @@ public class OrganizationModelImpl extends BaseModelImpl<Organization>
 				"value.object.finder.cache.enabled.Groups_Orgs"), true);
 	public static final String MAPPING_TABLE_USERS_ORGS_NAME = "Users_Orgs";
 	public static final Object[][] MAPPING_TABLE_USERS_ORGS_COLUMNS = {
-			{ "organizationId", Types.BIGINT },
-			{ "userId", Types.BIGINT }
+			{ "userId", Types.BIGINT },
+			{ "organizationId", Types.BIGINT }
 		};
 	public static final String MAPPING_TABLE_USERS_ORGS_SQL_CREATE = "create table Users_Orgs (organizationId LONG not null,userId LONG not null,primary key (organizationId, userId))";
 	public static final boolean FINDER_CACHE_ENABLED_USERS_ORGS = GetterUtil.getBoolean(com.liferay.portal.util.PropsUtil.get(
@@ -223,7 +214,6 @@ public class OrganizationModelImpl extends BaseModelImpl<Organization>
 	public Map<String, Object> getModelAttributes() {
 		Map<String, Object> attributes = new HashMap<String, Object>();
 
-		attributes.put("mvccVersion", getMvccVersion());
 		attributes.put("uuid", getUuid());
 		attributes.put("organizationId", getOrganizationId());
 		attributes.put("companyId", getCompanyId());
@@ -240,22 +230,12 @@ public class OrganizationModelImpl extends BaseModelImpl<Organization>
 		attributes.put("countryId", getCountryId());
 		attributes.put("statusId", getStatusId());
 		attributes.put("comments", getComments());
-		attributes.put("logoId", getLogoId());
-
-		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
-		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
 
 		return attributes;
 	}
 
 	@Override
 	public void setModelAttributes(Map<String, Object> attributes) {
-		Long mvccVersion = (Long)attributes.get("mvccVersion");
-
-		if (mvccVersion != null) {
-			setMvccVersion(mvccVersion);
-		}
-
 		String uuid = (String)attributes.get("uuid");
 
 		if (uuid != null) {
@@ -351,23 +331,6 @@ public class OrganizationModelImpl extends BaseModelImpl<Organization>
 		if (comments != null) {
 			setComments(comments);
 		}
-
-		Long logoId = (Long)attributes.get("logoId");
-
-		if (logoId != null) {
-			setLogoId(logoId);
-		}
-	}
-
-	@JSON
-	@Override
-	public long getMvccVersion() {
-		return _mvccVersion;
-	}
-
-	@Override
-	public void setMvccVersion(long mvccVersion) {
-		_mvccVersion = mvccVersion;
 	}
 
 	@JSON
@@ -452,19 +415,13 @@ public class OrganizationModelImpl extends BaseModelImpl<Organization>
 	}
 
 	@Override
-	public String getUserUuid() {
-		try {
-			User user = UserLocalServiceUtil.getUserById(getUserId());
-
-			return user.getUuid();
-		}
-		catch (PortalException pe) {
-			return StringPool.BLANK;
-		}
+	public String getUserUuid() throws SystemException {
+		return PortalUtil.getUserValue(getUserId(), "uuid", _userUuid);
 	}
 
 	@Override
 	public void setUserUuid(String userUuid) {
+		_userUuid = userUuid;
 	}
 
 	@JSON
@@ -661,17 +618,6 @@ public class OrganizationModelImpl extends BaseModelImpl<Organization>
 		_comments = comments;
 	}
 
-	@JSON
-	@Override
-	public long getLogoId() {
-		return _logoId;
-	}
-
-	@Override
-	public void setLogoId(long logoId) {
-		_logoId = logoId;
-	}
-
 	@Override
 	public StagedModelType getStagedModelType() {
 		return new StagedModelType(PortalUtil.getClassNameId(
@@ -709,7 +655,6 @@ public class OrganizationModelImpl extends BaseModelImpl<Organization>
 	public Object clone() {
 		OrganizationImpl organizationImpl = new OrganizationImpl();
 
-		organizationImpl.setMvccVersion(getMvccVersion());
 		organizationImpl.setUuid(getUuid());
 		organizationImpl.setOrganizationId(getOrganizationId());
 		organizationImpl.setCompanyId(getCompanyId());
@@ -726,7 +671,6 @@ public class OrganizationModelImpl extends BaseModelImpl<Organization>
 		organizationImpl.setCountryId(getCountryId());
 		organizationImpl.setStatusId(getStatusId());
 		organizationImpl.setComments(getComments());
-		organizationImpl.setLogoId(getLogoId());
 
 		organizationImpl.resetOriginalValues();
 
@@ -774,16 +718,6 @@ public class OrganizationModelImpl extends BaseModelImpl<Organization>
 	}
 
 	@Override
-	public boolean isEntityCacheEnabled() {
-		return ENTITY_CACHE_ENABLED;
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return FINDER_CACHE_ENABLED;
-	}
-
-	@Override
 	public void resetOriginalValues() {
 		OrganizationModelImpl organizationModelImpl = this;
 
@@ -811,8 +745,6 @@ public class OrganizationModelImpl extends BaseModelImpl<Organization>
 	@Override
 	public CacheModel<Organization> toCacheModel() {
 		OrganizationCacheModel organizationCacheModel = new OrganizationCacheModel();
-
-		organizationCacheModel.mvccVersion = getMvccVersion();
 
 		organizationCacheModel.uuid = getUuid();
 
@@ -896,18 +828,14 @@ public class OrganizationModelImpl extends BaseModelImpl<Organization>
 			organizationCacheModel.comments = null;
 		}
 
-		organizationCacheModel.logoId = getLogoId();
-
 		return organizationCacheModel;
 	}
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(37);
+		StringBundler sb = new StringBundler(33);
 
-		sb.append("{mvccVersion=");
-		sb.append(getMvccVersion());
-		sb.append(", uuid=");
+		sb.append("{uuid=");
 		sb.append(getUuid());
 		sb.append(", organizationId=");
 		sb.append(getOrganizationId());
@@ -939,8 +867,6 @@ public class OrganizationModelImpl extends BaseModelImpl<Organization>
 		sb.append(getStatusId());
 		sb.append(", comments=");
 		sb.append(getComments());
-		sb.append(", logoId=");
-		sb.append(getLogoId());
 		sb.append("}");
 
 		return sb.toString();
@@ -948,16 +874,12 @@ public class OrganizationModelImpl extends BaseModelImpl<Organization>
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(58);
+		StringBundler sb = new StringBundler(52);
 
 		sb.append("<model><model-name>");
 		sb.append("com.liferay.portal.model.Organization");
 		sb.append("</model-name>");
 
-		sb.append(
-			"<column><column-name>mvccVersion</column-name><column-value><![CDATA[");
-		sb.append(getMvccVersion());
-		sb.append("]]></column-value></column>");
 		sb.append(
 			"<column><column-name>uuid</column-name><column-value><![CDATA[");
 		sb.append(getUuid());
@@ -1022,21 +944,16 @@ public class OrganizationModelImpl extends BaseModelImpl<Organization>
 			"<column><column-name>comments</column-name><column-value><![CDATA[");
 		sb.append(getComments());
 		sb.append("]]></column-value></column>");
-		sb.append(
-			"<column><column-name>logoId</column-name><column-value><![CDATA[");
-		sb.append(getLogoId());
-		sb.append("]]></column-value></column>");
 
 		sb.append("</model>");
 
 		return sb.toString();
 	}
 
-	private static final ClassLoader _classLoader = Organization.class.getClassLoader();
-	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
+	private static ClassLoader _classLoader = Organization.class.getClassLoader();
+	private static Class<?>[] _escapedModelInterfaces = new Class[] {
 			Organization.class
 		};
-	private long _mvccVersion;
 	private String _uuid;
 	private String _originalUuid;
 	private long _organizationId;
@@ -1046,6 +963,7 @@ public class OrganizationModelImpl extends BaseModelImpl<Organization>
 	private long _originalCompanyId;
 	private boolean _setOriginalCompanyId;
 	private long _userId;
+	private String _userUuid;
 	private String _userName;
 	private Date _createDate;
 	private Date _modifiedDate;
@@ -1062,7 +980,6 @@ public class OrganizationModelImpl extends BaseModelImpl<Organization>
 	private long _countryId;
 	private int _statusId;
 	private String _comments;
-	private long _logoId;
 	private long _columnBitmask;
 	private Organization _escapedModel;
 }

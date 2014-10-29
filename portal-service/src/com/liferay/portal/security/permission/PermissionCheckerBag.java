@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,29 +14,37 @@
 
 package com.liferay.portal.security.permission;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.Organization;
 import com.liferay.portal.model.Role;
+
+import java.io.Serializable;
 
 import java.util.List;
 
 /**
  * @author Brian Wing Shun Chan
  */
-@ProviderType
-public interface PermissionCheckerBag extends UserPermissionCheckerBag {
+public interface PermissionCheckerBag extends Serializable {
+
+	public List<Group> getGroups();
 
 	public long[] getRoleIds();
 
 	public List<Role> getRoles();
 
+	public List<Group> getUserGroups();
+
+	public List<Group> getUserOrgGroups();
+
+	public List<Organization> getUserOrgs();
+
+	public List<Group> getUserUserGroupGroups();
+
 	/**
 	 * @deprecated As of 6.1.0, renamed to {@link
 	 *             #isGroupAdmin(PermissionChecker, Group)}
 	 */
-	@Deprecated
 	public boolean isCommunityAdmin(
 			PermissionChecker permissionChecker, Group group)
 		throws Exception;
@@ -45,12 +53,7 @@ public interface PermissionCheckerBag extends UserPermissionCheckerBag {
 	 * @deprecated As of 6.1.0, renamed to {@link
 	 *             #isGroupOwner(PermissionChecker, Group)}
 	 */
-	@Deprecated
 	public boolean isCommunityOwner(
-			PermissionChecker permissionChecker, Group group)
-		throws Exception;
-
-	public boolean isContentReviewer(
 			PermissionChecker permissionChecker, Group group)
 		throws Exception;
 

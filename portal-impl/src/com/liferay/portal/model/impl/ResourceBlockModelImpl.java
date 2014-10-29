@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -13,8 +13,6 @@
  */
 
 package com.liferay.portal.model.impl;
-
-import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
 import com.liferay.portal.kernel.json.JSON;
@@ -54,7 +52,6 @@ import java.util.Map;
  * @generated
  */
 @JSON(strict = true)
-@ProviderType
 public class ResourceBlockModelImpl extends BaseModelImpl<ResourceBlock>
 	implements ResourceBlockModel {
 	/*
@@ -64,7 +61,6 @@ public class ResourceBlockModelImpl extends BaseModelImpl<ResourceBlock>
 	 */
 	public static final String TABLE_NAME = "ResourceBlock";
 	public static final Object[][] TABLE_COLUMNS = {
-			{ "mvccVersion", Types.BIGINT },
 			{ "resourceBlockId", Types.BIGINT },
 			{ "companyId", Types.BIGINT },
 			{ "groupId", Types.BIGINT },
@@ -72,7 +68,7 @@ public class ResourceBlockModelImpl extends BaseModelImpl<ResourceBlock>
 			{ "permissionsHash", Types.VARCHAR },
 			{ "referenceCount", Types.BIGINT }
 		};
-	public static final String TABLE_SQL_CREATE = "create table ResourceBlock (mvccVersion LONG default 0,resourceBlockId LONG not null primary key,companyId LONG,groupId LONG,name VARCHAR(75) null,permissionsHash VARCHAR(75) null,referenceCount LONG)";
+	public static final String TABLE_SQL_CREATE = "create table ResourceBlock (resourceBlockId LONG not null primary key,companyId LONG,groupId LONG,name VARCHAR(75) null,permissionsHash VARCHAR(75) null,referenceCount LONG)";
 	public static final String TABLE_SQL_DROP = "drop table ResourceBlock";
 	public static final String ORDER_BY_JPQL = " ORDER BY resourceBlock.resourceBlockId ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY ResourceBlock.resourceBlockId ASC";
@@ -88,11 +84,11 @@ public class ResourceBlockModelImpl extends BaseModelImpl<ResourceBlock>
 	public static final boolean COLUMN_BITMASK_ENABLED = GetterUtil.getBoolean(com.liferay.portal.util.PropsUtil.get(
 				"value.object.column.bitmask.enabled.com.liferay.portal.model.ResourceBlock"),
 			true);
-	public static final long COMPANYID_COLUMN_BITMASK = 1L;
-	public static final long GROUPID_COLUMN_BITMASK = 2L;
-	public static final long NAME_COLUMN_BITMASK = 4L;
-	public static final long PERMISSIONSHASH_COLUMN_BITMASK = 8L;
-	public static final long RESOURCEBLOCKID_COLUMN_BITMASK = 16L;
+	public static long COMPANYID_COLUMN_BITMASK = 1L;
+	public static long GROUPID_COLUMN_BITMASK = 2L;
+	public static long NAME_COLUMN_BITMASK = 4L;
+	public static long PERMISSIONSHASH_COLUMN_BITMASK = 8L;
+	public static long RESOURCEBLOCKID_COLUMN_BITMASK = 16L;
 
 	/**
 	 * Converts the soap model instance into a normal model instance.
@@ -107,7 +103,6 @@ public class ResourceBlockModelImpl extends BaseModelImpl<ResourceBlock>
 
 		ResourceBlock model = new ResourceBlockImpl();
 
-		model.setMvccVersion(soapModel.getMvccVersion());
 		model.setResourceBlockId(soapModel.getResourceBlockId());
 		model.setCompanyId(soapModel.getCompanyId());
 		model.setGroupId(soapModel.getGroupId());
@@ -178,7 +173,6 @@ public class ResourceBlockModelImpl extends BaseModelImpl<ResourceBlock>
 	public Map<String, Object> getModelAttributes() {
 		Map<String, Object> attributes = new HashMap<String, Object>();
 
-		attributes.put("mvccVersion", getMvccVersion());
 		attributes.put("resourceBlockId", getResourceBlockId());
 		attributes.put("companyId", getCompanyId());
 		attributes.put("groupId", getGroupId());
@@ -186,20 +180,11 @@ public class ResourceBlockModelImpl extends BaseModelImpl<ResourceBlock>
 		attributes.put("permissionsHash", getPermissionsHash());
 		attributes.put("referenceCount", getReferenceCount());
 
-		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
-		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
-
 		return attributes;
 	}
 
 	@Override
 	public void setModelAttributes(Map<String, Object> attributes) {
-		Long mvccVersion = (Long)attributes.get("mvccVersion");
-
-		if (mvccVersion != null) {
-			setMvccVersion(mvccVersion);
-		}
-
 		Long resourceBlockId = (Long)attributes.get("resourceBlockId");
 
 		if (resourceBlockId != null) {
@@ -235,17 +220,6 @@ public class ResourceBlockModelImpl extends BaseModelImpl<ResourceBlock>
 		if (referenceCount != null) {
 			setReferenceCount(referenceCount);
 		}
-	}
-
-	@JSON
-	@Override
-	public long getMvccVersion() {
-		return _mvccVersion;
-	}
-
-	@Override
-	public void setMvccVersion(long mvccVersion) {
-		_mvccVersion = mvccVersion;
 	}
 
 	@JSON
@@ -399,7 +373,6 @@ public class ResourceBlockModelImpl extends BaseModelImpl<ResourceBlock>
 	public Object clone() {
 		ResourceBlockImpl resourceBlockImpl = new ResourceBlockImpl();
 
-		resourceBlockImpl.setMvccVersion(getMvccVersion());
 		resourceBlockImpl.setResourceBlockId(getResourceBlockId());
 		resourceBlockImpl.setCompanyId(getCompanyId());
 		resourceBlockImpl.setGroupId(getGroupId());
@@ -455,16 +428,6 @@ public class ResourceBlockModelImpl extends BaseModelImpl<ResourceBlock>
 	}
 
 	@Override
-	public boolean isEntityCacheEnabled() {
-		return ENTITY_CACHE_ENABLED;
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return FINDER_CACHE_ENABLED;
-	}
-
-	@Override
 	public void resetOriginalValues() {
 		ResourceBlockModelImpl resourceBlockModelImpl = this;
 
@@ -486,8 +449,6 @@ public class ResourceBlockModelImpl extends BaseModelImpl<ResourceBlock>
 	@Override
 	public CacheModel<ResourceBlock> toCacheModel() {
 		ResourceBlockCacheModel resourceBlockCacheModel = new ResourceBlockCacheModel();
-
-		resourceBlockCacheModel.mvccVersion = getMvccVersion();
 
 		resourceBlockCacheModel.resourceBlockId = getResourceBlockId();
 
@@ -518,11 +479,9 @@ public class ResourceBlockModelImpl extends BaseModelImpl<ResourceBlock>
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(15);
+		StringBundler sb = new StringBundler(13);
 
-		sb.append("{mvccVersion=");
-		sb.append(getMvccVersion());
-		sb.append(", resourceBlockId=");
+		sb.append("{resourceBlockId=");
 		sb.append(getResourceBlockId());
 		sb.append(", companyId=");
 		sb.append(getCompanyId());
@@ -541,16 +500,12 @@ public class ResourceBlockModelImpl extends BaseModelImpl<ResourceBlock>
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(25);
+		StringBundler sb = new StringBundler(22);
 
 		sb.append("<model><model-name>");
 		sb.append("com.liferay.portal.model.ResourceBlock");
 		sb.append("</model-name>");
 
-		sb.append(
-			"<column><column-name>mvccVersion</column-name><column-value><![CDATA[");
-		sb.append(getMvccVersion());
-		sb.append("]]></column-value></column>");
 		sb.append(
 			"<column><column-name>resourceBlockId</column-name><column-value><![CDATA[");
 		sb.append(getResourceBlockId());
@@ -581,11 +536,10 @@ public class ResourceBlockModelImpl extends BaseModelImpl<ResourceBlock>
 		return sb.toString();
 	}
 
-	private static final ClassLoader _classLoader = ResourceBlock.class.getClassLoader();
-	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
+	private static ClassLoader _classLoader = ResourceBlock.class.getClassLoader();
+	private static Class<?>[] _escapedModelInterfaces = new Class[] {
 			ResourceBlock.class
 		};
-	private long _mvccVersion;
 	private long _resourceBlockId;
 	private long _companyId;
 	private long _originalCompanyId;

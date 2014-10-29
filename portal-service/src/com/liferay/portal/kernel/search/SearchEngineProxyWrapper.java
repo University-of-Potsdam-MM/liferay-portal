@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -28,13 +28,6 @@ public class SearchEngineProxyWrapper implements SearchEngine {
 		_indexSearcher = indexSearcher;
 		_indexWriter = indexWriter;
 		_searchEngine = searchEngine;
-	}
-
-	@Override
-	public String backup(long companyId, String backupName)
-		throws SearchException {
-
-		return _searchEngine.backup(companyId, backupName);
 	}
 
 	@Override
@@ -82,11 +75,6 @@ public class SearchEngineProxyWrapper implements SearchEngine {
 	}
 
 	@Override
-	public void initialize(long companyId) {
-		_searchEngine.initialize(companyId);
-	}
-
-	@Override
 	public boolean isClusteredWrite() {
 		return _searchEngine.isClusteredWrite();
 	}
@@ -94,25 +82,6 @@ public class SearchEngineProxyWrapper implements SearchEngine {
 	@Override
 	public boolean isLuceneBased() {
 		return _searchEngine.isLuceneBased();
-	}
-
-	@Override
-	public void removeBackup(long companyId, String backupName)
-		throws SearchException {
-
-		_searchEngine.removeBackup(companyId, backupName);
-	}
-
-	@Override
-	public void removeCompany(long companyId) {
-		_searchEngine.removeCompany(companyId);
-	}
-
-	@Override
-	public void restore(long companyId, String backupName)
-		throws SearchException {
-
-		_searchEngine.restore(companyId, backupName);
 	}
 
 	private IndexSearcher _indexSearcher;

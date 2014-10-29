@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -33,7 +33,7 @@ MBCategory category = message.getCategory();
 MBThread thread = message.getThread();
 %>
 
-<liferay-ui:icon-menu icon="<%= StringPool.BLANK %>" message="<%= StringPool.BLANK %>">
+<liferay-ui:icon-menu>
 	<c:if test="<%= MBMessagePermission.contains(permissionChecker, message, ActionKeys.UPDATE) && !thread.isLocked() %>">
 		<portlet:renderURL var="editURL">
 			<portlet:param name="struts_action" value="/message_boards/edit_message" />
@@ -42,8 +42,7 @@ MBThread thread = message.getThread();
 		</portlet:renderURL>
 
 		<liferay-ui:icon
-			iconCssClass="icon-edit"
-			message="edit"
+			image="edit"
 			url="<%= editURL %>"
 		/>
 	</c:if>
@@ -58,8 +57,7 @@ MBThread thread = message.getThread();
 		/>
 
 		<liferay-ui:icon
-			iconCssClass="icon-lock"
-			message="permissions"
+			image="permissions"
 			method="get"
 			url="<%= permissionsURL %>"
 			useDialog="<%= true %>"
@@ -82,7 +80,7 @@ MBThread thread = message.getThread();
 			/>
 		</c:if>
 
-		<c:if test="<%= MBMessagePermission.contains(permissionChecker, message, ActionKeys.SUBSCRIBE) && (mbSettings.isEmailMessageAddedEnabled() || mbSettings.isEmailMessageUpdatedEnabled()) %>">
+		<c:if test="<%= MBMessagePermission.contains(permissionChecker, message, ActionKeys.SUBSCRIBE) && (MBUtil.getEmailMessageAddedEnabled(portletPreferences) || MBUtil.getEmailMessageUpdatedEnabled(portletPreferences)) %>">
 			<c:choose>
 				<c:when test="<%= (threadSubscriptionClassPKs != null) && threadSubscriptionClassPKs.contains(message.getThreadId()) %>">
 					<portlet:actionURL var="unsubscribeURL">
@@ -93,8 +91,7 @@ MBThread thread = message.getThread();
 					</portlet:actionURL>
 
 					<liferay-ui:icon
-						iconCssClass="icon-remove-sign"
-						message="unsubscribe"
+						image="unsubscribe"
 						url="<%= unsubscribeURL %>"
 					/>
 				</c:when>
@@ -107,8 +104,7 @@ MBThread thread = message.getThread();
 					</portlet:actionURL>
 
 					<liferay-ui:icon
-						iconCssClass="icon-ok-sign"
-						message="subscribe"
+						image="subscribe"
 						url="<%= subscribeURL %>"
 					/>
 				</c:otherwise>
@@ -127,7 +123,7 @@ MBThread thread = message.getThread();
 				</portlet:actionURL>
 
 				<liferay-ui:icon
-					iconCssClass="icon-unlock"
+					image="unlock"
 					message="unlock-thread"
 					url="<%= unlockThreadURL %>"
 				/>
@@ -142,7 +138,7 @@ MBThread thread = message.getThread();
 				</portlet:actionURL>
 
 				<liferay-ui:icon
-					iconCssClass="icon-lock"
+					image="lock"
 					message="lock-thread"
 					url="<%= lockThreadURL %>"
 				/>
@@ -150,7 +146,7 @@ MBThread thread = message.getThread();
 		</c:choose>
 	</c:if>
 
-	<c:if test="<%= MBCategoryPermission.contains(permissionChecker, message.getGroupId(), message.getCategoryId(), ActionKeys.MOVE_THREAD) && !thread.isLocked() %>">
+	<c:if test="<%= MBCategoryPermission.contains(permissionChecker, message.getGroupId(), message.getCategoryId(), ActionKeys.MOVE_THREAD) %>">
 		<portlet:renderURL var="moveThreadURL">
 			<portlet:param name="struts_action" value="/message_boards/move_thread" />
 			<portlet:param name="redirect" value="<%= currentURL %>" />
@@ -159,7 +155,7 @@ MBThread thread = message.getThread();
 		</portlet:renderURL>
 
 		<liferay-ui:icon
-			iconCssClass="icon-move"
+			image="submit"
 			message="move"
 			url="<%= moveThreadURL %>"
 		/>

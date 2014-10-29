@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -189,22 +189,16 @@ public class FileUtil {
 	}
 
 	/**
-	 * Extracts the text from the input stream and file name.
+	 * Extract text from an input stream and file name.
 	 *
-	 * @param  is the file's input stream
-	 * @param  fileName the file's full name or extension (e.g., "Test.doc" or
+	 * @param  is input stream of file
+	 * @param  fileName full name or extension of file (e.g., "Test.doc",
 	 *         ".doc")
-	 * @return the extracted text if it is a supported format or an empty string
-	 *         if it is an unsupported format
+	 * @return Extracted text if it is a supported format or an empty string if
+	 *         it is an unsupported format
 	 */
 	public static String extractText(InputStream is, String fileName) {
 		return getFile().extractText(is, fileName);
-	}
-
-	public static String extractText(
-		InputStream is, String fileName, int maxStringLength) {
-
-		return getFile().extractText(is, fileName, maxStringLength);
 	}
 
 	public static String[] find(
@@ -217,12 +211,6 @@ public class FileUtil {
 
 	public static String getAbsolutePath(File file) {
 		return getFile().getAbsolutePath(file);
-	}
-
-	public static byte[] getBytes(Class<?> clazz, String fileName)
-		throws Exception {
-
-		return getFile().getBytes(clazz, fileName);
 	}
 
 	public static byte[] getBytes(File file) throws IOException {

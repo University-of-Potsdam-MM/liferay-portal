@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,7 +14,6 @@
 
 package com.liferay.taglib.ui;
 
-import com.liferay.portlet.asset.model.AssetCategoryConstants;
 import com.liferay.taglib.util.IncludeTag;
 
 import javax.servlet.http.HttpServletRequest;
@@ -33,10 +32,6 @@ public class AssetCategoriesSelectorTag extends IncludeTag {
 		_classPK = classPK;
 	}
 
-	public void setClassTypePK(long classTypePK) {
-		_classTypePK = classTypePK;
-	}
-
 	public void setContentCallback(String contentCallback) {
 		_contentCallback = contentCallback;
 	}
@@ -53,7 +48,6 @@ public class AssetCategoriesSelectorTag extends IncludeTag {
 	protected void cleanUp() {
 		_className = null;
 		_classPK = 0;
-		_classTypePK = AssetCategoryConstants.ALL_CLASS_TYPE_PK;
 		_contentCallback = null;
 		_curCategoryIds = null;
 		_hiddenInput = "assetCategoryIds";
@@ -72,9 +66,6 @@ public class AssetCategoriesSelectorTag extends IncludeTag {
 			"liferay-ui:asset-categories-selector:classPK",
 			String.valueOf(_classPK));
 		request.setAttribute(
-			"liferay-ui:asset-categories-selector:classTypePK",
-			String.valueOf(_classTypePK));
-		request.setAttribute(
 			"liferay-ui:asset-categories-selector:contentCallback",
 			String.valueOf(_contentCallback));
 		request.setAttribute(
@@ -89,7 +80,6 @@ public class AssetCategoriesSelectorTag extends IncludeTag {
 
 	private String _className;
 	private long _classPK;
-	private long _classTypePK = AssetCategoryConstants.ALL_CLASS_TYPE_PK;
 	private String _contentCallback;
 	private String _curCategoryIds;
 	private String _hiddenInput = "assetCategoryIds";

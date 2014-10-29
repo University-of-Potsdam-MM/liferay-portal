@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -24,14 +24,12 @@ Portlet selPortlet = PortletLocalServiceUtil.getPortletById(company.getCompanyId
 String className = ParamUtil.getString(request, "className");
 long classPK = ParamUtil.getLong(request, "classPK");
 
-AssetRenderer assetRenderer = null;
-
 Map<String, Object> data = new HashMap<String, Object>();
 
 if (Validator.isNotNull(className) && (classPK > 0)) {
 	AssetRendererFactory assetRendererFactory = AssetRendererFactoryRegistryUtil.getAssetRendererFactoryByClassName(className);
 
-	assetRenderer = assetRendererFactory.getAssetRenderer(classPK);
+	AssetRenderer assetRenderer = assetRendererFactory.getAssetRenderer(classPK);
 
 	data.put("class-name", className);
 	data.put("class-pk", classPK);
@@ -40,20 +38,18 @@ if (Validator.isNotNull(className) && (classPK > 0)) {
 }
 %>
 
-<span <%= AUIUtil.buildData(data) %> class="hide portlet-item"></span>
+<span <%= AUIUtil.buildData(data) %> class="aui-helper-hidden portlet-item"></span>
 
 <aui:script use="aui-base">
-	<c:if test="<%= assetRenderer != null %>">
+	<c:if test="<%= Validator.isNotNull(className) && (classPK > 0) %>">
 		var Util = Liferay.Util;
 
-		<c:if test="<%= PortletPermissionUtil.contains(permissionChecker, layout, assetRenderer.getAddToPagePortletId(), ActionKeys.ADD_TO_PAGE) %>">
-			Util.getOpener().Liferay.fire(
-				'AddContent:addPortlet',
-				{
-					node: A.one('.portlet-item')
-				}
-			);
-		</c:if>
+		Util.getOpener().Liferay.fire(
+			'AddContent:addPortlet',
+			{
+				node: A.one('.portlet-item')
+			}
+		);
 
 		Util.getOpener().Liferay.fire('AddContent:refreshContentList');
 	</c:if>

@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -39,11 +39,11 @@ else {
 	searchContext.setKeywords(displayTerms.getKeywords());
 	searchContext.setStart(searchContainer.getStart());
 
-	BaseModelSearchResult<DDLRecord> baseModelSearchResult = DDLRecordLocalServiceUtil.searchDDLRecords(searchContext);
+	Hits hits = DDLRecordLocalServiceUtil.search(searchContext);
 
-	results = baseModelSearchResult.getBaseModels();
+	results = DDLUtil.getRecords(hits);
 
-	total = baseModelSearchResult.getLength();
+	total = results.size();
 
 	searchContainer.setTotal(total);
 }

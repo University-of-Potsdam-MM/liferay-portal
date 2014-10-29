@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -45,10 +45,7 @@ public class SiteMinderAutoLogin extends BaseAutoLogin {
 
 		long companyId = company.getCompanyId();
 
-		if (!PrefsPropsUtil.getBoolean(
-				companyId, PropsKeys.SITEMINDER_AUTH_ENABLED,
-				PropsValues.SITEMINDER_AUTH_ENABLED)) {
-
+		if (!AuthSettingsUtil.isSiteMinderEnabled(companyId)) {
 			return null;
 		}
 
@@ -93,8 +90,6 @@ public class SiteMinderAutoLogin extends BaseAutoLogin {
 					companyId, siteMinderUserHeader);
 			}
 		}
-
-		addRedirect(request);
 
 		String[] credentials = new String[3];
 

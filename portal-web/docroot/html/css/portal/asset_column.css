@@ -1,5 +1,3 @@
-@import "compass";
-
 .lfr-asset-column-content {
 	margin-right: 1em;
 	padding: 0;
@@ -13,13 +11,11 @@
 	.lfr-asset-summary {
 		margin-bottom: 2em;
 		text-align: center;
-
-		@include word-break(break-all);
+		word-break: break-all;
 	}
 
 	.lfr-asset-avatar img {
 		margin: 0 auto;
-		max-width: 100%;
 		padding-right: 2em;
 	}
 
@@ -38,6 +34,7 @@
 		border-right: 1px solid transparent;
 		float: left;
 		margin-right: 10px;
+		padding-left: 25px;
 		padding-right: 10px;
 
 		&.last {
@@ -49,9 +46,13 @@
 		overflow: hidden;
 	}
 
-	.lfr-asset-downloads {
+	.lfr-asset-items {
 		overflow: hidden;
+	}
+
+	.lfr-asset-downloads {
 		padding-left: 0;
+		overflow: hidden;
 	}
 
 	.lfr-asset-metadata {
@@ -62,6 +63,10 @@
 
 	.lfr-asset-ratings {
 		margin: 2em 0;
+	}
+
+	.lfr-asset-teams {
+		border-right-width: 0;
 	}
 
 	.taglib-custom-attributes-list label, .lfr-asset-field label {
@@ -127,13 +132,31 @@
 	.lfr-asset-description {
 		color: #444;
 		font-style: italic;
-
-		@include hyphens;
 	}
 
 	.lfr-asset-icon {
 		border-right-color: #999;
 		color: #999;
+	}
+
+	.lfr-asset-author {
+		background: url(@theme_image_path@/portlet/edit_guest.png) no-repeat 0 50%;
+	}
+
+	.lfr-asset-date {
+		background: url(@theme_image_path@/common/date.png) no-repeat 0 50%;
+	}
+
+	.lfr-asset-subfolders {
+		background: url(@theme_image_path@/common/folder.png) no-repeat 0 50%;
+	}
+
+	.lfr-asset-teams {
+		background: url(@theme_image_path@/common/team_icon.png) no-repeat 0 50%;
+	}
+
+	.lfr-asset-items {
+		background: url(@theme_image_path@/common/page.png) no-repeat 0 50%;
 	}
 
 	.lfr-asset-tags {

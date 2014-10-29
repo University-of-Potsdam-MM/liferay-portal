@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,11 +15,11 @@
 package com.liferay.portlet.wiki.lar;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.lar.BaseStagedModelDataHandler;
 import com.liferay.portal.kernel.lar.ExportImportPathUtil;
 import com.liferay.portal.kernel.lar.PortletDataContext;
 import com.liferay.portal.kernel.trash.TrashHandler;
-import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.service.ServiceContext;
@@ -27,7 +27,6 @@ import com.liferay.portal.util.PropsValues;
 import com.liferay.portlet.wiki.model.WikiNode;
 import com.liferay.portlet.wiki.service.WikiNodeLocalServiceUtil;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -41,36 +40,15 @@ public class WikiNodeStagedModelDataHandler
 	@Override
 	public void deleteStagedModel(
 			String uuid, long groupId, String className, String extraData)
-		throws PortalException {
+		throws PortalException, SystemException {
 
-		WikiNode wikiNode = fetchStagedModelByUuidAndGroupId(uuid, groupId);
+		WikiNode wikiNode =
+			WikiNodeLocalServiceUtil.fetchWikiNodeByUuidAndGroupId(
+				uuid, groupId);
 
 		if (wikiNode != null) {
 			WikiNodeLocalServiceUtil.deleteNode(wikiNode);
 		}
-	}
-
-	@Override
-	public WikiNode fetchStagedModelByUuidAndCompanyId(
-		String uuid, long companyId) {
-
-		List<WikiNode> wikiNodes =
-			WikiNodeLocalServiceUtil.getWikiNodesByUuidAndCompanyId(
-				uuid, companyId);
-
-		if (ListUtil.isEmpty(wikiNodes)) {
-			return null;
-		}
-
-		return wikiNodes.get(0);
-	}
-
-	@Override
-	public WikiNode fetchStagedModelByUuidAndGroupId(
-		String uuid, long groupId) {
-
-		return WikiNodeLocalServiceUtil.fetchWikiNodeByUuidAndGroupId(
-			uuid, groupId);
 	}
 
 	@Override
@@ -90,12 +68,13 @@ public class WikiNodeStagedModelDataHandler
 	}
 
 	@Override
-	protected void doImportMissingReference(
-			PortletDataContext portletDataContext, String uuid, long groupId,
-			long nodeId)
+	protected void doImportCompanyStagedModel(
+			PortletDataContext portletDataContext, String uuid, long nodeId)
 		throws Exception {
 
-		WikiNode existingNode = fetchMissingReference(uuid, groupId);
+		WikiNode existingNode =
+			WikiNodeLocalServiceUtil.fetchNodeByUuidAndGroupId(
+				uuid, portletDataContext.getCompanyGroupId());
 
 		Map<Long, Long> nodeIds =
 			(Map<Long, Long>)portletDataContext.getNewPrimaryKeysMap(
@@ -117,8 +96,9 @@ public class WikiNodeStagedModelDataHandler
 		WikiNode importedNode = null;
 
 		if (portletDataContext.isDataStrategyMirror()) {
-			WikiNode existingNode = fetchStagedModelByUuidAndGroupId(
-				node.getUuid(), portletDataContext.getScopeGroupId());
+			WikiNode existingNode =
+				WikiNodeLocalServiceUtil.fetchNodeByUuidAndGroupId(
+					node.getUuid(), portletDataContext.getScopeGroupId());
 
 			String initialNodeName = PropsValues.WIKI_INITIAL_NODE_NAME;
 
@@ -175,8 +155,9 @@ public class WikiNodeStagedModelDataHandler
 
 		long userId = portletDataContext.getUserId(node.getUserUuid());
 
-		WikiNode existingNode = fetchStagedModelByUuidAndGroupId(
-			node.getUuid(), portletDataContext.getScopeGroupId());
+		WikiNode existingNode =
+			WikiNodeLocalServiceUtil.fetchNodeByUuidAndGroupId(
+				node.getUuid(), portletDataContext.getScopeGroupId());
 
 		if ((existingNode == null) || !existingNode.isInTrash()) {
 			return;
@@ -207,6 +188,21 @@ public class WikiNodeStagedModelDataHandler
 			portletDataContext, node,
 			nodeName.concat(StringPool.SPACE).concat(String.valueOf(count)),
 			++count);
+	}
+
+	@Override
+	protected boolean validateMissingReference(
+			String uuid, long companyId, long groupId)
+		throws Exception {
+
+		WikiNode node = WikiNodeLocalServiceUtil.fetchNodeByUuidAndGroupId(
+			uuid, groupId);
+
+		if (node == null) {
+			return false;
+		}
+
+		return true;
 	}
 
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -16,6 +16,7 @@ package com.liferay.portlet.messageboards.service.impl;
 
 import com.liferay.portal.kernel.dao.orm.QueryDefinition;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.model.Lock;
@@ -45,7 +46,9 @@ import java.util.List;
 public class MBThreadServiceImpl extends MBThreadServiceBaseImpl {
 
 	@Override
-	public void deleteThread(long threadId) throws PortalException {
+	public void deleteThread(long threadId)
+		throws PortalException, SystemException {
+
 		if (lockLocalService.isLocked(MBThread.class.getName(), threadId)) {
 			throw new LockedThreadException();
 		}
@@ -66,11 +69,11 @@ public class MBThreadServiceImpl extends MBThreadServiceBaseImpl {
 	public List<MBThread> getGroupThreads(
 			long groupId, long userId, Date modifiedDate, int status, int start,
 			int end)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		if (!InlineSQLHelperUtil.isEnabled(groupId)) {
-			QueryDefinition<MBThread> queryDefinition =
-				new QueryDefinition<MBThread>(status, start, end, null);
+			QueryDefinition queryDefinition = new QueryDefinition(
+				status, start, end, null);
 
 			return mbThreadFinder.findByG_U_LPD(
 				groupId, userId, modifiedDate, queryDefinition);
@@ -101,7 +104,7 @@ public class MBThreadServiceImpl extends MBThreadServiceBaseImpl {
 	public List<MBThread> getGroupThreads(
 			long groupId, long userId, int status, boolean subscribed,
 			boolean includeAnonymous, int start, int end)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		if (!InlineSQLHelperUtil.isEnabled(groupId)) {
 			return doGetGroupThreads(
@@ -124,8 +127,8 @@ public class MBThreadServiceImpl extends MBThreadServiceBaseImpl {
 		}
 		else {
 			if (subscribed) {
-				QueryDefinition<MBThread> queryDefinition =
-					new QueryDefinition<MBThread>(status, start, end, null);
+				QueryDefinition queryDefinition = new QueryDefinition(
+					status, start, end, null);
 
 				return mbThreadFinder.filterFindByS_G_U_C(
 					groupId, userId, categoryIds, queryDefinition);
@@ -158,7 +161,7 @@ public class MBThreadServiceImpl extends MBThreadServiceBaseImpl {
 	public List<MBThread> getGroupThreads(
 			long groupId, long userId, int status, boolean subscribed,
 			int start, int end)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return getGroupThreads(
 			groupId, userId, status, subscribed, true, start, end);
@@ -167,18 +170,18 @@ public class MBThreadServiceImpl extends MBThreadServiceBaseImpl {
 	@Override
 	public List<MBThread> getGroupThreads(
 			long groupId, long userId, int status, int start, int end)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return getGroupThreads(groupId, userId, status, false, start, end);
 	}
 
 	@Override
 	public int getGroupThreadsCount(
-		long groupId, long userId, Date modifiedDate, int status) {
+			long groupId, long userId, Date modifiedDate, int status)
+		throws SystemException {
 
 		if (!InlineSQLHelperUtil.isEnabled(groupId)) {
-			QueryDefinition<MBThread> queryDefinition =
-				new QueryDefinition<MBThread>(status);
+			QueryDefinition queryDefinition = new QueryDefinition(status);
 
 			return mbThreadFinder.countByG_U_LPD(
 				groupId, userId, modifiedDate, queryDefinition);
@@ -196,21 +199,25 @@ public class MBThreadServiceImpl extends MBThreadServiceBaseImpl {
 	}
 
 	@Override
-	public int getGroupThreadsCount(long groupId, long userId, int status) {
+	public int getGroupThreadsCount(long groupId, long userId, int status)
+		throws SystemException {
+
 		return getGroupThreadsCount(groupId, userId, status, false);
 	}
 
 	@Override
 	public int getGroupThreadsCount(
-		long groupId, long userId, int status, boolean subscribed) {
+			long groupId, long userId, int status, boolean subscribed)
+		throws SystemException {
 
 		return getGroupThreadsCount(groupId, userId, status, subscribed, true);
 	}
 
 	@Override
 	public int getGroupThreadsCount(
-		long groupId, long userId, int status, boolean subscribed,
-		boolean includeAnonymous) {
+			long groupId, long userId, int status, boolean subscribed,
+			boolean includeAnonymous)
+		throws SystemException {
 
 		if (!InlineSQLHelperUtil.isEnabled(groupId)) {
 			return doGetGroupThreadsCount(
@@ -230,8 +237,7 @@ public class MBThreadServiceImpl extends MBThreadServiceBaseImpl {
 		}
 		else {
 			if (subscribed) {
-				QueryDefinition<MBThread> queryDefinition =
-					new QueryDefinition<MBThread>(status);
+				QueryDefinition queryDefinition = new QueryDefinition(status);
 
 				return mbThreadFinder.filterCountByS_G_U_C(
 					groupId, userId, categoryIds, queryDefinition);
@@ -251,23 +257,25 @@ public class MBThreadServiceImpl extends MBThreadServiceBaseImpl {
 
 	@Override
 	public List<MBThread> getThreads(
-		long groupId, long categoryId, int status, int start, int end) {
+			long groupId, long categoryId, int status, int start, int end)
+		throws SystemException {
 
-		QueryDefinition<MBThread> queryDefinition =
-			new QueryDefinition<MBThread>(status, start, end, null);
+		QueryDefinition queryDefinition = new QueryDefinition(
+			status, start, end, null);
 
 		return mbThreadFinder.filterFindByG_C(
 			groupId, categoryId, queryDefinition);
 	}
 
 	@Override
-	public int getThreadsCount(long groupId, long categoryId, int status) {
+	public int getThreadsCount(long groupId, long categoryId, int status)
+		throws SystemException {
+
 		if (status == WorkflowConstants.STATUS_ANY) {
 			return mbThreadFinder.filterCountByG_C(groupId, categoryId);
 		}
 		else {
-			QueryDefinition<MBThread> queryDefinition =
-				new QueryDefinition<MBThread>(status);
+			QueryDefinition queryDefinition = new QueryDefinition(status);
 
 			return mbThreadFinder.filterCountByG_C(
 				groupId, categoryId, queryDefinition);
@@ -275,7 +283,9 @@ public class MBThreadServiceImpl extends MBThreadServiceBaseImpl {
 	}
 
 	@Override
-	public Lock lockThread(long threadId) throws PortalException {
+	public Lock lockThread(long threadId)
+		throws PortalException, SystemException {
+
 		MBThread thread = mbThreadPersistence.findByPrimaryKey(threadId);
 
 		MBCategoryPermission.check(
@@ -290,11 +300,7 @@ public class MBThreadServiceImpl extends MBThreadServiceBaseImpl {
 
 	@Override
 	public MBThread moveThread(long categoryId, long threadId)
-		throws PortalException {
-
-		if (lockLocalService.isLocked(MBThread.class.getName(), threadId)) {
-			throw new LockedThreadException();
-		}
+		throws PortalException, SystemException {
 
 		MBThread thread = mbThreadLocalService.getThread(threadId);
 
@@ -312,7 +318,7 @@ public class MBThreadServiceImpl extends MBThreadServiceBaseImpl {
 
 	@Override
 	public MBThread moveThreadFromTrash(long categoryId, long threadId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		MBThread thread = mbThreadLocalService.getThread(threadId);
 
@@ -325,7 +331,9 @@ public class MBThreadServiceImpl extends MBThreadServiceBaseImpl {
 	}
 
 	@Override
-	public MBThread moveThreadToTrash(long threadId) throws PortalException {
+	public MBThread moveThreadToTrash(long threadId)
+		throws PortalException, SystemException {
+
 		if (lockLocalService.isLocked(MBThread.class.getName(), threadId)) {
 			throw new LockedThreadException();
 		}
@@ -343,7 +351,9 @@ public class MBThreadServiceImpl extends MBThreadServiceBaseImpl {
 	}
 
 	@Override
-	public void restoreThreadFromTrash(long threadId) throws PortalException {
+	public void restoreThreadFromTrash(long threadId)
+		throws PortalException, SystemException {
+
 		List<MBMessage> messages = mbMessagePersistence.findByThreadId(
 			threadId);
 
@@ -359,7 +369,7 @@ public class MBThreadServiceImpl extends MBThreadServiceBaseImpl {
 	@Override
 	public Hits search(
 			long groupId, long creatorUserId, int status, int start, int end)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return mbThreadLocalService.search(
 			groupId, getUserId(), creatorUserId, status, start, end);
@@ -369,7 +379,7 @@ public class MBThreadServiceImpl extends MBThreadServiceBaseImpl {
 	public Hits search(
 			long groupId, long creatorUserId, long startDate, long endDate,
 			int status, int start, int end)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return mbThreadLocalService.search(
 			groupId, getUserId(), creatorUserId, startDate, endDate, status,
@@ -379,7 +389,7 @@ public class MBThreadServiceImpl extends MBThreadServiceBaseImpl {
 	@Override
 	public MBThread splitThread(
 			long messageId, String subject, ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		MBMessage message = mbMessageLocalService.getMessage(messageId);
 
@@ -392,7 +402,9 @@ public class MBThreadServiceImpl extends MBThreadServiceBaseImpl {
 	}
 
 	@Override
-	public void unlockThread(long threadId) throws PortalException {
+	public void unlockThread(long threadId)
+		throws PortalException, SystemException {
+
 		MBThread thread = mbThreadLocalService.getThread(threadId);
 
 		MBCategoryPermission.check(
@@ -403,8 +415,9 @@ public class MBThreadServiceImpl extends MBThreadServiceBaseImpl {
 	}
 
 	protected List<MBThread> doGetGroupThreads(
-		long groupId, long userId, int status, boolean subscribed,
-		boolean includeAnonymous, int start, int end) {
+			long groupId, long userId, int status, boolean subscribed,
+			boolean includeAnonymous, int start, int end)
+		throws SystemException {
 
 		if (userId <= 0) {
 			if (status == WorkflowConstants.STATUS_ANY) {
@@ -416,8 +429,8 @@ public class MBThreadServiceImpl extends MBThreadServiceBaseImpl {
 			}
 		}
 
-		QueryDefinition<MBThread> queryDefinition =
-			new QueryDefinition<MBThread>(status, start, end, null);
+		QueryDefinition queryDefinition = new QueryDefinition(
+			status, start, end, null);
 
 		if (subscribed) {
 			return mbThreadFinder.findByS_G_U(groupId, userId, queryDefinition);
@@ -432,8 +445,9 @@ public class MBThreadServiceImpl extends MBThreadServiceBaseImpl {
 	}
 
 	protected int doGetGroupThreadsCount(
-		long groupId, long userId, int status, boolean subscribed,
-		boolean includeAnonymous) {
+			long groupId, long userId, int status, boolean subscribed,
+			boolean includeAnonymous)
+		throws SystemException {
 
 		if (userId <= 0) {
 			if (status == WorkflowConstants.STATUS_ANY) {
@@ -444,8 +458,7 @@ public class MBThreadServiceImpl extends MBThreadServiceBaseImpl {
 			}
 		}
 
-		QueryDefinition<MBThread> queryDefinition =
-			new QueryDefinition<MBThread>(status);
+		QueryDefinition queryDefinition = new QueryDefinition(status);
 
 		if (subscribed) {
 			return mbThreadFinder.countByS_G_U(

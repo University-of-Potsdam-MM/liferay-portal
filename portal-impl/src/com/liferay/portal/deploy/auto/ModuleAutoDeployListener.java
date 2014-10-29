@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -24,7 +24,6 @@ import com.liferay.portal.kernel.deploy.auto.BaseAutoDeployListener;
 import com.liferay.portal.kernel.deploy.auto.context.AutoDeploymentContext;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.util.StreamUtil;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.io.File;
@@ -80,20 +79,16 @@ public class ModuleAutoDeployListener extends BaseAutoDeployListener {
 			return false;
 		}
 
-		JarInputStream jarInputStream = null;
-
 		Manifest manifest = null;
 
 		try {
-			jarInputStream = new JarInputStream(new FileInputStream(file));
+			JarInputStream jarInputStream = new JarInputStream(
+				new FileInputStream(file));
 
 			manifest = jarInputStream.getManifest();
 		}
 		catch (IOException ioe) {
 			throw new AutoDeployException(ioe);
-		}
-		finally {
-			StreamUtil.cleanUp(jarInputStream);
 		}
 
 		if (manifest == null) {

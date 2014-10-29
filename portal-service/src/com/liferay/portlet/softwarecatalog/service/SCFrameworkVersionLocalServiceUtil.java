@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -40,94 +40,18 @@ public class SCFrameworkVersionLocalServiceUtil {
 	 *
 	 * Never modify this class directly. Add custom service methods to {@link com.liferay.portlet.softwarecatalog.service.impl.SCFrameworkVersionLocalServiceImpl} and rerun ServiceBuilder to regenerate this class.
 	 */
-	public static com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion addFrameworkVersion(
-		long userId, java.lang.String name, java.lang.String url,
-		boolean active, int priority,
-		com.liferay.portal.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService()
-				   .addFrameworkVersion(userId, name, url, active, priority,
-			serviceContext);
-	}
-
-	public static void addFrameworkVersionResources(
-		com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion frameworkVersion,
-		boolean addGroupPermissions, boolean addGuestPermissions)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		getService()
-			.addFrameworkVersionResources(frameworkVersion,
-			addGroupPermissions, addGuestPermissions);
-	}
-
-	public static void addFrameworkVersionResources(
-		com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion frameworkVersion,
-		java.lang.String[] groupPermissions, java.lang.String[] guestPermissions)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		getService()
-			.addFrameworkVersionResources(frameworkVersion, groupPermissions,
-			guestPermissions);
-	}
-
-	public static void addFrameworkVersionResources(long frameworkVersionId,
-		boolean addGroupPermissions, boolean addGuestPermissions)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		getService()
-			.addFrameworkVersionResources(frameworkVersionId,
-			addGroupPermissions, addGuestPermissions);
-	}
-
-	public static void addFrameworkVersionResources(long frameworkVersionId,
-		java.lang.String[] groupPermissions, java.lang.String[] guestPermissions)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		getService()
-			.addFrameworkVersionResources(frameworkVersionId, groupPermissions,
-			guestPermissions);
-	}
 
 	/**
 	* Adds the s c framework version to the database. Also notifies the appropriate model listeners.
 	*
 	* @param scFrameworkVersion the s c framework version
 	* @return the s c framework version that was added
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion addSCFrameworkVersion(
-		com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion scFrameworkVersion) {
+		com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion scFrameworkVersion)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().addSCFrameworkVersion(scFrameworkVersion);
-	}
-
-	public static void addSCProductVersionSCFrameworkVersion(
-		long productVersionId, long frameworkVersionId) {
-		getService()
-			.addSCProductVersionSCFrameworkVersion(productVersionId,
-			frameworkVersionId);
-	}
-
-	public static void addSCProductVersionSCFrameworkVersion(
-		long productVersionId,
-		com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion scFrameworkVersion) {
-		getService()
-			.addSCProductVersionSCFrameworkVersion(productVersionId,
-			scFrameworkVersion);
-	}
-
-	public static void addSCProductVersionSCFrameworkVersions(
-		long productVersionId,
-		java.util.List<com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion> SCFrameworkVersions) {
-		getService()
-			.addSCProductVersionSCFrameworkVersions(productVersionId,
-			SCFrameworkVersions);
-	}
-
-	public static void addSCProductVersionSCFrameworkVersions(
-		long productVersionId, long[] frameworkVersionIds) {
-		getService()
-			.addSCProductVersionSCFrameworkVersions(productVersionId,
-			frameworkVersionIds);
-	}
-
-	public static void clearSCProductVersionSCFrameworkVersions(
-		long productVersionId) {
-		getService().clearSCProductVersionSCFrameworkVersions(productVersionId);
 	}
 
 	/**
@@ -141,39 +65,18 @@ public class SCFrameworkVersionLocalServiceUtil {
 		return getService().createSCFrameworkVersion(frameworkVersionId);
 	}
 
-	public static void deleteFrameworkVersion(
-		com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion frameworkVersion) {
-		getService().deleteFrameworkVersion(frameworkVersion);
-	}
-
-	public static void deleteFrameworkVersion(long frameworkVersionId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		getService().deleteFrameworkVersion(frameworkVersionId);
-	}
-
-	public static void deleteFrameworkVersions(long groupId) {
-		getService().deleteFrameworkVersions(groupId);
-	}
-
-	/**
-	* @throws PortalException
-	*/
-	public static com.liferay.portal.model.PersistedModel deletePersistedModel(
-		com.liferay.portal.model.PersistedModel persistedModel)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().deletePersistedModel(persistedModel);
-	}
-
 	/**
 	* Deletes the s c framework version with the primary key from the database. Also notifies the appropriate model listeners.
 	*
 	* @param frameworkVersionId the primary key of the s c framework version
 	* @return the s c framework version that was removed
 	* @throws PortalException if a s c framework version with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion deleteSCFrameworkVersion(
 		long frameworkVersionId)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getService().deleteSCFrameworkVersion(frameworkVersionId);
 	}
 
@@ -182,40 +85,12 @@ public class SCFrameworkVersionLocalServiceUtil {
 	*
 	* @param scFrameworkVersion the s c framework version
 	* @return the s c framework version that was removed
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion deleteSCFrameworkVersion(
-		com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion scFrameworkVersion) {
+		com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion scFrameworkVersion)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().deleteSCFrameworkVersion(scFrameworkVersion);
-	}
-
-	public static void deleteSCProductVersionSCFrameworkVersion(
-		long productVersionId, long frameworkVersionId) {
-		getService()
-			.deleteSCProductVersionSCFrameworkVersion(productVersionId,
-			frameworkVersionId);
-	}
-
-	public static void deleteSCProductVersionSCFrameworkVersion(
-		long productVersionId,
-		com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion scFrameworkVersion) {
-		getService()
-			.deleteSCProductVersionSCFrameworkVersion(productVersionId,
-			scFrameworkVersion);
-	}
-
-	public static void deleteSCProductVersionSCFrameworkVersions(
-		long productVersionId,
-		java.util.List<com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion> SCFrameworkVersions) {
-		getService()
-			.deleteSCProductVersionSCFrameworkVersions(productVersionId,
-			SCFrameworkVersions);
-	}
-
-	public static void deleteSCProductVersionSCFrameworkVersions(
-		long productVersionId, long[] frameworkVersionIds) {
-		getService()
-			.deleteSCProductVersionSCFrameworkVersions(productVersionId,
-			frameworkVersionIds);
 	}
 
 	public static com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery() {
@@ -227,9 +102,12 @@ public class SCFrameworkVersionLocalServiceUtil {
 	*
 	* @param dynamicQuery the dynamic query
 	* @return the matching rows
+	* @throws SystemException if a system exception occurred
 	*/
-	public static <T> java.util.List<T> dynamicQuery(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery) {
+	@SuppressWarnings("rawtypes")
+	public static java.util.List dynamicQuery(
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().dynamicQuery(dynamicQuery);
 	}
 
@@ -244,10 +122,12 @@ public class SCFrameworkVersionLocalServiceUtil {
 	* @param start the lower bound of the range of model instances
 	* @param end the upper bound of the range of model instances (not inclusive)
 	* @return the range of matching rows
+	* @throws SystemException if a system exception occurred
 	*/
-	public static <T> java.util.List<T> dynamicQuery(
+	@SuppressWarnings("rawtypes")
+	public static java.util.List dynamicQuery(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
-		int end) {
+		int end) throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().dynamicQuery(dynamicQuery, start, end);
 	}
 
@@ -263,11 +143,14 @@ public class SCFrameworkVersionLocalServiceUtil {
 	* @param end the upper bound of the range of model instances (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching rows
+	* @throws SystemException if a system exception occurred
 	*/
-	public static <T> java.util.List<T> dynamicQuery(
+	@SuppressWarnings("rawtypes")
+	public static java.util.List dynamicQuery(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
 		int end,
-		com.liferay.portal.kernel.util.OrderByComparator<T> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService()
 				   .dynamicQuery(dynamicQuery, start, end, orderByComparator);
 	}
@@ -277,9 +160,11 @@ public class SCFrameworkVersionLocalServiceUtil {
 	*
 	* @param dynamicQuery the dynamic query
 	* @return the number of rows that match the dynamic query
+	* @throws SystemException if a system exception occurred
 	*/
 	public static long dynamicQueryCount(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery) {
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().dynamicQueryCount(dynamicQuery);
 	}
 
@@ -289,69 +174,19 @@ public class SCFrameworkVersionLocalServiceUtil {
 	* @param dynamicQuery the dynamic query
 	* @param projection the projection to apply to the query
 	* @return the number of rows that match the dynamic query
+	* @throws SystemException if a system exception occurred
 	*/
 	public static long dynamicQueryCount(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery,
-		com.liferay.portal.kernel.dao.orm.Projection projection) {
+		com.liferay.portal.kernel.dao.orm.Projection projection)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().dynamicQueryCount(dynamicQuery, projection);
 	}
 
 	public static com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion fetchSCFrameworkVersion(
-		long frameworkVersionId) {
-		return getService().fetchSCFrameworkVersion(frameworkVersionId);
-	}
-
-	public static com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery getActionableDynamicQuery() {
-		return getService().getActionableDynamicQuery();
-	}
-
-	/**
-	* Returns the Spring bean ID for this bean.
-	*
-	* @return the Spring bean ID for this bean
-	*/
-	public static java.lang.String getBeanIdentifier() {
-		return getService().getBeanIdentifier();
-	}
-
-	public static com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion getFrameworkVersion(
 		long frameworkVersionId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().getFrameworkVersion(frameworkVersionId);
-	}
-
-	public static java.util.List<com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion> getFrameworkVersions(
-		long groupId, boolean active) {
-		return getService().getFrameworkVersions(groupId, active);
-	}
-
-	public static java.util.List<com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion> getFrameworkVersions(
-		long groupId, boolean active, int start, int end) {
-		return getService().getFrameworkVersions(groupId, active, start, end);
-	}
-
-	public static java.util.List<com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion> getFrameworkVersions(
-		long groupId, int start, int end) {
-		return getService().getFrameworkVersions(groupId, start, end);
-	}
-
-	public static int getFrameworkVersionsCount(long groupId) {
-		return getService().getFrameworkVersionsCount(groupId);
-	}
-
-	public static int getFrameworkVersionsCount(long groupId, boolean active) {
-		return getService().getFrameworkVersionsCount(groupId, active);
-	}
-
-	public static com.liferay.portal.model.PersistedModel getPersistedModel(
-		java.io.Serializable primaryKeyObj)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().getPersistedModel(primaryKeyObj);
-	}
-
-	public static java.util.List<com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion> getProductVersionFrameworkVersions(
-		long productVersionId) {
-		return getService().getProductVersionFrameworkVersions(productVersionId);
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().fetchSCFrameworkVersion(frameworkVersionId);
 	}
 
 	/**
@@ -360,11 +195,20 @@ public class SCFrameworkVersionLocalServiceUtil {
 	* @param frameworkVersionId the primary key of the s c framework version
 	* @return the s c framework version
 	* @throws PortalException if a s c framework version with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion getSCFrameworkVersion(
 		long frameworkVersionId)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getService().getSCFrameworkVersion(frameworkVersionId);
+	}
+
+	public static com.liferay.portal.model.PersistedModel getPersistedModel(
+		java.io.Serializable primaryKeyObj)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getService().getPersistedModel(primaryKeyObj);
 	}
 
 	/**
@@ -377,9 +221,11 @@ public class SCFrameworkVersionLocalServiceUtil {
 	* @param start the lower bound of the range of s c framework versions
 	* @param end the upper bound of the range of s c framework versions (not inclusive)
 	* @return the range of s c framework versions
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion> getSCFrameworkVersions(
-		int start, int end) {
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().getSCFrameworkVersions(start, end);
 	}
 
@@ -387,59 +233,209 @@ public class SCFrameworkVersionLocalServiceUtil {
 	* Returns the number of s c framework versions.
 	*
 	* @return the number of s c framework versions
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int getSCFrameworkVersionsCount() {
+	public static int getSCFrameworkVersionsCount()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().getSCFrameworkVersionsCount();
 	}
 
 	/**
-	* Returns the productVersionIds of the s c product versions associated with the s c framework version.
+	* Updates the s c framework version in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	*
-	* @param frameworkVersionId the frameworkVersionId of the s c framework version
-	* @return long[] the productVersionIds of s c product versions associated with the s c framework version
+	* @param scFrameworkVersion the s c framework version
+	* @return the s c framework version that was updated
+	* @throws SystemException if a system exception occurred
 	*/
-	public static long[] getSCProductVersionPrimaryKeys(long frameworkVersionId) {
-		return getService().getSCProductVersionPrimaryKeys(frameworkVersionId);
+	public static com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion updateSCFrameworkVersion(
+		com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion scFrameworkVersion)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().updateSCFrameworkVersion(scFrameworkVersion);
 	}
 
+	/**
+	* @throws SystemException if a system exception occurred
+	*/
+	public static void addSCProductVersionSCFrameworkVersion(
+		long productVersionId, long frameworkVersionId)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		getService()
+			.addSCProductVersionSCFrameworkVersion(productVersionId,
+			frameworkVersionId);
+	}
+
+	/**
+	* @throws SystemException if a system exception occurred
+	*/
+	public static void addSCProductVersionSCFrameworkVersion(
+		long productVersionId,
+		com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion scFrameworkVersion)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		getService()
+			.addSCProductVersionSCFrameworkVersion(productVersionId,
+			scFrameworkVersion);
+	}
+
+	/**
+	* @throws SystemException if a system exception occurred
+	*/
+	public static void addSCProductVersionSCFrameworkVersions(
+		long productVersionId, long[] frameworkVersionIds)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		getService()
+			.addSCProductVersionSCFrameworkVersions(productVersionId,
+			frameworkVersionIds);
+	}
+
+	/**
+	* @throws SystemException if a system exception occurred
+	*/
+	public static void addSCProductVersionSCFrameworkVersions(
+		long productVersionId,
+		java.util.List<com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion> SCFrameworkVersions)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		getService()
+			.addSCProductVersionSCFrameworkVersions(productVersionId,
+			SCFrameworkVersions);
+	}
+
+	/**
+	* @throws SystemException if a system exception occurred
+	*/
+	public static void clearSCProductVersionSCFrameworkVersions(
+		long productVersionId)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		getService().clearSCProductVersionSCFrameworkVersions(productVersionId);
+	}
+
+	/**
+	* @throws SystemException if a system exception occurred
+	*/
+	public static void deleteSCProductVersionSCFrameworkVersion(
+		long productVersionId, long frameworkVersionId)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		getService()
+			.deleteSCProductVersionSCFrameworkVersion(productVersionId,
+			frameworkVersionId);
+	}
+
+	/**
+	* @throws SystemException if a system exception occurred
+	*/
+	public static void deleteSCProductVersionSCFrameworkVersion(
+		long productVersionId,
+		com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion scFrameworkVersion)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		getService()
+			.deleteSCProductVersionSCFrameworkVersion(productVersionId,
+			scFrameworkVersion);
+	}
+
+	/**
+	* @throws SystemException if a system exception occurred
+	*/
+	public static void deleteSCProductVersionSCFrameworkVersions(
+		long productVersionId, long[] frameworkVersionIds)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		getService()
+			.deleteSCProductVersionSCFrameworkVersions(productVersionId,
+			frameworkVersionIds);
+	}
+
+	/**
+	* @throws SystemException if a system exception occurred
+	*/
+	public static void deleteSCProductVersionSCFrameworkVersions(
+		long productVersionId,
+		java.util.List<com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion> SCFrameworkVersions)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		getService()
+			.deleteSCProductVersionSCFrameworkVersions(productVersionId,
+			SCFrameworkVersions);
+	}
+
+	/**
+	* @throws SystemException if a system exception occurred
+	*/
 	public static java.util.List<com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion> getSCProductVersionSCFrameworkVersions(
-		long productVersionId) {
+		long productVersionId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService()
 				   .getSCProductVersionSCFrameworkVersions(productVersionId);
 	}
 
+	/**
+	* @throws SystemException if a system exception occurred
+	*/
 	public static java.util.List<com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion> getSCProductVersionSCFrameworkVersions(
-		long productVersionId, int start, int end) {
+		long productVersionId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService()
 				   .getSCProductVersionSCFrameworkVersions(productVersionId,
 			start, end);
 	}
 
+	/**
+	* @throws SystemException if a system exception occurred
+	*/
 	public static java.util.List<com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion> getSCProductVersionSCFrameworkVersions(
 		long productVersionId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService()
 				   .getSCProductVersionSCFrameworkVersions(productVersionId,
 			start, end, orderByComparator);
 	}
 
+	/**
+	* @throws SystemException if a system exception occurred
+	*/
 	public static int getSCProductVersionSCFrameworkVersionsCount(
-		long productVersionId) {
+		long productVersionId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService()
 				   .getSCProductVersionSCFrameworkVersionsCount(productVersionId);
 	}
 
+	/**
+	* @throws SystemException if a system exception occurred
+	*/
 	public static boolean hasSCProductVersionSCFrameworkVersion(
-		long productVersionId, long frameworkVersionId) {
+		long productVersionId, long frameworkVersionId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService()
 				   .hasSCProductVersionSCFrameworkVersion(productVersionId,
 			frameworkVersionId);
 	}
 
+	/**
+	* @throws SystemException if a system exception occurred
+	*/
 	public static boolean hasSCProductVersionSCFrameworkVersions(
-		long productVersionId) {
+		long productVersionId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService()
 				   .hasSCProductVersionSCFrameworkVersions(productVersionId);
+	}
+
+	/**
+	* @throws SystemException if a system exception occurred
+	*/
+	public static void setSCProductVersionSCFrameworkVersions(
+		long productVersionId, long[] frameworkVersionIds)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		getService()
+			.setSCProductVersionSCFrameworkVersions(productVersionId,
+			frameworkVersionIds);
+	}
+
+	/**
+	* Returns the Spring bean ID for this bean.
+	*
+	* @return the Spring bean ID for this bean
+	*/
+	public static java.lang.String getBeanIdentifier() {
+		return getService().getBeanIdentifier();
 	}
 
 	/**
@@ -451,31 +447,121 @@ public class SCFrameworkVersionLocalServiceUtil {
 		getService().setBeanIdentifier(beanIdentifier);
 	}
 
-	public static void setSCProductVersionSCFrameworkVersions(
-		long productVersionId, long[] frameworkVersionIds) {
+	public static com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion addFrameworkVersion(
+		long userId, java.lang.String name, java.lang.String url,
+		boolean active, int priority,
+		com.liferay.portal.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getService()
+				   .addFrameworkVersion(userId, name, url, active, priority,
+			serviceContext);
+	}
+
+	public static void addFrameworkVersionResources(long frameworkVersionId,
+		boolean addGroupPermissions, boolean addGuestPermissions)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		getService()
-			.setSCProductVersionSCFrameworkVersions(productVersionId,
-			frameworkVersionIds);
+			.addFrameworkVersionResources(frameworkVersionId,
+			addGroupPermissions, addGuestPermissions);
+	}
+
+	public static void addFrameworkVersionResources(long frameworkVersionId,
+		java.lang.String[] groupPermissions, java.lang.String[] guestPermissions)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		getService()
+			.addFrameworkVersionResources(frameworkVersionId, groupPermissions,
+			guestPermissions);
+	}
+
+	public static void addFrameworkVersionResources(
+		com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion frameworkVersion,
+		boolean addGroupPermissions, boolean addGuestPermissions)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		getService()
+			.addFrameworkVersionResources(frameworkVersion,
+			addGroupPermissions, addGuestPermissions);
+	}
+
+	public static void addFrameworkVersionResources(
+		com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion frameworkVersion,
+		java.lang.String[] groupPermissions, java.lang.String[] guestPermissions)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		getService()
+			.addFrameworkVersionResources(frameworkVersion, groupPermissions,
+			guestPermissions);
+	}
+
+	public static void deleteFrameworkVersion(long frameworkVersionId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		getService().deleteFrameworkVersion(frameworkVersionId);
+	}
+
+	public static void deleteFrameworkVersion(
+		com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion frameworkVersion)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		getService().deleteFrameworkVersion(frameworkVersion);
+	}
+
+	public static void deleteFrameworkVersions(long groupId)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		getService().deleteFrameworkVersions(groupId);
+	}
+
+	public static com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion getFrameworkVersion(
+		long frameworkVersionId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getService().getFrameworkVersion(frameworkVersionId);
+	}
+
+	public static java.util.List<com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion> getFrameworkVersions(
+		long groupId, boolean active)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().getFrameworkVersions(groupId, active);
+	}
+
+	public static java.util.List<com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion> getFrameworkVersions(
+		long groupId, boolean active, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().getFrameworkVersions(groupId, active, start, end);
+	}
+
+	public static java.util.List<com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion> getFrameworkVersions(
+		long groupId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().getFrameworkVersions(groupId, start, end);
+	}
+
+	public static int getFrameworkVersionsCount(long groupId)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().getFrameworkVersionsCount(groupId);
+	}
+
+	public static int getFrameworkVersionsCount(long groupId, boolean active)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().getFrameworkVersionsCount(groupId, active);
+	}
+
+	public static java.util.List<com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion> getProductVersionFrameworkVersions(
+		long productVersionId)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().getProductVersionFrameworkVersions(productVersionId);
 	}
 
 	public static com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion updateFrameworkVersion(
 		long frameworkVersionId, java.lang.String name, java.lang.String url,
 		boolean active, int priority)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getService()
 				   .updateFrameworkVersion(frameworkVersionId, name, url,
 			active, priority);
-	}
-
-	/**
-	* Updates the s c framework version in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
-	*
-	* @param scFrameworkVersion the s c framework version
-	* @return the s c framework version that was updated
-	*/
-	public static com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion updateSCFrameworkVersion(
-		com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion scFrameworkVersion) {
-		return getService().updateSCFrameworkVersion(scFrameworkVersion);
 	}
 
 	public static SCFrameworkVersionLocalService getService() {
@@ -492,7 +578,6 @@ public class SCFrameworkVersionLocalServiceUtil {
 	/**
 	 * @deprecated As of 6.2.0
 	 */
-	@Deprecated
 	public void setService(SCFrameworkVersionLocalService service) {
 	}
 

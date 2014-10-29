@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -22,8 +22,8 @@ ResultRow row = (ResultRow)request.getAttribute(WebKeys.SEARCH_CONTAINER_RESULT_
 Team team = (Team)row.getObject();
 %>
 
-<liferay-ui:icon-menu direction="down" icon="<%= StringPool.BLANK %>" message="<%= StringPool.BLANK %>" showWhenSingleIcon="<%= true %>">
-	<c:if test="<%= TeamPermissionUtil.contains(permissionChecker, team, ActionKeys.UPDATE) %>">
+<liferay-ui:icon-menu>
+	<c:if test="<%= TeamPermissionUtil.contains(permissionChecker, team.getTeamId(), ActionKeys.UPDATE) %>">
 		<portlet:renderURL var="editURL">
 			<portlet:param name="struts_action" value="/sites_admin/edit_team" />
 			<portlet:param name="redirect" value="<%= currentURL %>" />
@@ -31,13 +31,12 @@ Team team = (Team)row.getObject();
 		</portlet:renderURL>
 
 		<liferay-ui:icon
-			iconCssClass="icon-edit"
-			message="edit"
+			image="edit"
 			url="<%= editURL %>"
 		/>
 	</c:if>
 
-	<c:if test="<%= TeamPermissionUtil.contains(permissionChecker, team, ActionKeys.PERMISSIONS) %>">
+	<c:if test="<%= TeamPermissionUtil.contains(permissionChecker, team.getTeamId(), ActionKeys.PERMISSIONS) %>">
 
 		<%
 		Role role = team.getRole();
@@ -61,15 +60,14 @@ Team team = (Team)row.getObject();
 		/>
 
 		<liferay-ui:icon
-			iconCssClass="icon-lock"
-			message="permissions"
+			image="permissions"
 			method="get"
 			url="<%= permissionsURL %>"
 			useDialog="<%= true %>"
 		/>
 	</c:if>
 
-	<c:if test="<%= TeamPermissionUtil.contains(permissionChecker, team, ActionKeys.ASSIGN_MEMBERS) %>">
+	<c:if test="<%= TeamPermissionUtil.contains(permissionChecker, team.getTeamId(), ActionKeys.ASSIGN_MEMBERS) %>">
 		<portlet:renderURL var="assignMembersURL">
 			<portlet:param name="struts_action" value="/sites_admin/edit_team_assignments" />
 			<portlet:param name="redirect" value="<%= currentURL %>" />
@@ -77,13 +75,13 @@ Team team = (Team)row.getObject();
 		</portlet:renderURL>
 
 		<liferay-ui:icon
-			iconCssClass="icon-plus"
+			image="assign"
 			message="assign-members"
 			url="<%= assignMembersURL %>"
 		/>
 	</c:if>
 
-	<c:if test="<%= TeamPermissionUtil.contains(permissionChecker, team, ActionKeys.DELETE) %>">
+	<c:if test="<%= TeamPermissionUtil.contains(permissionChecker, team.getTeamId(), ActionKeys.DELETE) %>">
 		<portlet:actionURL var="deleteURL">
 			<portlet:param name="struts_action" value="/sites_admin/edit_team" />
 			<portlet:param name="<%= Constants.CMD %>" value="<%= Constants.DELETE %>" />

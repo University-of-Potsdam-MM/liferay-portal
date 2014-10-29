@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,8 +14,6 @@
 
 package com.liferay.counter.service.base;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.counter.model.Counter;
 import com.liferay.counter.service.CounterLocalService;
 import com.liferay.counter.service.persistence.CounterFinder;
@@ -23,8 +21,6 @@ import com.liferay.counter.service.persistence.CounterPersistence;
 
 import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.bean.IdentifiableBean;
-import com.liferay.portal.kernel.dao.db.DB;
-import com.liferay.portal.kernel.dao.db.DBFactoryUtil;
 import com.liferay.portal.kernel.dao.jdbc.SqlUpdate;
 import com.liferay.portal.kernel.dao.jdbc.SqlUpdateFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
@@ -38,10 +34,8 @@ import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.model.PersistedModel;
 import com.liferay.portal.service.BaseLocalServiceImpl;
 import com.liferay.portal.service.PersistedModelLocalServiceRegistry;
-import com.liferay.portal.service.persistence.ClassNamePersistence;
 import com.liferay.portal.service.persistence.UserFinder;
 import com.liferay.portal.service.persistence.UserPersistence;
-import com.liferay.portal.util.PortalUtil;
 
 import java.io.Serializable;
 
@@ -61,7 +55,6 @@ import javax.sql.DataSource;
  * @see com.liferay.counter.service.CounterLocalServiceUtil
  * @generated
  */
-@ProviderType
 public abstract class CounterLocalServiceBaseImpl extends BaseLocalServiceImpl
 	implements CounterLocalService, IdentifiableBean {
 	/*
@@ -75,10 +68,11 @@ public abstract class CounterLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 *
 	 * @param counter the counter
 	 * @return the counter that was added
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
-	public Counter addCounter(Counter counter) {
+	public Counter addCounter(Counter counter) throws SystemException {
 		counter.setNew(true);
 
 		return counterPersistence.update(counter);
@@ -101,10 +95,12 @@ public abstract class CounterLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * @param name the primary key of the counter
 	 * @return the counter that was removed
 	 * @throws PortalException if a counter with the primary key could not be found
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.DELETE)
 	@Override
-	public Counter deleteCounter(String name) throws PortalException {
+	public Counter deleteCounter(String name)
+		throws PortalException, SystemException {
 		return counterPersistence.remove(name);
 	}
 
@@ -113,10 +109,11 @@ public abstract class CounterLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 *
 	 * @param counter the counter
 	 * @return the counter that was removed
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.DELETE)
 	@Override
-	public Counter deleteCounter(Counter counter) {
+	public Counter deleteCounter(Counter counter) throws SystemException {
 		return counterPersistence.remove(counter);
 	}
 
@@ -133,9 +130,12 @@ public abstract class CounterLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 *
 	 * @param dynamicQuery the dynamic query
 	 * @return the matching rows
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery) {
+	@SuppressWarnings("rawtypes")
+	public List dynamicQuery(DynamicQuery dynamicQuery)
+		throws SystemException {
 		return counterPersistence.findWithDynamicQuery(dynamicQuery);
 	}
 
@@ -150,10 +150,12 @@ public abstract class CounterLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * @param start the lower bound of the range of model instances
 	 * @param end the upper bound of the range of model instances (not inclusive)
 	 * @return the range of matching rows
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
-		int end) {
+	@SuppressWarnings("rawtypes")
+	public List dynamicQuery(DynamicQuery dynamicQuery, int start, int end)
+		throws SystemException {
 		return counterPersistence.findWithDynamicQuery(dynamicQuery, start, end);
 	}
 
@@ -169,10 +171,12 @@ public abstract class CounterLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * @param end the upper bound of the range of model instances (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching rows
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
-		int end, OrderByComparator<T> orderByComparator) {
+	@SuppressWarnings("rawtypes")
+	public List dynamicQuery(DynamicQuery dynamicQuery, int start, int end,
+		OrderByComparator orderByComparator) throws SystemException {
 		return counterPersistence.findWithDynamicQuery(dynamicQuery, start,
 			end, orderByComparator);
 	}
@@ -182,9 +186,11 @@ public abstract class CounterLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 *
 	 * @param dynamicQuery the dynamic query
 	 * @return the number of rows that match the dynamic query
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public long dynamicQueryCount(DynamicQuery dynamicQuery) {
+	public long dynamicQueryCount(DynamicQuery dynamicQuery)
+		throws SystemException {
 		return counterPersistence.countWithDynamicQuery(dynamicQuery);
 	}
 
@@ -194,15 +200,16 @@ public abstract class CounterLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * @param dynamicQuery the dynamic query
 	 * @param projection the projection to apply to the query
 	 * @return the number of rows that match the dynamic query
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public long dynamicQueryCount(DynamicQuery dynamicQuery,
-		Projection projection) {
+		Projection projection) throws SystemException {
 		return counterPersistence.countWithDynamicQuery(dynamicQuery, projection);
 	}
 
 	@Override
-	public Counter fetchCounter(String name) {
+	public Counter fetchCounter(String name) throws SystemException {
 		return counterPersistence.fetchByPrimaryKey(name);
 	}
 
@@ -212,24 +219,17 @@ public abstract class CounterLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * @param name the primary key of the counter
 	 * @return the counter
 	 * @throws PortalException if a counter with the primary key could not be found
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public Counter getCounter(String name) throws PortalException {
+	public Counter getCounter(String name)
+		throws PortalException, SystemException {
 		return counterPersistence.findByPrimaryKey(name);
-	}
-
-	/**
-	 * @throws PortalException
-	 */
-	@Override
-	public PersistedModel deletePersistedModel(PersistedModel persistedModel)
-		throws PortalException {
-		return counterLocalService.deleteCounter((Counter)persistedModel);
 	}
 
 	@Override
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
-		throws PortalException {
+		throws PortalException, SystemException {
 		return counterPersistence.findByPrimaryKey(primaryKeyObj);
 	}
 
@@ -243,9 +243,11 @@ public abstract class CounterLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * @param start the lower bound of the range of counters
 	 * @param end the upper bound of the range of counters (not inclusive)
 	 * @return the range of counters
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public List<Counter> getCounters(int start, int end) {
+	public List<Counter> getCounters(int start, int end)
+		throws SystemException {
 		return counterPersistence.findAll(start, end);
 	}
 
@@ -253,9 +255,10 @@ public abstract class CounterLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * Returns the number of counters.
 	 *
 	 * @return the number of counters
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public int getCountersCount() {
+	public int getCountersCount() throws SystemException {
 		return counterPersistence.countAll();
 	}
 
@@ -264,10 +267,11 @@ public abstract class CounterLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 *
 	 * @param counter the counter
 	 * @return the counter that was updated
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
-	public Counter updateCounter(Counter counter) {
+	public Counter updateCounter(Counter counter) throws SystemException {
 		return counterPersistence.update(counter);
 	}
 
@@ -324,63 +328,6 @@ public abstract class CounterLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 */
 	public void setCounterFinder(CounterFinder counterFinder) {
 		this.counterFinder = counterFinder;
-	}
-
-	/**
-	 * Returns the class name local service.
-	 *
-	 * @return the class name local service
-	 */
-	public com.liferay.portal.service.ClassNameLocalService getClassNameLocalService() {
-		return classNameLocalService;
-	}
-
-	/**
-	 * Sets the class name local service.
-	 *
-	 * @param classNameLocalService the class name local service
-	 */
-	public void setClassNameLocalService(
-		com.liferay.portal.service.ClassNameLocalService classNameLocalService) {
-		this.classNameLocalService = classNameLocalService;
-	}
-
-	/**
-	 * Returns the class name remote service.
-	 *
-	 * @return the class name remote service
-	 */
-	public com.liferay.portal.service.ClassNameService getClassNameService() {
-		return classNameService;
-	}
-
-	/**
-	 * Sets the class name remote service.
-	 *
-	 * @param classNameService the class name remote service
-	 */
-	public void setClassNameService(
-		com.liferay.portal.service.ClassNameService classNameService) {
-		this.classNameService = classNameService;
-	}
-
-	/**
-	 * Returns the class name persistence.
-	 *
-	 * @return the class name persistence
-	 */
-	public ClassNamePersistence getClassNamePersistence() {
-		return classNamePersistence;
-	}
-
-	/**
-	 * Sets the class name persistence.
-	 *
-	 * @param classNamePersistence the class name persistence
-	 */
-	public void setClassNamePersistence(
-		ClassNamePersistence classNamePersistence) {
-		this.classNamePersistence = classNamePersistence;
 	}
 
 	/**
@@ -515,18 +462,13 @@ public abstract class CounterLocalServiceBaseImpl extends BaseLocalServiceImpl
 	}
 
 	/**
-	 * Performs a SQL query.
+	 * Performs an SQL query.
 	 *
 	 * @param sql the sql query
 	 */
-	protected void runSQL(String sql) {
+	protected void runSQL(String sql) throws SystemException {
 		try {
 			DataSource dataSource = counterPersistence.getDataSource();
-
-			DB db = DBFactoryUtil.getDB();
-
-			sql = db.buildSQL(sql);
-			sql = PortalUtil.transformSQL(sql);
 
 			SqlUpdate sqlUpdate = SqlUpdateFactoryUtil.getSqlUpdate(dataSource,
 					sql, new int[0]);
@@ -544,12 +486,6 @@ public abstract class CounterLocalServiceBaseImpl extends BaseLocalServiceImpl
 	protected CounterPersistence counterPersistence;
 	@BeanReference(type = CounterFinder.class)
 	protected CounterFinder counterFinder;
-	@BeanReference(type = com.liferay.portal.service.ClassNameLocalService.class)
-	protected com.liferay.portal.service.ClassNameLocalService classNameLocalService;
-	@BeanReference(type = com.liferay.portal.service.ClassNameService.class)
-	protected com.liferay.portal.service.ClassNameService classNameService;
-	@BeanReference(type = ClassNamePersistence.class)
-	protected ClassNamePersistence classNamePersistence;
 	@BeanReference(type = com.liferay.portal.service.ResourceLocalService.class)
 	protected com.liferay.portal.service.ResourceLocalService resourceLocalService;
 	@BeanReference(type = com.liferay.portal.service.UserLocalService.class)

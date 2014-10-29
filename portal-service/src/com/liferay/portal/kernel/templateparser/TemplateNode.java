@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -20,10 +20,7 @@ import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.model.Group;
 import com.liferay.portal.model.Layout;
-import com.liferay.portal.service.GroupLocalServiceUtil;
 import com.liferay.portal.service.LayoutLocalServiceUtil;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.portal.util.PortalUtil;
@@ -40,12 +37,10 @@ import java.util.Map;
 public class TemplateNode extends LinkedHashMap<String, Object> {
 
 	public TemplateNode(
-		ThemeDisplay themeDisplay, String name, String data, String type,
-		Map<String, String> attributes) {
+		ThemeDisplay themeDisplay, String name, String data, String type) {
 
 		_themeDisplay = themeDisplay;
 
-		put("attributes", attributes);
 		put("name", name);
 		put("data", data);
 		put("type", type);
@@ -78,20 +73,6 @@ public class TemplateNode extends LinkedHashMap<String, Object> {
 
 	public void appendSibling(TemplateNode templateNode) {
 		_siblingTemplateNodes.add(templateNode);
-	}
-
-	public String getAttribute(String name) {
-		Map<String, String> attributes = getAttributes();
-
-		if (attributes == null) {
-			return StringPool.BLANK;
-		}
-
-		return attributes.get(name);
-	}
-
-	public Map<String, String> getAttributes() {
-		return (Map<String, String>)get("attributes");
 	}
 
 	public TemplateNode getChild(String name) {
@@ -134,15 +115,11 @@ public class TemplateNode extends LinkedHashMap<String, Object> {
 
 		String layoutType = getLayoutType();
 
-		if (Validator.isNull(layoutType)) {
-			return StringPool.BLANK;
-		}
-
 		boolean privateLayout = layoutType.startsWith("private");
 
 		try {
 			Layout layout = LayoutLocalServiceUtil.getLayout(
-				getLayoutGroupId(), privateLayout, getLayoutId());
+				_themeDisplay.getScopeGroupId(), privateLayout, getLayoutId());
 
 			return PortalUtil.getLayoutFriendlyURL(layout, _themeDisplay);
 		}
@@ -185,10 +162,6 @@ public class TemplateNode extends LinkedHashMap<String, Object> {
 
 		String layoutType = getLayoutType();
 
-		if (Validator.isNull(layoutType)) {
-			return StringPool.BLANK;
-		}
-
 		if (layoutType.equals(_LAYOUT_TYPE_PRIVATE_GROUP)) {
 			sb.append(PortalUtil.getPathFriendlyURLPrivateGroup());
 		}
@@ -203,36 +176,11 @@ public class TemplateNode extends LinkedHashMap<String, Object> {
 		}
 
 		sb.append(StringPool.SLASH);
-
-		try {
-			Group group = GroupLocalServiceUtil.getGroup(getLayoutGroupId());
-
-			String name = group.getFriendlyURL();
-
-			name = name.substring(1);
-
-			sb.append(name);
-		}
-		catch (Exception e) {
-			sb.append("@group_id@");
-		}
-
+		sb.append("@group_id@");
 		sb.append(StringPool.SLASH);
 		sb.append(getLayoutId());
 
 		return sb.toString();
-	}
-
-	protected long getLayoutGroupId() {
-		String data = (String)get("data");
-
-		int pos = data.lastIndexOf(CharPool.AT);
-
-		if (pos != -1) {
-			data = data.substring(pos + 1);
-		}
-
-		return GetterUtil.getLong(data);
 	}
 
 	protected long getLayoutId() {
@@ -250,16 +198,10 @@ public class TemplateNode extends LinkedHashMap<String, Object> {
 	protected String getLayoutType() {
 		String data = (String)get("data");
 
-		int x = data.indexOf(CharPool.AT);
-		int y = data.lastIndexOf(CharPool.AT);
+		int pos = data.indexOf(CharPool.AT);
 
-		if ((x != -1) && (y != -1)) {
-			if (x == y) {
-				data = data.substring(x + 1);
-			}
-			else {
-				data = data.substring(x + 1, y);
-			}
+		if (pos != -1) {
+			data = data.substring(pos + 1);
 		}
 
 		return data;

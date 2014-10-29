@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portlet.mobiledevicerules.service.impl;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.security.permission.ActionKeys;
 import com.liferay.portal.service.ServiceContext;
@@ -35,7 +36,7 @@ public class MDRActionServiceImpl extends MDRActionServiceBaseImpl {
 			long ruleGroupInstanceId, Map<Locale, String> nameMap,
 			Map<Locale, String> descriptionMap, String type,
 			String typeSettings, ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		MDRRuleGroupInstancePermissionUtil.check(
 			getPermissionChecker(), ruleGroupInstanceId, ActionKeys.UPDATE);
@@ -51,7 +52,7 @@ public class MDRActionServiceImpl extends MDRActionServiceBaseImpl {
 			Map<Locale, String> descriptionMap, String type,
 			UnicodeProperties typeSettingsProperties,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		MDRRuleGroupInstancePermissionUtil.check(
 			getPermissionChecker(), ruleGroupInstanceId, ActionKeys.UPDATE);
@@ -62,7 +63,9 @@ public class MDRActionServiceImpl extends MDRActionServiceBaseImpl {
 	}
 
 	@Override
-	public void deleteAction(long actionId) throws PortalException {
+	public void deleteAction(long actionId)
+		throws PortalException, SystemException {
+
 		MDRAction action = mdrActionPersistence.findByPrimaryKey(actionId);
 
 		MDRRuleGroupInstancePermissionUtil.check(
@@ -73,7 +76,9 @@ public class MDRActionServiceImpl extends MDRActionServiceBaseImpl {
 	}
 
 	@Override
-	public MDRAction fetchAction(long actionId) throws PortalException {
+	public MDRAction fetchAction(long actionId)
+		throws PortalException, SystemException {
+
 		MDRAction action = mdrActionLocalService.fetchAction(actionId);
 
 		if (action != null) {
@@ -86,7 +91,9 @@ public class MDRActionServiceImpl extends MDRActionServiceBaseImpl {
 	}
 
 	@Override
-	public MDRAction getAction(long actionId) throws PortalException {
+	public MDRAction getAction(long actionId)
+		throws PortalException, SystemException {
+
 		MDRAction action = mdrActionPersistence.findByPrimaryKey(actionId);
 
 		MDRRuleGroupInstancePermissionUtil.check(
@@ -101,7 +108,7 @@ public class MDRActionServiceImpl extends MDRActionServiceBaseImpl {
 			long actionId, Map<Locale, String> nameMap,
 			Map<Locale, String> descriptionMap, String type,
 			String typeSettings, ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		MDRAction action = mdrActionPersistence.findByPrimaryKey(actionId);
 
@@ -120,7 +127,7 @@ public class MDRActionServiceImpl extends MDRActionServiceBaseImpl {
 			Map<Locale, String> descriptionMap, String type,
 			UnicodeProperties typeSettingsProperties,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		MDRAction action = mdrActionPersistence.findByPrimaryKey(actionId);
 

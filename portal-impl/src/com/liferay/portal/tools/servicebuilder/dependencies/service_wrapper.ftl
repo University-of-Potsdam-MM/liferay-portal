@@ -15,11 +15,10 @@ import com.liferay.portal.service.ServiceWrapper;
  * @generated
  */
 
-<#if classDeprecated>
-	@Deprecated
+<#if pluginName == "">
+	@ProviderType
 </#if>
 
-@ProviderType
 public class ${entity.name}${sessionTypeName}ServiceWrapper implements ${entity.name}${sessionTypeName}Service, ServiceWrapper<${entity.name}${sessionTypeName}Service> {
 
 	public ${entity.name}${sessionTypeName}ServiceWrapper(${entity.name}${sessionTypeName}Service ${entity.varName}${sessionTypeName}Service) {
@@ -30,18 +29,13 @@ public class ${entity.name}${sessionTypeName}ServiceWrapper implements ${entity.
 		<#if !method.isConstructor() && method.isPublic() && serviceBuilder.isCustomMethod(method)>
 			${serviceBuilder.getJavadocComment(method)}
 
-			<#if serviceBuilder.hasAnnotation(method, "Deprecated")>
-				@Deprecated
-			</#if>
-
 			@Override
-			public
 
-			<#if method.name = "dynamicQuery" && (serviceBuilder.getTypeGenericsName(method.returns) == "java.util.List<T>")>
-				<T>
+			<#if method.name = "dynamicQuery" && (method.parameters?size != 0)>
+				@SuppressWarnings("rawtypes")
 			</#if>
 
-			${serviceBuilder.getTypeGenericsName(method.returns)} ${method.name}(
+			public ${serviceBuilder.getTypeGenericsName(method.returns)} ${method.name}(
 
 			<#list method.parameters as parameter>
 				${serviceBuilder.getTypeGenericsName(parameter.type)} ${parameter.name}
@@ -88,7 +82,6 @@ public class ${entity.name}${sessionTypeName}ServiceWrapper implements ${entity.
 	/**
 	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedService}
 	 */
-	@Deprecated
 	public ${entity.name}${sessionTypeName}Service getWrapped${entity.name}${sessionTypeName}Service() {
 		return _${entity.varName}${sessionTypeName}Service;
 	}
@@ -96,7 +89,6 @@ public class ${entity.name}${sessionTypeName}ServiceWrapper implements ${entity.
 	/**
 	 * @deprecated As of 6.1.0, replaced by {@link #setWrappedService}
 	 */
-	@Deprecated
 	public void setWrapped${entity.name}${sessionTypeName}Service(${entity.name}${sessionTypeName}Service ${entity.varName}${sessionTypeName}Service) {
 		_${entity.varName}${sessionTypeName}Service = ${entity.varName}${sessionTypeName}Service;
 	}

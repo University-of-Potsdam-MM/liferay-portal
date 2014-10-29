@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portal.security.pwd;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.model.PasswordPolicy;
 
 /**
@@ -29,12 +30,12 @@ public abstract class BasicToolkit implements Toolkit {
 	public abstract void validate(
 			long userId, String password1, String password2,
 			PasswordPolicy passwordPolicy)
-		throws PortalException;
+		throws PortalException, SystemException;
 
 	@Override
 	public void validate(
 			String password1, String password2, PasswordPolicy passwordPolicy)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		validate(0, password1, password2, passwordPolicy);
 	}

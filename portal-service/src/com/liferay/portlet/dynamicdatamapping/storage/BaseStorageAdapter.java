@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portlet.dynamicdatamapping.storage;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.service.ServiceContext;
@@ -122,7 +123,7 @@ public abstract class BaseStorageAdapter implements StorageAdapter {
 	@Override
 	public List<Fields> getFieldsList(
 			long ddmStructureId, List<String> fieldNames,
-			OrderByComparator<Fields> orderByComparator)
+			OrderByComparator orderByComparator)
 		throws StorageException {
 
 		try {
@@ -140,7 +141,7 @@ public abstract class BaseStorageAdapter implements StorageAdapter {
 	@Override
 	public List<Fields> getFieldsList(
 			long ddmStructureId, long[] classPKs, List<String> fieldNames,
-			OrderByComparator<Fields> orderByComparator)
+			OrderByComparator orderByComparator)
 		throws StorageException {
 
 		try {
@@ -158,7 +159,7 @@ public abstract class BaseStorageAdapter implements StorageAdapter {
 	@Override
 	public List<Fields> getFieldsList(
 			long ddmStructureId, long[] classPKs,
-			OrderByComparator<Fields> orderByComparator)
+			OrderByComparator orderByComparator)
 		throws StorageException {
 
 		return getFieldsList(ddmStructureId, classPKs, null, orderByComparator);
@@ -191,7 +192,7 @@ public abstract class BaseStorageAdapter implements StorageAdapter {
 	@Override
 	public List<Fields> query(
 			long ddmStructureId, List<String> fieldNames, Condition condition,
-			OrderByComparator<Fields> orderByComparator)
+			OrderByComparator orderByComparator)
 		throws StorageException {
 
 		try {
@@ -260,12 +261,12 @@ public abstract class BaseStorageAdapter implements StorageAdapter {
 
 	protected abstract List<Fields> doGetFieldsListByClasses(
 			long ddmStructureId, long[] classPKs, List<String> fieldNames,
-			OrderByComparator<Fields> orderByComparator)
+			OrderByComparator orderByComparator)
 		throws Exception;
 
 	protected abstract List<Fields> doGetFieldsListByDDMStructure(
 			long ddmStructureId, List<String> fieldNames,
-			OrderByComparator<Fields> orderByComparator)
+			OrderByComparator orderByComparator)
 		throws Exception;
 
 	protected abstract Map<Long, Fields> doGetFieldsMapByClasses(
@@ -274,7 +275,7 @@ public abstract class BaseStorageAdapter implements StorageAdapter {
 
 	protected abstract List<Fields> doQuery(
 			long ddmStructureId, List<String> fieldNames, Condition condition,
-			OrderByComparator<Fields> orderByComparator)
+			OrderByComparator orderByComparator)
 		throws Exception;
 
 	protected abstract int doQueryCount(
@@ -287,7 +288,7 @@ public abstract class BaseStorageAdapter implements StorageAdapter {
 		throws Exception;
 
 	protected void validateClassFields(long classPK, Fields fields)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		DDMStorageLink ddmStorageLink =
 			DDMStorageLinkLocalServiceUtil.getClassStorageLink(classPK);
@@ -297,7 +298,7 @@ public abstract class BaseStorageAdapter implements StorageAdapter {
 
 	protected void validateDDMStructureFields(
 			long ddmStructureId, Fields fields)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		DDMStructure ddmStructure =
 			DDMStructureLocalServiceUtil.getDDMStructure(ddmStructureId);

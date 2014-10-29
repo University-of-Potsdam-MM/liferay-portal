@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,15 +14,19 @@
 
 package com.liferay.portal.cache.memory;
 
-import com.liferay.portal.kernel.cache.AbstractPortalCache;
-import com.liferay.portal.kernel.cache.PortalCacheManager;
+import com.liferay.portal.kernel.cache.CacheListener;
+import com.liferay.portal.kernel.cache.CacheListenerScope;
+import com.liferay.portal.kernel.cache.PortalCache;
+import com.liferay.portal.kernel.concurrent.ConcurrentHashSet;
 
 import java.io.Serializable;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 /**
  * @author Brian Wing Shun Chan
@@ -30,34 +34,36 @@ import java.util.concurrent.ConcurrentMap;
  * @author Shuyang Zhou
  */
 public class MemoryPortalCache<K extends Serializable, V>
-	extends AbstractPortalCache<K, V> {
+	implements PortalCache<K, V> {
 
-	public MemoryPortalCache(
-		PortalCacheManager<K, V> portalCacheManager, String name,
-		int initialCapacity) {
-
-		_portalCacheManager = portalCacheManager;
+	public MemoryPortalCache(String name, int initialCapacity) {
 		_name = name;
-
-		_concurrentMap = new ConcurrentHashMap<K, V>(initialCapacity);
+		_map = new ConcurrentHashMap<K, V>(initialCapacity);
 	}
 
+	@Override
 	public void destroy() {
 		removeAll();
 
-		_concurrentMap = null;
+		_cacheListeners = null;
+		_map = null;
 		_name = null;
 	}
 
 	@Override
-	public List<K> getKeys() {
-		List<K> keys = new ArrayList<K>();
+	public Collection<V> get(Collection<K> keys) {
+		List<V> values = new ArrayList<V>(keys.size());
 
-		for (K key : _concurrentMap.keySet()) {
-			keys.add(key);
+		for (K key : keys) {
+			values.add(get(key));
 		}
 
-		return keys;
+		return values;
+	}
+
+	@Override
+	public V get(K key) {
+		return _map.get(key);
 	}
 
 	@Override
@@ -66,100 +72,76 @@ public class MemoryPortalCache<K extends Serializable, V>
 	}
 
 	@Override
-	public PortalCacheManager<K, V> getPortalCacheManager() {
-		return _portalCacheManager;
+	public void put(K key, V value) {
+		V oldValue = _map.put(key, value);
+
+		notifyPutEvents(key, value, oldValue != null);
+	}
+
+	@Override
+	public void put(K key, V value, int timeToLive) {
+		V oldValue = _map.put(key, value);
+
+		notifyPutEvents(key, value, oldValue != null);
+	}
+
+	@Override
+	public void registerCacheListener(CacheListener<K, V> cacheListener) {
+		_cacheListeners.add(cacheListener);
+	}
+
+	@Override
+	public void registerCacheListener(
+		CacheListener<K, V> cacheListener,
+		CacheListenerScope cacheListenerScope) {
+
+		registerCacheListener(cacheListener);
+	}
+
+	@Override
+	public void remove(K key) {
+		V value = _map.remove(key);
+
+		for (CacheListener<K, V> cacheListener : _cacheListeners) {
+			cacheListener.notifyEntryRemoved(this, key, value);
+		}
 	}
 
 	@Override
 	public void removeAll() {
-		_concurrentMap.clear();
+		_map.clear();
 
-		aggregatedCacheListener.notifyRemoveAll(this);
-	}
-
-	@Override
-	protected V doGet(K key) {
-		return _concurrentMap.get(key);
-	}
-
-	@Override
-	protected void doPut(K key, V value, int timeToLive, boolean quiet) {
-		V oldValue = _concurrentMap.put(key, value);
-
-		if (quiet) {
-			return;
+		for (CacheListener<K, V> cacheListener : _cacheListeners) {
+			cacheListener.notifyRemoveAll(this);
 		}
+	}
 
-		if (oldValue != null) {
-			aggregatedCacheListener.notifyEntryUpdated(
-				this, key, value, timeToLive);
+	@Override
+	public void unregisterCacheListener(CacheListener<K, V> cacheListener) {
+		_cacheListeners.remove(cacheListener);
+	}
+
+	@Override
+	public void unregisterCacheListeners() {
+		_cacheListeners.clear();
+	}
+
+	protected void notifyPutEvents(K key, V value, boolean updated) {
+		if (updated) {
+			for (CacheListener<K, V> cacheListener : _cacheListeners) {
+				cacheListener.notifyEntryUpdated(this, key, value);
+			}
 		}
 		else {
-			aggregatedCacheListener.notifyEntryPut(
-				this, key, value, timeToLive);
+			for (CacheListener<K, V> cacheListener : _cacheListeners) {
+				cacheListener.notifyEntryPut(this, key, value);
+			}
 		}
 	}
 
-	@Override
-	protected V doPutIfAbsent(K key, V value, int timeToLive) {
-		V oldValue = _concurrentMap.putIfAbsent(key, value);
-
-		if (oldValue == null) {
-			aggregatedCacheListener.notifyEntryPut(
-				this, key, value, timeToLive);
-		}
-
-		return oldValue;
-	}
-
-	@Override
-	protected void doRemove(K key) {
-		V value = _concurrentMap.remove(key);
-
-		if (value != null) {
-			aggregatedCacheListener.notifyEntryRemoved(
-				this, key, value, DEFAULT_TIME_TO_LIVE);
-		}
-	}
-
-	@Override
-	protected boolean doRemove(K key, V value) {
-		boolean removed = _concurrentMap.remove(key, value);
-
-		if (removed) {
-			aggregatedCacheListener.notifyEntryRemoved(
-				this, key, value, DEFAULT_TIME_TO_LIVE);
-		}
-
-		return removed;
-	}
-
-	@Override
-	protected V doReplace(K key, V value, int timeToLive) {
-		V oldValue = _concurrentMap.replace(key, value);
-
-		if (oldValue != null) {
-			aggregatedCacheListener.notifyEntryUpdated(
-				this, key, value, timeToLive);
-		}
-
-		return oldValue;
-	}
-
-	@Override
-	protected boolean doReplace(K key, V oldValue, V newValue, int timeToLive) {
-		boolean replaced = _concurrentMap.replace(key, oldValue, newValue);
-
-		if (replaced) {
-			aggregatedCacheListener.notifyEntryUpdated(
-				this, key, newValue, timeToLive);
-		}
-
-		return replaced;
-	}
-
-	private ConcurrentMap<K, V> _concurrentMap;
+	private Set<CacheListener<K, V>> _cacheListeners =
+		new ConcurrentHashSet<CacheListener<K, V>>();
+	private Map<K, V> _map;
 	private String _name;
-	private PortalCacheManager<K, V> _portalCacheManager;
 
 }

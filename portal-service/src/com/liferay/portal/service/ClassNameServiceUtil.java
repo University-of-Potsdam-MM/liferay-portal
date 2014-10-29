@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -40,18 +40,6 @@ public class ClassNameServiceUtil {
 	 *
 	 * Never modify this class directly. Add custom service methods to {@link com.liferay.portal.service.impl.ClassNameServiceImpl} and rerun ServiceBuilder to regenerate this class.
 	 */
-	public static com.liferay.portal.model.ClassName fetchClassName(
-		java.lang.String value) {
-		return getService().fetchClassName(value);
-	}
-
-	public static long fetchClassNameId(java.lang.Class<?> clazz) {
-		return getService().fetchClassNameId(clazz);
-	}
-
-	public static long fetchClassNameId(java.lang.String value) {
-		return getService().fetchClassNameId(value);
-	}
 
 	/**
 	* Returns the Spring bean ID for this bean.
@@ -71,6 +59,20 @@ public class ClassNameServiceUtil {
 		getService().setBeanIdentifier(beanIdentifier);
 	}
 
+	public static com.liferay.portal.model.ClassName fetchClassName(
+		java.lang.String value)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().fetchClassName(value);
+	}
+
+	public static long fetchClassNameId(java.lang.Class<?> clazz) {
+		return getService().fetchClassNameId(clazz);
+	}
+
+	public static long fetchClassNameId(java.lang.String value) {
+		return getService().fetchClassNameId(value);
+	}
+
 	public static ClassNameService getService() {
 		if (_service == null) {
 			_service = (ClassNameService)PortalBeanLocatorUtil.locate(ClassNameService.class.getName());
@@ -85,7 +87,6 @@ public class ClassNameServiceUtil {
 	/**
 	 * @deprecated As of 6.2.0
 	 */
-	@Deprecated
 	public void setService(ClassNameService service) {
 	}
 

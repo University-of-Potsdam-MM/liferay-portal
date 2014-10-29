@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,38 +14,21 @@
 
 package com.liferay.portlet.bookmarks.service.base;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.bean.IdentifiableBean;
-import com.liferay.portal.kernel.dao.db.DB;
-import com.liferay.portal.kernel.dao.db.DBFactoryUtil;
 import com.liferay.portal.kernel.dao.jdbc.SqlUpdate;
 import com.liferay.portal.kernel.dao.jdbc.SqlUpdateFactoryUtil;
-import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
-import com.liferay.portal.kernel.dao.orm.DefaultActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
-import com.liferay.portal.kernel.dao.orm.ExportActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Projection;
-import com.liferay.portal.kernel.dao.orm.Property;
-import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.lar.ExportImportHelperUtil;
-import com.liferay.portal.kernel.lar.ManifestSummary;
-import com.liferay.portal.kernel.lar.PortletDataContext;
-import com.liferay.portal.kernel.lar.StagedModelDataHandler;
-import com.liferay.portal.kernel.lar.StagedModelDataHandlerRegistryUtil;
-import com.liferay.portal.kernel.lar.StagedModelDataHandlerUtil;
-import com.liferay.portal.kernel.lar.StagedModelType;
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.model.PersistedModel;
 import com.liferay.portal.service.BaseLocalServiceImpl;
 import com.liferay.portal.service.PersistedModelLocalServiceRegistry;
-import com.liferay.portal.service.persistence.ClassNamePersistence;
 import com.liferay.portal.service.persistence.GroupFinder;
 import com.liferay.portal.service.persistence.GroupPersistence;
 import com.liferay.portal.service.persistence.PortletPreferencesFinder;
@@ -53,7 +36,6 @@ import com.liferay.portal.service.persistence.PortletPreferencesPersistence;
 import com.liferay.portal.service.persistence.SubscriptionPersistence;
 import com.liferay.portal.service.persistence.UserFinder;
 import com.liferay.portal.service.persistence.UserPersistence;
-import com.liferay.portal.util.PortalUtil;
 
 import com.liferay.portlet.asset.service.persistence.AssetEntryFinder;
 import com.liferay.portlet.asset.service.persistence.AssetEntryPersistence;
@@ -90,7 +72,6 @@ import javax.sql.DataSource;
  * @see com.liferay.portlet.bookmarks.service.BookmarksEntryLocalServiceUtil
  * @generated
  */
-@ProviderType
 public abstract class BookmarksEntryLocalServiceBaseImpl
 	extends BaseLocalServiceImpl implements BookmarksEntryLocalService,
 		IdentifiableBean {
@@ -105,10 +86,12 @@ public abstract class BookmarksEntryLocalServiceBaseImpl
 	 *
 	 * @param bookmarksEntry the bookmarks entry
 	 * @return the bookmarks entry that was added
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
-	public BookmarksEntry addBookmarksEntry(BookmarksEntry bookmarksEntry) {
+	public BookmarksEntry addBookmarksEntry(BookmarksEntry bookmarksEntry)
+		throws SystemException {
 		bookmarksEntry.setNew(true);
 
 		return bookmarksEntryPersistence.update(bookmarksEntry);
@@ -131,11 +114,12 @@ public abstract class BookmarksEntryLocalServiceBaseImpl
 	 * @param entryId the primary key of the bookmarks entry
 	 * @return the bookmarks entry that was removed
 	 * @throws PortalException if a bookmarks entry with the primary key could not be found
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.DELETE)
 	@Override
 	public BookmarksEntry deleteBookmarksEntry(long entryId)
-		throws PortalException {
+		throws PortalException, SystemException {
 		return bookmarksEntryPersistence.remove(entryId);
 	}
 
@@ -144,10 +128,12 @@ public abstract class BookmarksEntryLocalServiceBaseImpl
 	 *
 	 * @param bookmarksEntry the bookmarks entry
 	 * @return the bookmarks entry that was removed
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.DELETE)
 	@Override
-	public BookmarksEntry deleteBookmarksEntry(BookmarksEntry bookmarksEntry) {
+	public BookmarksEntry deleteBookmarksEntry(BookmarksEntry bookmarksEntry)
+		throws SystemException {
 		return bookmarksEntryPersistence.remove(bookmarksEntry);
 	}
 
@@ -164,9 +150,12 @@ public abstract class BookmarksEntryLocalServiceBaseImpl
 	 *
 	 * @param dynamicQuery the dynamic query
 	 * @return the matching rows
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery) {
+	@SuppressWarnings("rawtypes")
+	public List dynamicQuery(DynamicQuery dynamicQuery)
+		throws SystemException {
 		return bookmarksEntryPersistence.findWithDynamicQuery(dynamicQuery);
 	}
 
@@ -181,10 +170,12 @@ public abstract class BookmarksEntryLocalServiceBaseImpl
 	 * @param start the lower bound of the range of model instances
 	 * @param end the upper bound of the range of model instances (not inclusive)
 	 * @return the range of matching rows
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
-		int end) {
+	@SuppressWarnings("rawtypes")
+	public List dynamicQuery(DynamicQuery dynamicQuery, int start, int end)
+		throws SystemException {
 		return bookmarksEntryPersistence.findWithDynamicQuery(dynamicQuery,
 			start, end);
 	}
@@ -201,10 +192,12 @@ public abstract class BookmarksEntryLocalServiceBaseImpl
 	 * @param end the upper bound of the range of model instances (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching rows
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
-		int end, OrderByComparator<T> orderByComparator) {
+	@SuppressWarnings("rawtypes")
+	public List dynamicQuery(DynamicQuery dynamicQuery, int start, int end,
+		OrderByComparator orderByComparator) throws SystemException {
 		return bookmarksEntryPersistence.findWithDynamicQuery(dynamicQuery,
 			start, end, orderByComparator);
 	}
@@ -214,9 +207,11 @@ public abstract class BookmarksEntryLocalServiceBaseImpl
 	 *
 	 * @param dynamicQuery the dynamic query
 	 * @return the number of rows that match the dynamic query
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public long dynamicQueryCount(DynamicQuery dynamicQuery) {
+	public long dynamicQueryCount(DynamicQuery dynamicQuery)
+		throws SystemException {
 		return bookmarksEntryPersistence.countWithDynamicQuery(dynamicQuery);
 	}
 
@@ -226,17 +221,34 @@ public abstract class BookmarksEntryLocalServiceBaseImpl
 	 * @param dynamicQuery the dynamic query
 	 * @param projection the projection to apply to the query
 	 * @return the number of rows that match the dynamic query
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public long dynamicQueryCount(DynamicQuery dynamicQuery,
-		Projection projection) {
+		Projection projection) throws SystemException {
 		return bookmarksEntryPersistence.countWithDynamicQuery(dynamicQuery,
 			projection);
 	}
 
 	@Override
-	public BookmarksEntry fetchBookmarksEntry(long entryId) {
+	public BookmarksEntry fetchBookmarksEntry(long entryId)
+		throws SystemException {
 		return bookmarksEntryPersistence.fetchByPrimaryKey(entryId);
+	}
+
+	/**
+	 * Returns the bookmarks entry with the matching UUID and company.
+	 *
+	 * @param uuid the bookmarks entry's UUID
+	 * @param  companyId the primary key of the company
+	 * @return the matching bookmarks entry, or <code>null</code> if a matching bookmarks entry could not be found
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public BookmarksEntry fetchBookmarksEntryByUuidAndCompanyId(String uuid,
+		long companyId) throws SystemException {
+		return bookmarksEntryPersistence.fetchByUuid_C_First(uuid, companyId,
+			null);
 	}
 
 	/**
@@ -245,10 +257,11 @@ public abstract class BookmarksEntryLocalServiceBaseImpl
 	 * @param uuid the bookmarks entry's UUID
 	 * @param groupId the primary key of the group
 	 * @return the matching bookmarks entry, or <code>null</code> if a matching bookmarks entry could not be found
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public BookmarksEntry fetchBookmarksEntryByUuidAndGroupId(String uuid,
-		long groupId) {
+		long groupId) throws SystemException {
 		return bookmarksEntryPersistence.fetchByUUID_G(uuid, groupId);
 	}
 
@@ -258,125 +271,34 @@ public abstract class BookmarksEntryLocalServiceBaseImpl
 	 * @param entryId the primary key of the bookmarks entry
 	 * @return the bookmarks entry
 	 * @throws PortalException if a bookmarks entry with the primary key could not be found
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public BookmarksEntry getBookmarksEntry(long entryId)
-		throws PortalException {
+		throws PortalException, SystemException {
 		return bookmarksEntryPersistence.findByPrimaryKey(entryId);
 	}
 
 	@Override
-	public ActionableDynamicQuery getActionableDynamicQuery() {
-		ActionableDynamicQuery actionableDynamicQuery = new DefaultActionableDynamicQuery();
-
-		actionableDynamicQuery.setBaseLocalService(com.liferay.portlet.bookmarks.service.BookmarksEntryLocalServiceUtil.getService());
-		actionableDynamicQuery.setClass(BookmarksEntry.class);
-		actionableDynamicQuery.setClassLoader(getClassLoader());
-
-		actionableDynamicQuery.setPrimaryKeyPropertyName("entryId");
-
-		return actionableDynamicQuery;
-	}
-
-	protected void initActionableDynamicQuery(
-		ActionableDynamicQuery actionableDynamicQuery) {
-		actionableDynamicQuery.setBaseLocalService(com.liferay.portlet.bookmarks.service.BookmarksEntryLocalServiceUtil.getService());
-		actionableDynamicQuery.setClass(BookmarksEntry.class);
-		actionableDynamicQuery.setClassLoader(getClassLoader());
-
-		actionableDynamicQuery.setPrimaryKeyPropertyName("entryId");
-	}
-
-	@Override
-	public ExportActionableDynamicQuery getExportActionableDynamicQuery(
-		final PortletDataContext portletDataContext) {
-		final ExportActionableDynamicQuery exportActionableDynamicQuery = new ExportActionableDynamicQuery() {
-				@Override
-				public long performCount() throws PortalException {
-					ManifestSummary manifestSummary = portletDataContext.getManifestSummary();
-
-					StagedModelType stagedModelType = getStagedModelType();
-
-					long modelAdditionCount = super.performCount();
-
-					manifestSummary.addModelAdditionCount(stagedModelType.toString(),
-						modelAdditionCount);
-
-					long modelDeletionCount = ExportImportHelperUtil.getModelDeletionCount(portletDataContext,
-							stagedModelType);
-
-					manifestSummary.addModelDeletionCount(stagedModelType.toString(),
-						modelDeletionCount);
-
-					return modelAdditionCount;
-				}
-			};
-
-		initActionableDynamicQuery(exportActionableDynamicQuery);
-
-		exportActionableDynamicQuery.setAddCriteriaMethod(new ActionableDynamicQuery.AddCriteriaMethod() {
-				@Override
-				public void addCriteria(DynamicQuery dynamicQuery) {
-					portletDataContext.addDateRangeCriteria(dynamicQuery,
-						"modifiedDate");
-
-					StagedModelDataHandler<?> stagedModelDataHandler = StagedModelDataHandlerRegistryUtil.getStagedModelDataHandler(BookmarksEntry.class.getName());
-
-					Property workflowStatusProperty = PropertyFactoryUtil.forName(
-							"status");
-
-					dynamicQuery.add(workflowStatusProperty.in(
-							stagedModelDataHandler.getExportableStatuses()));
-				}
-			});
-
-		exportActionableDynamicQuery.setCompanyId(portletDataContext.getCompanyId());
-
-		exportActionableDynamicQuery.setGroupId(portletDataContext.getScopeGroupId());
-
-		exportActionableDynamicQuery.setPerformActionMethod(new ActionableDynamicQuery.PerformActionMethod() {
-				@Override
-				public void performAction(Object object)
-					throws PortalException {
-					BookmarksEntry stagedModel = (BookmarksEntry)object;
-
-					StagedModelDataHandlerUtil.exportStagedModel(portletDataContext,
-						stagedModel);
-				}
-			});
-		exportActionableDynamicQuery.setStagedModelType(new StagedModelType(
-				PortalUtil.getClassNameId(BookmarksEntry.class.getName())));
-
-		return exportActionableDynamicQuery;
-	}
-
-	/**
-	 * @throws PortalException
-	 */
-	@Override
-	public PersistedModel deletePersistedModel(PersistedModel persistedModel)
-		throws PortalException {
-		return bookmarksEntryLocalService.deleteBookmarksEntry((BookmarksEntry)persistedModel);
-	}
-
-	@Override
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
-		throws PortalException {
+		throws PortalException, SystemException {
 		return bookmarksEntryPersistence.findByPrimaryKey(primaryKeyObj);
 	}
 
+	/**
+	 * Returns the bookmarks entry with the matching UUID and company.
+	 *
+	 * @param uuid the bookmarks entry's UUID
+	 * @param  companyId the primary key of the company
+	 * @return the matching bookmarks entry
+	 * @throws PortalException if a matching bookmarks entry could not be found
+	 * @throws SystemException if a system exception occurred
+	 */
 	@Override
-	public List<BookmarksEntry> getBookmarksEntriesByUuidAndCompanyId(
-		String uuid, long companyId) {
-		return bookmarksEntryPersistence.findByUuid_C(uuid, companyId);
-	}
-
-	@Override
-	public List<BookmarksEntry> getBookmarksEntriesByUuidAndCompanyId(
-		String uuid, long companyId, int start, int end,
-		OrderByComparator<BookmarksEntry> orderByComparator) {
-		return bookmarksEntryPersistence.findByUuid_C(uuid, companyId, start,
-			end, orderByComparator);
+	public BookmarksEntry getBookmarksEntryByUuidAndCompanyId(String uuid,
+		long companyId) throws PortalException, SystemException {
+		return bookmarksEntryPersistence.findByUuid_C_First(uuid, companyId,
+			null);
 	}
 
 	/**
@@ -386,10 +308,11 @@ public abstract class BookmarksEntryLocalServiceBaseImpl
 	 * @param groupId the primary key of the group
 	 * @return the matching bookmarks entry
 	 * @throws PortalException if a matching bookmarks entry could not be found
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public BookmarksEntry getBookmarksEntryByUuidAndGroupId(String uuid,
-		long groupId) throws PortalException {
+		long groupId) throws PortalException, SystemException {
 		return bookmarksEntryPersistence.findByUUID_G(uuid, groupId);
 	}
 
@@ -403,9 +326,11 @@ public abstract class BookmarksEntryLocalServiceBaseImpl
 	 * @param start the lower bound of the range of bookmarks entries
 	 * @param end the upper bound of the range of bookmarks entries (not inclusive)
 	 * @return the range of bookmarks entries
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public List<BookmarksEntry> getBookmarksEntries(int start, int end) {
+	public List<BookmarksEntry> getBookmarksEntries(int start, int end)
+		throws SystemException {
 		return bookmarksEntryPersistence.findAll(start, end);
 	}
 
@@ -413,9 +338,10 @@ public abstract class BookmarksEntryLocalServiceBaseImpl
 	 * Returns the number of bookmarks entries.
 	 *
 	 * @return the number of bookmarks entries
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public int getBookmarksEntriesCount() {
+	public int getBookmarksEntriesCount() throws SystemException {
 		return bookmarksEntryPersistence.countAll();
 	}
 
@@ -424,10 +350,12 @@ public abstract class BookmarksEntryLocalServiceBaseImpl
 	 *
 	 * @param bookmarksEntry the bookmarks entry
 	 * @return the bookmarks entry that was updated
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
-	public BookmarksEntry updateBookmarksEntry(BookmarksEntry bookmarksEntry) {
+	public BookmarksEntry updateBookmarksEntry(BookmarksEntry bookmarksEntry)
+		throws SystemException {
 		return bookmarksEntryPersistence.update(bookmarksEntry);
 	}
 
@@ -600,63 +528,6 @@ public abstract class BookmarksEntryLocalServiceBaseImpl
 	public void setCounterLocalService(
 		com.liferay.counter.service.CounterLocalService counterLocalService) {
 		this.counterLocalService = counterLocalService;
-	}
-
-	/**
-	 * Returns the class name local service.
-	 *
-	 * @return the class name local service
-	 */
-	public com.liferay.portal.service.ClassNameLocalService getClassNameLocalService() {
-		return classNameLocalService;
-	}
-
-	/**
-	 * Sets the class name local service.
-	 *
-	 * @param classNameLocalService the class name local service
-	 */
-	public void setClassNameLocalService(
-		com.liferay.portal.service.ClassNameLocalService classNameLocalService) {
-		this.classNameLocalService = classNameLocalService;
-	}
-
-	/**
-	 * Returns the class name remote service.
-	 *
-	 * @return the class name remote service
-	 */
-	public com.liferay.portal.service.ClassNameService getClassNameService() {
-		return classNameService;
-	}
-
-	/**
-	 * Sets the class name remote service.
-	 *
-	 * @param classNameService the class name remote service
-	 */
-	public void setClassNameService(
-		com.liferay.portal.service.ClassNameService classNameService) {
-		this.classNameService = classNameService;
-	}
-
-	/**
-	 * Returns the class name persistence.
-	 *
-	 * @return the class name persistence
-	 */
-	public ClassNamePersistence getClassNamePersistence() {
-		return classNamePersistence;
-	}
-
-	/**
-	 * Sets the class name persistence.
-	 *
-	 * @param classNamePersistence the class name persistence
-	 */
-	public void setClassNamePersistence(
-		ClassNamePersistence classNamePersistence) {
-		this.classNamePersistence = classNamePersistence;
 	}
 
 	/**
@@ -1375,18 +1246,13 @@ public abstract class BookmarksEntryLocalServiceBaseImpl
 	}
 
 	/**
-	 * Performs a SQL query.
+	 * Performs an SQL query.
 	 *
 	 * @param sql the sql query
 	 */
-	protected void runSQL(String sql) {
+	protected void runSQL(String sql) throws SystemException {
 		try {
 			DataSource dataSource = bookmarksEntryPersistence.getDataSource();
-
-			DB db = DBFactoryUtil.getDB();
-
-			sql = db.buildSQL(sql);
-			sql = PortalUtil.transformSQL(sql);
 
 			SqlUpdate sqlUpdate = SqlUpdateFactoryUtil.getSqlUpdate(dataSource,
 					sql, new int[0]);
@@ -1416,12 +1282,6 @@ public abstract class BookmarksEntryLocalServiceBaseImpl
 	protected BookmarksFolderFinder bookmarksFolderFinder;
 	@BeanReference(type = com.liferay.counter.service.CounterLocalService.class)
 	protected com.liferay.counter.service.CounterLocalService counterLocalService;
-	@BeanReference(type = com.liferay.portal.service.ClassNameLocalService.class)
-	protected com.liferay.portal.service.ClassNameLocalService classNameLocalService;
-	@BeanReference(type = com.liferay.portal.service.ClassNameService.class)
-	protected com.liferay.portal.service.ClassNameService classNameService;
-	@BeanReference(type = ClassNamePersistence.class)
-	protected ClassNamePersistence classNamePersistence;
 	@BeanReference(type = com.liferay.portal.service.GroupLocalService.class)
 	protected com.liferay.portal.service.GroupLocalService groupLocalService;
 	@BeanReference(type = com.liferay.portal.service.GroupService.class)

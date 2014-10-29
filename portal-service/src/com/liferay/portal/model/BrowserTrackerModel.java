@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -16,6 +16,7 @@ package com.liferay.portal.model;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.service.ServiceContext;
 
 import com.liferay.portlet.expando.model.ExpandoBridge;
@@ -36,7 +37,7 @@ import java.io.Serializable;
  * @generated
  */
 @ProviderType
-public interface BrowserTrackerModel extends BaseModel<BrowserTracker>, MVCCModel {
+public interface BrowserTrackerModel extends BaseModel<BrowserTracker> {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -56,22 +57,6 @@ public interface BrowserTrackerModel extends BaseModel<BrowserTracker>, MVCCMode
 	 * @param primaryKey the primary key of this browser tracker
 	 */
 	public void setPrimaryKey(long primaryKey);
-
-	/**
-	 * Returns the mvcc version of this browser tracker.
-	 *
-	 * @return the mvcc version of this browser tracker
-	 */
-	@Override
-	public long getMvccVersion();
-
-	/**
-	 * Sets the mvcc version of this browser tracker.
-	 *
-	 * @param mvccVersion the mvcc version of this browser tracker
-	 */
-	@Override
-	public void setMvccVersion(long mvccVersion);
 
 	/**
 	 * Returns the browser tracker ID of this browser tracker.
@@ -105,8 +90,9 @@ public interface BrowserTrackerModel extends BaseModel<BrowserTracker>, MVCCMode
 	 * Returns the user uuid of this browser tracker.
 	 *
 	 * @return the user uuid of this browser tracker
+	 * @throws SystemException if a system exception occurred
 	 */
-	public String getUserUuid();
+	public String getUserUuid() throws SystemException;
 
 	/**
 	 * Sets the user uuid of this browser tracker.

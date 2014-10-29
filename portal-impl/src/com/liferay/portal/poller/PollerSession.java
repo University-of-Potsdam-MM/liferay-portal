@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -29,7 +29,11 @@ public class PollerSession {
 	}
 
 	public synchronized boolean beginPortletProcessing(
-		PollerRequest pollerRequest, String responseId) {
+		PollerRequestResponsePair pollerRequestResponsePair,
+		String responseId) {
+
+		PollerRequest pollerRequest =
+			pollerRequestResponsePair.getPollerRequest();
 
 		String portletId = pollerRequest.getPortletId();
 
@@ -43,7 +47,7 @@ public class PollerSession {
 
 		_pendingResponseIds.put(portletId, responseId);
 
-		_pollerRequests.put(portletId, pollerRequest);
+		_pollerRequestResponsePairs.put(portletId, pollerRequestResponsePair);
 
 		return true;
 	}
@@ -56,7 +60,7 @@ public class PollerSession {
 		if (responseId.equals(pendingResponseId)) {
 			_pendingResponseIds.remove(portletId);
 
-			_pollerRequests.remove(portletId);
+			_pollerRequestResponsePairs.remove(portletId);
 		}
 
 		return _pendingResponseIds.isEmpty();
@@ -68,8 +72,8 @@ public class PollerSession {
 
 	private Map<String, String> _pendingResponseIds =
 		new HashMap<String, String>();
-	private Map<String, PollerRequest> _pollerRequests =
-		new HashMap<String, PollerRequest>();
+	private Map<String, PollerRequestResponsePair> _pollerRequestResponsePairs =
+		new HashMap<String, PollerRequestResponsePair>();
 	private String _pollerSessionId;
 
 }

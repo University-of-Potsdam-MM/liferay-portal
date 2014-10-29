@@ -5,21 +5,13 @@ AUI.add(
 
 		var AArray = A.Array;
 
-		var AObject = A.Object;
-
-		var REGEX_DELIMITER_NS = /_/g;
-
 		var SELECTOR_LANG_VALUE = '.language-value';
-
-		var STR_BLANK = '';
 
 		var STR_INPUT_PLACEHOLDER = 'inputPlaceholder';
 
 		var STR_INPUT_VALUE_CHANGE = '_onInputValueChange';
 
 		var STR_ITEMS = 'items';
-
-		var STR_ITEMS_ERROR = 'itemsError';
 
 		var STR_SELECTED = 'selected';
 
@@ -38,7 +30,6 @@ AUI.add(
 			{
 				ATTRS: {
 					animateClass: {
-						validator: Lang.isString,
 						value: 'highlight-animation'
 					},
 
@@ -48,15 +39,11 @@ AUI.add(
 
 					editor: {},
 
-					fieldPrefix: {
+					name: {
 						validator: Lang.isString
 					},
 
-					fieldPrefixSeparator: {
-						validator: Lang.isString
-					},
-
-					id: {
+					namespace: {
 						validator: Lang.isString
 					},
 
@@ -68,36 +55,15 @@ AUI.add(
 						value: availableLanguageIds
 					},
 
-					itemsError: {
-						validator: Lang.isArray
-					},
-
-					name: {
-						validator: Lang.isString
-					},
-
-					namespace: {
-						validator: Lang.isString
-					},
-
 					selected: {
 						valueFn: function() {
 							var instance = this;
 
 							var items = instance.get(STR_ITEMS);
 
-							var itemsError = instance.get(STR_ITEMS_ERROR);
+							defaultLanguageId = instance.get('defaultLanguageId');
 
-							var selectedIndex;
-
-							if (itemsError.length) {
-								selectedIndex = AArray.indexOf(items, itemsError[0]);
-							}
-							else {
-								selectedIndex = AArray.indexOf(items, instance.get('defaultLanguageId'));
-							}
-
-							return selectedIndex;
+							return AArray.indexOf(items, defaultLanguageId);
 						}
 					},
 
@@ -124,14 +90,14 @@ AUI.add(
 				prototype: {
 					BOUNDING_TEMPLATE: '<span />',
 
-					INPUT_HIDDEN_TEMPLATE: '<input id="{namespace}{id}_{value}" name="{namespace}{fieldNamePrefix}{name}_{value}{fieldNameSuffix}" type="hidden" value="" />',
+					INPUT_HIDDEN_TEMPLATE: '<input id="{namespace}{value}" name="{name}{value}" type="hidden" value="" />',
 
-					ITEM_TEMPLATE: '<li class="palette-item {selectedClassName}" data-column={column} data-index={index} data-row={row} data-value="{value}">' +
+					ITEM_TEMPLATE: '<td class="palette-item {selectedClassName}" data-column={column} data-index={index} data-row={row} data-value="{value}">' +
 						'<a href="" class="palette-item-inner" onclick="return false;">' +
 							'<img class="lfr-input-localized-flag" data-languageId="{value}" src="' + themeDisplay.getPathThemeImages() + '/language/{value}.png" />' +
-							'<div class="lfr-input-localized-state {stateClass}"></div>' +
+							'<div class="lfr-input-localized-state"></div>' +
 						'</a>' +
-					'</li>',
+					'</td>',
 
 					initializer: function() {
 						var instance = this;
@@ -152,21 +118,6 @@ AUI.add(
 						];
 
 						instance._eventHandles = eventHandles;
-
-						var boundingBox = instance.get('boundingBox');
-
-						boundingBox.plug(
-							A.Plugin.NodeFocusManager,
-							{
-								descendants: '.palette-item a',
-								keys: {
-									next: 'down:39,40',
-									previous: 'down:37,38'
-								}
-							}
-						);
-
-						instance._inputPlaceholderDescription = boundingBox.one('#' + inputPlaceholder.attr('id') + '_desc');
 					},
 
 					destructor: function() {
@@ -192,26 +143,19 @@ AUI.add(
 						return items[selected];
 					},
 
-					getValue: function(languageId) {
-						var instance = this;
-
-						if (!Lang.isValue(languageId)) {
-							languageId = defaultLanguageId;
-						}
-
-						return instance._getInputLanguage(languageId).val();
-					},
-
 					selectFlag: function(languageId) {
 						var instance = this;
 
 						var inputPlaceholder = instance.get(STR_INPUT_PLACEHOLDER);
 
-						var defaultLanguageValue = instance.getValue(defaultLanguageId);
+						var inputLanguage = instance._getInputLanguage(languageId);
+						var defaultInputLanguage = instance._getInputLanguage(defaultLanguageId);
+
+						var defaultLanguageValue = defaultInputLanguage.val();
 
 						var editor = instance.get('editor');
 
-						inputPlaceholder.val(instance.getValue(languageId));
+						inputPlaceholder.val(inputLanguage.val());
 
 						inputPlaceholder.attr('dir', Liferay.Language.direction[languageId]);
 						inputPlaceholder.attr('placeholder', defaultLanguageValue);
@@ -223,10 +167,6 @@ AUI.add(
 
 						if (editor) {
 							editor.setHTML(inputPlaceholder.val());
-						}
-
-						if (instance._inputPlaceholderDescription) {
-							instance._inputPlaceholderDescription.text(instance._flags.one('[data-languageId="' + languageId + '"]').attr('alt'));
 						}
 					},
 
@@ -311,30 +251,16 @@ AUI.add(
 						var instance = this;
 
 						var boundingBox = instance.get('boundingBox');
-						var fieldPrefix = instance.get('fieldPrefix');
-						var fieldPrefixSeparator = instance.get('fieldPrefixSeparator');
-						var id = instance.get('id');
 						var name = instance.get('name');
 						var namespace = instance.get('namespace');
 
-						var fieldNamePrefix = STR_BLANK;
-						var fieldNameSuffix = STR_BLANK;
-
-						if (fieldPrefix) {
-							fieldNamePrefix = fieldPrefix + fieldPrefixSeparator;
-							fieldNameSuffix = fieldPrefixSeparator;
-						}
-
-						var inputLanguage = boundingBox.one('#' + namespace + id + '_' + languageId);
+						var inputLanguage = boundingBox.one('#' + namespace + languageId);
 
 						if (!inputLanguage) {
 							inputLanguage = A.Node.create(
 								A.Lang.sub(
 									instance.INPUT_HIDDEN_TEMPLATE,
 									{
-										fieldNamePrefix: fieldNamePrefix,
-										fieldNameSuffix: fieldNameSuffix,
-										id: id,
 										name: name,
 										namespace: namespace,
 										value: languageId
@@ -434,7 +360,7 @@ AUI.add(
 
 						AArray.each(
 							flags,
-							function(item, index) {
+							function(item, index, collection) {
 								var flagNode = instance.getItemByIndex(index);
 
 								flagNode.toggleClass(
@@ -443,28 +369,6 @@ AUI.add(
 								);
 							}
 						);
-					},
-
-					_valueFormatterFn: function() {
-						return function(items, index, row, column, selected) {
-							var instance = this;
-
-							var item = items[index];
-
-							var itemsError = instance.get(STR_ITEMS_ERROR);
-
-							return Lang.sub(
-								instance.ITEM_TEMPLATE,
-								{
-									column: column,
-									index: index,
-									row: row,
-									selectedClassName: selected ? 'palette-item-selected' : STR_BLANK,
-									stateClass: AArray.indexOf(itemsError, item) >= 0 ? 'lfr-input-localized-state-error' : STR_BLANK,
-									value: Lang.isObject(item) ? item.value : item
-								}
-							);
-						};
 					},
 
 					_animating: null,
@@ -581,29 +485,6 @@ AUI.add(
 		);
 
 		Liferay.InputLocalized = InputLocalized;
-
-		Liferay.on(
-			'destroyPortlet',
-			function(event) {
-				AObject.each(
-					Liferay.InputLocalized._instances,
-					function(item, index) {
-						if (item.get('namespace').replace(REGEX_DELIMITER_NS, STR_BLANK) === event.portletId) {
-							item.destroy();
-						}
-					}
-				);
-
-				AObject.each(
-					Liferay.InputLocalized._registered,
-					function(item, index) {
-						if (item.namespace.replace(REGEX_DELIMITER_NS, STR_BLANK) === event.portletId) {
-							Liferay.InputLocalized.unregister(index);
-						}
-					}
-				);
-			}
-		);
 	},
 	'',
 	{

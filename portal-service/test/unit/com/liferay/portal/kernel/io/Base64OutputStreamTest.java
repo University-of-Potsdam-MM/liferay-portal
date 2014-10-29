@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -32,19 +32,21 @@ public class Base64OutputStreamTest {
 		ByteArrayOutputStream byteArrayOutputStream =
 			new ByteArrayOutputStream();
 
-		try (Base64OutputStream base64OutputStream = new Base64OutputStream(
-				byteArrayOutputStream)) {
+		Base64OutputStream base64OutputStream = new Base64OutputStream(
+			byteArrayOutputStream);
 
-			base64OutputStream.write('A');
-		}
+		base64OutputStream.write('A');
+
+		base64OutputStream.close();
+
+		ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(
+			byteArrayOutputStream.toByteArray());
 
 		byte[] bytes = new byte[4];
 
-		try (ByteArrayInputStream byteArrayInputStream =
-				new ByteArrayInputStream(byteArrayOutputStream.toByteArray())) {
+		byteArrayInputStream.read(bytes);
 
-			byteArrayInputStream.read(bytes);
-		}
+		byteArrayInputStream.close();
 
 		if ((bytes[3] != CharPool.EQUAL) || (bytes[2] != CharPool.EQUAL)) {
 			Assert.fail();
@@ -56,17 +58,19 @@ public class Base64OutputStreamTest {
 		ByteArrayOutputStream byteArrayOutputStream =
 			new ByteArrayOutputStream();
 
-		try (Base64OutputStream base64OutputStream = new Base64OutputStream(
-				byteArrayOutputStream)) {
+		Base64OutputStream base64OutputStream = new Base64OutputStream(
+			byteArrayOutputStream);
 
-			base64OutputStream.encodeUnit((byte)'A');
-		}
+		base64OutputStream.encodeUnit((byte)'A');
 
-		try (ByteArrayInputStream byteArrayInputStream =
-				new ByteArrayInputStream(byteArrayOutputStream.toByteArray())) {
+		base64OutputStream.close();
 
-			Assert.assertEquals(4, byteArrayInputStream.read(new byte[4]));
-		}
+		ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(
+			byteArrayOutputStream.toByteArray());
+
+		Assert.assertEquals(4, byteArrayInputStream.read(new byte[4]));
+
+		byteArrayInputStream.close();
 	}
 
 	@Test
@@ -74,17 +78,19 @@ public class Base64OutputStreamTest {
 		ByteArrayOutputStream byteArrayOutputStream =
 			new ByteArrayOutputStream();
 
-		try (Base64OutputStream base64OutputStream = new Base64OutputStream(
-				byteArrayOutputStream)) {
+		Base64OutputStream base64OutputStream = new Base64OutputStream(
+			byteArrayOutputStream);
 
-			base64OutputStream.encodeUnit((byte)'A', (byte)'B');
-		}
+		base64OutputStream.encodeUnit((byte)'A', (byte)'B');
 
-		try (ByteArrayInputStream byteArrayInputStream =
-				new ByteArrayInputStream(byteArrayOutputStream.toByteArray())) {
+		base64OutputStream.close();
 
-			Assert.assertEquals(4, byteArrayInputStream.read(new byte[4]));
-		}
+		ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(
+			byteArrayOutputStream.toByteArray());
+
+		Assert.assertEquals(4, byteArrayInputStream.read(new byte[4]));
+
+		byteArrayInputStream.close();
 	}
 
 	@Test
@@ -92,17 +98,19 @@ public class Base64OutputStreamTest {
 		ByteArrayOutputStream byteArrayOutputStream =
 			new ByteArrayOutputStream();
 
-		try (Base64OutputStream base64OutputStream = new Base64OutputStream(
-				byteArrayOutputStream)) {
+		Base64OutputStream base64OutputStream = new Base64OutputStream(
+			byteArrayOutputStream);
 
-			base64OutputStream.encodeUnit((byte)'A', (byte)'B', (byte)'C');
-		}
+		base64OutputStream.encodeUnit((byte)'A', (byte)'B', (byte)'C');
 
-		try (ByteArrayInputStream byteArrayInputStream =
-				new ByteArrayInputStream(byteArrayOutputStream.toByteArray())) {
+		base64OutputStream.close();
 
-			Assert.assertEquals(4, byteArrayInputStream.read(new byte[4]));
-		}
+		ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(
+			byteArrayOutputStream.toByteArray());
+
+		Assert.assertEquals(4, byteArrayInputStream.read(new byte[4]));
+
+		byteArrayInputStream.close();
 	}
 
 	@Test
@@ -143,11 +151,14 @@ public class Base64OutputStreamTest {
 
 	@Test
 	public void testGetChar() {
-		try (Base64OutputStream base64OutputStream = new Base64OutputStream(
-				new ByteArrayOutputStream())) {
+		try {
+			Base64OutputStream base64OutputStream = new Base64OutputStream(
+				new ByteArrayOutputStream());
 
 			Assert.assertEquals('A', base64OutputStream.getChar(0));
 			Assert.assertEquals('?', base64OutputStream.getChar(64));
+
+			base64OutputStream.close();
 		}
 		catch (Exception e) {
 			Assert.fail(e.getMessage());
@@ -159,21 +170,23 @@ public class Base64OutputStreamTest {
 		ByteArrayOutputStream byteArrayOutputStream =
 			new ByteArrayOutputStream();
 
-		try (Base64OutputStream base64OutputStream = new Base64OutputStream(
-				byteArrayOutputStream)) {
+		Base64OutputStream base64OutputStream = new Base64OutputStream(
+			byteArrayOutputStream);
 
-			byte[] bytes = {'A', 'B', 'C', 'A', 'B', 'C'};
+		byte[] bytes = {'A', 'B', 'C', 'A', 'B', 'C'};
 
-			base64OutputStream.write(bytes, 0, 1);
-			base64OutputStream.write(bytes, 1, 2);
-			base64OutputStream.write(bytes, 3, 3);
-		}
+		base64OutputStream.write(bytes, 0, 1);
+		base64OutputStream.write(bytes, 1, 2);
+		base64OutputStream.write(bytes, 3, 3);
 
-		try (ByteArrayInputStream byteArrayInputStream =
-				new ByteArrayInputStream(byteArrayOutputStream.toByteArray())) {
+		base64OutputStream.close();
 
-			Assert.assertEquals(8, byteArrayInputStream.read(new byte[8]));
-		}
+		ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(
+			byteArrayOutputStream.toByteArray());
+
+		Assert.assertEquals(8, byteArrayInputStream.read(new byte[8]));
+
+		byteArrayInputStream.close();
 	}
 
 	@Test
@@ -181,17 +194,19 @@ public class Base64OutputStreamTest {
 		ByteArrayOutputStream byteArrayOutputStream =
 			new ByteArrayOutputStream();
 
-		try (Base64OutputStream base64OutputStream = new Base64OutputStream(
-				byteArrayOutputStream)) {
+		Base64OutputStream base64OutputStream = new Base64OutputStream(
+			byteArrayOutputStream);
 
-			base64OutputStream.write(new byte[] {'A', 'B', 'C'});
-		}
+		base64OutputStream.write(new byte[] {'A', 'B', 'C'});
 
-		try (ByteArrayInputStream byteArrayInputStream =
-				new ByteArrayInputStream(byteArrayOutputStream.toByteArray())) {
+		base64OutputStream.close();
 
-			Assert.assertEquals(4, byteArrayInputStream.read(new byte[4]));
-		}
+		ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(
+			byteArrayOutputStream.toByteArray());
+
+		Assert.assertEquals(4, byteArrayInputStream.read(new byte[4]));
+
+		byteArrayInputStream.close();
 	}
 
 	@Test
@@ -199,19 +214,21 @@ public class Base64OutputStreamTest {
 		ByteArrayOutputStream byteArrayOutputStream =
 			new ByteArrayOutputStream();
 
-		try (Base64OutputStream base64OutputStream = new Base64OutputStream(
-				byteArrayOutputStream)) {
+		Base64OutputStream base64OutputStream = new Base64OutputStream(
+			byteArrayOutputStream);
 
-			base64OutputStream.write('A');
-			base64OutputStream.write('A');
-			base64OutputStream.write('A');
-		}
+		base64OutputStream.write('A');
+		base64OutputStream.write('A');
+		base64OutputStream.write('A');
 
-		try (ByteArrayInputStream byteArrayInputStream =
-				new ByteArrayInputStream(byteArrayOutputStream.toByteArray())) {
+		base64OutputStream.close();
 
-			Assert.assertEquals(4, byteArrayInputStream.read(new byte[4]));
-		}
+		ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(
+			byteArrayOutputStream.toByteArray());
+
+		Assert.assertEquals(4, byteArrayInputStream.read(new byte[4]));
+
+		byteArrayInputStream.close();
 	}
 
 }

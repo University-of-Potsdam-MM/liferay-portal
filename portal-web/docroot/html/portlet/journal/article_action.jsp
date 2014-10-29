@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -32,7 +32,7 @@ else {
 %>
 
 <span class="entry-action overlay">
-	<liferay-ui:icon-menu direction="down" icon="<%= StringPool.BLANK %>" message="<%= StringPool.BLANK %>" showWhenSingleIcon="<%= true %>">
+	<liferay-ui:icon-menu direction="down" extended="<%= false %>" icon="<%= StringPool.BLANK %>" message="<%= StringPool.BLANK %>" showWhenSingleIcon="<%= true %>" triggerCssClass="btn">
 		<c:if test="<%= JournalArticlePermission.contains(permissionChecker, article, ActionKeys.UPDATE) %>">
 			<portlet:renderURL var="editURL">
 				<portlet:param name="struts_action" value="/journal/edit_article" />
@@ -46,23 +46,22 @@ else {
 			</portlet:renderURL>
 
 			<liferay-ui:icon
-				iconCssClass="icon-edit"
-				message="edit"
+				image="edit"
 				url="<%= editURL %>"
 			/>
 		</c:if>
 
 		<c:if test="<%= JournalArticlePermission.contains(permissionChecker, article, ActionKeys.UPDATE) %>">
 			<portlet:renderURL var="moveURL">
-				<portlet:param name="struts_action" value="/journal/move_entry" />
+				<portlet:param name="struts_action" value="/journal/move_article" />
 				<portlet:param name="redirect" value="<%= currentURL %>" />
 				<portlet:param name="backURL" value="<%= currentURL %>" />
 				<portlet:param name="referringPortletResource" value="<%= referringPortletResource %>" />
-				<portlet:param name="articleIds" value="<%= article.getArticleId() %>" />
+				<portlet:param name="articleId" value="<%= article.getArticleId() %>" />
 			</portlet:renderURL>
 
 			<liferay-ui:icon
-				iconCssClass="icon-move"
+				image="submit"
 				message="move"
 				url="<%= moveURL %>"
 			/>
@@ -71,15 +70,14 @@ else {
 		<c:if test="<%= JournalArticlePermission.contains(permissionChecker, article, ActionKeys.PERMISSIONS) %>">
 			<liferay-security:permissionsURL
 				modelResource="<%= JournalArticle.class.getName() %>"
-				modelResourceDescription="<%= HtmlUtil.escape(article.getTitle(locale)) %>"
+				modelResourceDescription="<%= article.getTitle(locale) %>"
 				resourcePrimKey="<%= String.valueOf(article.getResourcePrimKey()) %>"
 				var="permissionsURL"
 				windowState="<%= LiferayWindowState.POP_UP.toString() %>"
 			/>
 
 			<liferay-ui:icon
-				iconCssClass="icon-lock"
-				message="permissions"
+				image="permissions"
 				method="get"
 				url="<%= permissionsURL %>"
 				useDialog="<%= true %>"
@@ -99,8 +97,7 @@ else {
 			%>
 
 			<liferay-ui:icon
-				iconCssClass="icon-search"
-				message="preview"
+				image="preview"
 				onClick="<%= taglibOnClick %>"
 				url="javascript:;"
 			/>
@@ -114,13 +111,13 @@ else {
 				</portlet:renderURL>
 
 				<liferay-ui:icon
-					iconCssClass="icon-time"
+					image="time"
 					message="view-history"
 					url="<%= viewHistoryURL.toString() %>"
 				/>
 			</c:if>
 
-			<c:if test="<%= JournalFolderPermission.contains(permissionChecker, scopeGroupId, article.getFolderId(), ActionKeys.ADD_ARTICLE) %>">
+			<c:if test="<%= JournalPermission.contains(permissionChecker, scopeGroupId, ActionKeys.ADD_ARTICLE) %>">
 				<portlet:renderURL var="copyURL">
 					<portlet:param name="struts_action" value="/journal/copy_article" />
 					<portlet:param name="redirect" value="<%= currentURL %>" />
@@ -130,8 +127,7 @@ else {
 				</portlet:renderURL>
 
 				<liferay-ui:icon
-					iconCssClass="icon-copy"
-					message="copy"
+					image="copy"
 					url="<%= copyURL.toString() %>"
 				/>
 			</c:if>
@@ -147,8 +143,7 @@ else {
 			</portlet:actionURL>
 
 			<liferay-ui:icon
-				iconCssClass="icon-time"
-				message="expire"
+				image="expire"
 				url="<%= expireURL %>"
 			/>
 		</c:if>

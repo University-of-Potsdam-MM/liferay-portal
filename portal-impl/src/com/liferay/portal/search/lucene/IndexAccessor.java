@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -22,7 +22,6 @@ import java.util.Collection;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.store.Directory;
 
 /**
@@ -32,8 +31,6 @@ import org.apache.lucene.store.Directory;
 public interface IndexAccessor {
 
 	public static final long DEFAULT_LAST_GENERATION = -1;
-
-	public IndexSearcher acquireIndexSearcher() throws IOException;
 
 	public void addDocument(Document document) throws IOException;
 
@@ -53,12 +50,7 @@ public interface IndexAccessor {
 
 	public Directory getLuceneDir();
 
-	public void invalidate();
-
 	public void loadIndex(InputStream inputStream) throws IOException;
-
-	public void releaseIndexSearcher(IndexSearcher indexSearcher)
-		throws IOException;
 
 	public void updateDocument(Term term, Document document) throws IOException;
 

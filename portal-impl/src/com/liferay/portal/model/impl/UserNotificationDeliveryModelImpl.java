@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,21 +14,17 @@
 
 package com.liferay.portal.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
-import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.CacheModel;
-import com.liferay.portal.model.User;
 import com.liferay.portal.model.UserNotificationDelivery;
 import com.liferay.portal.model.UserNotificationDeliveryModel;
 import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.service.UserLocalServiceUtil;
 import com.liferay.portal.util.PortalUtil;
 
 import com.liferay.portlet.expando.model.ExpandoBridge;
@@ -54,7 +50,6 @@ import java.util.Map;
  * @see com.liferay.portal.model.UserNotificationDeliveryModel
  * @generated
  */
-@ProviderType
 public class UserNotificationDeliveryModelImpl extends BaseModelImpl<UserNotificationDelivery>
 	implements UserNotificationDeliveryModel {
 	/*
@@ -64,7 +59,6 @@ public class UserNotificationDeliveryModelImpl extends BaseModelImpl<UserNotific
 	 */
 	public static final String TABLE_NAME = "UserNotificationDelivery";
 	public static final Object[][] TABLE_COLUMNS = {
-			{ "mvccVersion", Types.BIGINT },
 			{ "userNotificationDeliveryId", Types.BIGINT },
 			{ "companyId", Types.BIGINT },
 			{ "userId", Types.BIGINT },
@@ -74,7 +68,7 @@ public class UserNotificationDeliveryModelImpl extends BaseModelImpl<UserNotific
 			{ "deliveryType", Types.INTEGER },
 			{ "deliver", Types.BOOLEAN }
 		};
-	public static final String TABLE_SQL_CREATE = "create table UserNotificationDelivery (mvccVersion LONG default 0,userNotificationDeliveryId LONG not null primary key,companyId LONG,userId LONG,portletId VARCHAR(200) null,classNameId LONG,notificationType INTEGER,deliveryType INTEGER,deliver BOOLEAN)";
+	public static final String TABLE_SQL_CREATE = "create table UserNotificationDelivery (userNotificationDeliveryId LONG not null primary key,companyId LONG,userId LONG,portletId VARCHAR(200) null,classNameId LONG,notificationType INTEGER,deliveryType INTEGER,deliver BOOLEAN)";
 	public static final String TABLE_SQL_DROP = "drop table UserNotificationDelivery";
 	public static final String ORDER_BY_JPQL = " ORDER BY userNotificationDelivery.userNotificationDeliveryId ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY UserNotificationDelivery.userNotificationDeliveryId ASC";
@@ -90,12 +84,12 @@ public class UserNotificationDeliveryModelImpl extends BaseModelImpl<UserNotific
 	public static final boolean COLUMN_BITMASK_ENABLED = GetterUtil.getBoolean(com.liferay.portal.util.PropsUtil.get(
 				"value.object.column.bitmask.enabled.com.liferay.portal.model.UserNotificationDelivery"),
 			true);
-	public static final long CLASSNAMEID_COLUMN_BITMASK = 1L;
-	public static final long DELIVERYTYPE_COLUMN_BITMASK = 2L;
-	public static final long NOTIFICATIONTYPE_COLUMN_BITMASK = 4L;
-	public static final long PORTLETID_COLUMN_BITMASK = 8L;
-	public static final long USERID_COLUMN_BITMASK = 16L;
-	public static final long USERNOTIFICATIONDELIVERYID_COLUMN_BITMASK = 32L;
+	public static long CLASSNAMEID_COLUMN_BITMASK = 1L;
+	public static long DELIVERYTYPE_COLUMN_BITMASK = 2L;
+	public static long NOTIFICATIONTYPE_COLUMN_BITMASK = 4L;
+	public static long PORTLETID_COLUMN_BITMASK = 8L;
+	public static long USERID_COLUMN_BITMASK = 16L;
+	public static long USERNOTIFICATIONDELIVERYID_COLUMN_BITMASK = 32L;
 	public static final long LOCK_EXPIRATION_TIME = GetterUtil.getLong(com.liferay.portal.util.PropsUtil.get(
 				"lock.expiration.time.com.liferay.portal.model.UserNotificationDelivery"));
 
@@ -136,7 +130,6 @@ public class UserNotificationDeliveryModelImpl extends BaseModelImpl<UserNotific
 	public Map<String, Object> getModelAttributes() {
 		Map<String, Object> attributes = new HashMap<String, Object>();
 
-		attributes.put("mvccVersion", getMvccVersion());
 		attributes.put("userNotificationDeliveryId",
 			getUserNotificationDeliveryId());
 		attributes.put("companyId", getCompanyId());
@@ -147,20 +140,11 @@ public class UserNotificationDeliveryModelImpl extends BaseModelImpl<UserNotific
 		attributes.put("deliveryType", getDeliveryType());
 		attributes.put("deliver", getDeliver());
 
-		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
-		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
-
 		return attributes;
 	}
 
 	@Override
 	public void setModelAttributes(Map<String, Object> attributes) {
-		Long mvccVersion = (Long)attributes.get("mvccVersion");
-
-		if (mvccVersion != null) {
-			setMvccVersion(mvccVersion);
-		}
-
 		Long userNotificationDeliveryId = (Long)attributes.get(
 				"userNotificationDeliveryId");
 
@@ -212,16 +196,6 @@ public class UserNotificationDeliveryModelImpl extends BaseModelImpl<UserNotific
 	}
 
 	@Override
-	public long getMvccVersion() {
-		return _mvccVersion;
-	}
-
-	@Override
-	public void setMvccVersion(long mvccVersion) {
-		_mvccVersion = mvccVersion;
-	}
-
-	@Override
 	public long getUserNotificationDeliveryId() {
 		return _userNotificationDeliveryId;
 	}
@@ -260,19 +234,13 @@ public class UserNotificationDeliveryModelImpl extends BaseModelImpl<UserNotific
 	}
 
 	@Override
-	public String getUserUuid() {
-		try {
-			User user = UserLocalServiceUtil.getUserById(getUserId());
-
-			return user.getUuid();
-		}
-		catch (PortalException pe) {
-			return StringPool.BLANK;
-		}
+	public String getUserUuid() throws SystemException {
+		return PortalUtil.getUserValue(getUserId(), "uuid", _userUuid);
 	}
 
 	@Override
 	public void setUserUuid(String userUuid) {
+		_userUuid = userUuid;
 	}
 
 	public long getOriginalUserId() {
@@ -436,7 +404,6 @@ public class UserNotificationDeliveryModelImpl extends BaseModelImpl<UserNotific
 	public Object clone() {
 		UserNotificationDeliveryImpl userNotificationDeliveryImpl = new UserNotificationDeliveryImpl();
 
-		userNotificationDeliveryImpl.setMvccVersion(getMvccVersion());
 		userNotificationDeliveryImpl.setUserNotificationDeliveryId(getUserNotificationDeliveryId());
 		userNotificationDeliveryImpl.setCompanyId(getCompanyId());
 		userNotificationDeliveryImpl.setUserId(getUserId());
@@ -494,16 +461,6 @@ public class UserNotificationDeliveryModelImpl extends BaseModelImpl<UserNotific
 	}
 
 	@Override
-	public boolean isEntityCacheEnabled() {
-		return ENTITY_CACHE_ENABLED;
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return FINDER_CACHE_ENABLED;
-	}
-
-	@Override
 	public void resetOriginalValues() {
 		UserNotificationDeliveryModelImpl userNotificationDeliveryModelImpl = this;
 
@@ -532,8 +489,6 @@ public class UserNotificationDeliveryModelImpl extends BaseModelImpl<UserNotific
 	public CacheModel<UserNotificationDelivery> toCacheModel() {
 		UserNotificationDeliveryCacheModel userNotificationDeliveryCacheModel = new UserNotificationDeliveryCacheModel();
 
-		userNotificationDeliveryCacheModel.mvccVersion = getMvccVersion();
-
 		userNotificationDeliveryCacheModel.userNotificationDeliveryId = getUserNotificationDeliveryId();
 
 		userNotificationDeliveryCacheModel.companyId = getCompanyId();
@@ -561,11 +516,9 @@ public class UserNotificationDeliveryModelImpl extends BaseModelImpl<UserNotific
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(19);
+		StringBundler sb = new StringBundler(17);
 
-		sb.append("{mvccVersion=");
-		sb.append(getMvccVersion());
-		sb.append(", userNotificationDeliveryId=");
+		sb.append("{userNotificationDeliveryId=");
 		sb.append(getUserNotificationDeliveryId());
 		sb.append(", companyId=");
 		sb.append(getCompanyId());
@@ -588,16 +541,12 @@ public class UserNotificationDeliveryModelImpl extends BaseModelImpl<UserNotific
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(31);
+		StringBundler sb = new StringBundler(28);
 
 		sb.append("<model><model-name>");
 		sb.append("com.liferay.portal.model.UserNotificationDelivery");
 		sb.append("</model-name>");
 
-		sb.append(
-			"<column><column-name>mvccVersion</column-name><column-value><![CDATA[");
-		sb.append(getMvccVersion());
-		sb.append("]]></column-value></column>");
 		sb.append(
 			"<column><column-name>userNotificationDeliveryId</column-name><column-value><![CDATA[");
 		sb.append(getUserNotificationDeliveryId());
@@ -636,14 +585,14 @@ public class UserNotificationDeliveryModelImpl extends BaseModelImpl<UserNotific
 		return sb.toString();
 	}
 
-	private static final ClassLoader _classLoader = UserNotificationDelivery.class.getClassLoader();
-	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
+	private static ClassLoader _classLoader = UserNotificationDelivery.class.getClassLoader();
+	private static Class<?>[] _escapedModelInterfaces = new Class[] {
 			UserNotificationDelivery.class
 		};
-	private long _mvccVersion;
 	private long _userNotificationDeliveryId;
 	private long _companyId;
 	private long _userId;
+	private String _userUuid;
 	private long _originalUserId;
 	private boolean _setOriginalUserId;
 	private String _portletId;

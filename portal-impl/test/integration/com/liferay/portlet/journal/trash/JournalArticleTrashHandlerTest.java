@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,46 +15,32 @@
 package com.liferay.portlet.journal.trash;
 
 import com.liferay.portal.kernel.test.ExecutionTestListeners;
-import com.liferay.portal.kernel.trash.TrashHandler;
-import com.liferay.portal.kernel.trash.TrashHandlerRegistryUtil;
-import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.model.BaseModel;
 import com.liferay.portal.model.ClassedModel;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.WorkflowedModel;
 import com.liferay.portal.service.ServiceContext;
+import com.liferay.portal.service.ServiceTestUtil;
+import com.liferay.portal.test.LiferayIntegrationJUnitTestRunner;
+import com.liferay.portal.test.MainServletExecutionTestListener;
 import com.liferay.portal.test.Sync;
 import com.liferay.portal.test.SynchronousDestinationExecutionTestListener;
-import com.liferay.portal.test.listeners.MainServletExecutionTestListener;
-import com.liferay.portal.test.runners.LiferayIntegrationJUnitTestRunner;
-import com.liferay.portal.util.test.RandomTestUtil;
-import com.liferay.portal.util.test.ServiceContextTestUtil;
-import com.liferay.portal.util.test.TestPropsValues;
-import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
-import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
-import com.liferay.portlet.dynamicdatamapping.util.test.DDMStructureTestUtil;
-import com.liferay.portlet.dynamicdatamapping.util.test.DDMTemplateTestUtil;
+import com.liferay.portal.util.TestPropsValues;
 import com.liferay.portlet.journal.model.JournalArticle;
 import com.liferay.portlet.journal.model.JournalArticleResource;
 import com.liferay.portlet.journal.model.JournalFolder;
 import com.liferay.portlet.journal.model.JournalFolderConstants;
-import com.liferay.portlet.journal.service.JournalArticleImageLocalServiceUtil;
 import com.liferay.portlet.journal.service.JournalArticleLocalServiceUtil;
 import com.liferay.portlet.journal.service.JournalArticleResourceLocalServiceUtil;
 import com.liferay.portlet.journal.service.JournalArticleServiceUtil;
 import com.liferay.portlet.journal.service.JournalFolderServiceUtil;
-import com.liferay.portlet.journal.util.test.JournalTestUtil;
+import com.liferay.portlet.journal.util.JournalTestUtil;
 import com.liferay.portlet.trash.BaseTrashHandlerTestCase;
 import com.liferay.portlet.trash.util.TrashUtil;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import org.junit.Assert;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
@@ -68,67 +54,6 @@ import org.junit.runner.RunWith;
 @RunWith(LiferayIntegrationJUnitTestRunner.class)
 @Sync
 public class JournalArticleTrashHandlerTest extends BaseTrashHandlerTestCase {
-
-	@Test
-	public void testArticleImages() throws Exception {
-		ServiceContext serviceContext =
-			ServiceContextTestUtil.getServiceContext(group.getGroupId());
-
-		int initialArticleImagesCount =
-			JournalArticleImageLocalServiceUtil.getArticleImagesCount(
-				group.getGroupId());
-
-		Class<?> clazz = getClass();
-
-		ClassLoader classLoader = clazz.getClassLoader();
-
-		String definition = StringUtil.read(
-			classLoader,
-			"com/liferay/portlet/journal/dependencies" +
-				"/test-ddm-structure-image-field.xml");
-
-		DDMStructure ddmStructure = DDMStructureTestUtil.addStructure(
-			serviceContext.getScopeGroupId(), JournalArticle.class.getName(),
-			definition);
-
-		DDMTemplate ddmTemplate = DDMTemplateTestUtil.addTemplate(
-			serviceContext.getScopeGroupId(), ddmStructure.getStructureId());
-
-		String content = StringUtil.read(
-			classLoader,
-			"com/liferay/portlet/journal/dependencies" +
-				"/test-journal-content-image-field.xml");
-
-		Map<String, byte[]> images = new HashMap<String, byte[]>();
-
-		images.put(
-			"_image_1_0_en_US",
-			FileUtil.getBytes(
-				clazz,
-				"/com/liferay/portlet/journal/dependencies/liferay.png"));
-
-		baseModel = JournalTestUtil.addArticleWithXMLContent(
-			JournalFolderConstants.DEFAULT_PARENT_FOLDER_ID, content,
-			ddmStructure.getStructureKey(), ddmTemplate.getTemplateKey(),
-			images, serviceContext);
-
-		Assert.assertEquals(
-			initialArticleImagesCount + 1,
-			JournalArticleImageLocalServiceUtil.getArticleImagesCount(
-				group.getGroupId()));
-
-		moveBaseModelToTrash((Long)baseModel.getPrimaryKeyObj());
-
-		TrashHandler trashHandler = TrashHandlerRegistryUtil.getTrashHandler(
-			getBaseModelClassName());
-
-		trashHandler.deleteTrashEntry(getTrashEntryClassPK(baseModel));
-
-		Assert.assertEquals(
-			initialArticleImagesCount,
-			JournalArticleImageLocalServiceUtil.getArticleImagesCount(
-				group.getGroupId()));
-	}
 
 	@Override
 	protected BaseModel<?> addBaseModelWithWorkflow(
@@ -178,21 +103,16 @@ public class JournalArticleTrashHandlerTest extends BaseTrashHandlerTestCase {
 
 	@Override
 	protected Long getAssetClassPK(ClassedModel classedModel) {
-		if (classedModel instanceof JournalArticle) {
-			JournalArticle article = (JournalArticle)classedModel;
+		JournalArticle article = (JournalArticle)classedModel;
 
-			try {
-				JournalArticleResource journalArticleResource =
-					JournalArticleResourceLocalServiceUtil.getArticleResource(
-						article.getResourcePrimKey());
+		try {
+			JournalArticleResource journalArticleResource =
+				JournalArticleResourceLocalServiceUtil.getArticleResource(
+					article.getResourcePrimKey());
 
-				return journalArticleResource.getResourcePrimKey();
-			}
-			catch (Exception e) {
-				return super.getAssetClassPK(classedModel);
-			}
+			return journalArticleResource.getResourcePrimKey();
 		}
-		else {
+		catch (Exception e) {
 			return super.getAssetClassPK(classedModel);
 		}
 	}
@@ -245,22 +165,12 @@ public class JournalArticleTrashHandlerTest extends BaseTrashHandlerTestCase {
 
 	@Override
 	protected BaseModel<?> getParentBaseModel(
-			Group group, long parentBaseModelId, ServiceContext serviceContext)
-		throws Exception {
-
-		return JournalTestUtil.addFolder(
-			group.getGroupId(), parentBaseModelId,
-			RandomTestUtil.randomString(_FOLDER_NAME_MAX_LENGTH));
-	}
-
-	@Override
-	protected BaseModel<?> getParentBaseModel(
 			Group group, ServiceContext serviceContext)
 		throws Exception {
 
-		return getParentBaseModel(
-			group, JournalFolderConstants.DEFAULT_PARENT_FOLDER_ID,
-			serviceContext);
+		return JournalTestUtil.addFolder(
+			group.getGroupId(), JournalFolderConstants.DEFAULT_PARENT_FOLDER_ID,
+			ServiceTestUtil.randomString(_FOLDER_NAME_MAX_LENGTH));
 	}
 
 	@Override
@@ -344,7 +254,7 @@ public class JournalArticleTrashHandlerTest extends BaseTrashHandlerTestCase {
 
 		return JournalTestUtil.updateArticle(
 			article, "Content: Enterprise. Open Source. For Life.",
-			article.getContent(), false, true, serviceContext);
+			article.getContent(), serviceContext);
 	}
 
 	private static final int _FOLDER_NAME_MAX_LENGTH = 100;

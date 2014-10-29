@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -110,11 +110,11 @@ public class LayoutServiceSoap {
 	found, if the group did not have permission to manage the
 	layouts involved, if layout values were invalid, or if a
 	portal exception occurred
+	* @throws SystemException if a system exception occurred
 	* @deprecated As of 6.2.0, replaced by {@link #addLayout(long, boolean,
 	long, Map, Map, Map, Map, Map, String, String, boolean, Map,
 	ServiceContext)}
 	*/
-	@Deprecated
 	public static com.liferay.portal.model.LayoutSoap addLayout(long groupId,
 		boolean privateLayout, long parentLayoutId,
 		java.lang.String[] localeNamesMapLanguageIds,
@@ -199,6 +199,7 @@ public class LayoutServiceSoap {
 	found, if the group did not have permission to manage the layouts
 	involved, if layout values were invalid, or if a portal exception
 	occurred
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.LayoutSoap addLayout(long groupId,
 		boolean privateLayout, long parentLayoutId,
@@ -284,6 +285,7 @@ public class LayoutServiceSoap {
 	found, if the group did not have permission to manage the layouts
 	involved, if layout values were invalid, or if a portal exception
 	occurred
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.LayoutSoap addLayout(long groupId,
 		boolean privateLayout, long parentLayoutId, java.lang.String name,
@@ -316,6 +318,7 @@ public class LayoutServiceSoap {
 	* @throws PortalException if the user did not have permission to delete the
 	layout, if a matching layout could not be found , or if some
 	other portal exception occurred
+	* @throws SystemException if a system exception occurred
 	*/
 	public static void deleteLayout(long groupId, boolean privateLayout,
 		long layoutId, com.liferay.portal.service.ServiceContext serviceContext)
@@ -340,6 +343,7 @@ public class LayoutServiceSoap {
 	* @throws PortalException if the user did not have permission to delete the
 	layout, if a layout with the primary key could not be found , or
 	if some other portal exception occurred
+	* @throws SystemException if a system exception occurred
 	*/
 	public static void deleteLayout(long plid,
 		com.liferay.portal.service.ServiceContext serviceContext)
@@ -355,40 +359,11 @@ public class LayoutServiceSoap {
 	}
 
 	public static void deleteTempFileEntry(long groupId,
-		java.lang.String folderName, java.lang.String fileName)
+		java.lang.String fileName, java.lang.String tempFolderName)
 		throws RemoteException {
 		try {
-			LayoutServiceUtil.deleteTempFileEntry(groupId, folderName, fileName);
-		}
-		catch (Exception e) {
-			_log.error(e, e);
-
-			throw new RemoteException(e.getMessage());
-		}
-	}
-
-	public static long exportLayoutsAsFileInBackground(
-		com.liferay.portal.model.ExportImportConfigurationSoap exportImportConfiguration)
-		throws RemoteException {
-		try {
-			long returnValue = LayoutServiceUtil.exportLayoutsAsFileInBackground(com.liferay.portal.model.impl.ExportImportConfigurationModelImpl.toModel(
-						exportImportConfiguration));
-
-			return returnValue;
-		}
-		catch (Exception e) {
-			_log.error(e, e);
-
-			throw new RemoteException(e.getMessage());
-		}
-	}
-
-	public static long exportLayoutsAsFileInBackground(
-		long exportImportConfigurationId) throws RemoteException {
-		try {
-			long returnValue = LayoutServiceUtil.exportLayoutsAsFileInBackground(exportImportConfigurationId);
-
-			return returnValue;
+			LayoutServiceUtil.deleteTempFileEntry(groupId, fileName,
+				tempFolderName);
 		}
 		catch (Exception e) {
 			_log.error(e, e);
@@ -404,6 +379,7 @@ public class LayoutServiceSoap {
 	* @return the ancestor layouts of the layout
 	* @throws PortalException if a matching layout could not be found or if a
 	portal exception occurred
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.LayoutSoap[] getAncestorLayouts(
 		long plid) throws RemoteException {
@@ -431,6 +407,7 @@ public class LayoutServiceSoap {
 	com.liferay.portal.model.LayoutConstants#DEFAULT_PLID} otherwise
 	* @throws PortalException if a group, layout, or portlet with the primary
 	key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static long getDefaultPlid(long groupId, long scopeGroupId,
 		boolean privateLayout, java.lang.String portletId)
@@ -473,6 +450,7 @@ public class LayoutServiceSoap {
 	* @throws PortalException if a matching layout could not be found, if the
 	user did not have permission to view the layout, or if some other
 	portal exception occurred
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.LayoutSoap getLayoutByUuidAndGroupId(
 		java.lang.String uuid, long groupId, boolean privateLayout)
@@ -500,6 +478,7 @@ public class LayoutServiceSoap {
 	See {@link java.util.Locale}.
 	* @return the layout's name
 	* @throws PortalException if a matching layout could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.lang.String getLayoutName(long groupId,
 		boolean privateLayout, long layoutId, java.lang.String languageId)
@@ -526,6 +505,7 @@ public class LayoutServiceSoap {
 	* @param preferencesKey the portlet's preference key
 	* @param preferencesValue the portlet's preference value
 	* @return the layout references of the matching layouts
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.LayoutReference[] getLayoutReferences(
 		long companyId, java.lang.String portletId,
@@ -591,26 +571,11 @@ public class LayoutServiceSoap {
 		}
 	}
 
-	public static int getLayoutsCount(long groupId, boolean privateLayout,
-		long parentLayoutId) throws RemoteException {
+	public static java.lang.String[] getTempFileEntryNames(long groupId,
+		java.lang.String tempFolderName) throws RemoteException {
 		try {
-			int returnValue = LayoutServiceUtil.getLayoutsCount(groupId,
-					privateLayout, parentLayoutId);
-
-			return returnValue;
-		}
-		catch (Exception e) {
-			_log.error(e, e);
-
-			throw new RemoteException(e.getMessage());
-		}
-	}
-
-	public static java.lang.String[] getTempFileNames(long groupId,
-		java.lang.String folderName) throws RemoteException {
-		try {
-			java.lang.String[] returnValue = LayoutServiceUtil.getTempFileNames(groupId,
-					folderName);
+			java.lang.String[] returnValue = LayoutServiceUtil.getTempFileEntryNames(groupId,
+					tempFolderName);
 
 			return returnValue;
 		}
@@ -635,6 +600,7 @@ public class LayoutServiceSoap {
 	layouts, if no layouts were specified, if the first layout was
 	not page-able, if the first layout was hidden, or if some other
 	portal exception occurred
+	* @throws SystemException if a system exception occurred
 	*/
 	public static void setLayouts(long groupId, boolean privateLayout,
 		long parentLayoutId, long[] layoutIds,
@@ -661,6 +627,7 @@ public class LayoutServiceSoap {
 	See {@link com.liferay.portal.kernel.messaging.DestinationNames}.
 	* @throws PortalException if the group did not permission to manage staging
 	and publish
+	* @throws SystemException if a system exception occurred
 	*/
 	public static void unschedulePublishToLive(long groupId,
 		java.lang.String jobName, java.lang.String groupName)
@@ -686,6 +653,7 @@ public class LayoutServiceSoap {
 	See {@link com.liferay.portal.kernel.messaging.DestinationNames}.
 	* @throws PortalException if a group with the primary key could not be
 	found or if the group did not have permission to publish
+	* @throws SystemException if a system exception occurred
 	*/
 	public static void unschedulePublishToRemote(long groupId,
 		java.lang.String jobName, java.lang.String groupName)
@@ -693,21 +661,6 @@ public class LayoutServiceSoap {
 		try {
 			LayoutServiceUtil.unschedulePublishToRemote(groupId, jobName,
 				groupName);
-		}
-		catch (Exception e) {
-			_log.error(e, e);
-
-			throw new RemoteException(e.getMessage());
-		}
-	}
-
-	public static com.liferay.portal.model.LayoutSoap updateIconImage(
-		long plid, byte[] bytes) throws RemoteException {
-		try {
-			com.liferay.portal.model.Layout returnValue = LayoutServiceUtil.updateIconImage(plid,
-					bytes);
-
-			return com.liferay.portal.model.LayoutSoap.toSoapModel(returnValue);
 		}
 		catch (Exception e) {
 			_log.error(e, e);
@@ -748,6 +701,7 @@ public class LayoutServiceSoap {
 	layout, if a unique friendly URL could not be generated, if a
 	valid parent layout ID to use could not be found, or if the
 	layout parameters were invalid
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.LayoutSoap updateLayout(
 		long groupId, boolean privateLayout, long layoutId,
@@ -762,7 +716,7 @@ public class LayoutServiceSoap {
 		java.lang.String[] robotsMapLanguageIds,
 		java.lang.String[] robotsMapValues, java.lang.String type,
 		boolean hidden, java.lang.String[] friendlyURLMapLanguageIds,
-		java.lang.String[] friendlyURLMapValues, boolean iconImage,
+		java.lang.String[] friendlyURLMapValues, java.lang.Boolean iconImage,
 		byte[] iconBytes,
 		com.liferay.portal.service.ServiceContext serviceContext)
 		throws RemoteException {
@@ -829,11 +783,11 @@ public class LayoutServiceSoap {
 	update the layout, if a unique friendly URL could not be
 	generated, if a valid parent layout ID to use could not be
 	found, or if the layout parameters were invalid
+	* @throws SystemException if a system exception occurred
 	* @deprecated As of 6.2.0, replaced by {@link #updateLayout(long, boolean,
 	long, long, Map, Map, Map, Map, Map, String, boolean, Map,
 	Boolean, byte[], ServiceContext)}
 	*/
-	@Deprecated
 	public static com.liferay.portal.model.LayoutSoap updateLayout(
 		long groupId, boolean privateLayout, long layoutId,
 		long parentLayoutId, java.lang.String[] localeNamesMapLanguageIds,
@@ -889,6 +843,7 @@ public class LayoutServiceSoap {
 	* @return the updated layout
 	* @throws PortalException if a matching layout could not be found or if the
 	user did not have permission to update the layout
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.LayoutSoap updateLayout(
 		long groupId, boolean privateLayout, long layoutId,
@@ -920,6 +875,7 @@ public class LayoutServiceSoap {
 	* @throws PortalException if a matching layout could not be found, or if
 	the user did not have permission to update the layout and
 	permission to apply the theme
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.LayoutSoap updateLookAndFeel(
 		long groupId, boolean privateLayout, long layoutId,
@@ -953,6 +909,7 @@ public class LayoutServiceSoap {
 	* @throws PortalException if a matching layout could not be found, if the
 	user did not have permission to update the layout, or if the new
 	name was <code>null</code>
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.LayoutSoap updateName(long groupId,
 		boolean privateLayout, long layoutId, java.lang.String name,
@@ -981,6 +938,7 @@ public class LayoutServiceSoap {
 	* @throws PortalException if a layout with the primary key could not be
 	found, or if the user did not have permission to update the
 	layout, or if the name was <code>null</code>
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.LayoutSoap updateName(long plid,
 		java.lang.String name, java.lang.String languageId)
@@ -1011,6 +969,7 @@ public class LayoutServiceSoap {
 	* @throws PortalException if a valid parent layout ID to use could not be
 	found, if a matching layout could not be found, or if the user
 	did not have permission to update the layout
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.LayoutSoap updateParentLayoutId(
 		long groupId, boolean privateLayout, long layoutId, long parentLayoutId)
@@ -1041,36 +1000,13 @@ public class LayoutServiceSoap {
 	* @throws PortalException if a layout with the primary key could not be
 	found, if the user did not have permission to update the layout,
 	or if a valid parent layout ID to use could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.LayoutSoap updateParentLayoutId(
 		long plid, long parentPlid) throws RemoteException {
 		try {
 			com.liferay.portal.model.Layout returnValue = LayoutServiceUtil.updateParentLayoutId(plid,
 					parentPlid);
-
-			return com.liferay.portal.model.LayoutSoap.toSoapModel(returnValue);
-		}
-		catch (Exception e) {
-			_log.error(e, e);
-
-			throw new RemoteException(e.getMessage());
-		}
-	}
-
-	/**
-	* Updates the parent layout ID and priority of the layout.
-	*
-	* @param plid the primary key of the layout
-	* @param parentPlid the primary key of the parent layout
-	* @param priority the layout's new priority
-	* @return the layout matching the primary key
-	* @throws PortalException if a portal exception occurred
-	*/
-	public static com.liferay.portal.model.LayoutSoap updateParentLayoutIdAndPriority(
-		long plid, long parentPlid, int priority) throws RemoteException {
-		try {
-			com.liferay.portal.model.Layout returnValue = LayoutServiceUtil.updateParentLayoutIdAndPriority(plid,
-					parentPlid, priority);
 
 			return com.liferay.portal.model.LayoutSoap.toSoapModel(returnValue);
 		}
@@ -1092,6 +1028,7 @@ public class LayoutServiceSoap {
 	* @return the updated layout
 	* @throws PortalException if a matching layout could not be found or if the
 	user did not have permission to update the layout
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.LayoutSoap updatePriority(
 		long groupId, boolean privateLayout, long layoutId, int priority)
@@ -1122,6 +1059,7 @@ public class LayoutServiceSoap {
 	* @return the updated layout
 	* @throws PortalException if a matching layout could not be found or if the
 	user did not have permission to update the layout
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.LayoutSoap updatePriority(
 		long groupId, boolean privateLayout, long layoutId, long nextLayoutId,
@@ -1147,6 +1085,7 @@ public class LayoutServiceSoap {
 	* @return the updated layout
 	* @throws PortalException if a layout with the primary key could not be
 	found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.LayoutSoap updatePriority(
 		long plid, int priority) throws RemoteException {

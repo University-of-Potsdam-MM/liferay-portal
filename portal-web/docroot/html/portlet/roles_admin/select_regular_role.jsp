@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -82,15 +82,13 @@ portletURL.setParameter("eventName", eventName);
 			keyProperty="roleId"
 			modelVar="role"
 		>
+			<liferay-util:param name="className" value="<%= RolesAdminUtil.getCssClassName(role) %>" />
+			<liferay-util:param name="classHoverName" value="<%= RolesAdminUtil.getCssClassName(role) %>" />
+
 			<liferay-ui:search-container-column-text
 				name="title"
-			>
-				<liferay-ui:icon
-					iconCssClass="<%= RolesAdminUtil.getIconCssClass(role) %>"
-					label="<%= true %>"
-					message="<%= HtmlUtil.escape(role.getTitle(locale)) %>"
-				/>
-			</liferay-ui:search-container-column-text>
+				value="<%= HtmlUtil.escape(role.getTitle(locale)) %>"
+			/>
 
 			<liferay-ui:search-container-column-text>
 				<c:if test="<%= Validator.isNull(p_u_i_d)|| RoleMembershipPolicyUtil.isRoleAllowed((selUser != null) ? selUser.getUserId() : 0, role.getRoleId()) %>">
@@ -98,23 +96,12 @@ portletURL.setParameter("eventName", eventName);
 					<%
 					Map<String, Object> data = new HashMap<String, Object>();
 
-					data.put("iconcssclass", RolesAdminUtil.getIconCssClass(role));
 					data.put("roleid", role.getRoleId());
-					data.put("roletitle", role.getTitle(locale));
+					data.put("roletitle", HtmlUtil.escapeAttribute(role.getTitle(locale)));
 					data.put("searchcontainername", "roles");
-
-					boolean disabled = false;
-
-					for (long curRoleId : selUser.getRoleIds()) {
-						if (curRoleId == role.getRoleId()) {
-							disabled = true;
-
-							break;
-						}
-					}
 					%>
 
-					<aui:button cssClass="selector-button" data="<%= data %>" disabled="<%= disabled %>" value="choose" />
+					<aui:button cssClass="selector-button" data="<%= data %>" value="choose" />
 				</c:if>
 			</liferay-ui:search-container-column-text>
 		</liferay-ui:search-container-row>
@@ -126,14 +113,15 @@ portletURL.setParameter("eventName", eventName);
 <aui:script use="aui-base">
 	var Util = Liferay.Util;
 
-	var openingLiferay = Util.getOpener().Liferay;
+	A.one('#<portlet:namespace />selectRegularRoleFm').delegate(
+		'click',
+		function(event) {
+			var result = Util.getAttributes(event.currentTarget, 'data-');
 
-	openingLiferay.fire(
-		'<portlet:namespace />enableRemovedRegularRoles',
-		{
-			selectors: A.all('.selector-button:disabled')
-		}
+			Util.getOpener().Liferay.fire('<%= HtmlUtil.escapeJS(eventName) %>', result);
+
+			Util.getWindow().hide();
+		},
+		'.selector-button'
 	);
-
-	Util.selectEntityHandler('#<portlet:namespace />selectRegularRoleFm', '<%= HtmlUtil.escapeJS(eventName) %>');
 </aui:script>

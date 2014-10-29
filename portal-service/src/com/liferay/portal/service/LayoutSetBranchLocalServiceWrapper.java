@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -37,23 +37,13 @@ public class LayoutSetBranchLocalServiceWrapper
 	*
 	* @param layoutSetBranch the layout set branch
 	* @return the layout set branch that was added
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
 	public com.liferay.portal.model.LayoutSetBranch addLayoutSetBranch(
-		com.liferay.portal.model.LayoutSetBranch layoutSetBranch) {
+		com.liferay.portal.model.LayoutSetBranch layoutSetBranch)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return _layoutSetBranchLocalService.addLayoutSetBranch(layoutSetBranch);
-	}
-
-	@Override
-	public com.liferay.portal.model.LayoutSetBranch addLayoutSetBranch(
-		long userId, long groupId, boolean privateLayout,
-		java.lang.String name, java.lang.String description, boolean master,
-		long copyLayoutSetBranchId,
-		com.liferay.portal.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _layoutSetBranchLocalService.addLayoutSetBranch(userId, groupId,
-			privateLayout, name, description, master, copyLayoutSetBranchId,
-			serviceContext);
 	}
 
 	/**
@@ -69,65 +59,35 @@ public class LayoutSetBranchLocalServiceWrapper
 	}
 
 	/**
-	* Deletes the layout set branch from the database. Also notifies the appropriate model listeners.
-	*
-	* @param layoutSetBranch the layout set branch
-	* @return the layout set branch that was removed
-	* @throws PortalException
-	*/
-	@Override
-	public com.liferay.portal.model.LayoutSetBranch deleteLayoutSetBranch(
-		com.liferay.portal.model.LayoutSetBranch layoutSetBranch)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _layoutSetBranchLocalService.deleteLayoutSetBranch(layoutSetBranch);
-	}
-
-	@Override
-	public com.liferay.portal.model.LayoutSetBranch deleteLayoutSetBranch(
-		com.liferay.portal.model.LayoutSetBranch layoutSetBranch,
-		boolean includeMaster)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _layoutSetBranchLocalService.deleteLayoutSetBranch(layoutSetBranch,
-			includeMaster);
-	}
-
-	/**
 	* Deletes the layout set branch with the primary key from the database. Also notifies the appropriate model listeners.
 	*
 	* @param layoutSetBranchId the primary key of the layout set branch
 	* @return the layout set branch that was removed
 	* @throws PortalException if a layout set branch with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
 	public com.liferay.portal.model.LayoutSetBranch deleteLayoutSetBranch(
 		long layoutSetBranchId)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return _layoutSetBranchLocalService.deleteLayoutSetBranch(layoutSetBranchId);
 	}
 
-	@Override
-	public void deleteLayoutSetBranches(long groupId, boolean privateLayout)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_layoutSetBranchLocalService.deleteLayoutSetBranches(groupId,
-			privateLayout);
-	}
-
-	@Override
-	public void deleteLayoutSetBranches(long groupId, boolean privateLayout,
-		boolean includeMaster)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_layoutSetBranchLocalService.deleteLayoutSetBranches(groupId,
-			privateLayout, includeMaster);
-	}
-
 	/**
+	* Deletes the layout set branch from the database. Also notifies the appropriate model listeners.
+	*
+	* @param layoutSetBranch the layout set branch
+	* @return the layout set branch that was removed
 	* @throws PortalException
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
-	public com.liferay.portal.model.PersistedModel deletePersistedModel(
-		com.liferay.portal.model.PersistedModel persistedModel)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _layoutSetBranchLocalService.deletePersistedModel(persistedModel);
+	public com.liferay.portal.model.LayoutSetBranch deleteLayoutSetBranch(
+		com.liferay.portal.model.LayoutSetBranch layoutSetBranch)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _layoutSetBranchLocalService.deleteLayoutSetBranch(layoutSetBranch);
 	}
 
 	@Override
@@ -140,10 +100,13 @@ public class LayoutSetBranchLocalServiceWrapper
 	*
 	* @param dynamicQuery the dynamic query
 	* @return the matching rows
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
-	public <T> java.util.List<T> dynamicQuery(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery) {
+	@SuppressWarnings("rawtypes")
+	public java.util.List dynamicQuery(
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return _layoutSetBranchLocalService.dynamicQuery(dynamicQuery);
 	}
 
@@ -158,11 +121,13 @@ public class LayoutSetBranchLocalServiceWrapper
 	* @param start the lower bound of the range of model instances
 	* @param end the upper bound of the range of model instances (not inclusive)
 	* @return the range of matching rows
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
-	public <T> java.util.List<T> dynamicQuery(
+	@SuppressWarnings("rawtypes")
+	public java.util.List dynamicQuery(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
-		int end) {
+		int end) throws com.liferay.portal.kernel.exception.SystemException {
 		return _layoutSetBranchLocalService.dynamicQuery(dynamicQuery, start,
 			end);
 	}
@@ -179,12 +144,15 @@ public class LayoutSetBranchLocalServiceWrapper
 	* @param end the upper bound of the range of model instances (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching rows
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
-	public <T> java.util.List<T> dynamicQuery(
+	@SuppressWarnings("rawtypes")
+	public java.util.List dynamicQuery(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
 		int end,
-		com.liferay.portal.kernel.util.OrderByComparator<T> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return _layoutSetBranchLocalService.dynamicQuery(dynamicQuery, start,
 			end, orderByComparator);
 	}
@@ -194,10 +162,12 @@ public class LayoutSetBranchLocalServiceWrapper
 	*
 	* @param dynamicQuery the dynamic query
 	* @return the number of rows that match the dynamic query
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
 	public long dynamicQueryCount(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery) {
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return _layoutSetBranchLocalService.dynamicQueryCount(dynamicQuery);
 	}
 
@@ -207,49 +177,22 @@ public class LayoutSetBranchLocalServiceWrapper
 	* @param dynamicQuery the dynamic query
 	* @param projection the projection to apply to the query
 	* @return the number of rows that match the dynamic query
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
 	public long dynamicQueryCount(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery,
-		com.liferay.portal.kernel.dao.orm.Projection projection) {
+		com.liferay.portal.kernel.dao.orm.Projection projection)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return _layoutSetBranchLocalService.dynamicQueryCount(dynamicQuery,
 			projection);
 	}
 
 	@Override
 	public com.liferay.portal.model.LayoutSetBranch fetchLayoutSetBranch(
-		long groupId, boolean privateLayout, java.lang.String name) {
-		return _layoutSetBranchLocalService.fetchLayoutSetBranch(groupId,
-			privateLayout, name);
-	}
-
-	@Override
-	public com.liferay.portal.model.LayoutSetBranch fetchLayoutSetBranch(
-		long layoutSetBranchId) {
+		long layoutSetBranchId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return _layoutSetBranchLocalService.fetchLayoutSetBranch(layoutSetBranchId);
-	}
-
-	@Override
-	public com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery getActionableDynamicQuery() {
-		return _layoutSetBranchLocalService.getActionableDynamicQuery();
-	}
-
-	/**
-	* Returns the Spring bean ID for this bean.
-	*
-	* @return the Spring bean ID for this bean
-	*/
-	@Override
-	public java.lang.String getBeanIdentifier() {
-		return _layoutSetBranchLocalService.getBeanIdentifier();
-	}
-
-	@Override
-	public com.liferay.portal.model.LayoutSetBranch getLayoutSetBranch(
-		long groupId, boolean privateLayout, java.lang.String name)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _layoutSetBranchLocalService.getLayoutSetBranch(groupId,
-			privateLayout, name);
 	}
 
 	/**
@@ -258,19 +201,22 @@ public class LayoutSetBranchLocalServiceWrapper
 	* @param layoutSetBranchId the primary key of the layout set branch
 	* @return the layout set branch
 	* @throws PortalException if a layout set branch with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
 	public com.liferay.portal.model.LayoutSetBranch getLayoutSetBranch(
 		long layoutSetBranchId)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return _layoutSetBranchLocalService.getLayoutSetBranch(layoutSetBranchId);
 	}
 
 	@Override
-	public java.util.List<com.liferay.portal.model.LayoutSetBranch> getLayoutSetBranches(
-		long groupId, boolean privateLayout) {
-		return _layoutSetBranchLocalService.getLayoutSetBranches(groupId,
-			privateLayout);
+	public com.liferay.portal.model.PersistedModel getPersistedModel(
+		java.io.Serializable primaryKeyObj)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _layoutSetBranchLocalService.getPersistedModel(primaryKeyObj);
 	}
 
 	/**
@@ -283,10 +229,12 @@ public class LayoutSetBranchLocalServiceWrapper
 	* @param start the lower bound of the range of layout set branchs
 	* @param end the upper bound of the range of layout set branchs (not inclusive)
 	* @return the range of layout set branchs
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
 	public java.util.List<com.liferay.portal.model.LayoutSetBranch> getLayoutSetBranchs(
-		int start, int end) {
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return _layoutSetBranchLocalService.getLayoutSetBranchs(start, end);
 	}
 
@@ -294,56 +242,36 @@ public class LayoutSetBranchLocalServiceWrapper
 	* Returns the number of layout set branchs.
 	*
 	* @return the number of layout set branchs
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
-	public int getLayoutSetBranchsCount() {
+	public int getLayoutSetBranchsCount()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return _layoutSetBranchLocalService.getLayoutSetBranchsCount();
 	}
 
+	/**
+	* Updates the layout set branch in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
+	*
+	* @param layoutSetBranch the layout set branch
+	* @return the layout set branch that was updated
+	* @throws SystemException if a system exception occurred
+	*/
 	@Override
-	public com.liferay.portal.model.LayoutSetBranch getMasterLayoutSetBranch(
-		long groupId, boolean privateLayout)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _layoutSetBranchLocalService.getMasterLayoutSetBranch(groupId,
-			privateLayout);
-	}
-
-	@Override
-	public com.liferay.portal.model.PersistedModel getPersistedModel(
-		java.io.Serializable primaryKeyObj)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _layoutSetBranchLocalService.getPersistedModel(primaryKeyObj);
+	public com.liferay.portal.model.LayoutSetBranch updateLayoutSetBranch(
+		com.liferay.portal.model.LayoutSetBranch layoutSetBranch)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return _layoutSetBranchLocalService.updateLayoutSetBranch(layoutSetBranch);
 	}
 
 	/**
-	* @deprecated As of 6.2.0, replaced by {@link #getUserLayoutSetBranch(long,
-	long, boolean, long, long)}
+	* Returns the Spring bean ID for this bean.
+	*
+	* @return the Spring bean ID for this bean
 	*/
-	@Deprecated
 	@Override
-	public com.liferay.portal.model.LayoutSetBranch getUserLayoutSetBranch(
-		long userId, long groupId, boolean privateLayout, long layoutSetBranchId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _layoutSetBranchLocalService.getUserLayoutSetBranch(userId,
-			groupId, privateLayout, layoutSetBranchId);
-	}
-
-	@Override
-	public com.liferay.portal.model.LayoutSetBranch getUserLayoutSetBranch(
-		long userId, long groupId, boolean privateLayout, long layoutSetId,
-		long layoutSetBranchId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _layoutSetBranchLocalService.getUserLayoutSetBranch(userId,
-			groupId, privateLayout, layoutSetId, layoutSetBranchId);
-	}
-
-	@Override
-	public com.liferay.portal.model.LayoutSetBranch mergeLayoutSetBranch(
-		long layoutSetBranchId, long mergeLayoutSetBranchId,
-		com.liferay.portal.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _layoutSetBranchLocalService.mergeLayoutSetBranch(layoutSetBranchId,
-			mergeLayoutSetBranchId, serviceContext);
+	public java.lang.String getBeanIdentifier() {
+		return _layoutSetBranchLocalService.getBeanIdentifier();
 	}
 
 	/**
@@ -356,16 +284,111 @@ public class LayoutSetBranchLocalServiceWrapper
 		_layoutSetBranchLocalService.setBeanIdentifier(beanIdentifier);
 	}
 
+	@Override
+	public com.liferay.portal.model.LayoutSetBranch addLayoutSetBranch(
+		long userId, long groupId, boolean privateLayout,
+		java.lang.String name, java.lang.String description, boolean master,
+		long copyLayoutSetBranchId,
+		com.liferay.portal.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _layoutSetBranchLocalService.addLayoutSetBranch(userId, groupId,
+			privateLayout, name, description, master, copyLayoutSetBranchId,
+			serviceContext);
+	}
+
+	@Override
+	public com.liferay.portal.model.LayoutSetBranch deleteLayoutSetBranch(
+		com.liferay.portal.model.LayoutSetBranch layoutSetBranch,
+		boolean includeMaster)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _layoutSetBranchLocalService.deleteLayoutSetBranch(layoutSetBranch,
+			includeMaster);
+	}
+
+	@Override
+	public void deleteLayoutSetBranches(long groupId, boolean privateLayout)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		_layoutSetBranchLocalService.deleteLayoutSetBranches(groupId,
+			privateLayout);
+	}
+
+	@Override
+	public void deleteLayoutSetBranches(long groupId, boolean privateLayout,
+		boolean includeMaster)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		_layoutSetBranchLocalService.deleteLayoutSetBranches(groupId,
+			privateLayout, includeMaster);
+	}
+
+	@Override
+	public com.liferay.portal.model.LayoutSetBranch fetchLayoutSetBranch(
+		long groupId, boolean privateLayout, java.lang.String name)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return _layoutSetBranchLocalService.fetchLayoutSetBranch(groupId,
+			privateLayout, name);
+	}
+
+	@Override
+	public com.liferay.portal.model.LayoutSetBranch getLayoutSetBranch(
+		long groupId, boolean privateLayout, java.lang.String name)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _layoutSetBranchLocalService.getLayoutSetBranch(groupId,
+			privateLayout, name);
+	}
+
+	@Override
+	public java.util.List<com.liferay.portal.model.LayoutSetBranch> getLayoutSetBranches(
+		long groupId, boolean privateLayout)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return _layoutSetBranchLocalService.getLayoutSetBranches(groupId,
+			privateLayout);
+	}
+
+	@Override
+	public com.liferay.portal.model.LayoutSetBranch getMasterLayoutSetBranch(
+		long groupId, boolean privateLayout)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _layoutSetBranchLocalService.getMasterLayoutSetBranch(groupId,
+			privateLayout);
+	}
+
 	/**
-	* Updates the layout set branch in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
-	*
-	* @param layoutSetBranch the layout set branch
-	* @return the layout set branch that was updated
+	* @deprecated As of 6.2.0, replaced by {@link #getUserLayoutSetBranch(long,
+	long, boolean, long, long)}
 	*/
 	@Override
-	public com.liferay.portal.model.LayoutSetBranch updateLayoutSetBranch(
-		com.liferay.portal.model.LayoutSetBranch layoutSetBranch) {
-		return _layoutSetBranchLocalService.updateLayoutSetBranch(layoutSetBranch);
+	public com.liferay.portal.model.LayoutSetBranch getUserLayoutSetBranch(
+		long userId, long groupId, boolean privateLayout, long layoutSetBranchId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _layoutSetBranchLocalService.getUserLayoutSetBranch(userId,
+			groupId, privateLayout, layoutSetBranchId);
+	}
+
+	@Override
+	public com.liferay.portal.model.LayoutSetBranch getUserLayoutSetBranch(
+		long userId, long groupId, boolean privateLayout, long layoutSetId,
+		long layoutSetBranchId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _layoutSetBranchLocalService.getUserLayoutSetBranch(userId,
+			groupId, privateLayout, layoutSetId, layoutSetBranchId);
+	}
+
+	@Override
+	public com.liferay.portal.model.LayoutSetBranch mergeLayoutSetBranch(
+		long layoutSetBranchId, long mergeLayoutSetBranchId,
+		com.liferay.portal.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _layoutSetBranchLocalService.mergeLayoutSetBranch(layoutSetBranchId,
+			mergeLayoutSetBranchId, serviceContext);
 	}
 
 	@Override
@@ -373,7 +396,8 @@ public class LayoutSetBranchLocalServiceWrapper
 		long layoutSetBranchId, java.lang.String name,
 		java.lang.String description,
 		com.liferay.portal.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return _layoutSetBranchLocalService.updateLayoutSetBranch(layoutSetBranchId,
 			name, description, serviceContext);
 	}
@@ -381,7 +405,6 @@ public class LayoutSetBranchLocalServiceWrapper
 	/**
 	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedService}
 	 */
-	@Deprecated
 	public LayoutSetBranchLocalService getWrappedLayoutSetBranchLocalService() {
 		return _layoutSetBranchLocalService;
 	}
@@ -389,7 +412,6 @@ public class LayoutSetBranchLocalServiceWrapper
 	/**
 	 * @deprecated As of 6.1.0, replaced by {@link #setWrappedService}
 	 */
-	@Deprecated
 	public void setWrappedLayoutSetBranchLocalService(
 		LayoutSetBranchLocalService layoutSetBranchLocalService) {
 		_layoutSetBranchLocalService = layoutSetBranchLocalService;

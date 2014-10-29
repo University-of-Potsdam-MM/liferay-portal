@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -33,8 +33,6 @@ public class LocaleException extends PortalException {
 
 	public LocaleException() {
 		super();
-
-		_type = 0;
 	}
 
 	public LocaleException(int type) {
@@ -81,6 +79,6 @@ public class LocaleException extends PortalException {
 
 	private Locale[] _sourceAvailableLocales;
 	private Locale[] _targetAvailableLocales;
-	private final int _type;
+	private int _type;
 
 }

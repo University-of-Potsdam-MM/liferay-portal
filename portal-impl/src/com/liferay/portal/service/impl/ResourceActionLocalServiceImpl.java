@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -16,6 +16,7 @@ package com.liferay.portal.service.impl;
 
 import com.liferay.portal.NoSuchResourceActionException;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.spring.aop.Skip;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
@@ -42,7 +43,7 @@ public class ResourceActionLocalServiceImpl
 
 	@Override
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public void checkResourceActions() {
+	public void checkResourceActions() throws SystemException {
 		List<ResourceAction> resourceActions =
 			resourceActionPersistence.findAll();
 
@@ -55,13 +56,16 @@ public class ResourceActionLocalServiceImpl
 	}
 
 	@Override
-	public void checkResourceActions(String name, List<String> actionIds) {
+	public void checkResourceActions(String name, List<String> actionIds)
+		throws SystemException {
+
 		checkResourceActions(name, actionIds, false);
 	}
 
 	@Override
 	public void checkResourceActions(
-		String name, List<String> actionIds, boolean addDefaultActions) {
+			String name, List<String> actionIds, boolean addDefaultActions)
+		throws SystemException {
 
 		long lastBitwiseValue = -1;
 		List<ResourceAction> newResourceActions = null;
@@ -196,13 +200,10 @@ public class ResourceActionLocalServiceImpl
 	}
 
 	@Override
-	public List<ResourceAction> getResourceActions(String name) {
-		return resourceActionPersistence.findByName(name);
-	}
+	public List<ResourceAction> getResourceActions(String name)
+		throws SystemException {
 
-	@Override
-	public int getResourceActionsCount(String name) {
-		return resourceActionPersistence.countByName(name);
+		return resourceActionPersistence.findByName(name);
 	}
 
 	protected String encodeKey(String name, String actionId) {

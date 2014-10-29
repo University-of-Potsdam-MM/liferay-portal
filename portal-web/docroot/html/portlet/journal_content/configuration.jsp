@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,6 +18,8 @@
 
 <%
 int cur = ParamUtil.getInteger(request, SearchContainer.DEFAULT_CUR_PARAM);
+
+String redirect = ParamUtil.getString(request, "redirect");
 
 JournalArticle article = null;
 
@@ -38,7 +40,6 @@ catch (NoSuchArticleException nsae) {
 %>
 
 <liferay-portlet:actionURL portletConfiguration="true" var="configurationActionURL" />
-
 <liferay-portlet:renderURL portletConfiguration="true" varImpl="configurationRenderURL" />
 
 <aui:form action="<%= configurationActionURL %>" method="post" name="fm1">
@@ -60,63 +61,73 @@ catch (NoSuchArticleException nsae) {
 	<c:if test="<%= article != null %>">
 
 		<%
-		DDMStructure ddmStructure = DDMStructureLocalServiceUtil.fetchStructure(article.getGroupId(), PortalUtil.getClassNameId(JournalArticle.class), article.getStructureId(), true);
+		if (Validator.isNotNull(article.getStructureId())) {
+			DDMStructure ddmStructure = DDMStructureLocalServiceUtil.fetchStructure(article.getGroupId(), PortalUtil.getClassNameId(JournalArticle.class), article.getStructureId(), true);
 
-		List<DDMTemplate> ddmTemplates = DDMTemplateLocalServiceUtil.getTemplates(article.getGroupId(), PortalUtil.getClassNameId(DDMStructure.class), ddmStructure.getStructureId(), true);
+			List<DDMTemplate> ddmTemplates = new ArrayList<DDMTemplate>();
 
-		if (!ddmTemplates.isEmpty()) {
-			if (Validator.isNull(ddmTemplateKey)) {
-				ddmTemplateKey = article.getTemplateId();
+			if (ddmStructure != null) {
+				ddmTemplates.addAll(DDMTemplateLocalServiceUtil.getTemplates(ddmStructure.getGroupId(), PortalUtil.getClassNameId(DDMStructure.class), ddmStructure.getStructureId()));
+
+				if (article.getGroupId() != ddmStructure.getGroupId()) {
+					ddmTemplates.addAll(DDMTemplateLocalServiceUtil.getTemplates(article.getGroupId(), PortalUtil.getClassNameId(DDMStructure.class), ddmStructure.getStructureId()));
+				}
 			}
+
+			if (!ddmTemplates.isEmpty()) {
+				if (Validator.isNull(ddmTemplateKey)) {
+					ddmTemplateKey = article.getTemplateId();
+				}
 		%>
 
-			<aui:fieldset>
-				<liferay-ui:message key="override-default-template" />
+				<aui:fieldset>
+					<liferay-ui:message key="override-default-template" />
 
-				<liferay-ui:table-iterator
-					list="<%= ddmTemplates %>"
-					listType="com.liferay.portlet.dynamicdatamapping.model.DDMTemplate"
-					rowLength="3"
-					rowPadding="30"
-				>
+					<liferay-ui:table-iterator
+						list="<%= ddmTemplates %>"
+						listType="com.liferay.portlet.dynamicdatamapping.model.DDMTemplate"
+						rowLength="3"
+						rowPadding="30"
+					>
 
-					<%
-					boolean templateChecked = false;
+						<%
+						boolean templateChecked = false;
 
-					if (ddmTemplateKey.equals(tableIteratorObj.getTemplateKey())) {
-						templateChecked = true;
-					}
+						if (ddmTemplateKey.equals(tableIteratorObj.getTemplateKey())) {
+							templateChecked = true;
+						}
 
-					if ((tableIteratorPos.intValue() == 0) && Validator.isNull(ddmTemplateKey)) {
-						templateChecked = true;
-					}
-					%>
+						if ((tableIteratorPos.intValue() == 0) && Validator.isNull(ddmTemplateKey)) {
+							templateChecked = true;
+						}
+						%>
 
-					<liferay-portlet:renderURL portletName="<%= PortletKeys.DYNAMIC_DATA_MAPPING %>" var="editTemplateURL">
-						<portlet:param name="struts_action" value="/dynamic_data_mapping/edit_template" />
-						<portlet:param name="redirect" value="<%= currentURL %>" />
-						<portlet:param name="refererPortletName" value="<%= PortletKeys.JOURNAL_CONTENT %>" />
-						<portlet:param name="groupId" value="<%= String.valueOf(tableIteratorObj.getGroupId()) %>" />
-						<portlet:param name="templateId" value="<%= String.valueOf(tableIteratorObj.getTemplateId()) %>" />
-					</liferay-portlet:renderURL>
+						<liferay-portlet:renderURL portletName="<%= PortletKeys.DYNAMIC_DATA_MAPPING %>" var="editTemplateURL">
+							<portlet:param name="struts_action" value="/dynamic_data_mapping/edit_template" />
+							<portlet:param name="redirect" value="<%= currentURL %>" />
+							<portlet:param name="refererPortletName" value="<%= PortletKeys.JOURNAL_CONTENT %>" />
+							<portlet:param name="groupId" value="<%= String.valueOf(tableIteratorObj.getGroupId()) %>" />
+							<portlet:param name="templateId" value="<%= String.valueOf(tableIteratorObj.getTemplateId()) %>" />
+						</liferay-portlet:renderURL>
 
-					<liferay-util:buffer var="linkContent">
-						<aui:a href="<%= editTemplateURL %>" id="tableIteratorObjName"><%= HtmlUtil.escape(tableIteratorObj.getName(locale)) %></aui:a>
-					</liferay-util:buffer>
+						<liferay-util:buffer var="linkContent">
+							<aui:a href="<%= editTemplateURL %>" id="tableIteratorObjName"><%= tableIteratorObj.getName() %></aui:a>
+						</liferay-util:buffer>
 
-					<aui:input checked="<%= templateChecked %>" label="<%= linkContent %>" name="overideTemplateId" onChange='<%= "if (this.checked) {document." + renderResponse.getNamespace() + "fm." + renderResponse.getNamespace() + "ddmTemplateKey.value = this.value;}" %>' type="radio" value="<%= tableIteratorObj.getTemplateKey() %>" />
+						<aui:input checked="<%= templateChecked %>" label="<%= linkContent %>" name="overideTemplateId" onChange='<%= "if (this.checked) {document." + renderResponse.getNamespace() + "fm." + renderResponse.getNamespace() + "ddmTemplateKey.value = this.value;}" %>' type="radio" value="<%= tableIteratorObj.getTemplateKey() %>" />
 
-					<c:if test="<%= tableIteratorObj.isSmallImage() %>">
-						<br />
+						<c:if test="<%= tableIteratorObj.isSmallImage() %>">
+							<br />
 
-						<img alt="" hspace="0" src="<%= HtmlUtil.escapeAttribute(tableIteratorObj.getTemplateImageURL(themeDisplay)) %>" vspace="0" />
-					</c:if>
-				</liferay-ui:table-iterator>
+							<img border="0" hspace="0" src="<%= Validator.isNotNull(tableIteratorObj.getSmallImageURL()) ? tableIteratorObj.getSmallImageURL() : themeDisplay.getPathImage() + "/journal/template?img_id=" + tableIteratorObj.getSmallImageId() + "&t=" + WebServerServletTokenUtil.getToken(tableIteratorObj.getSmallImageId()) %>" vspace="0" />
+						</c:if>
+					</liferay-ui:table-iterator>
 
-				<br />
-			</aui:fieldset>
+					<br />
+				</aui:fieldset>
 
 		<%
+			}
 		}
 		%>
 
@@ -131,8 +142,6 @@ catch (NoSuchArticleException nsae) {
 	dynamicRenderRequest.setParameter("groupId", String.valueOf(groupId));
 
 	ArticleSearch searchContainer = new ArticleSearch(dynamicRenderRequest, configurationRenderURL);
-
-	searchContainer.setEmptyResultsMessage("no-web-content-was-found-that-matched-the-specified-filters");
 
 	List<String> headerNames = searchContainer.getHeaderNames();
 
@@ -180,7 +189,7 @@ catch (NoSuchArticleException nsae) {
 		sb.append("javascript:");
 		sb.append(renderResponse.getNamespace());
 		sb.append("selectArticle('");
-		sb.append(String.valueOf(curArticle.getGroupId()));
+		sb.append(HtmlUtil.escapeJS(String.valueOf(curArticle.getGroupId())));
 		sb.append("','");
 		sb.append(HtmlUtil.escapeJS(curArticle.getArticleId()));
 		sb.append("','");
@@ -218,16 +227,17 @@ catch (NoSuchArticleException nsae) {
 	<liferay-ui:search-iterator searchContainer="<%= searchContainer %>" />
 </aui:form>
 
-<aui:form action="<%= configurationActionURL %>" method="post" name="fm" onSubmit='<%= "event.preventDefault(); " + renderResponse.getNamespace() + "saveConfiguration();" %>'>
+<aui:form action="<%= configurationActionURL %>" method="post" name="fm">
 	<aui:input name="<%= Constants.CMD %>" type="hidden" value="<%= Constants.UPDATE %>" />
 	<aui:input name="redirect" type="hidden" value='<%= configurationRenderURL + StringPool.AMPERSAND + renderResponse.getNamespace() + "cur" + cur %>' />
 	<aui:input name="preferences--groupId--" type="hidden" value="<%= articleGroupId %>" />
 	<aui:input name="preferences--articleId--" type="hidden" value="<%= articleId %>" />
 	<aui:input name="preferences--ddmTemplateKey--" type="hidden" value="<%= ddmTemplateKey %>" />
-	<aui:input name="preferences--extensions--" type="hidden" value="<%= extensions %>" />
 
 	<aui:fieldset>
-		<aui:input name="portletId" type="resource" value="<%= portletResource %>" />
+		<aui:field-wrapper label="portlet-id">
+			<liferay-ui:input-resource url="<%= portletResource %>" />
+		</aui:field-wrapper>
 	</aui:fieldset>
 
 	<aui:fieldset>
@@ -235,40 +245,22 @@ catch (NoSuchArticleException nsae) {
 			<aui:input name="preferences--showAvailableLocales--" type="checkbox" value="<%= showAvailableLocales %>" />
 		</aui:field-wrapper>
 
-		<%
-		List<KeyValuePair> currentExtensions = new ArrayList<KeyValuePair>();
-
-		if (extensions == null) {
-			extensions = new String[0];
-		}
-
-		for (String extension : extensions) {
-			currentExtensions.add(new KeyValuePair(extension, StringUtil.toUpperCase(extension)));
-		}
-
-		Arrays.sort(extensions);
-
-		List<KeyValuePair> availableExtensions = new ArrayList<KeyValuePair>();
-
-		for (String conversion : conversions) {
-			if (Arrays.binarySearch(extensions, conversion) < 0) {
-				availableExtensions.add(new KeyValuePair(conversion, StringUtil.toUpperCase(conversion)));
-			}
-		}
-
-		availableExtensions = ListUtil.sort(availableExtensions, new KeyValuePairComparator(false, true));
-		%>
-
 		<aui:field-wrapper helpMessage='<%= !openOfficeServerEnabled ? "enabling-openoffice-integration-provides-document-conversion-functionality" : StringPool.BLANK %>' label="enable-conversion-to">
-			<liferay-ui:input-move-boxes
-				leftBoxName="currentExtensions"
-				leftList="<%= currentExtensions %>"
-				leftReorder="true"
-				leftTitle="current"
-				rightBoxName="availableExtensions"
-				rightList="<%= availableExtensions %>"
-				rightTitle="available"
-			/>
+
+			<%
+			for (String conversion : conversions) {
+			%>
+
+				<label class="checkbox inline">
+					<input <%= ArrayUtil.contains(extensions, conversion) ? "checked": "" %> <%= openOfficeServerEnabled ? "" : "disabled" %> name="<portlet:namespace />extensions" type="checkbox" value="<%= conversion %>" />
+
+					<%= StringUtil.toUpperCase(conversion) %>
+				</label>
+
+			<%
+			}
+			%>
+
 		</aui:field-wrapper>
 
 		<aui:field-wrapper>
@@ -302,28 +294,16 @@ catch (NoSuchArticleException nsae) {
 
 			document.<portlet:namespace />fm.<portlet:namespace />groupId.value = articleGroupId;
 			document.<portlet:namespace />fm.<portlet:namespace />articleId.value = articleId;
-			document.<portlet:namespace />fm.<portlet:namespace />ddmTemplateKey.value = '';
+			document.<portlet:namespace />fm.<portlet:namespace />ddmTemplateKey.value = "";
 
 			A.one('.displaying-article-id-holder').show();
 			A.one('.displaying-help-message-holder').hide();
 
 			var displayArticleId = A.one('.displaying-article-id');
 
-			displayArticleId.html(A.Lang.String.escapeHTML(articleTitle) + ' (<%= UnicodeLanguageUtil.get(request, "modified") %>)');
-
+			displayArticleId.set('innerHTML', articleTitle + ' (<%= UnicodeLanguageUtil.get(pageContext, "modified") %>)');
 			displayArticleId.addClass('modified');
 		},
 		['aui-base']
-	);
-
-	Liferay.provide(
-		window,
-		'<portlet:namespace />saveConfiguration',
-		function() {
-			document.<portlet:namespace />fm.<portlet:namespace />extensions.value = Liferay.Util.listSelect(document.<portlet:namespace />fm.<portlet:namespace />currentExtensions);
-
-			submitForm(document.<portlet:namespace />fm);
-		},
-		['liferay-util-list-fields']
 	);
 </aui:script>

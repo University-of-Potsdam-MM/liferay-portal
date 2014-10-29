@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,17 +18,14 @@ import com.liferay.counter.model.Counter;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.process.ClassPathUtil;
 import com.liferay.portal.kernel.process.ProcessCallable;
-import com.liferay.portal.kernel.process.ProcessChannel;
-import com.liferay.portal.kernel.process.ProcessConfig;
-import com.liferay.portal.kernel.process.ProcessConfig.Builder;
 import com.liferay.portal.kernel.process.ProcessException;
-import com.liferay.portal.kernel.process.ProcessExecutorUtil;
+import com.liferay.portal.kernel.process.ProcessExecutor;
 import com.liferay.portal.kernel.scheduler.SchedulerEngineHelperUtil;
+import com.liferay.portal.kernel.scheduler.SchedulerException;
 import com.liferay.portal.kernel.test.ExecutionTestListeners;
-import com.liferay.portal.kernel.util.PortalClassLoaderUtil;
 import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.test.listeners.MainServletExecutionTestListener;
-import com.liferay.portal.test.runners.LiferayIntegrationJUnitTestRunner;
+import com.liferay.portal.test.EnvironmentExecutionTestListener;
+import com.liferay.portal.test.LiferayIntegrationJUnitTestRunner;
 import com.liferay.portal.util.InitUtil;
 import com.liferay.portal.util.PropsUtil;
 import com.liferay.portal.util.PropsValues;
@@ -48,7 +45,7 @@ import org.junit.runner.RunWith;
 /**
  * @author Shuyang Zhou
  */
-@ExecutionTestListeners(listeners = {MainServletExecutionTestListener.class})
+@ExecutionTestListeners(listeners = {EnvironmentExecutionTestListener.class})
 @RunWith(LiferayIntegrationJUnitTestRunner.class)
 public class CounterLocalServiceTest {
 
@@ -72,15 +69,8 @@ public class CounterLocalServiceTest {
 	public void testConcurrentIncrement() throws Exception {
 		String classPath = ClassPathUtil.getJVMClassPath(true);
 
-		Builder builder = new Builder();
-
-		builder.setArguments(
-			Arrays.asList("-Xmx1024m", "-XX:MaxPermSize=200m"));
-		builder.setBootstrapClassPath(classPath);
-		builder.setReactClassLoader(PortalClassLoaderUtil.getClassLoader());
-		builder.setRuntimeClassPath(classPath);
-
-		ProcessConfig processConfig = builder.build();
+		List<String> jvmArguments = Arrays.asList(
+			"-Xmx1024m", "-XX:MaxPermSize=200m");
 
 		List<Future<Long[]>> futuresList = new ArrayList<Future<Long[]>>();
 
@@ -89,11 +79,8 @@ public class CounterLocalServiceTest {
 				new IncrementProcessCallable(
 					"Increment Process-" + i, _COUNTER_NAME, _INCREMENT_COUNT);
 
-			ProcessChannel<Long[]> processChannel = ProcessExecutorUtil.execute(
-				processConfig, processCallable);
-
-			Future<Long[]> futures =
-				processChannel.getProcessNoticeableFuture();
+			Future<Long[]> futures = ProcessExecutor.execute(
+				classPath, jvmArguments, processCallable);
 
 			futuresList.add(futures);
 		}
@@ -117,11 +104,11 @@ public class CounterLocalServiceTest {
 		}
 	}
 
-	private static String _COUNTER_NAME;
-
 	private static final int _INCREMENT_COUNT = 10000;
 
 	private static final int _PROCESS_COUNT = 4;
+
+	private static String _COUNTER_NAME;
 
 	private static class IncrementProcessCallable
 		implements ProcessCallable<Long[]> {
@@ -141,7 +128,7 @@ public class CounterLocalServiceTest {
 
 			PropsUtil.set(PropsValues.COUNTER_INCREMENT + _COUNTER_NAME, "1");
 
-			InitUtil.initWithSpringAndModuleFramework();
+			InitUtil.initWithSpring();
 
 			List<Long> ids = new ArrayList<Long>();
 
@@ -156,11 +143,9 @@ public class CounterLocalServiceTest {
 			finally {
 				try {
 					SchedulerEngineHelperUtil.shutdown();
-
-					InitUtil.stopModuleFramework();
 				}
-				catch (Exception e) {
-					throw new ProcessException(e);
+				catch (SchedulerException se) {
+					throw new ProcessException(se);
 				}
 			}
 

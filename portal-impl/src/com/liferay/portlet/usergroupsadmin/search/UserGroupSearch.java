@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -39,12 +39,8 @@ import javax.portlet.PortletURL;
  */
 public class UserGroupSearch extends SearchContainer<UserGroup> {
 
-	public static final String EMPTY_RESULTS_MESSAGE =
-		"no-user-groups-were-found";
-
-	public static List<String> headerNames = new ArrayList<String>();
-	public static Map<String, String> orderableHeaders =
-		new HashMap<String, String>();
+	static List<String> headerNames = new ArrayList<String>();
+	static Map<String, String> orderableHeaders = new HashMap<String, String>();
 
 	static {
 		headerNames.add("name");
@@ -53,6 +49,9 @@ public class UserGroupSearch extends SearchContainer<UserGroup> {
 		orderableHeaders.put("name", "name");
 		orderableHeaders.put("description", "description");
 	}
+
+	public static final String EMPTY_RESULTS_MESSAGE =
+		"no-user-groups-were-found";
 
 	public UserGroupSearch(
 		PortletRequest portletRequest, PortletURL iteratorURL) {
@@ -99,7 +98,7 @@ public class UserGroupSearch extends SearchContainer<UserGroup> {
 					"asc");
 			}
 
-			OrderByComparator<UserGroup> orderByComparator =
+			OrderByComparator orderByComparator =
 				UsersAdminUtil.getUserGroupOrderByComparator(
 					orderByCol, orderByType);
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -32,6 +32,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
+import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.TagSupport;
 
 /**
@@ -39,8 +40,12 @@ import javax.servlet.jsp.tagext.TagSupport;
  */
 public class DoAsURLTag extends TagSupport {
 
-	public static String doTag(long doAsUserId, HttpServletRequest request)
+	public static void doTag(
+			long doAsUserId, String var, PageContext pageContext)
 		throws Exception {
+
+		HttpServletRequest request =
+			(HttpServletRequest)pageContext.getRequest();
 
 		ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
 			WebKeys.THEME_DISPLAY);
@@ -78,23 +83,22 @@ public class DoAsURLTag extends TagSupport {
 		String encDoAsUserId = Encryptor.encrypt(
 			company.getKeyObj(), String.valueOf(doAsUserId));
 
-		return HttpUtil.addParameter(doAsURL, "doAsUserId", encDoAsUserId);
+		doAsURL = HttpUtil.addParameter(doAsURL, "doAsUserId", encDoAsUserId);
+
+		if (Validator.isNotNull(var)) {
+			pageContext.setAttribute(var, doAsURL);
+		}
+		else {
+			JspWriter jspWriter = pageContext.getOut();
+
+			jspWriter.write(doAsURL);
+		}
 	}
 
 	@Override
 	public int doEndTag() throws JspException {
 		try {
-			String doAsURL = doTag(
-				_doAsUserId, (HttpServletRequest)pageContext.getRequest());
-
-			if (Validator.isNotNull(_var)) {
-				pageContext.setAttribute(_var, doAsURL);
-			}
-			else {
-				JspWriter jspWriter = pageContext.getOut();
-
-				jspWriter.write(doAsURL);
-			}
+			doTag(_doAsUserId, _var, pageContext);
 		}
 		catch (Exception e) {
 			throw new JspException(e);

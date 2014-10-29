@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -20,6 +20,7 @@ import com.liferay.portal.CountryIddException;
 import com.liferay.portal.CountryNameException;
 import com.liferay.portal.CountryNumberException;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.Country;
 import com.liferay.portal.security.auth.PrincipalException;
@@ -36,7 +37,7 @@ public class CountryServiceImpl extends CountryServiceBaseImpl {
 	public Country addCountry(
 			String name, String a2, String a3, String number, String idd,
 			boolean active)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		if (!getPermissionChecker().isOmniadmin()) {
 			throw new PrincipalException();
@@ -79,47 +80,55 @@ public class CountryServiceImpl extends CountryServiceBaseImpl {
 	}
 
 	@Override
-	public Country fetchCountry(long countryId) {
+	public Country fetchCountry(long countryId) throws SystemException {
 		return countryPersistence.fetchByPrimaryKey(countryId);
 	}
 
 	@Override
-	public Country fetchCountryByA2(String a2) {
+	public Country fetchCountryByA2(String a2) throws SystemException {
 		return countryPersistence.fetchByA2(a2);
 	}
 
 	@Override
-	public Country fetchCountryByA3(String a3) {
+	public Country fetchCountryByA3(String a3) throws SystemException {
 		return countryPersistence.fetchByA3(a3);
 	}
 
 	@Override
-	public List<Country> getCountries() {
+	public List<Country> getCountries() throws SystemException {
 		return countryPersistence.findAll();
 	}
 
 	@Override
-	public List<Country> getCountries(boolean active) {
+	public List<Country> getCountries(boolean active) throws SystemException {
 		return countryPersistence.findByActive(active);
 	}
 
 	@Override
-	public Country getCountry(long countryId) throws PortalException {
+	public Country getCountry(long countryId)
+		throws PortalException, SystemException {
+
 		return countryPersistence.findByPrimaryKey(countryId);
 	}
 
 	@Override
-	public Country getCountryByA2(String a2) throws PortalException {
+	public Country getCountryByA2(String a2)
+		throws PortalException, SystemException {
+
 		return countryPersistence.findByA2(a2);
 	}
 
 	@Override
-	public Country getCountryByA3(String a3) throws PortalException {
+	public Country getCountryByA3(String a3)
+		throws PortalException, SystemException {
+
 		return countryPersistence.findByA3(a3);
 	}
 
 	@Override
-	public Country getCountryByName(String name) throws PortalException {
+	public Country getCountryByName(String name)
+		throws PortalException, SystemException {
+
 		return countryPersistence.findByName(name);
 	}
 

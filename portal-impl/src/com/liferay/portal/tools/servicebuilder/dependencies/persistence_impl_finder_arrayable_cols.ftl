@@ -1,3 +1,5 @@
+boolean conjunctionable = false;
+
 <#list finderColsList as finderCol>
 	<#if sqlQuery?? && sqlQuery && (finderCol.name != finderCol.DBName)>
 		<#assign finderFieldSuffix = finderFieldSQLSuffix>
@@ -6,40 +8,44 @@
 	</#if>
 
 	<#if finderCol.hasArrayableOperator()>
-		if (${finderCol.names}.length > 0) {
+		if ((${finderCol.names} == null) || (${finderCol.names}.length > 0)) {
+			if (conjunctionable) {
+				query.append(WHERE_AND);
+			}
+
 			query.append(StringPool.OPEN_PARENTHESIS);
 
-			<#if finderCol.type == "String">
-				for (int i = 0; i < ${finderCol.names}.length; i++) {
+			for (int i = 0; i < ${finderCol.names}.length; i++) {
+				<#if !finderCol.isPrimitiveType()>
 					${finderCol.type} ${finderCol.name} = ${finderCol.names}[i];
+				</#if>
 
-					<#include "persistence_impl_finder_arrayable_col.ftl">
+				<#include "persistence_impl_finder_arrayable_col.ftl">
 
-					if ((i + 1) < ${finderCol.names}.length) {
-						query.append(<#if finderCol.isArrayableAndOperator()>WHERE_AND<#else>WHERE_OR</#if>);
-					}
+				if ((i + 1) < ${finderCol.names}.length) {
+					query.append(<#if finderCol.isArrayableAndOperator()>WHERE_AND<#else>WHERE_OR</#if>);
 				}
-			<#else>
-				query.append(_FINDER_COLUMN_${finder.name?upper_case}_${finderCol.name?upper_case}_7${finderFieldSuffix});
-
-				query.append(StringUtil.merge(${finderCol.names}));
-
-				query.append(StringPool.CLOSE_PARENTHESIS);
-			</#if>
+			}
 
 			query.append(StringPool.CLOSE_PARENTHESIS);
 
-			<#if finderCol_has_next>
-				query.append(WHERE_AND);
-			</#if>
+			conjunctionable = true;
 		}
 	<#else>
-		<#include "persistence_impl_finder_col.ftl">
+		if (conjunctionable) {
+			query.append(WHERE_AND);
+		}
+
+		<#include "persistence_impl_finder_arrayable_col.ftl">
+
+		conjunctionable = true;
 	</#if>
 </#list>
 
 <#if finder.where?? && validator.isNotNull(finder.getWhere())>
+	if (conjunctionable) {
+		query.append(WHERE_AND);
+	}
+
 	query.append("${finder.where}");
-<#else>
-	query.setStringAt(removeConjunction(query.stringAt(query.index() - 1)), query.index() - 1);
 </#if>

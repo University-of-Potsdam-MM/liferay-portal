@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -16,6 +16,7 @@ package com.liferay.portlet.wiki.model.impl;
 
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.repository.model.FileEntry;
@@ -47,7 +48,9 @@ public class WikiPageImpl extends WikiPageBaseImpl {
 	}
 
 	@Override
-	public Folder addAttachmentsFolder() throws PortalException {
+	public Folder addAttachmentsFolder()
+		throws PortalException, SystemException {
+
 		if (_attachmentsFolderId !=
 				DLFolderConstants.DEFAULT_PARENT_FOLDER_ID) {
 
@@ -77,32 +80,14 @@ public class WikiPageImpl extends WikiPageBaseImpl {
 	}
 
 	@Override
-	public WikiPage fetchParentPage() {
-		if (Validator.isNull(getParentTitle())) {
-			return null;
-		}
-
-		return WikiPageLocalServiceUtil.fetchPage(
-			getNodeId(), getParentTitle());
-	}
-
-	@Override
-	public WikiPage fetchRedirectPage() {
-		if (Validator.isNull(getRedirectTitle())) {
-			return null;
-		}
-
-		return WikiPageLocalServiceUtil.fetchPage(
-			getNodeId(), getRedirectTitle());
-	}
-
-	@Override
-	public List<FileEntry> getAttachmentsFileEntries() {
+	public List<FileEntry> getAttachmentsFileEntries() throws SystemException {
 		return getAttachmentsFileEntries(QueryUtil.ALL_POS, QueryUtil.ALL_POS);
 	}
 
 	@Override
-	public List<FileEntry> getAttachmentsFileEntries(int start, int end) {
+	public List<FileEntry> getAttachmentsFileEntries(int start, int end)
+		throws SystemException {
+
 		List<FileEntry> fileEntries = new ArrayList<FileEntry>();
 
 		long attachmentsFolderId = getAttachmentsFolderId();
@@ -117,7 +102,7 @@ public class WikiPageImpl extends WikiPageBaseImpl {
 	}
 
 	@Override
-	public int getAttachmentsFileEntriesCount() {
+	public int getAttachmentsFileEntriesCount() throws SystemException {
 		int attachmentsFileEntriesCount = 0;
 
 		long attachmentsFolderId = getAttachmentsFolderId();
@@ -133,7 +118,7 @@ public class WikiPageImpl extends WikiPageBaseImpl {
 	}
 
 	@Override
-	public long getAttachmentsFolderId() {
+	public long getAttachmentsFolderId() throws SystemException {
 		if (_attachmentsFolderId !=
 				DLFolderConstants.DEFAULT_PARENT_FOLDER_ID) {
 
@@ -186,14 +171,16 @@ public class WikiPageImpl extends WikiPageBaseImpl {
 	}
 
 	@Override
-	public List<FileEntry> getDeletedAttachmentsFileEntries() {
+	public List<FileEntry> getDeletedAttachmentsFileEntries()
+		throws SystemException {
+
 		return getDeletedAttachmentsFileEntries(
 			QueryUtil.ALL_POS, QueryUtil.ALL_POS);
 	}
 
 	@Override
-	public List<FileEntry> getDeletedAttachmentsFileEntries(
-		int start, int end) {
+	public List<FileEntry> getDeletedAttachmentsFileEntries(int start, int end)
+		throws SystemException {
 
 		List<FileEntry> fileEntries = new ArrayList<FileEntry>();
 
@@ -209,7 +196,7 @@ public class WikiPageImpl extends WikiPageBaseImpl {
 	}
 
 	@Override
-	public int getDeletedAttachmentsFileEntriesCount() {
+	public int getDeletedAttachmentsFileEntriesCount() throws SystemException {
 		int deletedAttachmentsFileEntriesCount = 0;
 
 		long attachmentsFolderId = getAttachmentsFolderId();
@@ -236,26 +223,34 @@ public class WikiPageImpl extends WikiPageBaseImpl {
 	}
 
 	@Override
-	public long getNodeAttachmentsFolderId() {
+	public long getNodeAttachmentsFolderId() throws SystemException {
 		WikiNode node = getNode();
 
 		return node.getAttachmentsFolderId();
 	}
 
 	@Override
-	public WikiPage getParentPage() throws PortalException {
+	public WikiPage getParentPage() {
 		if (Validator.isNull(getParentTitle())) {
 			return null;
 		}
 
-		return WikiPageLocalServiceUtil.getPage(getNodeId(), getParentTitle());
+		try {
+			return WikiPageLocalServiceUtil.getPage(
+				getNodeId(), getParentTitle());
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			return null;
+		}
 	}
 
 	@Override
 	public List<WikiPage> getParentPages() {
 		List<WikiPage> parentPages = new ArrayList<WikiPage>();
 
-		WikiPage parentPage = fetchParentPage();
+		WikiPage parentPage = getParentPage();
 
 		if (parentPage != null) {
 			parentPages.addAll(parentPage.getParentPages());
@@ -266,13 +261,20 @@ public class WikiPageImpl extends WikiPageBaseImpl {
 	}
 
 	@Override
-	public WikiPage getRedirectPage() throws PortalException {
+	public WikiPage getRedirectPage() {
 		if (Validator.isNull(getRedirectTitle())) {
 			return null;
 		}
 
-		return WikiPageLocalServiceUtil.getPage(
-			getNodeId(), getRedirectTitle());
+		try {
+			return WikiPageLocalServiceUtil.getPage(
+				getNodeId(), getRedirectTitle());
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			return null;
+		}
 	}
 
 	@Override

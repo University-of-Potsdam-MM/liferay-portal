@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -45,9 +45,6 @@ public class SoftReferencePool<V, P> {
 
 		if (_useWeakCounter) {
 			_weakCounter = new AtomicInteger();
-		}
-		else {
-			_weakCounter = null;
 		}
 	}
 
@@ -115,12 +112,12 @@ public class SoftReferencePool<V, P> {
 		}
 	}
 
-	private final int _maxIdleSize;
-	private final PoolAction<V, P> _poolAction;
-	private final ReferenceQueue<V> _referenceQueue = new ReferenceQueue<V>();
-	private final Queue<SoftReference<? extends V>> _softReferences =
+	private int _maxIdleSize;
+	private PoolAction<V, P> _poolAction;
+	private ReferenceQueue<V> _referenceQueue = new ReferenceQueue<V>();
+	private Queue<SoftReference<? extends V>> _softReferences =
 		new ConcurrentLinkedQueue<SoftReference<? extends V>>();
-	private final boolean _useWeakCounter;
-	private final AtomicInteger _weakCounter;
+	private boolean _useWeakCounter;
+	private AtomicInteger _weakCounter;
 
 }

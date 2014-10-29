@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -50,7 +50,6 @@ public class SearchContainer<R> {
 	/**
 	 * @deprecated As of 6.2.0, replaced by {@link #DEFAULT_CUR}.
 	 */
-	@Deprecated
 	public static final int DEFAULT_CUR_VALUE = DEFAULT_CUR;
 
 	public static final int DEFAULT_DELTA = GetterUtil.getInteger(
@@ -65,7 +64,6 @@ public class SearchContainer<R> {
 	/**
 	 * @deprecated As of 6.2.0, see LPS-6312
 	 */
-	@Deprecated
 	public static final int DEFAULT_MAX_PAGES = 25;
 
 	public static final String DEFAULT_ORDER_BY_COL_PARAM = "orderByCol";
@@ -81,10 +79,6 @@ public class SearchContainer<R> {
 	public static final int MAX_DELTA = 200;
 
 	public SearchContainer() {
-		_curParam = DEFAULT_CUR_PARAM;
-		_displayTerms = null;
-		_portletRequest = null;
-		_searchTerms = null;
 	}
 
 	public SearchContainer(
@@ -199,7 +193,6 @@ public class SearchContainer<R> {
 	/**
 	 * @deprecated As of 6.2.0, replaced by {@link #getCur}
 	 */
-	@Deprecated
 	public int getCurValue() {
 		return getCur();
 	}
@@ -279,7 +272,6 @@ public class SearchContainer<R> {
 	/**
 	 * @deprecated As of 6.2.0, see LPS-6312
 	 */
-	@Deprecated
 	public int getMaxPages() {
 		return _maxPages;
 	}
@@ -300,7 +292,7 @@ public class SearchContainer<R> {
 		return _orderByColParam;
 	}
 
-	public OrderByComparator<R> getOrderByComparator() {
+	public OrderByComparator getOrderByComparator() {
 		return _orderByComparator;
 	}
 
@@ -423,7 +415,6 @@ public class SearchContainer<R> {
 	/**
 	 * @deprecated As of 6.2.0, see LPS-6312
 	 */
-	@Deprecated
 	public void setMaxPages(int maxPages) {
 		_maxPages = maxPages;
 	}
@@ -442,7 +433,7 @@ public class SearchContainer<R> {
 		_orderByColParam = orderByColParam;
 	}
 
-	public void setOrderByComparator(OrderByComparator<R> orderByComparator) {
+	public void setOrderByComparator(OrderByComparator orderByComparator) {
 		_orderByComparator = orderByComparator;
 	}
 
@@ -525,11 +516,11 @@ public class SearchContainer<R> {
 
 	private String _className;
 	private int _cur;
-	private final String _curParam;
+	private String _curParam = DEFAULT_CUR_PARAM;
 	private int _delta = DEFAULT_DELTA;
 	private boolean _deltaConfigurable = DEFAULT_DELTA_CONFIGURABLE;
 	private String _deltaParam = DEFAULT_DELTA_PARAM;
-	private final DisplayTerms _displayTerms;
+	private DisplayTerms _displayTerms;
 	private String _emptyResultsMessage;
 	private int _end;
 	private List<String> _headerNames;
@@ -540,23 +531,22 @@ public class SearchContainer<R> {
 	/**
 	 * @deprecated As of 6.2.0, see LPS-6312
 	 */
-	@Deprecated
 	private int _maxPages = DEFAULT_MAX_PAGES;
 
 	private List<String> _normalizedHeaderNames;
 	private Map<String, String> _orderableHeaders;
 	private String _orderByCol;
 	private String _orderByColParam = DEFAULT_ORDER_BY_COL_PARAM;
-	private OrderByComparator<R> _orderByComparator;
+	private OrderByComparator _orderByComparator;
 	private String _orderByJS;
 	private String _orderByType;
 	private String _orderByTypeParam = DEFAULT_ORDER_BY_TYPE_PARAM;
-	private final PortletRequest _portletRequest;
+	private PortletRequest _portletRequest;
 	private int _resultEnd;
-	private final List<ResultRow> _resultRows = new ArrayList<ResultRow>();
+	private List<ResultRow> _resultRows = new ArrayList<ResultRow>();
 	private List<R> _results = new ArrayList<R>();
 	private RowChecker _rowChecker;
-	private final DisplayTerms _searchTerms;
+	private DisplayTerms _searchTerms;
 	private int _start;
 	private int _total;
 	private String _totalVar;

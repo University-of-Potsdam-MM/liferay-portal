@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,35 +14,31 @@
 
 package com.liferay.portal.json.transformer;
 
-import com.liferay.portal.json.JoddJSONContext;
-import com.liferay.portal.kernel.json.JSONContext;
-import com.liferay.portal.kernel.json.JSONTransformer;
+import flexjson.JSONContext;
 
 import java.util.HashMap;
-import java.util.Map;
 import java.util.TreeMap;
-
-import jodd.json.impl.MapJsonSerializer;
 
 /**
  * @author Igor Spasic
  */
-public class SortedHashMapJSONTransformer
-	extends MapJsonSerializer implements JSONTransformer {
+public class SortedHashMapJSONTransformer extends BaseJSONTransformer {
 
 	@Override
-	public void transform(JSONContext jsonContext, Object map) {
-		if (map instanceof HashMap) {
-			TreeMap<Object, Object> treeMap = new TreeMap<>();
+	public void transform(Object object) {
+		if (object instanceof HashMap) {
+			HashMap<Object, Object> hashMap = (HashMap<Object, Object>)object;
 
-			treeMap.putAll((HashMap<Object, Object>)map);
+			TreeMap<Object, Object> treeMap = new TreeMap<Object, Object>();
 
-			map = treeMap;
+			treeMap.putAll(hashMap);
+
+			object = treeMap;
 		}
 
-		JoddJSONContext joddJSONContext = (JoddJSONContext)jsonContext;
+		JSONContext jsonContext = getContext();
 
-		super.serialize(joddJSONContext.getImplementation(), (Map<?, ?>)map);
+		jsonContext.transform(object);
 	}
 
 }

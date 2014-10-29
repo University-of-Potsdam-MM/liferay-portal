@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portal.model;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portlet.PortalPreferences;
 
 import java.util.List;
@@ -42,44 +43,47 @@ public interface LayoutTypePortlet extends LayoutType {
 	public void addModePrintPortletId(String portletId);
 
 	public String addPortletId(long userId, String portletId)
-		throws PortalException;
+		throws PortalException, SystemException;
 
 	public String addPortletId(
 			long userId, String portletId, boolean checkPermission)
-		throws PortalException;
+		throws PortalException, SystemException;
 
 	public String addPortletId(
 			long userId, String portletId, String columnId, int columnPos)
-		throws PortalException;
+		throws PortalException, SystemException;
 
 	public String addPortletId(
 			long userId, String portletId, String columnId, int columnPos,
 			boolean checkPermission)
-		throws PortalException;
+		throws PortalException, SystemException;
 
 	public void addPortletIds(
 			long userId, String[] portletIds, boolean checkPermission)
-		throws PortalException;
+		throws PortalException, SystemException;
 
 	public void addPortletIds(
 			long userId, String[] portletIds, String columnId,
 			boolean checkPermission)
-		throws PortalException;
+		throws PortalException, SystemException;
 
 	public void addStateMaxPortletId(String portletId);
 
 	public void addStateMinPortletId(String portletId);
 
 	public List<Portlet> addStaticPortlets(
-		List<Portlet> portlets, List<Portlet> startPortlets,
-		List<Portlet> endPortlets);
+			List<Portlet> portlets, List<Portlet> startPortlets,
+			List<Portlet> endPortlets)
+		throws SystemException;
 
-	public List<Portlet> getAllPortlets() throws PortalException;
+	public List<Portlet> getAllPortlets()
+		throws PortalException, SystemException;
 
 	public List<Portlet> getAllPortlets(boolean includeSystem)
-		throws PortalException;
+		throws PortalException, SystemException;
 
-	public List<Portlet> getAllPortlets(String columnId) throws PortalException;
+	public List<Portlet> getAllPortlets(String columnId)
+		throws PortalException, SystemException;
 
 	public Layout getLayoutSetPrototypeLayout();
 
@@ -111,7 +115,7 @@ public interface LayoutTypePortlet extends LayoutType {
 
 	public List<String> getPortletIds();
 
-	public List<Portlet> getPortlets();
+	public List<Portlet> getPortlets() throws SystemException;
 
 	public String getStateMax();
 
@@ -120,7 +124,7 @@ public interface LayoutTypePortlet extends LayoutType {
 	public String getStateMin();
 
 	public boolean hasDefaultScopePortletId(long groupId, String portletId)
-		throws PortalException;
+		throws PortalException, SystemException;
 
 	public boolean hasModeAboutPortletId(String portletId);
 
@@ -140,10 +144,11 @@ public interface LayoutTypePortlet extends LayoutType {
 
 	public boolean hasModeViewPortletId(String portletId);
 
-	public boolean hasPortletId(String portletId) throws PortalException;
+	public boolean hasPortletId(String portletId)
+		throws PortalException, SystemException;
 
 	public boolean hasPortletId(String portletId, boolean strict)
-		throws PortalException;
+		throws PortalException, SystemException;
 
 	public boolean hasStateMax();
 
@@ -157,7 +162,7 @@ public interface LayoutTypePortlet extends LayoutType {
 
 	public boolean hasUpdatePermission();
 
-	public boolean isCacheable() throws PortalException;
+	public boolean isCacheable() throws PortalException, SystemException;
 
 	public boolean isColumnCustomizable(String columnId);
 
@@ -173,7 +178,7 @@ public interface LayoutTypePortlet extends LayoutType {
 
 	public void movePortletId(
 			long userId, String portletId, String columnId, int columnPos)
-		throws PortalException;
+		throws PortalException, SystemException;
 
 	public void removeModeAboutPortletId(String portletId);
 

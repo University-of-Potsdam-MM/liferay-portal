@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,14 +14,12 @@
 
 package com.liferay.portlet.dynamicdatalists.lar;
 
-import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.lar.BaseStagedModelDataHandler;
 import com.liferay.portal.kernel.lar.ExportImportPathUtil;
 import com.liferay.portal.kernel.lar.PortletDataContext;
 import com.liferay.portal.kernel.lar.StagedModelDataHandlerUtil;
-import com.liferay.portal.kernel.lar.StagedModelModifiedDateComparator;
-import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.service.ServiceContext;
@@ -44,38 +42,15 @@ public class DDLRecordSetStagedModelDataHandler
 	@Override
 	public void deleteStagedModel(
 			String uuid, long groupId, String className, String extraData)
-		throws PortalException {
+		throws PortalException, SystemException {
 
-		DDLRecordSet ddlRecordSet = fetchStagedModelByUuidAndGroupId(
-			uuid, groupId);
+		DDLRecordSet ddlRecordSet =
+			DDLRecordSetLocalServiceUtil.fetchDDLRecordSetByUuidAndGroupId(
+				uuid, groupId);
 
 		if (ddlRecordSet != null) {
 			DDLRecordSetLocalServiceUtil.deleteRecordSet(ddlRecordSet);
 		}
-	}
-
-	@Override
-	public DDLRecordSet fetchStagedModelByUuidAndCompanyId(
-		String uuid, long companyId) {
-
-		List<DDLRecordSet> recordSets =
-			DDLRecordSetLocalServiceUtil.getDDLRecordSetsByUuidAndCompanyId(
-				uuid, companyId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-				new StagedModelModifiedDateComparator<DDLRecordSet>());
-
-		if (ListUtil.isEmpty(recordSets)) {
-			return null;
-		}
-
-		return recordSets.get(0);
-	}
-
-	@Override
-	public DDLRecordSet fetchStagedModelByUuidAndGroupId(
-		String uuid, long groupId) {
-
-		return DDLRecordSetLocalServiceUtil.fetchDDLRecordSetByUuidAndGroupId(
-			uuid, groupId);
 	}
 
 	@Override
@@ -95,9 +70,8 @@ public class DDLRecordSetStagedModelDataHandler
 
 		DDMStructure ddmStructure = recordSet.getDDMStructure();
 
-		StagedModelDataHandlerUtil.exportReferenceStagedModel(
-			portletDataContext, recordSet, ddmStructure,
-			PortletDataContext.REFERENCE_TYPE_STRONG);
+		StagedModelDataHandlerUtil.exportStagedModel(
+			portletDataContext, ddmStructure);
 
 		List<DDMTemplate> ddmTemplates = ddmStructure.getTemplates();
 
@@ -116,12 +90,14 @@ public class DDLRecordSetStagedModelDataHandler
 	}
 
 	@Override
-	protected void doImportMissingReference(
-			PortletDataContext portletDataContext, String uuid, long groupId,
+	protected void doImportCompanyStagedModel(
+			PortletDataContext portletDataContext, String uuid,
 			long recordSetId)
 		throws Exception {
 
-		DDLRecordSet existingRecordSet = fetchMissingReference(uuid, groupId);
+		DDLRecordSet existingRecordSet =
+			DDLRecordSetLocalServiceUtil.fetchDDLRecordSetByUuidAndGroupId(
+				uuid, portletDataContext.getCompanyGroupId());
 
 		Map<Long, Long> recordSetIds =
 			(Map<Long, Long>)portletDataContext.getNewPrimaryKeysMap(
@@ -137,6 +113,10 @@ public class DDLRecordSetStagedModelDataHandler
 
 		long userId = portletDataContext.getUserId(recordSet.getUserUuid());
 
+		StagedModelDataHandlerUtil.importReferenceStagedModel(
+			portletDataContext, recordSet, DDMStructure.class,
+			recordSet.getDDMStructureId());
+
 		Map<Long, Long> ddmStructureIds =
 			(Map<Long, Long>)portletDataContext.getNewPrimaryKeysMap(
 				DDMStructure.class);
@@ -145,14 +125,18 @@ public class DDLRecordSetStagedModelDataHandler
 			ddmStructureIds, recordSet.getDDMStructureId(),
 			recordSet.getDDMStructureId());
 
+		StagedModelDataHandlerUtil.importReferenceStagedModels(
+			portletDataContext, recordSet, DDMTemplate.class);
+
 		ServiceContext serviceContext = portletDataContext.createServiceContext(
 			recordSet);
 
 		DDLRecordSet importedRecordSet = null;
 
 		if (portletDataContext.isDataStrategyMirror()) {
-			DDLRecordSet existingRecordSet = fetchStagedModelByUuidAndGroupId(
-				recordSet.getUuid(), portletDataContext.getScopeGroupId());
+			DDLRecordSet existingRecordSet =
+				DDLRecordSetLocalServiceUtil.fetchDDLRecordSetByUuidAndGroupId(
+					recordSet.getUuid(), portletDataContext.getScopeGroupId());
 
 			if (existingRecordSet == null) {
 				serviceContext.setUuid(recordSet.getUuid());

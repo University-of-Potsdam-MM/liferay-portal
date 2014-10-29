@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -85,12 +85,11 @@ public class PortletDisplayTemplateDDMDisplay extends BaseDDMDisplay {
 
 	@Override
 	public long[] getTemplateGroupIds(
-			ThemeDisplay themeDisplay, boolean includeAncestorTemplates)
+			ThemeDisplay themeDisplay, boolean showGlobalScope)
 		throws Exception {
 
-		if (includeAncestorTemplates) {
-			return PortalUtil.getCurrentAndAncestorSiteGroupIds(
-				themeDisplay.getScopeGroupId());
+		if (showGlobalScope) {
+			return PortalUtil.getSiteAndCompanyGroupIds(themeDisplay);
 		}
 
 		return new long[] {
@@ -129,19 +128,13 @@ public class PortletDisplayTemplateDDMDisplay extends BaseDDMDisplay {
 
 	@Override
 	public String getViewTemplatesTitle(
-		DDMStructure structure, boolean controlPanel, boolean search,
-		Locale locale) {
-
-		if (search) {
-			return LanguageUtil.get(locale, "templates");
-		}
+		DDMStructure structure, boolean controlPanel, Locale locale) {
 
 		if (controlPanel) {
 			return StringPool.BLANK;
 		}
 
-		return super.getViewTemplatesTitle(
-			structure, controlPanel, search, locale);
+		return super.getViewTemplatesTitle(structure, controlPanel, locale);
 	}
 
 	@Override

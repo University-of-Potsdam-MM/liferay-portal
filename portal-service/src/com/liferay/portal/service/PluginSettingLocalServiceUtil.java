@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -46,16 +46,12 @@ public class PluginSettingLocalServiceUtil {
 	*
 	* @param pluginSetting the plugin setting
 	* @return the plugin setting that was added
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.PluginSetting addPluginSetting(
-		com.liferay.portal.model.PluginSetting pluginSetting) {
+		com.liferay.portal.model.PluginSetting pluginSetting)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().addPluginSetting(pluginSetting);
-	}
-
-	public static void checkPermission(long userId, java.lang.String pluginId,
-		java.lang.String pluginType)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		getService().checkPermission(userId, pluginId, pluginType);
 	}
 
 	/**
@@ -70,12 +66,18 @@ public class PluginSettingLocalServiceUtil {
 	}
 
 	/**
-	* @throws PortalException
+	* Deletes the plugin setting with the primary key from the database. Also notifies the appropriate model listeners.
+	*
+	* @param pluginSettingId the primary key of the plugin setting
+	* @return the plugin setting that was removed
+	* @throws PortalException if a plugin setting with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
-	public static com.liferay.portal.model.PersistedModel deletePersistedModel(
-		com.liferay.portal.model.PersistedModel persistedModel)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().deletePersistedModel(persistedModel);
+	public static com.liferay.portal.model.PluginSetting deletePluginSetting(
+		long pluginSettingId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getService().deletePluginSetting(pluginSettingId);
 	}
 
 	/**
@@ -83,23 +85,12 @@ public class PluginSettingLocalServiceUtil {
 	*
 	* @param pluginSetting the plugin setting
 	* @return the plugin setting that was removed
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.PluginSetting deletePluginSetting(
-		com.liferay.portal.model.PluginSetting pluginSetting) {
+		com.liferay.portal.model.PluginSetting pluginSetting)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().deletePluginSetting(pluginSetting);
-	}
-
-	/**
-	* Deletes the plugin setting with the primary key from the database. Also notifies the appropriate model listeners.
-	*
-	* @param pluginSettingId the primary key of the plugin setting
-	* @return the plugin setting that was removed
-	* @throws PortalException if a plugin setting with the primary key could not be found
-	*/
-	public static com.liferay.portal.model.PluginSetting deletePluginSetting(
-		long pluginSettingId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().deletePluginSetting(pluginSettingId);
 	}
 
 	public static com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery() {
@@ -111,9 +102,12 @@ public class PluginSettingLocalServiceUtil {
 	*
 	* @param dynamicQuery the dynamic query
 	* @return the matching rows
+	* @throws SystemException if a system exception occurred
 	*/
-	public static <T> java.util.List<T> dynamicQuery(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery) {
+	@SuppressWarnings("rawtypes")
+	public static java.util.List dynamicQuery(
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().dynamicQuery(dynamicQuery);
 	}
 
@@ -128,10 +122,12 @@ public class PluginSettingLocalServiceUtil {
 	* @param start the lower bound of the range of model instances
 	* @param end the upper bound of the range of model instances (not inclusive)
 	* @return the range of matching rows
+	* @throws SystemException if a system exception occurred
 	*/
-	public static <T> java.util.List<T> dynamicQuery(
+	@SuppressWarnings("rawtypes")
+	public static java.util.List dynamicQuery(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
-		int end) {
+		int end) throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().dynamicQuery(dynamicQuery, start, end);
 	}
 
@@ -147,11 +143,14 @@ public class PluginSettingLocalServiceUtil {
 	* @param end the upper bound of the range of model instances (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching rows
+	* @throws SystemException if a system exception occurred
 	*/
-	public static <T> java.util.List<T> dynamicQuery(
+	@SuppressWarnings("rawtypes")
+	public static java.util.List dynamicQuery(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
 		int end,
-		com.liferay.portal.kernel.util.OrderByComparator<T> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService()
 				   .dynamicQuery(dynamicQuery, start, end, orderByComparator);
 	}
@@ -161,9 +160,11 @@ public class PluginSettingLocalServiceUtil {
 	*
 	* @param dynamicQuery the dynamic query
 	* @return the number of rows that match the dynamic query
+	* @throws SystemException if a system exception occurred
 	*/
 	public static long dynamicQueryCount(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery) {
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().dynamicQueryCount(dynamicQuery);
 	}
 
@@ -173,44 +174,19 @@ public class PluginSettingLocalServiceUtil {
 	* @param dynamicQuery the dynamic query
 	* @param projection the projection to apply to the query
 	* @return the number of rows that match the dynamic query
+	* @throws SystemException if a system exception occurred
 	*/
 	public static long dynamicQueryCount(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery,
-		com.liferay.portal.kernel.dao.orm.Projection projection) {
+		com.liferay.portal.kernel.dao.orm.Projection projection)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().dynamicQueryCount(dynamicQuery, projection);
 	}
 
 	public static com.liferay.portal.model.PluginSetting fetchPluginSetting(
-		long pluginSettingId) {
+		long pluginSettingId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().fetchPluginSetting(pluginSettingId);
-	}
-
-	public static com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery getActionableDynamicQuery() {
-		return getService().getActionableDynamicQuery();
-	}
-
-	/**
-	* Returns the Spring bean ID for this bean.
-	*
-	* @return the Spring bean ID for this bean
-	*/
-	public static java.lang.String getBeanIdentifier() {
-		return getService().getBeanIdentifier();
-	}
-
-	public static com.liferay.portal.model.PluginSetting getDefaultPluginSetting() {
-		return getService().getDefaultPluginSetting();
-	}
-
-	public static com.liferay.portal.model.PersistedModel getPersistedModel(
-		java.io.Serializable primaryKeyObj)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().getPersistedModel(primaryKeyObj);
-	}
-
-	public static com.liferay.portal.model.PluginSetting getPluginSetting(
-		long companyId, java.lang.String pluginId, java.lang.String pluginType) {
-		return getService().getPluginSetting(companyId, pluginId, pluginType);
 	}
 
 	/**
@@ -219,11 +195,20 @@ public class PluginSettingLocalServiceUtil {
 	* @param pluginSettingId the primary key of the plugin setting
 	* @return the plugin setting
 	* @throws PortalException if a plugin setting with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.PluginSetting getPluginSetting(
 		long pluginSettingId)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getService().getPluginSetting(pluginSettingId);
+	}
+
+	public static com.liferay.portal.model.PersistedModel getPersistedModel(
+		java.io.Serializable primaryKeyObj)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getService().getPersistedModel(primaryKeyObj);
 	}
 
 	/**
@@ -236,9 +221,11 @@ public class PluginSettingLocalServiceUtil {
 	* @param start the lower bound of the range of plugin settings
 	* @param end the upper bound of the range of plugin settings (not inclusive)
 	* @return the range of plugin settings
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portal.model.PluginSetting> getPluginSettings(
-		int start, int end) {
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().getPluginSettings(start, end);
 	}
 
@@ -246,14 +233,33 @@ public class PluginSettingLocalServiceUtil {
 	* Returns the number of plugin settings.
 	*
 	* @return the number of plugin settings
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int getPluginSettingsCount() {
+	public static int getPluginSettingsCount()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().getPluginSettingsCount();
 	}
 
-	public static boolean hasPermission(long userId, java.lang.String pluginId,
-		java.lang.String pluginType) {
-		return getService().hasPermission(userId, pluginId, pluginType);
+	/**
+	* Updates the plugin setting in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
+	*
+	* @param pluginSetting the plugin setting
+	* @return the plugin setting that was updated
+	* @throws SystemException if a system exception occurred
+	*/
+	public static com.liferay.portal.model.PluginSetting updatePluginSetting(
+		com.liferay.portal.model.PluginSetting pluginSetting)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().updatePluginSetting(pluginSetting);
+	}
+
+	/**
+	* Returns the Spring bean ID for this bean.
+	*
+	* @return the Spring bean ID for this bean
+	*/
+	public static java.lang.String getBeanIdentifier() {
+		return getService().getBeanIdentifier();
 	}
 
 	/**
@@ -265,23 +271,34 @@ public class PluginSettingLocalServiceUtil {
 		getService().setBeanIdentifier(beanIdentifier);
 	}
 
+	public static void checkPermission(long userId, java.lang.String pluginId,
+		java.lang.String pluginType)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		getService().checkPermission(userId, pluginId, pluginType);
+	}
+
+	public static com.liferay.portal.model.PluginSetting getDefaultPluginSetting() {
+		return getService().getDefaultPluginSetting();
+	}
+
+	public static com.liferay.portal.model.PluginSetting getPluginSetting(
+		long companyId, java.lang.String pluginId, java.lang.String pluginType)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().getPluginSetting(companyId, pluginId, pluginType);
+	}
+
+	public static boolean hasPermission(long userId, java.lang.String pluginId,
+		java.lang.String pluginType) {
+		return getService().hasPermission(userId, pluginId, pluginType);
+	}
+
 	public static com.liferay.portal.model.PluginSetting updatePluginSetting(
 		long companyId, java.lang.String pluginId, java.lang.String pluginType,
-		java.lang.String roles, boolean active) {
+		java.lang.String roles, boolean active)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService()
 				   .updatePluginSetting(companyId, pluginId, pluginType, roles,
 			active);
-	}
-
-	/**
-	* Updates the plugin setting in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
-	*
-	* @param pluginSetting the plugin setting
-	* @return the plugin setting that was updated
-	*/
-	public static com.liferay.portal.model.PluginSetting updatePluginSetting(
-		com.liferay.portal.model.PluginSetting pluginSetting) {
-		return getService().updatePluginSetting(pluginSetting);
 	}
 
 	public static PluginSettingLocalService getService() {
@@ -298,7 +315,6 @@ public class PluginSettingLocalServiceUtil {
 	/**
 	 * @deprecated As of 6.2.0
 	 */
-	@Deprecated
 	public void setService(PluginSettingLocalService service) {
 	}
 

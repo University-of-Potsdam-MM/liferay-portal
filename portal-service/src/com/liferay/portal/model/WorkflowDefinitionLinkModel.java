@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -17,6 +17,7 @@ package com.liferay.portal.model;
 import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.bean.AutoEscape;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.service.ServiceContext;
 
 import com.liferay.portlet.expando.model.ExpandoBridge;
@@ -40,7 +41,7 @@ import java.util.Date;
  */
 @ProviderType
 public interface WorkflowDefinitionLinkModel extends AttachedModel,
-	BaseModel<WorkflowDefinitionLink>, GroupedModel, MVCCModel {
+	BaseModel<WorkflowDefinitionLink>, GroupedModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -60,22 +61,6 @@ public interface WorkflowDefinitionLinkModel extends AttachedModel,
 	 * @param primaryKey the primary key of this workflow definition link
 	 */
 	public void setPrimaryKey(long primaryKey);
-
-	/**
-	 * Returns the mvcc version of this workflow definition link.
-	 *
-	 * @return the mvcc version of this workflow definition link
-	 */
-	@Override
-	public long getMvccVersion();
-
-	/**
-	 * Sets the mvcc version of this workflow definition link.
-	 *
-	 * @param mvccVersion the mvcc version of this workflow definition link
-	 */
-	@Override
-	public void setMvccVersion(long mvccVersion);
 
 	/**
 	 * Returns the workflow definition link ID of this workflow definition link.
@@ -143,9 +128,10 @@ public interface WorkflowDefinitionLinkModel extends AttachedModel,
 	 * Returns the user uuid of this workflow definition link.
 	 *
 	 * @return the user uuid of this workflow definition link
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public String getUserUuid();
+	public String getUserUuid() throws SystemException;
 
 	/**
 	 * Sets the user uuid of this workflow definition link.

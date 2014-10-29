@@ -419,7 +419,7 @@ AUI.add(
 
 						A.each(
 							originalConfig.dataSet,
-							function(item, index) {
+							function(item, index, collection) {
 								item.localizedName = activityDefinitionLanguageKeys[item.modelName + '.' + item.languageKey];
 
 								item.settingsDisplay = instance;

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,6 +18,7 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.LocaleException;
 import com.liferay.portal.kernel.bean.AutoEscape;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.service.ServiceContext;
 
 import com.liferay.portlet.expando.model.ExpandoBridge;
@@ -42,8 +43,7 @@ import java.util.Map;
  * @generated
  */
 @ProviderType
-public interface LayoutModel extends BaseModel<Layout>, LocalizedModel, MVCCModel,
-	StagedGroupedModel {
+public interface LayoutModel extends BaseModel<Layout>, StagedGroupedModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -63,22 +63,6 @@ public interface LayoutModel extends BaseModel<Layout>, LocalizedModel, MVCCMode
 	 * @param primaryKey the primary key of this layout
 	 */
 	public void setPrimaryKey(long primaryKey);
-
-	/**
-	 * Returns the mvcc version of this layout.
-	 *
-	 * @return the mvcc version of this layout
-	 */
-	@Override
-	public long getMvccVersion();
-
-	/**
-	 * Sets the mvcc version of this layout.
-	 *
-	 * @param mvccVersion the mvcc version of this layout
-	 */
-	@Override
-	public void setMvccVersion(long mvccVersion);
 
 	/**
 	 * Returns the uuid of this layout.
@@ -163,9 +147,10 @@ public interface LayoutModel extends BaseModel<Layout>, LocalizedModel, MVCCMode
 	 * Returns the user uuid of this layout.
 	 *
 	 * @return the user uuid of this layout
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public String getUserUuid();
+	public String getUserUuid() throws SystemException;
 
 	/**
 	 * Sets the user uuid of this layout.
@@ -838,6 +823,27 @@ public interface LayoutModel extends BaseModel<Layout>, LocalizedModel, MVCCMode
 	public void setFriendlyURL(String friendlyURL);
 
 	/**
+	 * Returns the icon image of this layout.
+	 *
+	 * @return the icon image of this layout
+	 */
+	public boolean getIconImage();
+
+	/**
+	 * Returns <code>true</code> if this layout is icon image.
+	 *
+	 * @return <code>true</code> if this layout is icon image; <code>false</code> otherwise
+	 */
+	public boolean isIconImage();
+
+	/**
+	 * Sets whether this layout is icon image.
+	 *
+	 * @param iconImage the icon image of this layout
+	 */
+	public void setIconImage(boolean iconImage);
+
+	/**
 	 * Returns the icon image ID of this layout.
 	 *
 	 * @return the icon image ID of this layout
@@ -1025,16 +1031,12 @@ public interface LayoutModel extends BaseModel<Layout>, LocalizedModel, MVCCMode
 	@Override
 	public void setExpandoBridgeAttributes(ServiceContext serviceContext);
 
-	@Override
 	public String[] getAvailableLanguageIds();
 
-	@Override
 	public String getDefaultLanguageId();
 
-	@Override
 	public void prepareLocalizedFieldsForImport() throws LocaleException;
 
-	@Override
 	public void prepareLocalizedFieldsForImport(Locale defaultImportLocale)
 		throws LocaleException;
 

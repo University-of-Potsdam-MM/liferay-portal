@@ -1,44 +1,36 @@
 <#include "../init.ftl">
 
-<#assign fieldValue = paramUtil.getString(request, "${namespacedFieldName}Editor", fieldValue)>
+<#assign skipEditorLoading = paramUtil.getBoolean(request, "p_p_isolated")>
 
 <@aui["field-wrapper"] data=data helpMessage=escape(fieldStructure.tip) label=escape(label) required=required>
-	<#assign skipEditorLoading = paramUtil.getBoolean(request, "p_p_isolated")>
+	<@liferay_ui["input-editor"] initMethod="${namespacedFieldName}InitEditor" name="${namespacedFieldName}Editor" skipEditorLoading=skipEditorLoading />
 
-	<@liferay_ui["input-editor"] contentsLanguageId="${requestedLocale}" initMethod="" name="${namespacedFieldName}Editor" onBlurMethod="${namespacedFieldName}OnBlurEditor" skipEditorLoading=skipEditorLoading />
-
-	<@aui.input name=namespacedFieldName type="hidden" value=fieldValue>
-		<#if required>
-			<@aui.validator name="required" />
-		</#if>
-	</@>
+	<@aui.input name=namespacedFieldName type="hidden" value=fieldValue />
 
 	${fieldStructure.children}
+</@>
 
-	<@aui.script>
-		Liferay.provide(
-			window,
-			'${portletNamespace}${namespacedFieldName}OnBlurEditor',
-			function() {
-				var A = AUI();
+<@aui.script>
+	function ${portletNamespace}${namespacedFieldName}InitEditor() {
+		return "${unicodeFormatter.toString(fieldValue)}";
+	}
+</@>
 
-				var field = A.one('#${portletNamespace}${namespacedFieldName}');
+<@aui.script use="aui-base">
+	var field = A.one('#${portletNamespace}${namespacedFieldName}');
 
-				field.val(window['${portletNamespace}${namespacedFieldName}Editor'].getHTML());
+	if (field) {
+		var form = field.get('form');
 
-				var form = field.get('form');
-
-				if (form) {
-					var formName = form.get('name');
-
-					var formValidator = Liferay.Form.get(formName).formValidator;
-
-					if (formValidator) {
-						formValidator.validateField(field);
+		if (form) {
+			Liferay.on(
+				'submitForm',
+				function(event) {
+					if (event.form.compareTo(form)) {
+						field.val(window.${portletNamespace}${namespacedFieldName}Editor.getHTML());
 					}
 				}
-			},
-			['liferay-form']
-		);
-	</@>
+			);
+		}
+	}
 </@>

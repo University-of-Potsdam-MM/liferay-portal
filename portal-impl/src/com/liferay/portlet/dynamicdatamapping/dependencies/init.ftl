@@ -1,7 +1,6 @@
 <#-- Tag libraries -->
 
 <#assign aui = PortalJspTagLibs["/WEB-INF/tld/aui.tld"] />
-<#assign fmt = PortalJspTagLibs["/WEB-INF/tld/fmt.tld"] />
 <#assign liferay_portlet = PortalJspTagLibs["/WEB-INF/tld/liferay-portlet.tld"] />
 <#assign liferay_ui = PortalJspTagLibs["/WEB-INF/tld/liferay-ui.tld"] />
 
@@ -10,13 +9,7 @@
 <#assign cssClass = "">
 
 <#if fieldStructure.width??>
-	<#if fieldStructure.width == "large">
-		<#assign cssClass = "input-large">
-	<#elseif fieldStructure.width == "medium">
-		<#assign cssClass = "input-medium">
-	<#elseif fieldStructure.width == "small">
-		<#assign cssClass = "input-small">
-	</#if>
+	<#assign cssClass = "w" + fieldStructure.width>
 </#if>
 
 <#-- Repeatable -->
@@ -68,7 +61,6 @@
 
 <#assign fieldValue = predefinedValue>
 <#assign fieldRawValue = "">
-<#assign hasFieldValue = false>
 
 <#if fields?? && fields.get(fieldName)??>
 	<#assign field = fields.get(fieldName)>
@@ -77,18 +69,6 @@
 
 	<#assign fieldValue = field.getRenderedValue(requestedLocale, valueIndex)>
 	<#assign fieldRawValue = field.getValue(requestedLocale, valueIndex)!>
-
-	<#if fieldValue != "">
-		<#assign hasFieldValue = true>
-	</#if>
-</#if>
-
-<#-- Disabled -->
-
-<#assign disabled = false>
-
-<#if fieldStructure.disabled?? && (fieldStructure.disabled == "true")>
-	<#assign disabled = true>
 </#if>
 
 <#-- Label -->
@@ -160,5 +140,5 @@
 </#function>
 
 <#function getFileJSONObject fieldValue>
-	<#return jsonFactoryUtil.createJSONObject(fieldValue)>
+	<#return jsonFactoryUtil.createJSONObject(fieldValue)>>
 </#function>

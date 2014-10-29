@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,6 +18,7 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.bean.PortalBeanLocatorUtil;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ReferenceRegistry;
 import com.liferay.portal.service.ServiceContext;
@@ -63,7 +64,8 @@ public class ShoppingOrderItemUtil {
 	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#countWithDynamicQuery(DynamicQuery)
 	 */
-	public static long countWithDynamicQuery(DynamicQuery dynamicQuery) {
+	public static long countWithDynamicQuery(DynamicQuery dynamicQuery)
+		throws SystemException {
 		return getPersistence().countWithDynamicQuery(dynamicQuery);
 	}
 
@@ -71,7 +73,7 @@ public class ShoppingOrderItemUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#findWithDynamicQuery(DynamicQuery)
 	 */
 	public static List<ShoppingOrderItem> findWithDynamicQuery(
-		DynamicQuery dynamicQuery) {
+		DynamicQuery dynamicQuery) throws SystemException {
 		return getPersistence().findWithDynamicQuery(dynamicQuery);
 	}
 
@@ -79,7 +81,8 @@ public class ShoppingOrderItemUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#findWithDynamicQuery(DynamicQuery, int, int)
 	 */
 	public static List<ShoppingOrderItem> findWithDynamicQuery(
-		DynamicQuery dynamicQuery, int start, int end) {
+		DynamicQuery dynamicQuery, int start, int end)
+		throws SystemException {
 		return getPersistence().findWithDynamicQuery(dynamicQuery, start, end);
 	}
 
@@ -88,7 +91,7 @@ public class ShoppingOrderItemUtil {
 	 */
 	public static List<ShoppingOrderItem> findWithDynamicQuery(
 		DynamicQuery dynamicQuery, int start, int end,
-		OrderByComparator<ShoppingOrderItem> orderByComparator) {
+		OrderByComparator orderByComparator) throws SystemException {
 		return getPersistence()
 				   .findWithDynamicQuery(dynamicQuery, start, end,
 			orderByComparator);
@@ -97,7 +100,8 @@ public class ShoppingOrderItemUtil {
 	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel)
 	 */
-	public static ShoppingOrderItem update(ShoppingOrderItem shoppingOrderItem) {
+	public static ShoppingOrderItem update(ShoppingOrderItem shoppingOrderItem)
+		throws SystemException {
 		return getPersistence().update(shoppingOrderItem);
 	}
 
@@ -105,7 +109,8 @@ public class ShoppingOrderItemUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, ServiceContext)
 	 */
 	public static ShoppingOrderItem update(
-		ShoppingOrderItem shoppingOrderItem, ServiceContext serviceContext) {
+		ShoppingOrderItem shoppingOrderItem, ServiceContext serviceContext)
+		throws SystemException {
 		return getPersistence().update(shoppingOrderItem, serviceContext);
 	}
 
@@ -114,9 +119,11 @@ public class ShoppingOrderItemUtil {
 	*
 	* @param orderId the order ID
 	* @return the matching shopping order items
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.shopping.model.ShoppingOrderItem> findByOrderId(
-		long orderId) {
+		long orderId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByOrderId(orderId);
 	}
 
@@ -131,9 +138,11 @@ public class ShoppingOrderItemUtil {
 	* @param start the lower bound of the range of shopping order items
 	* @param end the upper bound of the range of shopping order items (not inclusive)
 	* @return the range of matching shopping order items
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.shopping.model.ShoppingOrderItem> findByOrderId(
-		long orderId, int start, int end) {
+		long orderId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByOrderId(orderId, start, end);
 	}
 
@@ -149,10 +158,12 @@ public class ShoppingOrderItemUtil {
 	* @param end the upper bound of the range of shopping order items (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching shopping order items
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.shopping.model.ShoppingOrderItem> findByOrderId(
 		long orderId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.shopping.model.ShoppingOrderItem> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByOrderId(orderId, start, end, orderByComparator);
 	}
@@ -164,11 +175,13 @@ public class ShoppingOrderItemUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching shopping order item
 	* @throws com.liferay.portlet.shopping.NoSuchOrderItemException if a matching shopping order item could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.shopping.model.ShoppingOrderItem findByOrderId_First(
 		long orderId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.shopping.model.ShoppingOrderItem> orderByComparator)
-		throws com.liferay.portlet.shopping.NoSuchOrderItemException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.shopping.NoSuchOrderItemException {
 		return getPersistence().findByOrderId_First(orderId, orderByComparator);
 	}
 
@@ -178,10 +191,12 @@ public class ShoppingOrderItemUtil {
 	* @param orderId the order ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching shopping order item, or <code>null</code> if a matching shopping order item could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.shopping.model.ShoppingOrderItem fetchByOrderId_First(
 		long orderId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.shopping.model.ShoppingOrderItem> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByOrderId_First(orderId, orderByComparator);
 	}
 
@@ -192,11 +207,13 @@ public class ShoppingOrderItemUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching shopping order item
 	* @throws com.liferay.portlet.shopping.NoSuchOrderItemException if a matching shopping order item could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.shopping.model.ShoppingOrderItem findByOrderId_Last(
 		long orderId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.shopping.model.ShoppingOrderItem> orderByComparator)
-		throws com.liferay.portlet.shopping.NoSuchOrderItemException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.shopping.NoSuchOrderItemException {
 		return getPersistence().findByOrderId_Last(orderId, orderByComparator);
 	}
 
@@ -206,10 +223,12 @@ public class ShoppingOrderItemUtil {
 	* @param orderId the order ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching shopping order item, or <code>null</code> if a matching shopping order item could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.shopping.model.ShoppingOrderItem fetchByOrderId_Last(
 		long orderId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.shopping.model.ShoppingOrderItem> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByOrderId_Last(orderId, orderByComparator);
 	}
 
@@ -221,11 +240,13 @@ public class ShoppingOrderItemUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next shopping order item
 	* @throws com.liferay.portlet.shopping.NoSuchOrderItemException if a shopping order item with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.shopping.model.ShoppingOrderItem[] findByOrderId_PrevAndNext(
 		long orderItemId, long orderId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.shopping.model.ShoppingOrderItem> orderByComparator)
-		throws com.liferay.portlet.shopping.NoSuchOrderItemException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.shopping.NoSuchOrderItemException {
 		return getPersistence()
 				   .findByOrderId_PrevAndNext(orderItemId, orderId,
 			orderByComparator);
@@ -235,8 +256,10 @@ public class ShoppingOrderItemUtil {
 	* Removes all the shopping order items where orderId = &#63; from the database.
 	*
 	* @param orderId the order ID
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByOrderId(long orderId) {
+	public static void removeByOrderId(long orderId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeByOrderId(orderId);
 	}
 
@@ -245,8 +268,10 @@ public class ShoppingOrderItemUtil {
 	*
 	* @param orderId the order ID
 	* @return the number of matching shopping order items
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByOrderId(long orderId) {
+	public static int countByOrderId(long orderId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByOrderId(orderId);
 	}
 
@@ -287,15 +312,18 @@ public class ShoppingOrderItemUtil {
 	* @param orderItemId the primary key of the shopping order item
 	* @return the shopping order item that was removed
 	* @throws com.liferay.portlet.shopping.NoSuchOrderItemException if a shopping order item with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.shopping.model.ShoppingOrderItem remove(
 		long orderItemId)
-		throws com.liferay.portlet.shopping.NoSuchOrderItemException {
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.shopping.NoSuchOrderItemException {
 		return getPersistence().remove(orderItemId);
 	}
 
 	public static com.liferay.portlet.shopping.model.ShoppingOrderItem updateImpl(
-		com.liferay.portlet.shopping.model.ShoppingOrderItem shoppingOrderItem) {
+		com.liferay.portlet.shopping.model.ShoppingOrderItem shoppingOrderItem)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().updateImpl(shoppingOrderItem);
 	}
 
@@ -305,10 +333,12 @@ public class ShoppingOrderItemUtil {
 	* @param orderItemId the primary key of the shopping order item
 	* @return the shopping order item
 	* @throws com.liferay.portlet.shopping.NoSuchOrderItemException if a shopping order item with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.shopping.model.ShoppingOrderItem findByPrimaryKey(
 		long orderItemId)
-		throws com.liferay.portlet.shopping.NoSuchOrderItemException {
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.shopping.NoSuchOrderItemException {
 		return getPersistence().findByPrimaryKey(orderItemId);
 	}
 
@@ -317,23 +347,22 @@ public class ShoppingOrderItemUtil {
 	*
 	* @param orderItemId the primary key of the shopping order item
 	* @return the shopping order item, or <code>null</code> if a shopping order item with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.shopping.model.ShoppingOrderItem fetchByPrimaryKey(
-		long orderItemId) {
+		long orderItemId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByPrimaryKey(orderItemId);
-	}
-
-	public static java.util.Map<java.io.Serializable, com.liferay.portlet.shopping.model.ShoppingOrderItem> fetchByPrimaryKeys(
-		java.util.Set<java.io.Serializable> primaryKeys) {
-		return getPersistence().fetchByPrimaryKeys(primaryKeys);
 	}
 
 	/**
 	* Returns all the shopping order items.
 	*
 	* @return the shopping order items
+	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portlet.shopping.model.ShoppingOrderItem> findAll() {
+	public static java.util.List<com.liferay.portlet.shopping.model.ShoppingOrderItem> findAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll();
 	}
 
@@ -347,9 +376,11 @@ public class ShoppingOrderItemUtil {
 	* @param start the lower bound of the range of shopping order items
 	* @param end the upper bound of the range of shopping order items (not inclusive)
 	* @return the range of shopping order items
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.shopping.model.ShoppingOrderItem> findAll(
-		int start, int end) {
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll(start, end);
 	}
 
@@ -364,17 +395,22 @@ public class ShoppingOrderItemUtil {
 	* @param end the upper bound of the range of shopping order items (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of shopping order items
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.shopping.model.ShoppingOrderItem> findAll(
 		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.shopping.model.ShoppingOrderItem> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll(start, end, orderByComparator);
 	}
 
 	/**
 	* Removes all the shopping order items from the database.
+	*
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeAll() {
+	public static void removeAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeAll();
 	}
 
@@ -382,8 +418,10 @@ public class ShoppingOrderItemUtil {
 	* Returns the number of shopping order items.
 	*
 	* @return the number of shopping order items
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countAll() {
+	public static int countAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countAll();
 	}
 
@@ -401,7 +439,6 @@ public class ShoppingOrderItemUtil {
 	/**
 	 * @deprecated As of 6.2.0
 	 */
-	@Deprecated
 	public void setPersistence(ShoppingOrderItemPersistence persistence) {
 	}
 

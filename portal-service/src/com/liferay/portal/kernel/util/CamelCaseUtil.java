@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -32,11 +32,14 @@ public class CamelCaseUtil {
 		for (int i = 0; i < s.length(); i++) {
 			char c = s.charAt(i);
 
-			if ((i > 0) && Character.isUpperCase(c)) {
-				if (!upperCase ||
-					((i < (s.length() - 1)) &&
-					 !Character.isUpperCase(s.charAt(i + 1)))) {
+			boolean nextUpperCase = true;
 
+			if (i < (s.length() - 1)) {
+				nextUpperCase = Character.isUpperCase(s.charAt(i + 1));
+			}
+
+			if ((i > 0) && Character.isUpperCase(c)) {
+				if (!upperCase || !nextUpperCase) {
 					sb.append(delimiter);
 				}
 
@@ -55,38 +58,22 @@ public class CamelCaseUtil {
 	}
 
 	public static String normalizeCamelCase(String s) {
-		return normalizeCamelCase(s, false);
-	}
-
-	public static String normalizeCamelCase(
-		String s, boolean normalizeInnerTerms) {
-
-		StringBuilder sb = new StringBuilder(s);
+		StringBuilder sb = new StringBuilder();
 
 		boolean upperCase = false;
 
 		for (int i = 0; i < s.length(); i++) {
 			char c = s.charAt(i);
 
-			if (!normalizeInnerTerms && (c == CharPool.PERIOD)) {
-				return sb.toString();
+			boolean nextUpperCase = true;
+
+			if (i < (s.length() - 1)) {
+				nextUpperCase = Character.isUpperCase(s.charAt(i + 1));
 			}
 
 			if ((i > 0) && Character.isUpperCase(c)) {
-				boolean nextUpperCase = true;
-
-				if (i < (s.length() - 1)) {
-					char nextChar = s.charAt(i + 1);
-
-					if ((nextChar != CharPool.PERIOD) &&
-						!Character.isUpperCase(nextChar)) {
-
-						nextUpperCase = false;
-					}
-				}
-
 				if (upperCase && nextUpperCase) {
-					sb.setCharAt(i, Character.toLowerCase(c));
+					c = Character.toLowerCase(c);
 				}
 
 				upperCase = true;
@@ -94,6 +81,8 @@ public class CamelCaseUtil {
 			else {
 				upperCase = false;
 			}
+
+			sb.append(c);
 		}
 
 		return sb.toString();

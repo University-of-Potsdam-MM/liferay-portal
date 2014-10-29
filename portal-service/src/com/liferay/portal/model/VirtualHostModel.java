@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -37,7 +37,7 @@ import java.io.Serializable;
  * @generated
  */
 @ProviderType
-public interface VirtualHostModel extends BaseModel<VirtualHost>, MVCCModel {
+public interface VirtualHostModel extends BaseModel<VirtualHost> {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -57,22 +57,6 @@ public interface VirtualHostModel extends BaseModel<VirtualHost>, MVCCModel {
 	 * @param primaryKey the primary key of this virtual host
 	 */
 	public void setPrimaryKey(long primaryKey);
-
-	/**
-	 * Returns the mvcc version of this virtual host.
-	 *
-	 * @return the mvcc version of this virtual host
-	 */
-	@Override
-	public long getMvccVersion();
-
-	/**
-	 * Sets the mvcc version of this virtual host.
-	 *
-	 * @param mvccVersion the mvcc version of this virtual host
-	 */
-	@Override
-	public void setMvccVersion(long mvccVersion);
 
 	/**
 	 * Returns the virtual host ID of this virtual host.

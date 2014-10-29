@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -19,6 +19,7 @@ import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Property;
 import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.search.BaseIndexer;
 import com.liferay.portal.kernel.search.BooleanQuery;
 import com.liferay.portal.kernel.search.Document;
@@ -31,21 +32,17 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.model.Group;
-import com.liferay.portal.security.permission.ActionKeys;
-import com.liferay.portal.security.permission.PermissionChecker;
-import com.liferay.portal.service.GroupLocalServiceUtil;
+import com.liferay.portal.service.persistence.GroupActionableDynamicQuery;
 import com.liferay.portal.util.PortletKeys;
 import com.liferay.portlet.bookmarks.model.BookmarksEntry;
 import com.liferay.portlet.bookmarks.model.BookmarksFolder;
 import com.liferay.portlet.bookmarks.model.BookmarksFolderConstants;
 import com.liferay.portlet.bookmarks.service.BookmarksEntryLocalServiceUtil;
-import com.liferay.portlet.bookmarks.service.BookmarksFolderLocalServiceUtil;
-import com.liferay.portlet.bookmarks.service.permission.BookmarksEntryPermission;
+import com.liferay.portlet.bookmarks.service.persistence.BookmarksEntryActionableDynamicQuery;
+import com.liferay.portlet.bookmarks.service.persistence.BookmarksFolderActionableDynamicQuery;
 
 import java.util.Locale;
 
-import javax.portlet.PortletRequest;
-import javax.portlet.PortletResponse;
 import javax.portlet.PortletURL;
 
 /**
@@ -60,10 +57,6 @@ public class BookmarksEntryIndexer extends BaseIndexer {
 	public static final String PORTLET_ID = PortletKeys.BOOKMARKS;
 
 	public BookmarksEntryIndexer() {
-		setDefaultSelectedFieldNames(
-			Field.COMPANY_ID, Field.ENTRY_CLASS_NAME, Field.ENTRY_CLASS_PK,
-			Field.TITLE, Field.UID, Field.URL);
-		setFilterSearch(true);
 		setPermissionAware(true);
 	}
 
@@ -75,16 +68,6 @@ public class BookmarksEntryIndexer extends BaseIndexer {
 	@Override
 	public String getPortletId() {
 		return PORTLET_ID;
-	}
-
-	@Override
-	public boolean hasPermission(
-			PermissionChecker permissionChecker, String entryClassName,
-			long entryClassPK, String actionId)
-		throws Exception {
-
-		return BookmarksEntryPermission.contains(
-			permissionChecker, entryClassPK, ActionKeys.VIEW);
 	}
 
 	@Override
@@ -121,8 +104,8 @@ public class BookmarksEntryIndexer extends BaseIndexer {
 
 	@Override
 	protected Summary doGetSummary(
-		Document document, Locale locale, String snippet, PortletURL portletURL,
-		PortletRequest portletRequest, PortletResponse portletResponse) {
+		Document document, Locale locale, String snippet,
+		PortletURL portletURL) {
 
 		String entryId = document.get(Field.ENTRY_CLASS_PK);
 
@@ -143,8 +126,7 @@ public class BookmarksEntryIndexer extends BaseIndexer {
 		Document document = getDocument(entry);
 
 		SearchEngineUtil.updateDocument(
-			getSearchEngineId(), entry.getCompanyId(), document,
-			isCommitImmediately());
+			getSearchEngineId(), entry.getCompanyId(), document);
 	}
 
 	@Override
@@ -169,102 +151,93 @@ public class BookmarksEntryIndexer extends BaseIndexer {
 
 	protected void reindexEntries(
 			long companyId, final long groupId, final long folderId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
-		final ActionableDynamicQuery actionableDynamicQuery =
-			BookmarksEntryLocalServiceUtil.getActionableDynamicQuery();
+		ActionableDynamicQuery actionableDynamicQuery =
+			new BookmarksEntryActionableDynamicQuery() {
 
-		actionableDynamicQuery.setAddCriteriaMethod(
-			new ActionableDynamicQuery.AddCriteriaMethod() {
+			@Override
+			protected void addCriteria(DynamicQuery dynamicQuery) {
+				Property folderIdProperty = PropertyFactoryUtil.forName(
+					"folderId");
 
-				@Override
-				public void addCriteria(DynamicQuery dynamicQuery) {
-					Property folderIdProperty = PropertyFactoryUtil.forName(
-						"folderId");
+				dynamicQuery.add(folderIdProperty.eq(folderId));
 
-					dynamicQuery.add(folderIdProperty.eq(folderId));
+				Property statusProperty = PropertyFactoryUtil.forName("status");
 
-					Property statusProperty = PropertyFactoryUtil.forName(
-						"status");
+				Integer[] statuses = {
+					WorkflowConstants.STATUS_APPROVED,
+					WorkflowConstants.STATUS_IN_TRASH
+				};
 
-					Integer[] statuses = {
-						WorkflowConstants.STATUS_APPROVED,
-						WorkflowConstants.STATUS_IN_TRASH
-					};
+				dynamicQuery.add(statusProperty.in(statuses));
+			}
 
-					dynamicQuery.add(statusProperty.in(statuses));
-				}
+			@Override
+			protected void performAction(Object object) throws PortalException {
+				BookmarksEntry entry = (BookmarksEntry)object;
 
-			});
+				Document document = getDocument(entry);
+
+				addDocument(document);
+			}
+
+		};
+
 		actionableDynamicQuery.setCompanyId(companyId);
 		actionableDynamicQuery.setGroupId(groupId);
-		actionableDynamicQuery.setPerformActionMethod(
-			new ActionableDynamicQuery.PerformActionMethod() {
-
-				@Override
-				public void performAction(Object object)
-					throws PortalException {
-
-					BookmarksEntry entry = (BookmarksEntry)object;
-
-					Document document = getDocument(entry);
-
-					actionableDynamicQuery.addDocument(document);
-				}
-
-			});
 		actionableDynamicQuery.setSearchEngineId(getSearchEngineId());
 
 		actionableDynamicQuery.performActions();
 	}
 
-	protected void reindexFolders(final long companyId) throws PortalException {
-		final ActionableDynamicQuery actionableDynamicQuery =
-			BookmarksFolderLocalServiceUtil.getActionableDynamicQuery();
+	protected void reindexFolders(final long companyId)
+		throws PortalException, SystemException {
+
+		ActionableDynamicQuery actionableDynamicQuery =
+			new BookmarksFolderActionableDynamicQuery() {
+
+			@Override
+			protected void performAction(Object object)
+				throws PortalException, SystemException {
+
+				BookmarksFolder folder = (BookmarksFolder)object;
+
+				long groupId = folder.getGroupId();
+				long folderId = folder.getFolderId();
+
+				reindexEntries(companyId, groupId, folderId);
+			}
+
+		};
 
 		actionableDynamicQuery.setCompanyId(companyId);
-		actionableDynamicQuery.setPerformActionMethod(
-			new ActionableDynamicQuery.PerformActionMethod() {
-
-				@Override
-				public void performAction(Object object)
-					throws PortalException {
-
-					BookmarksFolder folder = (BookmarksFolder)object;
-
-					long groupId = folder.getGroupId();
-					long folderId = folder.getFolderId();
-
-					reindexEntries(companyId, groupId, folderId);
-				}
-
-			});
 
 		actionableDynamicQuery.performActions();
 	}
 
-	protected void reindexRoot(final long companyId) throws PortalException {
+	protected void reindexRoot(final long companyId)
+		throws PortalException, SystemException {
+
 		ActionableDynamicQuery actionableDynamicQuery =
-			GroupLocalServiceUtil.getActionableDynamicQuery();
+			new GroupActionableDynamicQuery() {
+
+			@Override
+			protected void performAction(Object object)
+				throws PortalException, SystemException {
+
+				Group group = (Group)object;
+
+				long groupId = group.getGroupId();
+				long folderId =
+					BookmarksFolderConstants.DEFAULT_PARENT_FOLDER_ID;
+
+				reindexEntries(companyId, groupId, folderId);
+			}
+
+		};
 
 		actionableDynamicQuery.setCompanyId(companyId);
-		actionableDynamicQuery.setPerformActionMethod(
-			new ActionableDynamicQuery.PerformActionMethod() {
-
-				@Override
-				public void performAction(Object object)
-					throws PortalException {
-
-					Group group = (Group)object;
-
-					long groupId = group.getGroupId();
-					long folderId =
-						BookmarksFolderConstants.DEFAULT_PARENT_FOLDER_ID;
-
-					reindexEntries(companyId, groupId, folderId);
-				}
-
-			});
 
 		actionableDynamicQuery.performActions();
 	}

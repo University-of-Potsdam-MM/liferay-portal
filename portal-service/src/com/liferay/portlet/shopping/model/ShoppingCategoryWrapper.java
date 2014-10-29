@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -130,15 +130,24 @@ public class ShoppingCategoryWrapper implements ShoppingCategory,
 		}
 	}
 
+	/**
+	* Returns the primary key of this shopping category.
+	*
+	* @return the primary key of this shopping category
+	*/
 	@Override
-	public java.lang.Object clone() {
-		return new ShoppingCategoryWrapper((ShoppingCategory)_shoppingCategory.clone());
+	public long getPrimaryKey() {
+		return _shoppingCategory.getPrimaryKey();
 	}
 
+	/**
+	* Sets the primary key of this shopping category.
+	*
+	* @param primaryKey the primary key of this shopping category
+	*/
 	@Override
-	public int compareTo(
-		com.liferay.portlet.shopping.model.ShoppingCategory shoppingCategory) {
-		return _shoppingCategory.compareTo(shoppingCategory);
+	public void setPrimaryKey(long primaryKey) {
+		_shoppingCategory.setPrimaryKey(primaryKey);
 	}
 
 	/**
@@ -152,38 +161,13 @@ public class ShoppingCategoryWrapper implements ShoppingCategory,
 	}
 
 	/**
-	* Returns the company ID of this shopping category.
+	* Sets the category ID of this shopping category.
 	*
-	* @return the company ID of this shopping category
+	* @param categoryId the category ID of this shopping category
 	*/
 	@Override
-	public long getCompanyId() {
-		return _shoppingCategory.getCompanyId();
-	}
-
-	/**
-	* Returns the create date of this shopping category.
-	*
-	* @return the create date of this shopping category
-	*/
-	@Override
-	public java.util.Date getCreateDate() {
-		return _shoppingCategory.getCreateDate();
-	}
-
-	/**
-	* Returns the description of this shopping category.
-	*
-	* @return the description of this shopping category
-	*/
-	@Override
-	public java.lang.String getDescription() {
-		return _shoppingCategory.getDescription();
-	}
-
-	@Override
-	public com.liferay.portlet.expando.model.ExpandoBridge getExpandoBridge() {
-		return _shoppingCategory.getExpandoBridge();
+	public void setCategoryId(long categoryId) {
+		_shoppingCategory.setCategoryId(categoryId);
 	}
 
 	/**
@@ -197,123 +181,23 @@ public class ShoppingCategoryWrapper implements ShoppingCategory,
 	}
 
 	/**
-	* Returns the modified date of this shopping category.
+	* Sets the group ID of this shopping category.
 	*
-	* @return the modified date of this shopping category
+	* @param groupId the group ID of this shopping category
 	*/
 	@Override
-	public java.util.Date getModifiedDate() {
-		return _shoppingCategory.getModifiedDate();
+	public void setGroupId(long groupId) {
+		_shoppingCategory.setGroupId(groupId);
 	}
 
 	/**
-	* Returns the name of this shopping category.
+	* Returns the company ID of this shopping category.
 	*
-	* @return the name of this shopping category
+	* @return the company ID of this shopping category
 	*/
 	@Override
-	public java.lang.String getName() {
-		return _shoppingCategory.getName();
-	}
-
-	/**
-	* Returns the parent category ID of this shopping category.
-	*
-	* @return the parent category ID of this shopping category
-	*/
-	@Override
-	public long getParentCategoryId() {
-		return _shoppingCategory.getParentCategoryId();
-	}
-
-	/**
-	* Returns the primary key of this shopping category.
-	*
-	* @return the primary key of this shopping category
-	*/
-	@Override
-	public long getPrimaryKey() {
-		return _shoppingCategory.getPrimaryKey();
-	}
-
-	@Override
-	public java.io.Serializable getPrimaryKeyObj() {
-		return _shoppingCategory.getPrimaryKeyObj();
-	}
-
-	/**
-	* Returns the user ID of this shopping category.
-	*
-	* @return the user ID of this shopping category
-	*/
-	@Override
-	public long getUserId() {
-		return _shoppingCategory.getUserId();
-	}
-
-	/**
-	* Returns the user name of this shopping category.
-	*
-	* @return the user name of this shopping category
-	*/
-	@Override
-	public java.lang.String getUserName() {
-		return _shoppingCategory.getUserName();
-	}
-
-	/**
-	* Returns the user uuid of this shopping category.
-	*
-	* @return the user uuid of this shopping category
-	*/
-	@Override
-	public java.lang.String getUserUuid() {
-		return _shoppingCategory.getUserUuid();
-	}
-
-	@Override
-	public int hashCode() {
-		return _shoppingCategory.hashCode();
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _shoppingCategory.isCachedModel();
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _shoppingCategory.isEscapedModel();
-	}
-
-	@Override
-	public boolean isNew() {
-		return _shoppingCategory.isNew();
-	}
-
-	@Override
-	public boolean isRoot() {
-		return _shoppingCategory.isRoot();
-	}
-
-	@Override
-	public void persist() {
-		_shoppingCategory.persist();
-	}
-
-	@Override
-	public void setCachedModel(boolean cachedModel) {
-		_shoppingCategory.setCachedModel(cachedModel);
-	}
-
-	/**
-	* Sets the category ID of this shopping category.
-	*
-	* @param categoryId the category ID of this shopping category
-	*/
-	@Override
-	public void setCategoryId(long categoryId) {
-		_shoppingCategory.setCategoryId(categoryId);
+	public long getCompanyId() {
+		return _shoppingCategory.getCompanyId();
 	}
 
 	/**
@@ -327,6 +211,78 @@ public class ShoppingCategoryWrapper implements ShoppingCategory,
 	}
 
 	/**
+	* Returns the user ID of this shopping category.
+	*
+	* @return the user ID of this shopping category
+	*/
+	@Override
+	public long getUserId() {
+		return _shoppingCategory.getUserId();
+	}
+
+	/**
+	* Sets the user ID of this shopping category.
+	*
+	* @param userId the user ID of this shopping category
+	*/
+	@Override
+	public void setUserId(long userId) {
+		_shoppingCategory.setUserId(userId);
+	}
+
+	/**
+	* Returns the user uuid of this shopping category.
+	*
+	* @return the user uuid of this shopping category
+	* @throws SystemException if a system exception occurred
+	*/
+	@Override
+	public java.lang.String getUserUuid()
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return _shoppingCategory.getUserUuid();
+	}
+
+	/**
+	* Sets the user uuid of this shopping category.
+	*
+	* @param userUuid the user uuid of this shopping category
+	*/
+	@Override
+	public void setUserUuid(java.lang.String userUuid) {
+		_shoppingCategory.setUserUuid(userUuid);
+	}
+
+	/**
+	* Returns the user name of this shopping category.
+	*
+	* @return the user name of this shopping category
+	*/
+	@Override
+	public java.lang.String getUserName() {
+		return _shoppingCategory.getUserName();
+	}
+
+	/**
+	* Sets the user name of this shopping category.
+	*
+	* @param userName the user name of this shopping category
+	*/
+	@Override
+	public void setUserName(java.lang.String userName) {
+		_shoppingCategory.setUserName(userName);
+	}
+
+	/**
+	* Returns the create date of this shopping category.
+	*
+	* @return the create date of this shopping category
+	*/
+	@Override
+	public java.util.Date getCreateDate() {
+		return _shoppingCategory.getCreateDate();
+	}
+
+	/**
 	* Sets the create date of this shopping category.
 	*
 	* @param createDate the create date of this shopping category
@@ -337,6 +293,76 @@ public class ShoppingCategoryWrapper implements ShoppingCategory,
 	}
 
 	/**
+	* Returns the modified date of this shopping category.
+	*
+	* @return the modified date of this shopping category
+	*/
+	@Override
+	public java.util.Date getModifiedDate() {
+		return _shoppingCategory.getModifiedDate();
+	}
+
+	/**
+	* Sets the modified date of this shopping category.
+	*
+	* @param modifiedDate the modified date of this shopping category
+	*/
+	@Override
+	public void setModifiedDate(java.util.Date modifiedDate) {
+		_shoppingCategory.setModifiedDate(modifiedDate);
+	}
+
+	/**
+	* Returns the parent category ID of this shopping category.
+	*
+	* @return the parent category ID of this shopping category
+	*/
+	@Override
+	public long getParentCategoryId() {
+		return _shoppingCategory.getParentCategoryId();
+	}
+
+	/**
+	* Sets the parent category ID of this shopping category.
+	*
+	* @param parentCategoryId the parent category ID of this shopping category
+	*/
+	@Override
+	public void setParentCategoryId(long parentCategoryId) {
+		_shoppingCategory.setParentCategoryId(parentCategoryId);
+	}
+
+	/**
+	* Returns the name of this shopping category.
+	*
+	* @return the name of this shopping category
+	*/
+	@Override
+	public java.lang.String getName() {
+		return _shoppingCategory.getName();
+	}
+
+	/**
+	* Sets the name of this shopping category.
+	*
+	* @param name the name of this shopping category
+	*/
+	@Override
+	public void setName(java.lang.String name) {
+		_shoppingCategory.setName(name);
+	}
+
+	/**
+	* Returns the description of this shopping category.
+	*
+	* @return the description of this shopping category
+	*/
+	@Override
+	public java.lang.String getDescription() {
+		return _shoppingCategory.getDescription();
+	}
+
+	/**
 	* Sets the description of this shopping category.
 	*
 	* @param description the description of this shopping category
@@ -344,6 +370,46 @@ public class ShoppingCategoryWrapper implements ShoppingCategory,
 	@Override
 	public void setDescription(java.lang.String description) {
 		_shoppingCategory.setDescription(description);
+	}
+
+	@Override
+	public boolean isNew() {
+		return _shoppingCategory.isNew();
+	}
+
+	@Override
+	public void setNew(boolean n) {
+		_shoppingCategory.setNew(n);
+	}
+
+	@Override
+	public boolean isCachedModel() {
+		return _shoppingCategory.isCachedModel();
+	}
+
+	@Override
+	public void setCachedModel(boolean cachedModel) {
+		_shoppingCategory.setCachedModel(cachedModel);
+	}
+
+	@Override
+	public boolean isEscapedModel() {
+		return _shoppingCategory.isEscapedModel();
+	}
+
+	@Override
+	public java.io.Serializable getPrimaryKeyObj() {
+		return _shoppingCategory.getPrimaryKeyObj();
+	}
+
+	@Override
+	public void setPrimaryKeyObj(java.io.Serializable primaryKeyObj) {
+		_shoppingCategory.setPrimaryKeyObj(primaryKeyObj);
+	}
+
+	@Override
+	public com.liferay.portlet.expando.model.ExpandoBridge getExpandoBridge() {
+		return _shoppingCategory.getExpandoBridge();
 	}
 
 	@Override
@@ -364,94 +430,20 @@ public class ShoppingCategoryWrapper implements ShoppingCategory,
 		_shoppingCategory.setExpandoBridgeAttributes(serviceContext);
 	}
 
-	/**
-	* Sets the group ID of this shopping category.
-	*
-	* @param groupId the group ID of this shopping category
-	*/
 	@Override
-	public void setGroupId(long groupId) {
-		_shoppingCategory.setGroupId(groupId);
-	}
-
-	/**
-	* Sets the modified date of this shopping category.
-	*
-	* @param modifiedDate the modified date of this shopping category
-	*/
-	@Override
-	public void setModifiedDate(java.util.Date modifiedDate) {
-		_shoppingCategory.setModifiedDate(modifiedDate);
-	}
-
-	/**
-	* Sets the name of this shopping category.
-	*
-	* @param name the name of this shopping category
-	*/
-	@Override
-	public void setName(java.lang.String name) {
-		_shoppingCategory.setName(name);
+	public java.lang.Object clone() {
+		return new ShoppingCategoryWrapper((ShoppingCategory)_shoppingCategory.clone());
 	}
 
 	@Override
-	public void setNew(boolean n) {
-		_shoppingCategory.setNew(n);
-	}
-
-	/**
-	* Sets the parent category ID of this shopping category.
-	*
-	* @param parentCategoryId the parent category ID of this shopping category
-	*/
-	@Override
-	public void setParentCategoryId(long parentCategoryId) {
-		_shoppingCategory.setParentCategoryId(parentCategoryId);
-	}
-
-	/**
-	* Sets the primary key of this shopping category.
-	*
-	* @param primaryKey the primary key of this shopping category
-	*/
-	@Override
-	public void setPrimaryKey(long primaryKey) {
-		_shoppingCategory.setPrimaryKey(primaryKey);
+	public int compareTo(
+		com.liferay.portlet.shopping.model.ShoppingCategory shoppingCategory) {
+		return _shoppingCategory.compareTo(shoppingCategory);
 	}
 
 	@Override
-	public void setPrimaryKeyObj(java.io.Serializable primaryKeyObj) {
-		_shoppingCategory.setPrimaryKeyObj(primaryKeyObj);
-	}
-
-	/**
-	* Sets the user ID of this shopping category.
-	*
-	* @param userId the user ID of this shopping category
-	*/
-	@Override
-	public void setUserId(long userId) {
-		_shoppingCategory.setUserId(userId);
-	}
-
-	/**
-	* Sets the user name of this shopping category.
-	*
-	* @param userName the user name of this shopping category
-	*/
-	@Override
-	public void setUserName(java.lang.String userName) {
-		_shoppingCategory.setUserName(userName);
-	}
-
-	/**
-	* Sets the user uuid of this shopping category.
-	*
-	* @param userUuid the user uuid of this shopping category
-	*/
-	@Override
-	public void setUserUuid(java.lang.String userUuid) {
-		_shoppingCategory.setUserUuid(userUuid);
+	public int hashCode() {
+		return _shoppingCategory.hashCode();
 	}
 
 	@Override
@@ -465,18 +457,29 @@ public class ShoppingCategoryWrapper implements ShoppingCategory,
 	}
 
 	@Override
-	public java.lang.String toString() {
-		return _shoppingCategory.toString();
-	}
-
-	@Override
 	public com.liferay.portlet.shopping.model.ShoppingCategory toUnescapedModel() {
 		return new ShoppingCategoryWrapper(_shoppingCategory.toUnescapedModel());
 	}
 
 	@Override
+	public java.lang.String toString() {
+		return _shoppingCategory.toString();
+	}
+
+	@Override
 	public java.lang.String toXmlString() {
 		return _shoppingCategory.toXmlString();
+	}
+
+	@Override
+	public void persist()
+		throws com.liferay.portal.kernel.exception.SystemException {
+		_shoppingCategory.persist();
+	}
+
+	@Override
+	public boolean isRoot() {
+		return _shoppingCategory.isRoot();
 	}
 
 	@Override
@@ -502,7 +505,6 @@ public class ShoppingCategoryWrapper implements ShoppingCategory,
 	/**
 	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedModel}
 	 */
-	@Deprecated
 	public ShoppingCategory getWrappedShoppingCategory() {
 		return _shoppingCategory;
 	}
@@ -513,19 +515,9 @@ public class ShoppingCategoryWrapper implements ShoppingCategory,
 	}
 
 	@Override
-	public boolean isEntityCacheEnabled() {
-		return _shoppingCategory.isEntityCacheEnabled();
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return _shoppingCategory.isFinderCacheEnabled();
-	}
-
-	@Override
 	public void resetOriginalValues() {
 		_shoppingCategory.resetOriginalValues();
 	}
 
-	private final ShoppingCategory _shoppingCategory;
+	private ShoppingCategory _shoppingCategory;
 }

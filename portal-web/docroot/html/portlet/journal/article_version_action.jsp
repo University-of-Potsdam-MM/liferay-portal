@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -24,7 +24,7 @@ ResultRow row = (ResultRow)request.getAttribute(WebKeys.SEARCH_CONTAINER_RESULT_
 JournalArticle article = (JournalArticle)row.getObject();
 %>
 
-<liferay-ui:icon-menu direction="down" icon="<%= StringPool.BLANK %>" message="<%= StringPool.BLANK %>" showWhenSingleIcon="<%= true %>">
+<liferay-ui:icon-menu>
 	<c:if test="<%= JournalArticlePermission.contains(permissionChecker, article, ActionKeys.VIEW) %>">
 		<liferay-portlet:renderURL plid="<%= JournalUtil.getPreviewPlid(article, themeDisplay) %>" var="previewArticleContentURL" windowState="<%= LiferayWindowState.POP_UP.toString() %>">
 			<portlet:param name="struts_action" value="/journal/preview_article_content" />
@@ -38,13 +38,12 @@ JournalArticle article = (JournalArticle)row.getObject();
 		%>
 
 		<liferay-ui:icon
-			iconCssClass="icon-search"
-			message="preview"
+			image="preview"
 			onClick="<%= taglibOnClick %>"
 			url="javascript:;"
 		/>
 
-		<c:if test="<%= JournalFolderPermission.contains(permissionChecker, scopeGroupId, article.getFolderId(), ActionKeys.ADD_ARTICLE) %>">
+		<c:if test="<%= JournalPermission.contains(permissionChecker, scopeGroupId, ActionKeys.ADD_ARTICLE) %>">
 			<portlet:renderURL var="copyURL">
 				<portlet:param name="struts_action" value="/journal/copy_article" />
 				<portlet:param name="redirect" value="<%= currentURL %>" />
@@ -54,8 +53,7 @@ JournalArticle article = (JournalArticle)row.getObject();
 			</portlet:renderURL>
 
 			<liferay-ui:icon
-				iconCssClass="icon-copy"
-				message="copy"
+				image="copy"
 				url="<%= copyURL.toString() %>"
 			/>
 		</c:if>
@@ -70,33 +68,9 @@ JournalArticle article = (JournalArticle)row.getObject();
 			<portlet:param name="articleId" value="<%= article.getArticleId() + EditArticleAction.VERSION_SEPARATOR + article.getVersion() %>" />
 		</portlet:actionURL>
 
-		<liferay-ui:icon
-			iconCssClass="icon-time"
-			message="expire"
-			url="<%= expireURL %>"
+		<liferay-ui:icon image="time" message="expire" url="<%= expireURL %>"
 		/>
 	</c:if>
-
-	<portlet:renderURL var="compareVersionURL" windowState="<%= LiferayWindowState.POP_UP.toString() %>">
-		<portlet:param name="struts_action" value="/journal/select_version" />
-		<portlet:param name="groupId" value="<%= String.valueOf(article.getGroupId()) %>" />
-		<portlet:param name="articleId" value="<%= article.getArticleId() %>" />
-		<portlet:param name="sourceVersion" value="<%= String.valueOf(article.getVersion()) %>" />
-	</portlet:renderURL>
-
-	<%
-	Map<String, Object> data = new HashMap<String, Object>();
-
-	data.put("uri", compareVersionURL.toString());
-	%>
-
-	<liferay-ui:icon
-		cssClass="compare-to-link"
-		data="<%= data %>"
-		iconCssClass="icon-copy"
-		message="compare-to"
-		url="javascript:;"
-	/>
 
 	<c:if test="<%= JournalArticlePermission.contains(permissionChecker, article, ActionKeys.DELETE) %>">
 		<portlet:actionURL var="deleteURL">
@@ -108,8 +82,7 @@ JournalArticle article = (JournalArticle)row.getObject();
 			<portlet:param name="articleId" value="<%= article.getArticleId() + EditArticleAction.VERSION_SEPARATOR + article.getVersion() %>" />
 		</portlet:actionURL>
 
-		<liferay-ui:icon-delete
-			url="<%= deleteURL %>"
+		<liferay-ui:icon-delete url="<%= deleteURL %>"
 		/>
 	</c:if>
 </liferay-ui:icon-menu>

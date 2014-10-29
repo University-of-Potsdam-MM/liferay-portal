@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -16,6 +16,7 @@ package com.liferay.portal.service.impl;
 
 import com.liferay.portal.NoSuchListTypeException;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.model.ClassName;
 import com.liferay.portal.model.ListType;
 import com.liferay.portal.service.base.ListTypeServiceBaseImpl;
@@ -28,18 +29,20 @@ import java.util.List;
 public class ListTypeServiceImpl extends ListTypeServiceBaseImpl {
 
 	@Override
-	public ListType getListType(int listTypeId) throws PortalException {
+	public ListType getListType(int listTypeId)
+		throws PortalException, SystemException {
+
 		return listTypePersistence.findByPrimaryKey(listTypeId);
 	}
 
 	@Override
-	public List<ListType> getListTypes(String type) {
+	public List<ListType> getListTypes(String type) throws SystemException {
 		return listTypePersistence.findByType(type);
 	}
 
 	@Override
 	public void validate(int listTypeId, long classNameId, String type)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		ClassName className = classNameLocalService.getClassName(classNameId);
 
@@ -47,7 +50,9 @@ public class ListTypeServiceImpl extends ListTypeServiceBaseImpl {
 	}
 
 	@Override
-	public void validate(int listTypeId, String type) throws PortalException {
+	public void validate(int listTypeId, String type)
+		throws PortalException, SystemException {
+
 		ListType listType = listTypePersistence.fetchByPrimaryKey(listTypeId);
 
 		if ((listType == null) || !listType.getType().equals(type)) {

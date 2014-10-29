@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -119,26 +119,28 @@ if ((group != null) && group.isCompany()) {
 	miscellaneousSections = new String[0];
 }
 
-if ((group != null) && (group.hasStagingGroup() || (group.hasRemoteStagingGroup() && !PropsValues.STAGING_LIVE_GROUP_REMOTE_STAGING_ENABLED))) {
+if ((group != null) && group.hasLocalOrRemoteStagingGroup()) {
 	advancedSections = ArrayUtil.remove(advancedSections, "staging");
 }
 
 String[][] categorySections = {mainSections, seoSections, advancedSections, miscellaneousSections};
+%>
 
-if (!portletName.equals(PortletKeys.SITE_SETTINGS)) {
+<c:if test="<%= !portletName.equals(PortletKeys.SITE_SETTINGS) %>">
+
+	<%
 	if (group != null) {
 		PortalUtil.addPortletBreadcrumbEntry(request, group.getDescriptiveName(locale), null);
-		PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.get(request, "edit"), currentURL);
+		PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.get(pageContext, "edit"), currentURL);
 	}
 	else if (parentGroupId != GroupConstants.DEFAULT_PARENT_GROUP_ID) {
 		Group parentGroup = GroupLocalServiceUtil.getGroup(parentGroupId);
 
 		PortalUtil.addPortletBreadcrumbEntry(request, parentGroup.getDescriptiveName(locale), null);
 	}
-}
-%>
+	%>
 
-<liferay-ui:success key='<%= PortletKeys.SITE_SETTINGS + "requestProcessed" %>' message="site-was-added" />
+</c:if>
 
 <c:if test="<%= (group == null) || !layout.isTypeControlPanel() %>">
 
@@ -159,7 +161,7 @@ if (!portletName.equals(PortletKeys.SITE_SETTINGS)) {
 	%>
 
 		<div id="breadcrumb">
-			<liferay-ui:breadcrumb showCurrentGroup="<%= false %>" showGuestGroup="<%= false %>" showLayout="<%= false %>" showPortletBreadcrumb="<%= true %>" />
+			<liferay-ui:breadcrumb showCurrentGroup="<%= false %>" showCurrentPortlet="<%= false %>" showGuestGroup="<%= false %>" showLayout="<%= false %>" showPortletBreadcrumb="<%= true %>" />
 		</div>
 
 	<%
@@ -210,7 +212,7 @@ if (!portletName.equals(PortletKeys.SITE_SETTINGS)) {
 
 <aui:script>
 	function <portlet:namespace />saveGroup() {
-		document.<portlet:namespace />fm.<portlet:namespace /><%= Constants.CMD %>.value = '<%= (group == null) ? Constants.ADD : Constants.UPDATE %>';
+		document.<portlet:namespace />fm.<portlet:namespace /><%= Constants.CMD %>.value = "<%= (group == null) ? Constants.ADD : Constants.UPDATE %>";
 
 		var ok = true;
 
@@ -237,13 +239,13 @@ if (!portletName.equals(PortletKeys.SITE_SETTINGS)) {
 				ok = false;
 
 				if (0 == currentValue) {
-					ok = confirm('<%= UnicodeLanguageUtil.format(request, "are-you-sure-you-want-to-deactivate-staging-for-x", liveGroup.getDescriptiveName(locale), false) %>');
+					ok = confirm('<%= UnicodeLanguageUtil.format(pageContext, "are-you-sure-you-want-to-deactivate-staging-for-x", liveGroup.getDescriptiveName(locale)) %>');
 				}
 				else if (1 == currentValue) {
-					ok = confirm('<%= UnicodeLanguageUtil.format(request, "are-you-sure-you-want-to-activate-local-staging-for-x", liveGroup.getDescriptiveName(locale), false) %>');
+					ok = confirm('<%= UnicodeLanguageUtil.format(pageContext, "are-you-sure-you-want-to-activate-local-staging-for-x", liveGroup.getDescriptiveName(locale)) %>');
 				}
 				else if (2 == currentValue) {
-					ok = confirm('<%= UnicodeLanguageUtil.format(request, "are-you-sure-you-want-to-activate-remote-staging-for-x", liveGroup.getDescriptiveName(locale), false) %>');
+					ok = confirm('<%= UnicodeLanguageUtil.format(pageContext, "are-you-sure-you-want-to-activate-remote-staging-for-x", liveGroup.getDescriptiveName(locale)) %>');
 				}
 			}
 		</c:if>

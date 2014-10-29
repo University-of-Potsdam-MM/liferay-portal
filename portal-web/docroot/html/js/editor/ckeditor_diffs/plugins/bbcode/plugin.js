@@ -12,7 +12,7 @@
 					CKEDITOR.getUrl(path + 'bbcode_parser.js')
 				];
 
-				CKEDITOR.scriptLoader.loadScripts(
+				CKEDITOR.scriptLoader.load(
 					dependencies,
 					function() {
 						var bbcodeDataProcessor = CKEDITOR.plugins.get('bbcode_data_processor');
@@ -53,7 +53,7 @@
 								0
 							);
 						},
-						icon: editor.config.imagesPath + 'code.png',
+						icon: CKEDITOR.config.imagesPath + 'code.png',
 						label: Liferay.Language.get('code')
 					}
 				);

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -32,10 +32,8 @@ public class StringParserFragment {
 
 		String[] chunkParts = chunk.split(StringPool.COLON, 2);
 
-		String name = null;
-
 		if (chunkParts.length == 2) {
-			name = chunkParts[0];
+			_name = chunkParts[0];
 			String pattern = chunkParts[1];
 
 			if (Validator.isNull(pattern)) {
@@ -45,28 +43,23 @@ public class StringParserFragment {
 			_pattern = Pattern.compile(pattern);
 		}
 		else {
-			name = chunkParts[0];
+			_name = chunkParts[0];
 			_pattern = _defaultPattern;
 		}
 
-		if (Validator.isNull(name)) {
+		if (Validator.isNull(_name)) {
 			throw new IllegalArgumentException("Name is null");
 		}
 
-		if (name.startsWith(StringPool.PERCENT)) {
-			name = name.substring(1);
+		if (_name.startsWith(StringPool.PERCENT)) {
+			_name = _name.substring(1);
 
-			if (Validator.isNull(name)) {
+			if (Validator.isNull(_name)) {
 				throw new IllegalArgumentException("Name is null");
 			}
 
 			_raw = true;
 		}
-		else {
-			_raw = false;
-		}
-
-		_name = name;
 
 		_token = StringPool.OPEN_CURLY_BRACE.concat(_name).concat(
 			StringPool.CLOSE_CURLY_BRACE);
@@ -94,11 +87,11 @@ public class StringParserFragment {
 		return matcher.matches();
 	}
 
-	private static final Pattern _defaultPattern = Pattern.compile("[^/\\.]+");
+	private static Pattern _defaultPattern = Pattern.compile("[^/\\.]+");
 
-	private final String _name;
-	private final Pattern _pattern;
-	private final boolean _raw;
-	private final String _token;
+	private String _name;
+	private Pattern _pattern;
+	private boolean _raw;
+	private String _token;
 
 }

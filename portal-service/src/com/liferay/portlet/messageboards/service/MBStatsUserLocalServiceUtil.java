@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -46,15 +46,12 @@ public class MBStatsUserLocalServiceUtil {
 	*
 	* @param mbStatsUser the message boards stats user
 	* @return the message boards stats user that was added
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.messageboards.model.MBStatsUser addMBStatsUser(
-		com.liferay.portlet.messageboards.model.MBStatsUser mbStatsUser) {
+		com.liferay.portlet.messageboards.model.MBStatsUser mbStatsUser)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().addMBStatsUser(mbStatsUser);
-	}
-
-	public static com.liferay.portlet.messageboards.model.MBStatsUser addStatsUser(
-		long groupId, long userId) {
-		return getService().addStatsUser(groupId, userId);
 	}
 
 	/**
@@ -69,54 +66,31 @@ public class MBStatsUserLocalServiceUtil {
 	}
 
 	/**
-	* Deletes the message boards stats user from the database. Also notifies the appropriate model listeners.
-	*
-	* @param mbStatsUser the message boards stats user
-	* @return the message boards stats user that was removed
-	*/
-	public static com.liferay.portlet.messageboards.model.MBStatsUser deleteMBStatsUser(
-		com.liferay.portlet.messageboards.model.MBStatsUser mbStatsUser) {
-		return getService().deleteMBStatsUser(mbStatsUser);
-	}
-
-	/**
 	* Deletes the message boards stats user with the primary key from the database. Also notifies the appropriate model listeners.
 	*
 	* @param statsUserId the primary key of the message boards stats user
 	* @return the message boards stats user that was removed
 	* @throws PortalException if a message boards stats user with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.messageboards.model.MBStatsUser deleteMBStatsUser(
 		long statsUserId)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getService().deleteMBStatsUser(statsUserId);
 	}
 
 	/**
-	* @throws PortalException
+	* Deletes the message boards stats user from the database. Also notifies the appropriate model listeners.
+	*
+	* @param mbStatsUser the message boards stats user
+	* @return the message boards stats user that was removed
+	* @throws SystemException if a system exception occurred
 	*/
-	public static com.liferay.portal.model.PersistedModel deletePersistedModel(
-		com.liferay.portal.model.PersistedModel persistedModel)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().deletePersistedModel(persistedModel);
-	}
-
-	public static void deleteStatsUser(
-		com.liferay.portlet.messageboards.model.MBStatsUser statsUser) {
-		getService().deleteStatsUser(statsUser);
-	}
-
-	public static void deleteStatsUser(long statsUserId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		getService().deleteStatsUser(statsUserId);
-	}
-
-	public static void deleteStatsUsersByGroupId(long groupId) {
-		getService().deleteStatsUsersByGroupId(groupId);
-	}
-
-	public static void deleteStatsUsersByUserId(long userId) {
-		getService().deleteStatsUsersByUserId(userId);
+	public static com.liferay.portlet.messageboards.model.MBStatsUser deleteMBStatsUser(
+		com.liferay.portlet.messageboards.model.MBStatsUser mbStatsUser)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().deleteMBStatsUser(mbStatsUser);
 	}
 
 	public static com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery() {
@@ -128,9 +102,12 @@ public class MBStatsUserLocalServiceUtil {
 	*
 	* @param dynamicQuery the dynamic query
 	* @return the matching rows
+	* @throws SystemException if a system exception occurred
 	*/
-	public static <T> java.util.List<T> dynamicQuery(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery) {
+	@SuppressWarnings("rawtypes")
+	public static java.util.List dynamicQuery(
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().dynamicQuery(dynamicQuery);
 	}
 
@@ -145,10 +122,12 @@ public class MBStatsUserLocalServiceUtil {
 	* @param start the lower bound of the range of model instances
 	* @param end the upper bound of the range of model instances (not inclusive)
 	* @return the range of matching rows
+	* @throws SystemException if a system exception occurred
 	*/
-	public static <T> java.util.List<T> dynamicQuery(
+	@SuppressWarnings("rawtypes")
+	public static java.util.List dynamicQuery(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
-		int end) {
+		int end) throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().dynamicQuery(dynamicQuery, start, end);
 	}
 
@@ -164,11 +143,14 @@ public class MBStatsUserLocalServiceUtil {
 	* @param end the upper bound of the range of model instances (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching rows
+	* @throws SystemException if a system exception occurred
 	*/
-	public static <T> java.util.List<T> dynamicQuery(
+	@SuppressWarnings("rawtypes")
+	public static java.util.List dynamicQuery(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
 		int end,
-		com.liferay.portal.kernel.util.OrderByComparator<T> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService()
 				   .dynamicQuery(dynamicQuery, start, end, orderByComparator);
 	}
@@ -178,9 +160,11 @@ public class MBStatsUserLocalServiceUtil {
 	*
 	* @param dynamicQuery the dynamic query
 	* @return the number of rows that match the dynamic query
+	* @throws SystemException if a system exception occurred
 	*/
 	public static long dynamicQueryCount(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery) {
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().dynamicQueryCount(dynamicQuery);
 	}
 
@@ -190,34 +174,19 @@ public class MBStatsUserLocalServiceUtil {
 	* @param dynamicQuery the dynamic query
 	* @param projection the projection to apply to the query
 	* @return the number of rows that match the dynamic query
+	* @throws SystemException if a system exception occurred
 	*/
 	public static long dynamicQueryCount(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery,
-		com.liferay.portal.kernel.dao.orm.Projection projection) {
+		com.liferay.portal.kernel.dao.orm.Projection projection)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().dynamicQueryCount(dynamicQuery, projection);
 	}
 
 	public static com.liferay.portlet.messageboards.model.MBStatsUser fetchMBStatsUser(
-		long statsUserId) {
+		long statsUserId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().fetchMBStatsUser(statsUserId);
-	}
-
-	public static com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery getActionableDynamicQuery() {
-		return getService().getActionableDynamicQuery();
-	}
-
-	/**
-	* Returns the Spring bean ID for this bean.
-	*
-	* @return the Spring bean ID for this bean
-	*/
-	public static java.lang.String getBeanIdentifier() {
-		return getService().getBeanIdentifier();
-	}
-
-	public static java.util.Date getLastPostDateByUserId(long groupId,
-		long userId) {
-		return getService().getLastPostDateByUserId(groupId, userId);
 	}
 
 	/**
@@ -226,11 +195,20 @@ public class MBStatsUserLocalServiceUtil {
 	* @param statsUserId the primary key of the message boards stats user
 	* @return the message boards stats user
 	* @throws PortalException if a message boards stats user with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.messageboards.model.MBStatsUser getMBStatsUser(
 		long statsUserId)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getService().getMBStatsUser(statsUserId);
+	}
+
+	public static com.liferay.portal.model.PersistedModel getPersistedModel(
+		java.io.Serializable primaryKeyObj)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getService().getPersistedModel(primaryKeyObj);
 	}
 
 	/**
@@ -243,9 +221,11 @@ public class MBStatsUserLocalServiceUtil {
 	* @param start the lower bound of the range of message boards stats users
 	* @param end the upper bound of the range of message boards stats users (not inclusive)
 	* @return the range of message boards stats users
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.messageboards.model.MBStatsUser> getMBStatsUsers(
-		int start, int end) {
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().getMBStatsUsers(start, end);
 	}
 
@@ -253,44 +233,33 @@ public class MBStatsUserLocalServiceUtil {
 	* Returns the number of message boards stats users.
 	*
 	* @return the number of message boards stats users
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int getMBStatsUsersCount() {
+	public static int getMBStatsUsersCount()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().getMBStatsUsersCount();
 	}
 
-	public static long getMessageCountByGroupId(long groupId) {
-		return getService().getMessageCountByGroupId(groupId);
+	/**
+	* Updates the message boards stats user in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
+	*
+	* @param mbStatsUser the message boards stats user
+	* @return the message boards stats user that was updated
+	* @throws SystemException if a system exception occurred
+	*/
+	public static com.liferay.portlet.messageboards.model.MBStatsUser updateMBStatsUser(
+		com.liferay.portlet.messageboards.model.MBStatsUser mbStatsUser)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().updateMBStatsUser(mbStatsUser);
 	}
 
-	public static long getMessageCountByUserId(long userId) {
-		return getService().getMessageCountByUserId(userId);
-	}
-
-	public static com.liferay.portal.model.PersistedModel getPersistedModel(
-		java.io.Serializable primaryKeyObj)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().getPersistedModel(primaryKeyObj);
-	}
-
-	public static com.liferay.portlet.messageboards.model.MBStatsUser getStatsUser(
-		long groupId, long userId) {
-		return getService().getStatsUser(groupId, userId);
-	}
-
-	public static java.util.List<com.liferay.portlet.messageboards.model.MBStatsUser> getStatsUsersByGroupId(
-		long groupId, int start, int end)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().getStatsUsersByGroupId(groupId, start, end);
-	}
-
-	public static int getStatsUsersByGroupIdCount(long groupId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().getStatsUsersByGroupIdCount(groupId);
-	}
-
-	public static java.util.List<com.liferay.portlet.messageboards.model.MBStatsUser> getStatsUsersByUserId(
-		long userId) {
-		return getService().getStatsUsersByUserId(userId);
+	/**
+	* Returns the Spring bean ID for this bean.
+	*
+	* @return the Spring bean ID for this bean
+	*/
+	public static java.lang.String getBeanIdentifier() {
+		return getService().getBeanIdentifier();
 	}
 
 	/**
@@ -302,29 +271,88 @@ public class MBStatsUserLocalServiceUtil {
 		getService().setBeanIdentifier(beanIdentifier);
 	}
 
-	/**
-	* Updates the message boards stats user in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
-	*
-	* @param mbStatsUser the message boards stats user
-	* @return the message boards stats user that was updated
-	*/
-	public static com.liferay.portlet.messageboards.model.MBStatsUser updateMBStatsUser(
-		com.liferay.portlet.messageboards.model.MBStatsUser mbStatsUser) {
-		return getService().updateMBStatsUser(mbStatsUser);
+	public static com.liferay.portlet.messageboards.model.MBStatsUser addStatsUser(
+		long groupId, long userId)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().addStatsUser(groupId, userId);
+	}
+
+	public static void deleteStatsUser(long statsUserId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		getService().deleteStatsUser(statsUserId);
+	}
+
+	public static void deleteStatsUser(
+		com.liferay.portlet.messageboards.model.MBStatsUser statsUser)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		getService().deleteStatsUser(statsUser);
+	}
+
+	public static void deleteStatsUsersByGroupId(long groupId)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		getService().deleteStatsUsersByGroupId(groupId);
+	}
+
+	public static void deleteStatsUsersByUserId(long userId)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		getService().deleteStatsUsersByUserId(userId);
+	}
+
+	public static java.util.Date getLastPostDateByUserId(long groupId,
+		long userId) throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().getLastPostDateByUserId(groupId, userId);
+	}
+
+	public static long getMessageCountByGroupId(long groupId)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().getMessageCountByGroupId(groupId);
+	}
+
+	public static long getMessageCountByUserId(long userId)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().getMessageCountByUserId(userId);
+	}
+
+	public static com.liferay.portlet.messageboards.model.MBStatsUser getStatsUser(
+		long groupId, long userId)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().getStatsUser(groupId, userId);
+	}
+
+	public static java.util.List<com.liferay.portlet.messageboards.model.MBStatsUser> getStatsUsersByGroupId(
+		long groupId, int start, int end)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getService().getStatsUsersByGroupId(groupId, start, end);
+	}
+
+	public static int getStatsUsersByGroupIdCount(long groupId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getService().getStatsUsersByGroupIdCount(groupId);
+	}
+
+	public static java.util.List<com.liferay.portlet.messageboards.model.MBStatsUser> getStatsUsersByUserId(
+		long userId) throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().getStatsUsersByUserId(userId);
 	}
 
 	public static com.liferay.portlet.messageboards.model.MBStatsUser updateStatsUser(
-		long groupId, long userId) {
+		long groupId, long userId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().updateStatsUser(groupId, userId);
 	}
 
 	public static com.liferay.portlet.messageboards.model.MBStatsUser updateStatsUser(
-		long groupId, long userId, java.util.Date lastPostDate) {
+		long groupId, long userId, java.util.Date lastPostDate)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().updateStatsUser(groupId, userId, lastPostDate);
 	}
 
 	public static com.liferay.portlet.messageboards.model.MBStatsUser updateStatsUser(
-		long groupId, long userId, int messageCount, java.util.Date lastPostDate) {
+		long groupId, long userId, int messageCount, java.util.Date lastPostDate)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService()
 				   .updateStatsUser(groupId, userId, messageCount, lastPostDate);
 	}
@@ -343,7 +371,6 @@ public class MBStatsUserLocalServiceUtil {
 	/**
 	 * @deprecated As of 6.2.0
 	 */
-	@Deprecated
 	public void setService(MBStatsUserLocalService service) {
 	}
 

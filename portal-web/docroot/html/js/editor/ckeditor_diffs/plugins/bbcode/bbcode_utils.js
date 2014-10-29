@@ -1,10 +1,10 @@
 ;(function() {
 	var A = AUI();
 
-	var LString = A.Lang.String;
+	var LiferayUtil = Liferay.Util;
 
 	var entities = A.merge(
-		Liferay.Util.MAP_HTML_CHARS_ESCAPED,
+		LiferayUtil.MAP_HTML_CHARS_ESCAPED,
 		{
 			'[': '&#91;',
 			']': '&#93;',
@@ -15,6 +15,6 @@
 
 	var BBCodeUtil = Liferay.namespace('BBCodeUtil');
 
-	BBCodeUtil.escape = A.rbind('escapeHTML', LString, true, entities);
-	BBCodeUtil.unescape = A.rbind('unescapeHTML', LString, entities);
+	BBCodeUtil.escape = A.rbind('escapeHTML', LiferayUtil, true, entities);
+	BBCodeUtil.unescape = A.rbind('unescapeHTML', LiferayUtil, entities);
 }());

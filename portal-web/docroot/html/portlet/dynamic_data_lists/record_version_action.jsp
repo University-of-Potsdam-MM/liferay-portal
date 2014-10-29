@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -24,7 +24,7 @@ DDLRecordVersion recordVersion = (DDLRecordVersion)row.getObject();
 long formDDMTemplateId = GetterUtil.getLong((String)row.getParameter("formDDMTemplateId"));
 %>
 
-<liferay-ui:icon-menu icon="<%= StringPool.BLANK %>" message="<%= StringPool.BLANK %>">
+<liferay-ui:icon-menu>
 	<liferay-portlet:renderURL portletName="<%= PortletKeys.DYNAMIC_DATA_LISTS %>" var="viewRecordVersionURL" windowState="<%= WindowState.MAXIMIZED.toString() %>">
 		<portlet:param name="struts_action" value="/dynamic_data_lists/view_record" />
 		<portlet:param name="redirect" value="<%= currentURL %>" />
@@ -34,8 +34,7 @@ long formDDMTemplateId = GetterUtil.getLong((String)row.getParameter("formDDMTem
 	</liferay-portlet:renderURL>
 
 	<liferay-ui:icon
-		iconCssClass="icon-search"
-		message="view[action]"
+		image="view"
 		url="<%= viewRecordVersionURL %>"
 	/>
 
@@ -48,7 +47,7 @@ long formDDMTemplateId = GetterUtil.getLong((String)row.getParameter("formDDMTem
 	</portlet:actionURL>
 
 	<liferay-ui:icon
-		iconCssClass="icon-undo"
+		image="undo"
 		message="revert"
 		url="<%= revertURL %>"
 	/>

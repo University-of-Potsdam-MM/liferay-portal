@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -21,15 +21,17 @@ import com.liferay.portal.kernel.io.unsync.UnsyncByteArrayOutputStream;
 import com.liferay.portal.kernel.io.unsync.UnsyncPrintWriter;
 import com.liferay.portal.kernel.io.unsync.UnsyncStringWriter;
 import com.liferay.portal.kernel.test.CodeCoverageAssertor;
-import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.util.Props;
 import com.liferay.portal.kernel.util.PropsUtil;
+import com.liferay.portal.kernel.util.ReflectionUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+
+import java.lang.reflect.Field;
 
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
@@ -64,7 +66,7 @@ public class BufferCacheServletResponseTest {
 	}
 
 	@Test
-	public void testGetBufferSize() throws IOException {
+	public void testGetBufferSize() throws Exception {
 		StubHttpServletResponse stubHttpServletResponse =
 			new StubHttpServletResponse() {
 
@@ -156,8 +158,10 @@ public class BufferCacheServletResponseTest {
 
 		servletOutputStream = bufferCacheServletResponse.getOutputStream();
 
-		ReflectionTestUtil.setFieldValue(
-			servletOutputStream, "outputStream", failFlushOutputStream);
+		Field outputStreamField = ReflectionUtil.getDeclaredField(
+			ServletOutputStreamAdapter.class, "outputStream");
+
+		outputStreamField.set(servletOutputStream, failFlushOutputStream);
 
 		try {
 			bufferCacheServletResponse.getBufferSize();
@@ -173,7 +177,7 @@ public class BufferCacheServletResponseTest {
 	}
 
 	@Test
-	public void testGetByteBuffer() throws IOException {
+	public void testGetByteBuffer() throws Exception {
 		StubHttpServletResponse stubHttpServletResponse =
 			new StubHttpServletResponse() {
 
@@ -250,10 +254,11 @@ public class BufferCacheServletResponseTest {
 		UnsyncPrintWriter unsyncPrintWriter =
 			(UnsyncPrintWriter)bufferCacheServletResponse.getWriter();
 
-		Object writer = ReflectionTestUtil.getFieldValue(
-			unsyncPrintWriter, "_writer");
+		Field writerField = ReflectionUtil.getDeclaredField(
+			UnsyncPrintWriter.class, "_writer");
 
-		Assert.assertTrue(writer instanceof DummyWriter);
+		Assert.assertTrue(
+			writerField.get(unsyncPrintWriter) instanceof DummyWriter);
 		Assert.assertTrue(bufferCacheServletResponse.calledGetWriter);
 
 		bufferCacheServletResponse.setCharBuffer(null);
@@ -263,9 +268,8 @@ public class BufferCacheServletResponseTest {
 		unsyncPrintWriter =
 			(UnsyncPrintWriter)bufferCacheServletResponse.getWriter();
 
-		writer = ReflectionTestUtil.getFieldValue(unsyncPrintWriter, "_writer");
-
-		Assert.assertTrue(writer instanceof UnsyncStringWriter);
+		Assert.assertTrue(
+			writerField.get(unsyncPrintWriter) instanceof UnsyncStringWriter);
 		Assert.assertTrue(bufferCacheServletResponse.calledGetWriter);
 
 		// Servlet output stream

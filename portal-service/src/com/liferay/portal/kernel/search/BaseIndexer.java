@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,7 +18,9 @@ import com.liferay.portal.NoSuchCountryException;
 import com.liferay.portal.NoSuchModelException;
 import com.liferay.portal.NoSuchRegionException;
 import com.liferay.portal.kernel.configuration.Filter;
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -32,12 +34,12 @@ import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
-import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
@@ -53,6 +55,7 @@ import com.liferay.portal.model.ResourcedModel;
 import com.liferay.portal.model.TrashedModel;
 import com.liferay.portal.model.User;
 import com.liferay.portal.model.WorkflowedModel;
+import com.liferay.portal.security.permission.ActionKeys;
 import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portal.security.permission.PermissionThreadLocal;
 import com.liferay.portal.service.CountryServiceUtil;
@@ -70,12 +73,14 @@ import com.liferay.portlet.asset.model.AssetTag;
 import com.liferay.portlet.asset.service.AssetCategoryLocalServiceUtil;
 import com.liferay.portlet.asset.service.AssetEntryLocalServiceUtil;
 import com.liferay.portlet.asset.service.AssetTagLocalServiceUtil;
+import com.liferay.portlet.documentlibrary.model.DLFileEntry;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.util.DDMIndexerUtil;
 import com.liferay.portlet.expando.model.ExpandoBridge;
 import com.liferay.portlet.expando.model.ExpandoColumnConstants;
 import com.liferay.portlet.expando.util.ExpandoBridgeFactoryUtil;
 import com.liferay.portlet.expando.util.ExpandoBridgeIndexerUtil;
+import com.liferay.portlet.messageboards.model.MBMessage;
 import com.liferay.portlet.ratings.model.RatingsStats;
 import com.liferay.portlet.ratings.service.RatingsStatsLocalServiceUtil;
 import com.liferay.portlet.trash.model.TrashEntry;
@@ -91,8 +96,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import javax.portlet.PortletRequest;
-import javax.portlet.PortletResponse;
 import javax.portlet.PortletURL;
 
 /**
@@ -103,6 +106,13 @@ import javax.portlet.PortletURL;
  */
 public abstract class BaseIndexer implements Indexer {
 
+	public static final int INDEX_FILTER_SEARCH_LIMIT = GetterUtil.getInteger(
+		PropsUtil.get(PropsKeys.INDEX_FILTER_SEARCH_LIMIT));
+
+	public BaseIndexer() {
+		_document = new DocumentImpl();
+	}
+
 	@Override
 	public void addRelatedEntryFields(Document document, Object obj)
 		throws Exception {
@@ -112,7 +122,7 @@ public abstract class BaseIndexer implements Indexer {
 	public void delete(long companyId, String uid) throws SearchException {
 		try {
 			SearchEngineUtil.deleteDocument(
-				getSearchEngineId(), companyId, uid, _commitImmediately);
+				getSearchEngineId(), companyId, uid);
 		}
 		catch (SearchException se) {
 			throw se;
@@ -133,11 +143,6 @@ public abstract class BaseIndexer implements Indexer {
 		catch (Exception e) {
 			throw new SearchException(e);
 		}
-	}
-
-	@Override
-	public int getDatabaseCount() throws Exception {
-		return 0;
 	}
 
 	@Override
@@ -205,20 +210,28 @@ public abstract class BaseIndexer implements Indexer {
 		try {
 			searchContext.setSearchEngineId(getSearchEngineId());
 
-			resetFullQuery(searchContext);
+			String[] entryClassNames = getClassNames();
 
-			String[] fullQueryEntryClassNames =
-				searchContext.getFullQueryEntryClassNames();
+			if (searchContext.isIncludeAttachments()) {
+				entryClassNames = ArrayUtil.append(
+					entryClassNames, DLFileEntry.class.getName());
+			}
 
-			if (ArrayUtil.isNotEmpty(fullQueryEntryClassNames)) {
+			if (searchContext.isIncludeDiscussions()) {
+				entryClassNames = ArrayUtil.append(
+					entryClassNames, MBMessage.class.getName());
+
+				searchContext.setAttribute("discussion", Boolean.TRUE);
+			}
+
+			searchContext.setEntryClassNames(entryClassNames);
+
+			if (searchContext.isIncludeAttachments() ||
+				searchContext.isIncludeDiscussions()) {
+
 				searchContext.setAttribute(
 					"relatedEntryClassNames", getClassNames());
 			}
-
-			String[] entryClassNames = ArrayUtil.append(
-				getClassNames(), fullQueryEntryClassNames);
-
-			searchContext.setEntryClassNames(entryClassNames);
 
 			BooleanQuery contextQuery = BooleanQueryFactoryUtil.create(
 				searchContext);
@@ -307,32 +320,15 @@ public abstract class BaseIndexer implements Indexer {
 		return getSortField(orderByCol);
 	}
 
-	/**
-	 * @deprecated As of 7.0.0, replaced by {@link #getSummary(Document, String,
-	 *             PortletURL, PortletRequest, PortletResponse)}
-	 */
-	@Deprecated
 	@Override
 	public Summary getSummary(
 			Document document, Locale locale, String snippet,
 			PortletURL portletURL)
 		throws SearchException {
 
-		return getSummary(document, snippet, portletURL, null, null);
-	}
-
-	@Override
-	public Summary getSummary(
-			Document document, String snippet, PortletURL portletURL,
-			PortletRequest portletRequest, PortletResponse portletResponse)
-		throws SearchException {
-
 		try {
-			Locale locale = getLocale(portletRequest);
-
 			Summary summary = doGetSummary(
-				document, locale, snippet, portletURL, portletRequest,
-				portletResponse);
+				document, locale, snippet, portletURL);
 
 			for (IndexerPostProcessor indexerPostProcessor :
 					_indexerPostProcessors) {
@@ -361,11 +357,6 @@ public abstract class BaseIndexer implements Indexer {
 	}
 
 	@Override
-	public boolean isCommitImmediately() {
-		return _commitImmediately;
-	}
-
-	@Override
 	public boolean isFilterSearch() {
 		return _filterSearch;
 	}
@@ -379,25 +370,9 @@ public abstract class BaseIndexer implements Indexer {
 		return _permissionAware;
 	}
 
-	public boolean isSelectAllLocales() {
-		return _selectAllLocales;
-	}
-
 	@Override
 	public boolean isStagingAware() {
 		return _stagingAware;
-	}
-
-	@Override
-	public boolean isVisible(long classPK, int status) throws Exception {
-		return true;
-	}
-
-	@Override
-	public boolean isVisibleRelatedEntry(long classPK, int status)
-		throws Exception {
-
-		return true;
 	}
 
 	@Override
@@ -440,16 +415,7 @@ public abstract class BaseIndexer implements Indexer {
 				return;
 			}
 
-			if (obj instanceof List<?>) {
-				List<?> list = (List<?>)obj;
-
-				for (Object element : list) {
-					doReindex(element);
-				}
-			}
-			else {
-				doReindex(obj);
-			}
+			doReindex(obj);
 		}
 		catch (SearchException se) {
 			throw se;
@@ -462,9 +428,7 @@ public abstract class BaseIndexer implements Indexer {
 	@Override
 	public void reindex(String className, long classPK) throws SearchException {
 		try {
-			if (SearchEngineUtil.isIndexReadOnly() || !isIndexerEnabled() ||
-				(classPK <= 0)) {
-
+			if (SearchEngineUtil.isIndexReadOnly() || !isIndexerEnabled()) {
 				return;
 			}
 
@@ -472,7 +436,7 @@ public abstract class BaseIndexer implements Indexer {
 		}
 		catch (NoSuchModelException nsme) {
 			if (_log.isWarnEnabled()) {
-				_log.warn("Unable to index " + className + " " + classPK, nsme);
+				_log.warn("Unable to index " + className + " " + classPK);
 			}
 		}
 		catch (SearchException se) {
@@ -522,32 +486,30 @@ public abstract class BaseIndexer implements Indexer {
 	@Override
 	public Hits search(SearchContext searchContext) throws SearchException {
 		try {
-			Hits hits = null;
+			searchContext.setSearchEngineId(getSearchEngineId());
 
-			QueryConfig queryConfig = searchContext.getQueryConfig();
+			BooleanQuery fullQuery = getFullQuery(searchContext);
 
-			addDefaultHighlightFieldNames(queryConfig);
-
-			if (ArrayUtil.isEmpty(queryConfig.getSelectedFieldNames())) {
-				addDefaultSelectedFieldNames(searchContext);
-			}
-
-			addFacetSelectedFieldNames(searchContext, queryConfig);
+			fullQuery.setQueryConfig(searchContext.getQueryConfig());
 
 			PermissionChecker permissionChecker =
 				PermissionThreadLocal.getPermissionChecker();
 
-			if ((permissionChecker != null) &&
-				isUseSearchResultPermissionFilter(searchContext)) {
+			int end = searchContext.getEnd();
+			int start = searchContext.getStart();
 
-				SearchResultPermissionFilter searchResultPermissionFilter =
-					new DefaultSearchResultPermissionFilter(
-						this, permissionChecker);
-
-				hits = searchResultPermissionFilter.search(searchContext);
+			if (isFilterSearch() && (permissionChecker != null)) {
+				searchContext.setEnd(end + INDEX_FILTER_SEARCH_LIMIT);
+				searchContext.setStart(0);
 			}
-			else {
-				hits = doSearch(searchContext);
+
+			Hits hits = SearchEngineUtil.search(searchContext, fullQuery);
+
+			searchContext.setEnd(end);
+			searchContext.setStart(start);
+
+			if (isFilterSearch() && (permissionChecker != null)) {
+				hits = filterSearch(hits, permissionChecker, searchContext);
 			}
 
 			processHits(searchContext, hits);
@@ -563,26 +525,6 @@ public abstract class BaseIndexer implements Indexer {
 	}
 
 	@Override
-	public Hits search(
-			SearchContext searchContext, String... selectedFieldNames)
-		throws SearchException {
-
-		QueryConfig queryConfig = searchContext.getQueryConfig();
-
-		queryConfig.setSelectedFieldNames(selectedFieldNames);
-
-		return search(searchContext);
-	}
-
-	public void setCommitImmediately(boolean commitImmediately) {
-		_commitImmediately = commitImmediately;
-	}
-
-	public void setSelectAllLocales(boolean selectAllLocales) {
-		_selectAllLocales = selectAllLocales;
-	}
-
-	@Override
 	public void unregisterIndexerPostProcessor(
 		IndexerPostProcessor indexerPostProcessor) {
 
@@ -595,12 +537,9 @@ public abstract class BaseIndexer implements Indexer {
 			new IndexerPostProcessor[indexerPostProcessorsList.size()]);
 	}
 
-	@Override
-	public void updateFullQuery(SearchContext searchContext) {
-	}
-
 	protected void addAssetFields(
-		Document document, String className, long classPK) {
+			Document document, String className, long classPK)
+		throws SystemException {
 
 		AssetRendererFactory assetRendererFactory =
 			AssetRendererFactoryRegistryUtil.getAssetRendererFactoryByClassName(
@@ -652,84 +591,7 @@ public abstract class BaseIndexer implements Indexer {
 		document.addNumber(Field.VIEW_COUNT, assetEntry.getViewCount());
 
 		document.addLocalizedKeyword(
-			"localized_title", assetEntry.getTitleMap(), true, true);
-		document.addKeyword("visible", assetEntry.isVisible());
-	}
-
-	protected void addDefaultHighlightFieldNames(QueryConfig queryConfig) {
-		queryConfig.addHighlightFieldNames(Field.ASSET_CATEGORY_TITLES);
-
-		if (queryConfig.isHighlightEnabled()) {
-			queryConfig.addHighlightFieldNames(
-				Field.CONTENT, Field.DESCRIPTION, Field.TITLE);
-		}
-	}
-
-	protected void addDefaultSelectedFieldNames(SearchContext searchContext) {
-		QueryConfig queryConfig = searchContext.getQueryConfig();
-
-		Set<String> selectedFieldNames = null;
-
-		if (!ArrayUtil.isEmpty(getDefaultSelectedFieldNames())) {
-			selectedFieldNames = SetUtil.fromArray(
-				getDefaultSelectedFieldNames());
-
-			if (searchContext.isIncludeAttachments() ||
-				searchContext.isIncludeDiscussions()) {
-
-				selectedFieldNames.add(Field.CLASS_NAME_ID);
-				selectedFieldNames.add(Field.CLASS_PK);
-			}
-		}
-
-		if (!ArrayUtil.isEmpty(getDefaultSelectedLocalizedFieldNames())) {
-			if (selectedFieldNames == null) {
-				selectedFieldNames = new HashSet<String>();
-			}
-
-			if (isSelectAllLocales()) {
-				addSelectedLocalizedFieldNames(
-					selectedFieldNames,
-					LocaleUtil.toLanguageIds(
-						LanguageUtil.getSupportedLocales()));
-			}
-			else {
-				addSelectedLocalizedFieldNames(
-					selectedFieldNames,
-					LocaleUtil.toLanguageId(queryConfig.getLocale()));
-			}
-		}
-
-		if ((selectedFieldNames != null) && !selectedFieldNames.isEmpty()) {
-			queryConfig.setSelectedFieldNames(
-				selectedFieldNames.toArray(
-					new String[selectedFieldNames.size()]));
-		}
-	}
-
-	protected void addFacetSelectedFieldNames(
-		SearchContext searchContext, QueryConfig queryConfig) {
-
-		String[] selectedFieldNames = queryConfig.getSelectedFieldNames();
-
-		if (ArrayUtil.isEmpty(selectedFieldNames) ||
-			(selectedFieldNames.length == 1) &&
-			selectedFieldNames[0].equals(Field.ANY)) {
-
-			return;
-		}
-
-		Set<String> selectedFieldNameSet = SetUtil.fromArray(
-			selectedFieldNames);
-
-		Map<String, Facet> facets = searchContext.getFacets();
-
-		selectedFieldNameSet.addAll(facets.keySet());
-
-		selectedFieldNames = selectedFieldNameSet.toArray(
-			new String[selectedFieldNameSet.size()]);
-
-		queryConfig.setSelectedFieldNames(selectedFieldNames);
+			"localized_title", assetEntry.getTitleMap(), true);
 	}
 
 	/**
@@ -737,7 +599,6 @@ public abstract class BaseIndexer implements Indexer {
 	 *             #addSearchLocalizedTerm(BooleanQuery, SearchContext, String,
 	 *             boolean)}
 	 */
-	@Deprecated
 	protected void addLocalizedSearchTerm(
 			BooleanQuery searchQuery, SearchContext searchContext, String field,
 			boolean like)
@@ -1098,10 +959,6 @@ public abstract class BaseIndexer implements Indexer {
 		searchQuery.addTerms(Field.KEYWORDS, keywords, searchContext.isLike());
 
 		addSearchExpando(searchQuery, searchContext, keywords);
-
-		addSearchLocalizedTerm(
-			searchQuery, searchContext, Field.ASSET_CATEGORY_TITLES,
-			searchContext.isLike());
 	}
 
 	protected void addSearchLayout(
@@ -1196,24 +1053,6 @@ public abstract class BaseIndexer implements Indexer {
 		searchContext.addFacet(multiValueFacet);
 	}
 
-	protected void addSelectedLocalizedFieldNames(
-		Set<String> selectedFieldNames, String... languageIds) {
-
-		for (String defaultLocalizedSelectedFieldName :
-				getDefaultSelectedLocalizedFieldNames()) {
-
-			selectedFieldNames.add(defaultLocalizedSelectedFieldName);
-
-			for (String languageId : languageIds) {
-				String localizedFieldName =
-					LocalizationUtil.getLocalizedName(
-						defaultLocalizedSelectedFieldName, languageId);
-
-				selectedFieldNames.add(localizedFieldName);
-			}
-		}
-	}
-
 	protected void addStagingGroupKeyword(Document document, long groupId)
 		throws Exception {
 
@@ -1258,8 +1097,8 @@ public abstract class BaseIndexer implements Indexer {
 		}
 	}
 
-	protected void addTrashFields(
-		Document document, TrashedModel trashedModel) {
+	protected void addTrashFields(Document document, TrashedModel trashedModel)
+		throws SystemException {
 
 		TrashEntry trashEntry = null;
 
@@ -1296,7 +1135,7 @@ public abstract class BaseIndexer implements Indexer {
 				Field.REMOVED_BY_USER_NAME, trashEntry.getUserName(), true);
 
 			if (trashedModel.isInTrash() &&
-				!trashedModel.isInTrashExplicitly()) {
+				!trashEntry.isTrashEntry(trashedModel)) {
 
 				document.addKeyword(
 					Field.ROOT_ENTRY_CLASS_NAME, trashEntry.getClassName());
@@ -1443,8 +1282,7 @@ public abstract class BaseIndexer implements Indexer {
 		document.addUID(getPortletId(), field1);
 
 		SearchEngineUtil.deleteDocument(
-			getSearchEngineId(), companyId, document.get(Field.UID),
-			_commitImmediately);
+			getSearchEngineId(), companyId, document.get(Field.UID));
 	}
 
 	protected void deleteDocument(long companyId, String field1, String field2)
@@ -1455,8 +1293,7 @@ public abstract class BaseIndexer implements Indexer {
 		document.addUID(getPortletId(), field1, field2);
 
 		SearchEngineUtil.deleteDocument(
-			getSearchEngineId(), companyId, document.get(Field.UID),
-			_commitImmediately);
+			getSearchEngineId(), companyId, document.get(Field.UID));
 	}
 
 	protected abstract void doDelete(Object obj) throws Exception;
@@ -1469,8 +1306,7 @@ public abstract class BaseIndexer implements Indexer {
 
 	protected abstract Summary doGetSummary(
 			Document document, Locale locale, String snippet,
-			PortletURL portletURL, PortletRequest portletRequest,
-			PortletResponse portletResponse)
+			PortletURL portletURL)
 		throws Exception;
 
 	protected abstract void doReindex(Object obj) throws Exception;
@@ -1484,29 +1320,100 @@ public abstract class BaseIndexer implements Indexer {
 		throws Exception {
 	}
 
-	protected Hits doSearch(SearchContext searchContext)
-		throws SearchException {
+	protected Hits filterSearch(
+		Hits hits, PermissionChecker permissionChecker,
+		SearchContext searchContext) {
 
-		searchContext.setSearchEngineId(getSearchEngineId());
+		List<Document> docs = new ArrayList<Document>();
+		List<Float> scores = new ArrayList<Float>();
 
-		BooleanQuery fullQuery = getFullQuery(searchContext);
+		int start = searchContext.getStart();
+		int end = searchContext.getEnd();
 
-		QueryConfig queryConfig = searchContext.getQueryConfig();
+		String paginationType = GetterUtil.getString(
+			searchContext.getAttribute("paginationType"), "more");
 
-		fullQuery.setQueryConfig(queryConfig);
+		boolean hasMore = false;
 
-		return SearchEngineUtil.search(searchContext, fullQuery);
+		Document[] documents = hits.getDocs();
+
+		int excludeDocsSize = 0;
+
+		for (int i = 0; i < documents.length; i++) {
+			try {
+				Document document = documents[i];
+
+				String entryClassName = document.get(Field.ENTRY_CLASS_NAME);
+				long entryClassPK = GetterUtil.getLong(
+					document.get(Field.ENTRY_CLASS_PK));
+
+				Indexer indexer = IndexerRegistryUtil.getIndexer(
+					entryClassName);
+
+				if ((indexer.isFilterSearch() &&
+					 indexer.hasPermission(
+						 permissionChecker, entryClassName, entryClassPK,
+						 ActionKeys.VIEW)) ||
+					!indexer.isFilterSearch() ||
+					!indexer.isPermissionAware()) {
+
+					docs.add(document);
+					scores.add(hits.score(i));
+				}
+				else {
+					excludeDocsSize++;
+				}
+			}
+			catch (Exception e) {
+				excludeDocsSize++;
+			}
+
+			if (paginationType.equals("more") && (end > 0) &&
+				(end < documents.length) && (docs.size() >= end)) {
+
+				hasMore = true;
+
+				break;
+			}
+		}
+
+		int length = docs.size();
+
+		if (hasMore) {
+			length = documents.length - excludeDocsSize;
+		}
+
+		hits.setLength(length);
+
+		if ((start != QueryUtil.ALL_POS) && (end != QueryUtil.ALL_POS)) {
+			if (end > length) {
+				end = length;
+			}
+
+			docs = docs.subList(start, end);
+		}
+
+		hits.setDocs(docs.toArray(new Document[docs.size()]));
+		hits.setScores(scores.toArray(new Float[scores.size()]));
+
+		hits.setSearchTime(
+			(float)(System.currentTimeMillis() - hits.getStart()) /
+				Time.SECOND);
+
+		return hits;
 	}
 
 	protected Document getBaseModelDocument(
-		String portletId, BaseModel<?> baseModel) {
+			String portletId, BaseModel<?> baseModel)
+		throws SystemException {
 
 		return getBaseModelDocument(portletId, baseModel, baseModel);
 	}
 
 	protected Document getBaseModelDocument(
-		String portletId, BaseModel<?> baseModel,
-		BaseModel<?> workflowedBaseModel) {
+			String portletId, BaseModel<?> baseModel,
+			BaseModel<?> workflowedBaseModel)
+		throws SystemException {
 
 		Document document = newDocument();
 
@@ -1525,38 +1432,36 @@ public abstract class BaseIndexer implements Indexer {
 			classPK = (Long)baseModel.getPrimaryKeyObj();
 		}
 
-		DocumentHelper documentHelper = new DocumentHelper(document);
-
-		documentHelper.setEntryKey(className, classPK);
-
 		document.addUID(portletId, classPK);
 
 		List<AssetCategory> assetCategories =
 			AssetCategoryLocalServiceUtil.getCategories(className, classPK);
 
-		long[] assetCategoryIds = ListUtil.toLongArray(
-			assetCategories, AssetCategory.CATEGORY_ID_ACCESSOR);
+		long[] assetCategoryIds = StringUtil.split(
+			ListUtil.toString(
+				assetCategories, AssetCategory.CATEGORY_ID_ACCESSOR),
+			0L);
 
 		document.addKeyword(Field.ASSET_CATEGORY_IDS, assetCategoryIds);
 
 		addSearchAssetCategoryTitles(
 			document, Field.ASSET_CATEGORY_TITLES, assetCategories);
 
-		long classNameId = PortalUtil.getClassNameId(className);
-
-		List<AssetTag> assetTags = AssetTagLocalServiceUtil.getTags(
-			classNameId, classPK);
-
-		String[] assetTagNames = ListUtil.toArray(
-			assetTags, AssetTag.NAME_ACCESSOR);
+		String[] assetTagNames = AssetTagLocalServiceUtil.getTagNames(
+			className, classPK);
 
 		document.addText(Field.ASSET_TAG_NAMES, assetTagNames);
 
-		long[] assetTagsIds = ListUtil.toLongArray(
-			assetTags, AssetTag.TAG_ID_ACCESSOR);
+		List<AssetTag> assetTags = AssetTagLocalServiceUtil.getTags(
+			className, classPK);
+
+		long[] assetTagsIds = StringUtil.split(
+			ListUtil.toString(assetTags, AssetTag.TAG_ID_ACCESSOR), 0L);
 
 		document.addKeyword(Field.ASSET_TAG_IDS, assetTagsIds);
 
+		document.addKeyword(Field.ENTRY_CLASS_NAME, className);
+		document.addKeyword(Field.ENTRY_CLASS_PK, classPK);
 		document.addKeyword(Field.PORTLET_ID, portletId);
 
 		if (resourcePrimKey > 0) {
@@ -1566,8 +1471,9 @@ public abstract class BaseIndexer implements Indexer {
 		if (baseModel instanceof AttachedModel) {
 			AttachedModel attachedModel = (AttachedModel)baseModel;
 
-			documentHelper.setAttachmentOwnerKey(
-				attachedModel.getClassNameId(), attachedModel.getClassPK());
+			document.addKeyword(
+				Field.CLASS_NAME_ID, attachedModel.getClassNameId());
+			document.addKeyword(Field.CLASS_PK, attachedModel.getClassPK());
 		}
 
 		if (baseModel instanceof AuditedModel) {
@@ -1625,22 +1531,6 @@ public abstract class BaseIndexer implements Indexer {
 		return classNames[0];
 	}
 
-	protected String[] getDefaultSelectedFieldNames() {
-		return _defaultSelectedFieldNames;
-	}
-
-	protected String[] getDefaultSelectedLocalizedFieldNames() {
-		return _defaultSelectedLocalizedFieldNames;
-	}
-
-	protected Locale getLocale(PortletRequest portletRequest) {
-		if (portletRequest != null) {
-			return portletRequest.getLocale();
-		}
-
-		return LocaleUtil.getMostRelevantLocale();
-	}
-
 	protected Set<String> getLocalizedCountryNames(Country country) {
 		Set<String> countryNames = new HashSet<String>();
 
@@ -1660,7 +1550,6 @@ public abstract class BaseIndexer implements Indexer {
 	/**
 	 * @deprecated As of 6.2.0 renamed to {@link #getSiteGroupId(long)}
 	 */
-	@Deprecated
 	protected long getParentGroupId(long groupId) {
 		return getSiteGroupId(groupId);
 	}
@@ -1686,9 +1575,6 @@ public abstract class BaseIndexer implements Indexer {
 	protected Locale getSnippetLocale(Document document, Locale locale) {
 		String prefix = Field.SNIPPET + StringPool.UNDERLINE;
 
-		String localizedAssetCategoryTitlesName =
-			prefix +
-			DocumentImpl.getLocalizedName(locale, Field.ASSET_CATEGORY_TITLES);
 		String localizedContentName =
 			prefix + DocumentImpl.getLocalizedName(locale, Field.CONTENT);
 		String localizedDescriptionName =
@@ -1696,8 +1582,7 @@ public abstract class BaseIndexer implements Indexer {
 		String localizedTitleName =
 			prefix + DocumentImpl.getLocalizedName(locale, Field.TITLE);
 
-		if ((document.getField(localizedAssetCategoryTitlesName) != null) ||
-			(document.getField(localizedContentName) != null) ||
+		if ((document.getField(localizedContentName) != null) ||
 			(document.getField(localizedDescriptionName) != null) ||
 			(document.getField(localizedTitleName) != null)) {
 
@@ -1707,23 +1592,6 @@ public abstract class BaseIndexer implements Indexer {
 		return null;
 	}
 
-	protected boolean isUseSearchResultPermissionFilter(
-		SearchContext searchContext) {
-
-		return isFilterSearch();
-	}
-
-	protected boolean isVisible(int entryStatus, int queryStatus) {
-		if (((queryStatus != WorkflowConstants.STATUS_ANY) &&
-			 (entryStatus == queryStatus)) ||
-			(entryStatus != WorkflowConstants.STATUS_IN_TRASH)) {
-
-			return true;
-		}
-
-		return false;
-	}
-
 	protected Document newDocument() {
 		return (Document)_document.clone();
 	}
@@ -1731,7 +1599,7 @@ public abstract class BaseIndexer implements Indexer {
 	protected void populateAddresses(
 			Document document, List<Address> addresses, long regionId,
 			long countryId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		List<String> cities = new ArrayList<String>();
 
@@ -1802,26 +1670,6 @@ public abstract class BaseIndexer implements Indexer {
 		}
 	}
 
-	protected void resetFullQuery(SearchContext searchContext) {
-		searchContext.clearFullQueryEntryClassNames();
-
-		for (Indexer indexer : IndexerRegistryUtil.getIndexers()) {
-			indexer.updateFullQuery(searchContext);
-		}
-	}
-
-	protected void setDefaultSelectedFieldNames(
-		String... defaultLocalizedFieldNames) {
-
-		_defaultSelectedFieldNames = defaultLocalizedFieldNames;
-	}
-
-	protected void setDefaultSelectedLocalizedFieldNames(
-		String... defaultLocalizedFieldNames) {
-
-		_defaultSelectedLocalizedFieldNames = defaultLocalizedFieldNames;
-	}
-
 	protected void setFilterSearch(boolean filterSearch) {
 		_filterSearch = filterSearch;
 	}
@@ -1844,17 +1692,13 @@ public abstract class BaseIndexer implements Indexer {
 
 	private static Log _log = LogFactoryUtil.getLog(BaseIndexer.class);
 
-	private boolean _commitImmediately;
-	private String[] _defaultSelectedFieldNames;
-	private String[] _defaultSelectedLocalizedFieldNames;
-	private Document _document = new DocumentImpl();
+	private Document _document;
 	private boolean _filterSearch;
 	private boolean _indexerEnabled = true;
 	private IndexerPostProcessor[] _indexerPostProcessors =
 		new IndexerPostProcessor[0];
 	private boolean _permissionAware;
 	private String _searchEngineId;
-	private boolean _selectAllLocales;
 	private boolean _stagingAware = true;
 
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portlet.dynamicdatamapping.service.impl;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
@@ -48,7 +49,6 @@ import com.liferay.portlet.dynamicdatamapping.model.DDMTemplateConstants;
 import com.liferay.portlet.dynamicdatamapping.service.base.DDMTemplateLocalServiceBaseImpl;
 import com.liferay.portlet.dynamicdatamapping.util.DDMXMLUtil;
 import com.liferay.portlet.journal.model.JournalArticle;
-import com.liferay.portlet.journal.model.JournalArticleConstants;
 import com.liferay.portlet.journal.service.persistence.JournalArticleUtil;
 
 import java.io.File;
@@ -110,6 +110,7 @@ public class DDMTemplateLocalServiceImpl
 	 *         group permissions for the template.
 	 * @return the template
 	 * @throws PortalException if a portal exception occurred
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public DDMTemplate addTemplate(
@@ -117,7 +118,7 @@ public class DDMTemplateLocalServiceImpl
 			Map<Locale, String> nameMap, Map<Locale, String> descriptionMap,
 			String type, String mode, String language, String script,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return addTemplate(
 			userId, groupId, classNameId, classPK, null, nameMap,
@@ -156,6 +157,7 @@ public class DDMTemplateLocalServiceImpl
 	 *         group permissions for the template.
 	 * @return the template
 	 * @throws PortalException if a portal exception occurred
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public DDMTemplate addTemplate(
@@ -165,7 +167,7 @@ public class DDMTemplateLocalServiceImpl
 			String language, String script, boolean cacheable,
 			boolean smallImage, String smallImageURL, File smallImageFile,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		// Template
 
@@ -257,12 +259,13 @@ public class DDMTemplateLocalServiceImpl
 	 * @param  addGroupPermissions whether to add group permissions
 	 * @param  addGuestPermissions whether to add guest permissions
 	 * @throws PortalException if a portal exception occurred
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public void addTemplateResources(
 			DDMTemplate template, boolean addGroupPermissions,
 			boolean addGuestPermissions)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		resourceLocalService.addResources(
 			template.getCompanyId(), template.getGroupId(),
@@ -278,12 +281,13 @@ public class DDMTemplateLocalServiceImpl
 	 * @param  groupPermissions the group permissions to be added
 	 * @param  guestPermissions the guest permissions to be added
 	 * @throws PortalException if a portal exception occurred
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public void addTemplateResources(
 			DDMTemplate template, String[] groupPermissions,
 			String[] guestPermissions)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		resourceLocalService.addModelResources(
 			template.getCompanyId(), template.getGroupId(),
@@ -306,12 +310,13 @@ public class DDMTemplateLocalServiceImpl
 	 *         group permissions for the template.
 	 * @return the new template
 	 * @throws PortalException if a portal exception occurred
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public DDMTemplate copyTemplate(
 			long userId, long templateId, Map<Locale, String> nameMap,
 			Map<Locale, String> descriptionMap, ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		DDMTemplate template = ddmTemplatePersistence.findByPrimaryKey(
 			templateId);
@@ -324,7 +329,7 @@ public class DDMTemplateLocalServiceImpl
 	@Override
 	public DDMTemplate copyTemplate(
 			long userId, long templateId, ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		DDMTemplate template = ddmTemplatePersistence.findByPrimaryKey(
 			templateId);
@@ -351,12 +356,13 @@ public class DDMTemplateLocalServiceImpl
 	 *         permissions for the new templates.
 	 * @return the new templates
 	 * @throws PortalException if a portal exception occurred
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public List<DDMTemplate> copyTemplates(
 			long userId, long classNameId, long oldClassPK, long newClassPK,
 			String type, ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		List<DDMTemplate> newTemplates = new ArrayList<DDMTemplate>();
 
@@ -379,40 +385,39 @@ public class DDMTemplateLocalServiceImpl
 	 *
 	 * @param  template the template to be deleted
 	 * @throws PortalException if a portal exception occurred
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	@SystemEvent(type = SystemEventConstants.TYPE_DELETE)
-	public void deleteTemplate(DDMTemplate template) throws PortalException {
+	public void deleteTemplate(DDMTemplate template)
+		throws PortalException, SystemException {
 
 		// Template
 
 		if (template.getClassNameId() ==
-				classNameLocalService.getClassNameId(
-					DDMStructure.class.getName())) {
+				PortalUtil.getClassNameId(DDMStructure.class.getName())) {
 
 			DDMStructure structure = ddmStructureLocalService.fetchDDMStructure(
 				template.getClassPK());
 
 			if ((structure != null) &&
 				(structure.getClassNameId() ==
-					classNameLocalService.getClassNameId(
+					PortalUtil.getClassNameId(
 						JournalArticle.class.getName()))) {
 
 				Group companyGroup = groupLocalService.getCompanyGroup(
 					template.getCompanyId());
 
 				if (template.getGroupId() == companyGroup.getGroupId()) {
-					if (JournalArticleUtil.countByC_T(
-							JournalArticleConstants.CLASSNAME_ID_DEFAULT,
+					if (JournalArticleUtil.countByTemplateId(
 							template.getTemplateKey()) > 0) {
 
 						throw new RequiredTemplateException();
 					}
 				}
 				else {
-					if (JournalArticleUtil.countByG_C_T(
+					if (JournalArticleUtil.countByG_T(
 							template.getGroupId(),
-							JournalArticleConstants.CLASSNAME_ID_DEFAULT,
 							template.getTemplateKey()) > 0) {
 
 						throw new RequiredTemplateException();
@@ -435,9 +440,12 @@ public class DDMTemplateLocalServiceImpl
 	 *
 	 * @param  templateId the primary key of the template to be deleted
 	 * @throws PortalException if a portal exception occurred
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public void deleteTemplate(long templateId) throws PortalException {
+	public void deleteTemplate(long templateId)
+		throws PortalException, SystemException {
+
 		DDMTemplate template = ddmTemplatePersistence.findByPrimaryKey(
 			templateId);
 
@@ -449,9 +457,12 @@ public class DDMTemplateLocalServiceImpl
 	 *
 	 * @param  groupId the primary key of the group
 	 * @throws PortalException if a portal exception occurred
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public void deleteTemplates(long groupId) throws PortalException {
+	public void deleteTemplates(long groupId)
+		throws PortalException, SystemException {
+
 		List<DDMTemplate> templates = ddmTemplatePersistence.findByGroupId(
 			groupId);
 
@@ -469,10 +480,12 @@ public class DDMTemplateLocalServiceImpl
 	 * @param  templateKey the unique string identifying the template
 	 * @return the matching template, or <code>null</code> if a matching
 	 *         template could not be found
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public DDMTemplate fetchTemplate(
-		long groupId, long classNameId, String templateKey) {
+			long groupId, long classNameId, String templateKey)
+		throws SystemException {
 
 		templateKey = StringUtil.toUpperCase(templateKey.trim());
 
@@ -481,59 +494,48 @@ public class DDMTemplateLocalServiceImpl
 	}
 
 	/**
-	 * Returns the template matching the group and template key, optionally
-	 * searching ancestor sites (that have sharing enabled) and global scoped
-	 * sites.
+	 * Returns the template matching the group and template key, optionally in
+	 * the global scope.
 	 *
 	 * <p>
 	 * This method first searches in the given group. If the template is still
-	 * not found and <code>includeAncestorTemplates</code> is set to
-	 * <code>true</code>, this method searches the group's ancestor sites (that
-	 * have sharing enabled) and lastly searches global scoped sites.
+	 * not found and <code>includeGlobalTemplates</code> is set to
+	 * <code>true</code>, this method searches the global group.
 	 * </p>
 	 *
 	 * @param  groupId the primary key of the group
 	 * @param  classNameId the primary key of the class name for the template's
 	 *         related model
 	 * @param  templateKey the unique string identifying the template
-	 * @param  includeAncestorTemplates whether to include ancestor sites (that
-	 *         have sharing enabled) and include global scoped sites in the
-	 *         search in the search
+	 * @param  includeGlobalTemplates whether to include the global scope in the
+	 *         search
 	 * @return the matching template, or <code>null</code> if a matching
 	 *         template could not be found
 	 * @throws PortalException if a portal exception occurred
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public DDMTemplate fetchTemplate(
 			long groupId, long classNameId, String templateKey,
-			boolean includeAncestorTemplates)
-		throws PortalException {
+			boolean includeGlobalTemplates)
+		throws PortalException, SystemException {
 
 		templateKey = StringUtil.toUpperCase(templateKey.trim());
 
 		DDMTemplate template = ddmTemplatePersistence.fetchByG_C_T(
 			groupId, classNameId, templateKey);
 
-		if (template != null) {
+		if ((template != null) || !includeGlobalTemplates) {
 			return template;
 		}
 
-		if (!includeAncestorTemplates) {
-			return null;
-		}
+		Group group = groupPersistence.findByPrimaryKey(groupId);
 
-		for (long ancestorSiteGroupId :
-				PortalUtil.getAncestorSiteGroupIds(groupId)) {
+		Group companyGroup = groupLocalService.getCompanyGroup(
+			group.getCompanyId());
 
-			template = ddmTemplatePersistence.fetchByG_C_T(
-				ancestorSiteGroupId, classNameId, templateKey);
-
-			if (template != null) {
-				return template;
-			}
-		}
-
-		return null;
+		return ddmTemplatePersistence.fetchByG_C_T(
+			companyGroup.getGroupId(), classNameId, templateKey);
 	}
 
 	/**
@@ -542,9 +544,12 @@ public class DDMTemplateLocalServiceImpl
 	 * @param  templateId the primary key of the template
 	 * @return the template with the ID
 	 * @throws PortalException if a matching template could not be found
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public DDMTemplate getTemplate(long templateId) throws PortalException {
+	public DDMTemplate getTemplate(long templateId)
+		throws PortalException, SystemException {
+
 		return ddmTemplatePersistence.findByPrimaryKey(templateId);
 	}
 
@@ -557,11 +562,12 @@ public class DDMTemplateLocalServiceImpl
 	 * @param  templateKey the unique string identifying the template
 	 * @return the matching template
 	 * @throws PortalException if a matching template could not be found
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public DDMTemplate getTemplate(
 			long groupId, long classNameId, String templateKey)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		templateKey = StringUtil.toUpperCase(templateKey.trim());
 
@@ -570,32 +576,30 @@ public class DDMTemplateLocalServiceImpl
 	}
 
 	/**
-	 * Returns the template matching the group and template key, optionally
-	 * searching ancestor sites (that have sharing enabled) and global scoped
-	 * sites.
+	 * Returns the template matching the group and template key, optionally in
+	 * the global scope.
 	 *
 	 * <p>
 	 * This method first searches in the group. If the template is still not
-	 * found and <code>includeAncestorTemplates</code> is set to
-	 * <code>true</code>, this method searches the group's ancestor sites (that
-	 * have sharing enabled) and lastly searches global scoped sites.
+	 * found and <code>includeGlobalTemplates</code> is set to
+	 * <code>true</code>, this method searches the global group.
 	 * </p>
 	 *
 	 * @param  groupId the primary key of the group
 	 * @param  classNameId the primary key of the class name for the template's
 	 *         related model
 	 * @param  templateKey the unique string identifying the template
-	 * @param  includeAncestorTemplates whether to include ancestor sites (that
-	 *         have sharing enabled) and include global scoped sites in the
-	 *         search in the search
+	 * @param  includeGlobalTemplates whether to include the global scope in the
+	 *         search
 	 * @return the matching template
 	 * @throws PortalException if a matching template could not be found
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public DDMTemplate getTemplate(
 			long groupId, long classNameId, String templateKey,
-			boolean includeAncestorTemplates)
-		throws PortalException {
+			boolean includeGlobalTemplates)
+		throws PortalException, SystemException {
 
 		templateKey = StringUtil.toUpperCase(templateKey.trim());
 
@@ -606,30 +610,23 @@ public class DDMTemplateLocalServiceImpl
 			return template;
 		}
 
-		if (!includeAncestorTemplates) {
+		if (!includeGlobalTemplates) {
 			throw new NoSuchTemplateException(
 				"No DDMTemplate exists with the template key " + templateKey);
 		}
 
-		for (long ancestorSiteGroupId :
-				PortalUtil.getAncestorSiteGroupIds(groupId)) {
+		Group group = groupPersistence.findByPrimaryKey(groupId);
 
-			template = ddmTemplatePersistence.fetchByG_C_T(
-				ancestorSiteGroupId, classNameId, templateKey);
+		Group companyGroup = groupLocalService.getCompanyGroup(
+			group.getCompanyId());
 
-			if (template != null) {
-				return template;
-			}
-		}
-
-		throw new NoSuchTemplateException(
-			"No DDMTemplate exists with the template key " + templateKey +
-				" in the ancestor groups");
+		return ddmTemplatePersistence.findByG_C_T(
+			companyGroup.getGroupId(), classNameId, templateKey);
 	}
 
 	@Override
 	public DDMTemplate getTemplateBySmallImageId(long smallImageId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return ddmTemplatePersistence.findBySmallImageId(smallImageId);
 	}
@@ -639,9 +636,10 @@ public class DDMTemplateLocalServiceImpl
 	 *
 	 * @param  classPK the primary key of the template's related entity
 	 * @return the templates with the class PK
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public List<DDMTemplate> getTemplates(long classPK) {
+	public List<DDMTemplate> getTemplates(long classPK) throws SystemException {
 		return ddmTemplatePersistence.findByClassPK(classPK);
 	}
 
@@ -652,9 +650,12 @@ public class DDMTemplateLocalServiceImpl
 	 * @param  classNameId the primary key of the class name for the template's
 	 *         related model
 	 * @return the matching templates
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public List<DDMTemplate> getTemplates(long groupId, long classNameId) {
+	public List<DDMTemplate> getTemplates(long groupId, long classNameId)
+		throws SystemException {
+
 		return ddmTemplatePersistence.findByG_C(groupId, classNameId);
 	}
 
@@ -667,36 +668,15 @@ public class DDMTemplateLocalServiceImpl
 	 *         related model
 	 * @param  classPK the primary key of the template's related entity
 	 * @return the matching templates
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public List<DDMTemplate> getTemplates(
-		long groupId, long classNameId, long classPK) {
+			long groupId, long classNameId, long classPK)
+		throws SystemException {
 
 		return ddmTemplatePersistence.findByG_C_C(
 			groupId, classNameId, classPK);
-	}
-
-	@Override
-	public List<DDMTemplate> getTemplates(
-			long groupId, long classNameId, long classPK,
-			boolean includeAncestorTemplates)
-		throws PortalException {
-
-		List<DDMTemplate> ddmTemplates = new ArrayList<DDMTemplate>();
-
-		ddmTemplates.addAll(
-			ddmTemplatePersistence.findByG_C_C(groupId, classNameId, classPK));
-
-		if (!includeAncestorTemplates) {
-			return ddmTemplates;
-		}
-
-		ddmTemplates.addAll(
-			ddmTemplatePersistence.findByG_C_C(
-				PortalUtil.getAncestorSiteGroupIds(groupId), classNameId,
-				classPK));
-
-		return ddmTemplates;
 	}
 
 	/**
@@ -710,10 +690,12 @@ public class DDMTemplateLocalServiceImpl
 	 * @param  type the template's type. For more information, see {@link
 	 *         com.liferay.portlet.dynamicdatamapping.model.DDMTemplateConstants}.
 	 * @return the matching templates
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public List<DDMTemplate> getTemplates(
-		long groupId, long classNameId, long classPK, String type) {
+			long groupId, long classNameId, long classPK, String type)
+		throws SystemException {
 
 		return ddmTemplatePersistence.findByG_C_C_T(
 			groupId, classNameId, classPK, type);
@@ -732,39 +714,37 @@ public class DDMTemplateLocalServiceImpl
 	 * @param  mode the template's mode. For more information, see {@link
 	 *         com.liferay.portlet.dynamicdatamapping.model.DDMTemplateConstants}.
 	 * @return the matching templates
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public List<DDMTemplate> getTemplates(
-		long groupId, long classNameId, long classPK, String type,
-		String mode) {
+			long groupId, long classNameId, long classPK, String type,
+			String mode)
+		throws SystemException {
 
 		return ddmTemplatePersistence.findByG_C_C_T_M(
 			groupId, classNameId, classPK, type, mode);
 	}
 
 	@Override
-	public List<DDMTemplate> getTemplates(
-		long[] groupIds, long classNameId, long classPK) {
+	public List<DDMTemplate> getTemplatesByClassPK(long groupId, long classPK)
+		throws SystemException {
 
-		return ddmTemplatePersistence.findByG_C_C(
-			groupIds, classNameId, classPK);
-	}
-
-	@Override
-	public List<DDMTemplate> getTemplatesByClassPK(long groupId, long classPK) {
 		return ddmTemplatePersistence.findByG_CPK(groupId, classPK);
 	}
 
 	@Override
 	public List<DDMTemplate> getTemplatesByClassPK(
-		long groupId, long classPK, int start, int end) {
+			long groupId, long classPK, int start, int end)
+		throws SystemException {
 
 		return ddmTemplatePersistence.findByG_CPK(groupId, classPK, start, end);
 	}
 
 	@Override
 	public List<DDMTemplate> getTemplatesByClassPK(
-		long[] groupIds, long classPK) {
+			long[] groupIds, long classPK)
+		throws SystemException {
 
 		return ddmTemplatePersistence.findByG_CPK(groupIds, classPK);
 	}
@@ -775,9 +755,12 @@ public class DDMTemplateLocalServiceImpl
 	 * @param  groupId the primary key of the group
 	 * @param  classPK the primary key of the template's related entity
 	 * @return the number of templates belonging to the group and class PK
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public int getTemplatesByClassPKCount(long groupId, long classPK) {
+	public int getTemplatesByClassPKCount(long groupId, long classPK)
+		throws SystemException {
+
 		return ddmTemplatePersistence.countByG_CPK(groupId, classPK);
 	}
 
@@ -804,11 +787,13 @@ public class DDMTemplateLocalServiceImpl
 	 * @param  orderByComparator the comparator to order the templates
 	 *         (optionally <code>null</code>)
 	 * @return the range of matching templates ordered by the comparator
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public List<DDMTemplate> getTemplatesByStructureClassNameId(
-		long groupId, long structureClassNameId, int start, int end,
-		OrderByComparator<DDMTemplate> orderByComparator) {
+			long groupId, long structureClassNameId, int start, int end,
+			OrderByComparator orderByComparator)
+		throws SystemException {
 
 		return ddmTemplateFinder.findByG_SC(
 			groupId, structureClassNameId, start, end, orderByComparator);
@@ -822,10 +807,12 @@ public class DDMTemplateLocalServiceImpl
 	 * @param  structureClassNameId the primary key of the class name for the
 	 *         template's related structure
 	 * @return the number of matching templates
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public int getTemplatesByStructureClassNameIdCount(
-		long groupId, long structureClassNameId) {
+			long groupId, long structureClassNameId)
+		throws SystemException {
 
 		return ddmTemplateFinder.countByG_SC(groupId, structureClassNameId);
 	}
@@ -835,9 +822,10 @@ public class DDMTemplateLocalServiceImpl
 	 *
 	 * @param  groupId the primary key of the group
 	 * @return the number of templates belonging to the group
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public int getTemplatesCount(long groupId) {
+	public int getTemplatesCount(long groupId) throws SystemException {
 		return ddmTemplatePersistence.countByGroupId(groupId);
 	}
 
@@ -848,9 +836,12 @@ public class DDMTemplateLocalServiceImpl
 	 * @param  classNameId the primary key of the class name for the template's
 	 *         related model
 	 * @return the number of matching templates
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public int getTemplatesCount(long groupId, long classNameId) {
+	public int getTemplatesCount(long groupId, long classNameId)
+		throws SystemException {
+
 		return ddmTemplatePersistence.countByG_C(groupId, classNameId);
 	}
 
@@ -863,9 +854,12 @@ public class DDMTemplateLocalServiceImpl
 	 *         related model
 	 * @param  classPK the primary key of the template's related entity
 	 * @return the number of matching templates
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public int getTemplatesCount(long groupId, long classNameId, long classPK) {
+	public int getTemplatesCount(long groupId, long classNameId, long classPK)
+		throws SystemException {
+
 		return ddmTemplatePersistence.countByG_C_C(
 			groupId, classNameId, classPK);
 	}
@@ -904,12 +898,14 @@ public class DDMTemplateLocalServiceImpl
 	 * @param  orderByComparator the comparator to order the templates
 	 *         (optionally <code>null</code>)
 	 * @return the range of matching templates ordered by the comparator
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public List<DDMTemplate> search(
-		long companyId, long groupId, long classNameId, long classPK,
-		String keywords, String type, String mode, int start, int end,
-		OrderByComparator<DDMTemplate> orderByComparator) {
+			long companyId, long groupId, long classNameId, long classPK,
+			String keywords, String type, String mode, int start, int end,
+			OrderByComparator orderByComparator)
+		throws SystemException {
 
 		return ddmTemplateFinder.findByKeywords(
 			companyId, groupId, classNameId, classPK, keywords, type, mode,
@@ -956,13 +952,15 @@ public class DDMTemplateLocalServiceImpl
 	 * @param  orderByComparator the comparator to order the templates
 	 *         (optionally <code>null</code>)
 	 * @return the range of matching templates ordered by the comparator
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public List<DDMTemplate> search(
-		long companyId, long groupId, long classNameId, long classPK,
-		String name, String description, String type, String mode,
-		String language, boolean andOperator, int start, int end,
-		OrderByComparator<DDMTemplate> orderByComparator) {
+			long companyId, long groupId, long classNameId, long classPK,
+			String name, String description, String type, String mode,
+			String language, boolean andOperator, int start, int end,
+			OrderByComparator orderByComparator)
+		throws SystemException {
 
 		return ddmTemplateFinder.findByC_G_C_C_N_D_T_M_L(
 			companyId, groupId, classNameId, classPK, name, description, type,
@@ -1003,12 +1001,14 @@ public class DDMTemplateLocalServiceImpl
 	 * @param  orderByComparator the comparator to order the templates
 	 *         (optionally <code>null</code>)
 	 * @return the range of matching templates ordered by the comparator
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public List<DDMTemplate> search(
-		long companyId, long[] groupIds, long[] classNameIds, long[] classPKs,
-		String keywords, String type, String mode, int start, int end,
-		OrderByComparator<DDMTemplate> orderByComparator) {
+			long companyId, long[] groupIds, long[] classNameIds,
+			long[] classPKs, String keywords, String type, String mode,
+			int start, int end, OrderByComparator orderByComparator)
+		throws SystemException {
 
 		return ddmTemplateFinder.findByKeywords(
 			companyId, groupIds, classNameIds, classPKs, keywords, type, mode,
@@ -1055,13 +1055,15 @@ public class DDMTemplateLocalServiceImpl
 	 * @param  orderByComparator the comparator to order the templates
 	 *         (optionally <code>null</code>)
 	 * @return the range of matching templates ordered by the comparator
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public List<DDMTemplate> search(
-		long companyId, long[] groupIds, long[] classNameIds, long[] classPKs,
-		String name, String description, String type, String mode,
-		String language, boolean andOperator, int start, int end,
-		OrderByComparator<DDMTemplate> orderByComparator) {
+			long companyId, long[] groupIds, long[] classNameIds,
+			long[] classPKs, String name, String description, String type,
+			String mode, String language, boolean andOperator, int start,
+			int end, OrderByComparator orderByComparator)
+		throws SystemException {
 
 		return ddmTemplateFinder.findByC_G_C_C_N_D_T_M_L(
 			companyId, groupIds, classNameIds, classPKs, name, description,
@@ -1087,11 +1089,13 @@ public class DDMTemplateLocalServiceImpl
 	 *         information, see {@link
 	 *         com.liferay.portlet.dynamicdatamapping.model.DDMTemplateConstants}.
 	 * @return the number of matching templates
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public int searchCount(
-		long companyId, long groupId, long classNameId, long classPK,
-		String keywords, String type, String mode) {
+			long companyId, long groupId, long classNameId, long classPK,
+			String keywords, String type, String mode)
+		throws SystemException {
 
 		return ddmTemplateFinder.countByKeywords(
 			companyId, groupId, classNameId, classPK, keywords, type, mode);
@@ -1121,12 +1125,14 @@ public class DDMTemplateLocalServiceImpl
 	 * @param  andOperator whether every field must match its keywords, or just
 	 *         one field.
 	 * @return the number of matching templates
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public int searchCount(
-		long companyId, long groupId, long classNameId, long classPK,
-		String name, String description, String type, String mode,
-		String language, boolean andOperator) {
+			long companyId, long groupId, long classNameId, long classPK,
+			String name, String description, String type, String mode,
+			String language, boolean andOperator)
+		throws SystemException {
 
 		return ddmTemplateFinder.countByC_G_C_C_N_D_T_M_L(
 			companyId, groupId, classNameId, classPK, name, description, type,
@@ -1152,11 +1158,13 @@ public class DDMTemplateLocalServiceImpl
 	 *         information, see {@link
 	 *         com.liferay.portlet.dynamicdatamapping.model.DDMTemplateConstants}.
 	 * @return the number of matching templates
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public int searchCount(
-		long companyId, long[] groupIds, long[] classNameIds, long[] classPKs,
-		String keywords, String type, String mode) {
+			long companyId, long[] groupIds, long[] classNameIds,
+			long[] classPKs, String keywords, String type, String mode)
+		throws SystemException {
 
 		return ddmTemplateFinder.countByKeywords(
 			companyId, groupIds, classNameIds, classPKs, keywords, type, mode);
@@ -1186,12 +1194,14 @@ public class DDMTemplateLocalServiceImpl
 	 * @param  andOperator whether every field must match its keywords, or just
 	 *         one field.
 	 * @return the number of matching templates
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public int searchCount(
-		long companyId, long[] groupIds, long[] classNameIds, long[] classPKs,
-		String name, String description, String type, String mode,
-		String language, boolean andOperator) {
+			long companyId, long[] groupIds, long[] classNameIds,
+			long[] classPKs, String name, String description, String type,
+			String mode, String language, boolean andOperator)
+		throws SystemException {
 
 		return ddmTemplateFinder.countByC_G_C_C_N_D_T_M_L(
 			companyId, groupIds, classNameIds, classPKs, name, description,
@@ -1224,6 +1234,7 @@ public class DDMTemplateLocalServiceImpl
 	 *         modification date.
 	 * @return the updated template
 	 * @throws PortalException if a portal exception occurred
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public DDMTemplate updateTemplate(
@@ -1232,7 +1243,7 @@ public class DDMTemplateLocalServiceImpl
 			String language, String script, boolean cacheable,
 			boolean smallImage, String smallImageURL, File smallImageFile,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		script = formatScript(type, language, script);
 
@@ -1284,54 +1295,37 @@ public class DDMTemplateLocalServiceImpl
 		return template;
 	}
 
-	/**
-	 * Updates the template matching the ID.
-	 *
-	 * @param  templateId the primary key of the template
-	 * @param  classPK the primary key of the template's related entity
-	 * @param  nameMap the template's new locales and localized names
-	 * @param  descriptionMap the template's new locales and localized
-	 *         description
-	 * @param  type the template's type. For more information, see {@link
-	 *         com.liferay.portlet.dynamicdatamapping.model.DDMTemplateConstants}.
-	 * @param  mode the template's mode. For more information, see {@link
-	 *         com.liferay.portlet.dynamicdatamapping.model.DDMTemplateConstants}.
-	 * @param  language the template's script language. For more information,
-	 *         see {@link
-	 *         com.liferay.portlet.dynamicdatamapping.model.DDMTemplateConstants}.
-	 * @param  script the template's script
-	 * @param  cacheable whether the template is cacheable
-	 * @param  serviceContext the service context to be applied. Can set the
-	 *         modification date.
-	 * @return the updated template
-	 * @throws PortalException if a portal exception occurred
-	 */
-	@Override
-	public DDMTemplate updateTemplate(
-			long templateId, long classPK, Map<Locale, String> nameMap,
-			Map<Locale, String> descriptionMap, String type, String mode,
-			String language, String script, boolean cacheable,
-			ServiceContext serviceContext)
-		throws PortalException {
+	protected File copySmallImage(DDMTemplate template) throws SystemException {
+		File smallImageFile = null;
 
-		DDMTemplate template = ddmTemplateLocalService.getDDMTemplate(
-			templateId);
+		if (template.isSmallImage() &&
+			Validator.isNull(template.getSmallImageURL())) {
 
-		File smallImageFile = getSmallImageFile(template);
+			Image smallImage = ImageUtil.fetchByPrimaryKey(
+				template.getSmallImageId());
 
-		return updateTemplate(
-			templateId, classPK, nameMap, descriptionMap, type, mode, language,
-			script, cacheable, template.isSmallImage(),
-			template.getSmallImageURL(), smallImageFile, serviceContext);
+			if (smallImage != null) {
+				smallImageFile = FileUtil.createTempFile(smallImage.getType());
+
+				try {
+					FileUtil.write(smallImageFile, smallImage.getTextObj());
+				}
+				catch (IOException ioe) {
+					_log.error(ioe, ioe);
+				}
+			}
+		}
+
+		return smallImageFile;
 	}
 
 	protected DDMTemplate copyTemplate(
 			long userId, DDMTemplate template, long classPK,
 			Map<Locale, String> nameMap, Map<Locale, String> descriptionMap,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
-		File smallImageFile = getSmallImageFile(template);
+		File smallImageFile = copySmallImage(template);
 
 		return addTemplate(
 			userId, template.getGroupId(), template.getClassNameId(), classPK,
@@ -1359,34 +1353,10 @@ public class DDMTemplateLocalServiceImpl
 		return script;
 	}
 
-	protected File getSmallImageFile(DDMTemplate template) {
-		File smallImageFile = null;
-
-		if (template.isSmallImage() &&
-			Validator.isNull(template.getSmallImageURL())) {
-
-			Image smallImage = ImageUtil.fetchByPrimaryKey(
-				template.getSmallImageId());
-
-			if (smallImage != null) {
-				smallImageFile = FileUtil.createTempFile(smallImage.getType());
-
-				try {
-					FileUtil.write(smallImageFile, smallImage.getTextObj());
-				}
-				catch (IOException ioe) {
-					_log.error(ioe, ioe);
-				}
-			}
-		}
-
-		return smallImageFile;
-	}
-
 	protected void saveImages(
 			boolean smallImage, long smallImageId, File smallImageFile,
 			byte[] smallImageBytes)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		if (smallImage) {
 			if ((smallImageFile != null) && (smallImageBytes != null)) {
@@ -1402,7 +1372,7 @@ public class DDMTemplateLocalServiceImpl
 			long groupId, long classNameId, String templateKey,
 			Map<Locale, String> nameMap, String script, boolean smallImage,
 			String smallImageURL, File smallImageFile, byte[] smallImageBytes)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		templateKey = StringUtil.toUpperCase(templateKey.trim());
 
@@ -1418,22 +1388,16 @@ public class DDMTemplateLocalServiceImpl
 			smallImageBytes);
 	}
 
-	protected void validate(Map<Locale, String> nameMap, String script)
-		throws PortalException {
+	protected void validate(
+			Map<Locale, String> nameMap, String script, boolean smallImage,
+			String smallImageURL, File smallImageFile, byte[] smallImageBytes)
+		throws PortalException, SystemException {
 
 		validateName(nameMap);
 
 		if (Validator.isNull(script)) {
 			throw new TemplateScriptException();
 		}
-	}
-
-	protected void validate(
-			Map<Locale, String> nameMap, String script, boolean smallImage,
-			String smallImageURL, File smallImageFile, byte[] smallImageBytes)
-		throws PortalException {
-
-		validate(nameMap, script);
 
 		String[] imageExtensions = PrefsPropsUtil.getStringArray(
 			PropsKeys.DYNAMIC_DATA_MAPPING_IMAGE_EXTENSIONS, StringPool.COMMA);

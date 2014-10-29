@@ -3,8 +3,6 @@ AUI.add(
 	function(A) {
 		var Lang = A.Lang;
 
-		var LString = Lang.String;
-
 		var AObject = A.Object;
 
 		var BOUNDING_BOX = 'boundingBox';
@@ -30,10 +28,10 @@ AUI.add(
 		var TPL_CHECKED = ' checked="checked" ';
 
 		var TPL_INPUT =
-			'<label title="{titleCurrentValue}">' +
-				'<span class="lfr-categories-selector-category-name" title="{titleCurrentValue}">' +
-					'<input data-categoryId="{categoryId}" data-vocabularyid="{vocabularyId}" name="{inputName}" type="{type}" value="{titleCurrentValue}" {checked} />' +
-					'{titleCurrentValue}' +
+			'<label title="{name}">' +
+				'<span class="lfr-categories-selector-category-name" title="{name}">' +
+					'<input data-categoryId="{categoryId}" data-vocabularyid="{vocabularyId}" name="{inputName}" type="{type}" value="{name}" {checked} />' +
+					'{name}' +
 				'</span>' +
 				'<span class="lfr-categories-selector-search-results-path" title="{path}">{path}</span>' +
 			'</label>';
@@ -45,6 +43,8 @@ AUI.add(
 		var TPL_RADIO_ID = ' id="{0}" ';
 
 		var TPL_RADIO_IMAGE = '<div class="lfr-categories-selector-radio-image category{0}"></div>';
+
+		var TPL_SEARCH_QUERY = '%{0}%';
 
 		var TPL_SEARCH_RESULTS = '<div class="lfr-categories-selector-search-results"></div>';
 
@@ -81,9 +81,8 @@ AUI.add(
 
 							return value;
 						},
-						value: []
+						value: ''
 					},
-
 					curEntryIds: {
 						setter: function(value) {
 							var instance = this;
@@ -94,42 +93,31 @@ AUI.add(
 
 							return value;
 						},
-						value: []
+						value: ''
 					},
-
-					label: {
-						validator: '_isValidString',
-						value: Liferay.Language.get('select')
-					},
-
 					labelNode: {
 						setter: function(value) {
 							return A.one(value) || A.Attribute.INVALID_VALUE;
 						},
 						value: null
 					},
-
 					maxEntries: {
 						validator: Lang.isNumber,
 						value: -1
 					},
-
 					moreResultsLabel: {
 						validator: '_isValidString',
 						value: Liferay.Language.get('load-more-results')
 					},
-
 					singleSelect: {
 						validator: Lang.isBoolean,
 						value: false
 					},
-
 					title: {
 						validator: '_isValidString',
 						value: Liferay.Language.get('select-categories')
 					},
-
-					vocabularyGroupIds: {
+					vocabularyIds: {
 						setter: function(value) {
 							var instance = this;
 
@@ -141,8 +129,7 @@ AUI.add(
 						},
 						value: []
 					},
-
-					vocabularyIds: {
+					vocabularyGroupIds: {
 						setter: function(value) {
 							var instance = this;
 
@@ -161,8 +148,8 @@ AUI.add(
 				NAME: NAME,
 
 				prototype: {
-					TREEVIEWS: {},
 					UI_EVENTS: {},
+					TREEVIEWS: {},
 
 					renderUI: function() {
 						var instance = this;
@@ -198,14 +185,12 @@ AUI.add(
 
 						A.each(
 							curEntryIds,
-							function(item, index) {
+							function(item, index, collection) {
 								var entry = {
 									categoryId: item
 								};
 
 								entry[matchKey] = curEntries[index];
-
-								entry.value = LString.unescapeHTML(entry.value);
 
 								instance.entries.add(entry);
 							}
@@ -250,7 +235,7 @@ AUI.add(
 
 						A.each(
 							json,
-							function(item, index) {
+							function(item, index, collection) {
 								var checked = false;
 								var treeId = 'category' + item.categoryId;
 
@@ -264,7 +249,7 @@ AUI.add(
 									},
 									checked: checked,
 									id: treeId,
-									label: LString.escapeHTML(item.titleCurrentValue),
+									label: Liferay.Util.escapeHTML(item.titleCurrentValue),
 									leaf: !item.hasChildren,
 									paginator: instance._getPaginatorConfig(item),
 									type: type
@@ -313,6 +298,7 @@ AUI.add(
 								{
 									'$vocabularies = /assetvocabulary/get-vocabularies': {
 										vocabularyIds: vocabularyIds,
+
 										'$childrenCount = /assetcategory/get-vocabulary-root-categories-count': {
 											'@groupId': '$vocabularies.groupId',
 											'@vocabularyId': '$vocabularies.vocabularyId'
@@ -332,8 +318,9 @@ AUI.add(
 							Liferay.Service(
 								{
 									'$vocabularies = /assetvocabulary/get-groups-vocabularies': {
-										className: className,
 										groupIds: groupIds,
+										className: className,
+
 										'$childrenCount = /assetcategory/get-vocabulary-root-categories-count': {
 											'groupId': '$vocabularies.groupId',
 											'@vocabularyId': '$vocabularies.vocabularyId'
@@ -463,9 +450,24 @@ AUI.add(
 
 						entry[matchKey] = entryMatchKey;
 
-						entry.value = LString.unescapeHTML(entry.value);
+						entry.value = A.Lang.String.unescapeHTML(entry.value);
 
 						instance.entries.add(entry);
+					},
+
+					_onCheckedChange: function(event) {
+						var instance = this;
+
+						if (event.newVal) {
+							if (instance.get('singleSelect')) {
+								instance._clearEntries();
+							}
+
+							instance._onCheckboxCheck(event);
+						}
+						else {
+							instance._onCheckboxUncheck(event);
+						}
 					},
 
 					_onCheckboxClick: function(event) {
@@ -497,21 +499,6 @@ AUI.add(
 						instance.entries.removeKey(assetId);
 					},
 
-					_onCheckedChange: function(event) {
-						var instance = this;
-
-						if (event.newVal) {
-							if (instance.get('singleSelect')) {
-								instance._clearEntries();
-							}
-
-							instance._onCheckboxCheck(event);
-						}
-						else {
-							instance._onCheckboxUncheck(event);
-						}
-					},
-
 					_onSelectChange: function(event) {
 						var instance = this;
 
@@ -527,9 +514,7 @@ AUI.add(
 
 						buffer.length = 0;
 
-						var categories = results.categories;
-
-						if (categories.length > 0) {
+						if (results.length > 0) {
 							var inputType = 'checkbox';
 
 							if (instance.get('singleSelect')) {
@@ -539,8 +524,8 @@ AUI.add(
 							var inputName = A.guid();
 
 							A.each(
-								categories,
-								function(item, index) {
+								results,
+								function(item, index, collection) {
 									item.checked = instance.entries.findIndexBy('categoryId', item.categoryId) > -1 ? TPL_CHECKED : '';
 
 									item.inputName = inputName;
@@ -571,7 +556,7 @@ AUI.add(
 								children: [
 									{
 										icon: 'icon-search',
-										label: instance.get('label'),
+										label: Liferay.Language.get('select'),
 										on: {
 											click: A.bind('_showSelectPopup', instance)
 										},
@@ -597,17 +582,13 @@ AUI.add(
 							searchResults.addClass('loading-animation');
 
 							Liferay.Service(
+								'/assetcategory/search',
 								{
-									'$display = /assetcategory/search-categories-display': {
-										end: -1,
-										groupIds: vocabularyGroupIds,
-										start: -1,
-										title: searchValue,
-										vocabularyIds: vocabularyIds,
-										'categories.$path = /assetcategory/get-category-path': {
-											'@categoryId': '$display.categories.categoryId'
-										}
-									}
+									groupIds: vocabularyGroupIds,
+									name: Lang.sub(TPL_SEARCH_QUERY, [searchValue]),
+									vocabularyIds: vocabularyIds,
+									start: -1,
+									end: -1
 								},
 								callback
 							);
@@ -619,7 +600,7 @@ AUI.add(
 
 						AObject.each(
 							treeViews,
-							function(item, index) {
+							function(item, index, collection) {
 								item.toggle(!searchValue);
 							}
 						);
@@ -647,7 +628,7 @@ AUI.add(
 
 								A.each(
 									instance.TREEVIEWS,
-									function(item, index) {
+									function(item, index, collection) {
 										item.expandAll();
 									}
 								);
@@ -661,11 +642,11 @@ AUI.add(
 						instance._bindSearchHandle = popup.searchField.once('focus', instance._initSearch, instance);
 					},
 
-					_vocabulariesIterator: function(item, index) {
+					_vocabulariesIterator: function(item, index, collection) {
 						var instance = this;
 
 						var popup = instance._popup;
-						var vocabularyTitle = LString.escapeHTML(item.titleCurrentValue);
+						var vocabularyTitle = Liferay.Util.escapeHTML(item.titleCurrentValue);
 						var vocabularyId = item.vocabularyId;
 
 						if (item.groupId == themeDisplay.getCompanyGroupId()) {

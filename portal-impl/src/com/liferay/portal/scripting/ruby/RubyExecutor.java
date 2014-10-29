@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -134,10 +134,6 @@ public class RubyExecutor extends BaseScriptingExecutor {
 	@Override
 	public String getLanguage() {
 		return LANGUAGE;
-	}
-
-	public ScriptingContainer getScriptingContainer() {
-		return _scriptingContainer;
 	}
 
 	public void setExecuteInSeparateThread(boolean executeInSeparateThread) {
@@ -295,6 +291,7 @@ public class RubyExecutor extends BaseScriptingExecutor {
 	private static Log _log = LogFactoryUtil.getLog(RubyExecutor.class);
 
 	private static Field _globalRuntimeField;
+
 	private static ThreadFactory _threadFactory =
 		new NamedThreadFactory(
 			RubyExecutor.class.getName(), Thread.NORM_PRIORITY,
@@ -338,11 +335,11 @@ public class RubyExecutor extends BaseScriptingExecutor {
 		}
 
 		private final Set<String> _allowedClasses;
-		private final ClassLoader[] _classLoaders;
 		private final Map<String, Object> _inputObjects;
 		private final Set<String> _outputNames;
-		private final String _script;
 		private final File _scriptFile;
+		private final String _script;
+		private final ClassLoader[] _classLoaders;
 
 	}
 

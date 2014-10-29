@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portlet.softwarecatalog.service.impl;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portlet.softwarecatalog.model.SCProductScreenshot;
 import com.liferay.portlet.softwarecatalog.service.base.SCProductScreenshotLocalServiceBaseImpl;
 
@@ -28,7 +29,7 @@ public class SCProductScreenshotLocalServiceImpl
 
 	@Override
 	public void deleteProductScreenshot(SCProductScreenshot productScreenshot)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		// Product screenshot
 
@@ -42,7 +43,7 @@ public class SCProductScreenshotLocalServiceImpl
 
 	@Override
 	public void deleteProductScreenshots(long productEntryId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		List<SCProductScreenshot> productScreenshots =
 			scProductScreenshotPersistence.findByProductEntryId(productEntryId);
@@ -55,7 +56,7 @@ public class SCProductScreenshotLocalServiceImpl
 	@Override
 	public SCProductScreenshot getProductScreenshot(
 			long productEntryId, int priority)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return scProductScreenshotPersistence.findByP_P(
 			productEntryId, priority);
@@ -64,7 +65,7 @@ public class SCProductScreenshotLocalServiceImpl
 	@Override
 	public SCProductScreenshot getProductScreenshotByFullImageId(
 			long fullImageId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return scProductScreenshotPersistence.findByFullImageId(fullImageId);
 	}
@@ -72,14 +73,14 @@ public class SCProductScreenshotLocalServiceImpl
 	@Override
 	public SCProductScreenshot getProductScreenshotByThumbnailId(
 			long thumbnailId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return scProductScreenshotPersistence.findByThumbnailId(thumbnailId);
 	}
 
 	@Override
-	public List<SCProductScreenshot> getProductScreenshots(
-		long productEntryId) {
+	public List<SCProductScreenshot> getProductScreenshots(long productEntryId)
+		throws SystemException {
 
 		return scProductScreenshotPersistence.findByProductEntryId(
 			productEntryId);

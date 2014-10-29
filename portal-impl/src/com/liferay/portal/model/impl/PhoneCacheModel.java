@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,12 +14,9 @@
 
 package com.liferay.portal.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.CacheModel;
-import com.liferay.portal.model.MVCCModel;
 import com.liferay.portal.model.Phone;
 
 import java.io.Externalizable;
@@ -36,26 +33,12 @@ import java.util.Date;
  * @see Phone
  * @generated
  */
-@ProviderType
-public class PhoneCacheModel implements CacheModel<Phone>, Externalizable,
-	MVCCModel {
-	@Override
-	public long getMvccVersion() {
-		return mvccVersion;
-	}
-
-	@Override
-	public void setMvccVersion(long mvccVersion) {
-		this.mvccVersion = mvccVersion;
-	}
-
+public class PhoneCacheModel implements CacheModel<Phone>, Externalizable {
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(29);
+		StringBundler sb = new StringBundler(27);
 
-		sb.append("{mvccVersion=");
-		sb.append(mvccVersion);
-		sb.append(", uuid=");
+		sb.append("{uuid=");
 		sb.append(uuid);
 		sb.append(", phoneId=");
 		sb.append(phoneId);
@@ -89,8 +72,6 @@ public class PhoneCacheModel implements CacheModel<Phone>, Externalizable,
 	@Override
 	public Phone toEntityModel() {
 		PhoneImpl phoneImpl = new PhoneImpl();
-
-		phoneImpl.setMvccVersion(mvccVersion);
 
 		if (uuid == null) {
 			phoneImpl.setUuid(StringPool.BLANK);
@@ -151,7 +132,6 @@ public class PhoneCacheModel implements CacheModel<Phone>, Externalizable,
 
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
-		mvccVersion = objectInput.readLong();
 		uuid = objectInput.readUTF();
 		phoneId = objectInput.readLong();
 		companyId = objectInput.readLong();
@@ -170,8 +150,6 @@ public class PhoneCacheModel implements CacheModel<Phone>, Externalizable,
 	@Override
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
-		objectOutput.writeLong(mvccVersion);
-
 		if (uuid == null) {
 			objectOutput.writeUTF(StringPool.BLANK);
 		}
@@ -213,7 +191,6 @@ public class PhoneCacheModel implements CacheModel<Phone>, Externalizable,
 		objectOutput.writeBoolean(primary);
 	}
 
-	public long mvccVersion;
 	public String uuid;
 	public long phoneId;
 	public long companyId;

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,11 +15,10 @@
 package com.liferay.portlet.bookmarks.service.permission;
 
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.spring.osgi.OSGiBeanProperties;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.staging.permission.StagingPermissionUtil;
 import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.security.permission.ActionKeys;
-import com.liferay.portal.security.permission.BaseModelPermissionChecker;
 import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portal.util.PortletKeys;
 import com.liferay.portal.util.PropsValues;
@@ -33,17 +32,12 @@ import com.liferay.portlet.bookmarks.service.BookmarksFolderLocalServiceUtil;
 /**
  * @author Brian Wing Shun Chan
  */
-@OSGiBeanProperties(
-	property = {
-		"model.class.name=com.liferay.portlet.bookmarks.model.BookmarksEntry"
-	}
-)
-public class BookmarksEntryPermission implements BaseModelPermissionChecker {
+public class BookmarksEntryPermission {
 
 	public static void check(
 			PermissionChecker permissionChecker, BookmarksEntry entry,
 			String actionId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		if (!contains(permissionChecker, entry, actionId)) {
 			throw new PrincipalException();
@@ -52,7 +46,7 @@ public class BookmarksEntryPermission implements BaseModelPermissionChecker {
 
 	public static void check(
 			PermissionChecker permissionChecker, long entryId, String actionId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		if (!contains(permissionChecker, entryId, actionId)) {
 			throw new PrincipalException();
@@ -62,7 +56,7 @@ public class BookmarksEntryPermission implements BaseModelPermissionChecker {
 	public static boolean contains(
 			PermissionChecker permissionChecker, BookmarksEntry entry,
 			String actionId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Boolean hasPermission = StagingPermissionUtil.hasPermission(
 			permissionChecker, entry.getGroupId(),
@@ -78,14 +72,7 @@ public class BookmarksEntryPermission implements BaseModelPermissionChecker {
 
 			long folderId = entry.getFolderId();
 
-			if (folderId == BookmarksFolderConstants.DEFAULT_PARENT_FOLDER_ID) {
-				if (!BookmarksPermission.contains(
-						permissionChecker, entry.getGroupId(), actionId)) {
-
-					return false;
-				}
-			}
-			else {
+			if (folderId != BookmarksFolderConstants.DEFAULT_PARENT_FOLDER_ID) {
 				try {
 					BookmarksFolder folder =
 						BookmarksFolderLocalServiceUtil.getFolder(folderId);
@@ -120,20 +107,11 @@ public class BookmarksEntryPermission implements BaseModelPermissionChecker {
 
 	public static boolean contains(
 			PermissionChecker permissionChecker, long entryId, String actionId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		BookmarksEntry entry = BookmarksEntryLocalServiceUtil.getEntry(entryId);
 
 		return contains(permissionChecker, entry, actionId);
-	}
-
-	@Override
-	public void checkBaseModel(
-			PermissionChecker permissionChecker, long groupId, long primaryKey,
-			String actionId)
-		throws PortalException {
-
-		check(permissionChecker, primaryKey, actionId);
 	}
 
 }

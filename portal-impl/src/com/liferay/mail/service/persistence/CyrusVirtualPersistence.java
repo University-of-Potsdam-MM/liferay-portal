@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -16,6 +16,7 @@ package com.liferay.mail.service.persistence;
 
 import com.liferay.mail.NoSuchCyrusVirtualException;
 import com.liferay.mail.model.CyrusVirtual;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.model.Dummy;
 import com.liferay.portal.service.persistence.BasePersistence;
 
@@ -27,14 +28,15 @@ import java.util.List;
 public interface CyrusVirtualPersistence extends BasePersistence<Dummy> {
 
 	public CyrusVirtual findByPrimaryKey(String emailAddress)
-		throws NoSuchCyrusVirtualException;
+		throws NoSuchCyrusVirtualException, SystemException;
 
-	public List<CyrusVirtual> findByUserId(long userId);
+	public List<CyrusVirtual> findByUserId(long userId) throws SystemException;
 
-	public void remove(String emailAddress) throws NoSuchCyrusVirtualException;
+	public void remove(String emailAddress)
+		throws NoSuchCyrusVirtualException, SystemException;
 
-	public void removeByUserId(long userId);
+	public void removeByUserId(long userId) throws SystemException;
 
-	public void update(CyrusVirtual virtual);
+	public void update(CyrusVirtual virtual) throws SystemException;
 
 }

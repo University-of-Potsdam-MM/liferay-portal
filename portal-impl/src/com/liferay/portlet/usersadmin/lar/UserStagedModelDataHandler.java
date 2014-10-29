@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portlet.usersadmin.lar;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.lar.BaseStagedModelDataHandler;
 import com.liferay.portal.kernel.lar.PortletDataContext;
 import com.liferay.portal.model.Group;
@@ -33,24 +34,16 @@ public class UserStagedModelDataHandler
 	@Override
 	public void deleteStagedModel(
 			String uuid, long groupId, String className, String extraData)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Group group = GroupLocalServiceUtil.getGroup(groupId);
 
-		User user = fetchStagedModelByUuidAndCompanyId(
+		User user = UserLocalServiceUtil.fetchUserByUuidAndCompanyId(
 			uuid, group.getCompanyId());
 
 		if (user != null) {
 			UserLocalServiceUtil.deleteUser(user);
 		}
-	}
-
-	@Override
-	public User fetchStagedModelByUuidAndCompanyId(
-		String uuid, long companyId) {
-
-		return UserLocalServiceUtil.fetchUserByUuidAndCompanyId(
-			uuid, companyId);
 	}
 
 	@Override
@@ -77,6 +70,21 @@ public class UserStagedModelDataHandler
 		throws Exception {
 
 		return;
+	}
+
+	@Override
+	protected boolean validateMissingReference(
+			String uuid, long companyId, long groupId)
+		throws Exception {
+
+		User user = UserLocalServiceUtil.fetchUserByUuidAndCompanyId(
+			uuid, companyId);
+
+		if (user == null) {
+			return false;
+		}
+
+		return true;
 	}
 
 }

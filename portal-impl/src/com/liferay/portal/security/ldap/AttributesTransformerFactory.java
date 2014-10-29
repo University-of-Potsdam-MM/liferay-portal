@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,33 +14,57 @@
 
 package com.liferay.portal.security.ldap;
 
-import com.liferay.registry.Registry;
-import com.liferay.registry.RegistryUtil;
-import com.liferay.registry.ServiceTracker;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.util.ClassUtil;
+import com.liferay.portal.kernel.util.InstanceFactory;
+import com.liferay.portal.util.ClassLoaderUtil;
+import com.liferay.portal.util.PropsValues;
 
 /**
  * @author Brian Wing Shun Chan
  * @author Shuyang Zhou
- * @author Peter Fellwock
  */
 public class AttributesTransformerFactory {
 
 	public static AttributesTransformer getInstance() {
-		return _instance._serviceTracker.getService();
+		return _attributesTransformer;
 	}
 
-	private AttributesTransformerFactory() {
-		Registry registry = RegistryUtil.getRegistry();
+	public static void setInstance(
+		AttributesTransformer attributesTransformer) {
 
-		_serviceTracker = registry.trackServices(AttributesTransformer.class);
+		if (_log.isDebugEnabled()) {
+			_log.debug("Set " + ClassUtil.getClassName(attributesTransformer));
+		}
 
-		_serviceTracker.open();
+		if (attributesTransformer == null) {
+			_attributesTransformer = _originalAttributesTransformer;
+		}
+		else {
+			_attributesTransformer = attributesTransformer;
+		}
 	}
 
-	private static AttributesTransformerFactory _instance =
-		new AttributesTransformerFactory();
+	public void afterPropertiesSet() throws Exception {
+		if (_log.isDebugEnabled()) {
+			_log.debug(
+				"Instantiate " + PropsValues.LDAP_ATTRS_TRANSFORMER_IMPL);
+		}
 
-	private ServiceTracker<AttributesTransformer, AttributesTransformer>
-		_serviceTracker;
+		ClassLoader classLoader = ClassLoaderUtil.getPortalClassLoader();
+
+		_originalAttributesTransformer =
+			(AttributesTransformer)InstanceFactory.newInstance(
+				classLoader, PropsValues.LDAP_ATTRS_TRANSFORMER_IMPL);
+
+		_attributesTransformer = _originalAttributesTransformer;
+	}
+
+	private static Log _log = LogFactoryUtil.getLog(
+		AttributesTransformerFactory.class);
+
+	private static volatile AttributesTransformer _attributesTransformer;
+	private static AttributesTransformer _originalAttributesTransformer;
 
 }

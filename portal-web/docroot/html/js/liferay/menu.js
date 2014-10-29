@@ -75,6 +75,8 @@ AUI.add(
 
 		var SELECTOR_ANCHOR = 'a';
 
+		var SELECTOR_TEXT = 'a, span';
+
 		var SELECTOR_LIST_ITEM = 'li';
 
 		var SELECTOR_SEARCH_CONTAINER = '.lfr-menu-list-search-container';
@@ -219,7 +221,7 @@ AUI.add(
 				var liveSearch = menu && MAP_LIVE_SEARCH[menu.guid()];
 
 				if (liveSearch) {
-					liveSearch.reset();
+					liveSearch.search(STR_BLANK);
 				}
 
 				var listItems;
@@ -343,7 +345,7 @@ AUI.add(
 								modal: true,
 								width: '90%'
 							}
-						).align();
+						);
 					}
 					else {
 						var align = overlay.get('align');
@@ -430,15 +432,13 @@ AUI.add(
 		Menu.register = function(id) {
 			var menuNode = document.getElementById(id);
 
-			if (menuNode) {
-				if (!Menu._INSTANCE) {
-					new Menu();
-				}
-
-				buffer.push(menuNode);
-
-				Menu._registerTask();
+			if (!Menu._INSTANCE) {
+				new Menu();
 			}
+
+			buffer.push(menuNode);
+
+			Menu._registerTask();
 		};
 
 		Menu._registerTask = A.debounce(
@@ -538,46 +538,61 @@ AUI.add(
 			Menu,
 			'_getLiveSearch',
 			function(trigger, menu) {
-				var instance = this;
+				var instance = Menu._INSTANCE;
 
 				var id = menu.guid();
 
 				var liveSearch = MAP_LIVE_SEARCH[id];
 
 				if (!liveSearch) {
+					var searchId = A.guid();
+
 					var listNode = menu.one('ul');
 
-					var results = [];
+					var searchLabelNode = trigger.one(SELECTOR_ANCHOR) || trigger;
 
-					listNode.all('li').each(
-						function(node) {
-							results.push(
-								{
-									name: trim(node.one('.taglib-text-icon').text()),
-									node: node
-								}
-							);
-						}
-					);
-
-					liveSearch = new Liferay.MenuFilter(
+					var searchBoxContent = Lang.sub(
+						TPL_SEARCH_BOX,
 						{
-							content: listNode,
-							minQueryLength: 0,
-							queryDelay: 0,
-							resultFilters: 'phraseMatch',
-							resultTextLocator: 'name',
-							source: results
+							searchId: searchId,
+							searchLabeledBy: searchLabelNode.guid(),
+							searchOwns: listNode.guid()
 						}
 					);
 
-					liveSearch.get('inputNode').swallowEvent('click');
+					var inputSearch = A.Node.create(searchBoxContent);
+
+					inputSearch.swallowEvent('click');
+
+					menu.prepend(inputSearch);
+
+					var options = {
+						data: function(node) {
+							return trim(node.one(SELECTOR_TEXT).text());
+						},
+						input: '#' + searchId,
+						nodes: '#' + listNode.guid() + ' > li'
+					};
+
+					liveSearch = new A.LiveSearch(options);
+
+					var bodyNode = instance._overlay.bodyNode;
+
+					liveSearch.after(
+						'search',
+						function(event) {
+							var focusManager = bodyNode.focusManager;
+
+							if (focusManager) {
+								focusManager.refresh();
+							}
+						}
+					);
 
 					MAP_LIVE_SEARCH[id] = liveSearch;
 				}
-
 			},
-			['liferay-menu-filter'],
+			['aui-live-search-deprecated'],
 			true
 		);
 
@@ -593,17 +608,10 @@ AUI.add(
 
 				var activeTrigger = instance._activeTrigger;
 
-				if (activeTrigger) {
-					if (activeTrigger != trigger) {
-						activeTrigger.removeClass(CSS_BTN_PRIMARY);
+				if (activeTrigger && (activeTrigger != trigger)) {
+					activeTrigger.removeClass(CSS_BTN_PRIMARY);
 
-						activeTrigger.get(PARENT_NODE).removeClass(CSS_OPEN);
-					}
-					else {
-						instance._closeActiveMenu();
-
-						return;
-					}
+					activeTrigger.get(PARENT_NODE).removeClass(CSS_OPEN);
 				}
 
 				if (!trigger.hasClass('disabled')) {
@@ -615,20 +623,10 @@ AUI.add(
 					if (!handles.length) {
 						var listContainer = trigger.getData('menuListContainer');
 
-						A.Event.defineOutside('touchend');
-
 						handles.push(
 							A.getWin().on('resize', A.debounce(instance._positionActiveMenu, 200, instance)),
 							A.getDoc().on(EVENT_CLICK, instance._closeActiveMenu, instance),
-							listContainer.on(
-								'touchendoutside',
-								function(event) {
-									event.preventDefault();
-
-									instance._closeActiveMenu();
-								},
-								instance
-							)
+							listContainer.on('touchendoutside', instance._closeActiveMenu, instance)
 						);
 
 						var DDM = A.DD && A.DD.DDM;

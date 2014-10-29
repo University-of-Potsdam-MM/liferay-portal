@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -16,6 +16,7 @@ package com.liferay.portlet.backgroundtask.action;
 
 import com.liferay.portal.NoSuchBackgroundTaskException;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.security.auth.PrincipalException;
@@ -61,7 +62,7 @@ public class DeleteBackgroundTaskAction extends PortletAction {
 	}
 
 	protected void deleteBackgroundTask(ActionRequest actionRequest)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		long backgroundTaskId = ParamUtil.getLong(
 			actionRequest, "backgroundTaskId");

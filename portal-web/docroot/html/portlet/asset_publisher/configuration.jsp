@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -21,13 +21,20 @@ String tabs2 = ParamUtil.getString(request, "tabs2");
 
 String redirect = ParamUtil.getString(request, "redirect");
 
-String eventName = "_" + HtmlUtil.escapeJS(assetPublisherDisplayContext.getPortletResource()) + "_selectSite";
+String typeSelection = ParamUtil.getString(request, "typeSelection", StringPool.BLANK);
+String eventName = "_" + HtmlUtil.escapeJS(portletResource) + "_selectSite";
 
 List<AssetRendererFactory> classTypesAssetRendererFactories = new ArrayList<AssetRendererFactory>();
+
+String emailParam = "emailAssetEntryAdded";
+
+String currentLanguageId = LanguageUtil.getLanguageId(request);
+
+String emailSubjectParam = emailParam + "Subject_" + currentLanguageId;
+String emailBodyParam = emailParam + "Body_" + currentLanguageId;
 %>
 
 <liferay-portlet:actionURL portletConfiguration="true" var="configurationActionURL" />
-
 <liferay-portlet:renderURL portletConfiguration="true" varImpl="configurationRenderURL" />
 
 <aui:form action="<%= configurationActionURL %>" method="post" name="fm" onSubmit="event.preventDefault();">
@@ -41,16 +48,20 @@ List<AssetRendererFactory> classTypesAssetRendererFactories = new ArrayList<Asse
 	<aui:input name="assetEntryType" type="hidden" />
 	<aui:input name="scopeId" type="hidden" />
 
+	<%
+	String rootPortletId = PortletConstants.getRootPortletId(portletResource);
+	%>
+
 	<liferay-util:buffer var="selectStyle">
 		<c:choose>
-			<c:when test="<%= !assetPublisherDisplayContext.isSelectionStyleEnabled() %>">
+			<c:when test="<%= rootPortletId.equals(PortletKeys.HIGHEST_RATED_ASSETS) || rootPortletId.equals(PortletKeys.MOST_VIEWED_ASSETS) || rootPortletId.equals(PortletKeys.RELATED_ASSETS) %>">
 				<aui:input name="preferences--selectionStyle--" type="hidden" value="dynamic" />
 			</c:when>
 			<c:otherwise>
 				<aui:fieldset label="asset-selection">
-					<aui:input checked="<%= assetPublisherDisplayContext.isSelectionStyleDynamic() %>" id="selectionStyleDynamic" label="dynamic" name="preferences--selectionStyle--" onChange='<%= renderResponse.getNamespace() + "chooseSelectionStyle();" %>' type="radio" value="dynamic" />
+					<aui:input checked='<%= selectionStyle.equals("dynamic") %>' id="selectionStyleDynamic" label="dynamic" name="preferences--selectionStyle--" onChange='<%= renderResponse.getNamespace() + "chooseSelectionStyle();" %>' type="radio" value="dynamic" />
 
-					<aui:input checked="<%= assetPublisherDisplayContext.isSelectionStyleManual() %>" id="selectionStyleManual" label="manual" name="preferences--selectionStyle--" onChange='<%= renderResponse.getNamespace() + "chooseSelectionStyle();" %>' type="radio" value="manual" />
+					<aui:input checked='<%= selectionStyle.equals("manual") %>' id="selectionStyleManual" label="manual" name="preferences--selectionStyle--" onChange='<%= renderResponse.getNamespace() + "chooseSelectionStyle();" %>' type="radio" value="manual" />
 				</aui:fieldset>
 			</c:otherwise>
 		</c:choose>
@@ -68,7 +79,7 @@ List<AssetRendererFactory> classTypesAssetRendererFactories = new ArrayList<Asse
 			availableGroups.add(layout.getScopeGroup());
 		}
 
-		List<Group> selectedGroups = GroupLocalServiceUtil.getGroups(assetPublisherDisplayContext.getGroupIds());
+		List<Group> selectedGroups = GroupLocalServiceUtil.getGroups(groupIds);
 		%>
 
 		<div id="<portlet:namespace />scopesBoxes">
@@ -89,15 +100,15 @@ List<AssetRendererFactory> classTypesAssetRendererFactories = new ArrayList<Asse
 						name="name"
 					>
 						<liferay-ui:icon
-							iconCssClass="<%= group.getIconCssClass() %>"
 							label="<%= true %>"
 							message="<%= group.getScopeDescriptiveName(themeDisplay) %>"
+							src="<%= group.getIconURL(themeDisplay) %>"
 						/>
 					</liferay-ui:search-container-column-text>
 
 					<liferay-ui:search-container-column-text
 						name="type"
-						value="<%= LanguageUtil.get(request, group.getScopeLabel(themeDisplay)) %>"
+						value="<%= LanguageUtil.get(pageContext, group.getScopeLabel(themeDisplay)) %>"
 					/>
 
 					<liferay-ui:search-container-column-text
@@ -110,7 +121,7 @@ List<AssetRendererFactory> classTypesAssetRendererFactories = new ArrayList<Asse
 						</liferay-portlet:actionURL>
 
 						<liferay-ui:icon
-							iconCssClass="icon-remove"
+							image="delete"
 							url="<%= deleteURL %>"
 						/>
 					</liferay-ui:search-container-column-text>
@@ -120,13 +131,13 @@ List<AssetRendererFactory> classTypesAssetRendererFactories = new ArrayList<Asse
 			</liferay-ui:search-container>
 
 			<div class="select-asset-selector">
-				<liferay-ui:icon-menu cssClass="select-existing-selector" direction="right" icon="../aui/plus" message="select" showWhenSingleIcon="<%= true %>">
+				<liferay-ui:icon-menu cssClass="select-existing-selector" direction="right" icon='<%= themeDisplay.getPathThemeImages() + "/common/add.png" %>' message="select" showWhenSingleIcon="<%= true %>">
 
 					<%
 					Map<String, Object> data = new HashMap<String, Object>();
 
 					for (Group group : availableGroups) {
-						if (ArrayUtil.contains(assetPublisherDisplayContext.getGroupIds(), group.getGroupId())) {
+						if (ArrayUtil.contains(groupIds, group.getGroupId())) {
 							continue;
 						}
 					%>
@@ -138,10 +149,10 @@ List<AssetRendererFactory> classTypesAssetRendererFactories = new ArrayList<Asse
 						</liferay-portlet:actionURL>
 
 						<liferay-ui:icon
-							iconCssClass="<%= group.getIconCssClass() %>"
 							id='<%= "scope" + group.getGroupId() %>'
 							message="<%= group.getScopeDescriptiveName(themeDisplay) %>"
 							method="post"
+							src="<%= group.getIconURL(themeDisplay) %>"
 							url="<%= addScopeURL %>"
 						/>
 
@@ -156,7 +167,7 @@ List<AssetRendererFactory> classTypesAssetRendererFactories = new ArrayList<Asse
 
 						layoutSiteBrowserURL.setParameter("struts_action", "/site_browser/view");
 						layoutSiteBrowserURL.setParameter("groupId", String.valueOf(layout.getGroupId()));
-						layoutSiteBrowserURL.setParameter("selectedGroupIds", StringUtil.merge(assetPublisherDisplayContext.getGroupIds()));
+						layoutSiteBrowserURL.setParameter("selectedGroupIds", StringUtil.merge(groupIds));
 						layoutSiteBrowserURL.setParameter("type", "layoutScopes");
 						layoutSiteBrowserURL.setParameter("eventName", eventName);
 						layoutSiteBrowserURL.setPortletMode(PortletMode.VIEW);
@@ -167,15 +178,15 @@ List<AssetRendererFactory> classTypesAssetRendererFactories = new ArrayList<Asse
 						data = new HashMap<String, Object>();
 
 						data.put("href", layoutSiteBrowserURLString);
-						data.put("title", LanguageUtil.get(request, "pages"));
+						data.put("title", LanguageUtil.get(pageContext, "pages"));
 						%>
 
 						<liferay-ui:icon
 							cssClass="highlited scope-selector"
 							data="<%= data %>"
-							iconCssClass="icon-plus"
 							id="selectGroup"
-							message='<%= LanguageUtil.get(request, "pages") + StringPool.TRIPLE_PERIOD %>'
+							image="add"
+							message='<%= LanguageUtil.get(pageContext, "pages") + StringPool.TRIPLE_PERIOD %>'
 							method="get"
 							url="javascript:;"
 						/>
@@ -206,7 +217,7 @@ List<AssetRendererFactory> classTypesAssetRendererFactories = new ArrayList<Asse
 
 						siteBrowserURL.setParameter("struts_action", "/site_browser/view");
 						siteBrowserURL.setParameter("groupId", String.valueOf(layout.getGroupId()));
-						siteBrowserURL.setParameter("selectedGroupIds", StringUtil.merge(assetPublisherDisplayContext.getGroupIds()));
+						siteBrowserURL.setParameter("selectedGroupIds", StringUtil.merge(groupIds));
 						siteBrowserURL.setParameter("types", StringUtil.merge(types));
 						siteBrowserURL.setParameter("filter", "contentSharingWithChildrenEnabled");
 						siteBrowserURL.setParameter("eventName", eventName);
@@ -218,15 +229,15 @@ List<AssetRendererFactory> classTypesAssetRendererFactories = new ArrayList<Asse
 						data = new HashMap<String, Object>();
 
 						data.put("href", siteBrowserURLString);
-						data.put("title", LanguageUtil.get(request, "sites"));
+						data.put("title", LanguageUtil.get(pageContext, "sites"));
 						%>
 
 						<liferay-ui:icon
 							cssClass="highlited scope-selector"
 							data="<%= data %>"
-							iconCssClass="icon-plus"
 							id="selectManageableGroup"
-							message='<%= LanguageUtil.get(request, "other-site") + StringPool.TRIPLE_PERIOD %>'
+							image="add"
+							message='<%= LanguageUtil.get(pageContext, "other-site") + StringPool.TRIPLE_PERIOD %>'
 							method="get"
 							url="javascript:;"
 						/>
@@ -239,16 +250,20 @@ List<AssetRendererFactory> classTypesAssetRendererFactories = new ArrayList<Asse
 	<%
 	request.setAttribute("configuration.jsp-classTypesAssetRendererFactories", classTypesAssetRendererFactories);
 	request.setAttribute("configuration.jsp-configurationRenderURL", configurationRenderURL);
+	request.setAttribute("configuration.jsp-emailBodyParam", emailBodyParam);
+	request.setAttribute("configuration.jsp-emailParam", emailParam);
+	request.setAttribute("configuration.jsp-emailSubjectParam", emailSubjectParam);
 	request.setAttribute("configuration.jsp-redirect", redirect);
+	request.setAttribute("configuration.jsp-rootPortletId", rootPortletId);
 	request.setAttribute("configuration.jsp-selectScope", selectScope);
 	request.setAttribute("configuration.jsp-selectStyle", selectStyle);
 	%>
 
 	<c:choose>
-		<c:when test="<%= assetPublisherDisplayContext.isSelectionStyleManual() %>">
+		<c:when test='<%= selectionStyle.equals("manual") %>'>
 			<liferay-util:include page="/html/portlet/asset_publisher/configuration_manual.jsp" />
 		</c:when>
-		<c:when test="<%= assetPublisherDisplayContext.isSelectionStyleDynamic() %>">
+		<c:when test='<%= selectionStyle.equals("dynamic") %>'>
 			<liferay-util:include page="/html/portlet/asset_publisher/configuration_dynamic.jsp" />
 		</c:when>
 	</c:choose>
@@ -266,8 +281,8 @@ List<AssetRendererFactory> classTypesAssetRendererFactories = new ArrayList<Asse
 				{
 					dialog: {
 						constrain: true,
-						destroyOnHide: true,
-						modal: true
+						modal: true,
+						width: 600
 					},
 					eventName: '<%= eventName %>',
 					id: '<%= eventName %>' + currentTarget.attr('id'),
@@ -329,6 +344,7 @@ List<AssetRendererFactory> classTypesAssetRendererFactories = new ArrayList<Asse
 			%>
 
 			document.<portlet:namespace />fm.<portlet:namespace />metadataFields.value = Liferay.Util.listSelect(document.<portlet:namespace />fm.<portlet:namespace />currentMetadataFields);
+			document.<portlet:namespace />fm.<portlet:namespace /><%= emailBodyParam %>.value = window.<portlet:namespace />editor.getHTML();
 
 			submitForm(document.<portlet:namespace />fm);
 		},

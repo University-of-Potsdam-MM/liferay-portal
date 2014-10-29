@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -17,11 +17,9 @@ package com.liferay.taglib.ui;
 import com.liferay.portal.kernel.bean.BeanPropertiesUtil;
 import com.liferay.portal.kernel.dao.search.ResultRow;
 import com.liferay.portal.kernel.dao.search.SearchEntry;
-import com.liferay.portal.kernel.servlet.ServletContextPool;
+import com.liferay.portal.kernel.dao.search.StatusSearchEntry;
 import com.liferay.portal.kernel.util.ServerDetector;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.util.PortalUtil;
-import com.liferay.taglib.search.StatusSearchEntry;
 
 import java.util.Date;
 import java.util.List;
@@ -29,7 +27,6 @@ import java.util.Map;
 
 import javax.portlet.PortletURL;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspException;
@@ -84,12 +81,8 @@ public class SearchContainerColumnStatusTag<R>
 				(HttpServletRequest)pageContext.getRequest());
 			statusSearchEntry.setResponse(
 				(HttpServletResponse)pageContext.getResponse());
-
-			ServletContext servletContext = ServletContextPool.get(
-				PortalUtil.getServletContextName());
-
-			statusSearchEntry.setServletContext(servletContext);
-
+			statusSearchEntry.setServletContext(
+				pageContext.getServletContext());
 			statusSearchEntry.setStatus(_status);
 			statusSearchEntry.setStatusByUserId(_statusByUserId);
 			statusSearchEntry.setStatusDate(_statusDate);
@@ -165,7 +158,7 @@ public class SearchContainerColumnStatusTag<R>
 	}
 
 	public Object getHref() {
-		if (_href instanceof PortletURL) {
+		if (Validator.isNotNull(_href) && (_href instanceof PortletURL)) {
 			_href = _href.toString();
 		}
 

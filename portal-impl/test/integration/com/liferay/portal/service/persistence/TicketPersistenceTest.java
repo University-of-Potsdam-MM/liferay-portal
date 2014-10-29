@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portal.service.persistence;
 
 import com.liferay.portal.NoSuchTicketException;
+import com.liferay.portal.kernel.bean.PortalBeanLocatorUtil;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
@@ -23,75 +24,66 @@ import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.template.TemplateException;
-import com.liferay.portal.kernel.template.TemplateManagerUtil;
-import com.liferay.portal.kernel.transaction.Propagation;
+import com.liferay.portal.kernel.test.ExecutionTestListeners;
 import com.liferay.portal.kernel.util.IntegerWrapper;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.OrderByComparatorFactoryUtil;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.Ticket;
 import com.liferay.portal.model.impl.TicketModelImpl;
-import com.liferay.portal.service.TicketLocalServiceUtil;
-import com.liferay.portal.test.TransactionalTestRule;
-import com.liferay.portal.test.runners.PersistenceIntegrationJUnitTestRunner;
-import com.liferay.portal.tools.DBUpgrader;
+import com.liferay.portal.service.ServiceTestUtil;
+import com.liferay.portal.service.persistence.BasePersistence;
+import com.liferay.portal.service.persistence.PersistenceExecutionTestListener;
+import com.liferay.portal.test.LiferayPersistenceIntegrationJUnitTestRunner;
+import com.liferay.portal.test.persistence.TransactionalPersistenceAdvice;
 import com.liferay.portal.util.PropsValues;
-import com.liferay.portal.util.test.RandomTestUtil;
 
 import org.junit.After;
 import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
 import org.junit.Test;
 
 import org.junit.runner.RunWith;
 
 import java.io.Serializable;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 /**
- * @generated
+ * @author Brian Wing Shun Chan
  */
-@RunWith(PersistenceIntegrationJUnitTestRunner.class)
+@ExecutionTestListeners(listeners =  {
+	PersistenceExecutionTestListener.class})
+@RunWith(LiferayPersistenceIntegrationJUnitTestRunner.class)
 public class TicketPersistenceTest {
-	@ClassRule
-	public static TransactionalTestRule transactionalTestRule = new TransactionalTestRule(Propagation.REQUIRED);
-
-	@BeforeClass
-	public static void setupClass() throws TemplateException {
-		try {
-			DBUpgrader.upgrade();
-		}
-		catch (Exception e) {
-			_log.error(e, e);
-		}
-
-		TemplateManagerUtil.init();
-	}
-
 	@After
 	public void tearDown() throws Exception {
-		Iterator<Ticket> iterator = _tickets.iterator();
+		Map<Serializable, BasePersistence<?>> basePersistences = _transactionalPersistenceAdvice.getBasePersistences();
 
-		while (iterator.hasNext()) {
-			_persistence.remove(iterator.next());
+		Set<Serializable> primaryKeys = basePersistences.keySet();
 
-			iterator.remove();
+		for (Serializable primaryKey : primaryKeys) {
+			BasePersistence<?> basePersistence = basePersistences.get(primaryKey);
+
+			try {
+				basePersistence.remove(primaryKey);
+			}
+			catch (Exception e) {
+				if (_log.isDebugEnabled()) {
+					_log.debug("The model with primary key " + primaryKey +
+						" was already deleted");
+				}
+			}
 		}
+
+		_transactionalPersistenceAdvice.reset();
 	}
 
 	@Test
 	public void testCreate() throws Exception {
-		long pk = RandomTestUtil.nextLong();
+		long pk = ServiceTestUtil.nextLong();
 
 		Ticket ticket = _persistence.create(pk);
 
@@ -118,34 +110,30 @@ public class TicketPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
+		long pk = ServiceTestUtil.nextLong();
 
 		Ticket newTicket = _persistence.create(pk);
 
-		newTicket.setMvccVersion(RandomTestUtil.nextLong());
+		newTicket.setCompanyId(ServiceTestUtil.nextLong());
 
-		newTicket.setCompanyId(RandomTestUtil.nextLong());
+		newTicket.setCreateDate(ServiceTestUtil.nextDate());
 
-		newTicket.setCreateDate(RandomTestUtil.nextDate());
+		newTicket.setClassNameId(ServiceTestUtil.nextLong());
 
-		newTicket.setClassNameId(RandomTestUtil.nextLong());
+		newTicket.setClassPK(ServiceTestUtil.nextLong());
 
-		newTicket.setClassPK(RandomTestUtil.nextLong());
+		newTicket.setKey(ServiceTestUtil.randomString());
 
-		newTicket.setKey(RandomTestUtil.randomString());
+		newTicket.setType(ServiceTestUtil.nextInt());
 
-		newTicket.setType(RandomTestUtil.nextInt());
+		newTicket.setExtraInfo(ServiceTestUtil.randomString());
 
-		newTicket.setExtraInfo(RandomTestUtil.randomString());
+		newTicket.setExpirationDate(ServiceTestUtil.nextDate());
 
-		newTicket.setExpirationDate(RandomTestUtil.nextDate());
-
-		_tickets.add(_persistence.update(newTicket));
+		_persistence.update(newTicket);
 
 		Ticket existingTicket = _persistence.findByPrimaryKey(newTicket.getPrimaryKey());
 
-		Assert.assertEquals(existingTicket.getMvccVersion(),
-			newTicket.getMvccVersion());
 		Assert.assertEquals(existingTicket.getTicketId(),
 			newTicket.getTicketId());
 		Assert.assertEquals(existingTicket.getCompanyId(),
@@ -166,20 +154,6 @@ public class TicketPersistenceTest {
 	}
 
 	@Test
-	public void testCountByKey() {
-		try {
-			_persistence.countByKey(StringPool.BLANK);
-
-			_persistence.countByKey(StringPool.NULL);
-
-			_persistence.countByKey((String)null);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
 	public void testFindByPrimaryKeyExisting() throws Exception {
 		Ticket newTicket = addTicket();
 
@@ -190,7 +164,7 @@ public class TicketPersistenceTest {
 
 	@Test
 	public void testFindByPrimaryKeyMissing() throws Exception {
-		long pk = RandomTestUtil.nextLong();
+		long pk = ServiceTestUtil.nextLong();
 
 		try {
 			_persistence.findByPrimaryKey(pk);
@@ -212,11 +186,11 @@ public class TicketPersistenceTest {
 		}
 	}
 
-	protected OrderByComparator<Ticket> getOrderByComparator() {
-		return OrderByComparatorFactoryUtil.create("Ticket", "mvccVersion",
-			true, "ticketId", true, "companyId", true, "createDate", true,
-			"classNameId", true, "classPK", true, "key", true, "type", true,
-			"extraInfo", true, "expirationDate", true);
+	protected OrderByComparator getOrderByComparator() {
+		return OrderByComparatorFactoryUtil.create("Ticket", "ticketId", true,
+			"companyId", true, "createDate", true, "classNameId", true,
+			"classPK", true, "key", true, "type", true, "extraInfo", true,
+			"expirationDate", true);
 	}
 
 	@Test
@@ -230,7 +204,7 @@ public class TicketPersistenceTest {
 
 	@Test
 	public void testFetchByPrimaryKeyMissing() throws Exception {
-		long pk = RandomTestUtil.nextLong();
+		long pk = ServiceTestUtil.nextLong();
 
 		Ticket missingTicket = _persistence.fetchByPrimaryKey(pk);
 
@@ -238,99 +212,19 @@ public class TicketPersistenceTest {
 	}
 
 	@Test
-	public void testFetchByPrimaryKeysWithMultiplePrimaryKeysWhereAllPrimaryKeysExist()
-		throws Exception {
-		Ticket newTicket1 = addTicket();
-		Ticket newTicket2 = addTicket();
-
-		Set<Serializable> primaryKeys = new HashSet<Serializable>();
-
-		primaryKeys.add(newTicket1.getPrimaryKey());
-		primaryKeys.add(newTicket2.getPrimaryKey());
-
-		Map<Serializable, Ticket> tickets = _persistence.fetchByPrimaryKeys(primaryKeys);
-
-		Assert.assertEquals(2, tickets.size());
-		Assert.assertEquals(newTicket1, tickets.get(newTicket1.getPrimaryKey()));
-		Assert.assertEquals(newTicket2, tickets.get(newTicket2.getPrimaryKey()));
-	}
-
-	@Test
-	public void testFetchByPrimaryKeysWithMultiplePrimaryKeysWhereNoPrimaryKeysExist()
-		throws Exception {
-		long pk1 = RandomTestUtil.nextLong();
-
-		long pk2 = RandomTestUtil.nextLong();
-
-		Set<Serializable> primaryKeys = new HashSet<Serializable>();
-
-		primaryKeys.add(pk1);
-		primaryKeys.add(pk2);
-
-		Map<Serializable, Ticket> tickets = _persistence.fetchByPrimaryKeys(primaryKeys);
-
-		Assert.assertTrue(tickets.isEmpty());
-	}
-
-	@Test
-	public void testFetchByPrimaryKeysWithMultiplePrimaryKeysWhereSomePrimaryKeysExist()
-		throws Exception {
-		Ticket newTicket = addTicket();
-
-		long pk = RandomTestUtil.nextLong();
-
-		Set<Serializable> primaryKeys = new HashSet<Serializable>();
-
-		primaryKeys.add(newTicket.getPrimaryKey());
-		primaryKeys.add(pk);
-
-		Map<Serializable, Ticket> tickets = _persistence.fetchByPrimaryKeys(primaryKeys);
-
-		Assert.assertEquals(1, tickets.size());
-		Assert.assertEquals(newTicket, tickets.get(newTicket.getPrimaryKey()));
-	}
-
-	@Test
-	public void testFetchByPrimaryKeysWithNoPrimaryKeys()
-		throws Exception {
-		Set<Serializable> primaryKeys = new HashSet<Serializable>();
-
-		Map<Serializable, Ticket> tickets = _persistence.fetchByPrimaryKeys(primaryKeys);
-
-		Assert.assertTrue(tickets.isEmpty());
-	}
-
-	@Test
-	public void testFetchByPrimaryKeysWithOnePrimaryKey()
-		throws Exception {
-		Ticket newTicket = addTicket();
-
-		Set<Serializable> primaryKeys = new HashSet<Serializable>();
-
-		primaryKeys.add(newTicket.getPrimaryKey());
-
-		Map<Serializable, Ticket> tickets = _persistence.fetchByPrimaryKeys(primaryKeys);
-
-		Assert.assertEquals(1, tickets.size());
-		Assert.assertEquals(newTicket, tickets.get(newTicket.getPrimaryKey()));
-	}
-
-	@Test
 	public void testActionableDynamicQuery() throws Exception {
 		final IntegerWrapper count = new IntegerWrapper();
 
-		ActionableDynamicQuery actionableDynamicQuery = TicketLocalServiceUtil.getActionableDynamicQuery();
-
-		actionableDynamicQuery.setPerformActionMethod(new ActionableDynamicQuery.PerformActionMethod() {
+		ActionableDynamicQuery actionableDynamicQuery = new TicketActionableDynamicQuery() {
 				@Override
-				public void performAction(Object object) {
+				protected void performAction(Object object) {
 					Ticket ticket = (Ticket)object;
 
 					Assert.assertNotNull(ticket);
 
 					count.increment();
 				}
-			});
+			};
 
 		actionableDynamicQuery.performActions();
 
@@ -363,7 +257,7 @@ public class TicketPersistenceTest {
 				Ticket.class.getClassLoader());
 
 		dynamicQuery.add(RestrictionsFactoryUtil.eq("ticketId",
-				RandomTestUtil.nextLong()));
+				ServiceTestUtil.nextLong()));
 
 		List<Ticket> result = _persistence.findWithDynamicQuery(dynamicQuery);
 
@@ -402,7 +296,7 @@ public class TicketPersistenceTest {
 		dynamicQuery.setProjection(ProjectionFactoryUtil.property("ticketId"));
 
 		dynamicQuery.add(RestrictionsFactoryUtil.in("ticketId",
-				new Object[] { RandomTestUtil.nextLong() }));
+				new Object[] { ServiceTestUtil.nextLong() }));
 
 		List<Object> result = _persistence.findWithDynamicQuery(dynamicQuery);
 
@@ -426,34 +320,32 @@ public class TicketPersistenceTest {
 	}
 
 	protected Ticket addTicket() throws Exception {
-		long pk = RandomTestUtil.nextLong();
+		long pk = ServiceTestUtil.nextLong();
 
 		Ticket ticket = _persistence.create(pk);
 
-		ticket.setMvccVersion(RandomTestUtil.nextLong());
+		ticket.setCompanyId(ServiceTestUtil.nextLong());
 
-		ticket.setCompanyId(RandomTestUtil.nextLong());
+		ticket.setCreateDate(ServiceTestUtil.nextDate());
 
-		ticket.setCreateDate(RandomTestUtil.nextDate());
+		ticket.setClassNameId(ServiceTestUtil.nextLong());
 
-		ticket.setClassNameId(RandomTestUtil.nextLong());
+		ticket.setClassPK(ServiceTestUtil.nextLong());
 
-		ticket.setClassPK(RandomTestUtil.nextLong());
+		ticket.setKey(ServiceTestUtil.randomString());
 
-		ticket.setKey(RandomTestUtil.randomString());
+		ticket.setType(ServiceTestUtil.nextInt());
 
-		ticket.setType(RandomTestUtil.nextInt());
+		ticket.setExtraInfo(ServiceTestUtil.randomString());
 
-		ticket.setExtraInfo(RandomTestUtil.randomString());
+		ticket.setExpirationDate(ServiceTestUtil.nextDate());
 
-		ticket.setExpirationDate(RandomTestUtil.nextDate());
-
-		_tickets.add(_persistence.update(ticket));
+		_persistence.update(ticket);
 
 		return ticket;
 	}
 
 	private static Log _log = LogFactoryUtil.getLog(TicketPersistenceTest.class);
-	private List<Ticket> _tickets = new ArrayList<Ticket>();
-	private TicketPersistence _persistence = TicketUtil.getPersistence();
+	private TicketPersistence _persistence = (TicketPersistence)PortalBeanLocatorUtil.locate(TicketPersistence.class.getName());
+	private TransactionalPersistenceAdvice _transactionalPersistenceAdvice = (TransactionalPersistenceAdvice)PortalBeanLocatorUtil.locate(TransactionalPersistenceAdvice.class.getName());
 }

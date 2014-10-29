@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -26,8 +26,6 @@ public class WorkflowConstants {
 
 	public static final int ACTION_SAVE_DRAFT = 2;
 
-	public static final String CONTEXT_COMMAND = "command";
-
 	public static final String CONTEXT_COMPANY_ID = "companyId";
 
 	public static final String CONTEXT_ENTRY_CLASS_NAME = "entryClassName";
@@ -53,13 +51,7 @@ public class WorkflowConstants {
 
 	public static final String CONTEXT_TRANSITION_NAME = "transitionName";
 
-	public static final String CONTEXT_URL = "url";
-
 	public static final String CONTEXT_USER_ID = "userId";
-
-	public static final String CONTEXT_USER_PORTRAIT_URL = "userPortraitURL";
-
-	public static final String CONTEXT_USER_URL = "userURL";
 
 	public static final long DEFAULT_GROUP_ID = 0;
 
@@ -94,7 +86,6 @@ public class WorkflowConstants {
 	/**
 	 * @deprecated As of 6.2.0
 	 */
-	@Deprecated
 	public static final int STATUS_DRAFT_FROM_APPROVED = 9;
 
 	public static final int STATUS_EXPIRED = 3;
@@ -157,7 +148,7 @@ public class WorkflowConstants {
 			return "label-info";
 		}
 		else if (status == STATUS_EXPIRED) {
-			return "label-danger";
+			return "label-important";
 		}
 		else if (status == STATUS_PENDING) {
 			return "label-warning";
@@ -205,7 +196,6 @@ public class WorkflowConstants {
 	/**
 	 * @deprecated As of 6.2.0, replaced by {@link #getStatusLabel(int)}
 	 */
-	@Deprecated
 	public static String toLabel(int status) {
 		return getStatusLabel(status);
 	}
@@ -213,7 +203,6 @@ public class WorkflowConstants {
 	/**
 	 * @deprecated As of 6.2.0, replaced by {@link #getLabelStatus(String)}
 	 */
-	@Deprecated
 	public static int toStatus(String label) {
 		return getLabelStatus(label);
 	}

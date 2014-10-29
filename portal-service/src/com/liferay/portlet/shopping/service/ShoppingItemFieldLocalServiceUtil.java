@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -46,9 +46,11 @@ public class ShoppingItemFieldLocalServiceUtil {
 	*
 	* @param shoppingItemField the shopping item field
 	* @return the shopping item field that was added
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.shopping.model.ShoppingItemField addShoppingItemField(
-		com.liferay.portlet.shopping.model.ShoppingItemField shoppingItemField) {
+		com.liferay.portlet.shopping.model.ShoppingItemField shoppingItemField)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().addShoppingItemField(shoppingItemField);
 	}
 
@@ -64,24 +66,17 @@ public class ShoppingItemFieldLocalServiceUtil {
 	}
 
 	/**
-	* @throws PortalException
-	*/
-	public static com.liferay.portal.model.PersistedModel deletePersistedModel(
-		com.liferay.portal.model.PersistedModel persistedModel)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().deletePersistedModel(persistedModel);
-	}
-
-	/**
 	* Deletes the shopping item field with the primary key from the database. Also notifies the appropriate model listeners.
 	*
 	* @param itemFieldId the primary key of the shopping item field
 	* @return the shopping item field that was removed
 	* @throws PortalException if a shopping item field with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.shopping.model.ShoppingItemField deleteShoppingItemField(
 		long itemFieldId)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getService().deleteShoppingItemField(itemFieldId);
 	}
 
@@ -90,9 +85,11 @@ public class ShoppingItemFieldLocalServiceUtil {
 	*
 	* @param shoppingItemField the shopping item field
 	* @return the shopping item field that was removed
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.shopping.model.ShoppingItemField deleteShoppingItemField(
-		com.liferay.portlet.shopping.model.ShoppingItemField shoppingItemField) {
+		com.liferay.portlet.shopping.model.ShoppingItemField shoppingItemField)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().deleteShoppingItemField(shoppingItemField);
 	}
 
@@ -105,9 +102,12 @@ public class ShoppingItemFieldLocalServiceUtil {
 	*
 	* @param dynamicQuery the dynamic query
 	* @return the matching rows
+	* @throws SystemException if a system exception occurred
 	*/
-	public static <T> java.util.List<T> dynamicQuery(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery) {
+	@SuppressWarnings("rawtypes")
+	public static java.util.List dynamicQuery(
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().dynamicQuery(dynamicQuery);
 	}
 
@@ -122,10 +122,12 @@ public class ShoppingItemFieldLocalServiceUtil {
 	* @param start the lower bound of the range of model instances
 	* @param end the upper bound of the range of model instances (not inclusive)
 	* @return the range of matching rows
+	* @throws SystemException if a system exception occurred
 	*/
-	public static <T> java.util.List<T> dynamicQuery(
+	@SuppressWarnings("rawtypes")
+	public static java.util.List dynamicQuery(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
-		int end) {
+		int end) throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().dynamicQuery(dynamicQuery, start, end);
 	}
 
@@ -141,11 +143,14 @@ public class ShoppingItemFieldLocalServiceUtil {
 	* @param end the upper bound of the range of model instances (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching rows
+	* @throws SystemException if a system exception occurred
 	*/
-	public static <T> java.util.List<T> dynamicQuery(
+	@SuppressWarnings("rawtypes")
+	public static java.util.List dynamicQuery(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
 		int end,
-		com.liferay.portal.kernel.util.OrderByComparator<T> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService()
 				   .dynamicQuery(dynamicQuery, start, end, orderByComparator);
 	}
@@ -155,9 +160,11 @@ public class ShoppingItemFieldLocalServiceUtil {
 	*
 	* @param dynamicQuery the dynamic query
 	* @return the number of rows that match the dynamic query
+	* @throws SystemException if a system exception occurred
 	*/
 	public static long dynamicQueryCount(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery) {
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().dynamicQueryCount(dynamicQuery);
 	}
 
@@ -167,40 +174,19 @@ public class ShoppingItemFieldLocalServiceUtil {
 	* @param dynamicQuery the dynamic query
 	* @param projection the projection to apply to the query
 	* @return the number of rows that match the dynamic query
+	* @throws SystemException if a system exception occurred
 	*/
 	public static long dynamicQueryCount(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery,
-		com.liferay.portal.kernel.dao.orm.Projection projection) {
+		com.liferay.portal.kernel.dao.orm.Projection projection)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().dynamicQueryCount(dynamicQuery, projection);
 	}
 
 	public static com.liferay.portlet.shopping.model.ShoppingItemField fetchShoppingItemField(
-		long itemFieldId) {
+		long itemFieldId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().fetchShoppingItemField(itemFieldId);
-	}
-
-	public static com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery getActionableDynamicQuery() {
-		return getService().getActionableDynamicQuery();
-	}
-
-	/**
-	* Returns the Spring bean ID for this bean.
-	*
-	* @return the Spring bean ID for this bean
-	*/
-	public static java.lang.String getBeanIdentifier() {
-		return getService().getBeanIdentifier();
-	}
-
-	public static java.util.List<com.liferay.portlet.shopping.model.ShoppingItemField> getItemFields(
-		long itemId) {
-		return getService().getItemFields(itemId);
-	}
-
-	public static com.liferay.portal.model.PersistedModel getPersistedModel(
-		java.io.Serializable primaryKeyObj)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().getPersistedModel(primaryKeyObj);
 	}
 
 	/**
@@ -209,11 +195,20 @@ public class ShoppingItemFieldLocalServiceUtil {
 	* @param itemFieldId the primary key of the shopping item field
 	* @return the shopping item field
 	* @throws PortalException if a shopping item field with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.shopping.model.ShoppingItemField getShoppingItemField(
 		long itemFieldId)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getService().getShoppingItemField(itemFieldId);
+	}
+
+	public static com.liferay.portal.model.PersistedModel getPersistedModel(
+		java.io.Serializable primaryKeyObj)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getService().getPersistedModel(primaryKeyObj);
 	}
 
 	/**
@@ -226,9 +221,11 @@ public class ShoppingItemFieldLocalServiceUtil {
 	* @param start the lower bound of the range of shopping item fields
 	* @param end the upper bound of the range of shopping item fields (not inclusive)
 	* @return the range of shopping item fields
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.shopping.model.ShoppingItemField> getShoppingItemFields(
-		int start, int end) {
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().getShoppingItemFields(start, end);
 	}
 
@@ -236,9 +233,33 @@ public class ShoppingItemFieldLocalServiceUtil {
 	* Returns the number of shopping item fields.
 	*
 	* @return the number of shopping item fields
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int getShoppingItemFieldsCount() {
+	public static int getShoppingItemFieldsCount()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().getShoppingItemFieldsCount();
+	}
+
+	/**
+	* Updates the shopping item field in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
+	*
+	* @param shoppingItemField the shopping item field
+	* @return the shopping item field that was updated
+	* @throws SystemException if a system exception occurred
+	*/
+	public static com.liferay.portlet.shopping.model.ShoppingItemField updateShoppingItemField(
+		com.liferay.portlet.shopping.model.ShoppingItemField shoppingItemField)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().updateShoppingItemField(shoppingItemField);
+	}
+
+	/**
+	* Returns the Spring bean ID for this bean.
+	*
+	* @return the Spring bean ID for this bean
+	*/
+	public static java.lang.String getBeanIdentifier() {
+		return getService().getBeanIdentifier();
 	}
 
 	/**
@@ -250,15 +271,9 @@ public class ShoppingItemFieldLocalServiceUtil {
 		getService().setBeanIdentifier(beanIdentifier);
 	}
 
-	/**
-	* Updates the shopping item field in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
-	*
-	* @param shoppingItemField the shopping item field
-	* @return the shopping item field that was updated
-	*/
-	public static com.liferay.portlet.shopping.model.ShoppingItemField updateShoppingItemField(
-		com.liferay.portlet.shopping.model.ShoppingItemField shoppingItemField) {
-		return getService().updateShoppingItemField(shoppingItemField);
+	public static java.util.List<com.liferay.portlet.shopping.model.ShoppingItemField> getItemFields(
+		long itemId) throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().getItemFields(itemId);
 	}
 
 	public static ShoppingItemFieldLocalService getService() {
@@ -275,7 +290,6 @@ public class ShoppingItemFieldLocalServiceUtil {
 	/**
 	 * @deprecated As of 6.2.0
 	 */
-	@Deprecated
 	public void setService(ShoppingItemFieldLocalService service) {
 	}
 

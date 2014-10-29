@@ -9,15 +9,9 @@
 			<#if displayElementAttribute.getName() != "line-number">
 				<span class="attribute">${displayElementAttribute.getName()}</span>
 				<span class="arrow">=</span>
-				<span class="quote" id="${displayElementAttribute.getName() + lineNumber}">&quot;${seleniumBuilderFileUtil.escapeHtml(displayElementAttribute.getValue())}&quot;</span>
+				<span class="quote">&quot;${seleniumBuilderFileUtil.escapeHtml(displayElementAttribute.getValue())}&quot;</span>
 			</#if>
 		</#list>
-
-		<#if testCaseRootElement.elements("var")?? && displayElement.getText()?has_content>
-			<span class="attribute">value</span>
-			<span class="arrow">=</span>
-			<span class="quote" id="value${lineNumber}">&quot;${seleniumBuilderFileUtil.escapeHtml(displayElement.getText())}&quot;</span>
-		</#if>
 
 		<span class="arrow">/&gt;</span>
 

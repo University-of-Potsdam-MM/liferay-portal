@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -13,8 +13,6 @@
  */
 
 package com.liferay.portal.model.impl;
-
-import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -52,7 +50,6 @@ import java.util.Map;
  * @see com.liferay.portal.model.TicketModel
  * @generated
  */
-@ProviderType
 public class TicketModelImpl extends BaseModelImpl<Ticket>
 	implements TicketModel {
 	/*
@@ -62,7 +59,6 @@ public class TicketModelImpl extends BaseModelImpl<Ticket>
 	 */
 	public static final String TABLE_NAME = "Ticket";
 	public static final Object[][] TABLE_COLUMNS = {
-			{ "mvccVersion", Types.BIGINT },
 			{ "ticketId", Types.BIGINT },
 			{ "companyId", Types.BIGINT },
 			{ "createDate", Types.TIMESTAMP },
@@ -73,7 +69,7 @@ public class TicketModelImpl extends BaseModelImpl<Ticket>
 			{ "extraInfo", Types.CLOB },
 			{ "expirationDate", Types.TIMESTAMP }
 		};
-	public static final String TABLE_SQL_CREATE = "create table Ticket (mvccVersion LONG default 0,ticketId LONG not null primary key,companyId LONG,createDate DATE null,classNameId LONG,classPK LONG,key_ VARCHAR(75) null,type_ INTEGER,extraInfo TEXT null,expirationDate DATE null)";
+	public static final String TABLE_SQL_CREATE = "create table Ticket (ticketId LONG not null primary key,companyId LONG,createDate DATE null,classNameId LONG,classPK LONG,key_ VARCHAR(75) null,type_ INTEGER,extraInfo TEXT null,expirationDate DATE null)";
 	public static final String TABLE_SQL_DROP = "drop table Ticket";
 	public static final String ORDER_BY_JPQL = " ORDER BY ticket.ticketId ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY Ticket.ticketId ASC";
@@ -89,8 +85,8 @@ public class TicketModelImpl extends BaseModelImpl<Ticket>
 	public static final boolean COLUMN_BITMASK_ENABLED = GetterUtil.getBoolean(com.liferay.portal.util.PropsUtil.get(
 				"value.object.column.bitmask.enabled.com.liferay.portal.model.Ticket"),
 			true);
-	public static final long KEY_COLUMN_BITMASK = 1L;
-	public static final long TICKETID_COLUMN_BITMASK = 2L;
+	public static long KEY_COLUMN_BITMASK = 1L;
+	public static long TICKETID_COLUMN_BITMASK = 2L;
 	public static final long LOCK_EXPIRATION_TIME = GetterUtil.getLong(com.liferay.portal.util.PropsUtil.get(
 				"lock.expiration.time.com.liferay.portal.model.Ticket"));
 
@@ -131,7 +127,6 @@ public class TicketModelImpl extends BaseModelImpl<Ticket>
 	public Map<String, Object> getModelAttributes() {
 		Map<String, Object> attributes = new HashMap<String, Object>();
 
-		attributes.put("mvccVersion", getMvccVersion());
 		attributes.put("ticketId", getTicketId());
 		attributes.put("companyId", getCompanyId());
 		attributes.put("createDate", getCreateDate());
@@ -142,20 +137,11 @@ public class TicketModelImpl extends BaseModelImpl<Ticket>
 		attributes.put("extraInfo", getExtraInfo());
 		attributes.put("expirationDate", getExpirationDate());
 
-		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
-		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
-
 		return attributes;
 	}
 
 	@Override
 	public void setModelAttributes(Map<String, Object> attributes) {
-		Long mvccVersion = (Long)attributes.get("mvccVersion");
-
-		if (mvccVersion != null) {
-			setMvccVersion(mvccVersion);
-		}
-
 		Long ticketId = (Long)attributes.get("ticketId");
 
 		if (ticketId != null) {
@@ -209,16 +195,6 @@ public class TicketModelImpl extends BaseModelImpl<Ticket>
 		if (expirationDate != null) {
 			setExpirationDate(expirationDate);
 		}
-	}
-
-	@Override
-	public long getMvccVersion() {
-		return _mvccVersion;
-	}
-
-	@Override
-	public void setMvccVersion(long mvccVersion) {
-		_mvccVersion = mvccVersion;
 	}
 
 	@Override
@@ -384,7 +360,6 @@ public class TicketModelImpl extends BaseModelImpl<Ticket>
 	public Object clone() {
 		TicketImpl ticketImpl = new TicketImpl();
 
-		ticketImpl.setMvccVersion(getMvccVersion());
 		ticketImpl.setTicketId(getTicketId());
 		ticketImpl.setCompanyId(getCompanyId());
 		ticketImpl.setCreateDate(getCreateDate());
@@ -449,16 +424,6 @@ public class TicketModelImpl extends BaseModelImpl<Ticket>
 	}
 
 	@Override
-	public boolean isEntityCacheEnabled() {
-		return ENTITY_CACHE_ENABLED;
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return FINDER_CACHE_ENABLED;
-	}
-
-	@Override
 	public void resetOriginalValues() {
 		TicketModelImpl ticketModelImpl = this;
 
@@ -470,8 +435,6 @@ public class TicketModelImpl extends BaseModelImpl<Ticket>
 	@Override
 	public CacheModel<Ticket> toCacheModel() {
 		TicketCacheModel ticketCacheModel = new TicketCacheModel();
-
-		ticketCacheModel.mvccVersion = getMvccVersion();
 
 		ticketCacheModel.ticketId = getTicketId();
 
@@ -522,11 +485,9 @@ public class TicketModelImpl extends BaseModelImpl<Ticket>
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(21);
+		StringBundler sb = new StringBundler(19);
 
-		sb.append("{mvccVersion=");
-		sb.append(getMvccVersion());
-		sb.append(", ticketId=");
+		sb.append("{ticketId=");
 		sb.append(getTicketId());
 		sb.append(", companyId=");
 		sb.append(getCompanyId());
@@ -551,16 +512,12 @@ public class TicketModelImpl extends BaseModelImpl<Ticket>
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(34);
+		StringBundler sb = new StringBundler(31);
 
 		sb.append("<model><model-name>");
 		sb.append("com.liferay.portal.model.Ticket");
 		sb.append("</model-name>");
 
-		sb.append(
-			"<column><column-name>mvccVersion</column-name><column-value><![CDATA[");
-		sb.append(getMvccVersion());
-		sb.append("]]></column-value></column>");
 		sb.append(
 			"<column><column-name>ticketId</column-name><column-value><![CDATA[");
 		sb.append(getTicketId());
@@ -603,11 +560,8 @@ public class TicketModelImpl extends BaseModelImpl<Ticket>
 		return sb.toString();
 	}
 
-	private static final ClassLoader _classLoader = Ticket.class.getClassLoader();
-	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
-			Ticket.class
-		};
-	private long _mvccVersion;
+	private static ClassLoader _classLoader = Ticket.class.getClassLoader();
+	private static Class<?>[] _escapedModelInterfaces = new Class[] { Ticket.class };
 	private long _ticketId;
 	private long _companyId;
 	private Date _createDate;

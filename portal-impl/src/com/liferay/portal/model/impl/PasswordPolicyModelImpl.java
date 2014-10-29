@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,10 +14,8 @@
 
 package com.liferay.portal.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
-import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSON;
 import com.liferay.portal.kernel.lar.StagedModelType;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -28,9 +26,7 @@ import com.liferay.portal.model.CacheModel;
 import com.liferay.portal.model.PasswordPolicy;
 import com.liferay.portal.model.PasswordPolicyModel;
 import com.liferay.portal.model.PasswordPolicySoap;
-import com.liferay.portal.model.User;
 import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.service.UserLocalServiceUtil;
 import com.liferay.portal.util.PortalUtil;
 
 import com.liferay.portlet.expando.model.ExpandoBridge;
@@ -60,7 +56,6 @@ import java.util.Map;
  * @generated
  */
 @JSON(strict = true)
-@ProviderType
 public class PasswordPolicyModelImpl extends BaseModelImpl<PasswordPolicy>
 	implements PasswordPolicyModel {
 	/*
@@ -70,7 +65,6 @@ public class PasswordPolicyModelImpl extends BaseModelImpl<PasswordPolicy>
 	 */
 	public static final String TABLE_NAME = "PasswordPolicy";
 	public static final Object[][] TABLE_COLUMNS = {
-			{ "mvccVersion", Types.BIGINT },
 			{ "uuid_", Types.VARCHAR },
 			{ "passwordPolicyId", Types.BIGINT },
 			{ "companyId", Types.BIGINT },
@@ -106,7 +100,7 @@ public class PasswordPolicyModelImpl extends BaseModelImpl<PasswordPolicy>
 			{ "resetFailureCount", Types.BIGINT },
 			{ "resetTicketMaxAge", Types.BIGINT }
 		};
-	public static final String TABLE_SQL_CREATE = "create table PasswordPolicy (mvccVersion LONG default 0,uuid_ VARCHAR(75) null,passwordPolicyId LONG not null primary key,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,defaultPolicy BOOLEAN,name VARCHAR(75) null,description STRING null,changeable BOOLEAN,changeRequired BOOLEAN,minAge LONG,checkSyntax BOOLEAN,allowDictionaryWords BOOLEAN,minAlphanumeric INTEGER,minLength INTEGER,minLowerCase INTEGER,minNumbers INTEGER,minSymbols INTEGER,minUpperCase INTEGER,regex VARCHAR(75) null,history BOOLEAN,historyCount INTEGER,expireable BOOLEAN,maxAge LONG,warningTime LONG,graceLimit INTEGER,lockout BOOLEAN,maxFailure INTEGER,lockoutDuration LONG,requireUnlock BOOLEAN,resetFailureCount LONG,resetTicketMaxAge LONG)";
+	public static final String TABLE_SQL_CREATE = "create table PasswordPolicy (uuid_ VARCHAR(75) null,passwordPolicyId LONG not null primary key,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,defaultPolicy BOOLEAN,name VARCHAR(75) null,description STRING null,changeable BOOLEAN,changeRequired BOOLEAN,minAge LONG,checkSyntax BOOLEAN,allowDictionaryWords BOOLEAN,minAlphanumeric INTEGER,minLength INTEGER,minLowerCase INTEGER,minNumbers INTEGER,minSymbols INTEGER,minUpperCase INTEGER,regex VARCHAR(75) null,history BOOLEAN,historyCount INTEGER,expireable BOOLEAN,maxAge LONG,warningTime LONG,graceLimit INTEGER,lockout BOOLEAN,maxFailure INTEGER,lockoutDuration LONG,requireUnlock BOOLEAN,resetFailureCount LONG,resetTicketMaxAge LONG)";
 	public static final String TABLE_SQL_DROP = "drop table PasswordPolicy";
 	public static final String ORDER_BY_JPQL = " ORDER BY passwordPolicy.passwordPolicyId ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY PasswordPolicy.passwordPolicyId ASC";
@@ -122,11 +116,11 @@ public class PasswordPolicyModelImpl extends BaseModelImpl<PasswordPolicy>
 	public static final boolean COLUMN_BITMASK_ENABLED = GetterUtil.getBoolean(com.liferay.portal.util.PropsUtil.get(
 				"value.object.column.bitmask.enabled.com.liferay.portal.model.PasswordPolicy"),
 			true);
-	public static final long COMPANYID_COLUMN_BITMASK = 1L;
-	public static final long DEFAULTPOLICY_COLUMN_BITMASK = 2L;
-	public static final long NAME_COLUMN_BITMASK = 4L;
-	public static final long UUID_COLUMN_BITMASK = 8L;
-	public static final long PASSWORDPOLICYID_COLUMN_BITMASK = 16L;
+	public static long COMPANYID_COLUMN_BITMASK = 1L;
+	public static long DEFAULTPOLICY_COLUMN_BITMASK = 2L;
+	public static long NAME_COLUMN_BITMASK = 4L;
+	public static long UUID_COLUMN_BITMASK = 8L;
+	public static long PASSWORDPOLICYID_COLUMN_BITMASK = 16L;
 
 	/**
 	 * Converts the soap model instance into a normal model instance.
@@ -141,7 +135,6 @@ public class PasswordPolicyModelImpl extends BaseModelImpl<PasswordPolicy>
 
 		PasswordPolicy model = new PasswordPolicyImpl();
 
-		model.setMvccVersion(soapModel.getMvccVersion());
 		model.setUuid(soapModel.getUuid());
 		model.setPasswordPolicyId(soapModel.getPasswordPolicyId());
 		model.setCompanyId(soapModel.getCompanyId());
@@ -240,7 +233,6 @@ public class PasswordPolicyModelImpl extends BaseModelImpl<PasswordPolicy>
 	public Map<String, Object> getModelAttributes() {
 		Map<String, Object> attributes = new HashMap<String, Object>();
 
-		attributes.put("mvccVersion", getMvccVersion());
 		attributes.put("uuid", getUuid());
 		attributes.put("passwordPolicyId", getPasswordPolicyId());
 		attributes.put("companyId", getCompanyId());
@@ -276,20 +268,11 @@ public class PasswordPolicyModelImpl extends BaseModelImpl<PasswordPolicy>
 		attributes.put("resetFailureCount", getResetFailureCount());
 		attributes.put("resetTicketMaxAge", getResetTicketMaxAge());
 
-		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
-		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
-
 		return attributes;
 	}
 
 	@Override
 	public void setModelAttributes(Map<String, Object> attributes) {
-		Long mvccVersion = (Long)attributes.get("mvccVersion");
-
-		if (mvccVersion != null) {
-			setMvccVersion(mvccVersion);
-		}
-
 		String uuid = (String)attributes.get("uuid");
 
 		if (uuid != null) {
@@ -498,17 +481,6 @@ public class PasswordPolicyModelImpl extends BaseModelImpl<PasswordPolicy>
 
 	@JSON
 	@Override
-	public long getMvccVersion() {
-		return _mvccVersion;
-	}
-
-	@Override
-	public void setMvccVersion(long mvccVersion) {
-		_mvccVersion = mvccVersion;
-	}
-
-	@JSON
-	@Override
 	public String getUuid() {
 		if (_uuid == null) {
 			return StringPool.BLANK;
@@ -577,19 +549,13 @@ public class PasswordPolicyModelImpl extends BaseModelImpl<PasswordPolicy>
 	}
 
 	@Override
-	public String getUserUuid() {
-		try {
-			User user = UserLocalServiceUtil.getUserById(getUserId());
-
-			return user.getUuid();
-		}
-		catch (PortalException pe) {
-			return StringPool.BLANK;
-		}
+	public String getUserUuid() throws SystemException {
+		return PortalUtil.getUserValue(getUserId(), "uuid", _userUuid);
 	}
 
 	@Override
 	public void setUserUuid(String userUuid) {
+		_userUuid = userUuid;
 	}
 
 	@JSON
@@ -1046,7 +1012,6 @@ public class PasswordPolicyModelImpl extends BaseModelImpl<PasswordPolicy>
 	public Object clone() {
 		PasswordPolicyImpl passwordPolicyImpl = new PasswordPolicyImpl();
 
-		passwordPolicyImpl.setMvccVersion(getMvccVersion());
 		passwordPolicyImpl.setUuid(getUuid());
 		passwordPolicyImpl.setPasswordPolicyId(getPasswordPolicyId());
 		passwordPolicyImpl.setCompanyId(getCompanyId());
@@ -1130,16 +1095,6 @@ public class PasswordPolicyModelImpl extends BaseModelImpl<PasswordPolicy>
 	}
 
 	@Override
-	public boolean isEntityCacheEnabled() {
-		return ENTITY_CACHE_ENABLED;
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return FINDER_CACHE_ENABLED;
-	}
-
-	@Override
 	public void resetOriginalValues() {
 		PasswordPolicyModelImpl passwordPolicyModelImpl = this;
 
@@ -1161,8 +1116,6 @@ public class PasswordPolicyModelImpl extends BaseModelImpl<PasswordPolicy>
 	@Override
 	public CacheModel<PasswordPolicy> toCacheModel() {
 		PasswordPolicyCacheModel passwordPolicyCacheModel = new PasswordPolicyCacheModel();
-
-		passwordPolicyCacheModel.mvccVersion = getMvccVersion();
 
 		passwordPolicyCacheModel.uuid = getUuid();
 
@@ -1281,11 +1234,9 @@ public class PasswordPolicyModelImpl extends BaseModelImpl<PasswordPolicy>
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(71);
+		StringBundler sb = new StringBundler(69);
 
-		sb.append("{mvccVersion=");
-		sb.append(getMvccVersion());
-		sb.append(", uuid=");
+		sb.append("{uuid=");
 		sb.append(getUuid());
 		sb.append(", passwordPolicyId=");
 		sb.append(getPasswordPolicyId());
@@ -1360,16 +1311,12 @@ public class PasswordPolicyModelImpl extends BaseModelImpl<PasswordPolicy>
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(109);
+		StringBundler sb = new StringBundler(106);
 
 		sb.append("<model><model-name>");
 		sb.append("com.liferay.portal.model.PasswordPolicy");
 		sb.append("</model-name>");
 
-		sb.append(
-			"<column><column-name>mvccVersion</column-name><column-value><![CDATA[");
-		sb.append(getMvccVersion());
-		sb.append("]]></column-value></column>");
 		sb.append(
 			"<column><column-name>uuid</column-name><column-value><![CDATA[");
 		sb.append(getUuid());
@@ -1512,11 +1459,10 @@ public class PasswordPolicyModelImpl extends BaseModelImpl<PasswordPolicy>
 		return sb.toString();
 	}
 
-	private static final ClassLoader _classLoader = PasswordPolicy.class.getClassLoader();
-	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
+	private static ClassLoader _classLoader = PasswordPolicy.class.getClassLoader();
+	private static Class<?>[] _escapedModelInterfaces = new Class[] {
 			PasswordPolicy.class
 		};
-	private long _mvccVersion;
 	private String _uuid;
 	private String _originalUuid;
 	private long _passwordPolicyId;
@@ -1524,6 +1470,7 @@ public class PasswordPolicyModelImpl extends BaseModelImpl<PasswordPolicy>
 	private long _originalCompanyId;
 	private boolean _setOriginalCompanyId;
 	private long _userId;
+	private String _userUuid;
 	private String _userName;
 	private Date _createDate;
 	private Date _modifiedDate;

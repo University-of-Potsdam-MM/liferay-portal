@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -13,8 +13,6 @@
  */
 
 package com.liferay.portlet.expando.model.impl;
-
-import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
 import com.liferay.portal.kernel.json.JSON;
@@ -52,7 +50,6 @@ import java.util.Map;
  * @generated
  */
 @JSON(strict = true)
-@ProviderType
 public class ExpandoColumnModelImpl extends BaseModelImpl<ExpandoColumn>
 	implements ExpandoColumnModel {
 	/*
@@ -86,8 +83,8 @@ public class ExpandoColumnModelImpl extends BaseModelImpl<ExpandoColumn>
 	public static final boolean COLUMN_BITMASK_ENABLED = GetterUtil.getBoolean(com.liferay.portal.util.PropsUtil.get(
 				"value.object.column.bitmask.enabled.com.liferay.portlet.expando.model.ExpandoColumn"),
 			true);
-	public static final long NAME_COLUMN_BITMASK = 1L;
-	public static final long TABLEID_COLUMN_BITMASK = 2L;
+	public static long NAME_COLUMN_BITMASK = 1L;
+	public static long TABLEID_COLUMN_BITMASK = 2L;
 
 	/**
 	 * Converts the soap model instance into a normal model instance.
@@ -180,9 +177,6 @@ public class ExpandoColumnModelImpl extends BaseModelImpl<ExpandoColumn>
 		attributes.put("type", getType());
 		attributes.put("defaultData", getDefaultData());
 		attributes.put("typeSettings", getTypeSettings());
-
-		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
-		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
 
 		return attributes;
 	}
@@ -418,16 +412,6 @@ public class ExpandoColumnModelImpl extends BaseModelImpl<ExpandoColumn>
 	}
 
 	@Override
-	public boolean isEntityCacheEnabled() {
-		return ENTITY_CACHE_ENABLED;
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return FINDER_CACHE_ENABLED;
-	}
-
-	@Override
 	public void resetOriginalValues() {
 		ExpandoColumnModelImpl expandoColumnModelImpl = this;
 
@@ -544,8 +528,8 @@ public class ExpandoColumnModelImpl extends BaseModelImpl<ExpandoColumn>
 		return sb.toString();
 	}
 
-	private static final ClassLoader _classLoader = ExpandoColumn.class.getClassLoader();
-	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
+	private static ClassLoader _classLoader = ExpandoColumn.class.getClassLoader();
+	private static Class<?>[] _escapedModelInterfaces = new Class[] {
 			ExpandoColumn.class
 		};
 	private long _columnId;

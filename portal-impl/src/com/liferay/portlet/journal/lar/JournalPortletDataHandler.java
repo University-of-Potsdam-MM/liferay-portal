@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -16,7 +16,6 @@ package com.liferay.portlet.journal.lar;
 
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
-import com.liferay.portal.kernel.dao.orm.ExportActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Property;
 import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -28,7 +27,6 @@ import com.liferay.portal.kernel.lar.PortletDataHandlerBoolean;
 import com.liferay.portal.kernel.lar.PortletDataHandlerControl;
 import com.liferay.portal.kernel.lar.StagedModelDataHandlerUtil;
 import com.liferay.portal.kernel.lar.StagedModelType;
-import com.liferay.portal.kernel.lar.xstream.XStreamAliasRegistryUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.util.PortalUtil;
@@ -37,16 +35,17 @@ import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
 import com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalServiceUtil;
 import com.liferay.portlet.dynamicdatamapping.service.DDMTemplateLocalServiceUtil;
+import com.liferay.portlet.dynamicdatamapping.service.persistence.DDMStructureExportActionableDynamicQuery;
+import com.liferay.portlet.dynamicdatamapping.service.persistence.DDMTemplateExportActionableDynamicQuery;
 import com.liferay.portlet.journal.model.JournalArticle;
 import com.liferay.portlet.journal.model.JournalFeed;
 import com.liferay.portlet.journal.model.JournalFolder;
-import com.liferay.portlet.journal.model.impl.JournalArticleImpl;
-import com.liferay.portlet.journal.model.impl.JournalFeedImpl;
-import com.liferay.portlet.journal.model.impl.JournalFolderImpl;
 import com.liferay.portlet.journal.service.JournalArticleLocalServiceUtil;
-import com.liferay.portlet.journal.service.JournalFeedLocalServiceUtil;
 import com.liferay.portlet.journal.service.JournalFolderLocalServiceUtil;
 import com.liferay.portlet.journal.service.permission.JournalPermission;
+import com.liferay.portlet.journal.service.persistence.JournalArticleExportActionableDynamicQuery;
+import com.liferay.portlet.journal.service.persistence.JournalFeedExportActionableDynamicQuery;
+import com.liferay.portlet.journal.service.persistence.JournalFolderExportActionableDynamicQuery;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -115,12 +114,6 @@ public class JournalPortletDataHandler extends BasePortletDataHandler {
 				JournalFeed.class.getName()));
 		setPublishToLiveByDefault(
 			PropsValues.JOURNAL_PUBLISH_TO_LIVE_BY_DEFAULT);
-
-		XStreamAliasRegistryUtil.register(
-			JournalArticleImpl.class, "JournalArticle");
-		XStreamAliasRegistryUtil.register(JournalFeedImpl.class, "JournalFeed");
-		XStreamAliasRegistryUtil.register(
-			JournalFolderImpl.class, "JournalFolder");
 	}
 
 	@Override
@@ -166,8 +159,7 @@ public class JournalPortletDataHandler extends BasePortletDataHandler {
 
 		if (portletDataContext.getBooleanParameter(NAMESPACE, "feeds")) {
 			ActionableDynamicQuery feedActionableDynamicQuery =
-				JournalFeedLocalServiceUtil.getExportActionableDynamicQuery(
-					portletDataContext);
+				new JournalFeedExportActionableDynamicQuery(portletDataContext);
 
 			feedActionableDynamicQuery.performActions();
 		}
@@ -198,7 +190,7 @@ public class JournalPortletDataHandler extends BasePortletDataHandler {
 
 		if (portletDataContext.getBooleanParameter(NAMESPACE, "web-content")) {
 			ActionableDynamicQuery folderActionableDynamicQuery =
-				JournalFolderLocalServiceUtil.getExportActionableDynamicQuery(
+				new JournalFolderExportActionableDynamicQuery(
 					portletDataContext);
 
 			folderActionableDynamicQuery.performActions();
@@ -317,154 +309,129 @@ public class JournalPortletDataHandler extends BasePortletDataHandler {
 				ddmTemplates.size());
 
 		ActionableDynamicQuery feedActionableDynamicQuery =
-			JournalFeedLocalServiceUtil.getExportActionableDynamicQuery(
-				portletDataContext);
+			new JournalFeedExportActionableDynamicQuery(portletDataContext);
 
 		feedActionableDynamicQuery.performCount();
 
 		ActionableDynamicQuery folderActionableDynamicQuery =
-			JournalFolderLocalServiceUtil.getExportActionableDynamicQuery(
-				portletDataContext);
+			new JournalFolderExportActionableDynamicQuery(portletDataContext);
 
 		folderActionableDynamicQuery.performCount();
 	}
 
 	protected ActionableDynamicQuery getArticleActionableDynamicQuery(
-		final PortletDataContext portletDataContext) {
+			final PortletDataContext portletDataContext)
+		throws SystemException {
 
-		ActionableDynamicQuery actionableDynamicQuery =
-			JournalArticleLocalServiceUtil.getExportActionableDynamicQuery(
-				portletDataContext);
+		return new JournalArticleExportActionableDynamicQuery(
+			portletDataContext) {
 
-		actionableDynamicQuery.setPerformActionMethod(
-			new ActionableDynamicQuery.PerformActionMethod() {
+			@Override
+			protected void performAction(Object object) throws PortalException {
+				JournalArticle article = (JournalArticle)object;
 
-				@Override
-				public void performAction(Object object)
-					throws PortalException {
+				boolean latestVersion = false;
 
-					JournalArticle article = (JournalArticle)object;
-
-					boolean latestVersion = false;
-
-					try {
-						latestVersion =
-							JournalArticleLocalServiceUtil.isLatestVersion(
-								article.getGroupId(), article.getArticleId(),
-								article.getVersion(),
-								WorkflowConstants.STATUS_APPROVED);
-					}
-					catch (Exception e) {
-					}
-
-					if (portletDataContext.getBooleanParameter(
-							NAMESPACE, "version-history") ||
-						latestVersion) {
-
-						StagedModelDataHandlerUtil.exportStagedModel(
-							portletDataContext, article);
-					}
+				try {
+					latestVersion =
+						JournalArticleLocalServiceUtil.isLatestVersion(
+							article.getGroupId(), article.getArticleId(),
+							article.getVersion(),
+							WorkflowConstants.STATUS_APPROVED);
+				}
+				catch (Exception e) {
 				}
 
-			});
+				if (portletDataContext.getBooleanParameter(
+						NAMESPACE, "version-history") || latestVersion) {
 
-		return actionableDynamicQuery;
+					StagedModelDataHandlerUtil.exportStagedModel(
+						portletDataContext, article);
+				}
+			}
+
+		};
 	}
 
 	protected ActionableDynamicQuery getDDMStructureActionableDynamicQuery(
-		final PortletDataContext portletDataContext,
-		final List<DDMTemplate> ddmTemplates, final boolean export) {
+			final PortletDataContext portletDataContext,
+			final List<DDMTemplate> ddmTemplates, final boolean export)
+		throws SystemException {
 
-		ExportActionableDynamicQuery exportActionableDynamicQuery =
-			DDMStructureLocalServiceUtil.getExportActionableDynamicQuery(
-				portletDataContext);
+		return new DDMStructureExportActionableDynamicQuery(
+			portletDataContext) {
 
-		final ActionableDynamicQuery.AddCriteriaMethod addCriteriaMethod =
-			exportActionableDynamicQuery.getAddCriteriaMethod();
+			@Override
+			protected void addCriteria(DynamicQuery dynamicQuery) {
+				super.addCriteria(dynamicQuery);
 
-		exportActionableDynamicQuery.setAddCriteriaMethod(
-			new ActionableDynamicQuery.AddCriteriaMethod() {
+				Property classNameIdProperty = PropertyFactoryUtil.forName(
+					"classNameId");
 
-				@Override
-				public void addCriteria(DynamicQuery dynamicQuery) {
-					addCriteriaMethod.addCriteria(dynamicQuery);
+				long classNameId = PortalUtil.getClassNameId(
+					JournalArticle.class);
 
-					Property classNameIdProperty = PropertyFactoryUtil.forName(
-						"classNameId");
+				dynamicQuery.add(classNameIdProperty.eq(classNameId));
+			}
 
-					long classNameId = PortalUtil.getClassNameId(
-						JournalArticle.class);
+			@Override
+			protected StagedModelType getStagedModelType() {
+				return new StagedModelType(
+					DDMStructure.class.getName(),
+					JournalArticle.class.getName());
+			}
 
-					dynamicQuery.add(classNameIdProperty.eq(classNameId));
+			@Override
+			protected void performAction(Object object) throws PortalException {
+				DDMStructure ddmStructure = (DDMStructure)object;
+
+				if (export) {
+					StagedModelDataHandlerUtil.exportStagedModel(
+						portletDataContext, ddmStructure);
 				}
 
-			});
-		exportActionableDynamicQuery.setPerformActionMethod(
-			new ActionableDynamicQuery.PerformActionMethod() {
-
-				@Override
-				public void performAction(Object object)
-					throws PortalException {
-
-					DDMStructure ddmStructure = (DDMStructure)object;
-
-					if (export) {
-						StagedModelDataHandlerUtil.exportStagedModel(
-							portletDataContext, ddmStructure);
-					}
-
-					try {
-						ddmTemplates.addAll(ddmStructure.getTemplates());
-					}
-					catch (SystemException se) {
-					}
+				try {
+					ddmTemplates.addAll(ddmStructure.getTemplates());
 				}
+				catch (SystemException se) {
+				}
+			}
 
-			});
-		exportActionableDynamicQuery.setStagedModelType(
-			new StagedModelType(
-				DDMStructure.class.getName(), JournalArticle.class.getName()));
-
-		return exportActionableDynamicQuery;
+		};
 	}
 
 	protected ActionableDynamicQuery getDDMTemplateActionableDynamicQuery(
-		final PortletDataContext portletDataContext) {
+			final PortletDataContext portletDataContext)
+		throws SystemException {
 
-		ExportActionableDynamicQuery exportActionableDynamicQuery =
-			DDMTemplateLocalServiceUtil.getExportActionableDynamicQuery(
-				portletDataContext);
+		return new DDMTemplateExportActionableDynamicQuery(
+			portletDataContext) {
 
-		final ActionableDynamicQuery.AddCriteriaMethod addCriteriaMethod =
-			exportActionableDynamicQuery.getAddCriteriaMethod();
+			@Override
+			protected void addCriteria(DynamicQuery dynamicQuery) {
+				super.addCriteria(dynamicQuery);
 
-		exportActionableDynamicQuery.setAddCriteriaMethod(
-			new ActionableDynamicQuery.AddCriteriaMethod() {
+				Property classNameIdProperty = PropertyFactoryUtil.forName(
+					"classNameId");
 
-				@Override
-				public void addCriteria(DynamicQuery dynamicQuery) {
-					addCriteriaMethod.addCriteria(dynamicQuery);
+				long classNameId = PortalUtil.getClassNameId(
+					DDMStructure.class);
 
-					Property classNameIdProperty = PropertyFactoryUtil.forName(
-						"classNameId");
+				dynamicQuery.add(classNameIdProperty.eq(classNameId));
 
-					long classNameId = PortalUtil.getClassNameId(
-						DDMStructure.class);
+				Property classPKProperty = PropertyFactoryUtil.forName(
+					"classPK");
 
-					dynamicQuery.add(classNameIdProperty.eq(classNameId));
+				dynamicQuery.add(classPKProperty.eq(-1L));
+			}
 
-					Property classPKProperty = PropertyFactoryUtil.forName(
-						"classPK");
+			@Override
+			protected StagedModelType getStagedModelType() {
+				return new StagedModelType(
+					DDMTemplate.class.getName(), DDMStructure.class.getName());
+			}
 
-					dynamicQuery.add(classPKProperty.eq(-1L));
-				}
-
-			});
-		exportActionableDynamicQuery.setStagedModelType(
-			new StagedModelType(
-				DDMTemplate.class.getName(), DDMStructure.class.getName()));
-
-		return exportActionableDynamicQuery;
+		};
 	}
 
 }

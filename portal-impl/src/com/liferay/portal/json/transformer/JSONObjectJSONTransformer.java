@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,18 +14,20 @@
 
 package com.liferay.portal.json.transformer;
 
-import com.liferay.portal.kernel.json.JSONContext;
 import com.liferay.portal.kernel.json.JSONObject;
-import com.liferay.portal.kernel.json.JSONTransformer;
+
+import flexjson.JSONContext;
 
 /**
  * @author Igor Spasic
  */
-public class JSONObjectJSONTransformer implements JSONTransformer {
+public class JSONObjectJSONTransformer extends BaseJSONTransformer {
 
 	@Override
-	public void transform(JSONContext jsonContext, Object object) {
+	public void transform(Object object) {
 		JSONObject jsonObject = (JSONObject)object;
+
+		JSONContext jsonContext = getContext();
 
 		jsonContext.write(jsonObject.toString());
 	}

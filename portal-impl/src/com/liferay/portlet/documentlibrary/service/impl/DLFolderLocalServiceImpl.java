@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -21,9 +21,7 @@ import com.liferay.portal.NoSuchWorkflowDefinitionLinkException;
 import com.liferay.portal.kernel.dao.orm.QueryDefinition;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.increment.BufferedIncrement;
-import com.liferay.portal.kernel.increment.DateOverrideIncrement;
-import com.liferay.portal.kernel.lar.ExportImportThreadLocal;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.search.Indexable;
@@ -35,27 +33,23 @@ import com.liferay.portal.kernel.util.ObjectValuePair;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.kernel.util.TreeModelTasksAdapter;
+import com.liferay.portal.kernel.util.TreeModelFinder;
 import com.liferay.portal.kernel.util.TreePathUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.Lock;
-import com.liferay.portal.model.Repository;
 import com.liferay.portal.model.ResourceConstants;
 import com.liferay.portal.model.SystemEventConstants;
-import com.liferay.portal.model.TreeModel;
 import com.liferay.portal.model.User;
 import com.liferay.portal.model.WorkflowDefinitionLink;
+import com.liferay.portal.repository.liferayrepository.model.LiferayFolder;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portlet.documentlibrary.DuplicateFileException;
 import com.liferay.portlet.documentlibrary.DuplicateFolderNameException;
 import com.liferay.portlet.documentlibrary.FolderNameException;
-import com.liferay.portlet.documentlibrary.InvalidFolderException;
 import com.liferay.portlet.documentlibrary.NoSuchDirectoryException;
 import com.liferay.portlet.documentlibrary.NoSuchFileEntryException;
-import com.liferay.portlet.documentlibrary.NoSuchFolderException;
-import com.liferay.portlet.documentlibrary.RequiredFileEntryTypeException;
 import com.liferay.portlet.documentlibrary.model.DLFileEntryType;
 import com.liferay.portlet.documentlibrary.model.DLFileEntryTypeConstants;
 import com.liferay.portlet.documentlibrary.model.DLFolder;
@@ -63,7 +57,6 @@ import com.liferay.portlet.documentlibrary.model.DLFolderConstants;
 import com.liferay.portlet.documentlibrary.model.impl.DLFolderImpl;
 import com.liferay.portlet.documentlibrary.service.base.DLFolderLocalServiceBaseImpl;
 import com.liferay.portlet.documentlibrary.store.DLStoreUtil;
-import com.liferay.portlet.documentlibrary.util.DLValidatorUtil;
 import com.liferay.portlet.documentlibrary.util.comparator.FolderIdComparator;
 
 import java.io.Serializable;
@@ -85,13 +78,12 @@ public class DLFolderLocalServiceImpl extends DLFolderLocalServiceBaseImpl {
 			long userId, long groupId, long repositoryId, boolean mountPoint,
 			long parentFolderId, String name, String description,
 			boolean hidden, ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		// Folder
 
 		User user = userPersistence.findByPrimaryKey(userId);
-		parentFolderId = getParentFolderId(
-			groupId, repositoryId, parentFolderId);
+		parentFolderId = getParentFolderId(groupId, parentFolderId);
 		Date now = new Date();
 
 		validateFolder(groupId, parentFolderId, name);
@@ -143,8 +135,18 @@ public class DLFolderLocalServiceImpl extends DLFolderLocalServiceBaseImpl {
 		// Parent folder
 
 		if (parentFolderId != DLFolderConstants.DEFAULT_PARENT_FOLDER_ID) {
-			dlFolderLocalService.updateLastPostDate(parentFolderId, now);
+			DLFolder parentDLFolder = dlFolderPersistence.findByPrimaryKey(
+				parentFolderId);
+
+			parentDLFolder.setLastPostDate(now);
+
+			dlFolderPersistence.update(parentDLFolder);
 		}
+
+		// App helper
+
+		dlAppHelperLocalService.addFolder(
+			userId, new LiferayFolder(dlFolder), serviceContext);
 
 		return dlFolder;
 	}
@@ -154,13 +156,12 @@ public class DLFolderLocalServiceImpl extends DLFolderLocalServiceBaseImpl {
 	 *             long, long, boolean, long, String, String, boolean,
 	 *             ServiceContext)}
 	 */
-	@Deprecated
 	@Override
 	public DLFolder addFolder(
 			long userId, long groupId, long repositoryId, boolean mountPoint,
 			long parentFolderId, String name, String description,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return addFolder(
 			userId, groupId, repositoryId, mountPoint, parentFolderId, name,
@@ -168,7 +169,9 @@ public class DLFolderLocalServiceImpl extends DLFolderLocalServiceBaseImpl {
 	}
 
 	@Override
-	public void deleteAll(long groupId) throws PortalException {
+	public void deleteAll(long groupId)
+		throws PortalException, SystemException {
+
 		Group group = groupLocalService.getGroup(groupId);
 
 		List<DLFolder> dlFolders = dlFolderPersistence.findByGroupId(groupId);
@@ -201,7 +204,9 @@ public class DLFolderLocalServiceImpl extends DLFolderLocalServiceBaseImpl {
 	@SystemEvent(
 		action = SystemEventConstants.ACTION_SKIP,
 		type = SystemEventConstants.TYPE_DELETE)
-	public DLFolder deleteFolder(DLFolder dlFolder) throws PortalException {
+	public DLFolder deleteFolder(DLFolder dlFolder)
+		throws PortalException, SystemException {
+
 		return deleteFolder(dlFolder, true);
 	}
 
@@ -212,7 +217,7 @@ public class DLFolderLocalServiceImpl extends DLFolderLocalServiceBaseImpl {
 		type = SystemEventConstants.TYPE_DELETE)
 	public DLFolder deleteFolder(
 			DLFolder dlFolder, boolean includeTrashedEntries)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		// Folders
 
@@ -220,7 +225,7 @@ public class DLFolderLocalServiceImpl extends DLFolderLocalServiceBaseImpl {
 			dlFolder.getGroupId(), dlFolder.getFolderId());
 
 		for (DLFolder curDLFolder : dlFolders) {
-			if (includeTrashedEntries || !curDLFolder.isInTrashExplicitly()) {
+			if (includeTrashedEntries || !curDLFolder.isInTrash()) {
 				dlFolderLocalService.deleteFolder(
 					curDLFolder, includeTrashedEntries);
 			}
@@ -272,6 +277,10 @@ public class DLFolderLocalServiceImpl extends DLFolderLocalServiceBaseImpl {
 
 		expandoRowLocalService.deleteRows(dlFolder.getFolderId());
 
+		// App helper
+
+		dlAppHelperLocalService.deleteFolder(new LiferayFolder(dlFolder));
+
 		// Folder
 
 		dlFolderPersistence.remove(dlFolder);
@@ -317,14 +326,16 @@ public class DLFolderLocalServiceImpl extends DLFolderLocalServiceBaseImpl {
 
 	@Indexable(type = IndexableType.DELETE)
 	@Override
-	public DLFolder deleteFolder(long folderId) throws PortalException {
+	public DLFolder deleteFolder(long folderId)
+		throws PortalException, SystemException {
+
 		return dlFolderLocalService.deleteFolder(folderId, true);
 	}
 
 	@Indexable(type = IndexableType.DELETE)
 	@Override
 	public DLFolder deleteFolder(long folderId, boolean includeTrashedEntries)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		DLFolder dlFolder = dlFolderPersistence.findByPrimaryKey(folderId);
 
@@ -336,7 +347,7 @@ public class DLFolderLocalServiceImpl extends DLFolderLocalServiceBaseImpl {
 	@Override
 	public DLFolder deleteFolder(
 			long userId, long folderId, boolean includeTrashedEntries)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		boolean hasLock = hasFolderLock(userId, folderId);
 
@@ -365,26 +376,26 @@ public class DLFolderLocalServiceImpl extends DLFolderLocalServiceBaseImpl {
 	}
 
 	@Override
-	public DLFolder fetchFolder(long folderId) {
+	public DLFolder fetchFolder(long folderId) throws SystemException {
 		return dlFolderPersistence.fetchByPrimaryKey(folderId);
 	}
 
 	@Override
-	public DLFolder fetchFolder(
-		long groupId, long parentFolderId, String name) {
+	public DLFolder fetchFolder(long groupId, long parentFolderId, String name)
+		throws SystemException {
 
 		return dlFolderPersistence.fetchByG_P_N(groupId, parentFolderId, name);
 	}
 
 	@Override
-	public List<DLFolder> getCompanyFolders(
-		long companyId, int start, int end) {
+	public List<DLFolder> getCompanyFolders(long companyId, int start, int end)
+		throws SystemException {
 
 		return dlFolderPersistence.findByCompanyId(companyId, start, end);
 	}
 
 	@Override
-	public int getCompanyFoldersCount(long companyId) {
+	public int getCompanyFoldersCount(long companyId) throws SystemException {
 		return dlFolderPersistence.countByCompanyId(companyId);
 	}
 
@@ -392,12 +403,12 @@ public class DLFolderLocalServiceImpl extends DLFolderLocalServiceBaseImpl {
 	 * @deprecated As of 6.2.0, replaced by {@link
 	 *             #getFileEntriesAndFileShortcuts(long, long, QueryDefinition)}
 	 */
-	@Deprecated
 	@Override
 	public List<Object> getFileEntriesAndFileShortcuts(
-		long groupId, long folderId, int status, int start, int end) {
+			long groupId, long folderId, int status, int start, int end)
+		throws SystemException {
 
-		QueryDefinition<?> queryDefinition = new QueryDefinition<Object>(
+		QueryDefinition queryDefinition = new QueryDefinition(
 			status, start, end, null);
 
 		return getFileEntriesAndFileShortcuts(
@@ -406,7 +417,8 @@ public class DLFolderLocalServiceImpl extends DLFolderLocalServiceBaseImpl {
 
 	@Override
 	public List<Object> getFileEntriesAndFileShortcuts(
-		long groupId, long folderId, QueryDefinition<?> queryDefinition) {
+			long groupId, long folderId, QueryDefinition queryDefinition)
+		throws SystemException {
 
 		return dlFolderFinder.findFE_FS_ByG_F(
 			groupId, folderId, queryDefinition);
@@ -417,13 +429,12 @@ public class DLFolderLocalServiceImpl extends DLFolderLocalServiceBaseImpl {
 	 *             #getFileEntriesAndFileShortcutsCount(long, long,
 	 *             QueryDefinition)}
 	 */
-	@Deprecated
 	@Override
 	public int getFileEntriesAndFileShortcutsCount(
-		long groupId, long folderId, int status) {
+			long groupId, long folderId, int status)
+		throws SystemException {
 
-		QueryDefinition<?> queryDefinition = new QueryDefinition<Object>(
-			status);
+		QueryDefinition queryDefinition = new QueryDefinition(status);
 
 		return getFileEntriesAndFileShortcutsCount(
 			groupId, folderId, queryDefinition);
@@ -431,26 +442,31 @@ public class DLFolderLocalServiceImpl extends DLFolderLocalServiceBaseImpl {
 
 	@Override
 	public int getFileEntriesAndFileShortcutsCount(
-		long groupId, long folderId, QueryDefinition<?> queryDefinition) {
+			long groupId, long folderId, QueryDefinition queryDefinition)
+		throws SystemException {
 
 		return dlFolderFinder.countFE_FS_ByG_F(
 			groupId, folderId, queryDefinition);
 	}
 
 	@Override
-	public DLFolder getFolder(long folderId) throws PortalException {
+	public DLFolder getFolder(long folderId)
+		throws PortalException, SystemException {
+
 		return dlFolderPersistence.findByPrimaryKey(folderId);
 	}
 
 	@Override
 	public DLFolder getFolder(long groupId, long parentFolderId, String name)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return dlFolderPersistence.findByG_P_N(groupId, parentFolderId, name);
 	}
 
 	@Override
-	public long getFolderId(long companyId, long folderId) {
+	public long getFolderId(long companyId, long folderId)
+		throws SystemException {
+
 		if (folderId != DLFolderConstants.DEFAULT_PARENT_FOLDER_ID) {
 
 			// Ensure folder exists and belongs to the proper company
@@ -466,24 +482,16 @@ public class DLFolderLocalServiceImpl extends DLFolderLocalServiceBaseImpl {
 	}
 
 	@Override
-	public List<Long> getFolderIds(long groupId, long parentFolderId) {
-		List<Long> folderIds = new ArrayList<Long>();
+	public List<DLFolder> getFolders(long groupId, long parentFolderId)
+		throws SystemException {
 
-		folderIds.add(parentFolderId);
-
-		getSubfolderIds(folderIds, groupId, parentFolderId);
-
-		return folderIds;
-	}
-
-	@Override
-	public List<DLFolder> getFolders(long groupId, long parentFolderId) {
 		return getFolders(groupId, parentFolderId, true);
 	}
 
 	@Override
 	public List<DLFolder> getFolders(
-		long groupId, long parentFolderId, boolean includeMountfolders) {
+			long groupId, long parentFolderId, boolean includeMountfolders)
+		throws SystemException {
 
 		if (includeMountfolders) {
 			return dlFolderPersistence.findByG_P(groupId, parentFolderId);
@@ -496,8 +504,9 @@ public class DLFolderLocalServiceImpl extends DLFolderLocalServiceBaseImpl {
 
 	@Override
 	public List<DLFolder> getFolders(
-		long groupId, long parentFolderId, boolean includeMountfolders,
-		int start, int end, OrderByComparator<DLFolder> obc) {
+			long groupId, long parentFolderId, boolean includeMountfolders,
+			int start, int end, OrderByComparator obc)
+		throws SystemException {
 
 		if (includeMountfolders) {
 			return dlFolderPersistence.findByG_P(
@@ -511,8 +520,9 @@ public class DLFolderLocalServiceImpl extends DLFolderLocalServiceBaseImpl {
 
 	@Override
 	public List<DLFolder> getFolders(
-		long groupId, long parentFolderId, int start, int end,
-		OrderByComparator<DLFolder> obc) {
+			long groupId, long parentFolderId, int start, int end,
+			OrderByComparator obc)
+		throws SystemException {
 
 		return getFolders(groupId, parentFolderId, true, start, end, obc);
 	}
@@ -522,14 +532,15 @@ public class DLFolderLocalServiceImpl extends DLFolderLocalServiceBaseImpl {
 	 *             #getFoldersAndFileEntriesAndFileShortcuts(long, long,
 	 *             String[], boolean, QueryDefinition)}
 	 */
-	@Deprecated
 	@Override
 	public List<Object> getFoldersAndFileEntriesAndFileShortcuts(
-		long groupId, long folderId, int status, boolean includeMountFolders,
-		int start, int end, OrderByComparator<?> obc) {
+			long groupId, long folderId, int status,
+			boolean includeMountFolders, int start, int end,
+			OrderByComparator obc)
+		throws SystemException {
 
-		QueryDefinition<?> queryDefinition = new QueryDefinition<Object>(
-			status, start, end, (OrderByComparator<Object>)obc);
+		QueryDefinition queryDefinition = new QueryDefinition(
+			status, start, end, obc);
 
 		return getFoldersAndFileEntriesAndFileShortcuts(
 			groupId, folderId, null, includeMountFolders, queryDefinition);
@@ -540,15 +551,15 @@ public class DLFolderLocalServiceImpl extends DLFolderLocalServiceBaseImpl {
 	 *             #getFoldersAndFileEntriesAndFileShortcutsCount(long, long,
 	 *             String[], boolean, QueryDefinition)}
 	 */
-	@Deprecated
 	@Override
 	public List<Object> getFoldersAndFileEntriesAndFileShortcuts(
-		long groupId, long folderId, int status, String[] mimeTypes,
-		boolean includeMountFolders, int start, int end,
-		OrderByComparator<?> obc) {
+			long groupId, long folderId, int status, String[] mimeTypes,
+			boolean includeMountFolders, int start, int end,
+			OrderByComparator obc)
+		throws SystemException {
 
-		QueryDefinition<?> queryDefinition = new QueryDefinition<Object>(
-			status, start, end, (OrderByComparator<Object>)obc);
+		QueryDefinition queryDefinition = new QueryDefinition(
+			status, start, end, obc);
 
 		return getFoldersAndFileEntriesAndFileShortcuts(
 			groupId, folderId, mimeTypes, includeMountFolders, queryDefinition);
@@ -556,8 +567,9 @@ public class DLFolderLocalServiceImpl extends DLFolderLocalServiceBaseImpl {
 
 	@Override
 	public List<Object> getFoldersAndFileEntriesAndFileShortcuts(
-		long groupId, long folderId, String[] mimeTypes,
-		boolean includeMountFolders, QueryDefinition<?> queryDefinition) {
+			long groupId, long folderId, String[] mimeTypes,
+			boolean includeMountFolders, QueryDefinition queryDefinition)
+		throws SystemException {
 
 		return dlFolderFinder.findF_FE_FS_ByG_F_M_M(
 			groupId, folderId, mimeTypes, includeMountFolders, queryDefinition);
@@ -568,13 +580,13 @@ public class DLFolderLocalServiceImpl extends DLFolderLocalServiceBaseImpl {
 	 *             #getFoldersAndFileEntriesAndFileShortcutsCount(long, long,
 	 *             String[], boolean, QueryDefinition)}
 	 */
-	@Deprecated
 	@Override
 	public int getFoldersAndFileEntriesAndFileShortcutsCount(
-		long groupId, long folderId, int status, boolean includeMountFolders) {
+			long groupId, long folderId, int status,
+			boolean includeMountFolders)
+		throws SystemException {
 
-		QueryDefinition<?> queryDefinition = new QueryDefinition<Object>(
-			status);
+		QueryDefinition queryDefinition = new QueryDefinition(status);
 
 		return getFoldersAndFileEntriesAndFileShortcutsCount(
 			groupId, folderId, null, includeMountFolders, queryDefinition);
@@ -585,14 +597,13 @@ public class DLFolderLocalServiceImpl extends DLFolderLocalServiceBaseImpl {
 	 *             #getFoldersAndFileEntriesAndFileShortcutsCount(long, long,
 	 *             String[], boolean, QueryDefinition)}
 	 */
-	@Deprecated
 	@Override
 	public int getFoldersAndFileEntriesAndFileShortcutsCount(
-		long groupId, long folderId, int status, String[] mimeTypes,
-		boolean includeMountFolders) {
+			long groupId, long folderId, int status, String[] mimeTypes,
+			boolean includeMountFolders)
+		throws SystemException {
 
-		QueryDefinition<?> queryDefinition = new QueryDefinition<Object>(
-			status);
+		QueryDefinition queryDefinition = new QueryDefinition(status);
 
 		return getFoldersAndFileEntriesAndFileShortcutsCount(
 			groupId, folderId, mimeTypes, includeMountFolders, queryDefinition);
@@ -600,21 +611,25 @@ public class DLFolderLocalServiceImpl extends DLFolderLocalServiceBaseImpl {
 
 	@Override
 	public int getFoldersAndFileEntriesAndFileShortcutsCount(
-		long groupId, long folderId, String[] mimeTypes,
-		boolean includeMountFolders, QueryDefinition<?> queryDefinition) {
+			long groupId, long folderId, String[] mimeTypes,
+			boolean includeMountFolders, QueryDefinition queryDefinition)
+		throws SystemException {
 
 		return dlFolderFinder.countF_FE_FS_ByG_F_M_M(
 			groupId, folderId, mimeTypes, includeMountFolders, queryDefinition);
 	}
 
 	@Override
-	public int getFoldersCount(long groupId, long parentFolderId) {
+	public int getFoldersCount(long groupId, long parentFolderId)
+		throws SystemException {
+
 		return getFoldersCount(groupId, parentFolderId, true);
 	}
 
 	@Override
 	public int getFoldersCount(
-		long groupId, long parentFolderId, boolean includeMountfolders) {
+			long groupId, long parentFolderId, boolean includeMountfolders)
+		throws SystemException {
 
 		if (includeMountfolders) {
 			return dlFolderPersistence.countByG_P(groupId, parentFolderId);
@@ -627,8 +642,9 @@ public class DLFolderLocalServiceImpl extends DLFolderLocalServiceBaseImpl {
 
 	@Override
 	public int getFoldersCount(
-		long groupId, long parentFolderId, int status,
-		boolean includeMountfolders) {
+			long groupId, long parentFolderId, int status,
+			boolean includeMountfolders)
+		throws SystemException {
 
 		if (includeMountfolders) {
 			return dlFolderPersistence.countByG_P_H_S(
@@ -641,45 +657,39 @@ public class DLFolderLocalServiceImpl extends DLFolderLocalServiceBaseImpl {
 	}
 
 	@Override
-	public DLFolder getMountFolder(long repositoryId) throws PortalException {
-		return dlFolderPersistence.findByR_M(repositoryId, true);
+	public DLFolder getMountFolder(long repositoryId)
+		throws PortalException, SystemException {
+
+		return dlFolderPersistence.findByRepositoryId(repositoryId);
 	}
 
 	@Override
 	public List<DLFolder> getMountFolders(
-		long groupId, long parentFolderId, int start, int end,
-		OrderByComparator<DLFolder> obc) {
+			long groupId, long parentFolderId, int start, int end,
+			OrderByComparator obc)
+		throws SystemException {
 
 		return dlFolderPersistence.findByG_M_P_H(
 			groupId, true, parentFolderId, false, start, end, obc);
 	}
 
 	@Override
-	public int getMountFoldersCount(long groupId, long parentFolderId) {
+	public int getMountFoldersCount(long groupId, long parentFolderId)
+		throws SystemException {
+
 		return dlFolderPersistence.countByG_M_P_H(
 			groupId, true, parentFolderId, false);
 	}
 
 	@Override
-	public List<DLFolder> getNoAssetFolders() {
+	public List<DLFolder> getNoAssetFolders() throws SystemException {
 		return dlFolderFinder.findF_ByNoAssets();
 	}
 
 	@Override
-	public List<DLFolder> getRepositoryFolders(
-		long repositoryId, int start, int end) {
-
-		return dlFolderPersistence.findByRepositoryId(repositoryId, start, end);
-	}
-
-	@Override
-	public int getRepositoryFoldersCount(long repositoryId) {
-		return dlFolderPersistence.countByRepositoryId(repositoryId);
-	}
-
-	@Override
 	public void getSubfolderIds(
-		List<Long> folderIds, long groupId, long folderId) {
+			List<Long> folderIds, long groupId, long folderId)
+		throws SystemException {
 
 		List<DLFolder> dlFolders = dlFolderPersistence.findByG_P(
 			groupId, folderId);
@@ -693,13 +703,17 @@ public class DLFolderLocalServiceImpl extends DLFolderLocalServiceBaseImpl {
 	}
 
 	@Override
-	public boolean hasFolderLock(long userId, long folderId) {
+	public boolean hasFolderLock(long userId, long folderId)
+		throws SystemException {
+
 		return lockLocalService.hasLock(
 			userId, DLFolder.class.getName(), folderId);
 	}
 
 	@Override
-	public Lock lockFolder(long userId, long folderId) throws PortalException {
+	public Lock lockFolder(long userId, long folderId)
+		throws PortalException, SystemException {
+
 		return lockFolder(
 			userId, folderId, null, false, DLFolderImpl.LOCK_EXPIRATION_TIME);
 	}
@@ -708,7 +722,7 @@ public class DLFolderLocalServiceImpl extends DLFolderLocalServiceBaseImpl {
 	public Lock lockFolder(
 			long userId, long folderId, String owner, boolean inheritable,
 			long expirationTime)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		if ((expirationTime <= 0) ||
 			(expirationTime > DLFolderImpl.LOCK_EXPIRATION_TIME)) {
@@ -726,7 +740,7 @@ public class DLFolderLocalServiceImpl extends DLFolderLocalServiceBaseImpl {
 	public DLFolder moveFolder(
 			long userId, long folderId, long parentFolderId,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		boolean hasLock = hasFolderLock(userId, folderId);
 
@@ -755,9 +769,7 @@ public class DLFolderLocalServiceImpl extends DLFolderLocalServiceBaseImpl {
 
 			dlFolderPersistence.update(dlFolder);
 
-			rebuildTree(
-				dlFolder.getCompanyId(), folderId, dlFolder.getTreePath(),
-				true);
+			dlAppHelperLocalService.moveFolder(new LiferayFolder(dlFolder));
 
 			return dlFolder;
 		}
@@ -772,60 +784,21 @@ public class DLFolderLocalServiceImpl extends DLFolderLocalServiceBaseImpl {
 	}
 
 	@Override
-	public void rebuildTree(long companyId) throws PortalException {
-		rebuildTree(
-			companyId, DLFolderConstants.DEFAULT_PARENT_FOLDER_ID,
-			StringPool.SLASH, false);
-	}
-
-	@Override
-	public void rebuildTree(
-			long companyId, long parentFolderId, String parentTreePath,
-			final boolean reindex)
-		throws PortalException {
-
+	public void rebuildTree(long companyId) throws SystemException {
 		TreePathUtil.rebuildTree(
-			companyId, parentFolderId, parentTreePath,
-			new TreeModelTasksAdapter<DLFolder>() {
+			companyId, DLFolderConstants.DEFAULT_PARENT_FOLDER_ID,
+			new TreeModelFinder<DLFolder>() {
 
 				@Override
 				public List<DLFolder> findTreeModels(
-					long previousId, long companyId, long parentPrimaryKey,
-					int size) {
+						long previousId, long companyId, long parentPrimaryKey,
+						int size)
+					throws SystemException {
 
 					return dlFolderPersistence.findByF_C_P_NotS(
 						previousId, companyId, parentPrimaryKey,
 						WorkflowConstants.STATUS_IN_TRASH, QueryUtil.ALL_POS,
-						size, new FolderIdComparator(true));
-				}
-
-				@Override
-				public void rebuildDependentModelsTreePaths(
-						long parentPrimaryKey, String treePath)
-					throws PortalException {
-
-					dlFileEntryLocalService.setTreePaths(
-						parentPrimaryKey, treePath, false);
-					dlFileShortcutLocalService.setTreePaths(
-						parentPrimaryKey, treePath);
-					dlFileVersionLocalService.setTreePaths(
-						parentPrimaryKey, treePath);
-				}
-
-				@Override
-				public void reindexTreeModels(List<TreeModel> treeModels)
-					throws PortalException {
-
-					if (!reindex) {
-						return;
-					}
-
-					Indexer indexer = IndexerRegistryUtil.nullSafeGetIndexer(
-						DLFolder.class);
-
-					for (TreeModel treeModel : treeModels) {
-						indexer.reindex(treeModel);
-					}
+						size, new FolderIdComparator());
 				}
 
 			}
@@ -835,7 +808,7 @@ public class DLFolderLocalServiceImpl extends DLFolderLocalServiceBaseImpl {
 	@Override
 	public void unlockFolder(
 			long groupId, long parentFolderId, String name, String lockUuid)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		DLFolder dlFolder = getFolder(groupId, parentFolderId, name);
 
@@ -844,7 +817,7 @@ public class DLFolderLocalServiceImpl extends DLFolderLocalServiceBaseImpl {
 
 	@Override
 	public void unlockFolder(long folderId, String lockUuid)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		if (Validator.isNotNull(lockUuid)) {
 			try {
@@ -874,7 +847,7 @@ public class DLFolderLocalServiceImpl extends DLFolderLocalServiceBaseImpl {
 			long folderId, long parentFolderId, String name, String description,
 			long defaultFileEntryTypeId, List<Long> fileEntryTypeIds,
 			boolean overrideFileEntryTypes, ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		boolean hasLock = hasFolderLock(serviceContext.getUserId(), folderId);
 
@@ -959,18 +932,10 @@ public class DLFolderLocalServiceImpl extends DLFolderLocalServiceBaseImpl {
 			long folderId, String name, String description,
 			long defaultFileEntryTypeId, List<Long> fileEntryTypeIds,
 			boolean overrideFileEntryTypes, ServiceContext serviceContext)
-		throws PortalException {
-
-		long parentFolderId = DLFolderConstants.DEFAULT_PARENT_FOLDER_ID;
-
-		if (folderId != DLFolderConstants.DEFAULT_PARENT_FOLDER_ID) {
-			DLFolder dlFolder = getDLFolder(folderId);
-
-			parentFolderId = dlFolder.getParentFolderId();
-		}
+		throws PortalException, SystemException {
 
 		return updateFolder(
-			folderId, parentFolderId, name, description, defaultFileEntryTypeId,
+			folderId, folderId, name, description, defaultFileEntryTypeId,
 			fileEntryTypeIds, overrideFileEntryTypes, serviceContext);
 	}
 
@@ -980,11 +945,7 @@ public class DLFolderLocalServiceImpl extends DLFolderLocalServiceBaseImpl {
 			String description, long defaultFileEntryTypeId,
 			List<Long> fileEntryTypeIds, boolean overrideFileEntryTypes,
 			ServiceContext serviceContext)
-		throws PortalException {
-
-		if (overrideFileEntryTypes && fileEntryTypeIds.isEmpty()) {
-			throw new RequiredFileEntryTypeException();
-		}
+		throws PortalException, SystemException {
 
 		boolean hasLock = hasFolderLock(userId, folderId);
 
@@ -1033,6 +994,11 @@ public class DLFolderLocalServiceImpl extends DLFolderLocalServiceBaseImpl {
 					serviceContext);
 			}
 
+			// App helper
+
+			dlAppHelperLocalService.updateFolder(
+				userId, new LiferayFolder(dlFolder), serviceContext);
+
 			return dlFolder;
 		}
 		finally {
@@ -1045,25 +1011,14 @@ public class DLFolderLocalServiceImpl extends DLFolderLocalServiceBaseImpl {
 		}
 	}
 
-	@BufferedIncrement(
-		configuration = "DLFolderEntry",
-		incrementClass = DateOverrideIncrement.class)
+	/**
+	 * @deprecated As of 6.2.0
+	 */
 	@Override
 	public void updateLastPostDate(long folderId, Date lastPostDate)
-		throws PortalException {
-
-		if (ExportImportThreadLocal.isImportInProcess() ||
-			(folderId == DLFolderConstants.DEFAULT_PARENT_FOLDER_ID) ||
-			(lastPostDate == null)) {
-
-			return;
-		}
+		throws PortalException, SystemException {
 
 		DLFolder dlFolder = dlFolderPersistence.findByPrimaryKey(folderId);
-
-		if (lastPostDate.before(dlFolder.getLastPostDate())) {
-			return;
-		}
 
 		dlFolder.setLastPostDate(lastPostDate);
 
@@ -1075,7 +1030,7 @@ public class DLFolderLocalServiceImpl extends DLFolderLocalServiceBaseImpl {
 			long userId, long folderId, int status,
 			Map<String, Serializable> workflowContext,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		// Folder
 
@@ -1122,7 +1077,7 @@ public class DLFolderLocalServiceImpl extends DLFolderLocalServiceBaseImpl {
 	protected void addFolderResources(
 			DLFolder dlFolder, boolean addGroupPermissions,
 			boolean addGuestPermissions)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		resourceLocalService.addResources(
 			dlFolder.getCompanyId(), dlFolder.getGroupId(),
@@ -1134,7 +1089,7 @@ public class DLFolderLocalServiceImpl extends DLFolderLocalServiceBaseImpl {
 	protected void addFolderResources(
 			DLFolder dlFolder, String[] groupPermissions,
 			String[] guestPermissions)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		resourceLocalService.addModelResources(
 			dlFolder.getCompanyId(), dlFolder.getGroupId(),
@@ -1145,7 +1100,7 @@ public class DLFolderLocalServiceImpl extends DLFolderLocalServiceBaseImpl {
 	protected void addFolderResources(
 			long folderId, boolean addGroupPermissions,
 			boolean addGuestPermissions)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		DLFolder dlFolder = dlFolderPersistence.findByPrimaryKey(folderId);
 
@@ -1154,7 +1109,7 @@ public class DLFolderLocalServiceImpl extends DLFolderLocalServiceBaseImpl {
 
 	protected void addFolderResources(
 			long folderId, String[] groupPermissions, String[] guestPermissions)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		DLFolder dlFolder = dlFolderPersistence.findByPrimaryKey(folderId);
 
@@ -1162,19 +1117,23 @@ public class DLFolderLocalServiceImpl extends DLFolderLocalServiceBaseImpl {
 	}
 
 	protected long getParentFolderId(DLFolder dlFolder, long parentFolderId)
-		throws PortalException {
-
-		parentFolderId = getParentFolderId(
-			dlFolder.getGroupId(), dlFolder.getRepositoryId(), parentFolderId);
+		throws SystemException {
 
 		if (parentFolderId == DLFolderConstants.DEFAULT_PARENT_FOLDER_ID) {
 			return parentFolderId;
 		}
 
 		if (dlFolder.getFolderId() == parentFolderId) {
-			throw new InvalidFolderException(
-				String.format(
-					"Cannot move folder %s into itself", parentFolderId));
+			return dlFolder.getParentFolderId();
+		}
+
+		DLFolder parentDLFolder = dlFolderPersistence.fetchByPrimaryKey(
+			parentFolderId);
+
+		if ((parentDLFolder == null) ||
+			(dlFolder.getGroupId() != parentDLFolder.getGroupId())) {
+
+			return dlFolder.getParentFolderId();
 		}
 
 		List<Long> subfolderIds = new ArrayList<Long>();
@@ -1183,58 +1142,36 @@ public class DLFolderLocalServiceImpl extends DLFolderLocalServiceBaseImpl {
 			subfolderIds, dlFolder.getGroupId(), dlFolder.getFolderId());
 
 		if (subfolderIds.contains(parentFolderId)) {
-			throw new InvalidFolderException(
-				String.format(
-					"Cannot move folder %s into one of its children",
-					parentFolderId));
+			return dlFolder.getParentFolderId();
 		}
 
 		return parentFolderId;
 	}
 
-	protected long getParentFolderId(
-			long groupId, long repositoryId, long parentFolderId)
-		throws PortalException {
+	protected long getParentFolderId(long groupId, long parentFolderId)
+		throws SystemException {
 
-		if (parentFolderId == DLFolderConstants.DEFAULT_PARENT_FOLDER_ID) {
-			return parentFolderId;
-		}
+		if (parentFolderId != DLFolderConstants.DEFAULT_PARENT_FOLDER_ID) {
+			DLFolder parentDLFolder = dlFolderPersistence.fetchByPrimaryKey(
+				parentFolderId);
 
-		DLFolder parentDLFolder = dlFolderPersistence.findByPrimaryKey(
-			parentFolderId);
+			if ((parentDLFolder == null) ||
+				(groupId != parentDLFolder.getGroupId())) {
 
-		if (parentDLFolder.getGroupId() != groupId) {
-			throw new NoSuchFolderException(
-				String.format(
-					"No folder exists with the primary key %s in group %s",
-					parentFolderId, groupId));
-		}
-
-		if ((parentDLFolder.getRepositoryId() != repositoryId) &&
-			(parentDLFolder.getRepositoryId() != groupId)) {
-
-			Repository repository = repositoryLocalService.getRepository(
-				repositoryId);
-
-			if (repository.getGroupId() != parentDLFolder.getGroupId()) {
-				throw new NoSuchFolderException(
-					String.format(
-						"No folder exists with the primary key %s in " +
-							"repository %s",
-						parentFolderId, repositoryId));
+				parentFolderId = DLFolderConstants.DEFAULT_PARENT_FOLDER_ID;
 			}
 		}
 
-		return parentDLFolder.getFolderId();
+		return parentFolderId;
 	}
 
 	protected void validateFolder(
 			long folderId, long groupId, long parentFolderId, String name)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		validateFolderName(name);
 
-		DLValidatorUtil.validateDirectoryName(name);
+		DLStoreUtil.validateDirectoryName(name);
 
 		try {
 			dlFileEntryLocalService.getFileEntry(groupId, parentFolderId, name);
@@ -1254,7 +1191,7 @@ public class DLFolderLocalServiceImpl extends DLFolderLocalServiceBaseImpl {
 
 	protected void validateFolder(
 			long groupId, long parentFolderId, String name)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		long folderId = 0;
 

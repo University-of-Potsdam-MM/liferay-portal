@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,6 +18,7 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.bean.PortalBeanLocatorUtil;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ReferenceRegistry;
 import com.liferay.portal.model.UserTrackerPath;
@@ -62,7 +63,8 @@ public class UserTrackerPathUtil {
 	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#countWithDynamicQuery(DynamicQuery)
 	 */
-	public static long countWithDynamicQuery(DynamicQuery dynamicQuery) {
+	public static long countWithDynamicQuery(DynamicQuery dynamicQuery)
+		throws SystemException {
 		return getPersistence().countWithDynamicQuery(dynamicQuery);
 	}
 
@@ -70,7 +72,7 @@ public class UserTrackerPathUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#findWithDynamicQuery(DynamicQuery)
 	 */
 	public static List<UserTrackerPath> findWithDynamicQuery(
-		DynamicQuery dynamicQuery) {
+		DynamicQuery dynamicQuery) throws SystemException {
 		return getPersistence().findWithDynamicQuery(dynamicQuery);
 	}
 
@@ -78,7 +80,8 @@ public class UserTrackerPathUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#findWithDynamicQuery(DynamicQuery, int, int)
 	 */
 	public static List<UserTrackerPath> findWithDynamicQuery(
-		DynamicQuery dynamicQuery, int start, int end) {
+		DynamicQuery dynamicQuery, int start, int end)
+		throws SystemException {
 		return getPersistence().findWithDynamicQuery(dynamicQuery, start, end);
 	}
 
@@ -87,7 +90,7 @@ public class UserTrackerPathUtil {
 	 */
 	public static List<UserTrackerPath> findWithDynamicQuery(
 		DynamicQuery dynamicQuery, int start, int end,
-		OrderByComparator<UserTrackerPath> orderByComparator) {
+		OrderByComparator orderByComparator) throws SystemException {
 		return getPersistence()
 				   .findWithDynamicQuery(dynamicQuery, start, end,
 			orderByComparator);
@@ -96,7 +99,8 @@ public class UserTrackerPathUtil {
 	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel)
 	 */
-	public static UserTrackerPath update(UserTrackerPath userTrackerPath) {
+	public static UserTrackerPath update(UserTrackerPath userTrackerPath)
+		throws SystemException {
 		return getPersistence().update(userTrackerPath);
 	}
 
@@ -104,7 +108,7 @@ public class UserTrackerPathUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, ServiceContext)
 	 */
 	public static UserTrackerPath update(UserTrackerPath userTrackerPath,
-		ServiceContext serviceContext) {
+		ServiceContext serviceContext) throws SystemException {
 		return getPersistence().update(userTrackerPath, serviceContext);
 	}
 
@@ -113,9 +117,11 @@ public class UserTrackerPathUtil {
 	*
 	* @param userTrackerId the user tracker ID
 	* @return the matching user tracker paths
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portal.model.UserTrackerPath> findByUserTrackerId(
-		long userTrackerId) {
+		long userTrackerId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByUserTrackerId(userTrackerId);
 	}
 
@@ -130,9 +136,11 @@ public class UserTrackerPathUtil {
 	* @param start the lower bound of the range of user tracker paths
 	* @param end the upper bound of the range of user tracker paths (not inclusive)
 	* @return the range of matching user tracker paths
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portal.model.UserTrackerPath> findByUserTrackerId(
-		long userTrackerId, int start, int end) {
+		long userTrackerId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByUserTrackerId(userTrackerId, start, end);
 	}
 
@@ -148,10 +156,12 @@ public class UserTrackerPathUtil {
 	* @param end the upper bound of the range of user tracker paths (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching user tracker paths
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portal.model.UserTrackerPath> findByUserTrackerId(
 		long userTrackerId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.UserTrackerPath> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByUserTrackerId(userTrackerId, start, end,
 			orderByComparator);
@@ -164,11 +174,13 @@ public class UserTrackerPathUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching user tracker path
 	* @throws com.liferay.portal.NoSuchUserTrackerPathException if a matching user tracker path could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserTrackerPath findByUserTrackerId_First(
 		long userTrackerId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.UserTrackerPath> orderByComparator)
-		throws com.liferay.portal.NoSuchUserTrackerPathException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchUserTrackerPathException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByUserTrackerId_First(userTrackerId, orderByComparator);
 	}
@@ -179,10 +191,12 @@ public class UserTrackerPathUtil {
 	* @param userTrackerId the user tracker ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching user tracker path, or <code>null</code> if a matching user tracker path could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserTrackerPath fetchByUserTrackerId_First(
 		long userTrackerId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.UserTrackerPath> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByUserTrackerId_First(userTrackerId, orderByComparator);
 	}
@@ -194,11 +208,13 @@ public class UserTrackerPathUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching user tracker path
 	* @throws com.liferay.portal.NoSuchUserTrackerPathException if a matching user tracker path could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserTrackerPath findByUserTrackerId_Last(
 		long userTrackerId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.UserTrackerPath> orderByComparator)
-		throws com.liferay.portal.NoSuchUserTrackerPathException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchUserTrackerPathException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByUserTrackerId_Last(userTrackerId, orderByComparator);
 	}
@@ -209,10 +225,12 @@ public class UserTrackerPathUtil {
 	* @param userTrackerId the user tracker ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching user tracker path, or <code>null</code> if a matching user tracker path could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserTrackerPath fetchByUserTrackerId_Last(
 		long userTrackerId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.UserTrackerPath> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByUserTrackerId_Last(userTrackerId, orderByComparator);
 	}
@@ -225,11 +243,13 @@ public class UserTrackerPathUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next user tracker path
 	* @throws com.liferay.portal.NoSuchUserTrackerPathException if a user tracker path with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserTrackerPath[] findByUserTrackerId_PrevAndNext(
 		long userTrackerPathId, long userTrackerId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.UserTrackerPath> orderByComparator)
-		throws com.liferay.portal.NoSuchUserTrackerPathException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchUserTrackerPathException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByUserTrackerId_PrevAndNext(userTrackerPathId,
 			userTrackerId, orderByComparator);
@@ -239,8 +259,10 @@ public class UserTrackerPathUtil {
 	* Removes all the user tracker paths where userTrackerId = &#63; from the database.
 	*
 	* @param userTrackerId the user tracker ID
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByUserTrackerId(long userTrackerId) {
+	public static void removeByUserTrackerId(long userTrackerId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeByUserTrackerId(userTrackerId);
 	}
 
@@ -249,8 +271,10 @@ public class UserTrackerPathUtil {
 	*
 	* @param userTrackerId the user tracker ID
 	* @return the number of matching user tracker paths
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByUserTrackerId(long userTrackerId) {
+	public static int countByUserTrackerId(long userTrackerId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByUserTrackerId(userTrackerId);
 	}
 
@@ -291,15 +315,18 @@ public class UserTrackerPathUtil {
 	* @param userTrackerPathId the primary key of the user tracker path
 	* @return the user tracker path that was removed
 	* @throws com.liferay.portal.NoSuchUserTrackerPathException if a user tracker path with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserTrackerPath remove(
 		long userTrackerPathId)
-		throws com.liferay.portal.NoSuchUserTrackerPathException {
+		throws com.liferay.portal.NoSuchUserTrackerPathException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().remove(userTrackerPathId);
 	}
 
 	public static com.liferay.portal.model.UserTrackerPath updateImpl(
-		com.liferay.portal.model.UserTrackerPath userTrackerPath) {
+		com.liferay.portal.model.UserTrackerPath userTrackerPath)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().updateImpl(userTrackerPath);
 	}
 
@@ -309,10 +336,12 @@ public class UserTrackerPathUtil {
 	* @param userTrackerPathId the primary key of the user tracker path
 	* @return the user tracker path
 	* @throws com.liferay.portal.NoSuchUserTrackerPathException if a user tracker path with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserTrackerPath findByPrimaryKey(
 		long userTrackerPathId)
-		throws com.liferay.portal.NoSuchUserTrackerPathException {
+		throws com.liferay.portal.NoSuchUserTrackerPathException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByPrimaryKey(userTrackerPathId);
 	}
 
@@ -321,23 +350,22 @@ public class UserTrackerPathUtil {
 	*
 	* @param userTrackerPathId the primary key of the user tracker path
 	* @return the user tracker path, or <code>null</code> if a user tracker path with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserTrackerPath fetchByPrimaryKey(
-		long userTrackerPathId) {
+		long userTrackerPathId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByPrimaryKey(userTrackerPathId);
-	}
-
-	public static java.util.Map<java.io.Serializable, com.liferay.portal.model.UserTrackerPath> fetchByPrimaryKeys(
-		java.util.Set<java.io.Serializable> primaryKeys) {
-		return getPersistence().fetchByPrimaryKeys(primaryKeys);
 	}
 
 	/**
 	* Returns all the user tracker paths.
 	*
 	* @return the user tracker paths
+	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portal.model.UserTrackerPath> findAll() {
+	public static java.util.List<com.liferay.portal.model.UserTrackerPath> findAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll();
 	}
 
@@ -351,9 +379,11 @@ public class UserTrackerPathUtil {
 	* @param start the lower bound of the range of user tracker paths
 	* @param end the upper bound of the range of user tracker paths (not inclusive)
 	* @return the range of user tracker paths
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portal.model.UserTrackerPath> findAll(
-		int start, int end) {
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll(start, end);
 	}
 
@@ -368,17 +398,22 @@ public class UserTrackerPathUtil {
 	* @param end the upper bound of the range of user tracker paths (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of user tracker paths
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portal.model.UserTrackerPath> findAll(
 		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.UserTrackerPath> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll(start, end, orderByComparator);
 	}
 
 	/**
 	* Removes all the user tracker paths from the database.
+	*
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeAll() {
+	public static void removeAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeAll();
 	}
 
@@ -386,8 +421,10 @@ public class UserTrackerPathUtil {
 	* Returns the number of user tracker paths.
 	*
 	* @return the number of user tracker paths
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countAll() {
+	public static int countAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countAll();
 	}
 
@@ -405,7 +442,6 @@ public class UserTrackerPathUtil {
 	/**
 	 * @deprecated As of 6.2.0
 	 */
-	@Deprecated
 	public void setPersistence(UserTrackerPathPersistence persistence) {
 	}
 

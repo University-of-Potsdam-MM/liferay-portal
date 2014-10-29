@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -42,9 +42,6 @@ public class PACLInitialContextFactory implements InitialContextFactory {
 
 		if (environment != null) {
 			_environment = new Hashtable<Object, Object>(environment);
-		}
-		else {
-			_environment = null;
 		}
 	}
 
@@ -159,12 +156,12 @@ public class PACLInitialContextFactory implements InitialContextFactory {
 		return new PACLContext(context, paclPolicy);
 	}
 
-	private final Hashtable<?, ?> _environment;
-	private final InitialContextFactoryBuilder _initialContextFactoryBuilder;
+	private Hashtable<?, ?> _environment;
+	private InitialContextFactoryBuilder _initialContextFactoryBuilder;
 
 	// This must not be static because of LPS-33404
 
-	private final Log _log = LogFactoryUtil.getLog(
+	private Log _log = LogFactoryUtil.getLog(
 		PACLInitialContextFactory.class.getName());
 
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -31,18 +31,6 @@ public class BackgroundTaskServiceWrapper implements BackgroundTaskService,
 		_backgroundTaskService = backgroundTaskService;
 	}
 
-	@Override
-	public java.lang.String getBackgroundTaskStatusJSON(long backgroundTaskId) {
-		return _backgroundTaskService.getBackgroundTaskStatusJSON(backgroundTaskId);
-	}
-
-	@Override
-	public int getBackgroundTasksCount(long groupId,
-		java.lang.String taskExecutorClassName, java.lang.String completed) {
-		return _backgroundTaskService.getBackgroundTasksCount(groupId,
-			taskExecutorClassName, completed);
-	}
-
 	/**
 	* Returns the Spring bean ID for this bean.
 	*
@@ -63,10 +51,22 @@ public class BackgroundTaskServiceWrapper implements BackgroundTaskService,
 		_backgroundTaskService.setBeanIdentifier(beanIdentifier);
 	}
 
+	@Override
+	public int getBackgroundTasksCount(long groupId,
+		java.lang.String taskExecutorClassName, java.lang.String completed)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return _backgroundTaskService.getBackgroundTasksCount(groupId,
+			taskExecutorClassName, completed);
+	}
+
+	@Override
+	public java.lang.String getBackgroundTaskStatusJSON(long backgroundTaskId) {
+		return _backgroundTaskService.getBackgroundTaskStatusJSON(backgroundTaskId);
+	}
+
 	/**
 	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedService}
 	 */
-	@Deprecated
 	public BackgroundTaskService getWrappedBackgroundTaskService() {
 		return _backgroundTaskService;
 	}
@@ -74,7 +74,6 @@ public class BackgroundTaskServiceWrapper implements BackgroundTaskService,
 	/**
 	 * @deprecated As of 6.1.0, replaced by {@link #setWrappedService}
 	 */
-	@Deprecated
 	public void setWrappedBackgroundTaskService(
 		BackgroundTaskService backgroundTaskService) {
 		_backgroundTaskService = backgroundTaskService;

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -28,17 +28,13 @@ public class PropertyComment {
 
 		String[] lines = comment.split(StringPool.NEW_LINE);
 
-		boolean preformatted = false;
-
 		for (String line : lines) {
 			if (line.startsWith(PropertiesDocBuilder.INDENT)) {
-				preformatted = true;
+				_preformatted = true;
 
-				break;
+				return;
 			}
 		}
-
-		_preformatted = preformatted;
 	}
 
 	public String getComment() {
@@ -49,7 +45,7 @@ public class PropertyComment {
 		return _preformatted;
 	}
 
-	private final String _comment;
-	private final boolean _preformatted;
+	private String _comment;
+	private boolean _preformatted;
 
 }

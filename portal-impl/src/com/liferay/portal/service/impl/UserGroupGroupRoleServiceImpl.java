@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,12 +15,13 @@
 package com.liferay.portal.service.impl;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.security.auth.PrincipalException;
+import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portal.service.base.UserGroupGroupRoleServiceBaseImpl;
-import com.liferay.portal.service.permission.UserGroupRolePermissionUtil;
 
 /**
  * @author Brett Swaim
- * @author Akos Thurzo
  */
 public class UserGroupGroupRoleServiceImpl
 	extends UserGroupGroupRoleServiceBaseImpl {
@@ -28,9 +29,13 @@ public class UserGroupGroupRoleServiceImpl
 	@Override
 	public void addUserGroupGroupRoles(
 			long userGroupId, long groupId, long[] roleIds)
-		throws PortalException {
+		throws PortalException, SystemException {
 
-		checkPermission(groupId, roleIds);
+		PermissionChecker permissionChecker = getPermissionChecker();
+
+		if (!permissionChecker.isGroupOwner(groupId)) {
+			throw new PrincipalException();
+		}
 
 		userGroupGroupRoleLocalService.addUserGroupGroupRoles(
 			userGroupId, groupId, roleIds);
@@ -39,9 +44,13 @@ public class UserGroupGroupRoleServiceImpl
 	@Override
 	public void addUserGroupGroupRoles(
 			long[] userGroupIds, long groupId, long roleId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
-		checkPermission(groupId, new long[] {roleId});
+		PermissionChecker permissionChecker = getPermissionChecker();
+
+		if (!permissionChecker.isGroupOwner(groupId)) {
+			throw new PrincipalException();
+		}
 
 		userGroupGroupRoleLocalService.addUserGroupGroupRoles(
 			userGroupIds, groupId, roleId);
@@ -50,9 +59,13 @@ public class UserGroupGroupRoleServiceImpl
 	@Override
 	public void deleteUserGroupGroupRoles(
 			long userGroupId, long groupId, long[] roleIds)
-		throws PortalException {
+		throws PortalException, SystemException {
 
-		checkPermission(groupId, roleIds);
+		PermissionChecker permissionChecker = getPermissionChecker();
+
+		if (!permissionChecker.isGroupOwner(groupId)) {
+			throw new PrincipalException();
+		}
 
 		userGroupGroupRoleLocalService.deleteUserGroupGroupRoles(
 			userGroupId, groupId, roleIds);
@@ -61,21 +74,16 @@ public class UserGroupGroupRoleServiceImpl
 	@Override
 	public void deleteUserGroupGroupRoles(
 			long[] userGroupIds, long groupId, long roleId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
-		checkPermission(groupId, new long[] {roleId});
+		PermissionChecker permissionChecker = getPermissionChecker();
+
+		if (!permissionChecker.isGroupOwner(groupId)) {
+			throw new PrincipalException();
+		}
 
 		userGroupGroupRoleLocalService.deleteUserGroupGroupRoles(
 			userGroupIds, groupId, roleId);
-	}
-
-	protected void checkPermission(long groupId, long[] roleIds)
-		throws PortalException {
-
-		for (long roleId : roleIds) {
-			UserGroupRolePermissionUtil.check(
-				getPermissionChecker(), groupId, roleId);
-		}
 	}
 
 }

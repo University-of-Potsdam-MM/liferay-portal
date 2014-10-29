@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -24,24 +24,21 @@ import com.liferay.portal.kernel.cluster.ClusterNodeResponses;
 import com.liferay.portal.kernel.cluster.ClusterRequest;
 import com.liferay.portal.kernel.cluster.FutureClusterResponses;
 import com.liferay.portal.kernel.executor.PortalExecutorManagerUtil;
-import com.liferay.portal.kernel.test.CaptureHandler;
 import com.liferay.portal.kernel.test.CodeCoverageAssertor;
 import com.liferay.portal.kernel.test.JDKLoggerTestUtil;
-import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.util.MethodHandler;
 import com.liferay.portal.kernel.util.PropsUtil;
+import com.liferay.portal.kernel.util.ReflectionUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
 import com.liferay.portal.test.AdviseWith;
-import com.liferay.portal.test.runners.AspectJMockingNewJVMJUnitTestRunner;
+import com.liferay.portal.test.AspectJMockingNewJVMJUnitTestRunner;
 import com.liferay.portal.util.PortalImpl;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.PropsImpl;
 import com.liferay.portal.uuid.PortalUUIDImpl;
 
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.UnknownHostException;
+import java.lang.reflect.Field;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,10 +67,10 @@ public class ClusterExecutorImplTest extends BaseClusterExecutorImplTestCase {
 
 	@AdviseWith(
 		adviceClasses = {
-			DisableAutodetectedAddressAdvice.class,
 			EnableClusterLinkAdvice.class,
 			EnableClusterExecutorDebugAdvice.class, EnableLiveUsersAdvice.class
-		})
+		}
+	)
 	@Test
 	public void testClusterEventListener1() throws Exception {
 		ClusterExecutorImpl clusterExecutorImpl = null;
@@ -136,9 +133,11 @@ public class ClusterExecutorImplTest extends BaseClusterExecutorImplTestCase {
 		try {
 			clusterExecutorImpl = getClusterExecutorImpl(false, false);
 
+			Field field = ReflectionUtil.getDeclaredField(
+				ClusterExecutorImpl.class, "_clusterEventListeners");
+
 			List<ClusterEventListener> fieldClusterEventListeners =
-				ReflectionTestUtil.getFieldValue(
-					clusterExecutorImpl, "_clusterEventListeners");
+				(List<ClusterEventListener>)field.get(clusterExecutorImpl);
 
 			ClusterEventListener clusterEventListener =
 				new MockClusterEventListener();
@@ -185,11 +184,7 @@ public class ClusterExecutorImplTest extends BaseClusterExecutorImplTestCase {
 		}
 	}
 
-	@AdviseWith(
-		adviceClasses = {
-			DisableAutodetectedAddressAdvice.class,
-			EnableClusterLinkAdvice.class
-		})
+	@AdviseWith(adviceClasses = {EnableClusterLinkAdvice.class})
 	@Test
 	public void testClusterTopology() throws Exception {
 		ClusterExecutorImpl clusterExecutorImpl1 = null;
@@ -246,70 +241,57 @@ public class ClusterExecutorImplTest extends BaseClusterExecutorImplTestCase {
 
 	@AdviseWith(
 		adviceClasses = {
-			DisableAutodetectedAddressAdvice.class,
-			EnableClusterLinkAdvice.class, JChannelExceptionAdvice.class,
-			SetBadPortalInetSocketAddressAdvice.class
-		})
+			EnableClusterLinkAdvice.class, InetAddressUtilExceptionAdvice.class,
+			JChannelExceptionAdvice.class
+		}
+
+	)
 	@Test
-	public void testErrorLogAndExceptions() throws UnknownHostException {
-		SetBadPortalInetSocketAddressAdvice.setPort(8080);
-
-		PortalUtil portalUtil = new PortalUtil();
-
-		portalUtil.setPortal(new PortalImpl());
-
-		PortalUUIDUtil portalUUIDUtil = new PortalUUIDUtil();
-
-		portalUUIDUtil.setPortalUUID(new PortalUUIDImpl());
-
-		PropsUtil.setProps(new PropsImpl());
-
-		PortalExecutorManagerUtil portalExecutorManagerUtil =
-			new PortalExecutorManagerUtil();
-
-		portalExecutorManagerUtil.setPortalExecutorManager(
-			new ClusterExecutorImplTest.MockPortalExecutorManager());
-
-		CaptureHandler captureHandler = JDKLoggerTestUtil.configureJDKLogger(
-			ClusterExecutorImpl.class.getName(), Level.SEVERE);
+	public void testErrorLogAndExceptions() throws Exception {
+		JDKLoggerTestUtil.configureJDKLogger(
+			ClusterBase.class.getName(), Level.FINE);
 
 		ClusterExecutorImpl clusterExecutorImpl = null;
 
 		try {
-			List<LogRecord> logRecords = captureHandler.getLogRecords();
+			PortalUtil portalUtil = new PortalUtil();
+
+			portalUtil.setPortal(new PortalImpl());
+
+			PortalUUIDUtil portalUUIDUtil = new PortalUUIDUtil();
+
+			portalUUIDUtil.setPortalUUID(new PortalUUIDImpl());
+
+			PropsUtil.setProps(new PropsImpl());
+
+			PortalExecutorManagerUtil portalExecutorManagerUtil =
+				new PortalExecutorManagerUtil();
+
+			portalExecutorManagerUtil.setPortalExecutorManager(
+				new ClusterExecutorImplTest.MockPortalExecutorManager());
+
+			List<LogRecord> logRecords = JDKLoggerTestUtil.configureJDKLogger(
+				ClusterExecutorImpl.class.getName(), Level.SEVERE);
 
 			clusterExecutorImpl = new ClusterExecutorImpl();
 
-			clusterExecutorImpl.afterPropertiesSet();
+			clusterExecutorImpl.initChannels();
+			clusterExecutorImpl.initSystemProperties();
 
 			clusterExecutorImpl.initialize();
 
-			Assert.assertEquals(2, logRecords.size());
+			assertLogger(
+				logRecords, "Unable to determine local network address",
+				Exception.class);
 
-			LogRecord logRecord = logRecords.get(0);
+			clusterExecutorImpl.initBindAddress();
 
-			Assert.assertEquals(
-				"Unable to parse portal InetSocketAddress from bad " +
-					"address:8080",
-				logRecord.getMessage());
+			clusterExecutorImpl.initialize();
 
-			Throwable throwable = logRecord.getThrown();
+			assertLogger(
+				logRecords, "Unable to send notify message", Exception.class);
 
-			Assert.assertSame(UnknownHostException.class, throwable.getClass());
-
-			logRecord = logRecords.get(1);
-
-			Assert.assertEquals(
-				"Unable to send notify message", logRecord.getMessage());
-
-			throwable = logRecord.getThrown();
-
-			Assert.assertSame(Exception.class, throwable.getClass());
-
-			logRecords.clear();
-
-			clusterExecutorImpl.portalLocalInetSockAddressConfigured(
-				new InetSocketAddress(InetAddress.getLocalHost(), 80));
+			clusterExecutorImpl.portalPortConfigured(80);
 
 			assertLogger(
 				logRecords, "Unable to determine configure node port",
@@ -342,19 +324,13 @@ public class ClusterExecutorImplTest extends BaseClusterExecutorImplTestCase {
 			}
 		}
 		finally {
-			captureHandler.close();
-
 			if (clusterExecutorImpl != null) {
 				clusterExecutorImpl.destroy();
 			}
 		}
 	}
 
-	@AdviseWith(
-		adviceClasses = {
-			DisableAutodetectedAddressAdvice.class,
-			EnableClusterLinkAdvice.class
-		})
+	@AdviseWith(adviceClasses = {EnableClusterLinkAdvice.class})
 	@Test
 	public void testExecuteByFireAndForget() throws Exception {
 		ClusterExecutorImpl clusterExecutorImpl1 = null;
@@ -416,11 +392,7 @@ public class ClusterExecutorImplTest extends BaseClusterExecutorImplTestCase {
 		}
 	}
 
-	@AdviseWith(
-		adviceClasses = {
-			DisableAutodetectedAddressAdvice.class,
-			EnableClusterLinkAdvice.class
-		})
+	@AdviseWith(adviceClasses = {EnableClusterLinkAdvice.class})
 	@Test
 	public void testExecuteByLocalMethod1() throws Exception {
 		ClusterExecutorImpl clusterExecutorImpl = null;
@@ -452,11 +424,7 @@ public class ClusterExecutorImplTest extends BaseClusterExecutorImplTestCase {
 		}
 	}
 
-	@AdviseWith(
-		adviceClasses = {
-			DisableAutodetectedAddressAdvice.class,
-			EnableClusterLinkAdvice.class
-		})
+	@AdviseWith(adviceClasses = {EnableClusterLinkAdvice.class})
 	@Test
 	public void testExecuteByLocalMethod2() throws Exception {
 		ClusterExecutorImpl clusterExecutorImpl = null;
@@ -486,11 +454,7 @@ public class ClusterExecutorImplTest extends BaseClusterExecutorImplTestCase {
 		}
 	}
 
-	@AdviseWith(
-		adviceClasses = {
-			DisableAutodetectedAddressAdvice.class,
-			EnableClusterLinkAdvice.class
-		})
+	@AdviseWith(adviceClasses = {EnableClusterLinkAdvice.class})
 	@Test
 	public void testExecuteByLocalMethod3() throws Exception {
 		ClusterExecutorImpl clusterExecutorImpl = null;
@@ -522,11 +486,7 @@ public class ClusterExecutorImplTest extends BaseClusterExecutorImplTestCase {
 		}
 	}
 
-	@AdviseWith(
-		adviceClasses = {
-			DisableAutodetectedAddressAdvice.class,
-			EnableClusterLinkAdvice.class
-		})
+	@AdviseWith(adviceClasses = {EnableClusterLinkAdvice.class})
 	@Test
 	public void testExecuteByLocalMethod4() throws Exception {
 		ClusterExecutorImpl clusterExecutorImpl = null;
@@ -553,11 +513,7 @@ public class ClusterExecutorImplTest extends BaseClusterExecutorImplTestCase {
 		}
 	}
 
-	@AdviseWith(
-		adviceClasses = {
-			DisableAutodetectedAddressAdvice.class,
-			EnableClusterLinkAdvice.class
-		})
+	@AdviseWith(adviceClasses = {EnableClusterLinkAdvice.class})
 	@Test
 	public void testExecuteByShortcutMethod() throws Exception {
 		ClusterExecutorImpl clusterExecutorImpl = null;
@@ -635,11 +591,7 @@ public class ClusterExecutorImplTest extends BaseClusterExecutorImplTestCase {
 		}
 	}
 
-	@AdviseWith(
-		adviceClasses = {
-			DisableAutodetectedAddressAdvice.class,
-			EnableClusterLinkAdvice.class
-		})
+	@AdviseWith(adviceClasses = {EnableClusterLinkAdvice.class})
 	@Test
 	public void testExecuteBySkipLocal() throws Exception {
 		ClusterExecutorImpl clusterExecutorImpl = null;
@@ -715,11 +667,7 @@ public class ClusterExecutorImplTest extends BaseClusterExecutorImplTestCase {
 		}
 	}
 
-	@AdviseWith(
-		adviceClasses = {
-			DisableAutodetectedAddressAdvice.class,
-			EnableClusterLinkAdvice.class
-		})
+	@AdviseWith(adviceClasses = {EnableClusterLinkAdvice.class})
 	@Test
 	public void testExecuteWithCallBack1() throws Exception {
 		ClusterExecutorImpl clusterExecutorImpl = null;
@@ -757,11 +705,7 @@ public class ClusterExecutorImplTest extends BaseClusterExecutorImplTestCase {
 		}
 	}
 
-	@AdviseWith(
-		adviceClasses = {
-			DisableAutodetectedAddressAdvice.class,
-			EnableClusterLinkAdvice.class
-		})
+	@AdviseWith(adviceClasses = {EnableClusterLinkAdvice.class})
 	@Test
 	public void testExecuteWithCallBack2() throws Exception {
 		ClusterExecutorImpl clusterExecutorImpl = null;
@@ -769,34 +713,13 @@ public class ClusterExecutorImplTest extends BaseClusterExecutorImplTestCase {
 		try {
 			clusterExecutorImpl = getClusterExecutorImpl(false, false);
 
-			String timestamp = String.valueOf(System.currentTimeMillis());
-
-			MethodHandler methodHandler = new MethodHandler(
-				testMethod1MethodKey, timestamp);
-
-			Address address = clusterExecutorImpl.getLocalClusterNodeAddress();
+			// TimeoutException
 
 			ClusterRequest clusterRequest = ClusterRequest.createUnicastRequest(
-				methodHandler, address);
+				null, new AddressImpl(new MockAddress()));
 
 			MockClusterResponseCallback mockClusterResponseCallback =
 				new MockClusterResponseCallback();
-
-			clusterExecutorImpl.execute(
-				clusterRequest, mockClusterResponseCallback, 1000,
-				TimeUnit.MILLISECONDS);
-
-			ClusterNodeResponses clusterNodeResponses =
-				mockClusterResponseCallback.waitMessage();
-
-			assertFutureClusterResponsesWithoutException(
-				clusterNodeResponses, clusterRequest.getUuid(), timestamp,
-				address);
-
-			// TimeoutException
-
-			clusterRequest = ClusterRequest.createUnicastRequest(
-				null, new AddressImpl(new MockAddress()));
 
 			clusterExecutorImpl.execute(
 				clusterRequest, mockClusterResponseCallback, 1000,
@@ -812,8 +735,11 @@ public class ClusterExecutorImplTest extends BaseClusterExecutorImplTestCase {
 			clusterExecutorImpl.execute(
 				clusterRequest, mockClusterResponseCallback);
 
-			ExecutorService executorService = ReflectionTestUtil.getFieldValue(
-				clusterExecutorImpl, "_executorService");
+			Field field = ReflectionUtil.getDeclaredField(
+				ClusterExecutorImpl.class, "_executorService");
+
+			ExecutorService executorService = (ExecutorService)field.get(
+				clusterExecutorImpl);
 
 			executorService.shutdownNow();
 
@@ -872,11 +798,7 @@ public class ClusterExecutorImplTest extends BaseClusterExecutorImplTestCase {
 		}
 	}
 
-	@AdviseWith(
-		adviceClasses = {
-			DisableAutodetectedAddressAdvice.class,
-			EnableClusterLinkAdvice.class
-		})
+	@AdviseWith(adviceClasses = {EnableClusterLinkAdvice.class})
 	@Test
 	public void testGetMethods2() throws Exception {
 		ClusterExecutorImpl clusterExecutorImpl1 = null;
@@ -956,11 +878,7 @@ public class ClusterExecutorImplTest extends BaseClusterExecutorImplTestCase {
 		}
 	}
 
-	@AdviseWith(
-		adviceClasses = {
-			DisableAutodetectedAddressAdvice.class,
-			EnableClusterLinkAdvice.class
-		})
+	@AdviseWith(adviceClasses = {EnableClusterLinkAdvice.class})
 	@Test
 	public void testMemberRemoved() throws Exception {
 		ClusterExecutorImpl clusterExecutorImpl = null;
@@ -992,13 +910,9 @@ public class ClusterExecutorImplTest extends BaseClusterExecutorImplTestCase {
 		}
 	}
 
-	@AdviseWith(
-		adviceClasses = {
-			DisableAutodetectedAddressAdvice.class,
-			EnableClusterLinkAdvice.class
-		})
+	@AdviseWith(adviceClasses = {EnableClusterLinkAdvice.class})
 	@Test
-	public void testPortalConfigured1() throws Exception {
+	public void testPortalPortConfigured1() throws Exception {
 		ClusterExecutorImpl clusterExecutorImpl1 = null;
 		ClusterExecutorImpl clusterExecutorImpl2 = null;
 
@@ -1029,17 +943,11 @@ public class ClusterExecutorImplTest extends BaseClusterExecutorImplTestCase {
 			assertClusterEvent(
 				clusterEvent, ClusterEventType.DEPART, clusterNode2);
 
-			Assert.assertNull(clusterNode2.getPortalInetSocketAddress());
+			Assert.assertEquals(-1, clusterNode2.getPort());
 
-			InetAddress inetAddress = InetAddress.getLocalHost();
-			int port = 8080;
+			clusterExecutorImpl2.portalPortConfigured(80);
 
-			clusterExecutorImpl2.portalLocalInetSockAddressConfigured(
-				new InetSocketAddress(inetAddress, port));
-
-			Assert.assertEquals(
-				new InetSocketAddress(inetAddress, port),
-				clusterNode2.getPortalInetSocketAddress());
+			Assert.assertEquals(80, clusterNode2.getPort());
 
 			clusterEvent = mockClusterEventListener.waitJoinMessage();
 
@@ -1059,12 +967,12 @@ public class ClusterExecutorImplTest extends BaseClusterExecutorImplTestCase {
 
 	@AdviseWith(
 		adviceClasses = {
-			DisableAutodetectedAddressAdvice.class,
-			EnableClusterLinkAdvice.class,
-			SetPortalInetSocketAddressAdvice.class
-		})
+			EnableClusterLinkAdvice.class, SetPortalPortAdvice.class
+		}
+
+	)
 	@Test
-	public void testPortalConfigured2() throws Exception {
+	public void testPortalPortConfigured2() throws Exception {
 		ClusterExecutorImpl clusterExecutorImpl = null;
 
 		try {
@@ -1073,118 +981,12 @@ public class ClusterExecutorImplTest extends BaseClusterExecutorImplTestCase {
 			ClusterNode clusterNode = clusterExecutorImpl.getLocalClusterNode();
 
 			Assert.assertEquals(
-				new InetSocketAddress(
-					InetAddress.getByName(
-						SetPortalInetSocketAddressAdvice.PORTAL_ADDRESS),
-					SetPortalInetSocketAddressAdvice.PORTAL_PORT),
-				clusterNode.getPortalInetSocketAddress());
+				SetPortalPortAdvice.PORTAL_PORT, clusterNode.getPort());
 
-			clusterExecutorImpl.portalLocalInetSockAddressConfigured(
-				new InetSocketAddress(
-					InetAddress.getByName(
-						SetPortalInetSocketAddressAdvice.SECURE_PORTAL_ADDRESS),
-					SetPortalInetSocketAddressAdvice.SECURE_PORTAL_PORT));
+			clusterExecutorImpl.portalPortConfigured(81);
 
 			Assert.assertEquals(
-				new InetSocketAddress(
-					InetAddress.getByName(
-						SetPortalInetSocketAddressAdvice.PORTAL_ADDRESS),
-					SetPortalInetSocketAddressAdvice.PORTAL_PORT),
-				clusterNode.getPortalInetSocketAddress());
-		}
-		finally {
-			if (clusterExecutorImpl != null) {
-				clusterExecutorImpl.destroy();
-			}
-		}
-	}
-
-	@AdviseWith(
-		adviceClasses = {
-			DisableAutodetectedAddressAdvice.class,
-			EnableClusterLinkAdvice.class,
-			SetPortalInetSocketAddressAdvice.class,
-			SetWebServerProtocolAdvice.class
-		})
-	@Test
-	public void testPortalConfigured3() throws Exception {
-		ClusterExecutorImpl clusterExecutorImpl = null;
-
-		try {
-			clusterExecutorImpl = getClusterExecutorImpl(false, false);
-
-			ClusterNode clusterNode = clusterExecutorImpl.getLocalClusterNode();
-
-			Assert.assertEquals(
-				new InetSocketAddress(
-					InetAddress.getByName(
-						SetPortalInetSocketAddressAdvice.SECURE_PORTAL_ADDRESS),
-					SetPortalInetSocketAddressAdvice.SECURE_PORTAL_PORT),
-				clusterNode.getPortalInetSocketAddress());
-
-			clusterExecutorImpl.portalLocalInetSockAddressConfigured(
-				new InetSocketAddress(
-					InetAddress.getByName(
-						SetPortalInetSocketAddressAdvice.PORTAL_ADDRESS),
-					SetPortalInetSocketAddressAdvice.PORTAL_PORT));
-
-			Assert.assertEquals(
-				new InetSocketAddress(
-					InetAddress.getByName(
-						SetPortalInetSocketAddressAdvice.SECURE_PORTAL_ADDRESS),
-					SetPortalInetSocketAddressAdvice.SECURE_PORTAL_PORT),
-				clusterNode.getPortalInetSocketAddress());
-		}
-		finally {
-			if (clusterExecutorImpl != null) {
-				clusterExecutorImpl.destroy();
-			}
-		}
-	}
-
-	@AdviseWith(
-		adviceClasses = {
-			DisableAutodetectedAddressAdvice.class,
-			EnableClusterLinkAdvice.class,
-			SetBadPortalInetSocketAddressAdvice.class,
-			SetWebServerProtocolAdvice.class
-		})
-	@Test
-	public void testPortalConfigured4() throws Exception {
-		ClusterExecutorImpl clusterExecutorImpl = null;
-
-		try {
-			clusterExecutorImpl = getClusterExecutorImpl(false, false);
-
-			ClusterNode clusterNode = clusterExecutorImpl.getLocalClusterNode();
-
-			Assert.assertNull(clusterNode.getPortalInetSocketAddress());
-
-			clusterExecutorImpl.portalLocalInetSockAddressConfigured(
-				new InetSocketAddress(
-					InetAddress.getByName(
-						SetPortalInetSocketAddressAdvice.SECURE_PORTAL_ADDRESS),
-					SetPortalInetSocketAddressAdvice.SECURE_PORTAL_PORT));
-
-			Assert.assertEquals(
-				new InetSocketAddress(
-					InetAddress.getByName(
-						SetPortalInetSocketAddressAdvice.SECURE_PORTAL_ADDRESS),
-					SetPortalInetSocketAddressAdvice.SECURE_PORTAL_PORT),
-				clusterNode.getPortalInetSocketAddress());
-
-			clusterExecutorImpl.portalLocalInetSockAddressConfigured(
-				new InetSocketAddress(
-					InetAddress.getByName(
-						SetPortalInetSocketAddressAdvice.SECURE_PORTAL_ADDRESS),
-					SetPortalInetSocketAddressAdvice.SECURE_PORTAL_PORT));
-
-			Assert.assertEquals(
-				new InetSocketAddress(
-					InetAddress.getByName(
-						SetPortalInetSocketAddressAdvice.SECURE_PORTAL_ADDRESS),
-					SetPortalInetSocketAddressAdvice.SECURE_PORTAL_PORT),
-				clusterNode.getPortalInetSocketAddress());
+				SetPortalPortAdvice.PORTAL_PORT, clusterNode.getPort());
 		}
 		finally {
 			if (clusterExecutorImpl != null) {
@@ -1195,17 +997,13 @@ public class ClusterExecutorImplTest extends BaseClusterExecutorImplTestCase {
 
 	@AdviseWith(adviceClasses = {DisableClusterLinkAdvice.class})
 	@Test
-	public void testPortalConfigured5() throws Exception {
+	public void testPortalPortConfigured3() throws Exception {
 		ClusterExecutorImpl clusterExecutorImpl = null;
 
 		try {
 			clusterExecutorImpl = getClusterExecutorImpl(false, false);
 
-			clusterExecutorImpl.portalServerInetSocketAddressConfigured(
-				new InetSocketAddress(80));
-
-			clusterExecutorImpl.portalLocalInetSockAddressConfigured(
-				new InetSocketAddress(80));
+			clusterExecutorImpl.portalPortConfigured(80);
 		}
 		finally {
 			if (clusterExecutorImpl != null) {

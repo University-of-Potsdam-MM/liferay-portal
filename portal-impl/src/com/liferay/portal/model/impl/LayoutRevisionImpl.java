@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portal.model.impl;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.CookieKeys;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringPool;
@@ -50,13 +51,15 @@ public class LayoutRevisionImpl extends LayoutRevisionBaseImpl {
 	}
 
 	@Override
-	public List<LayoutRevision> getChildren() {
+	public List<LayoutRevision> getChildren() throws SystemException {
 		return LayoutRevisionLocalServiceUtil.getChildLayoutRevisions(
 			getLayoutSetBranchId(), getLayoutRevisionId(), getPlid());
 	}
 
 	@Override
-	public ColorScheme getColorScheme() throws PortalException {
+	public ColorScheme getColorScheme()
+		throws PortalException, SystemException {
+
 		if (isInheritLookAndFeel()) {
 			return getLayoutSet().getColorScheme();
 		}
@@ -68,7 +71,7 @@ public class LayoutRevisionImpl extends LayoutRevisionBaseImpl {
 	}
 
 	@Override
-	public String getCssText() throws PortalException {
+	public String getCssText() throws PortalException, SystemException {
 		if (isInheritLookAndFeel()) {
 			return getLayoutSet().getCss();
 		}
@@ -96,29 +99,22 @@ public class LayoutRevisionImpl extends LayoutRevisionBaseImpl {
 	}
 
 	@Override
-	public boolean getIconImage() {
-		if (getIconImageId() > 0) {
-			return true;
-		}
+	public LayoutBranch getLayoutBranch()
+		throws PortalException, SystemException {
 
-		return false;
-	}
-
-	@Override
-	public LayoutBranch getLayoutBranch() throws PortalException {
 		return LayoutBranchLocalServiceUtil.getLayoutBranch(
 			getLayoutBranchId());
 	}
 
 	@Override
-	public LayoutSet getLayoutSet() throws PortalException {
+	public LayoutSet getLayoutSet() throws PortalException, SystemException {
 		return LayoutSetLocalServiceUtil.getLayoutSet(
 			getGroupId(), isPrivateLayout());
 	}
 
 	@Override
 	public String getRegularURL(HttpServletRequest request)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
 			WebKeys.THEME_DISPLAY);
@@ -140,7 +136,7 @@ public class LayoutRevisionImpl extends LayoutRevisionBaseImpl {
 	}
 
 	@Override
-	public Theme getTheme() throws PortalException {
+	public Theme getTheme() throws PortalException, SystemException {
 		if (isInheritLookAndFeel()) {
 			return getLayoutSet().getTheme();
 		}
@@ -204,21 +200,9 @@ public class LayoutRevisionImpl extends LayoutRevisionBaseImpl {
 	}
 
 	@Override
-	public String getTypeSettingsProperty(String key) {
-		UnicodeProperties typeSettingsProperties = getTypeSettingsProperties();
+	public ColorScheme getWapColorScheme()
+		throws PortalException, SystemException {
 
-		return typeSettingsProperties.getProperty(key);
-	}
-
-	@Override
-	public String getTypeSettingsProperty(String key, String defaultValue) {
-		UnicodeProperties typeSettingsProperties = getTypeSettingsProperties();
-
-		return typeSettingsProperties.getProperty(key, defaultValue);
-	}
-
-	@Override
-	public ColorScheme getWapColorScheme() throws PortalException {
 		if (isInheritLookAndFeel()) {
 			return getLayoutSet().getWapColorScheme();
 		}
@@ -230,7 +214,7 @@ public class LayoutRevisionImpl extends LayoutRevisionBaseImpl {
 	}
 
 	@Override
-	public Theme getWapTheme() throws PortalException {
+	public Theme getWapTheme() throws PortalException, SystemException {
 		if (isInheritWapLookAndFeel()) {
 			return getLayoutSet().getWapTheme();
 		}
@@ -241,7 +225,7 @@ public class LayoutRevisionImpl extends LayoutRevisionBaseImpl {
 	}
 
 	@Override
-	public boolean hasChildren() {
+	public boolean hasChildren() throws SystemException {
 		if (!getChildren().isEmpty()) {
 			return true;
 		}
@@ -263,11 +247,6 @@ public class LayoutRevisionImpl extends LayoutRevisionBaseImpl {
 		else {
 			return false;
 		}
-	}
-
-	@Override
-	public boolean isIconImage() {
-		return getIconImage();
 	}
 
 	@Override
@@ -310,7 +289,9 @@ public class LayoutRevisionImpl extends LayoutRevisionBaseImpl {
 		super.setTypeSettings(_typeSettingsProperties.toString());
 	}
 
-	protected Theme getTheme(String device) throws PortalException {
+	protected Theme getTheme(String device)
+		throws PortalException, SystemException {
+
 		if (device.equals("regular")) {
 			return getTheme();
 		}

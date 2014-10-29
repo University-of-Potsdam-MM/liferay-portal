@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,7 +15,6 @@
 package com.liferay.portal.security.pacl;
 
 import com.liferay.portal.kernel.security.pacl.permission.PortalServicePermission;
-import com.liferay.portal.spring.aop.AdvisedSupportProxy;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
@@ -31,8 +30,7 @@ import org.springframework.aop.framework.AdvisedSupport;
  * @author Brian Wing Shun Chan
  * @author Raymond Augé
  */
-public class PACLInvocationHandler
-	implements AdvisedSupportProxy, InvocationHandler {
+public class PACLInvocationHandler implements InvocationHandler {
 
 	public PACLInvocationHandler(InvocationHandler invocationHandler) {
 		this(invocationHandler, null);
@@ -43,11 +41,6 @@ public class PACLInvocationHandler
 
 		_invocationHandler = invocationHandler;
 		_advisedSupport = advisedSupport;
-	}
-
-	@Override
-	public AdvisedSupport getAdvisedSupport() {
-		return _advisedSupport;
 	}
 
 	@Override
@@ -92,7 +85,9 @@ public class PACLInvocationHandler
 		}
 	}
 
+	@SuppressWarnings("unused")
 	private AdvisedSupport _advisedSupport;
+
 	private InvocationHandler _invocationHandler;
 
 	private class InvokePrivilegedExceptionAction

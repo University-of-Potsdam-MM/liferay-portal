@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -25,7 +25,6 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.util.Normalizer;
 
 import java.util.Arrays;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -43,7 +42,6 @@ public class FriendlyURLNormalizerImpl implements FriendlyURLNormalizer {
 	/**
 	 * @deprecated As of 6.2.0, replaced by {@link #normalize(String, Pattern)}
 	 */
-	@Deprecated
 	@Override
 	public String normalize(String friendlyURL, char[] replaceChars) {
 		if (Validator.isNull(friendlyURL)) {
@@ -111,24 +109,15 @@ public class FriendlyURLNormalizerImpl implements FriendlyURLNormalizer {
 
 		friendlyURL = StringUtil.toLowerCase(friendlyURL);
 		friendlyURL = Normalizer.normalizeToAscii(friendlyURL);
-
-		Matcher matcher = friendlyURLPattern.matcher(friendlyURL);
-
-		friendlyURL = matcher.replaceAll(StringPool.DASH);
-
-		matcher = _friendlyURLHyphenPattern.matcher(friendlyURL);
-
-		friendlyURL = matcher.replaceAll(StringPool.DASH);
+		friendlyURL = friendlyURL.replaceAll(
+			friendlyURLPattern.pattern(), StringPool.DASH);
+		friendlyURL = friendlyURL.replaceAll(
+			_friendlyURLHyphenPattern.pattern(), StringPool.DASH);
 
 		return friendlyURL;
 	}
 
 	private static final char[] _REPLACE_CHARS;
-
-	private static Pattern _friendlyURLHyphenPattern = Pattern.compile(
-		"(-)\\1+");
-	private static Pattern _friendlyURLPattern = Pattern.compile(
-		"[^a-z0-9./_-]");
 
 	static {
 		char[] replaceChars = new char[] {
@@ -141,5 +130,10 @@ public class FriendlyURLNormalizerImpl implements FriendlyURLNormalizer {
 
 		_REPLACE_CHARS = replaceChars;
 	}
+
+	private static Pattern _friendlyURLHyphenPattern = Pattern.compile(
+		"(-)\\1+");
+	private static Pattern _friendlyURLPattern = Pattern.compile(
+		"[^a-z0-9./_-]");
 
 }

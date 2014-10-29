@@ -1,19 +1,10 @@
 package ${seleniumBuilderContext.getMacroPackageName(macroName)};
 
-import com.liferay.portal.kernel.util.HtmlUtil;
-import com.liferay.portal.kernel.util.MathUtil;
-import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portalweb.portal.util.RuntimeVariables;
-import com.liferay.portalweb.portal.util.block.macro.BaseMacro;
 import com.liferay.portalweb.portal.util.liferayselenium.LiferaySelenium;
+import com.liferay.portalweb2.util.block.macro.BaseMacro;
 
 <#assign rootElement = seleniumBuilderContext.getMacroRootElement(macroName)>
-
-<#if rootElement.attributeValue("extends")??>
-	<#assign extendsName = rootElement.attributeValue("extends")>
-
-	import ${seleniumBuilderContext.getMacroClassName(extendsName)};
-</#if>
 
 <#assign childElementAttributeValues = seleniumBuilderFileUtil.getChildElementAttributeValues(rootElement, "action")>
 
@@ -30,13 +21,7 @@ import com.liferay.portalweb.portal.util.liferayselenium.LiferaySelenium;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ${seleniumBuilderContext.getMacroSimpleClassName(macroName)}
-
-<#if extendsName??>
-	extends ${extendsName}Macro {
-<#else>
-	extends BaseMacro {
-</#if>
+public class ${seleniumBuilderContext.getMacroSimpleClassName(macroName)} extends BaseMacro {
 
 	public ${seleniumBuilderContext.getMacroSimpleClassName(macroName)}(LiferaySelenium liferaySelenium) {
 		super(liferaySelenium);
@@ -44,18 +29,10 @@ public class ${seleniumBuilderContext.getMacroSimpleClassName(macroName)}
 		<#if rootElement.element("var")??>
 			<#assign varElements = rootElement.elements("var")>
 
+			<#assign context = "definitionScopeVariables">
+
 			<#list varElements as varElement>
-				<#assign lineNumber = varElement.attributeValue("line-number")>
-
-				liferaySelenium.sendLogger("${macroName?uncap_first}Macro${lineNumber}", "pending");
-
-				<#assign void = variableContextStack.push("definitionScopeVariables")>
-
 				<#include "var_element.ftl">
-
-				<#assign void = variableContextStack.pop()>
-
-				liferaySelenium.sendLogger("${macroName?uncap_first}Macro${lineNumber}", "pass");
 			</#list>
 		</#if>
 	}
@@ -92,16 +69,8 @@ public class ${seleniumBuilderContext.getMacroSimpleClassName(macroName)}
 
 			<#assign blockElement = commandElement>
 
-			<#assign blockLevel = "macro">
-
-			<#assign void = variableContextStack.push("commandScopeVariables")>
-
-			<#include "block_element.ftl">
-
-			<#assign void = variableContextStack.pop()>
+			<#include "macro_block_element.ftl">
 		}
 	</#list>
-
-	private int _whileCount;
 
 }

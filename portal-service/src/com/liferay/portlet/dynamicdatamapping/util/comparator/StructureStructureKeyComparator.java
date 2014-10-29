@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -21,8 +21,7 @@ import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 /**
  * @author Miguel Pastor
  */
-public class StructureStructureKeyComparator
-	extends OrderByComparator<DDMStructure> {
+public class StructureStructureKeyComparator extends OrderByComparator {
 
 	public static final String ORDER_BY_ASC = "DDMStructure.structureKey ASC";
 
@@ -39,10 +38,14 @@ public class StructureStructureKeyComparator
 	}
 
 	@Override
-	public int compare(DDMStructure structure1, DDMStructure structure2) {
+	public int compare(Object obj1, Object obj2) {
+		DDMStructure structure1 = (DDMStructure)obj1;
+
 		String structureKey1 = structure1.getStructureKey();
 
 		structureKey1 = StringUtil.toLowerCase(structureKey1);
+
+		DDMStructure structure2 = (DDMStructure)obj2;
 
 		String structureKey2 = structure2.getStructureKey();
 

@@ -3,10 +3,11 @@ AUI.add(
 	function(A) {
 		var AObject = A.Object;
 		var JSON = A.JSON;
+		var Util = Liferay.Util;
 
 		var owns = AObject.owns;
 
-		var _browserKey = Liferay.Util.randomInt();
+		var _browserKey = Util.randomInt();
 		var _enabled = false;
 		var _supportsComet = false;
 		var _encryptedUserId = null;
@@ -87,10 +88,10 @@ AUI.add(
 			var response = JSON.parse(obj.responseText);
 			var send = false;
 
-			if (A.Lang.isArray(response)) {
+			if (Util.isArray(response)) {
 				var meta = response.shift();
 
-				for (var i = 0; i < response.length; i++) {
+				for (var i = 0, length = response.length; i < length; i++) {
 					var chunk = response[i].payload;
 
 					var chunkData = chunk.data;
@@ -203,7 +204,7 @@ AUI.add(
 			_createRequestTimer();
 		};
 
-		var _updatePortletIdsMap = function(item, index) {
+		var _updatePortletIdsMap = function(item, index, collection) {
 			_portletIdsMap[index] = item.initialRequest;
 		};
 
@@ -214,6 +215,8 @@ AUI.add(
 				instance.setEncryptedUserId(options.encryptedUserId);
 				instance.setSupportsComet(options.supportsComet);
 			},
+
+			url: _url,
 
 			addListener: function(key, listener, scope) {
 				_portlets[key] = {
@@ -320,8 +323,8 @@ AUI.add(
 					}
 
 					var requestData = {
-						data: data,
-						portletId: key
+						portletId: key,
+						data: data
 					};
 
 					if (chunkId) {
@@ -338,9 +341,7 @@ AUI.add(
 				_cancelRequestTimer();
 
 				_suspended = true;
-			},
-
-			url: _url
+			}
 		};
 
 		A.getDoc().on(

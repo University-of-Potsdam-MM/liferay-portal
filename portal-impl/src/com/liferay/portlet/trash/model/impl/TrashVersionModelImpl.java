@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -13,8 +13,6 @@
  */
 
 package com.liferay.portlet.trash.model.impl;
-
-import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -52,7 +50,6 @@ import java.util.Map;
  * @see com.liferay.portlet.trash.model.TrashVersionModel
  * @generated
  */
-@ProviderType
 public class TrashVersionModelImpl extends BaseModelImpl<TrashVersion>
 	implements TrashVersionModel {
 	/*
@@ -85,10 +82,10 @@ public class TrashVersionModelImpl extends BaseModelImpl<TrashVersion>
 	public static final boolean COLUMN_BITMASK_ENABLED = GetterUtil.getBoolean(com.liferay.portal.util.PropsUtil.get(
 				"value.object.column.bitmask.enabled.com.liferay.portlet.trash.model.TrashVersion"),
 			true);
-	public static final long CLASSNAMEID_COLUMN_BITMASK = 1L;
-	public static final long CLASSPK_COLUMN_BITMASK = 2L;
-	public static final long ENTRYID_COLUMN_BITMASK = 4L;
-	public static final long VERSIONID_COLUMN_BITMASK = 8L;
+	public static long CLASSNAMEID_COLUMN_BITMASK = 1L;
+	public static long CLASSPK_COLUMN_BITMASK = 2L;
+	public static long ENTRYID_COLUMN_BITMASK = 4L;
+	public static long VERSIONID_COLUMN_BITMASK = 8L;
 	public static final long LOCK_EXPIRATION_TIME = GetterUtil.getLong(com.liferay.portal.util.PropsUtil.get(
 				"lock.expiration.time.com.liferay.portlet.trash.model.TrashVersion"));
 
@@ -135,9 +132,6 @@ public class TrashVersionModelImpl extends BaseModelImpl<TrashVersion>
 		attributes.put("classPK", getClassPK());
 		attributes.put("typeSettings", getTypeSettings());
 		attributes.put("status", getStatus());
-
-		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
-		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
 
 		return attributes;
 	}
@@ -388,16 +382,6 @@ public class TrashVersionModelImpl extends BaseModelImpl<TrashVersion>
 	}
 
 	@Override
-	public boolean isEntityCacheEnabled() {
-		return ENTITY_CACHE_ENABLED;
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return FINDER_CACHE_ENABLED;
-	}
-
-	@Override
 	public void resetOriginalValues() {
 		TrashVersionModelImpl trashVersionModelImpl = this;
 
@@ -500,8 +484,8 @@ public class TrashVersionModelImpl extends BaseModelImpl<TrashVersion>
 		return sb.toString();
 	}
 
-	private static final ClassLoader _classLoader = TrashVersion.class.getClassLoader();
-	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
+	private static ClassLoader _classLoader = TrashVersion.class.getClassLoader();
+	private static Class<?>[] _escapedModelInterfaces = new Class[] {
 			TrashVersion.class
 		};
 	private long _versionId;

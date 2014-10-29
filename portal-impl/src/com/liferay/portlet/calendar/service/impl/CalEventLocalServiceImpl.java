@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -45,6 +45,7 @@ import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.kernel.util.TimeZoneUtil;
+import com.liferay.portal.kernel.util.UnmodifiableList;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
@@ -80,7 +81,6 @@ import java.text.Format;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -141,7 +141,7 @@ public class CalEventLocalServiceImpl extends CalEventLocalServiceBaseImpl {
 			String type, boolean repeating, TZSRecurrence recurrence,
 			int remindBy, int firstReminder, int secondReminder,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		// Event
 
@@ -256,7 +256,6 @@ public class CalEventLocalServiceImpl extends CalEventLocalServiceBaseImpl {
 	 *             boolean, String, boolean, TZSRecurrence, int, int, int,
 	 *             ServiceContext)}
 	 */
-	@Deprecated
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
 	public CalEvent addEvent(
@@ -268,7 +267,7 @@ public class CalEventLocalServiceImpl extends CalEventLocalServiceBaseImpl {
 			String type, boolean repeating, TZSRecurrence recurrence,
 			int remindBy, int firstReminder, int secondReminder,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return addEvent(
 			userId, title, description, location, startDateMonth, startDateDay,
@@ -282,7 +281,7 @@ public class CalEventLocalServiceImpl extends CalEventLocalServiceBaseImpl {
 	public void addEventResources(
 			CalEvent event, boolean addGroupPermissions,
 			boolean addGuestPermissions)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		resourceLocalService.addResources(
 			event.getCompanyId(), event.getGroupId(), event.getUserId(),
@@ -294,7 +293,7 @@ public class CalEventLocalServiceImpl extends CalEventLocalServiceBaseImpl {
 	public void addEventResources(
 			CalEvent event, String[] groupPermissions,
 			String[] guestPermissions)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		resourceLocalService.addModelResources(
 			event.getCompanyId(), event.getGroupId(), event.getUserId(),
@@ -306,7 +305,7 @@ public class CalEventLocalServiceImpl extends CalEventLocalServiceBaseImpl {
 	public void addEventResources(
 			long eventId, boolean addGroupPermissions,
 			boolean addGuestPermissions)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		CalEvent event = calEventPersistence.findByPrimaryKey(eventId);
 
@@ -316,7 +315,7 @@ public class CalEventLocalServiceImpl extends CalEventLocalServiceBaseImpl {
 	@Override
 	public void addEventResources(
 			long eventId, String[] groupPermissions, String[] guestPermissions)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		CalEvent event = calEventPersistence.findByPrimaryKey(eventId);
 
@@ -324,7 +323,7 @@ public class CalEventLocalServiceImpl extends CalEventLocalServiceBaseImpl {
 	}
 
 	@Override
-	public void checkEvents() {
+	public void checkEvents() throws SystemException {
 		List<CalEvent> events = calEventFinder.findByFutureReminders();
 
 		for (CalEvent event : events) {
@@ -389,7 +388,8 @@ public class CalEventLocalServiceImpl extends CalEventLocalServiceBaseImpl {
 
 	@Indexable(type = IndexableType.DELETE)
 	@Override
-	public CalEvent deleteEvent(CalEvent event) throws PortalException {
+	public CalEvent deleteEvent(CalEvent event)
+		throws PortalException, SystemException {
 
 		// Event
 
@@ -425,7 +425,9 @@ public class CalEventLocalServiceImpl extends CalEventLocalServiceBaseImpl {
 
 	@Indexable(type = IndexableType.DELETE)
 	@Override
-	public CalEvent deleteEvent(long eventId) throws PortalException {
+	public CalEvent deleteEvent(long eventId)
+		throws PortalException, SystemException {
+
 		CalEvent event = calEventPersistence.findByPrimaryKey(eventId);
 
 		deleteEvent(event);
@@ -434,7 +436,9 @@ public class CalEventLocalServiceImpl extends CalEventLocalServiceBaseImpl {
 	}
 
 	@Override
-	public void deleteEvents(long groupId) throws PortalException {
+	public void deleteEvents(long groupId)
+		throws PortalException, SystemException {
+
 		List<CalEvent> events = calEventPersistence.findByGroupId(groupId);
 
 		for (CalEvent event : events) {
@@ -443,7 +447,9 @@ public class CalEventLocalServiceImpl extends CalEventLocalServiceBaseImpl {
 	}
 
 	@Override
-	public File exportEvent(long userId, long eventId) throws PortalException {
+	public File exportEvent(long userId, long eventId)
+		throws PortalException, SystemException {
+
 		List<CalEvent> events = new ArrayList<CalEvent>();
 
 		CalEvent event = calEventPersistence.findByPrimaryKey(eventId);
@@ -456,14 +462,14 @@ public class CalEventLocalServiceImpl extends CalEventLocalServiceBaseImpl {
 	@Override
 	public File exportEvents(
 			long userId, List<CalEvent> events, String fileName)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return exportICal4j(toICalCalendar(userId, events), fileName);
 	}
 
 	@Override
 	public File exportGroupEvents(long userId, long groupId, String fileName)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		List<CalEvent> events = calEventPersistence.findByGroupId(groupId);
 
@@ -471,33 +477,41 @@ public class CalEventLocalServiceImpl extends CalEventLocalServiceBaseImpl {
 	}
 
 	@Override
-	public List<CalEvent> getCompanyEvents(long companyId, int start, int end) {
+	public List<CalEvent> getCompanyEvents(long companyId, int start, int end)
+		throws SystemException {
+
 		return calEventPersistence.findByCompanyId(companyId, start, end);
 	}
 
 	@Override
-	public int getCompanyEventsCount(long companyId) {
+	public int getCompanyEventsCount(long companyId) throws SystemException {
 		return calEventPersistence.countByCompanyId(companyId);
 	}
 
 	@Override
-	public CalEvent getEvent(long eventId) throws PortalException {
+	public CalEvent getEvent(long eventId)
+		throws PortalException, SystemException {
+
 		return calEventPersistence.findByPrimaryKey(eventId);
 	}
 
 	@Override
-	public List<CalEvent> getEvents(long groupId, Calendar cal) {
+	public List<CalEvent> getEvents(long groupId, Calendar cal)
+		throws SystemException {
+
 		return getEvents(groupId, cal, new String[0]);
 	}
 
 	@Override
-	public List<CalEvent> getEvents(long groupId, Calendar cal, String type) {
+	public List<CalEvent> getEvents(long groupId, Calendar cal, String type)
+		throws SystemException {
+
 		return getEvents(groupId, cal, new String[] {type});
 	}
 
 	@Override
-	public List<CalEvent> getEvents(
-		long groupId, Calendar cal, String[] types) {
+	public List<CalEvent> getEvents(long groupId, Calendar cal, String[] types)
+		throws SystemException {
 
 		if (types != null) {
 			types = ArrayUtil.distinct(types);
@@ -548,7 +562,7 @@ public class CalEventLocalServiceImpl extends CalEventLocalServiceBaseImpl {
 
 		events.addAll(getRepeatingEvents(groupId, cal, types));
 
-		events = Collections.unmodifiableList(events);
+		events = new UnmodifiableList<CalEvent>(events);
 
 		eventsPool.put(key, events);
 
@@ -557,14 +571,16 @@ public class CalEventLocalServiceImpl extends CalEventLocalServiceBaseImpl {
 
 	@Override
 	public List<CalEvent> getEvents(
-		long groupId, String type, int start, int end) {
+			long groupId, String type, int start, int end)
+		throws SystemException {
 
 		return getEvents(groupId, new String[] {type}, start, end);
 	}
 
 	@Override
 	public List<CalEvent> getEvents(
-		long groupId, String[] types, int start, int end) {
+			long groupId, String[] types, int start, int end)
+		throws SystemException {
 
 		if ((types != null) && (types.length > 0) &&
 			((types.length > 1) || Validator.isNotNull(types[0]))) {
@@ -577,12 +593,16 @@ public class CalEventLocalServiceImpl extends CalEventLocalServiceBaseImpl {
 	}
 
 	@Override
-	public int getEventsCount(long groupId, String type) {
+	public int getEventsCount(long groupId, String type)
+		throws SystemException {
+
 		return getEventsCount(groupId, new String[] {type});
 	}
 
 	@Override
-	public int getEventsCount(long groupId, String[] types) {
+	public int getEventsCount(long groupId, String[] types)
+		throws SystemException {
+
 		if ((types != null) && (types.length > 0) &&
 			((types.length > 1) || Validator.isNotNull(types[0]))) {
 
@@ -594,18 +614,21 @@ public class CalEventLocalServiceImpl extends CalEventLocalServiceBaseImpl {
 	}
 
 	@Override
-	public List<CalEvent> getNoAssetEvents() {
+	public List<CalEvent> getNoAssetEvents() throws SystemException {
 		return calEventFinder.findByNoAssets();
 	}
 
 	@Override
-	public List<CalEvent> getRepeatingEvents(long groupId) {
+	public List<CalEvent> getRepeatingEvents(long groupId)
+		throws SystemException {
+
 		return getRepeatingEvents(groupId, null, null);
 	}
 
 	@Override
 	public List<CalEvent> getRepeatingEvents(
-		long groupId, Calendar cal, String[] types) {
+			long groupId, Calendar cal, String[] types)
+		throws SystemException {
 
 		Map<String, List<CalEvent>> eventsPool =
 			CalEventLocalUtil.getEventsPool(groupId);
@@ -624,7 +647,7 @@ public class CalEventLocalServiceImpl extends CalEventLocalServiceBaseImpl {
 				events = calEventPersistence.findByG_R(groupId, true);
 			}
 
-			events = Collections.unmodifiableList(events);
+			events = new UnmodifiableList<CalEvent>(events);
 
 			eventsPool.put(key, events);
 		}
@@ -673,24 +696,30 @@ public class CalEventLocalServiceImpl extends CalEventLocalServiceBaseImpl {
 				}
 			}
 
-			events = Collections.unmodifiableList(repeatingEvents);
+			events = new UnmodifiableList<CalEvent>(repeatingEvents);
 		}
 
 		return events;
 	}
 
 	@Override
-	public boolean hasEvents(long groupId, Calendar cal) {
+	public boolean hasEvents(long groupId, Calendar cal)
+		throws SystemException {
+
 		return hasEvents(groupId, cal, new String[0]);
 	}
 
 	@Override
-	public boolean hasEvents(long groupId, Calendar cal, String type) {
+	public boolean hasEvents(long groupId, Calendar cal, String type)
+		throws SystemException {
+
 		return hasEvents(groupId, cal, new String[] {type});
 	}
 
 	@Override
-	public boolean hasEvents(long groupId, Calendar cal, String[] types) {
+	public boolean hasEvents(long groupId, Calendar cal, String[] types)
+		throws SystemException {
+
 		List<CalEvent> events = getEvents(groupId, cal, types);
 
 		if (events.isEmpty()) {
@@ -703,7 +732,7 @@ public class CalEventLocalServiceImpl extends CalEventLocalServiceBaseImpl {
 
 	@Override
 	public void importICal4j(long userId, long groupId, InputStream inputStream)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		try {
 			CalendarBuilder builder = new CalendarBuilder();
@@ -729,7 +758,7 @@ public class CalEventLocalServiceImpl extends CalEventLocalServiceBaseImpl {
 	public void updateAsset(
 			long userId, CalEvent event, long[] assetCategoryIds,
 			String[] assetTagNames, long[] assetLinkEntryIds)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		AssetEntry assetEntry = assetEntryLocalService.updateEntry(
 			userId, event.getGroupId(), event.getCreateDate(),
@@ -754,7 +783,7 @@ public class CalEventLocalServiceImpl extends CalEventLocalServiceBaseImpl {
 			boolean timeZoneSensitive, String type, boolean repeating,
 			TZSRecurrence recurrence, int remindBy, int firstReminder,
 			int secondReminder, ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		// Event
 
@@ -836,7 +865,6 @@ public class CalEventLocalServiceImpl extends CalEventLocalServiceBaseImpl {
 	 *             boolean, boolean, String, boolean, TZSRecurrence, int, int,
 	 *             int, ServiceContext)}
 	 */
-	@Deprecated
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
 	public CalEvent updateEvent(
@@ -848,7 +876,7 @@ public class CalEventLocalServiceImpl extends CalEventLocalServiceBaseImpl {
 			String type, boolean repeating, TZSRecurrence recurrence,
 			int remindBy, int firstReminder, int secondReminder,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return updateEvent(
 			userId, eventId, title, description, location, startDateMonth,
@@ -859,7 +887,8 @@ public class CalEventLocalServiceImpl extends CalEventLocalServiceBaseImpl {
 	}
 
 	protected File exportICal4j(
-		net.fortuna.ical4j.model.Calendar cal, String fileName) {
+			net.fortuna.ical4j.model.Calendar cal, String fileName)
+		throws SystemException {
 
 		OutputStream os = null;
 
@@ -965,7 +994,7 @@ public class CalEventLocalServiceImpl extends CalEventLocalServiceBaseImpl {
 	}
 
 	protected void importICal4j(long userId, long groupId, VEvent event)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		User user = userPersistence.findByPrimaryKey(userId);
 
@@ -1391,14 +1420,14 @@ public class CalEventLocalServiceImpl extends CalEventLocalServiceBaseImpl {
 
 	protected net.fortuna.ical4j.model.Calendar toICalCalendar(
 			long userId, List<CalEvent> events)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		net.fortuna.ical4j.model.Calendar iCal =
 			new net.fortuna.ical4j.model.Calendar();
 
 		ProdId prodId = new ProdId(
 			"-//Liferay Inc//Liferay Portal " + ReleaseInfo.getVersion() +
-				"//EN");
+			"//EN");
 
 		PropertyList propertiesList = iCal.getProperties();
 
@@ -1728,8 +1757,8 @@ public class CalEventLocalServiceImpl extends CalEventLocalServiceBaseImpl {
 				WeekDay weekDay = dayListItr.next();
 
 				DayAndPosition[] dayPos = {
-					new DayAndPosition(
-						toCalendarWeekDay(weekDay), weekDay.getOffset())
+					new DayAndPosition(toCalendarWeekDay(weekDay),
+					weekDay.getOffset())
 				};
 
 				recurrence.setByDay(dayPos);

@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -26,7 +26,7 @@ ResultRow row = (ResultRow)request.getAttribute(WebKeys.SEARCH_CONTAINER_RESULT_
 BlogsEntry entry = (BlogsEntry)row.getObject();
 %>
 
-<liferay-ui:icon-menu direction="down" icon="<%= StringPool.BLANK %>" message="<%= StringPool.BLANK %>" showExpanded="<%= false %>" showWhenSingleIcon="<%= false %>">
+<liferay-ui:icon-menu>
 	<c:if test="<%= BlogsEntryPermission.contains(permissionChecker, entry, ActionKeys.VIEW) %>">
 		<portlet:renderURL var="viewEntryURL">
 			<portlet:param name="struts_action" value="/blogs_admin/view_entry" />
@@ -35,8 +35,7 @@ BlogsEntry entry = (BlogsEntry)row.getObject();
 		</portlet:renderURL>
 
 		<liferay-ui:icon
-			iconCssClass="icon-search"
-			message="view[action]"
+			image="view"
 			url="<%= viewEntryURL %>"
 		/>
 	</c:if>
@@ -50,8 +49,7 @@ BlogsEntry entry = (BlogsEntry)row.getObject();
 		</portlet:renderURL>
 
 		<liferay-ui:icon
-			iconCssClass="icon-edit"
-			message="edit"
+			image="edit"
 			url="<%= editEntryURL %>"
 		/>
 	</c:if>
@@ -66,8 +64,7 @@ BlogsEntry entry = (BlogsEntry)row.getObject();
 		/>
 
 		<liferay-ui:icon
-			iconCssClass="icon-lock"
-			message="permissions"
+			image="permissions"
 			method="get"
 			url="<%= permissionsEntryURL %>"
 			useDialog="<%= true %>"

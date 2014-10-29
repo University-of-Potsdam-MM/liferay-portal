@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -55,82 +55,6 @@ import java.util.Map;
  */
 public class PermissionImporter {
 
-	public static PermissionImporter getInstance() {
-		return _instance;
-	}
-
-	protected Role checkRole(
-			LayoutCache layoutCache, long companyId, long groupId, long userId,
-			Element roleElement)
-		throws Exception {
-
-		String name = roleElement.attributeValue("name");
-
-		Role role = null;
-
-		if (name.startsWith(PermissionExporter.ROLE_TEAM_PREFIX)) {
-			name = name.substring(PermissionExporter.ROLE_TEAM_PREFIX.length());
-
-			String description = roleElement.attributeValue("description");
-
-			Team team = null;
-
-			try {
-				team = TeamLocalServiceUtil.getTeam(groupId, name);
-			}
-			catch (NoSuchTeamException nste) {
-				team = TeamLocalServiceUtil.addTeam(
-					userId, groupId, name, description);
-			}
-
-			role = RoleLocalServiceUtil.getTeamRole(
-				companyId, team.getTeamId());
-		}
-		else {
-			role = layoutCache.getRole(companyId, name);
-		}
-
-		if (role == null) {
-			String title = roleElement.attributeValue("title");
-
-			Map<Locale, String> titleMap = LocalizationUtil.getLocalizationMap(
-				title);
-
-			String description = roleElement.attributeValue("description");
-
-			Map<Locale, String> descriptionMap =
-				LocalizationUtil.getLocalizationMap(description);
-
-			int type = GetterUtil.getInteger(
-				roleElement.attributeValue("type"));
-			String subtype = roleElement.attributeValue("subtype");
-
-			role = RoleLocalServiceUtil.addRole(
-				userId, null, 0, name, titleMap, descriptionMap, type, subtype,
-				null);
-		}
-
-		return role;
-	}
-
-	protected void checkRoles(
-			LayoutCache layoutCache, long companyId, long groupId, long userId,
-			Element portletElement)
-		throws Exception {
-
-		Element permissionsElement = portletElement.element("permissions");
-
-		if (permissionsElement == null) {
-			return;
-		}
-
-		List<Element> roleElements = permissionsElement.elements("role");
-
-		for (Element roleElement : roleElements) {
-			checkRole(layoutCache, companyId, groupId, userId, roleElement);
-		}
-	}
-
 	protected List<String> getActions(Element element) {
 		List<String> actions = new ArrayList<String>();
 
@@ -154,8 +78,52 @@ public class PermissionImporter {
 		List<Element> roleElements = permissionsElement.elements("role");
 
 		for (Element roleElement : roleElements) {
-			Role role = checkRole(
-				layoutCache, companyId, groupId, userId, roleElement);
+			String name = roleElement.attributeValue("name");
+
+			Role role = null;
+
+			if (name.startsWith(PermissionExporter.ROLE_TEAM_PREFIX)) {
+				name = name.substring(
+					PermissionExporter.ROLE_TEAM_PREFIX.length());
+
+				String description = roleElement.attributeValue("description");
+
+				Team team = null;
+
+				try {
+					team = TeamLocalServiceUtil.getTeam(groupId, name);
+				}
+				catch (NoSuchTeamException nste) {
+					team = TeamLocalServiceUtil.addTeam(
+						userId, groupId, name, description);
+				}
+
+				role = RoleLocalServiceUtil.getTeamRole(
+					companyId, team.getTeamId());
+			}
+			else {
+				role = layoutCache.getRole(companyId, name);
+			}
+
+			if (role == null) {
+				String title = roleElement.attributeValue("title");
+
+				Map<Locale, String> titleMap =
+					LocalizationUtil.getLocalizationMap(title);
+
+				String description = roleElement.attributeValue("description");
+
+				Map<Locale, String> descriptionMap =
+					LocalizationUtil.getLocalizationMap(description);
+
+				int type = GetterUtil.getInteger(
+					roleElement.attributeValue("type"));
+				String subtype = roleElement.attributeValue("subtype");
+
+				role = RoleLocalServiceUtil.addRole(
+					userId, null, 0, name, titleMap, descriptionMap, type,
+					subtype, null);
+			}
 
 			Group group = GroupLocalServiceUtil.getGroup(groupId);
 
@@ -247,10 +215,5 @@ public class PermissionImporter {
 				resourceName, resourcePK, permissions);
 		}
 	}
-
-	private PermissionImporter() {
-	}
-
-	private static PermissionImporter _instance = new PermissionImporter();
 
 }

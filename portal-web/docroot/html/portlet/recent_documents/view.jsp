@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -17,7 +17,7 @@
 <%@ include file="/html/portlet/recent_documents/init.jsp" %>
 
 <%
-List<DLFileRank> fileRanks = DLAppLocalServiceUtil.getFileRanks(scopeGroupId, user.getUserId());
+List fileRanks = DLAppLocalServiceUtil.getFileRanks(scopeGroupId, user.getUserId());
 %>
 
 <c:choose>
@@ -25,10 +25,12 @@ List<DLFileRank> fileRanks = DLAppLocalServiceUtil.getFileRanks(scopeGroupId, us
 		<liferay-ui:message key="there-are-no-recent-downloads" />
 	</c:when>
 	<c:otherwise>
-		<ul class="recent-documents">
+		<table class="lfr-table">
 
 		<%
-		for (DLFileRank fileRank : fileRanks) {
+		for (int i = 0; i < fileRanks.size(); i++) {
+			DLFileRank fileRank = (DLFileRank)fileRanks.get(i);
+
 			try {
 				FileEntry fileEntry = DLAppLocalServiceUtil.getFileEntry(fileRank.getFileEntryId());
 
@@ -41,14 +43,11 @@ List<DLFileRank> fileRanks = DLAppLocalServiceUtil.getFileRanks(scopeGroupId, us
 				rowURL.setWindowState(LiferayWindowState.EXCLUSIVE);
 		%>
 
-				<li>
-					<liferay-ui:icon
-						iconCssClass="<%= fileEntry.getIconCssClass() %>"
-						label="<%= true %>"
-						message="<%= fileEntry.getTitle() %>"
-						url="<%= rowURL.toString() %>"
-					/>
-				</li>
+				<tr>
+					<td>
+						<a href="<%= rowURL.toString() %>"><img align="left" alt="" border="0" src="<%= themeDisplay.getPathThemeImages() %>/file_system/small/<%= fileEntry.getIcon() %>.png" /><%= fileEntry.getTitle() %></a>
+					</td>
+				</tr>
 
 		<%
 			}
@@ -57,6 +56,6 @@ List<DLFileRank> fileRanks = DLAppLocalServiceUtil.getFileRanks(scopeGroupId, us
 		}
 		%>
 
-		</ul>
+		</table>
 	</c:otherwise>
 </c:choose>

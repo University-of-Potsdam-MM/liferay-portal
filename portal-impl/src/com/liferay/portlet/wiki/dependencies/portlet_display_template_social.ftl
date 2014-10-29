@@ -138,7 +138,7 @@
 		${addPageURL.setParameter("parentTitle", entry.getTitle())}
 
 		<@liferay_ui["icon"]
-			iconCssClass="icon-plus"
+			image="add_article"
 			label=true
 			message="add-child-page"
 			url=addPageURL?string
@@ -152,7 +152,7 @@
 	${viewPageAttachmentsURL.setParameter("struts_action", "/wiki/view_page_attachments") }
 
 	<@liferay_ui["icon"]
-		iconCssClass="icon-paperclip"
+		image="clip"
 		label=true
 		message='${entry.getAttachmentsFileEntriesCount() + languageUtil.get(locale, "attachments")}'
 		url=viewPageAttachmentsURL?string
@@ -160,7 +160,7 @@
 </#macro>
 
 <#macro getDiscussion>
-	<#if validator.isNotNull(assetRenderer.getDiscussionPath()) && getterUtil.getBoolean(enableComments)>
+	<#if validator.isNotNull(assetRenderer.getDiscussionPath()) && (enableComments == "true")>
 		<br />
 
 		<#assign discussionURL = renderResponse.createActionURL() />
@@ -172,7 +172,7 @@
 			classPK=entry.getResourcePrimKey()
 			formAction=discussionURL?string
 			formName="fm2"
-			ratingsEnabled=getterUtil.getBoolean(enableCommentRatings)
+			ratingsEnabled=enableCommentRatings == "true"
 			redirect=currentURL
 			subject=assetRenderer.getTitle(locale)
 			userId=assetRenderer.getUserId()
@@ -190,7 +190,7 @@
 		${editPageURL.setParameter("title", entry.getTitle())}
 
 		<@liferay_ui["icon"]
-			iconCssClass="icon-edit"
+			image="edit"
 			message=entry.getTitle()
 			url=editPageURL?string
 		/>
@@ -204,7 +204,7 @@
 	${viewPageDetailsURL.setParameter("redirect", currentURL)}
 
 	<@liferay_ui["icon"]
-		iconCssClass="icon-file-alt"
+		image="history"
 		message="details"
 		url=viewPageDetailsURL?string
 	/>
@@ -216,11 +216,11 @@
 	${printURL.setParameter("viewMode", "print")}
 	${printURL.setWindowState("pop_up")}
 
-	<#assign title = languageUtil.format(locale, "print-x-x", ["hide-accessible", htmlUtil.escape(assetRenderer.getTitle(locale))], false) />
+	<#assign title = languageUtil.format(locale, "print-x-x", ["hide-accessible", htmlUtil.escape(assetRenderer.getTitle(locale))]) />
 	<#assign taglibPrintURL = "javascript:Liferay.Util.openWindow({dialog: {width: 960}, id:'" + renderResponse.getNamespace() + "printAsset', title: '" + title + "', uri: '" + htmlUtil.escapeURL(printURL.toString()) + "'});" />
 
 	<@liferay_ui["icon"]
-		iconCssClass="icon-print"
+		image="print"
 		message="print"
 		url=taglibPrintURL
 	/>
@@ -230,7 +230,7 @@
 	cssClass
 	entry
 >
-	<#if getterUtil.getBoolean(enablePageRatings)>
+	<#if enablePageRatings == "true">
 		<div class="${cssClass}">
 			<@liferay_ui["ratings"]
 				className=wikiPageClassName
@@ -241,7 +241,7 @@
 </#macro>
 
 <#macro getRelatedAssets>
-	<#if assetEntry?? && getterUtil.getBoolean(enableRelatedAssets)>
+	<#if assetEntry?? && (enableRelatedAssets == "true")>
 		<@liferay_ui["asset-links"]
 			assetEntryId=assetEntry.getEntryId()
 		/>

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -41,8 +41,15 @@ public class MockRemoteSPI extends RemoteSPI {
 	}
 
 	@Override
+	public void destroy() throws RemoteException {
+		if (_failOnDestroy) {
+			throw new RemoteException();
+		}
+	}
+
+	@Override
 	public String getSPIProviderName() {
-		return _spiProviderName;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -58,10 +65,6 @@ public class MockRemoteSPI extends RemoteSPI {
 		_failOnStop = failOnStop;
 	}
 
-	public void setSpiProviderName(String spiProviderName) {
-		_spiProviderName = spiProviderName;
-	}
-
 	@Override
 	public void start() {
 		throw new UnsupportedOperationException();
@@ -74,15 +77,7 @@ public class MockRemoteSPI extends RemoteSPI {
 		}
 	}
 
-	@Override
-	protected void doDestroy() throws RemoteException {
-		if (_failOnDestroy) {
-			throw new RemoteException();
-		}
-	}
-
 	private boolean _failOnDestroy;
 	private boolean _failOnStop;
-	private String _spiProviderName;
 
 }

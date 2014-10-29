@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -16,6 +16,7 @@ package com.liferay.portal.security.membershippolicy;
 
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.search.Indexer;
@@ -45,7 +46,7 @@ public class DefaultSiteMembershipPolicy extends BaseSiteMembershipPolicy {
 	@Override
 	public void checkMembership(
 			long[] userIds, long[] addGroupIds, long[] removeGroupIds)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		if (addGroupIds != null) {
 			checkAddUsersLimitedGroup(userIds, addGroupIds);
@@ -75,7 +76,7 @@ public class DefaultSiteMembershipPolicy extends BaseSiteMembershipPolicy {
 	@Override
 	public void propagateMembership(
 			long[] userIds, long[] addGroupIds, long[] removeGroupIds)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		if (removeGroupIds != null) {
 			for (long removeGroupId : removeGroupIds) {
@@ -85,7 +86,9 @@ public class DefaultSiteMembershipPolicy extends BaseSiteMembershipPolicy {
 	}
 
 	@Override
-	public void verifyPolicy(Group group) throws PortalException {
+	public void verifyPolicy(Group group)
+		throws PortalException, SystemException {
+
 		if (group.isLimitedToParentSiteMembers()) {
 			verifyLimitedParentMembership(group);
 		}
@@ -97,7 +100,7 @@ public class DefaultSiteMembershipPolicy extends BaseSiteMembershipPolicy {
 			List<AssetTag> oldAssetTags,
 			Map<String, Serializable> oldExpandoAttributes,
 			UnicodeProperties oldTypeSettingsProperties)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		if (group.isLimitedToParentSiteMembers()) {
 			if ((group.getParentGroupId() == oldGroup.getParentGroupId()) &&
@@ -116,7 +119,7 @@ public class DefaultSiteMembershipPolicy extends BaseSiteMembershipPolicy {
 	}
 
 	protected void checkAddUsersLimitedGroup(long[] userIds, long[] groupIds)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		MembershipPolicyException membershipPolicyException = null;
 
@@ -155,7 +158,7 @@ public class DefaultSiteMembershipPolicy extends BaseSiteMembershipPolicy {
 	}
 
 	protected List<Group> getLimitedChildrenGroups(Group group)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		List<Group> parentGroups = new ArrayList<Group>();
 
@@ -193,7 +196,7 @@ public class DefaultSiteMembershipPolicy extends BaseSiteMembershipPolicy {
 
 	protected void removeUsersFromLimitedChildrenGroups(
 			long[] userIds, long groupId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Group group = GroupLocalServiceUtil.getGroup(groupId);
 
@@ -212,7 +215,7 @@ public class DefaultSiteMembershipPolicy extends BaseSiteMembershipPolicy {
 	}
 
 	protected void verifyLimitedParentMembership(final Group group)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		int count = UserLocalServiceUtil.getGroupUsersCount(group.getGroupId());
 

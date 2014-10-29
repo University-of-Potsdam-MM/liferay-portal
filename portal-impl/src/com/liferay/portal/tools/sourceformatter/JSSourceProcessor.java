@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -30,9 +30,28 @@ import java.util.regex.Pattern;
 public class JSSourceProcessor extends BaseSourceProcessor {
 
 	@Override
-	protected String doFormat(
-			File file, String fileName, String absolutePath, String content)
-		throws Exception {
+	protected void format() throws Exception {
+		String[] excludes = {
+			"**\\js\\aui\\**", "**\\js\\editor\\**", "**\\js\\misc\\**",
+			"**\\tools\\**", "**\\VAADIN\\**"
+		};
+		String[] includes = {"**\\*.js"};
+
+		List<String> fileNames = getFileNames(excludes, includes);
+
+		for (String fileName : fileNames) {
+			format(fileName);
+		}
+	}
+
+	@Override
+	protected String format(String fileName) throws Exception {
+		File file = new File(BASEDIR + fileName);
+
+		fileName = StringUtil.replace(
+			fileName, StringPool.BACK_SLASH, StringPool.SLASH);
+
+		String content = fileUtil.read(file);
 
 		String newContent = trimContent(content, false);
 
@@ -75,26 +94,15 @@ public class JSSourceProcessor extends BaseSourceProcessor {
 
 		checkLanguageKeys(fileName, newContent, languageKeyPattern);
 
-		if (newContent.contains("debugger.")) {
-			processErrorMessage(fileName, "debugger " + fileName);
+		if (isAutoFix() && (newContent != null) &&
+			!content.equals(newContent)) {
+
+			fileUtil.write(file, newContent);
+
+			sourceFormatterHelper.printError(fileName, file);
 		}
 
 		return newContent;
-	}
-
-	@Override
-	protected void format() throws Exception {
-		String[] excludes = {
-			"**\\js\\aui\\**", "**\\js\\editor\\**", "**\\js\\misc\\**",
-			"**\\r2.js", "**\\tools\\**", "**\\VAADIN\\**"
-		};
-		String[] includes = {"**\\*.js"};
-
-		List<String> fileNames = getFileNames(excludes, includes);
-
-		for (String fileName : fileNames) {
-			format(fileName);
-		}
 	}
 
 	private Pattern _multipleVarsOnSingleLinePattern = Pattern.compile(

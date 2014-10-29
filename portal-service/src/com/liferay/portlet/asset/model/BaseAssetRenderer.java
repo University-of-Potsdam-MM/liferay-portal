@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,11 +15,11 @@
 package com.liferay.portlet.asset.model;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.portlet.LiferayPortletURL;
 import com.liferay.portal.kernel.util.HttpUtil;
-import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
@@ -35,7 +35,6 @@ import com.liferay.portal.util.PortletKeys;
 import com.liferay.portlet.asset.AssetRendererFactoryRegistryUtil;
 import com.liferay.portlet.asset.service.AssetEntryLocalServiceUtil;
 import com.liferay.portlet.assetpublisher.util.AssetPublisherUtil;
-import com.liferay.portlet.dynamicdatamapping.storage.Fields;
 import com.liferay.portlet.trash.util.TrashUtil;
 
 import java.util.Date;
@@ -86,15 +85,9 @@ public abstract class BaseAssetRenderer implements AssetRenderer {
 	/**
 	 * @deprecated As of 6.2.0, replaced by {@link #getAvailableLanguageIds}
 	 */
-	@Deprecated
 	@Override
 	public String[] getAvailableLocales() {
 		return getAvailableLanguageIds();
-	}
-
-	@Override
-	public DDMFieldReader getDDMFieldReader() {
-		return _nullDDMFieldReader;
 	}
 
 	@Override
@@ -105,12 +98,6 @@ public abstract class BaseAssetRenderer implements AssetRenderer {
 	@Override
 	public Date getDisplayDate() {
 		return null;
-	}
-
-	@Override
-	@SuppressWarnings("unused")
-	public String getIconCssClass() throws PortalException {
-		return getAssetRendererFactory().getIconCssClass();
 	}
 
 	@Override
@@ -136,27 +123,7 @@ public abstract class BaseAssetRenderer implements AssetRenderer {
 
 	@Override
 	public String getSearchSummary(Locale locale) {
-		return getSummary(null, null);
-	}
-
-	@Override
-	public String getSummary() {
-		return getSummary(null, null);
-	}
-
-	/**
-	 * @deprecated As of 7.0.0, replaced by {@link #getSummary(PortletRequest,
-	 *             PortletResponse)}
-	 */
-	@Deprecated
-	@Override
-	public String getSummary(Locale locale) {
-		return getSummary(null, null);
-	}
-
-	@Override
-	public String[] getSupportedConversions() {
-		return null;
+		return getSummary(locale);
 	}
 
 	@Override
@@ -270,15 +237,6 @@ public abstract class BaseAssetRenderer implements AssetRenderer {
 	}
 
 	@Override
-	public PortletURL getURLViewDiffs(
-			LiferayPortletRequest liferayPortletRequest,
-			LiferayPortletResponse liferayPortletResponse)
-		throws Exception {
-
-		return null;
-	}
-
-	@Override
 	public String getURLViewInContext(
 			LiferayPortletRequest liferayPortletRequest,
 			LiferayPortletResponse liferayPortletResponse,
@@ -296,7 +254,7 @@ public abstract class BaseAssetRenderer implements AssetRenderer {
 	@Override
 	@SuppressWarnings("unused")
 	public boolean hasEditPermission(PermissionChecker permissionChecker)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return false;
 	}
@@ -304,7 +262,7 @@ public abstract class BaseAssetRenderer implements AssetRenderer {
 	@Override
 	@SuppressWarnings("unused")
 	public boolean hasViewPermission(PermissionChecker permissionChecker)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return true;
 	}
@@ -367,27 +325,19 @@ public abstract class BaseAssetRenderer implements AssetRenderer {
 
 	protected long getControlPanelPlid(
 			LiferayPortletRequest liferayPortletRequest)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return PortalUtil.getControlPanelPlid(liferayPortletRequest);
 	}
 
 	protected long getControlPanelPlid(ThemeDisplay themeDisplay)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return PortalUtil.getControlPanelPlid(themeDisplay.getCompanyId());
 	}
 
 	protected String getIconPath(ThemeDisplay themeDisplay) {
 		return themeDisplay.getPathThemeImages() + "/common/page.png";
-	}
-
-	protected Locale getLocale(PortletRequest portletRequest) {
-		if (portletRequest != null) {
-			return portletRequest.getLocale();
-		}
-
-		return LocaleUtil.getMostRelevantLocale();
 	}
 
 	protected String getURLViewInContext(
@@ -413,29 +363,12 @@ public abstract class BaseAssetRenderer implements AssetRenderer {
 		sb.append(StringPool.EQUAL);
 		sb.append(primaryKeyParameterValue);
 
-		return PortalUtil.addPreservedParameters(themeDisplay, sb.toString());
+		return sb.toString();
 	}
 
 	private static final String[] _AVAILABLE_LANGUAGE_IDS = new String[0];
 
-	private static DDMFieldReader _nullDDMFieldReader =
-		new NullDDMFieldReader();
-
 	private AssetRendererFactory _assetRendererFactory;
 	private int _assetRendererType = AssetRendererFactory.TYPE_LATEST_APPROVED;
-
-	private static final class NullDDMFieldReader implements DDMFieldReader {
-
-		@Override
-		public Fields getFields() {
-			return new Fields();
-		}
-
-		@Override
-		public Fields getFields(String ddmType) {
-			return getFields();
-		}
-
-	}
 
 }

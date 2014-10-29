@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portlet.documentlibrary.model.impl;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portlet.documentlibrary.model.DLFileEntryType;
 import com.liferay.portlet.documentlibrary.model.DLFileVersion;
 import com.liferay.portlet.documentlibrary.service.DLFileEntryTypeLocalServiceUtil;
@@ -31,18 +32,24 @@ public class DLFileEntryMetadataImpl extends DLFileEntryMetadataBaseImpl {
 	}
 
 	@Override
-	public DDMStructure getDDMStructure() throws PortalException {
+	public DDMStructure getDDMStructure()
+		throws PortalException, SystemException {
+
 		return DDMStructureLocalServiceUtil.getStructure(getDDMStructureId());
 	}
 
 	@Override
-	public DLFileEntryType getFileEntryType() throws PortalException {
+	public DLFileEntryType getFileEntryType()
+		throws PortalException, SystemException {
+
 		return DLFileEntryTypeLocalServiceUtil.getFileEntryType(
 			getFileEntryTypeId());
 	}
 
 	@Override
-	public DLFileVersion getFileVersion() throws PortalException {
+	public DLFileVersion getFileVersion()
+		throws PortalException, SystemException {
+
 		return DLFileVersionLocalServiceUtil.getFileVersion(getFileVersionId());
 	}
 

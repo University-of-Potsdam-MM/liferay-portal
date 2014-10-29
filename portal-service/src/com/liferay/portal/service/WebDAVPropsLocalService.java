@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,7 +18,6 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.transaction.Isolation;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
@@ -51,10 +50,11 @@ public interface WebDAVPropsLocalService extends BaseLocalService,
 	*
 	* @param webDAVProps the web d a v props
 	* @return the web d a v props that was added
+	* @throws SystemException if a system exception occurred
 	*/
-	@com.liferay.portal.kernel.search.Indexable(type = IndexableType.REINDEX)
 	public com.liferay.portal.model.WebDAVProps addWebDAVProps(
-		com.liferay.portal.model.WebDAVProps webDAVProps);
+		com.liferay.portal.model.WebDAVProps webDAVProps)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Creates a new web d a v props with the primary key. Does not add the web d a v props to the database.
@@ -66,36 +66,28 @@ public interface WebDAVPropsLocalService extends BaseLocalService,
 		long webDavPropsId);
 
 	/**
-	* @throws PortalException
+	* Deletes the web d a v props with the primary key from the database. Also notifies the appropriate model listeners.
+	*
+	* @param webDavPropsId the primary key of the web d a v props
+	* @return the web d a v props that was removed
+	* @throws PortalException if a web d a v props with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
-	@Override
-	public com.liferay.portal.model.PersistedModel deletePersistedModel(
-		com.liferay.portal.model.PersistedModel persistedModel)
-		throws com.liferay.portal.kernel.exception.PortalException;
-
-	public void deleteWebDAVProps(java.lang.String className, long classPK);
+	public com.liferay.portal.model.WebDAVProps deleteWebDAVProps(
+		long webDavPropsId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Deletes the web d a v props from the database. Also notifies the appropriate model listeners.
 	*
 	* @param webDAVProps the web d a v props
 	* @return the web d a v props that was removed
+	* @throws SystemException if a system exception occurred
 	*/
-	@com.liferay.portal.kernel.search.Indexable(type = IndexableType.DELETE)
 	public com.liferay.portal.model.WebDAVProps deleteWebDAVProps(
-		com.liferay.portal.model.WebDAVProps webDAVProps);
-
-	/**
-	* Deletes the web d a v props with the primary key from the database. Also notifies the appropriate model listeners.
-	*
-	* @param webDavPropsId the primary key of the web d a v props
-	* @return the web d a v props that was removed
-	* @throws PortalException if a web d a v props with the primary key could not be found
-	*/
-	@com.liferay.portal.kernel.search.Indexable(type = IndexableType.DELETE)
-	public com.liferay.portal.model.WebDAVProps deleteWebDAVProps(
-		long webDavPropsId)
-		throws com.liferay.portal.kernel.exception.PortalException;
+		com.liferay.portal.model.WebDAVProps webDAVProps)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	public com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery();
 
@@ -104,9 +96,12 @@ public interface WebDAVPropsLocalService extends BaseLocalService,
 	*
 	* @param dynamicQuery the dynamic query
 	* @return the matching rows
+	* @throws SystemException if a system exception occurred
 	*/
-	public <T> java.util.List<T> dynamicQuery(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery);
+	@SuppressWarnings("rawtypes")
+	public java.util.List dynamicQuery(
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Performs a dynamic query on the database and returns a range of the matching rows.
@@ -119,10 +114,12 @@ public interface WebDAVPropsLocalService extends BaseLocalService,
 	* @param start the lower bound of the range of model instances
 	* @param end the upper bound of the range of model instances (not inclusive)
 	* @return the range of matching rows
+	* @throws SystemException if a system exception occurred
 	*/
-	public <T> java.util.List<T> dynamicQuery(
+	@SuppressWarnings("rawtypes")
+	public java.util.List dynamicQuery(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
-		int end);
+		int end) throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Performs a dynamic query on the database and returns an ordered range of the matching rows.
@@ -136,20 +133,25 @@ public interface WebDAVPropsLocalService extends BaseLocalService,
 	* @param end the upper bound of the range of model instances (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching rows
+	* @throws SystemException if a system exception occurred
 	*/
-	public <T> java.util.List<T> dynamicQuery(
+	@SuppressWarnings("rawtypes")
+	public java.util.List dynamicQuery(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
 		int end,
-		com.liferay.portal.kernel.util.OrderByComparator<T> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of rows that match the dynamic query.
 	*
 	* @param dynamicQuery the dynamic query
 	* @return the number of rows that match the dynamic query
+	* @throws SystemException if a system exception occurred
 	*/
 	public long dynamicQueryCount(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery);
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of rows that match the dynamic query.
@@ -157,34 +159,17 @@ public interface WebDAVPropsLocalService extends BaseLocalService,
 	* @param dynamicQuery the dynamic query
 	* @param projection the projection to apply to the query
 	* @return the number of rows that match the dynamic query
+	* @throws SystemException if a system exception occurred
 	*/
 	public long dynamicQueryCount(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery,
-		com.liferay.portal.kernel.dao.orm.Projection projection);
+		com.liferay.portal.kernel.dao.orm.Projection projection)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public com.liferay.portal.model.WebDAVProps fetchWebDAVProps(
-		long webDavPropsId);
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery getActionableDynamicQuery();
-
-	/**
-	* Returns the Spring bean ID for this bean.
-	*
-	* @return the Spring bean ID for this bean
-	*/
-	public java.lang.String getBeanIdentifier();
-
-	@Override
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public com.liferay.portal.model.PersistedModel getPersistedModel(
-		java.io.Serializable primaryKeyObj)
-		throws com.liferay.portal.kernel.exception.PortalException;
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public com.liferay.portal.model.WebDAVProps getWebDAVProps(long companyId,
-		java.lang.String className, long classPK);
+		long webDavPropsId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the web d a v props with the primary key.
@@ -192,11 +177,20 @@ public interface WebDAVPropsLocalService extends BaseLocalService,
 	* @param webDavPropsId the primary key of the web d a v props
 	* @return the web d a v props
 	* @throws PortalException if a web d a v props with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public com.liferay.portal.model.WebDAVProps getWebDAVProps(
 		long webDavPropsId)
-		throws com.liferay.portal.kernel.exception.PortalException;
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException;
+
+	@Override
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public com.liferay.portal.model.PersistedModel getPersistedModel(
+		java.io.Serializable primaryKeyObj)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns a range of all the web d a v propses.
@@ -208,18 +202,40 @@ public interface WebDAVPropsLocalService extends BaseLocalService,
 	* @param start the lower bound of the range of web d a v propses
 	* @param end the upper bound of the range of web d a v propses (not inclusive)
 	* @return the range of web d a v propses
+	* @throws SystemException if a system exception occurred
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public java.util.List<com.liferay.portal.model.WebDAVProps> getWebDAVPropses(
-		int start, int end);
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of web d a v propses.
 	*
 	* @return the number of web d a v propses
+	* @throws SystemException if a system exception occurred
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public int getWebDAVPropsesCount();
+	public int getWebDAVPropsesCount()
+		throws com.liferay.portal.kernel.exception.SystemException;
+
+	/**
+	* Updates the web d a v props in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
+	*
+	* @param webDAVProps the web d a v props
+	* @return the web d a v props that was updated
+	* @throws SystemException if a system exception occurred
+	*/
+	public com.liferay.portal.model.WebDAVProps updateWebDAVProps(
+		com.liferay.portal.model.WebDAVProps webDAVProps)
+		throws com.liferay.portal.kernel.exception.SystemException;
+
+	/**
+	* Returns the Spring bean ID for this bean.
+	*
+	* @return the Spring bean ID for this bean
+	*/
+	public java.lang.String getBeanIdentifier();
 
 	/**
 	* Sets the Spring bean ID for this bean.
@@ -228,17 +244,16 @@ public interface WebDAVPropsLocalService extends BaseLocalService,
 	*/
 	public void setBeanIdentifier(java.lang.String beanIdentifier);
 
+	public void deleteWebDAVProps(java.lang.String className, long classPK)
+		throws com.liferay.portal.kernel.exception.SystemException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public com.liferay.portal.model.WebDAVProps getWebDAVProps(long companyId,
+		java.lang.String className, long classPK)
+		throws com.liferay.portal.kernel.exception.SystemException;
+
 	public void storeWebDAVProps(
 		com.liferay.portal.model.WebDAVProps webDavProps)
-		throws com.liferay.portal.kernel.exception.PortalException;
-
-	/**
-	* Updates the web d a v props in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
-	*
-	* @param webDAVProps the web d a v props
-	* @return the web d a v props that was updated
-	*/
-	@com.liferay.portal.kernel.search.Indexable(type = IndexableType.REINDEX)
-	public com.liferay.portal.model.WebDAVProps updateWebDAVProps(
-		com.liferay.portal.model.WebDAVProps webDAVProps);
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException;
 }

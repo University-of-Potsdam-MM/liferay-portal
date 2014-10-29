@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,8 +14,6 @@
 
 package com.liferay.portal.kernel.nio.intraband.rpc;
 
-import com.liferay.portal.kernel.concurrent.DefaultNoticeableFuture;
-import com.liferay.portal.kernel.concurrent.NoticeableFuture;
 import com.liferay.portal.kernel.io.Deserializer;
 import com.liferay.portal.kernel.io.Serializer;
 import com.liferay.portal.kernel.nio.intraband.CompletionHandler;
@@ -30,15 +28,19 @@ import java.io.IOException;
 import java.io.Serializable;
 
 import java.util.EnumSet;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
 
 /**
  * @author Shuyang Zhou
  */
 public class IntrabandRPCUtil {
 
-	public static <V extends Serializable> NoticeableFuture<V> execute(
-		RegistrationReference registrationReference,
-		ProcessCallable<V> processCallable) {
+	public static <V extends Serializable> Future<V> execute(
+			RegistrationReference registrationReference,
+			ProcessCallable<V> processCallable)
+		throws IntrabandRPCException {
 
 		Intraband intraband = registrationReference.getIntraband();
 
@@ -48,18 +50,32 @@ public class IntrabandRPCUtil {
 
 		serializer.writeObject(processCallable);
 
-		Datagram datagram = Datagram.createRequestDatagram(
-			systemDataType.getValue(), serializer.toByteBuffer());
+		try {
+			Datagram datagram = Datagram.createRequestDatagram(
+				systemDataType.getValue(), serializer.toByteBuffer());
 
-		DefaultNoticeableFuture<V> defaultNoticeableFuture =
-			new DefaultNoticeableFuture<V>();
+			FutureResult<V> futureResult = new FutureResult<V>();
 
-		intraband.sendDatagram(
-			registrationReference, datagram, null, repliedEnumSet,
-			new FutureCompletionHandler<V>(defaultNoticeableFuture));
+			intraband.sendDatagram(
+				registrationReference, datagram, null, repliedEnumSet,
+				new FutureCompletionHandler<V>(futureResult));
 
-		return defaultNoticeableFuture;
+			return futureResult;
+		}
+		catch (Exception e) {
+			throw new IntrabandRPCException(e);
+		}
 	}
+
+	protected static Callable<Serializable> emptyCallable =
+		new Callable<Serializable>() {
+
+		@Override
+		public Serializable call() throws Exception {
+			return null;
+		}
+
+	};
 
 	protected static EnumSet<CompletionType> repliedEnumSet = EnumSet.of(
 		CompletionType.REPLIED);
@@ -67,13 +83,17 @@ public class IntrabandRPCUtil {
 	protected static class FutureCompletionHandler<V extends Serializable>
 		implements CompletionHandler<Object> {
 
+		protected FutureCompletionHandler(FutureResult<V> futureResult) {
+			_futureResult = futureResult;
+		}
+
 		@Override
 		public void delivered(Object attachment) {
 		}
 
 		@Override
 		public void failed(Object attachment, IOException ioe) {
-			_defaultNoticeableFuture.setException(ioe);
+			_futureResult.setException(ioe);
 		}
 
 		@Override
@@ -82,19 +102,12 @@ public class IntrabandRPCUtil {
 				datagram.getDataByteBuffer());
 
 			try {
-				RPCResponse rpcResponse = deserializer.readObject();
+				V v = deserializer.readObject();
 
-				Exception exception = rpcResponse.getException();
-
-				if (exception != null) {
-					_defaultNoticeableFuture.setException(exception);
-				}
-				else {
-					_defaultNoticeableFuture.set((V)rpcResponse.getResult());
-				}
+				_futureResult.set(v);
 			}
 			catch (ClassNotFoundException cnfe) {
-				_defaultNoticeableFuture.setException(cnfe);
+				_futureResult.setException(cnfe);
 			}
 		}
 
@@ -104,16 +117,29 @@ public class IntrabandRPCUtil {
 
 		@Override
 		public void timedOut(Object attachment) {
-			_defaultNoticeableFuture.cancel(true);
+			_futureResult.cancel(true);
 		}
 
-		protected FutureCompletionHandler(
-			DefaultNoticeableFuture<V> defaultNoticeableFuture) {
+		private final FutureResult<V> _futureResult;
 
-			_defaultNoticeableFuture = defaultNoticeableFuture;
+	}
+
+	protected static class FutureResult<V extends Serializable>
+		extends FutureTask<V> {
+
+		protected FutureResult() {
+			super((Callable<V>)emptyCallable);
 		}
 
-		private final DefaultNoticeableFuture<V> _defaultNoticeableFuture;
+		@Override
+		protected void set(V v) {
+			super.set(v);
+		}
+
+		@Override
+		protected void setException(Throwable t) {
+			super.setException(t);
+		}
 
 	}
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,7 +14,7 @@
 
 package com.liferay.portlet.journal.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
+import com.liferay.portal.kernel.exception.SystemException;
 
 import com.liferay.portlet.journal.model.JournalArticleImage;
 import com.liferay.portlet.journal.service.JournalArticleImageLocalServiceUtil;
@@ -31,7 +31,6 @@ import com.liferay.portlet.journal.service.JournalArticleImageLocalServiceUtil;
  * @see com.liferay.portlet.journal.model.JournalArticleImage
  * @generated
  */
-@ProviderType
 public abstract class JournalArticleImageBaseImpl
 	extends JournalArticleImageModelImpl implements JournalArticleImage {
 	/*
@@ -40,7 +39,7 @@ public abstract class JournalArticleImageBaseImpl
 	 * Never modify or reference this class directly. All methods that expect a journal article image model instance should use the {@link JournalArticleImage} interface instead.
 	 */
 	@Override
-	public void persist() {
+	public void persist() throws SystemException {
 		if (this.isNew()) {
 			JournalArticleImageLocalServiceUtil.addJournalArticleImage(this);
 		}
