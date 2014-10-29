@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,11 +15,6 @@
 package com.liferay.portal.kernel.search;
 
 import com.liferay.portal.kernel.cluster.messaging.ClusterBridgeMessageListener;
-import com.liferay.portal.kernel.concurrent.CallerRunsPolicy;
-import com.liferay.portal.kernel.concurrent.RejectedExecutionHandler;
-import com.liferay.portal.kernel.concurrent.ThreadPoolExecutor;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.messaging.Destination;
 import com.liferay.portal.kernel.messaging.InvokerMessageListener;
 import com.liferay.portal.kernel.messaging.MessageBus;
@@ -29,10 +24,6 @@ import com.liferay.portal.kernel.messaging.SynchronousDestination;
 import com.liferay.portal.kernel.search.messaging.BaseSearchEngineMessageListener;
 import com.liferay.portal.kernel.search.messaging.SearchReaderMessageListener;
 import com.liferay.portal.kernel.search.messaging.SearchWriterMessageListener;
-import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.PropsKeys;
-import com.liferay.portal.kernel.util.PropsUtil;
-import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.util.ArrayList;
@@ -44,10 +35,8 @@ import java.util.Set;
 /**
  * @author Michael C. Han
  */
-public abstract class AbstractSearchEngineConfigurator
-	implements SearchEngineConfigurator {
+public abstract class AbstractSearchEngineConfigurator {
 
-	@Override
 	public void afterPropertiesSet() {
 		Set<Entry<String, SearchEngine>> entrySet = _searchEngines.entrySet();
 
@@ -67,7 +56,6 @@ public abstract class AbstractSearchEngineConfigurator
 		_searchEngines.clear();
 	}
 
-	@Override
 	public void destroy() {
 		for (SearchEngineRegistration searchEngineRegistration :
 				_searchEngineRegistrations) {
@@ -84,7 +72,6 @@ public abstract class AbstractSearchEngineConfigurator
 		}
 	}
 
-	@Override
 	public void setSearchEngines(Map<String, SearchEngine> searchEngines) {
 		_searchEngines = searchEngines;
 	}
@@ -111,59 +98,6 @@ public abstract class AbstractSearchEngineConfigurator
 
 			searchWriterDestination.register(clusterBridgeMessageListener);
 		}
-	}
-
-	protected Destination createSearchReaderDestination(
-		String searchReaderDestinationName) {
-
-		SynchronousDestination synchronousDestination =
-			new SynchronousDestination();
-
-		synchronousDestination.setName(searchReaderDestinationName);
-
-		return synchronousDestination;
-	}
-
-	protected Destination createSearchWriterDestination(
-		String searchWriterDestinationName) {
-
-		ParallelDestination parallelDestination = new ParallelDestination();
-
-		parallelDestination.setName(searchWriterDestinationName);
-
-		if (_INDEX_SEARCH_WRITER_MAX_QUEUE_SIZE > 0) {
-			parallelDestination.setMaximumQueueSize(
-				_INDEX_SEARCH_WRITER_MAX_QUEUE_SIZE);
-
-			RejectedExecutionHandler rejectedExecutionHandler =
-				new CallerRunsPolicy() {
-
-					@Override
-					public void rejectedExecution(
-						Runnable runnable,
-						ThreadPoolExecutor threadPoolExecutor) {
-
-						if (_log.isWarnEnabled()) {
-							StringBundler sb = new StringBundler(4);
-
-							sb.append("The search index writer's task queue ");
-							sb.append("is at its maximum capacity. The ");
-							sb.append("current thread will handle the ");
-							sb.append("request.");
-
-							_log.warn(sb.toString());
-						}
-
-						super.rejectedExecution(runnable, threadPoolExecutor);
-					}
-
-				};
-
-			parallelDestination.setRejectedExecutionHandler(
-				rejectedExecutionHandler);
-		}
-
-		return parallelDestination;
 	}
 
 	protected void destroySearchEngine(
@@ -236,10 +170,14 @@ public abstract class AbstractSearchEngineConfigurator
 			searchReaderDestinationName);
 
 		if (searchReaderDestination == null) {
-			searchReaderDestination = createSearchReaderDestination(
-				searchReaderDestinationName);
+			SynchronousDestination synchronousDestination =
+				new SynchronousDestination();
 
-			searchReaderDestination.open();
+			synchronousDestination.setName(searchReaderDestinationName);
+
+			synchronousDestination.open();
+
+			searchReaderDestination = synchronousDestination;
 
 			messageBus.addDestination(searchReaderDestination);
 		}
@@ -258,10 +196,13 @@ public abstract class AbstractSearchEngineConfigurator
 			searchWriterDestinationName);
 
 		if (searchWriterDestination == null) {
-			searchWriterDestination = createSearchWriterDestination(
-				searchWriterDestinationName);
+			ParallelDestination parallelDestination = new ParallelDestination();
 
-			searchWriterDestination.open();
+			parallelDestination.setName(searchWriterDestinationName);
+
+			parallelDestination.open();
+
+			searchWriterDestination = parallelDestination;
 
 			messageBus.addDestination(searchWriterDestination);
 		}
@@ -387,19 +328,16 @@ public abstract class AbstractSearchEngineConfigurator
 		}
 	}
 
-	private static final int _INDEX_SEARCH_WRITER_MAX_QUEUE_SIZE =
-		GetterUtil.getInteger(
-			PropsUtil.get(PropsKeys.INDEX_SEARCH_WRITER_MAX_QUEUE_SIZE));
-
-	private static Log _log = LogFactoryUtil.getLog(
-		AbstractSearchEngineConfigurator.class);
-
 	private String _originalSearchEngineId;
 	private List<SearchEngineRegistration> _searchEngineRegistrations =
 		new ArrayList<SearchEngineRegistration>();
 	private Map<String, SearchEngine> _searchEngines;
 
 	private class SearchEngineRegistration {
+
+		private SearchEngineRegistration(String searchEngineId) {
+			_searchEngineId = searchEngineId;
+		}
 
 		public void addOriginalSearchReaderMessageListener(
 			InvokerMessageListener messageListener) {
@@ -465,10 +403,6 @@ public abstract class AbstractSearchEngineConfigurator
 			String searchWriterDestinationName) {
 
 			_searchWriterDestinationName = searchWriterDestinationName;
-		}
-
-		private SearchEngineRegistration(String searchEngineId) {
-			_searchEngineId = searchEngineId;
 		}
 
 		private SearchEngineProxyWrapper _originalSearchEngineProxyWrapper;

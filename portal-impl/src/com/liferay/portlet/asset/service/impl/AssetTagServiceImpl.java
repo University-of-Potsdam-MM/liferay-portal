@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -16,6 +16,7 @@ package com.liferay.portlet.asset.service.impl;
 
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
@@ -56,7 +57,7 @@ public class AssetTagServiceImpl extends AssetTagServiceBaseImpl {
 	@Override
 	public AssetTag addTag(
 			String name, String[] tagProperties, ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		AssetPermission.check(
 			getPermissionChecker(), serviceContext.getScopeGroupId(),
@@ -67,7 +68,7 @@ public class AssetTagServiceImpl extends AssetTagServiceBaseImpl {
 	}
 
 	@Override
-	public void deleteTag(long tagId) throws PortalException {
+	public void deleteTag(long tagId) throws PortalException, SystemException {
 		AssetTagPermission.check(
 			getPermissionChecker(), tagId, ActionKeys.DELETE);
 
@@ -75,7 +76,9 @@ public class AssetTagServiceImpl extends AssetTagServiceBaseImpl {
 	}
 
 	@Override
-	public void deleteTags(long[] tagIds) throws PortalException {
+	public void deleteTags(long[] tagIds)
+		throws PortalException, SystemException {
+
 		for (long tagId : tagIds) {
 			AssetTagPermission.check(
 				getPermissionChecker(), tagId, ActionKeys.DELETE);
@@ -85,7 +88,9 @@ public class AssetTagServiceImpl extends AssetTagServiceBaseImpl {
 	}
 
 	@Override
-	public List<AssetTag> getGroupsTags(long[] groupIds) {
+	public List<AssetTag> getGroupsTags(long[] groupIds)
+		throws SystemException {
+
 		Set<AssetTag> groupsTags = new TreeSet<AssetTag>(
 			new AssetTagNameComparator());
 
@@ -99,26 +104,28 @@ public class AssetTagServiceImpl extends AssetTagServiceBaseImpl {
 	}
 
 	@Override
-	public List<AssetTag> getGroupTags(long groupId) {
+	public List<AssetTag> getGroupTags(long groupId) throws SystemException {
 		return assetTagPersistence.filterFindByGroupId(groupId);
 	}
 
 	@Override
 	public List<AssetTag> getGroupTags(
-		long groupId, int start, int end, OrderByComparator<AssetTag> obc) {
+			long groupId, int start, int end, OrderByComparator obc)
+		throws SystemException {
 
 		return assetTagPersistence.filterFindByGroupId(
 			groupId, start, end, obc);
 	}
 
 	@Override
-	public int getGroupTagsCount(long groupId) {
+	public int getGroupTagsCount(long groupId) throws SystemException {
 		return assetTagPersistence.filterCountByGroupId(groupId);
 	}
 
 	@Override
 	public AssetTagDisplay getGroupTagsDisplay(
-		long groupId, String name, int start, int end) {
+			long groupId, String name, int start, int end)
+		throws SystemException {
 
 		List<AssetTag> tags = null;
 		int total = 0;
@@ -141,11 +148,10 @@ public class AssetTagServiceImpl extends AssetTagServiceBaseImpl {
 	 * @deprecated As of 6.2.0, replaced by {@link #getGroupTagsDisplay(long,
 	 *             String, int, int)}
 	 */
-	@Deprecated
 	@Override
 	public JSONObject getJSONGroupTags(
 			long groupId, String name, int start, int end)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
 
@@ -179,7 +185,7 @@ public class AssetTagServiceImpl extends AssetTagServiceBaseImpl {
 	}
 
 	@Override
-	public AssetTag getTag(long tagId) throws PortalException {
+	public AssetTag getTag(long tagId) throws PortalException, SystemException {
 		AssetTagPermission.check(
 			getPermissionChecker(), tagId, ActionKeys.VIEW);
 
@@ -187,7 +193,9 @@ public class AssetTagServiceImpl extends AssetTagServiceBaseImpl {
 	}
 
 	@Override
-	public List<AssetTag> getTags(long groupId, long classNameId, String name) {
+	public List<AssetTag> getTags(long groupId, long classNameId, String name)
+		throws SystemException {
+
 		return assetTagFinder.filterFindByG_C_N(
 			groupId, classNameId, name, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
 			null);
@@ -195,8 +203,9 @@ public class AssetTagServiceImpl extends AssetTagServiceBaseImpl {
 
 	@Override
 	public List<AssetTag> getTags(
-		long groupId, long classNameId, String name, int start, int end,
-		OrderByComparator<AssetTag> obc) {
+			long groupId, long classNameId, String name, int start, int end,
+			OrderByComparator obc)
+		throws SystemException {
 
 		return assetTagFinder.filterFindByG_C_N(
 			groupId, classNameId, name, start, end, obc);
@@ -204,15 +213,18 @@ public class AssetTagServiceImpl extends AssetTagServiceBaseImpl {
 
 	@Override
 	public List<AssetTag> getTags(
-		long groupId, String name, String[] tagProperties, int start, int end) {
+			long groupId, String name, String[] tagProperties, int start,
+			int end)
+		throws SystemException {
 
 		return getTags(new long[] {groupId}, name, tagProperties, start, end);
 	}
 
 	@Override
 	public List<AssetTag> getTags(
-		long[] groupIds, String name, String[] tagProperties, int start,
-		int end) {
+			long[] groupIds, String name, String[] tagProperties, int start,
+			int end)
+		throws SystemException {
 
 		return assetTagFinder.filterFindByG_N_P(
 			groupIds, name, tagProperties, start, end, null);
@@ -220,30 +232,34 @@ public class AssetTagServiceImpl extends AssetTagServiceBaseImpl {
 
 	@Override
 	public List<AssetTag> getTags(String className, long classPK)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return filterTags(assetTagLocalService.getTags(className, classPK));
 	}
 
 	@Override
-	public int getTagsCount(long groupId, long classNameId, String name) {
+	public int getTagsCount(long groupId, long classNameId, String name)
+		throws SystemException {
+
 		return assetTagFinder.filterCountByG_C_N(groupId, classNameId, name);
 	}
 
 	@Override
-	public int getTagsCount(long groupId, String name) {
+	public int getTagsCount(long groupId, String name) throws SystemException {
 		return assetTagFinder.filterCountByG_N(groupId, name);
 	}
 
 	@Override
-	public int getTagsCount(long groupId, String name, String[] tagProperties) {
+	public int getTagsCount(long groupId, String name, String[] tagProperties)
+		throws SystemException {
+
 		return assetTagFinder.filterCountByG_N_P(groupId, name, tagProperties);
 	}
 
 	@Override
 	public void mergeTags(
 			long fromTagId, long toTagId, boolean overrideProperties)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		AssetTagPermission.check(
 			getPermissionChecker(), fromTagId, ActionKeys.VIEW);
@@ -257,7 +273,7 @@ public class AssetTagServiceImpl extends AssetTagServiceBaseImpl {
 	@Override
 	public void mergeTags(
 			long[] fromTagIds, long toTagId, boolean overrideProperties)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		for (long fromTagId : fromTagIds) {
 			mergeTags(fromTagId, toTagId, overrideProperties);
@@ -266,15 +282,18 @@ public class AssetTagServiceImpl extends AssetTagServiceBaseImpl {
 
 	@Override
 	public JSONArray search(
-		long groupId, String name, String[] tagProperties, int start, int end) {
+			long groupId, String name, String[] tagProperties, int start,
+			int end)
+		throws SystemException {
 
 		return search(new long[] {groupId}, name, tagProperties, start, end);
 	}
 
 	@Override
 	public JSONArray search(
-		long[] groupIds, String name, String[] tagProperties, int start,
-		int end) {
+			long[] groupIds, String name, String[] tagProperties, int start,
+			int end)
+		throws SystemException {
 
 		List<AssetTag> tags = getTags(
 			groupIds, name, tagProperties, start, end);
@@ -286,7 +305,7 @@ public class AssetTagServiceImpl extends AssetTagServiceBaseImpl {
 	public AssetTag updateTag(
 			long tagId, String name, String[] tagProperties,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		AssetTagPermission.check(
 			getPermissionChecker(), tagId, ActionKeys.UPDATE);

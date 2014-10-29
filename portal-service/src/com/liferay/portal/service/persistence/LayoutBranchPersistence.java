@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -43,9 +43,11 @@ public interface LayoutBranchPersistence extends BasePersistence<LayoutBranch> {
 	*
 	* @param layoutSetBranchId the layout set branch ID
 	* @return the matching layout branchs
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.LayoutBranch> findByLayoutSetBranchId(
-		long layoutSetBranchId);
+		long layoutSetBranchId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns a range of all the layout branchs where layoutSetBranchId = &#63;.
@@ -58,9 +60,11 @@ public interface LayoutBranchPersistence extends BasePersistence<LayoutBranch> {
 	* @param start the lower bound of the range of layout branchs
 	* @param end the upper bound of the range of layout branchs (not inclusive)
 	* @return the range of matching layout branchs
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.LayoutBranch> findByLayoutSetBranchId(
-		long layoutSetBranchId, int start, int end);
+		long layoutSetBranchId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns an ordered range of all the layout branchs where layoutSetBranchId = &#63;.
@@ -74,10 +78,12 @@ public interface LayoutBranchPersistence extends BasePersistence<LayoutBranch> {
 	* @param end the upper bound of the range of layout branchs (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching layout branchs
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.LayoutBranch> findByLayoutSetBranchId(
 		long layoutSetBranchId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.LayoutBranch> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the first layout branch in the ordered set where layoutSetBranchId = &#63;.
@@ -86,11 +92,13 @@ public interface LayoutBranchPersistence extends BasePersistence<LayoutBranch> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching layout branch
 	* @throws com.liferay.portal.NoSuchLayoutBranchException if a matching layout branch could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.LayoutBranch findByLayoutSetBranchId_First(
 		long layoutSetBranchId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.LayoutBranch> orderByComparator)
-		throws com.liferay.portal.NoSuchLayoutBranchException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchLayoutBranchException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the first layout branch in the ordered set where layoutSetBranchId = &#63;.
@@ -98,10 +106,12 @@ public interface LayoutBranchPersistence extends BasePersistence<LayoutBranch> {
 	* @param layoutSetBranchId the layout set branch ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching layout branch, or <code>null</code> if a matching layout branch could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.LayoutBranch fetchByLayoutSetBranchId_First(
 		long layoutSetBranchId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.LayoutBranch> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the last layout branch in the ordered set where layoutSetBranchId = &#63;.
@@ -110,11 +120,13 @@ public interface LayoutBranchPersistence extends BasePersistence<LayoutBranch> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching layout branch
 	* @throws com.liferay.portal.NoSuchLayoutBranchException if a matching layout branch could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.LayoutBranch findByLayoutSetBranchId_Last(
 		long layoutSetBranchId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.LayoutBranch> orderByComparator)
-		throws com.liferay.portal.NoSuchLayoutBranchException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchLayoutBranchException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the last layout branch in the ordered set where layoutSetBranchId = &#63;.
@@ -122,10 +134,12 @@ public interface LayoutBranchPersistence extends BasePersistence<LayoutBranch> {
 	* @param layoutSetBranchId the layout set branch ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching layout branch, or <code>null</code> if a matching layout branch could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.LayoutBranch fetchByLayoutSetBranchId_Last(
 		long layoutSetBranchId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.LayoutBranch> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the layout branchs before and after the current layout branch in the ordered set where layoutSetBranchId = &#63;.
@@ -135,26 +149,32 @@ public interface LayoutBranchPersistence extends BasePersistence<LayoutBranch> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next layout branch
 	* @throws com.liferay.portal.NoSuchLayoutBranchException if a layout branch with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.LayoutBranch[] findByLayoutSetBranchId_PrevAndNext(
 		long LayoutBranchId, long layoutSetBranchId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.LayoutBranch> orderByComparator)
-		throws com.liferay.portal.NoSuchLayoutBranchException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchLayoutBranchException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Removes all the layout branchs where layoutSetBranchId = &#63; from the database.
 	*
 	* @param layoutSetBranchId the layout set branch ID
+	* @throws SystemException if a system exception occurred
 	*/
-	public void removeByLayoutSetBranchId(long layoutSetBranchId);
+	public void removeByLayoutSetBranchId(long layoutSetBranchId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of layout branchs where layoutSetBranchId = &#63;.
 	*
 	* @param layoutSetBranchId the layout set branch ID
 	* @return the number of matching layout branchs
+	* @throws SystemException if a system exception occurred
 	*/
-	public int countByLayoutSetBranchId(long layoutSetBranchId);
+	public int countByLayoutSetBranchId(long layoutSetBranchId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns all the layout branchs where layoutSetBranchId = &#63; and plid = &#63;.
@@ -162,9 +182,11 @@ public interface LayoutBranchPersistence extends BasePersistence<LayoutBranch> {
 	* @param layoutSetBranchId the layout set branch ID
 	* @param plid the plid
 	* @return the matching layout branchs
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.LayoutBranch> findByL_P(
-		long layoutSetBranchId, long plid);
+		long layoutSetBranchId, long plid)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns a range of all the layout branchs where layoutSetBranchId = &#63; and plid = &#63;.
@@ -178,9 +200,11 @@ public interface LayoutBranchPersistence extends BasePersistence<LayoutBranch> {
 	* @param start the lower bound of the range of layout branchs
 	* @param end the upper bound of the range of layout branchs (not inclusive)
 	* @return the range of matching layout branchs
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.LayoutBranch> findByL_P(
-		long layoutSetBranchId, long plid, int start, int end);
+		long layoutSetBranchId, long plid, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns an ordered range of all the layout branchs where layoutSetBranchId = &#63; and plid = &#63;.
@@ -195,10 +219,12 @@ public interface LayoutBranchPersistence extends BasePersistence<LayoutBranch> {
 	* @param end the upper bound of the range of layout branchs (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching layout branchs
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.LayoutBranch> findByL_P(
 		long layoutSetBranchId, long plid, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.LayoutBranch> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the first layout branch in the ordered set where layoutSetBranchId = &#63; and plid = &#63;.
@@ -208,11 +234,13 @@ public interface LayoutBranchPersistence extends BasePersistence<LayoutBranch> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching layout branch
 	* @throws com.liferay.portal.NoSuchLayoutBranchException if a matching layout branch could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.LayoutBranch findByL_P_First(
 		long layoutSetBranchId, long plid,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.LayoutBranch> orderByComparator)
-		throws com.liferay.portal.NoSuchLayoutBranchException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchLayoutBranchException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the first layout branch in the ordered set where layoutSetBranchId = &#63; and plid = &#63;.
@@ -221,10 +249,12 @@ public interface LayoutBranchPersistence extends BasePersistence<LayoutBranch> {
 	* @param plid the plid
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching layout branch, or <code>null</code> if a matching layout branch could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.LayoutBranch fetchByL_P_First(
 		long layoutSetBranchId, long plid,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.LayoutBranch> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the last layout branch in the ordered set where layoutSetBranchId = &#63; and plid = &#63;.
@@ -234,11 +264,13 @@ public interface LayoutBranchPersistence extends BasePersistence<LayoutBranch> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching layout branch
 	* @throws com.liferay.portal.NoSuchLayoutBranchException if a matching layout branch could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.LayoutBranch findByL_P_Last(
 		long layoutSetBranchId, long plid,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.LayoutBranch> orderByComparator)
-		throws com.liferay.portal.NoSuchLayoutBranchException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchLayoutBranchException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the last layout branch in the ordered set where layoutSetBranchId = &#63; and plid = &#63;.
@@ -247,10 +279,12 @@ public interface LayoutBranchPersistence extends BasePersistence<LayoutBranch> {
 	* @param plid the plid
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching layout branch, or <code>null</code> if a matching layout branch could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.LayoutBranch fetchByL_P_Last(
 		long layoutSetBranchId, long plid,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.LayoutBranch> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the layout branchs before and after the current layout branch in the ordered set where layoutSetBranchId = &#63; and plid = &#63;.
@@ -261,19 +295,23 @@ public interface LayoutBranchPersistence extends BasePersistence<LayoutBranch> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next layout branch
 	* @throws com.liferay.portal.NoSuchLayoutBranchException if a layout branch with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.LayoutBranch[] findByL_P_PrevAndNext(
 		long LayoutBranchId, long layoutSetBranchId, long plid,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.LayoutBranch> orderByComparator)
-		throws com.liferay.portal.NoSuchLayoutBranchException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchLayoutBranchException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Removes all the layout branchs where layoutSetBranchId = &#63; and plid = &#63; from the database.
 	*
 	* @param layoutSetBranchId the layout set branch ID
 	* @param plid the plid
+	* @throws SystemException if a system exception occurred
 	*/
-	public void removeByL_P(long layoutSetBranchId, long plid);
+	public void removeByL_P(long layoutSetBranchId, long plid)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of layout branchs where layoutSetBranchId = &#63; and plid = &#63;.
@@ -281,8 +319,10 @@ public interface LayoutBranchPersistence extends BasePersistence<LayoutBranch> {
 	* @param layoutSetBranchId the layout set branch ID
 	* @param plid the plid
 	* @return the number of matching layout branchs
+	* @throws SystemException if a system exception occurred
 	*/
-	public int countByL_P(long layoutSetBranchId, long plid);
+	public int countByL_P(long layoutSetBranchId, long plid)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the layout branch where layoutSetBranchId = &#63; and plid = &#63; and name = &#63; or throws a {@link com.liferay.portal.NoSuchLayoutBranchException} if it could not be found.
@@ -292,10 +332,12 @@ public interface LayoutBranchPersistence extends BasePersistence<LayoutBranch> {
 	* @param name the name
 	* @return the matching layout branch
 	* @throws com.liferay.portal.NoSuchLayoutBranchException if a matching layout branch could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.LayoutBranch findByL_P_N(
 		long layoutSetBranchId, long plid, java.lang.String name)
-		throws com.liferay.portal.NoSuchLayoutBranchException;
+		throws com.liferay.portal.NoSuchLayoutBranchException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the layout branch where layoutSetBranchId = &#63; and plid = &#63; and name = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
@@ -304,9 +346,11 @@ public interface LayoutBranchPersistence extends BasePersistence<LayoutBranch> {
 	* @param plid the plid
 	* @param name the name
 	* @return the matching layout branch, or <code>null</code> if a matching layout branch could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.LayoutBranch fetchByL_P_N(
-		long layoutSetBranchId, long plid, java.lang.String name);
+		long layoutSetBranchId, long plid, java.lang.String name)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the layout branch where layoutSetBranchId = &#63; and plid = &#63; and name = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
@@ -316,10 +360,12 @@ public interface LayoutBranchPersistence extends BasePersistence<LayoutBranch> {
 	* @param name the name
 	* @param retrieveFromCache whether to use the finder cache
 	* @return the matching layout branch, or <code>null</code> if a matching layout branch could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.LayoutBranch fetchByL_P_N(
 		long layoutSetBranchId, long plid, java.lang.String name,
-		boolean retrieveFromCache);
+		boolean retrieveFromCache)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Removes the layout branch where layoutSetBranchId = &#63; and plid = &#63; and name = &#63; from the database.
@@ -328,10 +374,12 @@ public interface LayoutBranchPersistence extends BasePersistence<LayoutBranch> {
 	* @param plid the plid
 	* @param name the name
 	* @return the layout branch that was removed
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.LayoutBranch removeByL_P_N(
 		long layoutSetBranchId, long plid, java.lang.String name)
-		throws com.liferay.portal.NoSuchLayoutBranchException;
+		throws com.liferay.portal.NoSuchLayoutBranchException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of layout branchs where layoutSetBranchId = &#63; and plid = &#63; and name = &#63;.
@@ -340,9 +388,11 @@ public interface LayoutBranchPersistence extends BasePersistence<LayoutBranch> {
 	* @param plid the plid
 	* @param name the name
 	* @return the number of matching layout branchs
+	* @throws SystemException if a system exception occurred
 	*/
 	public int countByL_P_N(long layoutSetBranchId, long plid,
-		java.lang.String name);
+		java.lang.String name)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns all the layout branchs where layoutSetBranchId = &#63; and plid = &#63; and master = &#63;.
@@ -351,9 +401,11 @@ public interface LayoutBranchPersistence extends BasePersistence<LayoutBranch> {
 	* @param plid the plid
 	* @param master the master
 	* @return the matching layout branchs
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.LayoutBranch> findByL_P_M(
-		long layoutSetBranchId, long plid, boolean master);
+		long layoutSetBranchId, long plid, boolean master)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns a range of all the layout branchs where layoutSetBranchId = &#63; and plid = &#63; and master = &#63;.
@@ -368,9 +420,11 @@ public interface LayoutBranchPersistence extends BasePersistence<LayoutBranch> {
 	* @param start the lower bound of the range of layout branchs
 	* @param end the upper bound of the range of layout branchs (not inclusive)
 	* @return the range of matching layout branchs
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.LayoutBranch> findByL_P_M(
-		long layoutSetBranchId, long plid, boolean master, int start, int end);
+		long layoutSetBranchId, long plid, boolean master, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns an ordered range of all the layout branchs where layoutSetBranchId = &#63; and plid = &#63; and master = &#63;.
@@ -386,10 +440,12 @@ public interface LayoutBranchPersistence extends BasePersistence<LayoutBranch> {
 	* @param end the upper bound of the range of layout branchs (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching layout branchs
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.LayoutBranch> findByL_P_M(
 		long layoutSetBranchId, long plid, boolean master, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.LayoutBranch> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the first layout branch in the ordered set where layoutSetBranchId = &#63; and plid = &#63; and master = &#63;.
@@ -400,11 +456,13 @@ public interface LayoutBranchPersistence extends BasePersistence<LayoutBranch> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching layout branch
 	* @throws com.liferay.portal.NoSuchLayoutBranchException if a matching layout branch could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.LayoutBranch findByL_P_M_First(
 		long layoutSetBranchId, long plid, boolean master,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.LayoutBranch> orderByComparator)
-		throws com.liferay.portal.NoSuchLayoutBranchException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchLayoutBranchException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the first layout branch in the ordered set where layoutSetBranchId = &#63; and plid = &#63; and master = &#63;.
@@ -414,10 +472,12 @@ public interface LayoutBranchPersistence extends BasePersistence<LayoutBranch> {
 	* @param master the master
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching layout branch, or <code>null</code> if a matching layout branch could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.LayoutBranch fetchByL_P_M_First(
 		long layoutSetBranchId, long plid, boolean master,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.LayoutBranch> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the last layout branch in the ordered set where layoutSetBranchId = &#63; and plid = &#63; and master = &#63;.
@@ -428,11 +488,13 @@ public interface LayoutBranchPersistence extends BasePersistence<LayoutBranch> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching layout branch
 	* @throws com.liferay.portal.NoSuchLayoutBranchException if a matching layout branch could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.LayoutBranch findByL_P_M_Last(
 		long layoutSetBranchId, long plid, boolean master,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.LayoutBranch> orderByComparator)
-		throws com.liferay.portal.NoSuchLayoutBranchException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchLayoutBranchException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the last layout branch in the ordered set where layoutSetBranchId = &#63; and plid = &#63; and master = &#63;.
@@ -442,10 +504,12 @@ public interface LayoutBranchPersistence extends BasePersistence<LayoutBranch> {
 	* @param master the master
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching layout branch, or <code>null</code> if a matching layout branch could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.LayoutBranch fetchByL_P_M_Last(
 		long layoutSetBranchId, long plid, boolean master,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.LayoutBranch> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the layout branchs before and after the current layout branch in the ordered set where layoutSetBranchId = &#63; and plid = &#63; and master = &#63;.
@@ -457,11 +521,13 @@ public interface LayoutBranchPersistence extends BasePersistence<LayoutBranch> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next layout branch
 	* @throws com.liferay.portal.NoSuchLayoutBranchException if a layout branch with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.LayoutBranch[] findByL_P_M_PrevAndNext(
 		long LayoutBranchId, long layoutSetBranchId, long plid, boolean master,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.LayoutBranch> orderByComparator)
-		throws com.liferay.portal.NoSuchLayoutBranchException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchLayoutBranchException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Removes all the layout branchs where layoutSetBranchId = &#63; and plid = &#63; and master = &#63; from the database.
@@ -469,8 +535,10 @@ public interface LayoutBranchPersistence extends BasePersistence<LayoutBranch> {
 	* @param layoutSetBranchId the layout set branch ID
 	* @param plid the plid
 	* @param master the master
+	* @throws SystemException if a system exception occurred
 	*/
-	public void removeByL_P_M(long layoutSetBranchId, long plid, boolean master);
+	public void removeByL_P_M(long layoutSetBranchId, long plid, boolean master)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of layout branchs where layoutSetBranchId = &#63; and plid = &#63; and master = &#63;.
@@ -479,8 +547,10 @@ public interface LayoutBranchPersistence extends BasePersistence<LayoutBranch> {
 	* @param plid the plid
 	* @param master the master
 	* @return the number of matching layout branchs
+	* @throws SystemException if a system exception occurred
 	*/
-	public int countByL_P_M(long layoutSetBranchId, long plid, boolean master);
+	public int countByL_P_M(long layoutSetBranchId, long plid, boolean master)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Caches the layout branch in the entity cache if it is enabled.
@@ -511,12 +581,15 @@ public interface LayoutBranchPersistence extends BasePersistence<LayoutBranch> {
 	* @param LayoutBranchId the primary key of the layout branch
 	* @return the layout branch that was removed
 	* @throws com.liferay.portal.NoSuchLayoutBranchException if a layout branch with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.LayoutBranch remove(long LayoutBranchId)
-		throws com.liferay.portal.NoSuchLayoutBranchException;
+		throws com.liferay.portal.NoSuchLayoutBranchException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	public com.liferay.portal.model.LayoutBranch updateImpl(
-		com.liferay.portal.model.LayoutBranch layoutBranch);
+		com.liferay.portal.model.LayoutBranch layoutBranch)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the layout branch with the primary key or throws a {@link com.liferay.portal.NoSuchLayoutBranchException} if it could not be found.
@@ -524,30 +597,32 @@ public interface LayoutBranchPersistence extends BasePersistence<LayoutBranch> {
 	* @param LayoutBranchId the primary key of the layout branch
 	* @return the layout branch
 	* @throws com.liferay.portal.NoSuchLayoutBranchException if a layout branch with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.LayoutBranch findByPrimaryKey(
 		long LayoutBranchId)
-		throws com.liferay.portal.NoSuchLayoutBranchException;
+		throws com.liferay.portal.NoSuchLayoutBranchException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the layout branch with the primary key or returns <code>null</code> if it could not be found.
 	*
 	* @param LayoutBranchId the primary key of the layout branch
 	* @return the layout branch, or <code>null</code> if a layout branch with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.LayoutBranch fetchByPrimaryKey(
-		long LayoutBranchId);
-
-	@Override
-	public java.util.Map<java.io.Serializable, com.liferay.portal.model.LayoutBranch> fetchByPrimaryKeys(
-		java.util.Set<java.io.Serializable> primaryKeys);
+		long LayoutBranchId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns all the layout branchs.
 	*
 	* @return the layout branchs
+	* @throws SystemException if a system exception occurred
 	*/
-	public java.util.List<com.liferay.portal.model.LayoutBranch> findAll();
+	public java.util.List<com.liferay.portal.model.LayoutBranch> findAll()
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns a range of all the layout branchs.
@@ -559,9 +634,11 @@ public interface LayoutBranchPersistence extends BasePersistence<LayoutBranch> {
 	* @param start the lower bound of the range of layout branchs
 	* @param end the upper bound of the range of layout branchs (not inclusive)
 	* @return the range of layout branchs
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.LayoutBranch> findAll(
-		int start, int end);
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns an ordered range of all the layout branchs.
@@ -574,20 +651,27 @@ public interface LayoutBranchPersistence extends BasePersistence<LayoutBranch> {
 	* @param end the upper bound of the range of layout branchs (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of layout branchs
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.LayoutBranch> findAll(
 		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.LayoutBranch> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Removes all the layout branchs from the database.
+	*
+	* @throws SystemException if a system exception occurred
 	*/
-	public void removeAll();
+	public void removeAll()
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of layout branchs.
 	*
 	* @return the number of layout branchs
+	* @throws SystemException if a system exception occurred
 	*/
-	public int countAll();
+	public int countAll()
+		throws com.liferay.portal.kernel.exception.SystemException;
 }

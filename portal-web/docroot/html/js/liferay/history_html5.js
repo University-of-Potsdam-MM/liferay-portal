@@ -19,7 +19,7 @@ AUI.add(
 		A.mix(
 			History.prototype,
 			{
-				PROTECTED_HASH_KEYS: [ /^liferay$/, /^tab$/, /^_\d+_tab$/ ],
+				PROTECTED_HASH_KEYS: [ /^tab$/, /^_\d+_tab$/ ],
 
 				add: function(state, options) {
 					var instance = this;
@@ -27,8 +27,6 @@ AUI.add(
 					options = options || {};
 
 					options.url = options.url || instance._updateURI(state);
-
-					state.liferay = true;
 
 					return History.superclass.add.call(instance, state, options);
 				},
@@ -82,10 +80,10 @@ AUI.add(
 
 							A.each(
 								state,
-								function(value1, key1) {
+								function(value1, key1, collection1) {
 									A.Array.each(
 										instance.PROTECTED_HASH_KEYS,
-										function(value2, key2) {
+										function(value2, key2, collection2) {
 											if (value2.test(key1)) {
 												delete state[key1];
 												protectedHashMap[key1] = value1;
@@ -105,7 +103,7 @@ AUI.add(
 
 					AObject.each(
 						queryMap,
-						function(item, index) {
+						function(item, index, collection) {
 							if (!isValue(item)) {
 								delete queryMap[index];
 							}

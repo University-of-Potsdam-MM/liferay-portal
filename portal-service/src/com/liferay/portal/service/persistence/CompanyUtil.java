@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,6 +18,7 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.bean.PortalBeanLocatorUtil;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ReferenceRegistry;
 import com.liferay.portal.model.Company;
@@ -62,14 +63,16 @@ public class CompanyUtil {
 	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#countWithDynamicQuery(DynamicQuery)
 	 */
-	public static long countWithDynamicQuery(DynamicQuery dynamicQuery) {
+	public static long countWithDynamicQuery(DynamicQuery dynamicQuery)
+		throws SystemException {
 		return getPersistence().countWithDynamicQuery(dynamicQuery);
 	}
 
 	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#findWithDynamicQuery(DynamicQuery)
 	 */
-	public static List<Company> findWithDynamicQuery(DynamicQuery dynamicQuery) {
+	public static List<Company> findWithDynamicQuery(DynamicQuery dynamicQuery)
+		throws SystemException {
 		return getPersistence().findWithDynamicQuery(dynamicQuery);
 	}
 
@@ -77,7 +80,8 @@ public class CompanyUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#findWithDynamicQuery(DynamicQuery, int, int)
 	 */
 	public static List<Company> findWithDynamicQuery(
-		DynamicQuery dynamicQuery, int start, int end) {
+		DynamicQuery dynamicQuery, int start, int end)
+		throws SystemException {
 		return getPersistence().findWithDynamicQuery(dynamicQuery, start, end);
 	}
 
@@ -86,7 +90,7 @@ public class CompanyUtil {
 	 */
 	public static List<Company> findWithDynamicQuery(
 		DynamicQuery dynamicQuery, int start, int end,
-		OrderByComparator<Company> orderByComparator) {
+		OrderByComparator orderByComparator) throws SystemException {
 		return getPersistence()
 				   .findWithDynamicQuery(dynamicQuery, start, end,
 			orderByComparator);
@@ -95,14 +99,15 @@ public class CompanyUtil {
 	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel)
 	 */
-	public static Company update(Company company) {
+	public static Company update(Company company) throws SystemException {
 		return getPersistence().update(company);
 	}
 
 	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, ServiceContext)
 	 */
-	public static Company update(Company company, ServiceContext serviceContext) {
+	public static Company update(Company company, ServiceContext serviceContext)
+		throws SystemException {
 		return getPersistence().update(company, serviceContext);
 	}
 
@@ -112,10 +117,12 @@ public class CompanyUtil {
 	* @param webId the web ID
 	* @return the matching company
 	* @throws com.liferay.portal.NoSuchCompanyException if a matching company could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.Company findByWebId(
 		java.lang.String webId)
-		throws com.liferay.portal.NoSuchCompanyException {
+		throws com.liferay.portal.NoSuchCompanyException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByWebId(webId);
 	}
 
@@ -124,9 +131,11 @@ public class CompanyUtil {
 	*
 	* @param webId the web ID
 	* @return the matching company, or <code>null</code> if a matching company could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.Company fetchByWebId(
-		java.lang.String webId) {
+		java.lang.String webId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByWebId(webId);
 	}
 
@@ -136,9 +145,11 @@ public class CompanyUtil {
 	* @param webId the web ID
 	* @param retrieveFromCache whether to use the finder cache
 	* @return the matching company, or <code>null</code> if a matching company could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.Company fetchByWebId(
-		java.lang.String webId, boolean retrieveFromCache) {
+		java.lang.String webId, boolean retrieveFromCache)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByWebId(webId, retrieveFromCache);
 	}
 
@@ -147,10 +158,12 @@ public class CompanyUtil {
 	*
 	* @param webId the web ID
 	* @return the company that was removed
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.Company removeByWebId(
 		java.lang.String webId)
-		throws com.liferay.portal.NoSuchCompanyException {
+		throws com.liferay.portal.NoSuchCompanyException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().removeByWebId(webId);
 	}
 
@@ -159,8 +172,10 @@ public class CompanyUtil {
 	*
 	* @param webId the web ID
 	* @return the number of matching companies
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByWebId(java.lang.String webId) {
+	public static int countByWebId(java.lang.String webId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByWebId(webId);
 	}
 
@@ -170,9 +185,11 @@ public class CompanyUtil {
 	* @param mx the mx
 	* @return the matching company
 	* @throws com.liferay.portal.NoSuchCompanyException if a matching company could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.Company findByMx(java.lang.String mx)
-		throws com.liferay.portal.NoSuchCompanyException {
+		throws com.liferay.portal.NoSuchCompanyException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByMx(mx);
 	}
 
@@ -181,9 +198,11 @@ public class CompanyUtil {
 	*
 	* @param mx the mx
 	* @return the matching company, or <code>null</code> if a matching company could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.Company fetchByMx(
-		java.lang.String mx) {
+		java.lang.String mx)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByMx(mx);
 	}
 
@@ -193,9 +212,11 @@ public class CompanyUtil {
 	* @param mx the mx
 	* @param retrieveFromCache whether to use the finder cache
 	* @return the matching company, or <code>null</code> if a matching company could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.Company fetchByMx(
-		java.lang.String mx, boolean retrieveFromCache) {
+		java.lang.String mx, boolean retrieveFromCache)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByMx(mx, retrieveFromCache);
 	}
 
@@ -204,9 +225,12 @@ public class CompanyUtil {
 	*
 	* @param mx the mx
 	* @return the company that was removed
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.Company removeByMx(
-		java.lang.String mx) throws com.liferay.portal.NoSuchCompanyException {
+		java.lang.String mx)
+		throws com.liferay.portal.NoSuchCompanyException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().removeByMx(mx);
 	}
 
@@ -215,8 +239,10 @@ public class CompanyUtil {
 	*
 	* @param mx the mx
 	* @return the number of matching companies
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByMx(java.lang.String mx) {
+	public static int countByMx(java.lang.String mx)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByMx(mx);
 	}
 
@@ -226,9 +252,11 @@ public class CompanyUtil {
 	* @param logoId the logo ID
 	* @return the matching company
 	* @throws com.liferay.portal.NoSuchCompanyException if a matching company could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.Company findByLogoId(long logoId)
-		throws com.liferay.portal.NoSuchCompanyException {
+		throws com.liferay.portal.NoSuchCompanyException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByLogoId(logoId);
 	}
 
@@ -237,8 +265,10 @@ public class CompanyUtil {
 	*
 	* @param logoId the logo ID
 	* @return the matching company, or <code>null</code> if a matching company could not be found
+	* @throws SystemException if a system exception occurred
 	*/
-	public static com.liferay.portal.model.Company fetchByLogoId(long logoId) {
+	public static com.liferay.portal.model.Company fetchByLogoId(long logoId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByLogoId(logoId);
 	}
 
@@ -248,9 +278,11 @@ public class CompanyUtil {
 	* @param logoId the logo ID
 	* @param retrieveFromCache whether to use the finder cache
 	* @return the matching company, or <code>null</code> if a matching company could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.Company fetchByLogoId(long logoId,
-		boolean retrieveFromCache) {
+		boolean retrieveFromCache)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByLogoId(logoId, retrieveFromCache);
 	}
 
@@ -259,9 +291,11 @@ public class CompanyUtil {
 	*
 	* @param logoId the logo ID
 	* @return the company that was removed
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.Company removeByLogoId(long logoId)
-		throws com.liferay.portal.NoSuchCompanyException {
+		throws com.liferay.portal.NoSuchCompanyException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().removeByLogoId(logoId);
 	}
 
@@ -270,8 +304,10 @@ public class CompanyUtil {
 	*
 	* @param logoId the logo ID
 	* @return the number of matching companies
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByLogoId(long logoId) {
+	public static int countByLogoId(long logoId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByLogoId(logoId);
 	}
 
@@ -280,9 +316,11 @@ public class CompanyUtil {
 	*
 	* @param system the system
 	* @return the matching companies
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portal.model.Company> findBySystem(
-		boolean system) {
+		boolean system)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findBySystem(system);
 	}
 
@@ -297,9 +335,11 @@ public class CompanyUtil {
 	* @param start the lower bound of the range of companies
 	* @param end the upper bound of the range of companies (not inclusive)
 	* @return the range of matching companies
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portal.model.Company> findBySystem(
-		boolean system, int start, int end) {
+		boolean system, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findBySystem(system, start, end);
 	}
 
@@ -315,10 +355,12 @@ public class CompanyUtil {
 	* @param end the upper bound of the range of companies (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching companies
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portal.model.Company> findBySystem(
 		boolean system, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Company> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findBySystem(system, start, end, orderByComparator);
 	}
@@ -330,11 +372,13 @@ public class CompanyUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching company
 	* @throws com.liferay.portal.NoSuchCompanyException if a matching company could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.Company findBySystem_First(
 		boolean system,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Company> orderByComparator)
-		throws com.liferay.portal.NoSuchCompanyException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchCompanyException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findBySystem_First(system, orderByComparator);
 	}
 
@@ -344,10 +388,12 @@ public class CompanyUtil {
 	* @param system the system
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching company, or <code>null</code> if a matching company could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.Company fetchBySystem_First(
 		boolean system,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Company> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchBySystem_First(system, orderByComparator);
 	}
 
@@ -358,11 +404,13 @@ public class CompanyUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching company
 	* @throws com.liferay.portal.NoSuchCompanyException if a matching company could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.Company findBySystem_Last(
 		boolean system,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Company> orderByComparator)
-		throws com.liferay.portal.NoSuchCompanyException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchCompanyException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findBySystem_Last(system, orderByComparator);
 	}
 
@@ -372,10 +420,12 @@ public class CompanyUtil {
 	* @param system the system
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching company, or <code>null</code> if a matching company could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.Company fetchBySystem_Last(
 		boolean system,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Company> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchBySystem_Last(system, orderByComparator);
 	}
 
@@ -387,11 +437,13 @@ public class CompanyUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next company
 	* @throws com.liferay.portal.NoSuchCompanyException if a company with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.Company[] findBySystem_PrevAndNext(
 		long companyId, boolean system,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Company> orderByComparator)
-		throws com.liferay.portal.NoSuchCompanyException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchCompanyException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findBySystem_PrevAndNext(companyId, system,
 			orderByComparator);
@@ -401,8 +453,10 @@ public class CompanyUtil {
 	* Removes all the companies where system = &#63; from the database.
 	*
 	* @param system the system
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeBySystem(boolean system) {
+	public static void removeBySystem(boolean system)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeBySystem(system);
 	}
 
@@ -411,8 +465,10 @@ public class CompanyUtil {
 	*
 	* @param system the system
 	* @return the number of matching companies
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countBySystem(boolean system) {
+	public static int countBySystem(boolean system)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countBySystem(system);
 	}
 
@@ -451,14 +507,17 @@ public class CompanyUtil {
 	* @param companyId the primary key of the company
 	* @return the company that was removed
 	* @throws com.liferay.portal.NoSuchCompanyException if a company with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.Company remove(long companyId)
-		throws com.liferay.portal.NoSuchCompanyException {
+		throws com.liferay.portal.NoSuchCompanyException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().remove(companyId);
 	}
 
 	public static com.liferay.portal.model.Company updateImpl(
-		com.liferay.portal.model.Company company) {
+		com.liferay.portal.model.Company company)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().updateImpl(company);
 	}
 
@@ -468,9 +527,12 @@ public class CompanyUtil {
 	* @param companyId the primary key of the company
 	* @return the company
 	* @throws com.liferay.portal.NoSuchCompanyException if a company with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.Company findByPrimaryKey(
-		long companyId) throws com.liferay.portal.NoSuchCompanyException {
+		long companyId)
+		throws com.liferay.portal.NoSuchCompanyException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByPrimaryKey(companyId);
 	}
 
@@ -479,23 +541,22 @@ public class CompanyUtil {
 	*
 	* @param companyId the primary key of the company
 	* @return the company, or <code>null</code> if a company with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.Company fetchByPrimaryKey(
-		long companyId) {
+		long companyId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByPrimaryKey(companyId);
-	}
-
-	public static java.util.Map<java.io.Serializable, com.liferay.portal.model.Company> fetchByPrimaryKeys(
-		java.util.Set<java.io.Serializable> primaryKeys) {
-		return getPersistence().fetchByPrimaryKeys(primaryKeys);
 	}
 
 	/**
 	* Returns all the companies.
 	*
 	* @return the companies
+	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portal.model.Company> findAll() {
+	public static java.util.List<com.liferay.portal.model.Company> findAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll();
 	}
 
@@ -509,9 +570,11 @@ public class CompanyUtil {
 	* @param start the lower bound of the range of companies
 	* @param end the upper bound of the range of companies (not inclusive)
 	* @return the range of companies
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portal.model.Company> findAll(
-		int start, int end) {
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll(start, end);
 	}
 
@@ -526,17 +589,22 @@ public class CompanyUtil {
 	* @param end the upper bound of the range of companies (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of companies
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portal.model.Company> findAll(
 		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Company> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll(start, end, orderByComparator);
 	}
 
 	/**
 	* Removes all the companies from the database.
+	*
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeAll() {
+	public static void removeAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeAll();
 	}
 
@@ -544,8 +612,10 @@ public class CompanyUtil {
 	* Returns the number of companies.
 	*
 	* @return the number of companies
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countAll() {
+	public static int countAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countAll();
 	}
 
@@ -563,7 +633,6 @@ public class CompanyUtil {
 	/**
 	 * @deprecated As of 6.2.0
 	 */
-	@Deprecated
 	public void setPersistence(CompanyPersistence persistence) {
 	}
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -20,6 +20,7 @@ import com.liferay.portal.layoutconfiguration.util.xml.RuntimeLogic;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.jsp.PageContext;
 
 /**
  * @author Brian Wing Shun Chan
@@ -29,23 +30,21 @@ import javax.servlet.http.HttpServletResponse;
 public interface RuntimePage {
 
 	public StringBundler getProcessedTemplate(
-			HttpServletRequest request, HttpServletResponse response,
-			String portletId, TemplateResource templateResource)
+			PageContext pageContext, String portletId,
+			TemplateResource templateResource)
 		throws Exception;
 
 	public void processCustomizationSettings(
-			HttpServletRequest request, HttpServletResponse response,
+			PageContext pageContext, TemplateResource templateResource)
+		throws Exception;
+
+	public void processTemplate(
+			PageContext pageContext, String portletId,
 			TemplateResource templateResource)
 		throws Exception;
 
 	public void processTemplate(
-			HttpServletRequest request, HttpServletResponse response,
-			String portletId, TemplateResource templateResource)
-		throws Exception;
-
-	public void processTemplate(
-			HttpServletRequest request, HttpServletResponse response,
-			TemplateResource templateResource)
+			PageContext pageContext, TemplateResource templateResource)
 		throws Exception;
 
 	public String processXML(

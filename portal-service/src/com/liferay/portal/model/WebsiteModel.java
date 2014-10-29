@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -17,6 +17,7 @@ package com.liferay.portal.model;
 import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.bean.AutoEscape;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.service.ServiceContext;
 
 import com.liferay.portlet.expando.model.ExpandoBridge;
@@ -40,7 +41,7 @@ import java.util.Date;
  */
 @ProviderType
 public interface WebsiteModel extends AttachedModel, BaseModel<Website>,
-	MVCCModel, StagedAuditedModel {
+	StagedAuditedModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -60,22 +61,6 @@ public interface WebsiteModel extends AttachedModel, BaseModel<Website>,
 	 * @param primaryKey the primary key of this website
 	 */
 	public void setPrimaryKey(long primaryKey);
-
-	/**
-	 * Returns the mvcc version of this website.
-	 *
-	 * @return the mvcc version of this website
-	 */
-	@Override
-	public long getMvccVersion();
-
-	/**
-	 * Sets the mvcc version of this website.
-	 *
-	 * @param mvccVersion the mvcc version of this website
-	 */
-	@Override
-	public void setMvccVersion(long mvccVersion);
 
 	/**
 	 * Returns the uuid of this website.
@@ -144,9 +129,10 @@ public interface WebsiteModel extends AttachedModel, BaseModel<Website>,
 	 * Returns the user uuid of this website.
 	 *
 	 * @return the user uuid of this website
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public String getUserUuid();
+	public String getUserUuid() throws SystemException;
 
 	/**
 	 * Sets the user uuid of this website.

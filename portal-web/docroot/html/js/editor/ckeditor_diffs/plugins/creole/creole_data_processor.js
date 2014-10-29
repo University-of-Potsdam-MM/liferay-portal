@@ -47,13 +47,34 @@
 
 	var TAG_UNORDERED_LIST_ITEM = '*';
 
-	var attachmentURLPrefix;
+	CKEDITOR.plugins.add(
+		'creole_data_processor',
+		{
+			requires: ['htmlwriter'],
 
-	var CreoleDataProcessor = function() {};
+			init: function(editor) {
+				editor.dataProcessor = new CKEDITOR.htmlDataProcessor(editor);
 
-	CreoleDataProcessor.prototype = {
-		constructor: CreoleDataProcessor,
+				editor.on(
+					'paste',
+					function(event) {
+						var data = event.data;
 
+						var htmlData = data.dataValue;
+
+						htmlData = CKEDITOR.htmlDataProcessor.prototype.toDataFormat(htmlData);
+
+						data.dataValue = htmlData;
+					},
+					editor.element.$
+				);
+
+				editor.fire('customDataProcessorLoaded');
+			}
+		}
+	);
+
+	CKEDITOR.htmlDataProcessor.prototype = {
 		toDataFormat: function(html, fixForBody ) {
 			var instance = this;
 
@@ -70,7 +91,7 @@
 			if (!instance._creoleParser) {
 				instance._creoleParser = new CKEDITOR.CreoleParser(
 					{
-						imagePrefix: attachmentURLPrefix
+						imagePrefix: CKEDITOR.config.attachmentURLPrefix
 					}
 				);
 			}
@@ -166,12 +187,9 @@
 
 			if (instance._skipParse) {
 				newLineCharacter = NEW_LINE;
+			}
 
-				listTagsIn.push(newLineCharacter);
-			}
-			else if (element.previousSibling && element.nextSibling && (element.nextSibling !== NEW_LINE)) {
-				listTagsIn.push(newLineCharacter);
-			}
+			listTagsIn.push(newLineCharacter);
 		},
 
 		_handleData: function(data, element) {
@@ -298,7 +316,6 @@
 			var instance = this;
 
 			var res = new Array(parseInt(params[1], 10) + 1);
-
 			res = res.join(STR_EQUALS);
 
 			if (instance._isDataAvailable() && !instance._isLastItemNewLine()) {
@@ -323,7 +340,7 @@
 			var attrAlt = element.getAttribute('alt');
 			var attrSrc = element.getAttribute('src');
 
-			attrSrc = attrSrc.replace(attachmentURLPrefix, STR_BLANK);
+			attrSrc = attrSrc.replace(CKEDITOR.config.attachmentURLPrefix, STR_BLANK);
 
 			listTagsIn.push('{{', attrSrc);
 
@@ -337,21 +354,21 @@
 		_handleLink: function(element, listTagsIn, listTagsOut) {
 			var hrefAttribute = element.getAttribute('href');
 
-			if (hrefAttribute) {
-				if (!REGEX_URL_PREFIX.test(hrefAttribute)) {
-					hrefAttribute = decodeURIComponent(hrefAttribute);
+			if (CKEDITOR.env.ie && (CKEDITOR.env.version < 8)) {
+				var ckeSavedHref = element.getAttribute('data-cke-saved-href');
+
+				if (ckeSavedHref) {
+					hrefAttribute = ckeSavedHref;
 				}
-
-				var linkText = element.textContent || element.innerText;
-
-				listTagsIn.push('[[');
-
-				if (linkText !== hrefAttribute) {
-					listTagsIn.push(hrefAttribute, STR_PIPE);
-				}
-
-				listTagsOut.push(']]');
 			}
+
+			if (!REGEX_URL_PREFIX.test(hrefAttribute)) {
+				hrefAttribute = decodeURIComponent(hrefAttribute);
+			}
+
+			listTagsIn.push('[[', hrefAttribute, STR_PIPE);
+
+			listTagsOut.push(']]');
 		},
 
 		_handleListItem: function(element, listTagsIn, listTagsOut) {
@@ -541,10 +558,7 @@
 		_pushTagList: function(tagsList) {
 			var instance = this;
 
-			var endResult;
-			var i;
-			var length;
-			var tag;
+			var endResult, i, length, tag;
 
 			endResult = instance._endResult;
 			length = tagsList.length;
@@ -566,33 +580,4 @@
 
 		_skipParse: false
 	};
-
-	CKEDITOR.plugins.add(
-		'creole_data_processor',
-		{
-			requires: ['htmlwriter'],
-
-			init: function(editor) {
-				attachmentURLPrefix = editor.config.attachmentURLPrefix;
-
-				editor.dataProcessor = new CreoleDataProcessor(editor);
-
-				editor.on(
-					'paste',
-					function(event) {
-						var data = event.data;
-
-						var htmlData = data.dataValue;
-
-						htmlData = editor.dataProcessor.toDataFormat(htmlData);
-
-						data.dataValue = htmlData;
-					},
-					editor.element.$
-				);
-
-				editor.fire('customDataProcessorLoaded');
-			}
-		}
-	);
 })();

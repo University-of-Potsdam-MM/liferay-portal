@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,9 +14,6 @@
 
 package com.liferay.portal.kernel.dao.orm;
 
-import com.liferay.portal.model.BaseModel;
-import com.liferay.portal.service.persistence.impl.BasePersistenceImpl;
-
 /**
  * @author Brian Wing Shun Chan
  */
@@ -29,15 +26,11 @@ public interface FinderCache {
 	public void clearLocalCache();
 
 	public Object getResult(
-		FinderPath finderPath, Object[] args,
-		BasePersistenceImpl<? extends BaseModel<?>> basePersistenceImpl);
+		FinderPath finderPath, Object[] args, SessionFactory sessionFactory);
 
 	public void invalidate();
 
 	public void putResult(FinderPath finderPath, Object[] args, Object result);
-
-	public void putResult(
-		FinderPath finderPath, Object[] args, Object result, boolean quiet);
 
 	public void removeCache(String className);
 

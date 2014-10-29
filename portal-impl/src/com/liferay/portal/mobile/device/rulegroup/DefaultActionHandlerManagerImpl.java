@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portal.mobile.device.rulegroup;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.mobile.device.rulegroup.ActionHandlerManager;
@@ -39,7 +40,7 @@ public class DefaultActionHandlerManagerImpl implements ActionHandlerManager {
 	public void applyActions(
 			List<MDRAction> mdrActions, HttpServletRequest request,
 			HttpServletResponse response)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		for (MDRAction mdrAction : mdrActions) {
 			applyAction(mdrAction, request, response);
@@ -88,7 +89,7 @@ public class DefaultActionHandlerManagerImpl implements ActionHandlerManager {
 	protected void applyAction(
 			MDRAction mdrAction, HttpServletRequest request,
 			HttpServletResponse response)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		ActionHandler actionHandler = _deviceActionHandlers.get(
 			mdrAction.getType());

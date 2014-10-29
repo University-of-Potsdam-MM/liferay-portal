@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,16 +15,17 @@
 package com.liferay.portal.bean;
 
 import com.liferay.portal.kernel.bean.ConstantsBeanFactory;
-import com.liferay.portal.kernel.concurrent.ConcurrentReferenceKeyHashMap;
-import com.liferay.portal.kernel.concurrent.ConcurrentReferenceValueHashMap;
-import com.liferay.portal.kernel.memory.FinalizeManager;
+import com.liferay.portal.kernel.memory.EqualityWeakReference;
 import com.liferay.portal.kernel.util.ReflectionUtil;
 
 import java.lang.ref.Reference;
+import java.lang.ref.ReferenceQueue;
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import org.objectweb.asm.ClassWriter;
@@ -39,12 +40,34 @@ public class ConstantsBeanFactoryImpl implements ConstantsBeanFactory {
 
 	@Override
 	public Object getConstantsBean(Class<?> constantsClass) {
-		Object constantsBean = constantsBeans.get(constantsClass);
+		Reference<?> constantsBeanReference = constantsBeans.get(
+			new EqualityWeakReference<Class<?>>(constantsClass));
+
+		Object constantsBean = null;
+
+		if (constantsBeanReference != null) {
+			constantsBean = constantsBeanReference.get();
+		}
 
 		if (constantsBean == null) {
 			constantsBean = createConstantsBean(constantsClass);
 
-			constantsBeans.put(constantsClass, constantsBean);
+			constantsBeans.put(
+				new EqualityWeakReference<Class<?>>(
+					constantsClass, constantsClassReferenceQueue),
+				new WeakReference<Object>(constantsBean));
+		}
+
+		while (true) {
+			EqualityWeakReference<Class<?>> staleConstantsClassReference =
+				(EqualityWeakReference<Class<?>>)
+					constantsClassReferenceQueue.poll();
+
+			if (staleConstantsClassReference == null) {
+				break;
+			}
+
+			constantsBeans.remove(staleConstantsClassReference);
 		}
 
 		return constantsBean;
@@ -81,8 +104,8 @@ public class ConstantsBeanFactoryImpl implements ConstantsBeanFactory {
 
 				return constantsBeanClass.newInstance();
 			}
-			catch (Throwable t) {
-				throw new RuntimeException(t);
+			catch (Exception e) {
+				throw new RuntimeException(e);
 			}
 		}
 	}
@@ -99,7 +122,7 @@ public class ConstantsBeanFactoryImpl implements ConstantsBeanFactory {
 		ClassWriter classWriter = new ClassWriter(0);
 
 		classWriter.visit(
-			Opcodes.V1_6, Opcodes.ACC_PUBLIC | Opcodes.ACC_SUPER,
+			Opcodes.V1_5, Opcodes.ACC_PUBLIC | Opcodes.ACC_SUPER,
 			constantsBeanClassBinaryName, null, objectClassBinaryName, null);
 
 		MethodVisitor methodVisitor = classWriter.visitMethod(
@@ -108,8 +131,7 @@ public class ConstantsBeanFactoryImpl implements ConstantsBeanFactory {
 		methodVisitor.visitCode();
 		methodVisitor.visitVarInsn(Opcodes.ALOAD, 0);
 		methodVisitor.visitMethodInsn(
-			Opcodes.INVOKESPECIAL, objectClassBinaryName, "<init>", "()V",
-			false);
+			Opcodes.INVOKESPECIAL, objectClassBinaryName, "<init>", "()V");
 		methodVisitor.visitInsn(Opcodes.RETURN);
 		methodVisitor.visitMaxs(1, 1);
 		methodVisitor.visitEnd();
@@ -118,7 +140,9 @@ public class ConstantsBeanFactoryImpl implements ConstantsBeanFactory {
 
 		for (Field field :fields) {
 			if (Modifier.isStatic(field.getModifiers())) {
-				Type fieldType = Type.getType(field.getType());
+				Class<?> fieldClass = field.getType();
+
+				Type fieldType = Type.getType(fieldClass);
 
 				methodVisitor = classWriter.visitMethod(
 					Opcodes.ACC_PUBLIC, "get" + field.getName(),
@@ -129,7 +153,24 @@ public class ConstantsBeanFactoryImpl implements ConstantsBeanFactory {
 					Opcodes.GETSTATIC, constantsClassBinaryName,
 					field.getName(), fieldType.getDescriptor());
 
-				methodVisitor.visitInsn(fieldType.getOpcode(Opcodes.IRETURN));
+				int returnOpcode = Opcodes.ARETURN;
+
+				if (fieldClass.isPrimitive()) {
+					if (fieldClass == Float.TYPE) {
+						returnOpcode = Opcodes.FRETURN;
+					}
+					else if (fieldClass == Double.TYPE) {
+						returnOpcode = Opcodes.DRETURN;
+					}
+					else if (fieldClass == Long.TYPE) {
+						returnOpcode = Opcodes.LRETURN;
+					}
+					else {
+						returnOpcode = Opcodes.IRETURN;
+					}
+				}
+
+				methodVisitor.visitInsn(returnOpcode);
 
 				methodVisitor.visitMaxs(fieldType.getSize(), 1);
 				methodVisitor.visitEnd();
@@ -147,10 +188,12 @@ public class ConstantsBeanFactoryImpl implements ConstantsBeanFactory {
 		return className.replace('.', '/');
 	}
 
-	protected static ConcurrentMap<Class<?>, Object> constantsBeans =
-		new ConcurrentReferenceKeyHashMap<Class<?>, Object>(
-			new ConcurrentReferenceValueHashMap<Reference<Class<?>>, Object>(
-				FinalizeManager.WEAK_REFERENCE_FACTORY),
-			FinalizeManager.WEAK_REFERENCE_FACTORY);
+	protected static ConcurrentMap
+		<EqualityWeakReference<Class<?>>, Reference<?>>
+			constantsBeans =
+				new ConcurrentHashMap
+					<EqualityWeakReference<Class<?>>, Reference<?>>();
+	protected static ReferenceQueue<Class<?>> constantsClassReferenceQueue =
+		new ReferenceQueue<Class<?>>();
 
 }

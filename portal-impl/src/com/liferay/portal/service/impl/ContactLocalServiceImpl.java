@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -17,6 +17,7 @@ package com.liferay.portal.service.impl;
 import com.liferay.portal.ContactBirthdayException;
 import com.liferay.portal.ContactClassNameException;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.util.OrderByComparator;
@@ -43,7 +44,7 @@ public class ContactLocalServiceImpl extends ContactLocalServiceBaseImpl {
 			int birthdayYear, String smsSn, String aimSn, String facebookSn,
 			String icqSn, String jabberSn, String msnSn, String mySpaceSn,
 			String skypeSn, String twitterSn, String ymSn, String jobTitle)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		User user = userPersistence.findByPrimaryKey(userId);
 		Date birthday = PortalUtil.getDate(
@@ -91,7 +92,7 @@ public class ContactLocalServiceImpl extends ContactLocalServiceBaseImpl {
 
 	@Indexable(type = IndexableType.DELETE)
 	@Override
-	public Contact deleteContact(Contact contact) {
+	public Contact deleteContact(Contact contact) throws SystemException {
 
 		// Contact
 
@@ -126,7 +127,7 @@ public class ContactLocalServiceImpl extends ContactLocalServiceBaseImpl {
 
 	@Indexable(type = IndexableType.DELETE)
 	@Override
-	public Contact deleteContact(long contactId) {
+	public Contact deleteContact(long contactId) throws SystemException {
 		Contact contact = contactPersistence.fetchByPrimaryKey(contactId);
 
 		if (contact != null) {
@@ -138,15 +139,18 @@ public class ContactLocalServiceImpl extends ContactLocalServiceBaseImpl {
 
 	@Override
 	public List<Contact> getContacts(
-		long classNameId, long classPK, int start, int end,
-		OrderByComparator<Contact> orderByComparator) {
+			long classNameId, long classPK, int start, int end,
+			OrderByComparator orderByComparator)
+		throws SystemException {
 
 		return contactPersistence.findByC_C(
 			classNameId, classPK, start, end, orderByComparator);
 	}
 
 	@Override
-	public int getContactsCount(long classNameId, long classPK) {
+	public int getContactsCount(long classNameId, long classPK)
+		throws SystemException {
+
 		return contactPersistence.countByC_C(classNameId, classPK);
 	}
 
@@ -159,7 +163,7 @@ public class ContactLocalServiceImpl extends ContactLocalServiceBaseImpl {
 			String smsSn, String aimSn, String facebookSn, String icqSn,
 			String jabberSn, String msnSn, String mySpaceSn, String skypeSn,
 			String twitterSn, String ymSn, String jobTitle)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Date birthday = PortalUtil.getDate(
 			birthdayMonth, birthdayDay, birthdayYear,

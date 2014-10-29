@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -13,8 +13,6 @@
  */
 
 package com.liferay.portal.model.impl;
-
-import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
 import com.liferay.portal.kernel.json.JSON;
@@ -54,7 +52,6 @@ import java.util.Map;
  * @generated
  */
 @JSON(strict = true)
-@ProviderType
 public class CompanyModelImpl extends BaseModelImpl<Company>
 	implements CompanyModel {
 	/*
@@ -64,7 +61,6 @@ public class CompanyModelImpl extends BaseModelImpl<Company>
 	 */
 	public static final String TABLE_NAME = "Company";
 	public static final Object[][] TABLE_COLUMNS = {
-			{ "mvccVersion", Types.BIGINT },
 			{ "companyId", Types.BIGINT },
 			{ "accountId", Types.BIGINT },
 			{ "webId", Types.VARCHAR },
@@ -76,7 +72,7 @@ public class CompanyModelImpl extends BaseModelImpl<Company>
 			{ "maxUsers", Types.INTEGER },
 			{ "active_", Types.BOOLEAN }
 		};
-	public static final String TABLE_SQL_CREATE = "create table Company (mvccVersion LONG default 0,companyId LONG not null primary key,accountId LONG,webId VARCHAR(75) null,key_ TEXT null,mx VARCHAR(75) null,homeURL STRING null,logoId LONG,system BOOLEAN,maxUsers INTEGER,active_ BOOLEAN)";
+	public static final String TABLE_SQL_CREATE = "create table Company (companyId LONG not null primary key,accountId LONG,webId VARCHAR(75) null,key_ TEXT null,mx VARCHAR(75) null,homeURL STRING null,logoId LONG,system BOOLEAN,maxUsers INTEGER,active_ BOOLEAN)";
 	public static final String TABLE_SQL_DROP = "drop table Company";
 	public static final String ORDER_BY_JPQL = " ORDER BY company.companyId ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY Company.companyId ASC";
@@ -92,11 +88,11 @@ public class CompanyModelImpl extends BaseModelImpl<Company>
 	public static final boolean COLUMN_BITMASK_ENABLED = GetterUtil.getBoolean(com.liferay.portal.util.PropsUtil.get(
 				"value.object.column.bitmask.enabled.com.liferay.portal.model.Company"),
 			true);
-	public static final long LOGOID_COLUMN_BITMASK = 1L;
-	public static final long MX_COLUMN_BITMASK = 2L;
-	public static final long SYSTEM_COLUMN_BITMASK = 4L;
-	public static final long WEBID_COLUMN_BITMASK = 8L;
-	public static final long COMPANYID_COLUMN_BITMASK = 16L;
+	public static long LOGOID_COLUMN_BITMASK = 1L;
+	public static long MX_COLUMN_BITMASK = 2L;
+	public static long SYSTEM_COLUMN_BITMASK = 4L;
+	public static long WEBID_COLUMN_BITMASK = 8L;
+	public static long COMPANYID_COLUMN_BITMASK = 16L;
 
 	/**
 	 * Converts the soap model instance into a normal model instance.
@@ -111,7 +107,6 @@ public class CompanyModelImpl extends BaseModelImpl<Company>
 
 		Company model = new CompanyImpl();
 
-		model.setMvccVersion(soapModel.getMvccVersion());
 		model.setCompanyId(soapModel.getCompanyId());
 		model.setAccountId(soapModel.getAccountId());
 		model.setWebId(soapModel.getWebId());
@@ -186,7 +181,6 @@ public class CompanyModelImpl extends BaseModelImpl<Company>
 	public Map<String, Object> getModelAttributes() {
 		Map<String, Object> attributes = new HashMap<String, Object>();
 
-		attributes.put("mvccVersion", getMvccVersion());
 		attributes.put("companyId", getCompanyId());
 		attributes.put("accountId", getAccountId());
 		attributes.put("webId", getWebId());
@@ -198,20 +192,11 @@ public class CompanyModelImpl extends BaseModelImpl<Company>
 		attributes.put("maxUsers", getMaxUsers());
 		attributes.put("active", getActive());
 
-		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
-		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
-
 		return attributes;
 	}
 
 	@Override
 	public void setModelAttributes(Map<String, Object> attributes) {
-		Long mvccVersion = (Long)attributes.get("mvccVersion");
-
-		if (mvccVersion != null) {
-			setMvccVersion(mvccVersion);
-		}
-
 		Long companyId = (Long)attributes.get("companyId");
 
 		if (companyId != null) {
@@ -271,17 +256,6 @@ public class CompanyModelImpl extends BaseModelImpl<Company>
 		if (active != null) {
 			setActive(active);
 		}
-	}
-
-	@JSON
-	@Override
-	public long getMvccVersion() {
-		return _mvccVersion;
-	}
-
-	@Override
-	public void setMvccVersion(long mvccVersion) {
-		_mvccVersion = mvccVersion;
 	}
 
 	@JSON
@@ -513,7 +487,6 @@ public class CompanyModelImpl extends BaseModelImpl<Company>
 	public Object clone() {
 		CompanyImpl companyImpl = new CompanyImpl();
 
-		companyImpl.setMvccVersion(getMvccVersion());
 		companyImpl.setCompanyId(getCompanyId());
 		companyImpl.setAccountId(getAccountId());
 		companyImpl.setWebId(getWebId());
@@ -573,16 +546,6 @@ public class CompanyModelImpl extends BaseModelImpl<Company>
 	}
 
 	@Override
-	public boolean isEntityCacheEnabled() {
-		return ENTITY_CACHE_ENABLED;
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return FINDER_CACHE_ENABLED;
-	}
-
-	@Override
 	public void resetOriginalValues() {
 		CompanyModelImpl companyModelImpl = this;
 
@@ -598,18 +561,12 @@ public class CompanyModelImpl extends BaseModelImpl<Company>
 
 		companyModelImpl._setOriginalSystem = false;
 
-		setKeyObj(null);
-
-		setVirtualHostname(null);
-
 		companyModelImpl._columnBitmask = 0;
 	}
 
 	@Override
 	public CacheModel<Company> toCacheModel() {
 		CompanyCacheModel companyCacheModel = new CompanyCacheModel();
-
-		companyCacheModel.mvccVersion = getMvccVersion();
 
 		companyCacheModel.companyId = getCompanyId();
 
@@ -664,11 +621,9 @@ public class CompanyModelImpl extends BaseModelImpl<Company>
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(23);
+		StringBundler sb = new StringBundler(21);
 
-		sb.append("{mvccVersion=");
-		sb.append(getMvccVersion());
-		sb.append(", companyId=");
+		sb.append("{companyId=");
 		sb.append(getCompanyId());
 		sb.append(", accountId=");
 		sb.append(getAccountId());
@@ -695,16 +650,12 @@ public class CompanyModelImpl extends BaseModelImpl<Company>
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(37);
+		StringBundler sb = new StringBundler(34);
 
 		sb.append("<model><model-name>");
 		sb.append("com.liferay.portal.model.Company");
 		sb.append("</model-name>");
 
-		sb.append(
-			"<column><column-name>mvccVersion</column-name><column-value><![CDATA[");
-		sb.append(getMvccVersion());
-		sb.append("]]></column-value></column>");
 		sb.append(
 			"<column><column-name>companyId</column-name><column-value><![CDATA[");
 		sb.append(getCompanyId());
@@ -751,11 +702,10 @@ public class CompanyModelImpl extends BaseModelImpl<Company>
 		return sb.toString();
 	}
 
-	private static final ClassLoader _classLoader = Company.class.getClassLoader();
-	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
+	private static ClassLoader _classLoader = Company.class.getClassLoader();
+	private static Class<?>[] _escapedModelInterfaces = new Class[] {
 			Company.class
 		};
-	private long _mvccVersion;
 	private long _companyId;
 	private long _accountId;
 	private String _webId;

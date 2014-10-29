@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,19 +14,21 @@
 
 package com.liferay.portal.lar;
 
+import com.liferay.portal.RequiredGroupException;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.lar.PortletDataHandlerBoolean;
 import com.liferay.portal.kernel.lar.PortletDataHandlerKeys;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.Layout;
 import com.liferay.portal.model.StagedModel;
+import com.liferay.portal.service.GroupLocalServiceUtil;
 import com.liferay.portal.service.LayoutLocalServiceUtil;
 import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.test.DeleteAfterTestRun;
-import com.liferay.portal.util.test.GroupTestUtil;
-import com.liferay.portal.util.test.LayoutTestUtil;
-import com.liferay.portal.util.test.RandomTestUtil;
+import com.liferay.portal.service.ServiceTestUtil;
+import com.liferay.portal.util.GroupTestUtil;
+import com.liferay.portal.util.LayoutTestUtil;
 
 import java.io.File;
 
@@ -36,10 +38,12 @@ import java.util.Map;
 import org.junit.After;
 import org.junit.Before;
 
+import org.powermock.api.mockito.PowerMockito;
+
 /**
  * @author Eduardo Garcia
  */
-public class BaseExportImportTestCase {
+public class BaseExportImportTestCase extends PowerMockito {
 
 	@Before
 	public void setUp() throws Exception {
@@ -47,7 +51,7 @@ public class BaseExportImportTestCase {
 		importedGroup = GroupTestUtil.addGroup();
 
 		layout = LayoutTestUtil.addLayout(
-			group.getGroupId(), RandomTestUtil.randomString());
+			group.getGroupId(), ServiceTestUtil.randomString());
 
 		// Delete and readd to ensure a different layout ID (not ID or UUID).
 		// See LPS-32132.
@@ -55,11 +59,31 @@ public class BaseExportImportTestCase {
 		LayoutLocalServiceUtil.deleteLayout(layout, true, new ServiceContext());
 
 		layout = LayoutTestUtil.addLayout(
-			group.getGroupId(), RandomTestUtil.randomString());
+			group.getGroupId(), ServiceTestUtil.randomString());
 	}
 
 	@After
 	public void tearDown() throws Exception {
+		try {
+			if (group != null) {
+				GroupLocalServiceUtil.deleteGroup(group);
+			}
+
+			if (importedGroup != null) {
+				GroupLocalServiceUtil.deleteGroup(importedGroup);
+			}
+		}
+		catch (RequiredGroupException rge) {
+		}
+
+		if (layout != null) {
+			LayoutLocalServiceUtil.deleteLayout(layout);
+		}
+
+		if (importedLayout != null) {
+			LayoutLocalServiceUtil.deleteLayout(importedLayout);
+		}
+
 		if ((larFile != null) && larFile.exists()) {
 			FileUtil.delete(larFile);
 		}
@@ -143,24 +167,20 @@ public class BaseExportImportTestCase {
 
 	@SuppressWarnings("unused")
 	protected StagedModel getStagedModel(String uuid, long groupId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return null;
 	}
 
 	@SuppressWarnings("unused")
 	protected String getStagedModelUuid(StagedModel stagedModel)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return stagedModel.getUuid();
 	}
 
-	@DeleteAfterTestRun
 	protected Group group;
-
-	@DeleteAfterTestRun
 	protected Group importedGroup;
-
 	protected Layout importedLayout;
 	protected File larFile;
 	protected Layout layout;

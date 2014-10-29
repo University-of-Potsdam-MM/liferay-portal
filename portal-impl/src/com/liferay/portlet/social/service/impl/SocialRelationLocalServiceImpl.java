@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,11 +15,12 @@
 package com.liferay.portlet.social.service.impl;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.model.User;
 import com.liferay.portlet.social.RelationUserIdException;
 import com.liferay.portlet.social.model.SocialRelation;
+import com.liferay.portlet.social.model.SocialRelationConstants;
 import com.liferay.portlet.social.service.base.SocialRelationLocalServiceBaseImpl;
-import com.liferay.portlet.social.util.SocialRelationTypesUtil;
 
 import java.util.List;
 
@@ -66,10 +67,11 @@ public class SocialRelationLocalServiceImpl
 	 * @throws PortalException if the users could not be found, if the users
 	 *         were not from the same company, or if either of the users was the
 	 *         default user
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public SocialRelation addRelation(long userId1, long userId2, int type)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		if (userId1 == userId2) {
 			throw new RelationUserIdException();
@@ -99,7 +101,7 @@ public class SocialRelationLocalServiceImpl
 			socialRelationPersistence.update(relation);
 		}
 
-		if (SocialRelationTypesUtil.isTypeBi(type)) {
+		if (SocialRelationConstants.isTypeBi(type)) {
 			SocialRelation biRelation =
 				socialRelationPersistence.fetchByU1_U2_T(
 					userId2, userId1, type);
@@ -128,9 +130,12 @@ public class SocialRelationLocalServiceImpl
 	 *
 	 * @param  relationId the primary key of the relation
 	 * @throws PortalException if the relation could not be found
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public void deleteRelation(long relationId) throws PortalException {
+	public void deleteRelation(long relationId)
+		throws PortalException, SystemException {
+
 		SocialRelation relation = socialRelationPersistence.findByPrimaryKey(
 			relationId);
 
@@ -146,10 +151,11 @@ public class SocialRelationLocalServiceImpl
 	 * @param  type the relation's type
 	 * @throws PortalException if the relation or its inverse relation (if
 	 *         applicable) could not be found
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public void deleteRelation(long userId1, long userId2, int type)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		SocialRelation relation = socialRelationPersistence.findByU1_U2_T(
 			userId1, userId2, type);
@@ -164,12 +170,15 @@ public class SocialRelationLocalServiceImpl
 	 * @param  relation the relation to be removed
 	 * @throws PortalException if the relation is bidirectional and its inverse
 	 *         relation could not be found
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public void deleteRelation(SocialRelation relation) throws PortalException {
+	public void deleteRelation(SocialRelation relation)
+		throws PortalException, SystemException {
+
 		socialRelationPersistence.remove(relation);
 
-		if (SocialRelationTypesUtil.isTypeBi(relation.getType())) {
+		if (SocialRelationConstants.isTypeBi(relation.getType())) {
 			SocialRelation biRelation = socialRelationPersistence.findByU1_U2_T(
 				relation.getUserId2(), relation.getUserId1(),
 				relation.getType());
@@ -182,9 +191,10 @@ public class SocialRelationLocalServiceImpl
 	 * Removes all relations involving the user from the database.
 	 *
 	 * @param  userId the primary key of the user
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public void deleteRelations(long userId) {
+	public void deleteRelations(long userId) throws SystemException {
 		socialRelationPersistence.removeByUserId1(userId);
 		socialRelationPersistence.removeByUserId2(userId);
 	}
@@ -195,10 +205,11 @@ public class SocialRelationLocalServiceImpl
 	 * @param  userId1 the user that is the subject of the relation
 	 * @param  userId2 the user at the other end of the relation
 	 * @throws PortalException if the inverse relation could not be found
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public void deleteRelations(long userId1, long userId2)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		List<SocialRelation> relations = socialRelationPersistence.findByU1_U2(
 			userId1, userId2);
@@ -227,10 +238,12 @@ public class SocialRelationLocalServiceImpl
 	 * @param  start the lower bound of the range of results
 	 * @param  end the upper bound of the range of results (not inclusive)
 	 * @return the range of matching relations
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public List<SocialRelation> getInverseRelations(
-		long userId, int type, int start, int end) {
+			long userId, int type, int start, int end)
+		throws SystemException {
 
 		return socialRelationPersistence.findByU2_T(userId, type, start, end);
 	}
@@ -242,9 +255,12 @@ public class SocialRelationLocalServiceImpl
 	 * @param  userId the primary key of the user
 	 * @param  type the relation's type
 	 * @return the number of matching relations
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public int getInverseRelationsCount(long userId, int type) {
+	public int getInverseRelationsCount(long userId, int type)
+		throws SystemException {
+
 		return socialRelationPersistence.countByU2_T(userId, type);
 	}
 
@@ -254,9 +270,12 @@ public class SocialRelationLocalServiceImpl
 	 * @param  relationId the primary key of the relation
 	 * @return Returns the relation
 	 * @throws PortalException if the relation could not be found
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public SocialRelation getRelation(long relationId) throws PortalException {
+	public SocialRelation getRelation(long relationId)
+		throws PortalException, SystemException {
+
 		return socialRelationPersistence.findByPrimaryKey(relationId);
 	}
 
@@ -268,10 +287,11 @@ public class SocialRelationLocalServiceImpl
 	 * @param  type the relation's type
 	 * @return Returns the relation
 	 * @throws PortalException if the relation could not be found
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public SocialRelation getRelation(long userId1, long userId2, int type)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return socialRelationPersistence.findByU1_U2_T(userId1, userId2, type);
 	}
@@ -295,10 +315,12 @@ public class SocialRelationLocalServiceImpl
 	 * @param  start the lower bound of the range of results
 	 * @param  end the upper bound of the range of results (not inclusive)
 	 * @return the range of relations
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public List<SocialRelation> getRelations(
-		long userId, int type, int start, int end) {
+			long userId, int type, int start, int end)
+		throws SystemException {
 
 		return socialRelationPersistence.findByU1_T(userId, type, start, end);
 	}
@@ -321,10 +343,12 @@ public class SocialRelationLocalServiceImpl
 	 * @param  start the lower bound of the range of results
 	 * @param  end the upper bound of the range of results (not inclusive)
 	 * @return the range of relations
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public List<SocialRelation> getRelations(
-		long userId1, long userId2, int start, int end) {
+			long userId1, long userId2, int start, int end)
+		throws SystemException {
 
 		return socialRelationPersistence.findByU1_U2(
 			userId1, userId2, start, end);
@@ -337,9 +361,10 @@ public class SocialRelationLocalServiceImpl
 	 * @param  userId the primary key of the user
 	 * @param  type the relation's type
 	 * @return the number of relations
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public int getRelationsCount(long userId, int type) {
+	public int getRelationsCount(long userId, int type) throws SystemException {
 		return socialRelationPersistence.countByU1_T(userId, type);
 	}
 
@@ -349,9 +374,12 @@ public class SocialRelationLocalServiceImpl
 	 * @param  userId1 the user that is the subject of the relation
 	 * @param  userId2 the user at the other end of the relation
 	 * @return the number of relations
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public int getRelationsCount(long userId1, long userId2) {
+	public int getRelationsCount(long userId1, long userId2)
+		throws SystemException {
+
 		return socialRelationPersistence.countByU1_U2(userId1, userId2);
 	}
 
@@ -366,9 +394,12 @@ public class SocialRelationLocalServiceImpl
 	 * @param  type the relation's type
 	 * @return <code>true</code> if the relation exists; <code>false</code>
 	 *         otherwise
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public boolean hasRelation(long userId1, long userId2, int type) {
+	public boolean hasRelation(long userId1, long userId2, int type)
+		throws SystemException {
+
 		SocialRelation relation = socialRelationPersistence.fetchByU1_U2_T(
 			userId1, userId2, type);
 
@@ -397,9 +428,12 @@ public class SocialRelationLocalServiceImpl
 	 * @param  type the relation's type
 	 * @return <code>true</code> if the two users can be in a new relation of
 	 *         the given type; <code>false</code> otherwise
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public boolean isRelatable(long userId1, long userId2, int type) {
+	public boolean isRelatable(long userId1, long userId2, int type)
+		throws SystemException {
+
 		if (userId1 == userId2) {
 			return false;
 		}

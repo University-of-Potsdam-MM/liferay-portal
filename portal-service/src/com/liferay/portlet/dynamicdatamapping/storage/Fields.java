@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -20,6 +20,7 @@ import com.liferay.portal.kernel.util.Validator;
 import java.io.Serializable;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -41,10 +42,6 @@ public class Fields implements Iterable<Field>, Serializable {
 
 	@Override
 	public boolean equals(Object obj) {
-		return equals(obj, true);
-	}
-
-	public boolean equals(Object obj, boolean includePrivateFields) {
 		if (this == obj) {
 			return true;
 		}
@@ -55,18 +52,7 @@ public class Fields implements Iterable<Field>, Serializable {
 
 		Fields fields = (Fields)obj;
 
-		if (includePrivateFields) {
-			return Validator.equals(_fieldsMap, fields._fieldsMap);
-		}
-
-		List<Field> fieldList1 = getFieldsList(includePrivateFields);
-		List<Field> fieldList2 = fields.getFieldsList(includePrivateFields);
-
-		if (fieldList1.size() != fieldList2.size()) {
-			return false;
-		}
-
-		if (fieldList1.containsAll(fieldList2)) {
+		if (Validator.equals(_fieldsMap, fields._fieldsMap)) {
 			return true;
 		}
 
@@ -123,7 +109,21 @@ public class Fields implements Iterable<Field>, Serializable {
 	public Iterator<Field> iterator(
 		Comparator<Field> comparator, boolean includePrivateFields) {
 
-		List<Field> fieldsList = getFieldsList(includePrivateFields);
+		Collection<Field> fieldsCollection = _fieldsMap.values();
+
+		List<Field> fieldsList = new ArrayList<Field>();
+
+		Iterator<Field> itr = fieldsCollection.iterator();
+
+		while (itr.hasNext()) {
+			Field field = itr.next();
+
+			if (!includePrivateFields && field.isPrivate()) {
+				continue;
+			}
+
+			fieldsList.add(field);
+		}
 
 		if (comparator != null) {
 			Collections.sort(fieldsList, comparator);
@@ -138,20 +138,6 @@ public class Fields implements Iterable<Field>, Serializable {
 
 	public Field remove(String name) {
 		return _fieldsMap.remove(name);
-	}
-
-	protected List<Field> getFieldsList(boolean includePrivateFields) {
-		List<Field> fieldsList = new ArrayList<Field>();
-
-		for (Field field : _fieldsMap.values()) {
-			if (!includePrivateFields && field.isPrivate()) {
-				continue;
-			}
-
-			fieldsList.add(field);
-		}
-
-		return fieldsList;
 	}
 
 	private Map<String, Field> _fieldsMap = new HashMap<String, Field>();

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -17,15 +17,18 @@ package com.liferay.portal.kernel.nio.intraband.rpc;
 import com.liferay.portal.kernel.io.Deserializer;
 import com.liferay.portal.kernel.io.Serializer;
 import com.liferay.portal.kernel.nio.intraband.Datagram;
+import com.liferay.portal.kernel.nio.intraband.MockIntraband;
+import com.liferay.portal.kernel.nio.intraband.MockRegistrationReference;
 import com.liferay.portal.kernel.nio.intraband.SystemDataType;
-import com.liferay.portal.kernel.nio.intraband.test.MockIntraband;
-import com.liferay.portal.kernel.nio.intraband.test.MockRegistrationReference;
 import com.liferay.portal.kernel.process.ProcessCallable;
 import com.liferay.portal.kernel.process.ProcessException;
 import com.liferay.portal.kernel.test.CodeCoverageAssertor;
+import com.liferay.portal.kernel.test.JDKLoggerTestUtil;
 import com.liferay.portal.kernel.util.PortalClassLoaderUtil;
 
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
 
 import org.junit.Assert;
 import org.junit.ClassRule;
@@ -38,14 +41,7 @@ public class BootstrapRPCDatagramReceiveHandlerTest {
 
 	@ClassRule
 	public static CodeCoverageAssertor codeCoverageAssertor =
-		new CodeCoverageAssertor() {
-
-			@Override
-			public void appendAssertClasses(List<Class<?>> assertClasses) {
-				assertClasses.add(RPCResponse.class);
-			}
-
-		};
+		new CodeCoverageAssertor();
 
 	@Test
 	public void testReceive() throws Exception {
@@ -72,11 +68,11 @@ public class BootstrapRPCDatagramReceiveHandlerTest {
 		Deserializer deserializer = new Deserializer(
 			responseDatagram.getDataByteBuffer());
 
-		RPCResponse rpcResponse = deserializer.readObject();
-
 		Assert.assertEquals(
-			TestProcessCallable.class.getName(), rpcResponse.getResult());
-		Assert.assertNull(rpcResponse.getException());
+			TestProcessCallable.class.getName(), deserializer.readObject());
+
+		List<LogRecord> logRecords = JDKLoggerTestUtil.configureJDKLogger(
+			BootstrapRPCDatagramReceiveHandler.class.getName(), Level.SEVERE);
 
 		serializer = new Serializer();
 
@@ -87,19 +83,16 @@ public class BootstrapRPCDatagramReceiveHandlerTest {
 			Datagram.createRequestDatagram(
 				systemDataType.getValue(), serializer.toByteBuffer()));
 
-		responseDatagram = mockIntraband.getDatagram();
+		Assert.assertEquals(1, logRecords.size());
 
-		deserializer = new Deserializer(responseDatagram.getDataByteBuffer());
+		LogRecord logRecord = logRecords.get(0);
 
-		rpcResponse = deserializer.readObject();
+		Assert.assertEquals("Unable to execute", logRecord.getMessage());
 
-		Assert.assertNull(rpcResponse.getResult());
+		Throwable throwable = logRecord.getThrown();
 
-		Exception exception = rpcResponse.getException();
-
-		Assert.assertSame(ProcessException.class, exception.getClass());
-		Assert.assertEquals(
-			ErrorTestProcessCallable.class.getName(), exception.getMessage());
+		Assert.assertSame(ProcessException.class, throwable.getClass());
+		Assert.assertEquals("Execution error", throwable.getMessage());
 	}
 
 	private static class ErrorTestProcessCallable
@@ -107,8 +100,7 @@ public class BootstrapRPCDatagramReceiveHandlerTest {
 
 		@Override
 		public String call() throws ProcessException {
-			throw new ProcessException(
-				ErrorTestProcessCallable.class.getName());
+			throw new ProcessException("Execution error");
 		}
 
 		private static final long serialVersionUID = 1L;

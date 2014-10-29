@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,13 +14,10 @@
 
 package com.liferay.portal.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.CacheModel;
 import com.liferay.portal.model.LayoutSetPrototype;
-import com.liferay.portal.model.MVCCModel;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -36,26 +33,13 @@ import java.util.Date;
  * @see LayoutSetPrototype
  * @generated
  */
-@ProviderType
 public class LayoutSetPrototypeCacheModel implements CacheModel<LayoutSetPrototype>,
-	Externalizable, MVCCModel {
-	@Override
-	public long getMvccVersion() {
-		return mvccVersion;
-	}
-
-	@Override
-	public void setMvccVersion(long mvccVersion) {
-		this.mvccVersion = mvccVersion;
-	}
-
+	Externalizable {
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(25);
+		StringBundler sb = new StringBundler(23);
 
-		sb.append("{mvccVersion=");
-		sb.append(mvccVersion);
-		sb.append(", uuid=");
+		sb.append("{uuid=");
 		sb.append(uuid);
 		sb.append(", layoutSetPrototypeId=");
 		sb.append(layoutSetPrototypeId);
@@ -85,8 +69,6 @@ public class LayoutSetPrototypeCacheModel implements CacheModel<LayoutSetPrototy
 	@Override
 	public LayoutSetPrototype toEntityModel() {
 		LayoutSetPrototypeImpl layoutSetPrototypeImpl = new LayoutSetPrototypeImpl();
-
-		layoutSetPrototypeImpl.setMvccVersion(mvccVersion);
 
 		if (uuid == null) {
 			layoutSetPrototypeImpl.setUuid(StringPool.BLANK);
@@ -150,7 +132,6 @@ public class LayoutSetPrototypeCacheModel implements CacheModel<LayoutSetPrototy
 
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
-		mvccVersion = objectInput.readLong();
 		uuid = objectInput.readUTF();
 		layoutSetPrototypeId = objectInput.readLong();
 		companyId = objectInput.readLong();
@@ -167,8 +148,6 @@ public class LayoutSetPrototypeCacheModel implements CacheModel<LayoutSetPrototy
 	@Override
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
-		objectOutput.writeLong(mvccVersion);
-
 		if (uuid == null) {
 			objectOutput.writeUTF(StringPool.BLANK);
 		}
@@ -214,7 +193,6 @@ public class LayoutSetPrototypeCacheModel implements CacheModel<LayoutSetPrototy
 		objectOutput.writeBoolean(active);
 	}
 
-	public long mvccVersion;
 	public String uuid;
 	public long layoutSetPrototypeId;
 	public long companyId;

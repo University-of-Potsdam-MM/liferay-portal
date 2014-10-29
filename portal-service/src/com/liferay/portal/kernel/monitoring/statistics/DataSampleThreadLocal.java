@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -17,21 +17,17 @@ package com.liferay.portal.kernel.monitoring.statistics;
 import com.liferay.portal.kernel.util.AutoResetThreadLocal;
 import com.liferay.portal.kernel.util.ListUtil;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * @author Michael C. Han
  * @author Brian Wing Shun Chan
  */
-public class DataSampleThreadLocal {
+public class DataSampleThreadLocal implements Cloneable {
 
 	public static void addDataSample(DataSample dataSample) {
-		DataSampleThreadLocal dataSampleThreadLocal =
-			_dataSampleThreadLocal.get();
-
-		dataSampleThreadLocal._addDataSample(dataSample);
+		_dataSampleThreadLocal.get()._addDataSample(dataSample);
 	}
 
 	public static void clearDataSamples() {
@@ -39,14 +35,12 @@ public class DataSampleThreadLocal {
 	}
 
 	public static List<DataSample> getDataSamples() {
-		DataSampleThreadLocal dataSampleThreadLocal =
-			_dataSampleThreadLocal.get();
-
-		return ListUtil.fromCollection(dataSampleThreadLocal._getDataSamples());
+		return ListUtil.copy(_dataSampleThreadLocal.get()._getDataSamples());
 	}
 
-	public static void initialize() {
-		_dataSampleThreadLocal.get();
+	@Override
+	public Object clone() {
+		return new DataSampleThreadLocal();
 	}
 
 	public long getMonitorTime() {
@@ -61,30 +55,16 @@ public class DataSampleThreadLocal {
 		_dataSamples.add(dataSample);
 	}
 
-	private Queue<DataSample> _getDataSamples() {
+	private List<DataSample> _getDataSamples() {
 		return _dataSamples;
 	}
 
 	private static ThreadLocal<DataSampleThreadLocal> _dataSampleThreadLocal =
 		new AutoResetThreadLocal<DataSampleThreadLocal>(
-			DataSampleThreadLocal.class + "._dataSampleThreadLocal") {
+			DataSampleThreadLocal.class + "._dataSampleThreadLocal",
+			new DataSampleThreadLocal());
 
-				@Override
-				protected DataSampleThreadLocal copy(
-					DataSampleThreadLocal dataSampleThreadLocal) {
-
-					return dataSampleThreadLocal;
-				}
-
-				@Override
-				protected DataSampleThreadLocal initialValue() {
-					return new DataSampleThreadLocal();
-				}
-
-			};
-
-	private Queue<DataSample> _dataSamples =
-		new ConcurrentLinkedQueue<DataSample>();
+	private List<DataSample> _dataSamples = new ArrayList<DataSample>();
 	private long _monitorTime;
 
 }

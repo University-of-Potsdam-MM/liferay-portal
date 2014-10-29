@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -19,7 +19,7 @@
 <%
 String authenticationURL = currentURL + "#_LFR_FN_authentication";
 
-boolean ldapAuthEnabled = PrefsPropsUtil.getBoolean(company.getCompanyId(), PropsKeys.LDAP_AUTH_ENABLED, PropsValues.LDAP_AUTH_ENABLED);
+boolean ldapAuthEnabled = AuthSettingsUtil.isLDAPAuthEnabled(company.getCompanyId());
 boolean ldapAuthRequired = PrefsPropsUtil.getBoolean(company.getCompanyId(), PropsKeys.LDAP_AUTH_REQUIRED);
 boolean ldapImportEnabled = PrefsPropsUtil.getBoolean(company.getCompanyId(), PropsKeys.LDAP_IMPORT_ENABLED, PropsValues.LDAP_IMPORT_ENABLED);
 boolean ldapImportOnStartup = PrefsPropsUtil.getBoolean(company.getCompanyId(), PropsKeys.LDAP_IMPORT_ON_STARTUP);
@@ -130,7 +130,7 @@ if (ldapAuthEnabled && (ldapServerIds.length <= 0) && Validator.isNull(PrefsProp
 	<c:if test="<%= ldapServerIds.length > 0 %>">
 		<br /><br />
 
-		<div class="ldap-servers searchcontainer-content">
+		<div class="searchcontainer-content ldap-servers">
 			<table class="table table-bordered table-hover table-striped">
 			<thead class="table-columns">
 			<tr>
@@ -169,7 +169,7 @@ if (ldapAuthEnabled && (ldapServerIds.length <= 0) && Validator.isNull(PrefsProp
 								%>
 
 								<liferay-ui:icon
-									iconCssClass="icon-arrow-up"
+									image="top"
 									message="up"
 									url="<%= taglibUpURL %>"
 								/>
@@ -179,7 +179,7 @@ if (ldapAuthEnabled && (ldapServerIds.length <= 0) && Validator.isNull(PrefsProp
 								%>
 
 								<liferay-ui:icon
-									iconCssClass="icon-arrow-down"
+									image="bottom"
 									message="down"
 									url="<%= taglibDownURL %>"
 								/>
@@ -192,8 +192,7 @@ if (ldapAuthEnabled && (ldapServerIds.length <= 0) && Validator.isNull(PrefsProp
 							</portlet:renderURL>
 
 							<liferay-ui:icon
-								iconCssClass="icon-edit"
-								message="edit"
+								image="edit"
 								url="<%= editURL %>"
 							/>
 
@@ -252,10 +251,18 @@ if (ldapAuthEnabled && (ldapServerIds.length <= 0) && Validator.isNull(PrefsProp
 			function() {
 				var A = AUI();
 
-				var exportCheckbox = A.one('#<portlet:namespace />ldapExportEnabled');
-				var importCheckbox = A.one('#<portlet:namespace />ldapImportEnabled');
+				var exportCheckbox = A.one('#<portlet:namespace />ldapExportEnabledCheckbox');
+				var importCheckbox = A.one('#<portlet:namespace />ldapImportEnabledCheckbox');
 
-				exportCheckbox.attr('disabled', importCheckbox.attr('checked'));
+				var checked = importCheckbox.attr('checked');
+
+				if (checked) {
+					exportCheckbox.attr('checked', false);
+
+					Liferay.Util.updateCheckboxValue(exportCheckbox);
+				}
+
+				exportCheckbox.attr('disabled', checked);
 			},
 			['aui-base']
 		);
@@ -304,5 +311,25 @@ if (ldapAuthEnabled && (ldapServerIds.length <= 0) && Validator.isNull(PrefsProp
 		['aui-base']
 	);
 
-	Liferay.Util.toggleBoxes('<portlet:namespace />ldapImportEnabled', '<portlet:namespace />importEnabledSettings');
+	Liferay.provide(
+		window,
+		'<portlet:namespace />saveLdap',
+		function() {
+			var A = AUI();
+
+			var ldapServerIds = [];
+
+			A.all('.ldap-servers .table-data tr').each(
+				function(item, index, collection) {
+					ldapServerIds.push(item.getAttribute('data-ldapServerId'));
+				}
+			);
+
+			document.<portlet:namespace />fm['<portlet:namespace />settings--ldap.server.ids--'].value = ldapServerIds.join(',');
+		},
+		['aui-base']
+	);
+
+	Liferay.Util.toggleBoxes('<portlet:namespace />ldapImportEnabledCheckbox', '<portlet:namespace />importEnabledSettings');
+	Liferay.Util.toggleBoxes('<portlet:namespace />ldapExportEnabledCheckbox', '<portlet:namespace />exportEnabledSettings');
 </aui:script>

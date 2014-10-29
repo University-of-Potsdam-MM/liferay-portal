@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,9 +14,11 @@
 
 package com.liferay.portlet.asset.model.impl;
 
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portlet.asset.AssetRendererFactoryRegistryUtil;
 import com.liferay.portlet.asset.model.AssetCategory;
 import com.liferay.portlet.asset.model.AssetRenderer;
@@ -62,23 +64,25 @@ public class AssetEntryImpl extends AssetEntryBaseImpl {
 	}
 
 	@Override
-	public List<AssetCategory> getCategories() {
+	public List<AssetCategory> getCategories() throws SystemException {
 		return AssetCategoryLocalServiceUtil.getEntryCategories(getEntryId());
 	}
 
 	@Override
-	public long[] getCategoryIds() {
-		return ListUtil.toLongArray(
-			getCategories(), AssetCategory.CATEGORY_ID_ACCESSOR);
+	public long[] getCategoryIds() throws SystemException {
+		return StringUtil.split(
+			ListUtil.toString(
+				getCategories(), AssetCategory.CATEGORY_ID_ACCESSOR), 0L);
 	}
 
 	@Override
-	public String[] getTagNames() {
-		return ListUtil.toArray(getTags(), AssetTag.NAME_ACCESSOR);
+	public String[] getTagNames() throws SystemException {
+		return StringUtil.split(
+			ListUtil.toString(getTags(), AssetTag.NAME_ACCESSOR));
 	}
 
 	@Override
-	public List<AssetTag> getTags() {
+	public List<AssetTag> getTags() throws SystemException {
 		return AssetTagLocalServiceUtil.getEntryTags(getEntryId());
 	}
 

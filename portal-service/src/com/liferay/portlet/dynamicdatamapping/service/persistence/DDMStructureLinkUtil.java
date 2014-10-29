@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,6 +18,7 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.bean.PortalBeanLocatorUtil;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ReferenceRegistry;
 import com.liferay.portal.service.ServiceContext;
@@ -63,7 +64,8 @@ public class DDMStructureLinkUtil {
 	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#countWithDynamicQuery(DynamicQuery)
 	 */
-	public static long countWithDynamicQuery(DynamicQuery dynamicQuery) {
+	public static long countWithDynamicQuery(DynamicQuery dynamicQuery)
+		throws SystemException {
 		return getPersistence().countWithDynamicQuery(dynamicQuery);
 	}
 
@@ -71,7 +73,7 @@ public class DDMStructureLinkUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#findWithDynamicQuery(DynamicQuery)
 	 */
 	public static List<DDMStructureLink> findWithDynamicQuery(
-		DynamicQuery dynamicQuery) {
+		DynamicQuery dynamicQuery) throws SystemException {
 		return getPersistence().findWithDynamicQuery(dynamicQuery);
 	}
 
@@ -79,7 +81,8 @@ public class DDMStructureLinkUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#findWithDynamicQuery(DynamicQuery, int, int)
 	 */
 	public static List<DDMStructureLink> findWithDynamicQuery(
-		DynamicQuery dynamicQuery, int start, int end) {
+		DynamicQuery dynamicQuery, int start, int end)
+		throws SystemException {
 		return getPersistence().findWithDynamicQuery(dynamicQuery, start, end);
 	}
 
@@ -88,7 +91,7 @@ public class DDMStructureLinkUtil {
 	 */
 	public static List<DDMStructureLink> findWithDynamicQuery(
 		DynamicQuery dynamicQuery, int start, int end,
-		OrderByComparator<DDMStructureLink> orderByComparator) {
+		OrderByComparator orderByComparator) throws SystemException {
 		return getPersistence()
 				   .findWithDynamicQuery(dynamicQuery, start, end,
 			orderByComparator);
@@ -97,7 +100,8 @@ public class DDMStructureLinkUtil {
 	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel)
 	 */
-	public static DDMStructureLink update(DDMStructureLink ddmStructureLink) {
+	public static DDMStructureLink update(DDMStructureLink ddmStructureLink)
+		throws SystemException {
 		return getPersistence().update(ddmStructureLink);
 	}
 
@@ -105,7 +109,7 @@ public class DDMStructureLinkUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, ServiceContext)
 	 */
 	public static DDMStructureLink update(DDMStructureLink ddmStructureLink,
-		ServiceContext serviceContext) {
+		ServiceContext serviceContext) throws SystemException {
 		return getPersistence().update(ddmStructureLink, serviceContext);
 	}
 
@@ -114,9 +118,11 @@ public class DDMStructureLinkUtil {
 	*
 	* @param classNameId the class name ID
 	* @return the matching d d m structure links
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.dynamicdatamapping.model.DDMStructureLink> findByClassNameId(
-		long classNameId) {
+		long classNameId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByClassNameId(classNameId);
 	}
 
@@ -131,9 +137,11 @@ public class DDMStructureLinkUtil {
 	* @param start the lower bound of the range of d d m structure links
 	* @param end the upper bound of the range of d d m structure links (not inclusive)
 	* @return the range of matching d d m structure links
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.dynamicdatamapping.model.DDMStructureLink> findByClassNameId(
-		long classNameId, int start, int end) {
+		long classNameId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByClassNameId(classNameId, start, end);
 	}
 
@@ -149,10 +157,12 @@ public class DDMStructureLinkUtil {
 	* @param end the upper bound of the range of d d m structure links (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching d d m structure links
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.dynamicdatamapping.model.DDMStructureLink> findByClassNameId(
 		long classNameId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.dynamicdatamapping.model.DDMStructureLink> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByClassNameId(classNameId, start, end, orderByComparator);
 	}
@@ -164,11 +174,13 @@ public class DDMStructureLinkUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching d d m structure link
 	* @throws com.liferay.portlet.dynamicdatamapping.NoSuchStructureLinkException if a matching d d m structure link could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.dynamicdatamapping.model.DDMStructureLink findByClassNameId_First(
 		long classNameId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.dynamicdatamapping.model.DDMStructureLink> orderByComparator)
-		throws com.liferay.portlet.dynamicdatamapping.NoSuchStructureLinkException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.dynamicdatamapping.NoSuchStructureLinkException {
 		return getPersistence()
 				   .findByClassNameId_First(classNameId, orderByComparator);
 	}
@@ -179,10 +191,12 @@ public class DDMStructureLinkUtil {
 	* @param classNameId the class name ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching d d m structure link, or <code>null</code> if a matching d d m structure link could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.dynamicdatamapping.model.DDMStructureLink fetchByClassNameId_First(
 		long classNameId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.dynamicdatamapping.model.DDMStructureLink> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByClassNameId_First(classNameId, orderByComparator);
 	}
@@ -194,11 +208,13 @@ public class DDMStructureLinkUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching d d m structure link
 	* @throws com.liferay.portlet.dynamicdatamapping.NoSuchStructureLinkException if a matching d d m structure link could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.dynamicdatamapping.model.DDMStructureLink findByClassNameId_Last(
 		long classNameId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.dynamicdatamapping.model.DDMStructureLink> orderByComparator)
-		throws com.liferay.portlet.dynamicdatamapping.NoSuchStructureLinkException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.dynamicdatamapping.NoSuchStructureLinkException {
 		return getPersistence()
 				   .findByClassNameId_Last(classNameId, orderByComparator);
 	}
@@ -209,10 +225,12 @@ public class DDMStructureLinkUtil {
 	* @param classNameId the class name ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching d d m structure link, or <code>null</code> if a matching d d m structure link could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.dynamicdatamapping.model.DDMStructureLink fetchByClassNameId_Last(
 		long classNameId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.dynamicdatamapping.model.DDMStructureLink> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByClassNameId_Last(classNameId, orderByComparator);
 	}
@@ -225,11 +243,13 @@ public class DDMStructureLinkUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next d d m structure link
 	* @throws com.liferay.portlet.dynamicdatamapping.NoSuchStructureLinkException if a d d m structure link with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.dynamicdatamapping.model.DDMStructureLink[] findByClassNameId_PrevAndNext(
 		long structureLinkId, long classNameId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.dynamicdatamapping.model.DDMStructureLink> orderByComparator)
-		throws com.liferay.portlet.dynamicdatamapping.NoSuchStructureLinkException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.dynamicdatamapping.NoSuchStructureLinkException {
 		return getPersistence()
 				   .findByClassNameId_PrevAndNext(structureLinkId, classNameId,
 			orderByComparator);
@@ -239,8 +259,10 @@ public class DDMStructureLinkUtil {
 	* Removes all the d d m structure links where classNameId = &#63; from the database.
 	*
 	* @param classNameId the class name ID
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByClassNameId(long classNameId) {
+	public static void removeByClassNameId(long classNameId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeByClassNameId(classNameId);
 	}
 
@@ -249,8 +271,10 @@ public class DDMStructureLinkUtil {
 	*
 	* @param classNameId the class name ID
 	* @return the number of matching d d m structure links
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByClassNameId(long classNameId) {
+	public static int countByClassNameId(long classNameId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByClassNameId(classNameId);
 	}
 
@@ -260,10 +284,12 @@ public class DDMStructureLinkUtil {
 	* @param classPK the class p k
 	* @return the matching d d m structure link
 	* @throws com.liferay.portlet.dynamicdatamapping.NoSuchStructureLinkException if a matching d d m structure link could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.dynamicdatamapping.model.DDMStructureLink findByClassPK(
 		long classPK)
-		throws com.liferay.portlet.dynamicdatamapping.NoSuchStructureLinkException {
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.dynamicdatamapping.NoSuchStructureLinkException {
 		return getPersistence().findByClassPK(classPK);
 	}
 
@@ -272,9 +298,11 @@ public class DDMStructureLinkUtil {
 	*
 	* @param classPK the class p k
 	* @return the matching d d m structure link, or <code>null</code> if a matching d d m structure link could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.dynamicdatamapping.model.DDMStructureLink fetchByClassPK(
-		long classPK) {
+		long classPK)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByClassPK(classPK);
 	}
 
@@ -284,9 +312,11 @@ public class DDMStructureLinkUtil {
 	* @param classPK the class p k
 	* @param retrieveFromCache whether to use the finder cache
 	* @return the matching d d m structure link, or <code>null</code> if a matching d d m structure link could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.dynamicdatamapping.model.DDMStructureLink fetchByClassPK(
-		long classPK, boolean retrieveFromCache) {
+		long classPK, boolean retrieveFromCache)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByClassPK(classPK, retrieveFromCache);
 	}
 
@@ -295,10 +325,12 @@ public class DDMStructureLinkUtil {
 	*
 	* @param classPK the class p k
 	* @return the d d m structure link that was removed
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.dynamicdatamapping.model.DDMStructureLink removeByClassPK(
 		long classPK)
-		throws com.liferay.portlet.dynamicdatamapping.NoSuchStructureLinkException {
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.dynamicdatamapping.NoSuchStructureLinkException {
 		return getPersistence().removeByClassPK(classPK);
 	}
 
@@ -307,8 +339,10 @@ public class DDMStructureLinkUtil {
 	*
 	* @param classPK the class p k
 	* @return the number of matching d d m structure links
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByClassPK(long classPK) {
+	public static int countByClassPK(long classPK)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByClassPK(classPK);
 	}
 
@@ -317,9 +351,11 @@ public class DDMStructureLinkUtil {
 	*
 	* @param structureId the structure ID
 	* @return the matching d d m structure links
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.dynamicdatamapping.model.DDMStructureLink> findByStructureId(
-		long structureId) {
+		long structureId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByStructureId(structureId);
 	}
 
@@ -334,9 +370,11 @@ public class DDMStructureLinkUtil {
 	* @param start the lower bound of the range of d d m structure links
 	* @param end the upper bound of the range of d d m structure links (not inclusive)
 	* @return the range of matching d d m structure links
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.dynamicdatamapping.model.DDMStructureLink> findByStructureId(
-		long structureId, int start, int end) {
+		long structureId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByStructureId(structureId, start, end);
 	}
 
@@ -352,10 +390,12 @@ public class DDMStructureLinkUtil {
 	* @param end the upper bound of the range of d d m structure links (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching d d m structure links
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.dynamicdatamapping.model.DDMStructureLink> findByStructureId(
 		long structureId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.dynamicdatamapping.model.DDMStructureLink> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByStructureId(structureId, start, end, orderByComparator);
 	}
@@ -367,11 +407,13 @@ public class DDMStructureLinkUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching d d m structure link
 	* @throws com.liferay.portlet.dynamicdatamapping.NoSuchStructureLinkException if a matching d d m structure link could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.dynamicdatamapping.model.DDMStructureLink findByStructureId_First(
 		long structureId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.dynamicdatamapping.model.DDMStructureLink> orderByComparator)
-		throws com.liferay.portlet.dynamicdatamapping.NoSuchStructureLinkException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.dynamicdatamapping.NoSuchStructureLinkException {
 		return getPersistence()
 				   .findByStructureId_First(structureId, orderByComparator);
 	}
@@ -382,10 +424,12 @@ public class DDMStructureLinkUtil {
 	* @param structureId the structure ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching d d m structure link, or <code>null</code> if a matching d d m structure link could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.dynamicdatamapping.model.DDMStructureLink fetchByStructureId_First(
 		long structureId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.dynamicdatamapping.model.DDMStructureLink> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByStructureId_First(structureId, orderByComparator);
 	}
@@ -397,11 +441,13 @@ public class DDMStructureLinkUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching d d m structure link
 	* @throws com.liferay.portlet.dynamicdatamapping.NoSuchStructureLinkException if a matching d d m structure link could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.dynamicdatamapping.model.DDMStructureLink findByStructureId_Last(
 		long structureId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.dynamicdatamapping.model.DDMStructureLink> orderByComparator)
-		throws com.liferay.portlet.dynamicdatamapping.NoSuchStructureLinkException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.dynamicdatamapping.NoSuchStructureLinkException {
 		return getPersistence()
 				   .findByStructureId_Last(structureId, orderByComparator);
 	}
@@ -412,10 +458,12 @@ public class DDMStructureLinkUtil {
 	* @param structureId the structure ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching d d m structure link, or <code>null</code> if a matching d d m structure link could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.dynamicdatamapping.model.DDMStructureLink fetchByStructureId_Last(
 		long structureId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.dynamicdatamapping.model.DDMStructureLink> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByStructureId_Last(structureId, orderByComparator);
 	}
@@ -428,11 +476,13 @@ public class DDMStructureLinkUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next d d m structure link
 	* @throws com.liferay.portlet.dynamicdatamapping.NoSuchStructureLinkException if a d d m structure link with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.dynamicdatamapping.model.DDMStructureLink[] findByStructureId_PrevAndNext(
 		long structureLinkId, long structureId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.dynamicdatamapping.model.DDMStructureLink> orderByComparator)
-		throws com.liferay.portlet.dynamicdatamapping.NoSuchStructureLinkException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.dynamicdatamapping.NoSuchStructureLinkException {
 		return getPersistence()
 				   .findByStructureId_PrevAndNext(structureLinkId, structureId,
 			orderByComparator);
@@ -442,8 +492,10 @@ public class DDMStructureLinkUtil {
 	* Removes all the d d m structure links where structureId = &#63; from the database.
 	*
 	* @param structureId the structure ID
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByStructureId(long structureId) {
+	public static void removeByStructureId(long structureId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeByStructureId(structureId);
 	}
 
@@ -452,8 +504,10 @@ public class DDMStructureLinkUtil {
 	*
 	* @param structureId the structure ID
 	* @return the number of matching d d m structure links
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByStructureId(long structureId) {
+	public static int countByStructureId(long structureId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByStructureId(structureId);
 	}
 
@@ -494,15 +548,18 @@ public class DDMStructureLinkUtil {
 	* @param structureLinkId the primary key of the d d m structure link
 	* @return the d d m structure link that was removed
 	* @throws com.liferay.portlet.dynamicdatamapping.NoSuchStructureLinkException if a d d m structure link with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.dynamicdatamapping.model.DDMStructureLink remove(
 		long structureLinkId)
-		throws com.liferay.portlet.dynamicdatamapping.NoSuchStructureLinkException {
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.dynamicdatamapping.NoSuchStructureLinkException {
 		return getPersistence().remove(structureLinkId);
 	}
 
 	public static com.liferay.portlet.dynamicdatamapping.model.DDMStructureLink updateImpl(
-		com.liferay.portlet.dynamicdatamapping.model.DDMStructureLink ddmStructureLink) {
+		com.liferay.portlet.dynamicdatamapping.model.DDMStructureLink ddmStructureLink)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().updateImpl(ddmStructureLink);
 	}
 
@@ -512,10 +569,12 @@ public class DDMStructureLinkUtil {
 	* @param structureLinkId the primary key of the d d m structure link
 	* @return the d d m structure link
 	* @throws com.liferay.portlet.dynamicdatamapping.NoSuchStructureLinkException if a d d m structure link with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.dynamicdatamapping.model.DDMStructureLink findByPrimaryKey(
 		long structureLinkId)
-		throws com.liferay.portlet.dynamicdatamapping.NoSuchStructureLinkException {
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.dynamicdatamapping.NoSuchStructureLinkException {
 		return getPersistence().findByPrimaryKey(structureLinkId);
 	}
 
@@ -524,23 +583,22 @@ public class DDMStructureLinkUtil {
 	*
 	* @param structureLinkId the primary key of the d d m structure link
 	* @return the d d m structure link, or <code>null</code> if a d d m structure link with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.dynamicdatamapping.model.DDMStructureLink fetchByPrimaryKey(
-		long structureLinkId) {
+		long structureLinkId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByPrimaryKey(structureLinkId);
-	}
-
-	public static java.util.Map<java.io.Serializable, com.liferay.portlet.dynamicdatamapping.model.DDMStructureLink> fetchByPrimaryKeys(
-		java.util.Set<java.io.Serializable> primaryKeys) {
-		return getPersistence().fetchByPrimaryKeys(primaryKeys);
 	}
 
 	/**
 	* Returns all the d d m structure links.
 	*
 	* @return the d d m structure links
+	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portlet.dynamicdatamapping.model.DDMStructureLink> findAll() {
+	public static java.util.List<com.liferay.portlet.dynamicdatamapping.model.DDMStructureLink> findAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll();
 	}
 
@@ -554,9 +612,11 @@ public class DDMStructureLinkUtil {
 	* @param start the lower bound of the range of d d m structure links
 	* @param end the upper bound of the range of d d m structure links (not inclusive)
 	* @return the range of d d m structure links
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.dynamicdatamapping.model.DDMStructureLink> findAll(
-		int start, int end) {
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll(start, end);
 	}
 
@@ -571,17 +631,22 @@ public class DDMStructureLinkUtil {
 	* @param end the upper bound of the range of d d m structure links (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of d d m structure links
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.dynamicdatamapping.model.DDMStructureLink> findAll(
 		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.dynamicdatamapping.model.DDMStructureLink> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll(start, end, orderByComparator);
 	}
 
 	/**
 	* Removes all the d d m structure links from the database.
+	*
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeAll() {
+	public static void removeAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeAll();
 	}
 
@@ -589,8 +654,10 @@ public class DDMStructureLinkUtil {
 	* Returns the number of d d m structure links.
 	*
 	* @return the number of d d m structure links
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countAll() {
+	public static int countAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countAll();
 	}
 
@@ -608,7 +675,6 @@ public class DDMStructureLinkUtil {
 	/**
 	 * @deprecated As of 6.2.0
 	 */
-	@Deprecated
 	public void setPersistence(DDMStructureLinkPersistence persistence) {
 	}
 

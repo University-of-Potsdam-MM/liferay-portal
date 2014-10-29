@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -20,10 +20,10 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.model.Group;
 import com.liferay.portal.util.PortletKeys;
 import com.liferay.portlet.PortalPreferences;
 import com.liferay.portlet.PortletPreferencesFactoryUtil;
-import com.liferay.portlet.trash.model.TrashEntry;
 import com.liferay.portlet.trash.util.TrashUtil;
 
 import java.util.ArrayList;
@@ -37,14 +37,10 @@ import javax.portlet.PortletURL;
 /**
  * @author Sergio González
  */
-public class EntrySearch extends SearchContainer<TrashEntry> {
+public class EntrySearch extends SearchContainer<Group> {
 
-	public static final String EMPTY_RESULTS_MESSAGE =
-		"the-recycle-bin-is-empty";
-
-	public static List<String> headerNames = new ArrayList<String>();
-	public static Map<String, String> orderableHeaders =
-		new HashMap<String, String>();
+	static List<String> headerNames = new ArrayList<String>();
+	static Map<String, String> orderableHeaders = new HashMap<String, String>();
 
 	static {
 		headerNames.add("name");
@@ -57,6 +53,9 @@ public class EntrySearch extends SearchContainer<TrashEntry> {
 		orderableHeaders.put("removed-date", "removed-date");
 		orderableHeaders.put("removed-by", "removed-by");
 	}
+
+	public static final String EMPTY_RESULTS_MESSAGE =
+		"the-recycle-bin-is-empty";
 
 	public EntrySearch(PortletRequest portletRequest, PortletURL iteratorURL) {
 		super(
@@ -92,7 +91,7 @@ public class EntrySearch extends SearchContainer<TrashEntry> {
 					PortletKeys.USERS_ADMIN, "entries-order-by-type", "asc");
 			}
 
-			OrderByComparator<TrashEntry> orderByComparator =
+			OrderByComparator orderByComparator =
 				TrashUtil.getEntryOrderByComparator(orderByCol, orderByType);
 
 			setOrderableHeaders(orderableHeaders);

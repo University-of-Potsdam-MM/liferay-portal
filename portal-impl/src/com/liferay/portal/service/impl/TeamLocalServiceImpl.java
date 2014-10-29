@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,6 +18,7 @@ import com.liferay.portal.DuplicateTeamException;
 import com.liferay.portal.TeamNameException;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.Validator;
@@ -40,7 +41,7 @@ public class TeamLocalServiceImpl extends TeamLocalServiceBaseImpl {
 	@Override
 	public Team addTeam(
 			long userId, long groupId, String name, String description)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		// Team
 
@@ -80,14 +81,16 @@ public class TeamLocalServiceImpl extends TeamLocalServiceBaseImpl {
 	}
 
 	@Override
-	public Team deleteTeam(long teamId) throws PortalException {
+	public Team deleteTeam(long teamId)
+		throws PortalException, SystemException {
+
 		Team team = teamPersistence.findByPrimaryKey(teamId);
 
 		return deleteTeam(team);
 	}
 
 	@Override
-	public Team deleteTeam(Team team) throws PortalException {
+	public Team deleteTeam(Team team) throws PortalException, SystemException {
 
 		// Team
 
@@ -109,7 +112,9 @@ public class TeamLocalServiceImpl extends TeamLocalServiceBaseImpl {
 	}
 
 	@Override
-	public void deleteTeams(long groupId) throws PortalException {
+	public void deleteTeams(long groupId)
+		throws PortalException, SystemException {
+
 		List<Team> teams = teamPersistence.findByGroupId(groupId);
 
 		for (Team team : teams) {
@@ -118,17 +123,21 @@ public class TeamLocalServiceImpl extends TeamLocalServiceBaseImpl {
 	}
 
 	@Override
-	public List<Team> getGroupTeams(long groupId) {
+	public List<Team> getGroupTeams(long groupId) throws SystemException {
 		return teamPersistence.findByGroupId(groupId);
 	}
 
 	@Override
-	public Team getTeam(long groupId, String name) throws PortalException {
+	public Team getTeam(long groupId, String name)
+		throws PortalException, SystemException {
+
 		return teamPersistence.findByG_N(groupId, name);
 	}
 
 	@Override
-	public List<Team> getUserTeams(long userId, long groupId) {
+	public List<Team> getUserTeams(long userId, long groupId)
+		throws SystemException {
+
 		LinkedHashMap<String, Object> params =
 			new LinkedHashMap<String, Object>();
 
@@ -141,9 +150,10 @@ public class TeamLocalServiceImpl extends TeamLocalServiceBaseImpl {
 
 	@Override
 	public List<Team> search(
-		long groupId, String name, String description,
-		LinkedHashMap<String, Object> params, int start, int end,
-		OrderByComparator<Team> obc) {
+			long groupId, String name, String description,
+			LinkedHashMap<String, Object> params, int start, int end,
+			OrderByComparator obc)
+		throws SystemException {
 
 		return teamFinder.findByG_N_D(
 			groupId, name, description, params, start, end, obc);
@@ -151,15 +161,16 @@ public class TeamLocalServiceImpl extends TeamLocalServiceBaseImpl {
 
 	@Override
 	public int searchCount(
-		long groupId, String name, String description,
-		LinkedHashMap<String, Object> params) {
+			long groupId, String name, String description,
+			LinkedHashMap<String, Object> params)
+		throws SystemException {
 
 		return teamFinder.countByG_N_D(groupId, name, description, params);
 	}
 
 	@Override
 	public Team updateTeam(long teamId, String name, String description)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Date now = new Date();
 
@@ -177,7 +188,7 @@ public class TeamLocalServiceImpl extends TeamLocalServiceBaseImpl {
 	}
 
 	protected void validate(long teamId, long groupId, String name)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		if (Validator.isNull(name) || Validator.isNumber(name) ||
 			(name.indexOf(CharPool.COMMA) != -1) ||
@@ -188,8 +199,10 @@ public class TeamLocalServiceImpl extends TeamLocalServiceBaseImpl {
 
 		Team team = teamPersistence.fetchByG_N(groupId, name);
 
-		if ((team != null) && (team.getTeamId() != teamId)) {
-			throw new DuplicateTeamException("{teamId=" + teamId + "}");
+		if (team != null) {
+			if ((teamId <= 0) || (team.getTeamId() != teamId)) {
+				throw new DuplicateTeamException();
+			}
 		}
 	}
 

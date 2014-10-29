@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,14 +18,12 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.messaging.MessageBusUtil;
 import com.liferay.portal.kernel.messaging.async.Async;
-import com.liferay.portal.kernel.transaction.TransactionCommitCallbackRegistryUtil;
 import com.liferay.portal.spring.aop.AnnotationChainableMethodAdvice;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
 import java.util.Map;
-import java.util.concurrent.Callable;
 
 import org.aopalliance.intercept.MethodInvocation;
 
@@ -73,21 +71,8 @@ public class AsyncAdvice extends AnnotationChainableMethodAdvice<Async> {
 			destinationName = _defaultDestinationName;
 		}
 
-		final String callbackDestinationName = destinationName;
-
-		TransactionCommitCallbackRegistryUtil.registerCallback(
-			new Callable<Void>() {
-
-				@Override
-				public Void call() throws Exception {
-					MessageBusUtil.sendMessage(
-						callbackDestinationName,
-						new AsyncProcessCallable(methodInvocation));
-
-					return null;
-				}
-
-			});
+		MessageBusUtil.sendMessage(
+			destinationName, new AsyncProcessCallable(methodInvocation));
 
 		return nullResult;
 	}

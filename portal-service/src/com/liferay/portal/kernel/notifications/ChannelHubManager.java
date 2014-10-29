@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -112,10 +112,6 @@ public interface ChannelHubManager {
 			Collection<String> notificationEventUuids)
 		throws ChannelException;
 
-	public void sendClusterNotificationEvent(
-			long companyId, long userId, NotificationEvent notificationEvent)
-		throws ChannelException;
-
 	public void sendNotificationEvent(
 			long companyId, long userId, NotificationEvent notificationEvent)
 		throws ChannelException;
@@ -123,10 +119,6 @@ public interface ChannelHubManager {
 	public void sendNotificationEvents(
 			long companyId, long userId,
 			Collection<NotificationEvent> notificationEvents)
-		throws ChannelException;
-
-	public void storeNotificationEvent(
-			long companyId, long userId, NotificationEvent notificationEvent)
 		throws ChannelException;
 
 	public void unregisterChannelListener(

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portal.util;
 
 import com.liferay.portal.kernel.test.ExecutionTestListeners;
+import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
@@ -22,13 +23,10 @@ import com.liferay.portal.model.Company;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.Layout;
 import com.liferay.portal.service.CompanyLocalServiceUtil;
-import com.liferay.portal.test.DeleteAfterTestRun;
-import com.liferay.portal.test.listeners.MainServletExecutionTestListener;
-import com.liferay.portal.test.runners.LiferayIntegrationJUnitTestRunner;
+import com.liferay.portal.test.EnvironmentExecutionTestListener;
+import com.liferay.portal.test.LiferayIntegrationJUnitTestRunner;
+import com.liferay.portal.test.TransactionalExecutionTestListener;
 import com.liferay.portal.theme.ThemeDisplay;
-import com.liferay.portal.util.test.GroupTestUtil;
-import com.liferay.portal.util.test.LayoutTestUtil;
-import com.liferay.portal.util.test.TestPropsValues;
 
 import java.util.Locale;
 
@@ -39,19 +37,23 @@ import org.junit.runner.RunWith;
 /**
  * @author Sergio González
  */
-@ExecutionTestListeners(listeners = {MainServletExecutionTestListener.class})
+@ExecutionTestListeners(
+	listeners = {
+		EnvironmentExecutionTestListener.class,
+		TransactionalExecutionTestListener.class
+	})
 @RunWith(LiferayIntegrationJUnitTestRunner.class)
+@Transactional
 public class PortalImplAlternateURLTest {
 
 	@Test
 	public void testCustomPortalLocaleAlternateURL() throws Exception {
-		testAlternateURL("localhost", null, null, LocaleUtil.SPAIN, "/es");
+		testAlternateURL(null, null, LocaleUtil.SPAIN, "/es");
 	}
 
 	@Test
 	public void testDefaultPortalLocaleAlternateURL() throws Exception {
-		testAlternateURL(
-			"localhost", null, null, LocaleUtil.US, StringPool.BLANK);
+		testAlternateURL(null, null, LocaleUtil.US, StringPool.BLANK);
 	}
 
 	@Test
@@ -59,7 +61,6 @@ public class PortalImplAlternateURLTest {
 		throws Exception {
 
 		testAlternateURL(
-			"localhost",
 			new Locale[] {LocaleUtil.US, LocaleUtil.SPAIN, LocaleUtil.GERMANY},
 			LocaleUtil.SPAIN, LocaleUtil.US, "/en");
 	}
@@ -69,53 +70,16 @@ public class PortalImplAlternateURLTest {
 		throws Exception {
 
 		testAlternateURL(
-			"localhost",
 			new Locale[] {LocaleUtil.US, LocaleUtil.SPAIN, LocaleUtil.GERMANY},
 			LocaleUtil.SPAIN, LocaleUtil.SPAIN, StringPool.BLANK);
 	}
 
-	@Test
-	public void testNonlocalhostCustomPortalLocaleAlternateURL()
-		throws Exception {
-
-		testAlternateURL("liferay.com", null, null, LocaleUtil.SPAIN, "/es");
-	}
-
-	@Test
-	public void testNonlocalhostDefaultPortalLocaleAlternateURL()
-		throws Exception {
-
-		testAlternateURL(
-			"liferay.com", null, null, LocaleUtil.US, StringPool.BLANK);
-	}
-
-	@Test
-	public void testNonlocalhostLocalizedSiteCustomSiteLocaleAlternateURL()
-		throws Exception {
-
-		testAlternateURL(
-			"liferay.com", new Locale[] {LocaleUtil.US, LocaleUtil.SPAIN,
-			LocaleUtil.GERMANY}, LocaleUtil.SPAIN, LocaleUtil.US, "/en");
-	}
-
-	@Test
-	public void testNonlocalhostLocalizedSiteDefaultSiteLocaleAlternateURL()
-		throws Exception {
-
-		testAlternateURL(
-			"liferay.com", new Locale[] {LocaleUtil.US, LocaleUtil.SPAIN,
-			LocaleUtil.GERMANY}, LocaleUtil.SPAIN, LocaleUtil.SPAIN,
-			StringPool.BLANK);
-	}
-
 	protected String generateURL(
-		String portalDomain, String languageId, String groupFriendlyURL,
-		String layoutFriendlyURL) {
+		String languageId, String groupFriendlyURL, String layoutFriendlyURL) {
 
-		StringBundler sb = new StringBundler(6);
+		StringBundler sb = new StringBundler(5);
 
-		sb.append("http://");
-		sb.append(portalDomain);
+		sb.append("http://localhost");
 		sb.append(languageId);
 		sb.append(PropsValues.LAYOUT_FRIENDLY_URL_PUBLIC_SERVLET_MAPPING);
 		sb.append(groupFriendlyURL);
@@ -124,9 +88,7 @@ public class PortalImplAlternateURLTest {
 		return sb.toString();
 	}
 
-	protected ThemeDisplay getThemeDisplay(Group group, String portalURL)
-		throws Exception {
-
+	protected ThemeDisplay getThemeDisplay(Group group) throws Exception {
 		ThemeDisplay themeDisplay = new ThemeDisplay();
 
 		Company company = CompanyLocalServiceUtil.getCompany(
@@ -135,41 +97,33 @@ public class PortalImplAlternateURLTest {
 		themeDisplay.setCompany(company);
 
 		themeDisplay.setLayoutSet(group.getPublicLayoutSet());
-		themeDisplay.setPortalURL(portalURL);
 
 		return themeDisplay;
 	}
 
 	protected void testAlternateURL(
-			String portalDomain, Locale[] groupAvailableLocales,
-			Locale groupDefaultLocale, Locale alternateLocale,
-			String expectedI18nPath)
+			Locale[] groupAvailableLocales, Locale groupDefaultLocale,
+			Locale alternateLocale, String expectedI18nPath)
 		throws Exception {
 
-		_group = GroupTestUtil.addGroup();
+		Group group = GroupTestUtil.addGroup();
 
-		_group = GroupTestUtil.updateDisplaySettings(
-			_group.getGroupId(), groupAvailableLocales, groupDefaultLocale);
+		group = GroupTestUtil.updateDisplaySettings(
+			group.getGroupId(), groupAvailableLocales, groupDefaultLocale);
 
 		Layout layout = LayoutTestUtil.addLayout(
-			_group.getGroupId(), "welcome", false);
+			group.getGroupId(), "welcome", false);
 
 		String canonicalURL = generateURL(
-			portalDomain, StringPool.BLANK, _group.getFriendlyURL(),
-			layout.getFriendlyURL());
+			StringPool.BLANK, group.getFriendlyURL(), layout.getFriendlyURL());
 
 		String actualAlternateURL = PortalUtil.getAlternateURL(
-			canonicalURL, getThemeDisplay(_group, canonicalURL),
-			alternateLocale, layout);
+			canonicalURL, getThemeDisplay(group), alternateLocale, layout);
 
 		String expectedAlternateURL = generateURL(
-			portalDomain, expectedI18nPath, _group.getFriendlyURL(),
-			layout.getFriendlyURL());
+			expectedI18nPath, group.getFriendlyURL(), layout.getFriendlyURL());
 
 		Assert.assertEquals(expectedAlternateURL, actualAlternateURL);
 	}
-
-	@DeleteAfterTestRun
-	private Group _group;
 
 }

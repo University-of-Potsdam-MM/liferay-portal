@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -29,18 +29,18 @@ AssetRenderer assetRenderer = (AssetRenderer)request.getAttribute("add_panel.jsp
 
 	<c:if test="<%= Validator.isNotNull(imagePreviewURL) %>">
 		<div class="asset-image-preview">
-			<img alt="<%= HtmlUtil.escapeAttribute(assetRenderer.getTitle(themeDisplay.getLocale())) %>" src="<%= HtmlUtil.escapeAttribute(imagePreviewURL) %>" />
+			<img alt="<%= assetRenderer.getTitle(themeDisplay.getLocale()) %>" src="<%= imagePreviewURL %>" />
 		</div>
 	</c:if>
 
 	<div class="asset-title">
-		<%= HtmlUtil.escape(assetRenderer.getTitle(themeDisplay.getLocale())) %>
+		<%= assetRenderer.getTitle(themeDisplay.getLocale()) %>
 	</div>
 
 	<%
 	String displayDateString = StringPool.BLANK;
 
-	if (assetRenderer.getDisplayDate() != null) {
+	if (Validator.isNotNull(assetRenderer.getDisplayDate())) {
 		Format displayFormatDate = FastDateFormatFactoryUtil.getSimpleDateFormat("MMMM d, yyyy", locale, timeZone);
 
 		displayDateString = CharPool.OPEN_PARENTHESIS + displayFormatDate.format(assetRenderer.getDisplayDate()) + CharPool.CLOSE_PARENTHESIS;
@@ -48,11 +48,11 @@ AssetRenderer assetRenderer = (AssetRenderer)request.getAttribute("add_panel.jsp
 	%>
 
 	<div class="asset-information">
-		<span class="user-name"><%= HtmlUtil.escape(assetRenderer.getUserName()) %></span>&nbsp; <span class="display-date"><%= displayDateString %></span>
+		<span class="user-name"><%= assetRenderer.getUserName() %></span>&nbsp; <span class="display-date"><%= displayDateString %></span>
 	</div>
 
 	<div class="asset-summary">
-		<%= HtmlUtil.escape(StringUtil.shorten(assetRenderer.getSummary(liferayPortletRequest, liferayPortletResponse), 320)) %>
+		<%= StringUtil.shorten(assetRenderer.getSummary(themeDisplay.getLocale()), 320) %>
 	</div>
 
 	<div class="asset-metadata">
@@ -78,10 +78,7 @@ AssetRenderer assetRenderer = (AssetRenderer)request.getAttribute("add_panel.jsp
 	data.put("class-pk", assetEntry.getClassPK());
 	data.put("instanceable", Boolean.TRUE);
 	data.put("portlet-id", assetRenderer.getAddToPagePortletId());
-	data.put("title", HtmlUtil.escape(assetRenderer.getTitle(themeDisplay.getLocale())));
 	%>
 
-	<c:if test="<%= PortletPermissionUtil.contains(permissionChecker, layout, assetRenderer.getAddToPagePortletId(), ActionKeys.ADD_TO_PAGE) %>">
-		<aui:button cssClass="add-button-preview" data="<%= data %>" value="add" />
-	</c:if>
+	<aui:button cssClass="add-button-preview" data="<%= data %>" value="add" />
 </div>

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,8 +14,6 @@
 
 package com.liferay.portlet.dynamicdatamapping.model;
 
-import aQute.bnd.annotation.ProviderType;
-
 import java.io.Serializable;
 
 import java.util.ArrayList;
@@ -28,7 +26,6 @@ import java.util.List;
  * @author Brian Wing Shun Chan
  * @generated
  */
-@ProviderType
 public class DDMContentSoap implements Serializable {
 	public static DDMContentSoap toSoapModel(DDMContent model) {
 		DDMContentSoap soapModel = new DDMContentSoap();
@@ -43,7 +40,7 @@ public class DDMContentSoap implements Serializable {
 		soapModel.setModifiedDate(model.getModifiedDate());
 		soapModel.setName(model.getName());
 		soapModel.setDescription(model.getDescription());
-		soapModel.setData(model.getData());
+		soapModel.setXml(model.getXml());
 
 		return soapModel;
 	}
@@ -176,12 +173,12 @@ public class DDMContentSoap implements Serializable {
 		_description = description;
 	}
 
-	public String getData() {
-		return _data;
+	public String getXml() {
+		return _xml;
 	}
 
-	public void setData(String data) {
-		_data = data;
+	public void setXml(String xml) {
+		_xml = xml;
 	}
 
 	private String _uuid;
@@ -194,5 +191,5 @@ public class DDMContentSoap implements Serializable {
 	private Date _modifiedDate;
 	private String _name;
 	private String _description;
-	private String _data;
+	private String _xml;
 }

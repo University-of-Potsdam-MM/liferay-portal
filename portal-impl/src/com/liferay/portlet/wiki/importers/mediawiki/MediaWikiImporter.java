@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -126,8 +126,9 @@ public class MediaWikiImporter implements WikiImporter {
 	}
 
 	protected long getUserId(
-		long userId, WikiNode node, String author,
-		Map<String, String> usersMap) {
+			long userId, WikiNode node, String author,
+			Map<String, String> usersMap)
+		throws SystemException {
 
 		User user = null;
 
@@ -254,7 +255,7 @@ public class MediaWikiImporter implements WikiImporter {
 					serviceContext.setAddGroupPermissions(true);
 					serviceContext.setAddGuestPermissions(true);
 
-					WikiPageLocalServiceUtil.renamePage(
+					WikiPageLocalServiceUtil.movePage(
 						userId, node.getNodeId(), frontPageTitle,
 						WikiPageConstants.FRONT_PAGE, false, serviceContext);
 				}
@@ -281,17 +282,15 @@ public class MediaWikiImporter implements WikiImporter {
 	}
 
 	protected String normalizeDescription(String description) {
-		Matcher matcher = _categoriesPattern.matcher(description);
+		description = description.replaceAll(
+			_categoriesPattern.pattern(), StringPool.BLANK);
 
-		description = matcher.replaceAll(StringPool.BLANK);
-
-		return normalize(description, 255);
+		return normalize(description, 300);
 	}
 
 	protected String normalizeTitle(String title) {
-		Matcher matcher = _wikiPageTitlesRemovePattern.matcher(title);
-
-		title = matcher.replaceAll(StringPool.BLANK);
+		title = title.replaceAll(
+			PropsValues.WIKI_PAGE_TITLES_REMOVE_REGEXP, StringPool.BLANK);
 
 		return StringUtil.shorten(title, 75);
 	}
@@ -434,10 +433,6 @@ public class MediaWikiImporter implements WikiImporter {
 
 			String title = pageElement.elementText("title");
 
-			if (isSpecialMediaWikiPage(title, specialNamespaces)) {
-				continue;
-			}
-
 			title = normalizeTitle(title);
 
 			percentage = Math.min(
@@ -445,6 +440,10 @@ public class MediaWikiImporter implements WikiImporter {
 				maxPercentage);
 
 			progressTracker.setPercent(percentage);
+
+			if (isSpecialMediaWikiPage(title, specialNamespaces)) {
+				continue;
+			}
 
 			List<Element> revisionElements = pageElement.elements("revision");
 
@@ -527,7 +526,7 @@ public class MediaWikiImporter implements WikiImporter {
 
 				try {
 					assetTag = AssetTagLocalServiceUtil.getTag(
-						node.getGroupId(), categoryName);
+						node.getCompanyId(), categoryName);
 				}
 				catch (NoSuchTagException nste) {
 					ServiceContext serviceContext = new ServiceContext();
@@ -538,14 +537,12 @@ public class MediaWikiImporter implements WikiImporter {
 
 					assetTag = AssetTagLocalServiceUtil.addTag(
 						userId, categoryName, null, serviceContext);
+				}
 
-					if (PropsValues.ASSET_TAG_PROPERTIES_ENABLED &&
-						Validator.isNotNull(description)) {
-
-						AssetTagPropertyLocalServiceUtil.addTagProperty(
-							userId, assetTag.getTagId(), "description",
-							description);
-					}
+				if (Validator.isNotNull(description)) {
+					AssetTagPropertyLocalServiceUtil.addTagProperty(
+						userId, assetTag.getTagId(), "description",
+						description);
 				}
 			}
 			catch (SystemException se) {
@@ -560,7 +557,7 @@ public class MediaWikiImporter implements WikiImporter {
 
 	protected String[] readAssetTagNames(
 			long userId, WikiNode node, String content)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Matcher matcher = _categoriesPattern.matcher(content);
 
@@ -707,8 +704,6 @@ public class MediaWikiImporter implements WikiImporter {
 		"#REDIRECT \\[\\[([^\\]]*)\\]\\]");
 	private static Set<String> _specialMediaWikiDirs = SetUtil.fromArray(
 		new String[] {"archive", "temp", "thumb"});
-	private static Pattern _wikiPageTitlesRemovePattern = Pattern.compile(
-		PropsValues.WIKI_PAGE_TITLES_REMOVE_REGEXP);
 
 	private MediaWikiToCreoleTranslator _translator =
 		new MediaWikiToCreoleTranslator();

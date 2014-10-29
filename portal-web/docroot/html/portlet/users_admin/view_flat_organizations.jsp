@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -17,6 +17,8 @@
 <%@ include file="/html/portlet/users_admin/init.jsp" %>
 
 <%
+String toolbarItem = ParamUtil.getString(request, "toolbarItem", "browse");
+
 String usersListView = (String)request.getAttribute("view.jsp-usersListView");
 
 PortletURL portletURL = (PortletURL)request.getAttribute("view.jsp-portletURL");
@@ -39,19 +41,9 @@ if (filterManageableOrganizations) {
 
 <c:choose>
 	<c:when test="<%= showList %>">
-
-		<%
-		SearchContainer searchContainer = new OrganizationSearch(renderRequest, portletURL);
-
-		RowChecker rowChecker = new RowChecker(renderResponse);
-
-		rowChecker.setRowIds("rowIdsOrganization");
-
-		searchContainer.setRowChecker(rowChecker);
-		%>
-
 		<liferay-ui:search-container
-			searchContainer="<%= searchContainer %>"
+			rowChecker="<%= new RowChecker(renderResponse) %>"
+			searchContainer="<%= new OrganizationSearch(renderRequest, portletURL) %>"
 			var="organizationSearchContainer"
 		>
 			<aui:input disabled="<%= true %>" name="organizationsRedirect" type="hidden" value="<%= portletURL.toString() %>" />
@@ -66,7 +58,7 @@ if (filterManageableOrganizations) {
 						<portlet:param name="saveUsersListView" value="<%= Boolean.TRUE.toString() %>" />
 					</portlet:renderURL>
 
-					<aui:nav-item href="<%= viewUsersTreeURL %>" label="browse" />
+					<aui:nav-item href="<%= viewUsersTreeURL %>" label="browse" selected='<%= toolbarItem.equals("browse") %>' />
 
 					<portlet:renderURL var="viewOrganizationsFlatURL">
 						<portlet:param name="struts_action" value="/users_admin/view" />
@@ -75,7 +67,7 @@ if (filterManageableOrganizations) {
 						<portlet:param name="saveUsersListView" value="<%= Boolean.TRUE.toString() %>" />
 					</portlet:renderURL>
 
-					<aui:nav-item href="<%= viewOrganizationsFlatURL %>" label="all-organizations" selected="<%= true %>" />
+					<aui:nav-item href="<%= viewOrganizationsFlatURL %>" label="all-organizations" selected='<%= toolbarItem.equals("view-all-organizations") %>' />
 
 					<portlet:renderURL var="viewUsersFlatURL">
 						<portlet:param name="struts_action" value="/users_admin/view" />
@@ -84,22 +76,21 @@ if (filterManageableOrganizations) {
 						<portlet:param name="saveUsersListView" value="<%= Boolean.TRUE.toString() %>" />
 					</portlet:renderURL>
 
-					<aui:nav-item href="<%= viewUsersFlatURL %>" label="all-users" />
+					<aui:nav-item href="<%= viewUsersFlatURL %>" label="all-users" selected='<%= toolbarItem.equals("view-all-users") %>' />
 				</aui:nav>
 
 				<aui:nav-bar>
-
-					<%
-					request.setAttribute(WebKeys.SEARCH_CONTAINER, organizationSearchContainer);
-					%>
-
 					<liferay-util:include page="/html/portlet/users_admin/toolbar.jsp" />
 
-					<aui:nav-bar-search file="/html/portlet/users_admin/organization_search.jsp" searchContainer="<%= organizationSearchContainer %>" />
+					<aui:nav-bar-search cssClass="pull-right">
+						<liferay-ui:search-form
+							page="/html/portlet/users_admin/organization_search.jsp"
+						/>
+					</aui:nav-bar-search>
 				</aui:nav-bar>
 
 				<div id="breadcrumb">
-					<liferay-ui:breadcrumb showCurrentGroup="<%= false %>" showGuestGroup="<%= false %>" showLayout="<%= false %>" showPortletBreadcrumb="<%= true %>" />
+					<liferay-ui:breadcrumb showCurrentGroup="<%= false %>" showCurrentPortlet="<%= false %>" showGuestGroup="<%= false %>" showLayout="<%= false %>" showPortletBreadcrumb="<%= true %>" />
 				</div>
 			</c:if>
 
@@ -132,14 +123,13 @@ if (filterManageableOrganizations) {
 			>
 				<liferay-portlet:renderURL varImpl="rowURL">
 					<portlet:param name="struts_action" value="/users_admin/view" />
-					<portlet:param name="toolbarItem" value="view-all-organizations" />
 					<portlet:param name="redirect" value="<%= organizationSearchContainer.getIteratorURL().toString() %>" />
 					<portlet:param name="organizationId" value="<%= String.valueOf(organization.getOrganizationId()) %>" />
 					<portlet:param name="usersListView" value="<%= UserConstants.LIST_VIEW_TREE %>" />
 				</liferay-portlet:renderURL>
 
 				<%
-				if (!OrganizationPermissionUtil.contains(permissionChecker, organization, ActionKeys.VIEW)) {
+				if (!OrganizationPermissionUtil.contains(permissionChecker, organization.getOrganizationId(), ActionKeys.VIEW)) {
 					rowURL = null;
 				}
 				%>
@@ -148,7 +138,6 @@ if (filterManageableOrganizations) {
 
 				<liferay-ui:search-container-column-jsp
 					align="right"
-					cssClass="entry-action"
 					path="/html/portlet/users_admin/organization_action.jsp"
 				/>
 			</liferay-ui:search-container-row>

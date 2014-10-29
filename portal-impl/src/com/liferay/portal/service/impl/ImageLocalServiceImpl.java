@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -43,7 +43,9 @@ import java.util.List;
 public class ImageLocalServiceImpl extends ImageLocalServiceBaseImpl {
 
 	@Override
-	public Image deleteImage(long imageId) throws PortalException {
+	public Image deleteImage(long imageId)
+		throws PortalException, SystemException {
+
 		if (imageId <= 0) {
 			return null;
 		}
@@ -123,18 +125,18 @@ public class ImageLocalServiceImpl extends ImageLocalServiceBaseImpl {
 	}
 
 	@Override
-	public List<Image> getImages() {
+	public List<Image> getImages() throws SystemException {
 		return imagePersistence.findAll();
 	}
 
 	@Override
-	public List<Image> getImagesBySize(int size) {
+	public List<Image> getImagesBySize(int size) throws SystemException {
 		return imagePersistence.findByLtSize(size);
 	}
 
 	@Override
 	public Image updateImage(long imageId, byte[] bytes)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Image image = null;
 
@@ -154,7 +156,7 @@ public class ImageLocalServiceImpl extends ImageLocalServiceBaseImpl {
 	public Image updateImage(
 			long imageId, byte[] bytes, String type, int height, int width,
 			int size)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		validate(type);
 
@@ -182,7 +184,9 @@ public class ImageLocalServiceImpl extends ImageLocalServiceBaseImpl {
 	}
 
 	@Override
-	public Image updateImage(long imageId, File file) throws PortalException {
+	public Image updateImage(long imageId, File file)
+		throws PortalException, SystemException {
+
 		Image image = null;
 
 		try {
@@ -199,7 +203,7 @@ public class ImageLocalServiceImpl extends ImageLocalServiceBaseImpl {
 
 	@Override
 	public Image updateImage(long imageId, InputStream is)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Image image = null;
 
@@ -218,7 +222,7 @@ public class ImageLocalServiceImpl extends ImageLocalServiceBaseImpl {
 	@Override
 	public Image updateImage(
 			long imageId, InputStream is, boolean cleanUpStream)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Image image = null;
 

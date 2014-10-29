@@ -1,14 +1,13 @@
 .portlet-asset-publisher {
 	.asset-abstract {
-		border-bottom: 1px solid #DDD;
-		padding: 0.6em 0;
-
-		&:last-child {
-			border-bottom-width: 0;
-		}
+		margin-bottom: 2em;
 
 		.asset-content p {
 			margin-bottom: 0;
+		}
+
+		.asset-description {
+			clear: left;
 		}
 	}
 
@@ -18,7 +17,14 @@
 
 	.asset-content {
 		clear: right;
-		padding: 10px;
+		margin-bottom: 10px;
+		margin-left: 25px;
+		margin-right: 10px;
+
+		.asset-description {
+			clear: left;
+			font-style: italic;
+		}
 	}
 
 	.asset-flag {
@@ -32,7 +38,6 @@
 
 		&.show-asset-title .asset-content {
 			margin-right: 10px;
-			overflow-x: auto;
 		}
 
 		&.no-title .asset-user-actions{
@@ -47,15 +52,11 @@
 
 	.asset-metadata {
 		clear: both;
+		margin-left: 25px;
 		overflow: hidden;
-		padding: 10px;
 
 		span {
-			display: inline-block;
-		}
-
-		.metadata-author {
-			display: none;
+			float: left;
 		}
 
 		.metadata-categories span {
@@ -73,55 +74,18 @@
 		width: 150px;
 	}
 
-	.asset-thumbnail {
-		float: left;
-		margin: 0 2em 2em 0;
-	}
-
 	.asset-actions {
 		float: right;
 		font-size: 11px;
 		font-weight: normal;
 		margin-bottom: 3px;
-		margin-top: 10px;
-
-		.icon-edit-sign {
-			font-size: 2em;
-		}
-	}
-
-	.asset-author {
-		overflow: hidden;
-		padding: 10px;
-
-		.asset-avatar {
-			float: left;
-			padding-right: 10px;
-
-			.avatar {
-				width: 45px;
-			}
-		}
-
-		.asset-user-info {
-			margin-top: 5px;
-
-			.user-info {
-				color: #009AE5;
-				display: block;
-				font-size: 14px;
-				line-height: 14px;
-			}
-
-			.date-info {
-				color: #8C8C8C;
-				font-size: 13px;
-			}
-		}
+		margin-top: 0;
 	}
 
 	.asset-title {
-		padding: 10px;
+		border-bottom: 1px solid #DDD;
+		margin-right: 8px;
+		padding-bottom: 1px;
 
 		.asset-actions img {
 			margin-left: 5px;
@@ -167,17 +131,32 @@
 	}
 
 	.metadata-author {
+		background: url(@theme_image_path@/portlet/edit_guest.png) no-repeat 0 0;
+		float: left;
 		font-weight: bold;
 		margin-right: 10px;
+		padding-left: 25px;
 	}
 
 	.metadata-entry {
 		color: #999;
-		margin-right: 2em;
 	}
 
-	.single-item-button {
-		display: inline-block;
+	.metadata-modified-date, .metadata-create-date, .metadata-publish-date, .metadata-expiration-date {
+		background: url(@theme_image_path@/common/date.png) no-repeat 0 0;
+		color: #999;
+		margin-bottom: 1em;
+		padding-left: 25px;
+	}
+
+	.metadata-priority {
+		background: url(@theme_image_path@/common/top.png) no-repeat 0 20%;
+		margin-right: 10px;
+		padding-left: 25px;
+	}
+
+	.metadata-view-count {
+		margin-right: 10px;
 	}
 
 	.subscribe-action {
@@ -186,6 +165,14 @@
 		.taglib-rss {
 			margin-left: 10px;
 		}
+	}
+
+	.taglib-asset-categories-summary {
+		float: left;
+	}
+
+	.taglib-asset-tags-summary {
+		float: left;
 	}
 
 	.title-list {
@@ -248,7 +235,7 @@
 		}
 
 		.asset-query-rule-error {
-			background-color: #FEE5E2;
+			background-color: #fee5e2;
 		}
 
 		.general-display-settings {
@@ -300,8 +287,8 @@
 	}
 
 	.asset-subtypefield-selected {
-		margin-left: 6em;
 		padding-top: 10px;
+		margin-left: 6em;
 	}
 
 	.select-asset-selector {

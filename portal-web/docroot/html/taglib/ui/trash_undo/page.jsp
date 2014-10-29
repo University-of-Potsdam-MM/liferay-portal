@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -39,27 +39,10 @@ if (SessionMessages.contains(portletRequest, portletDisplay.getId() + SessionMes
 
 			trashedEntriesCount = primaryKeys.length;
 		}
-
-		String restoreNamespace = namespace;
-
-		if (Validator.isNull(portletURL)) {
-			long controlPanelPlid = PortalUtil.getControlPanelPlid(themeDisplay.getCompanyId());
-
-			PortletURL restoreURL = PortletURLFactoryUtil.create(request, PortletKeys.TRASH, controlPanelPlid, PortletRequest.ACTION_PHASE);
-
-			restoreURL.setParameter("struts_action", "/trash/edit_entry");
-			restoreURL.setParameter(Constants.CMD, Constants.RESTORE);
-			restoreURL.setParameter("redirect", redirect);
-			restoreURL.setWindowState(WindowState.MAXIMIZED);
-
-			portletURL = restoreURL.toString();
-
-			restoreNamespace = PortalUtil.getPortletNamespace(PortletKeys.TRASH);
-		}
 %>
 
 		<div class="alert alert-success taglib-trash-undo">
-			<aui:form action="<%= portletURL %>" name="undoForm" portletNamespace="<%= restoreNamespace %>">
+			<aui:form action="<%= portletURL %>" name="undoForm">
 				<liferay-util:buffer var="trashLink">
 					<c:choose>
 						<c:when test="<%= themeDisplay.isShowSiteAdministrationIcon() %>">
@@ -91,10 +74,10 @@ if (SessionMessages.contains(portletRequest, portletDisplay.getId() + SessionMes
 					<c:when test="<%= trashedEntriesCount > 1 %>">
 						<c:choose>
 							<c:when test="<%= Validator.equals(cmd, Constants.REMOVE) %>">
-								<liferay-ui:message arguments="<%= new Object[] {trashedEntriesCount} %>" key="x-items-were-removed" translateArguments="<%= false %>" />
+								<liferay-ui:message arguments="<%= new Object[] {trashedEntriesCount} %>" key="x-items-were-removed" />
 							</c:when>
 							<c:otherwise>
-								<liferay-ui:message arguments="<%= new Object[] {trashedEntriesCount, trashLink.trim()} %>" key="x-items-were-moved-to-x" translateArguments="<%= false %>" />
+								<liferay-ui:message arguments="<%= new Object[] {trashedEntriesCount, trashLink.trim()} %>" key="x-items-were-moved-to-x" />
 							</c:otherwise>
 						</c:choose>
 					</c:when>
@@ -110,7 +93,7 @@ if (SessionMessages.contains(portletRequest, portletDisplay.getId() + SessionMes
 						if (ArrayUtil.isNotEmpty(classNames)) {
 							className = classNames[0];
 
-							type = ResourceActionsUtil.getModelResource(request, className);
+							type = ResourceActionsUtil.getModelResource(pageContext, className);
 						}
 
 						String[] titles = data.get("deleteEntryTitle");
@@ -127,8 +110,8 @@ if (SessionMessages.contains(portletRequest, portletDisplay.getId() + SessionMes
 								<c:when test="<%= !Validator.equals(cmd, Constants.REMOVE) && themeDisplay.isShowSiteAdministrationIcon() && Validator.isNotNull(className) && Validator.isNotNull(title) && Validator.isNotNull(primaryKeys[0]) %>">
 									<liferay-portlet:renderURL plid="<%= PortalUtil.getControlPanelPlid(company.getCompanyId()) %>" portletName="<%= PortletKeys.TRASH %>" varImpl="trashURL" windowState="<%= WindowState.NORMAL.toString() %>">
 										<portlet:param name="struts_action" value="/trash/view_content" />
-										<portlet:param name="redirect" value="<%= currentURL %>" />
-										<portlet:param name="trashEntryId" value="<%= String.valueOf(primaryKeys[0]) %>" />
+										<portlet:param name="className" value="<%= className %>" />
+										<portlet:param name="classPK" value="<%= String.valueOf(primaryKeys[0]) %>" />
 									</liferay-portlet:renderURL>
 
 									<%
@@ -149,16 +132,16 @@ if (SessionMessages.contains(portletRequest, portletDisplay.getId() + SessionMes
 
 						<c:choose>
 							<c:when test="<%= Validator.equals(cmd, Constants.REMOVE) %>">
-								<liferay-ui:message arguments="<%= new Object[] {LanguageUtil.get(request, type), trashEntityLink} %>" key="the-x-x-was-removed" translateArguments="<%= false %>" />
+								<liferay-ui:message arguments="<%= new Object[] {type, trashEntityLink} %>" key="the-x-x-was-removed" />
 							</c:when>
 							<c:otherwise>
-								<liferay-ui:message arguments="<%= new Object[] {LanguageUtil.get(request, type), trashEntityLink, trashLink.trim()} %>" key="the-x-x-was-moved-to-x" translateArguments="<%= false %>" />
+								<liferay-ui:message arguments="<%= new Object[] {type, trashEntityLink, trashLink.trim()} %>" key="the-x-x-was-moved-to-x" />
 							</c:otherwise>
 						</c:choose>
 					</c:otherwise>
 				</c:choose>
 
-				<a class="btn btn-primary btn-sm trash-undo-link" href="javascript:;" id="<%= restoreNamespace %>undo"><liferay-ui:message key="undo" /></a>
+				<a class="btn btn-primary btn-small trash-undo-link" href="javascript:;" id="<%= namespace %>undo"><liferay-ui:message key="undo" /></a>
 
 				<aui:input name="redirect" type="hidden" value="<%= redirect %>" />
 
@@ -182,13 +165,13 @@ if (SessionMessages.contains(portletRequest, portletDisplay.getId() + SessionMes
 		</div>
 
 		<aui:script use="aui-base">
-			var undoLink = A.one('#<%= restoreNamespace %>undo');
+			var undoLink = A.one('#<%= namespace %>undo');
 
 			if (undoLink) {
 				undoLink.on(
 					'click',
 					function(event) {
-						submitForm(document.<%= restoreNamespace %>undoForm);
+						submitForm(document.<%= namespace %>undoForm);
 					}
 				);
 			}

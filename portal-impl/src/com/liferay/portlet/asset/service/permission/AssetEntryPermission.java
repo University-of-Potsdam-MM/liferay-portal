@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portlet.asset.service.permission;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.security.permission.PermissionChecker;
 import com.liferay.portal.util.PortalUtil;
@@ -40,7 +41,7 @@ public class AssetEntryPermission {
 
 	public static void check(
 			PermissionChecker permissionChecker, long entryId, String actionId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		if (!contains(permissionChecker, entryId, actionId)) {
 			throw new PrincipalException();
@@ -50,7 +51,7 @@ public class AssetEntryPermission {
 	public static void check(
 			PermissionChecker permissionChecker, String className, long classPK,
 			String actionId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		if (!contains(permissionChecker, className, classPK, actionId)) {
 			throw new PrincipalException();
@@ -79,7 +80,7 @@ public class AssetEntryPermission {
 
 	public static boolean contains(
 			PermissionChecker permissionChecker, long entryId, String actionId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		AssetEntry entry = AssetEntryLocalServiceUtil.getEntry(entryId);
 
@@ -89,7 +90,7 @@ public class AssetEntryPermission {
 	public static boolean contains(
 			PermissionChecker permissionChecker, String className, long classPK,
 			String actionId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		AssetEntry entry = AssetEntryLocalServiceUtil.getEntry(
 			className, classPK);

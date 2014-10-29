@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.taglib.ui;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.JavaConstants;
 import com.liferay.portal.kernel.util.StringBundler;
@@ -36,7 +37,7 @@ import javax.portlet.RenderResponse;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.JspWriter;
+import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.TagSupport;
 
 /**
@@ -46,10 +47,13 @@ import javax.servlet.jsp.tagext.TagSupport;
  */
 public class InputPermissionsParamsTag extends TagSupport {
 
-	public static String doTag(String modelName, HttpServletRequest request)
+	public static String doTag(String modelName, PageContext pageContext)
 		throws Exception {
 
 		try {
+			HttpServletRequest request =
+				(HttpServletRequest)pageContext.getRequest();
+
 			RenderResponse renderResponse =
 				(RenderResponse)request.getAttribute(
 					JavaConstants.JAVAX_PORTLET_RESPONSE);
@@ -129,16 +133,18 @@ public class InputPermissionsParamsTag extends TagSupport {
 			sb.append("inputPermissionsViewRole=");
 			sb.append(HttpUtil.encodeURL(inputPermissionsViewRole));
 
-			return sb.toString();
+			pageContext.getOut().print(sb.toString());
 		}
 		catch (Exception e) {
 			throw new JspException(e);
 		}
+
+		return StringPool.BLANK;
 	}
 
 	public static String getDefaultViewRole(
 			String modelName, ThemeDisplay themeDisplay)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Layout layout = themeDisplay.getLayout();
 
@@ -181,9 +187,7 @@ public class InputPermissionsParamsTag extends TagSupport {
 	@Override
 	public int doEndTag() throws JspException {
 		try {
-			JspWriter jspWriter = pageContext.getOut();
-
-			jspWriter.write(_modelName);
+			doTag(_modelName, pageContext);
 
 			return EVAL_PAGE;
 		}

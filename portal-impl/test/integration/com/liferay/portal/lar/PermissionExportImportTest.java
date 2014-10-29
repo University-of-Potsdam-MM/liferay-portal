@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -16,6 +16,7 @@ package com.liferay.portal.lar;
 
 import com.liferay.portal.kernel.lar.PortletDataContext;
 import com.liferay.portal.kernel.test.ExecutionTestListeners;
+import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.kernel.xml.SAXReaderUtil;
@@ -33,15 +34,15 @@ import com.liferay.portal.service.ResourceBlockServiceUtil;
 import com.liferay.portal.service.ResourceLocalServiceUtil;
 import com.liferay.portal.service.ResourcePermissionServiceUtil;
 import com.liferay.portal.service.RoleLocalServiceUtil;
+import com.liferay.portal.service.ServiceTestUtil;
 import com.liferay.portal.service.permission.PortletPermissionUtil;
-import com.liferay.portal.test.listeners.MainServletExecutionTestListener;
-import com.liferay.portal.test.listeners.ResetDatabaseExecutionTestListener;
-import com.liferay.portal.test.runners.LiferayIntegrationJUnitTestRunner;
+import com.liferay.portal.test.LiferayIntegrationJUnitTestRunner;
+import com.liferay.portal.test.MainServletExecutionTestListener;
+import com.liferay.portal.test.TransactionalCallbackAwareExecutionTestListener;
+import com.liferay.portal.util.LayoutTestUtil;
 import com.liferay.portal.util.PortletKeys;
 import com.liferay.portal.util.ResourcePermissionUtil;
-import com.liferay.portal.util.test.LayoutTestUtil;
-import com.liferay.portal.util.test.RandomTestUtil;
-import com.liferay.portal.util.test.TestPropsValues;
+import com.liferay.portal.util.TestPropsValues;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -60,9 +61,10 @@ import org.powermock.api.mockito.PowerMockito;
 @ExecutionTestListeners(
 	listeners = {
 		MainServletExecutionTestListener.class,
-		ResetDatabaseExecutionTestListener.class
+		TransactionalCallbackAwareExecutionTestListener.class
 	})
 @RunWith(LiferayIntegrationJUnitTestRunner.class)
+@Transactional
 public class PermissionExportImportTest extends PowerMockito {
 
 	@Test
@@ -71,12 +73,13 @@ public class PermissionExportImportTest extends PowerMockito {
 		// Export
 
 		LayoutSetPrototype exportLayoutSetPrototype =
-			LayoutTestUtil.addLayoutSetPrototype(RandomTestUtil.randomString());
+			LayoutTestUtil.addLayoutSetPrototype(
+				ServiceTestUtil.randomString());
 
 		Group exportGroup = exportLayoutSetPrototype.getGroup();
 
 		Layout exportLayout = LayoutTestUtil.addLayout(
-			exportGroup.getGroupId(), RandomTestUtil.randomString(), true);
+			exportGroup.getGroupId(), ServiceTestUtil.randomString(), true);
 
 		String exportResourcePrimKey = PortletPermissionUtil.getPrimaryKey(
 			exportLayout.getPlid(), _PORTLET_ID);
@@ -92,12 +95,13 @@ public class PermissionExportImportTest extends PowerMockito {
 		// Import
 
 		LayoutSetPrototype importLayoutSetPrototype =
-			LayoutTestUtil.addLayoutSetPrototype(RandomTestUtil.randomString());
+			LayoutTestUtil.addLayoutSetPrototype(
+				ServiceTestUtil.randomString());
 
 		Group importGroup = importLayoutSetPrototype.getGroup();
 
 		Layout importLayout = LayoutTestUtil.addLayout(
-			importGroup.getGroupId(), RandomTestUtil.randomString(), true);
+			importGroup.getGroupId(), ServiceTestUtil.randomString(), true);
 
 		String importResourcePrimKey = PortletPermissionUtil.getPrimaryKey(
 			importLayout.getPlid(), _PORTLET_ID);
@@ -151,11 +155,11 @@ public class PermissionExportImportTest extends PowerMockito {
 
 		Element portletElement = SAXReaderUtil.createElement("portlet");
 
-		PermissionExporter permissionExporter =
-			PermissionExporter.getInstance();
+		PermissionExporter permissionExporter = new PermissionExporter();
 
 		permissionExporter.exportPortletPermissions(
-			portletDataContext, _PORTLET_ID, exportLayout, portletElement);
+			portletDataContext, new LayoutCache(), _PORTLET_ID, exportLayout,
+			portletElement);
 
 		return portletElement;
 	}
@@ -164,8 +168,7 @@ public class PermissionExportImportTest extends PowerMockito {
 			Group importGroup, Layout importLayout, Element portletElement)
 		throws Exception {
 
-		PermissionImporter permissionImporter =
-			PermissionImporter.getInstance();
+		PermissionImporter permissionImporter = new PermissionImporter();
 
 		permissionImporter.importPortletPermissions(
 			new LayoutCache(), TestPropsValues.getCompanyId(),
@@ -214,6 +217,6 @@ public class PermissionExportImportTest extends PowerMockito {
 	private static final String[] _ACTION_IDS =
 		{ActionKeys.ADD_TO_PAGE, ActionKeys.VIEW};
 
-	private static final String _PORTLET_ID = PortletKeys.LAYOUTS_ADMIN;
+	private static final String _PORTLET_ID = PortletKeys.BOOKMARKS;
 
 }

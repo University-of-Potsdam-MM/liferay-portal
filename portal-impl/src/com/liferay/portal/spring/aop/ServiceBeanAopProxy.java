@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -22,6 +22,7 @@ import com.liferay.portal.kernel.util.ProxyUtil;
 import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
@@ -42,8 +43,7 @@ import org.springframework.util.ClassUtils;
 /**
  * @author Shuyang Zhou
  */
-public class ServiceBeanAopProxy
-	implements AdvisedSupportProxy, AopProxy, InvocationHandler {
+public class ServiceBeanAopProxy implements AopProxy, InvocationHandler {
 
 	public static AdvisedSupport getAdvisedSupport(Object proxy)
 		throws Exception {
@@ -51,14 +51,14 @@ public class ServiceBeanAopProxy
 		InvocationHandler invocationHandler = ProxyUtil.getInvocationHandler(
 			proxy);
 
-		if (invocationHandler instanceof AdvisedSupportProxy) {
-			AdvisedSupportProxy advisableSupportProxy =
-				(AdvisedSupportProxy)invocationHandler;
+		Class<?> invocationHandlerClass = invocationHandler.getClass();
 
-			return advisableSupportProxy.getAdvisedSupport();
-		}
+		Field advisedSupportField = invocationHandlerClass.getDeclaredField(
+			"_advisedSupport");
 
-		return null;
+		advisedSupportField.setAccessible(true);
+
+		return (AdvisedSupport)advisedSupportField.get(invocationHandler);
 	}
 
 	public ServiceBeanAopProxy(
@@ -133,11 +133,6 @@ public class ServiceBeanAopProxy
 	}
 
 	@Override
-	public AdvisedSupport getAdvisedSupport() {
-		return _advisedSupport;
-	}
-
-	@Override
 	public Object getProxy() {
 		return getProxy(ClassUtils.getDefaultClassLoader());
 	}
@@ -163,11 +158,17 @@ public class ServiceBeanAopProxy
 		Object target = null;
 
 		try {
+			Class<?> targetClass = null;
+
 			target = targetSource.getTarget();
+
+			if (target != null) {
+				targetClass = target.getClass();
+			}
 
 			ServiceBeanMethodInvocation serviceBeanMethodInvocation =
 				new ServiceBeanMethodInvocation(
-					target, targetSource.getTargetClass(), method, arguments);
+					target, targetClass, method, arguments);
 
 			_setMethodInterceptors(serviceBeanMethodInvocation);
 
@@ -180,7 +181,7 @@ public class ServiceBeanAopProxy
 		}
 	}
 
-	public interface PACL {
+	public static interface PACL {
 
 		public InvocationHandler getInvocationHandler(
 			InvocationHandler invocationHandler, AdvisedSupport advisedSupport);

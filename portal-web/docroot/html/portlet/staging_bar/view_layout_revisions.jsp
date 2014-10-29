@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -37,7 +37,7 @@ List<LayoutRevision> rootLayoutRevisions = LayoutRevisionLocalServiceUtil.getChi
 
 <c:if test="<%= !rootLayoutRevisions.isEmpty() %>">
 	<c:if test="<%= rootLayoutRevisions.size() > 1 %>">
-		<aui:select cssClass="variation-selector" inlineLabel="left" label="" name="variationsSelector">
+		<aui:select cssClass="variation-selector" inlineLabel="left" label="page-variation" name="variationsSelector">
 
 			<%
 			for (LayoutRevision rootLayoutRevision : rootLayoutRevisions) {
@@ -82,10 +82,35 @@ List<LayoutRevision> rootLayoutRevisions = LayoutRevisionLocalServiceUtil.getChi
 						keyProperty="layoutRevisionId"
 						modelVar="curLayoutRevision"
 					>
-						<liferay-ui:search-container-column-date
+						<liferay-ui:search-container-column-text
+							buffer="buffer"
+							cssClass='<%= (curLayoutRevision.getLayoutRevisionId() == currentLayoutRevisionId) ? "layout-revision-current" : StringPool.BLANK %>'
 							name="date"
-							value="<%= curLayoutRevision.getCreateDate() %>"
-						/>
+						>
+
+						<%
+						Date now = new Date();
+
+						long timeAgo = now.getTime() - curLayoutRevision.getCreateDate().getTime();
+
+						if (curLayoutRevision.getLayoutRevisionId() == currentLayoutRevisionId) {
+							buffer.append("<div class=\"current-version-pointer\"><img alt=\"");
+							buffer.append(LanguageUtil.get(pageContext, "current-version"));
+							buffer.append("\" src=\"");
+							buffer.append(themeDisplay.getPathThemeImages());
+							buffer.append("/arrows/01_right.png\" title=\"");
+							buffer.append(LanguageUtil.get(pageContext, "current-version"));
+							buffer.append("\" /></div>");
+						}
+
+						buffer.append("<span class=\"approximate-date\">");
+						buffer.append(LanguageUtil.format(pageContext, "x-ago", LanguageUtil.getTimeDescription(pageContext, timeAgo, true)));
+						buffer.append("</span><span class=\"real-date\">");
+						buffer.append(dateFormatDateTime.format(curLayoutRevision.getCreateDate()));
+						buffer.append("</span>");
+						%>
+
+						</liferay-ui:search-container-column-text>
 
 						<liferay-ui:search-container-column-text
 							name="status"
@@ -99,53 +124,61 @@ List<LayoutRevision> rootLayoutRevisions = LayoutRevisionLocalServiceUtil.getChi
 
 							<c:choose>
 								<c:when test="<%= curLayoutRevision.isHead() %>">
-									<aui:workflow-status showIcon="<%= false %>" showLabel="<%= false %>" status="<%= status %>" statusMessage="ready-for-publication" />
+									<aui:workflow-status showLabel="<%= false %>" status="<%= status %>" statusMessage="ready-for-publication" />
 								</c:when>
 								<c:otherwise>
-									<aui:workflow-status showIcon="<%= false %>" showLabel="<%= false %>" status="<%= status %>" />
+									<aui:workflow-status showLabel="<%= false %>" status="<%= status %>" />
 								</c:otherwise>
 							</c:choose>
 
 						</liferay-ui:search-container-column-text>
 
 						<liferay-ui:search-container-column-text
+							buffer="buffer"
 							name="version"
 						>
-							<c:choose>
-								<c:when test="<%= curLayoutRevision.getLayoutRevisionId() == currentLayoutRevisionId %>">
-									<span class="layout-revision-current"><%= curLayoutRevision.getLayoutRevisionId() %></span>
-									<span class="current-version"><liferay-ui:message key="current-version" /></span>
-								</c:when>
-								<c:otherwise>
-									<a class="layout-revision selection-handle" data-layoutRevisionId="<%= curLayoutRevision.getLayoutRevisionId() %>" data-layoutSetBranchId="<%= curLayoutRevision.getLayoutSetBranchId() %>" href="#" title="<%= LanguageUtil.get(request, "go-to-this-version") %>">
-										<%= curLayoutRevision.getLayoutRevisionId() %>
-									</a>
-								</c:otherwise>
-							</c:choose>
+
+							<%
+							if (curLayoutRevision.getLayoutRevisionId() == currentLayoutRevisionId) {
+								buffer.append("<span class=\"layout-revision-current\">");
+								buffer.append(curLayoutRevision.getLayoutRevisionId());
+								buffer.append("</span><span class=\"current-version\">");
+								buffer.append(LanguageUtil.get(pageContext, "current-version"));
+								buffer.append("</span>");
+							}
+							else {
+								buffer.append("<a class=\"layout-revision selection-handle\" data-layoutRevisionId=\"");
+								buffer.append(curLayoutRevision.getLayoutRevisionId());
+								buffer.append("\" data-layoutSetBranchId=\"");
+								buffer.append(curLayoutRevision.getLayoutSetBranchId());
+								buffer.append("\" href=\"#\" title=\"");
+								buffer.append(LanguageUtil.get(pageContext, "go-to-this-version"));
+								buffer.append("\">");
+								buffer.append(curLayoutRevision.getLayoutRevisionId());
+								buffer.append("</a>");
+							}
+							%>
+
 						</liferay-ui:search-container-column-text>
 
 						<liferay-ui:search-container-column-text
+							buffer="buffer"
 							name="user"
 						>
 
 							<%
-							User curUser = UserLocalServiceUtil.fetchUserById(curLayoutRevision.getUserId());
+							User curUser = UserLocalServiceUtil.getUserById(curLayoutRevision.getUserId());
+
+							buffer.append("<a class=\"user-handle\" href=\"");
+							buffer.append(curUser.getDisplayURL(themeDisplay));
+							buffer.append("\">");
+							buffer.append(curUser.getFullName());
+							buffer.append("</a>");
 							%>
 
-							<c:choose>
-								<c:when test="<%= curUser != null %>">
-									<a class="user-handle" href="<%= curUser.getDisplayURL(themeDisplay) %>">
-										<%= HtmlUtil.escape(curUser.getFullName()) %>
-									</a>
-								</c:when>
-								<c:otherwise>
-									<%= curLayoutRevision.getUserName() %>
-								</c:otherwise>
-							</c:choose>
 						</liferay-ui:search-container-column-text>
 
 						<liferay-ui:search-container-column-jsp
-							cssClass="entry-action"
 							path="/html/portlet/staging_bar/layout_revision_action.jsp"
 						/>
 					</liferay-ui:search-container-row>

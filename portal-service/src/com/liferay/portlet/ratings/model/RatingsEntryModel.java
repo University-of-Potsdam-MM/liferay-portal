@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -17,10 +17,11 @@ package com.liferay.portlet.ratings.model;
 import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.bean.AutoEscape;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.model.AttachedModel;
+import com.liferay.portal.model.AuditedModel;
 import com.liferay.portal.model.BaseModel;
 import com.liferay.portal.model.CacheModel;
-import com.liferay.portal.model.StagedAuditedModel;
 import com.liferay.portal.service.ServiceContext;
 
 import com.liferay.portlet.expando.model.ExpandoBridge;
@@ -43,8 +44,8 @@ import java.util.Date;
  * @generated
  */
 @ProviderType
-public interface RatingsEntryModel extends AttachedModel, BaseModel<RatingsEntry>,
-	StagedAuditedModel {
+public interface RatingsEntryModel extends AttachedModel, AuditedModel,
+	BaseModel<RatingsEntry> {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -64,23 +65,6 @@ public interface RatingsEntryModel extends AttachedModel, BaseModel<RatingsEntry
 	 * @param primaryKey the primary key of this ratings entry
 	 */
 	public void setPrimaryKey(long primaryKey);
-
-	/**
-	 * Returns the uuid of this ratings entry.
-	 *
-	 * @return the uuid of this ratings entry
-	 */
-	@AutoEscape
-	@Override
-	public String getUuid();
-
-	/**
-	 * Sets the uuid of this ratings entry.
-	 *
-	 * @param uuid the uuid of this ratings entry
-	 */
-	@Override
-	public void setUuid(String uuid);
 
 	/**
 	 * Returns the entry ID of this ratings entry.
@@ -132,9 +116,10 @@ public interface RatingsEntryModel extends AttachedModel, BaseModel<RatingsEntry
 	 * Returns the user uuid of this ratings entry.
 	 *
 	 * @return the user uuid of this ratings entry
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public String getUserUuid();
+	public String getUserUuid() throws SystemException;
 
 	/**
 	 * Sets the user uuid of this ratings entry.

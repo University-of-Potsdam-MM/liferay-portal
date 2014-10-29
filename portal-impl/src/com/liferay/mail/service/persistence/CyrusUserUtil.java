@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -17,6 +17,7 @@ package com.liferay.mail.service.persistence;
 import com.liferay.mail.NoSuchCyrusUserException;
 import com.liferay.mail.model.CyrusUser;
 import com.liferay.portal.kernel.bean.PortalBeanLocatorUtil;
+import com.liferay.portal.kernel.exception.SystemException;
 
 /**
  * @author Brian Wing Shun Chan
@@ -24,7 +25,7 @@ import com.liferay.portal.kernel.bean.PortalBeanLocatorUtil;
 public class CyrusUserUtil {
 
 	public static CyrusUser findByPrimaryKey(long userId)
-		throws NoSuchCyrusUserException {
+		throws NoSuchCyrusUserException, SystemException {
 
 		return getPersistence().findByPrimaryKey(userId);
 	}
@@ -38,11 +39,13 @@ public class CyrusUserUtil {
 		return _persistence;
 	}
 
-	public static void remove(long userId) throws NoSuchCyrusUserException {
+	public static void remove(long userId)
+		throws NoSuchCyrusUserException, SystemException {
+
 		getPersistence().remove(userId);
 	}
 
-	public static void update(CyrusUser user) {
+	public static void update(CyrusUser user) throws SystemException {
 		getPersistence().update(user);
 	}
 

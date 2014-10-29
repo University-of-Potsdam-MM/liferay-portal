@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,6 +14,7 @@
 
 package com.liferay.portal.util;
 
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.security.pacl.DoPrivileged;
 import com.liferay.portal.kernel.util.PrefsProps;
 
@@ -28,13 +29,15 @@ import javax.portlet.PortletPreferences;
 public class PrefsPropsImpl implements PrefsProps {
 
 	@Override
-	public boolean getBoolean(long companyId, String name) {
+	public boolean getBoolean(long companyId, String name)
+		throws SystemException {
+
 		return PrefsPropsUtil.getBoolean(companyId, name);
 	}
 
 	@Override
-	public boolean getBoolean(
-		long companyId, String name, boolean defaultValue) {
+	public boolean getBoolean(long companyId, String name, boolean defaultValue)
+		throws SystemException {
 
 		return PrefsPropsUtil.getBoolean(companyId, name, defaultValue);
 	}
@@ -56,17 +59,21 @@ public class PrefsPropsImpl implements PrefsProps {
 	}
 
 	@Override
-	public boolean getBoolean(String name) {
+	public boolean getBoolean(String name) throws SystemException {
 		return PrefsPropsUtil.getBoolean(name);
 	}
 
 	@Override
-	public boolean getBoolean(String name, boolean defaultValue) {
+	public boolean getBoolean(String name, boolean defaultValue)
+		throws SystemException {
+
 		return PrefsPropsUtil.getBoolean(name, defaultValue);
 	}
 
 	@Override
-	public String getContent(long companyId, String name) {
+	public String getContent(long companyId, String name)
+		throws SystemException {
+
 		return PrefsPropsUtil.getContent(companyId, name);
 	}
 
@@ -78,17 +85,21 @@ public class PrefsPropsImpl implements PrefsProps {
 	}
 
 	@Override
-	public String getContent(String name) {
+	public String getContent(String name) throws SystemException {
 		return PrefsPropsUtil.getContent(name);
 	}
 
 	@Override
-	public double getDouble(long companyId, String name) {
+	public double getDouble(long companyId, String name)
+		throws SystemException {
+
 		return PrefsPropsUtil.getDouble(companyId, name);
 	}
 
 	@Override
-	public double getDouble(long companyId, String name, double defaultValue) {
+	public double getDouble(long companyId, String name, double defaultValue)
+		throws SystemException {
+
 		return PrefsPropsUtil.getDouble(companyId, name, defaultValue);
 	}
 
@@ -109,22 +120,26 @@ public class PrefsPropsImpl implements PrefsProps {
 	}
 
 	@Override
-	public double getDouble(String name) {
+	public double getDouble(String name) throws SystemException {
 		return PrefsPropsUtil.getDouble(name);
 	}
 
 	@Override
-	public double getDouble(String name, double defaultValue) {
+	public double getDouble(String name, double defaultValue)
+		throws SystemException {
+
 		return PrefsPropsUtil.getDouble(name, defaultValue);
 	}
 
 	@Override
-	public int getInteger(long companyId, String name) {
+	public int getInteger(long companyId, String name) throws SystemException {
 		return PrefsPropsUtil.getInteger(companyId, name);
 	}
 
 	@Override
-	public int getInteger(long companyId, String name, int defaultValue) {
+	public int getInteger(long companyId, String name, int defaultValue)
+		throws SystemException {
+
 		return PrefsPropsUtil.getInteger(companyId, name, defaultValue);
 	}
 
@@ -145,22 +160,26 @@ public class PrefsPropsImpl implements PrefsProps {
 	}
 
 	@Override
-	public int getInteger(String name) {
+	public int getInteger(String name) throws SystemException {
 		return PrefsPropsUtil.getInteger(name);
 	}
 
 	@Override
-	public int getInteger(String name, int defaultValue) {
+	public int getInteger(String name, int defaultValue)
+		throws SystemException {
+
 		return PrefsPropsUtil.getInteger(name, defaultValue);
 	}
 
 	@Override
-	public long getLong(long companyId, String name) {
+	public long getLong(long companyId, String name) throws SystemException {
 		return PrefsPropsUtil.getLong(companyId, name);
 	}
 
 	@Override
-	public long getLong(long companyId, String name, long defaultValue) {
+	public long getLong(long companyId, String name, long defaultValue)
+		throws SystemException {
+
 		return PrefsPropsUtil.getLong(companyId, name, defaultValue);
 	}
 
@@ -181,32 +200,38 @@ public class PrefsPropsImpl implements PrefsProps {
 	}
 
 	@Override
-	public long getLong(String name) {
+	public long getLong(String name) throws SystemException {
 		return PrefsPropsUtil.getLong(name);
 	}
 
 	@Override
-	public long getLong(String name, long defaultValue) {
+	public long getLong(String name, long defaultValue) throws SystemException {
 		return PrefsPropsUtil.getLong(name, defaultValue);
 	}
 
 	@Override
-	public PortletPreferences getPreferences() {
+	public PortletPreferences getPreferences() throws SystemException {
 		return PrefsPropsUtil.getPreferences();
 	}
 
 	@Override
-	public PortletPreferences getPreferences(boolean readOnly) {
+	public PortletPreferences getPreferences(boolean readOnly)
+		throws SystemException {
+
 		return PrefsPropsUtil.getPreferences(readOnly);
 	}
 
 	@Override
-	public PortletPreferences getPreferences(long companyId) {
+	public PortletPreferences getPreferences(long companyId)
+		throws SystemException {
+
 		return PrefsPropsUtil.getPreferences(companyId);
 	}
 
 	@Override
-	public PortletPreferences getPreferences(long companyId, boolean readOnly) {
+	public PortletPreferences getPreferences(long companyId, boolean readOnly)
+		throws SystemException {
+
 		return PrefsPropsUtil.getPreferences(companyId, readOnly);
 	}
 
@@ -220,17 +245,21 @@ public class PrefsPropsImpl implements PrefsProps {
 	}
 
 	@Override
-	public Properties getProperties(String prefix, boolean removePrefix) {
+	public Properties getProperties(String prefix, boolean removePrefix)
+		throws SystemException {
+
 		return PrefsPropsUtil.getProperties(prefix, removePrefix);
 	}
 
 	@Override
-	public short getShort(long companyId, String name) {
+	public short getShort(long companyId, String name) throws SystemException {
 		return PrefsPropsUtil.getShort(companyId, name);
 	}
 
 	@Override
-	public short getShort(long companyId, String name, short defaultValue) {
+	public short getShort(long companyId, String name, short defaultValue)
+		throws SystemException {
+
 		return PrefsPropsUtil.getShort(companyId, name, defaultValue);
 	}
 
@@ -251,22 +280,28 @@ public class PrefsPropsImpl implements PrefsProps {
 	}
 
 	@Override
-	public short getShort(String name) {
+	public short getShort(String name) throws SystemException {
 		return PrefsPropsUtil.getShort(name);
 	}
 
 	@Override
-	public short getShort(String name, short defaultValue) {
+	public short getShort(String name, short defaultValue)
+		throws SystemException {
+
 		return PrefsPropsUtil.getShort(name, defaultValue);
 	}
 
 	@Override
-	public String getString(long companyId, String name) {
+	public String getString(long companyId, String name)
+		throws SystemException {
+
 		return PrefsPropsUtil.getString(companyId, name);
 	}
 
 	@Override
-	public String getString(long companyId, String name, String defaultValue) {
+	public String getString(long companyId, String name, String defaultValue)
+		throws SystemException {
+
 		return PrefsPropsUtil.getString(companyId, name, defaultValue);
 	}
 
@@ -332,25 +367,30 @@ public class PrefsPropsImpl implements PrefsProps {
 	}
 
 	@Override
-	public String getString(String name) {
+	public String getString(String name) throws SystemException {
 		return PrefsPropsUtil.getString(name);
 	}
 
 	@Override
-	public String getString(String name, String defaultValue) {
+	public String getString(String name, String defaultValue)
+		throws SystemException {
+
 		return PrefsPropsUtil.getString(name, defaultValue);
 	}
 
 	@Override
 	public String[] getStringArray(
-		long companyId, String name, String delimiter) {
+			long companyId, String name, String delimiter)
+		throws SystemException {
 
 		return PrefsPropsUtil.getStringArray(companyId, name, delimiter);
 	}
 
 	@Override
 	public String[] getStringArray(
-		long companyId, String name, String delimiter, String[] defaultValue) {
+			long companyId, String name, String delimiter,
+			String[] defaultValue)
+		throws SystemException {
 
 		return PrefsPropsUtil.getStringArray(
 			companyId, name, delimiter, defaultValue);
@@ -375,19 +415,24 @@ public class PrefsPropsImpl implements PrefsProps {
 	}
 
 	@Override
-	public String[] getStringArray(String name, String delimiter) {
+	public String[] getStringArray(String name, String delimiter)
+		throws SystemException {
+
 		return PrefsPropsUtil.getStringArray(name, delimiter);
 	}
 
 	@Override
 	public String[] getStringArray(
-		String name, String delimiter, String[] defaultValue) {
+			String name, String delimiter, String[] defaultValue)
+		throws SystemException {
 
 		return PrefsPropsUtil.getStringArray(name, delimiter, defaultValue);
 	}
 
 	@Override
-	public String getStringFromNames(long companyId, String... names) {
+	public String getStringFromNames(long companyId, String... names)
+		throws SystemException {
+
 		return PrefsPropsUtil.getStringFromNames(companyId, names);
 	}
 

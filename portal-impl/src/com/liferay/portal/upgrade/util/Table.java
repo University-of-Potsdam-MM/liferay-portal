@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -21,7 +21,6 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.upgrade.StagnantRowException;
 import com.liferay.portal.kernel.upgrade.UpgradeException;
-import com.liferay.portal.kernel.util.Base64;
 import com.liferay.portal.kernel.util.DateUtil;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -76,9 +75,6 @@ public class Table {
 				"Nulls should never be inserted into the database. " +
 					"Attempted to append column to " + sb.toString() + ".");
 		}
-		else if (value instanceof byte[]) {
-			sb.append(Base64.encode((byte[])value));
-		}
 		else if (value instanceof Clob || value instanceof String) {
 			value = StringUtil.replace(
 				(String)value, _SAFE_TABLE_CHARS[0], _SAFE_TABLE_CHARS[1]);
@@ -128,18 +124,18 @@ public class Table {
 		appendColumn(sb, value, last);
 	}
 
-	public void generateTempFile() throws Exception {
+	public String generateTempFile() throws Exception {
 		Connection con = DataAccess.getUpgradeOptimizedConnection();
 
 		try {
-			generateTempFile(con);
+			return generateTempFile(con);
 		}
 		finally {
 			DataAccess.cleanUp(con);
 		}
 	}
 
-	public void generateTempFile(Connection con) throws Exception {
+	public String generateTempFile(Connection con) throws Exception {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 
@@ -149,11 +145,13 @@ public class Table {
 			SystemProperties.get(SystemProperties.TMP_DIR) + "/temp-db-" +
 				_tableName + "-" + System.currentTimeMillis();
 
-		StopWatch stopWatch = new StopWatch();
-
-		stopWatch.start();
+		StopWatch stopWatch = null;
 
 		if (_log.isInfoEnabled()) {
+			stopWatch = new StopWatch();
+
+			stopWatch.start();
+
 			_log.info(
 				"Starting backup of " + _tableName + " to " + tempFileName);
 		}
@@ -205,12 +203,12 @@ public class Table {
 		}
 
 		if (!empty) {
-			_tempFileName = tempFileName;
-
-			return;
+			return tempFileName;
 		}
 
 		FileUtil.delete(tempFileName);
+
+		return null;
 	}
 
 	public Object[][] getColumns() {
@@ -335,10 +333,6 @@ public class Table {
 		return _tableName;
 	}
 
-	public String getTempFileName() {
-		return _tempFileName;
-	}
-
 	public long getTotalRows() {
 		return _totalRows;
 	}
@@ -407,12 +401,6 @@ public class Table {
 		else if (t == Types.INTEGER) {
 			value = GetterUtil.getInteger(rs.getInt(name));
 		}
-		else if (t == Types.LONGVARBINARY) {
-			value = rs.getBytes(name);
-		}
-		else if (t == Types.LONGVARCHAR) {
-			value = GetterUtil.getString(rs.getString(name));
-		}
 		else if (t == Types.NUMERIC) {
 			value = GetterUtil.getLong(rs.getLong(name));
 		}
@@ -430,9 +418,6 @@ public class Table {
 				value = StringPool.NULL;
 			}
 		}
-		else if (t == Types.TINYINT) {
-			value = GetterUtil.getShort(rs.getShort(name));
-		}
 		else if (t == Types.VARCHAR) {
 			value = GetterUtil.getString(rs.getString(name));
 		}
@@ -444,28 +429,26 @@ public class Table {
 		return value;
 	}
 
-	public void populateTable() throws Exception {
+	public void populateTable(String tempFileName) throws Exception {
 		Connection con = DataAccess.getUpgradeOptimizedConnection();
 
 		try {
-			populateTable(con);
+			populateTable(tempFileName, con);
 		}
 		finally {
 			DataAccess.cleanUp(con);
 		}
 	}
 
-	public void populateTable(Connection con) throws Exception {
-		if (_tempFileName == null) {
-			return;
-		}
+	public void populateTable(String tempFileName, Connection con)
+		throws Exception {
 
 		PreparedStatement ps = null;
 
 		String insertSQL = getInsertSQL();
 
 		UnsyncBufferedReader unsyncBufferedReader = new UnsyncBufferedReader(
-			new FileReader(_tempFileName));
+			new FileReader(tempFileName));
 
 		String line = null;
 
@@ -568,9 +551,7 @@ public class Table {
 		else if (t == Types.BOOLEAN) {
 			ps.setBoolean(paramIndex, GetterUtil.getBoolean(value));
 		}
-		else if ((t == Types.CLOB) || (t == Types.LONGVARCHAR) ||
-				 (t == Types.VARCHAR)) {
-
+		else if ((t == Types.CLOB) || (t == Types.VARCHAR)) {
 			value = StringUtil.replace(
 				value, _SAFE_TABLE_CHARS[1], _SAFE_TABLE_CHARS[0]);
 
@@ -585,9 +566,6 @@ public class Table {
 		else if (t == Types.INTEGER) {
 			ps.setInt(paramIndex, GetterUtil.getInteger(value));
 		}
-		else if (t == Types.LONGVARBINARY) {
-			ps.setBytes(paramIndex, Base64.decode(value));
-		}
 		else if (t == Types.SMALLINT) {
 			ps.setShort(paramIndex, GetterUtil.getShort(value));
 		}
@@ -601,9 +579,6 @@ public class Table {
 				ps.setTimestamp(
 					paramIndex, new Timestamp(df.parse(value).getTime()));
 			}
-		}
-		else if (t == Types.TINYINT) {
-			ps.setShort(paramIndex, GetterUtil.getShort(value));
 		}
 		else {
 			throw new UpgradeException(
@@ -674,7 +649,6 @@ public class Table {
 	private int[] _order;
 	private String _selectSQL;
 	private String _tableName;
-	private String _tempFileName;
 	private long _totalRows;
 
 }

@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -31,9 +31,9 @@ String type = displayTerms.getType();
 	id="toggle_id_directory_organization_search"
 >
 	<aui:fieldset>
-		<aui:input inlineField="<%= true %>" name="<%= displayTerms.NAME %>" size="20" type="text" value="<%= displayTerms.getName() %>" />
+		<aui:input name="<%= displayTerms.NAME %>" size="20" type="text" value="<%= displayTerms.getName() %>" />
 
-		<aui:select inlineField="<%= true %>" name="<%= displayTerms.TYPE %>">
+		<aui:select name="<%= displayTerms.TYPE %>">
 			<aui:option value=""></aui:option>
 
 			<%
@@ -48,19 +48,15 @@ String type = displayTerms.getType();
 
 		</aui:select>
 
-		<aui:input inlineField="<%= true %>" name="<%= displayTerms.STREET %>" size="20" type="text" value="<%= displayTerms.getStreet() %>" />
-	</aui:fieldset>
+		<aui:input name="<%= displayTerms.STREET %>" size="20" type="text" value="<%= displayTerms.getStreet() %>" />
 
-	<aui:fieldset>
-		<aui:select inlineField="<%= true %>" label="country" name="<%= displayTerms.COUNTRY_ID %>" />
+		<aui:select label="country" name="<%= displayTerms.COUNTRY_ID %>" />
 
-		<aui:input inlineField="<%= true %>" name="<%= displayTerms.CITY %>" size="20" type="text" value="<%= displayTerms.getCity() %>" />
+		<aui:input name="<%= displayTerms.CITY %>" size="20" type="text" value="<%= displayTerms.getCity() %>" />
 
-		<aui:select inlineField="<%= true %>" label="region" name="<%= displayTerms.REGION_ID %>" />
-	</aui:fieldset>
+		<aui:select label="region" name="<%= displayTerms.REGION_ID %>" />
 
-	<aui:fieldset>
-		<aui:input inlineField="<%= true %>" label="postal-code" name="<%= displayTerms.ZIP %>" size="20" type="text" value="<%= displayTerms.getZip() %>" />
+		<aui:input label="postal-code" name="<%= displayTerms.ZIP %>" size="20" type="text" value="<%= displayTerms.getZip() %>" />
 	</aui:fieldset>
 </liferay-ui:search-toggle>
 

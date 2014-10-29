@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,6 +14,8 @@
 
 package com.liferay.portal.util;
 
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.MethodParameter;
 import com.liferay.portal.kernel.util.MethodParametersResolver;
 
@@ -38,6 +40,7 @@ public class MethodParametersResolverImpl implements MethodParametersResolver {
 			return methodParameters;
 		}
 
+		try {
 			Class<?>[] methodParameterTypes = method.getParameterTypes();
 
 			jodd.paramo.MethodParameter[] joddMethodParameters =
@@ -49,13 +52,22 @@ public class MethodParametersResolverImpl implements MethodParametersResolver {
 				methodParameters[i] = new MethodParameter(
 					joddMethodParameters[i].getName(),
 					joddMethodParameters[i].getSignature(),
-					methodParameterTypes[i], true);
+					methodParameterTypes[i]);
 			}
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			return null;
+		}
 
 		_methodParameters.put(method, methodParameters);
 
 		return methodParameters;
 	}
+
+	private static Log _log = LogFactoryUtil.getLog(
+		MethodParametersResolverImpl.class);
 
 	private Map<AccessibleObject, MethodParameter[]> _methodParameters =
 		new HashMap<AccessibleObject, MethodParameter[]>();

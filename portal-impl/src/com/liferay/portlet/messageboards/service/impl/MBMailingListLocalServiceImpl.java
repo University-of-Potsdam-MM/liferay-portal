@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portlet.messageboards.service.impl;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.messaging.DestinationNames;
 import com.liferay.portal.kernel.scheduler.CronText;
 import com.liferay.portal.kernel.scheduler.CronTrigger;
@@ -54,7 +55,7 @@ public class MBMailingListLocalServiceImpl
 			String outServerName, int outServerPort, boolean outUseSSL,
 			String outUserName, String outPassword, boolean allowAnonymous,
 			boolean active, ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		// Mailing list
 
@@ -109,7 +110,7 @@ public class MBMailingListLocalServiceImpl
 
 	@Override
 	public void deleteCategoryMailingList(long groupId, long categoryId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		MBMailingList mailingList = mbMailingListPersistence.findByG_C(
 			groupId, categoryId);
@@ -118,7 +119,9 @@ public class MBMailingListLocalServiceImpl
 	}
 
 	@Override
-	public void deleteMailingList(long mailingListId) throws PortalException {
+	public void deleteMailingList(long mailingListId)
+		throws PortalException, SystemException {
+
 		MBMailingList mailingList = mbMailingListPersistence.findByPrimaryKey(
 			mailingListId);
 
@@ -127,7 +130,7 @@ public class MBMailingListLocalServiceImpl
 
 	@Override
 	public void deleteMailingList(MBMailingList mailingList)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		unscheduleMailingList(mailingList);
 
@@ -136,7 +139,7 @@ public class MBMailingListLocalServiceImpl
 
 	@Override
 	public MBMailingList getCategoryMailingList(long groupId, long categoryId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return mbMailingListPersistence.findByG_C(groupId, categoryId);
 	}
@@ -150,7 +153,7 @@ public class MBMailingListLocalServiceImpl
 			int outServerPort, boolean outUseSSL, String outUserName,
 			String outPassword, boolean allowAnonymous, boolean active,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		// Mailing list
 

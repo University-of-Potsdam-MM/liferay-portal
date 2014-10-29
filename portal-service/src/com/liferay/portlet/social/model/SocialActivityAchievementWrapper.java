@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -111,15 +111,24 @@ public class SocialActivityAchievementWrapper
 		}
 	}
 
+	/**
+	* Returns the primary key of this social activity achievement.
+	*
+	* @return the primary key of this social activity achievement
+	*/
 	@Override
-	public java.lang.Object clone() {
-		return new SocialActivityAchievementWrapper((SocialActivityAchievement)_socialActivityAchievement.clone());
+	public long getPrimaryKey() {
+		return _socialActivityAchievement.getPrimaryKey();
 	}
 
+	/**
+	* Sets the primary key of this social activity achievement.
+	*
+	* @param primaryKey the primary key of this social activity achievement
+	*/
 	@Override
-	public int compareTo(
-		com.liferay.portlet.social.model.SocialActivityAchievement socialActivityAchievement) {
-		return _socialActivityAchievement.compareTo(socialActivityAchievement);
+	public void setPrimaryKey(long primaryKey) {
+		_socialActivityAchievement.setPrimaryKey(primaryKey);
 	}
 
 	/**
@@ -133,38 +142,13 @@ public class SocialActivityAchievementWrapper
 	}
 
 	/**
-	* Returns the company ID of this social activity achievement.
+	* Sets the activity achievement ID of this social activity achievement.
 	*
-	* @return the company ID of this social activity achievement
+	* @param activityAchievementId the activity achievement ID of this social activity achievement
 	*/
 	@Override
-	public long getCompanyId() {
-		return _socialActivityAchievement.getCompanyId();
-	}
-
-	/**
-	* Returns the create date of this social activity achievement.
-	*
-	* @return the create date of this social activity achievement
-	*/
-	@Override
-	public long getCreateDate() {
-		return _socialActivityAchievement.getCreateDate();
-	}
-
-	@Override
-	public com.liferay.portlet.expando.model.ExpandoBridge getExpandoBridge() {
-		return _socialActivityAchievement.getExpandoBridge();
-	}
-
-	/**
-	* Returns the first in group of this social activity achievement.
-	*
-	* @return the first in group of this social activity achievement
-	*/
-	@Override
-	public boolean getFirstInGroup() {
-		return _socialActivityAchievement.getFirstInGroup();
+	public void setActivityAchievementId(long activityAchievementId) {
+		_socialActivityAchievement.setActivityAchievementId(activityAchievementId);
 	}
 
 	/**
@@ -178,98 +162,23 @@ public class SocialActivityAchievementWrapper
 	}
 
 	/**
-	* Returns the name of this social activity achievement.
+	* Sets the group ID of this social activity achievement.
 	*
-	* @return the name of this social activity achievement
+	* @param groupId the group ID of this social activity achievement
 	*/
 	@Override
-	public java.lang.String getName() {
-		return _socialActivityAchievement.getName();
+	public void setGroupId(long groupId) {
+		_socialActivityAchievement.setGroupId(groupId);
 	}
 
 	/**
-	* Returns the primary key of this social activity achievement.
+	* Returns the company ID of this social activity achievement.
 	*
-	* @return the primary key of this social activity achievement
+	* @return the company ID of this social activity achievement
 	*/
 	@Override
-	public long getPrimaryKey() {
-		return _socialActivityAchievement.getPrimaryKey();
-	}
-
-	@Override
-	public java.io.Serializable getPrimaryKeyObj() {
-		return _socialActivityAchievement.getPrimaryKeyObj();
-	}
-
-	/**
-	* Returns the user ID of this social activity achievement.
-	*
-	* @return the user ID of this social activity achievement
-	*/
-	@Override
-	public long getUserId() {
-		return _socialActivityAchievement.getUserId();
-	}
-
-	/**
-	* Returns the user uuid of this social activity achievement.
-	*
-	* @return the user uuid of this social activity achievement
-	*/
-	@Override
-	public java.lang.String getUserUuid() {
-		return _socialActivityAchievement.getUserUuid();
-	}
-
-	@Override
-	public int hashCode() {
-		return _socialActivityAchievement.hashCode();
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _socialActivityAchievement.isCachedModel();
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _socialActivityAchievement.isEscapedModel();
-	}
-
-	/**
-	* Returns <code>true</code> if this social activity achievement is first in group.
-	*
-	* @return <code>true</code> if this social activity achievement is first in group; <code>false</code> otherwise
-	*/
-	@Override
-	public boolean isFirstInGroup() {
-		return _socialActivityAchievement.isFirstInGroup();
-	}
-
-	@Override
-	public boolean isNew() {
-		return _socialActivityAchievement.isNew();
-	}
-
-	@Override
-	public void persist() {
-		_socialActivityAchievement.persist();
-	}
-
-	/**
-	* Sets the activity achievement ID of this social activity achievement.
-	*
-	* @param activityAchievementId the activity achievement ID of this social activity achievement
-	*/
-	@Override
-	public void setActivityAchievementId(long activityAchievementId) {
-		_socialActivityAchievement.setActivityAchievementId(activityAchievementId);
-	}
-
-	@Override
-	public void setCachedModel(boolean cachedModel) {
-		_socialActivityAchievement.setCachedModel(cachedModel);
+	public long getCompanyId() {
+		return _socialActivityAchievement.getCompanyId();
 	}
 
 	/**
@@ -283,6 +192,58 @@ public class SocialActivityAchievementWrapper
 	}
 
 	/**
+	* Returns the user ID of this social activity achievement.
+	*
+	* @return the user ID of this social activity achievement
+	*/
+	@Override
+	public long getUserId() {
+		return _socialActivityAchievement.getUserId();
+	}
+
+	/**
+	* Sets the user ID of this social activity achievement.
+	*
+	* @param userId the user ID of this social activity achievement
+	*/
+	@Override
+	public void setUserId(long userId) {
+		_socialActivityAchievement.setUserId(userId);
+	}
+
+	/**
+	* Returns the user uuid of this social activity achievement.
+	*
+	* @return the user uuid of this social activity achievement
+	* @throws SystemException if a system exception occurred
+	*/
+	@Override
+	public java.lang.String getUserUuid()
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return _socialActivityAchievement.getUserUuid();
+	}
+
+	/**
+	* Sets the user uuid of this social activity achievement.
+	*
+	* @param userUuid the user uuid of this social activity achievement
+	*/
+	@Override
+	public void setUserUuid(java.lang.String userUuid) {
+		_socialActivityAchievement.setUserUuid(userUuid);
+	}
+
+	/**
+	* Returns the create date of this social activity achievement.
+	*
+	* @return the create date of this social activity achievement
+	*/
+	@Override
+	public long getCreateDate() {
+		return _socialActivityAchievement.getCreateDate();
+	}
+
+	/**
 	* Sets the create date of this social activity achievement.
 	*
 	* @param createDate the create date of this social activity achievement
@@ -290,6 +251,96 @@ public class SocialActivityAchievementWrapper
 	@Override
 	public void setCreateDate(long createDate) {
 		_socialActivityAchievement.setCreateDate(createDate);
+	}
+
+	/**
+	* Returns the name of this social activity achievement.
+	*
+	* @return the name of this social activity achievement
+	*/
+	@Override
+	public java.lang.String getName() {
+		return _socialActivityAchievement.getName();
+	}
+
+	/**
+	* Sets the name of this social activity achievement.
+	*
+	* @param name the name of this social activity achievement
+	*/
+	@Override
+	public void setName(java.lang.String name) {
+		_socialActivityAchievement.setName(name);
+	}
+
+	/**
+	* Returns the first in group of this social activity achievement.
+	*
+	* @return the first in group of this social activity achievement
+	*/
+	@Override
+	public boolean getFirstInGroup() {
+		return _socialActivityAchievement.getFirstInGroup();
+	}
+
+	/**
+	* Returns <code>true</code> if this social activity achievement is first in group.
+	*
+	* @return <code>true</code> if this social activity achievement is first in group; <code>false</code> otherwise
+	*/
+	@Override
+	public boolean isFirstInGroup() {
+		return _socialActivityAchievement.isFirstInGroup();
+	}
+
+	/**
+	* Sets whether this social activity achievement is first in group.
+	*
+	* @param firstInGroup the first in group of this social activity achievement
+	*/
+	@Override
+	public void setFirstInGroup(boolean firstInGroup) {
+		_socialActivityAchievement.setFirstInGroup(firstInGroup);
+	}
+
+	@Override
+	public boolean isNew() {
+		return _socialActivityAchievement.isNew();
+	}
+
+	@Override
+	public void setNew(boolean n) {
+		_socialActivityAchievement.setNew(n);
+	}
+
+	@Override
+	public boolean isCachedModel() {
+		return _socialActivityAchievement.isCachedModel();
+	}
+
+	@Override
+	public void setCachedModel(boolean cachedModel) {
+		_socialActivityAchievement.setCachedModel(cachedModel);
+	}
+
+	@Override
+	public boolean isEscapedModel() {
+		return _socialActivityAchievement.isEscapedModel();
+	}
+
+	@Override
+	public java.io.Serializable getPrimaryKeyObj() {
+		return _socialActivityAchievement.getPrimaryKeyObj();
+	}
+
+	@Override
+	public void setPrimaryKeyObj(java.io.Serializable primaryKeyObj) {
+		_socialActivityAchievement.setPrimaryKeyObj(primaryKeyObj);
+	}
+
+	@Override
+	public com.liferay.portlet.expando.model.ExpandoBridge getExpandoBridge() {
+		return _socialActivityAchievement.getExpandoBridge();
 	}
 
 	@Override
@@ -310,74 +361,20 @@ public class SocialActivityAchievementWrapper
 		_socialActivityAchievement.setExpandoBridgeAttributes(serviceContext);
 	}
 
-	/**
-	* Sets whether this social activity achievement is first in group.
-	*
-	* @param firstInGroup the first in group of this social activity achievement
-	*/
 	@Override
-	public void setFirstInGroup(boolean firstInGroup) {
-		_socialActivityAchievement.setFirstInGroup(firstInGroup);
-	}
-
-	/**
-	* Sets the group ID of this social activity achievement.
-	*
-	* @param groupId the group ID of this social activity achievement
-	*/
-	@Override
-	public void setGroupId(long groupId) {
-		_socialActivityAchievement.setGroupId(groupId);
-	}
-
-	/**
-	* Sets the name of this social activity achievement.
-	*
-	* @param name the name of this social activity achievement
-	*/
-	@Override
-	public void setName(java.lang.String name) {
-		_socialActivityAchievement.setName(name);
+	public java.lang.Object clone() {
+		return new SocialActivityAchievementWrapper((SocialActivityAchievement)_socialActivityAchievement.clone());
 	}
 
 	@Override
-	public void setNew(boolean n) {
-		_socialActivityAchievement.setNew(n);
-	}
-
-	/**
-	* Sets the primary key of this social activity achievement.
-	*
-	* @param primaryKey the primary key of this social activity achievement
-	*/
-	@Override
-	public void setPrimaryKey(long primaryKey) {
-		_socialActivityAchievement.setPrimaryKey(primaryKey);
+	public int compareTo(
+		com.liferay.portlet.social.model.SocialActivityAchievement socialActivityAchievement) {
+		return _socialActivityAchievement.compareTo(socialActivityAchievement);
 	}
 
 	@Override
-	public void setPrimaryKeyObj(java.io.Serializable primaryKeyObj) {
-		_socialActivityAchievement.setPrimaryKeyObj(primaryKeyObj);
-	}
-
-	/**
-	* Sets the user ID of this social activity achievement.
-	*
-	* @param userId the user ID of this social activity achievement
-	*/
-	@Override
-	public void setUserId(long userId) {
-		_socialActivityAchievement.setUserId(userId);
-	}
-
-	/**
-	* Sets the user uuid of this social activity achievement.
-	*
-	* @param userUuid the user uuid of this social activity achievement
-	*/
-	@Override
-	public void setUserUuid(java.lang.String userUuid) {
-		_socialActivityAchievement.setUserUuid(userUuid);
+	public int hashCode() {
+		return _socialActivityAchievement.hashCode();
 	}
 
 	@Override
@@ -391,18 +388,24 @@ public class SocialActivityAchievementWrapper
 	}
 
 	@Override
-	public java.lang.String toString() {
-		return _socialActivityAchievement.toString();
-	}
-
-	@Override
 	public com.liferay.portlet.social.model.SocialActivityAchievement toUnescapedModel() {
 		return new SocialActivityAchievementWrapper(_socialActivityAchievement.toUnescapedModel());
 	}
 
 	@Override
+	public java.lang.String toString() {
+		return _socialActivityAchievement.toString();
+	}
+
+	@Override
 	public java.lang.String toXmlString() {
 		return _socialActivityAchievement.toXmlString();
+	}
+
+	@Override
+	public void persist()
+		throws com.liferay.portal.kernel.exception.SystemException {
+		_socialActivityAchievement.persist();
 	}
 
 	@Override
@@ -428,7 +431,6 @@ public class SocialActivityAchievementWrapper
 	/**
 	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedModel}
 	 */
-	@Deprecated
 	public SocialActivityAchievement getWrappedSocialActivityAchievement() {
 		return _socialActivityAchievement;
 	}
@@ -439,19 +441,9 @@ public class SocialActivityAchievementWrapper
 	}
 
 	@Override
-	public boolean isEntityCacheEnabled() {
-		return _socialActivityAchievement.isEntityCacheEnabled();
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return _socialActivityAchievement.isFinderCacheEnabled();
-	}
-
-	@Override
 	public void resetOriginalValues() {
 		_socialActivityAchievement.resetOriginalValues();
 	}
 
-	private final SocialActivityAchievement _socialActivityAchievement;
+	private SocialActivityAchievement _socialActivityAchievement;
 }

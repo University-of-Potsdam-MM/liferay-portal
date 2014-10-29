@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,6 +18,7 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.bean.PortalBeanLocatorUtil;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ReferenceRegistry;
 import com.liferay.portal.service.ServiceContext;
@@ -63,7 +64,8 @@ public class DLFileEntryTypeUtil {
 	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#countWithDynamicQuery(DynamicQuery)
 	 */
-	public static long countWithDynamicQuery(DynamicQuery dynamicQuery) {
+	public static long countWithDynamicQuery(DynamicQuery dynamicQuery)
+		throws SystemException {
 		return getPersistence().countWithDynamicQuery(dynamicQuery);
 	}
 
@@ -71,7 +73,7 @@ public class DLFileEntryTypeUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#findWithDynamicQuery(DynamicQuery)
 	 */
 	public static List<DLFileEntryType> findWithDynamicQuery(
-		DynamicQuery dynamicQuery) {
+		DynamicQuery dynamicQuery) throws SystemException {
 		return getPersistence().findWithDynamicQuery(dynamicQuery);
 	}
 
@@ -79,7 +81,8 @@ public class DLFileEntryTypeUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#findWithDynamicQuery(DynamicQuery, int, int)
 	 */
 	public static List<DLFileEntryType> findWithDynamicQuery(
-		DynamicQuery dynamicQuery, int start, int end) {
+		DynamicQuery dynamicQuery, int start, int end)
+		throws SystemException {
 		return getPersistence().findWithDynamicQuery(dynamicQuery, start, end);
 	}
 
@@ -88,7 +91,7 @@ public class DLFileEntryTypeUtil {
 	 */
 	public static List<DLFileEntryType> findWithDynamicQuery(
 		DynamicQuery dynamicQuery, int start, int end,
-		OrderByComparator<DLFileEntryType> orderByComparator) {
+		OrderByComparator orderByComparator) throws SystemException {
 		return getPersistence()
 				   .findWithDynamicQuery(dynamicQuery, start, end,
 			orderByComparator);
@@ -97,7 +100,8 @@ public class DLFileEntryTypeUtil {
 	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel)
 	 */
-	public static DLFileEntryType update(DLFileEntryType dlFileEntryType) {
+	public static DLFileEntryType update(DLFileEntryType dlFileEntryType)
+		throws SystemException {
 		return getPersistence().update(dlFileEntryType);
 	}
 
@@ -105,7 +109,7 @@ public class DLFileEntryTypeUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, ServiceContext)
 	 */
 	public static DLFileEntryType update(DLFileEntryType dlFileEntryType,
-		ServiceContext serviceContext) {
+		ServiceContext serviceContext) throws SystemException {
 		return getPersistence().update(dlFileEntryType, serviceContext);
 	}
 
@@ -114,9 +118,11 @@ public class DLFileEntryTypeUtil {
 	*
 	* @param uuid the uuid
 	* @return the matching document library file entry types
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.documentlibrary.model.DLFileEntryType> findByUuid(
-		java.lang.String uuid) {
+		java.lang.String uuid)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByUuid(uuid);
 	}
 
@@ -131,9 +137,11 @@ public class DLFileEntryTypeUtil {
 	* @param start the lower bound of the range of document library file entry types
 	* @param end the upper bound of the range of document library file entry types (not inclusive)
 	* @return the range of matching document library file entry types
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.documentlibrary.model.DLFileEntryType> findByUuid(
-		java.lang.String uuid, int start, int end) {
+		java.lang.String uuid, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByUuid(uuid, start, end);
 	}
 
@@ -149,10 +157,12 @@ public class DLFileEntryTypeUtil {
 	* @param end the upper bound of the range of document library file entry types (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching document library file entry types
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.documentlibrary.model.DLFileEntryType> findByUuid(
 		java.lang.String uuid, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.documentlibrary.model.DLFileEntryType> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByUuid(uuid, start, end, orderByComparator);
 	}
 
@@ -163,11 +173,13 @@ public class DLFileEntryTypeUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching document library file entry type
 	* @throws com.liferay.portlet.documentlibrary.NoSuchFileEntryTypeException if a matching document library file entry type could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.documentlibrary.model.DLFileEntryType findByUuid_First(
 		java.lang.String uuid,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.documentlibrary.model.DLFileEntryType> orderByComparator)
-		throws com.liferay.portlet.documentlibrary.NoSuchFileEntryTypeException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.documentlibrary.NoSuchFileEntryTypeException {
 		return getPersistence().findByUuid_First(uuid, orderByComparator);
 	}
 
@@ -177,10 +189,12 @@ public class DLFileEntryTypeUtil {
 	* @param uuid the uuid
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching document library file entry type, or <code>null</code> if a matching document library file entry type could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.documentlibrary.model.DLFileEntryType fetchByUuid_First(
 		java.lang.String uuid,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.documentlibrary.model.DLFileEntryType> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByUuid_First(uuid, orderByComparator);
 	}
 
@@ -191,11 +205,13 @@ public class DLFileEntryTypeUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching document library file entry type
 	* @throws com.liferay.portlet.documentlibrary.NoSuchFileEntryTypeException if a matching document library file entry type could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.documentlibrary.model.DLFileEntryType findByUuid_Last(
 		java.lang.String uuid,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.documentlibrary.model.DLFileEntryType> orderByComparator)
-		throws com.liferay.portlet.documentlibrary.NoSuchFileEntryTypeException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.documentlibrary.NoSuchFileEntryTypeException {
 		return getPersistence().findByUuid_Last(uuid, orderByComparator);
 	}
 
@@ -205,10 +221,12 @@ public class DLFileEntryTypeUtil {
 	* @param uuid the uuid
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching document library file entry type, or <code>null</code> if a matching document library file entry type could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.documentlibrary.model.DLFileEntryType fetchByUuid_Last(
 		java.lang.String uuid,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.documentlibrary.model.DLFileEntryType> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByUuid_Last(uuid, orderByComparator);
 	}
 
@@ -220,11 +238,13 @@ public class DLFileEntryTypeUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next document library file entry type
 	* @throws com.liferay.portlet.documentlibrary.NoSuchFileEntryTypeException if a document library file entry type with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.documentlibrary.model.DLFileEntryType[] findByUuid_PrevAndNext(
 		long fileEntryTypeId, java.lang.String uuid,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.documentlibrary.model.DLFileEntryType> orderByComparator)
-		throws com.liferay.portlet.documentlibrary.NoSuchFileEntryTypeException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.documentlibrary.NoSuchFileEntryTypeException {
 		return getPersistence()
 				   .findByUuid_PrevAndNext(fileEntryTypeId, uuid,
 			orderByComparator);
@@ -234,8 +254,10 @@ public class DLFileEntryTypeUtil {
 	* Removes all the document library file entry types where uuid = &#63; from the database.
 	*
 	* @param uuid the uuid
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByUuid(java.lang.String uuid) {
+	public static void removeByUuid(java.lang.String uuid)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeByUuid(uuid);
 	}
 
@@ -244,8 +266,10 @@ public class DLFileEntryTypeUtil {
 	*
 	* @param uuid the uuid
 	* @return the number of matching document library file entry types
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByUuid(java.lang.String uuid) {
+	public static int countByUuid(java.lang.String uuid)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByUuid(uuid);
 	}
 
@@ -256,10 +280,12 @@ public class DLFileEntryTypeUtil {
 	* @param groupId the group ID
 	* @return the matching document library file entry type
 	* @throws com.liferay.portlet.documentlibrary.NoSuchFileEntryTypeException if a matching document library file entry type could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.documentlibrary.model.DLFileEntryType findByUUID_G(
 		java.lang.String uuid, long groupId)
-		throws com.liferay.portlet.documentlibrary.NoSuchFileEntryTypeException {
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.documentlibrary.NoSuchFileEntryTypeException {
 		return getPersistence().findByUUID_G(uuid, groupId);
 	}
 
@@ -269,9 +295,11 @@ public class DLFileEntryTypeUtil {
 	* @param uuid the uuid
 	* @param groupId the group ID
 	* @return the matching document library file entry type, or <code>null</code> if a matching document library file entry type could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.documentlibrary.model.DLFileEntryType fetchByUUID_G(
-		java.lang.String uuid, long groupId) {
+		java.lang.String uuid, long groupId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByUUID_G(uuid, groupId);
 	}
 
@@ -282,9 +310,11 @@ public class DLFileEntryTypeUtil {
 	* @param groupId the group ID
 	* @param retrieveFromCache whether to use the finder cache
 	* @return the matching document library file entry type, or <code>null</code> if a matching document library file entry type could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.documentlibrary.model.DLFileEntryType fetchByUUID_G(
-		java.lang.String uuid, long groupId, boolean retrieveFromCache) {
+		java.lang.String uuid, long groupId, boolean retrieveFromCache)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByUUID_G(uuid, groupId, retrieveFromCache);
 	}
 
@@ -294,10 +324,12 @@ public class DLFileEntryTypeUtil {
 	* @param uuid the uuid
 	* @param groupId the group ID
 	* @return the document library file entry type that was removed
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.documentlibrary.model.DLFileEntryType removeByUUID_G(
 		java.lang.String uuid, long groupId)
-		throws com.liferay.portlet.documentlibrary.NoSuchFileEntryTypeException {
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.documentlibrary.NoSuchFileEntryTypeException {
 		return getPersistence().removeByUUID_G(uuid, groupId);
 	}
 
@@ -307,8 +339,10 @@ public class DLFileEntryTypeUtil {
 	* @param uuid the uuid
 	* @param groupId the group ID
 	* @return the number of matching document library file entry types
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByUUID_G(java.lang.String uuid, long groupId) {
+	public static int countByUUID_G(java.lang.String uuid, long groupId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByUUID_G(uuid, groupId);
 	}
 
@@ -318,9 +352,11 @@ public class DLFileEntryTypeUtil {
 	* @param uuid the uuid
 	* @param companyId the company ID
 	* @return the matching document library file entry types
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.documentlibrary.model.DLFileEntryType> findByUuid_C(
-		java.lang.String uuid, long companyId) {
+		java.lang.String uuid, long companyId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByUuid_C(uuid, companyId);
 	}
 
@@ -336,9 +372,11 @@ public class DLFileEntryTypeUtil {
 	* @param start the lower bound of the range of document library file entry types
 	* @param end the upper bound of the range of document library file entry types (not inclusive)
 	* @return the range of matching document library file entry types
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.documentlibrary.model.DLFileEntryType> findByUuid_C(
-		java.lang.String uuid, long companyId, int start, int end) {
+		java.lang.String uuid, long companyId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByUuid_C(uuid, companyId, start, end);
 	}
 
@@ -355,10 +393,12 @@ public class DLFileEntryTypeUtil {
 	* @param end the upper bound of the range of document library file entry types (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching document library file entry types
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.documentlibrary.model.DLFileEntryType> findByUuid_C(
 		java.lang.String uuid, long companyId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.documentlibrary.model.DLFileEntryType> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByUuid_C(uuid, companyId, start, end, orderByComparator);
 	}
@@ -371,11 +411,13 @@ public class DLFileEntryTypeUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching document library file entry type
 	* @throws com.liferay.portlet.documentlibrary.NoSuchFileEntryTypeException if a matching document library file entry type could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.documentlibrary.model.DLFileEntryType findByUuid_C_First(
 		java.lang.String uuid, long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.documentlibrary.model.DLFileEntryType> orderByComparator)
-		throws com.liferay.portlet.documentlibrary.NoSuchFileEntryTypeException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.documentlibrary.NoSuchFileEntryTypeException {
 		return getPersistence()
 				   .findByUuid_C_First(uuid, companyId, orderByComparator);
 	}
@@ -387,10 +429,12 @@ public class DLFileEntryTypeUtil {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching document library file entry type, or <code>null</code> if a matching document library file entry type could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.documentlibrary.model.DLFileEntryType fetchByUuid_C_First(
 		java.lang.String uuid, long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.documentlibrary.model.DLFileEntryType> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByUuid_C_First(uuid, companyId, orderByComparator);
 	}
@@ -403,11 +447,13 @@ public class DLFileEntryTypeUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching document library file entry type
 	* @throws com.liferay.portlet.documentlibrary.NoSuchFileEntryTypeException if a matching document library file entry type could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.documentlibrary.model.DLFileEntryType findByUuid_C_Last(
 		java.lang.String uuid, long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.documentlibrary.model.DLFileEntryType> orderByComparator)
-		throws com.liferay.portlet.documentlibrary.NoSuchFileEntryTypeException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.documentlibrary.NoSuchFileEntryTypeException {
 		return getPersistence()
 				   .findByUuid_C_Last(uuid, companyId, orderByComparator);
 	}
@@ -419,10 +465,12 @@ public class DLFileEntryTypeUtil {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching document library file entry type, or <code>null</code> if a matching document library file entry type could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.documentlibrary.model.DLFileEntryType fetchByUuid_C_Last(
 		java.lang.String uuid, long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.documentlibrary.model.DLFileEntryType> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByUuid_C_Last(uuid, companyId, orderByComparator);
 	}
@@ -436,11 +484,13 @@ public class DLFileEntryTypeUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next document library file entry type
 	* @throws com.liferay.portlet.documentlibrary.NoSuchFileEntryTypeException if a document library file entry type with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.documentlibrary.model.DLFileEntryType[] findByUuid_C_PrevAndNext(
 		long fileEntryTypeId, java.lang.String uuid, long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.documentlibrary.model.DLFileEntryType> orderByComparator)
-		throws com.liferay.portlet.documentlibrary.NoSuchFileEntryTypeException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.documentlibrary.NoSuchFileEntryTypeException {
 		return getPersistence()
 				   .findByUuid_C_PrevAndNext(fileEntryTypeId, uuid, companyId,
 			orderByComparator);
@@ -451,8 +501,10 @@ public class DLFileEntryTypeUtil {
 	*
 	* @param uuid the uuid
 	* @param companyId the company ID
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByUuid_C(java.lang.String uuid, long companyId) {
+	public static void removeByUuid_C(java.lang.String uuid, long companyId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeByUuid_C(uuid, companyId);
 	}
 
@@ -462,8 +514,10 @@ public class DLFileEntryTypeUtil {
 	* @param uuid the uuid
 	* @param companyId the company ID
 	* @return the number of matching document library file entry types
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByUuid_C(java.lang.String uuid, long companyId) {
+	public static int countByUuid_C(java.lang.String uuid, long companyId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByUuid_C(uuid, companyId);
 	}
 
@@ -472,9 +526,11 @@ public class DLFileEntryTypeUtil {
 	*
 	* @param groupId the group ID
 	* @return the matching document library file entry types
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.documentlibrary.model.DLFileEntryType> findByGroupId(
-		long groupId) {
+		long groupId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByGroupId(groupId);
 	}
 
@@ -489,9 +545,11 @@ public class DLFileEntryTypeUtil {
 	* @param start the lower bound of the range of document library file entry types
 	* @param end the upper bound of the range of document library file entry types (not inclusive)
 	* @return the range of matching document library file entry types
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.documentlibrary.model.DLFileEntryType> findByGroupId(
-		long groupId, int start, int end) {
+		long groupId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByGroupId(groupId, start, end);
 	}
 
@@ -507,10 +565,12 @@ public class DLFileEntryTypeUtil {
 	* @param end the upper bound of the range of document library file entry types (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching document library file entry types
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.documentlibrary.model.DLFileEntryType> findByGroupId(
 		long groupId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.documentlibrary.model.DLFileEntryType> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByGroupId(groupId, start, end, orderByComparator);
 	}
@@ -522,11 +582,13 @@ public class DLFileEntryTypeUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching document library file entry type
 	* @throws com.liferay.portlet.documentlibrary.NoSuchFileEntryTypeException if a matching document library file entry type could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.documentlibrary.model.DLFileEntryType findByGroupId_First(
 		long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.documentlibrary.model.DLFileEntryType> orderByComparator)
-		throws com.liferay.portlet.documentlibrary.NoSuchFileEntryTypeException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.documentlibrary.NoSuchFileEntryTypeException {
 		return getPersistence().findByGroupId_First(groupId, orderByComparator);
 	}
 
@@ -536,10 +598,12 @@ public class DLFileEntryTypeUtil {
 	* @param groupId the group ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching document library file entry type, or <code>null</code> if a matching document library file entry type could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.documentlibrary.model.DLFileEntryType fetchByGroupId_First(
 		long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.documentlibrary.model.DLFileEntryType> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByGroupId_First(groupId, orderByComparator);
 	}
 
@@ -550,11 +614,13 @@ public class DLFileEntryTypeUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching document library file entry type
 	* @throws com.liferay.portlet.documentlibrary.NoSuchFileEntryTypeException if a matching document library file entry type could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.documentlibrary.model.DLFileEntryType findByGroupId_Last(
 		long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.documentlibrary.model.DLFileEntryType> orderByComparator)
-		throws com.liferay.portlet.documentlibrary.NoSuchFileEntryTypeException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.documentlibrary.NoSuchFileEntryTypeException {
 		return getPersistence().findByGroupId_Last(groupId, orderByComparator);
 	}
 
@@ -564,10 +630,12 @@ public class DLFileEntryTypeUtil {
 	* @param groupId the group ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching document library file entry type, or <code>null</code> if a matching document library file entry type could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.documentlibrary.model.DLFileEntryType fetchByGroupId_Last(
 		long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.documentlibrary.model.DLFileEntryType> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByGroupId_Last(groupId, orderByComparator);
 	}
 
@@ -579,11 +647,13 @@ public class DLFileEntryTypeUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next document library file entry type
 	* @throws com.liferay.portlet.documentlibrary.NoSuchFileEntryTypeException if a document library file entry type with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.documentlibrary.model.DLFileEntryType[] findByGroupId_PrevAndNext(
 		long fileEntryTypeId, long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.documentlibrary.model.DLFileEntryType> orderByComparator)
-		throws com.liferay.portlet.documentlibrary.NoSuchFileEntryTypeException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.documentlibrary.NoSuchFileEntryTypeException {
 		return getPersistence()
 				   .findByGroupId_PrevAndNext(fileEntryTypeId, groupId,
 			orderByComparator);
@@ -594,9 +664,11 @@ public class DLFileEntryTypeUtil {
 	*
 	* @param groupId the group ID
 	* @return the matching document library file entry types that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.documentlibrary.model.DLFileEntryType> filterFindByGroupId(
-		long groupId) {
+		long groupId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().filterFindByGroupId(groupId);
 	}
 
@@ -611,9 +683,11 @@ public class DLFileEntryTypeUtil {
 	* @param start the lower bound of the range of document library file entry types
 	* @param end the upper bound of the range of document library file entry types (not inclusive)
 	* @return the range of matching document library file entry types that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.documentlibrary.model.DLFileEntryType> filterFindByGroupId(
-		long groupId, int start, int end) {
+		long groupId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().filterFindByGroupId(groupId, start, end);
 	}
 
@@ -629,10 +703,12 @@ public class DLFileEntryTypeUtil {
 	* @param end the upper bound of the range of document library file entry types (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching document library file entry types that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.documentlibrary.model.DLFileEntryType> filterFindByGroupId(
 		long groupId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.documentlibrary.model.DLFileEntryType> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .filterFindByGroupId(groupId, start, end, orderByComparator);
 	}
@@ -645,11 +721,13 @@ public class DLFileEntryTypeUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next document library file entry type
 	* @throws com.liferay.portlet.documentlibrary.NoSuchFileEntryTypeException if a document library file entry type with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.documentlibrary.model.DLFileEntryType[] filterFindByGroupId_PrevAndNext(
 		long fileEntryTypeId, long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.documentlibrary.model.DLFileEntryType> orderByComparator)
-		throws com.liferay.portlet.documentlibrary.NoSuchFileEntryTypeException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.documentlibrary.NoSuchFileEntryTypeException {
 		return getPersistence()
 				   .filterFindByGroupId_PrevAndNext(fileEntryTypeId, groupId,
 			orderByComparator);
@@ -660,9 +738,11 @@ public class DLFileEntryTypeUtil {
 	*
 	* @param groupIds the group IDs
 	* @return the matching document library file entry types that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.documentlibrary.model.DLFileEntryType> filterFindByGroupId(
-		long[] groupIds) {
+		long[] groupIds)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().filterFindByGroupId(groupIds);
 	}
 
@@ -677,9 +757,11 @@ public class DLFileEntryTypeUtil {
 	* @param start the lower bound of the range of document library file entry types
 	* @param end the upper bound of the range of document library file entry types (not inclusive)
 	* @return the range of matching document library file entry types that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.documentlibrary.model.DLFileEntryType> filterFindByGroupId(
-		long[] groupIds, int start, int end) {
+		long[] groupIds, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().filterFindByGroupId(groupIds, start, end);
 	}
 
@@ -695,10 +777,12 @@ public class DLFileEntryTypeUtil {
 	* @param end the upper bound of the range of document library file entry types (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching document library file entry types that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.documentlibrary.model.DLFileEntryType> filterFindByGroupId(
 		long[] groupIds, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.documentlibrary.model.DLFileEntryType> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .filterFindByGroupId(groupIds, start, end, orderByComparator);
 	}
@@ -712,9 +796,11 @@ public class DLFileEntryTypeUtil {
 	*
 	* @param groupIds the group IDs
 	* @return the matching document library file entry types
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.documentlibrary.model.DLFileEntryType> findByGroupId(
-		long[] groupIds) {
+		long[] groupIds)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByGroupId(groupIds);
 	}
 
@@ -729,9 +815,11 @@ public class DLFileEntryTypeUtil {
 	* @param start the lower bound of the range of document library file entry types
 	* @param end the upper bound of the range of document library file entry types (not inclusive)
 	* @return the range of matching document library file entry types
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.documentlibrary.model.DLFileEntryType> findByGroupId(
-		long[] groupIds, int start, int end) {
+		long[] groupIds, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByGroupId(groupIds, start, end);
 	}
 
@@ -747,10 +835,12 @@ public class DLFileEntryTypeUtil {
 	* @param end the upper bound of the range of document library file entry types (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching document library file entry types
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.documentlibrary.model.DLFileEntryType> findByGroupId(
 		long[] groupIds, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.documentlibrary.model.DLFileEntryType> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByGroupId(groupIds, start, end, orderByComparator);
 	}
@@ -759,8 +849,10 @@ public class DLFileEntryTypeUtil {
 	* Removes all the document library file entry types where groupId = &#63; from the database.
 	*
 	* @param groupId the group ID
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByGroupId(long groupId) {
+	public static void removeByGroupId(long groupId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeByGroupId(groupId);
 	}
 
@@ -769,8 +861,10 @@ public class DLFileEntryTypeUtil {
 	*
 	* @param groupId the group ID
 	* @return the number of matching document library file entry types
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByGroupId(long groupId) {
+	public static int countByGroupId(long groupId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByGroupId(groupId);
 	}
 
@@ -779,8 +873,10 @@ public class DLFileEntryTypeUtil {
 	*
 	* @param groupIds the group IDs
 	* @return the number of matching document library file entry types
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByGroupId(long[] groupIds) {
+	public static int countByGroupId(long[] groupIds)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByGroupId(groupIds);
 	}
 
@@ -789,8 +885,10 @@ public class DLFileEntryTypeUtil {
 	*
 	* @param groupId the group ID
 	* @return the number of matching document library file entry types that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int filterCountByGroupId(long groupId) {
+	public static int filterCountByGroupId(long groupId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().filterCountByGroupId(groupId);
 	}
 
@@ -799,8 +897,10 @@ public class DLFileEntryTypeUtil {
 	*
 	* @param groupIds the group IDs
 	* @return the number of matching document library file entry types that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int filterCountByGroupId(long[] groupIds) {
+	public static int filterCountByGroupId(long[] groupIds)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().filterCountByGroupId(groupIds);
 	}
 
@@ -811,10 +911,12 @@ public class DLFileEntryTypeUtil {
 	* @param fileEntryTypeKey the file entry type key
 	* @return the matching document library file entry type
 	* @throws com.liferay.portlet.documentlibrary.NoSuchFileEntryTypeException if a matching document library file entry type could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.documentlibrary.model.DLFileEntryType findByG_F(
 		long groupId, java.lang.String fileEntryTypeKey)
-		throws com.liferay.portlet.documentlibrary.NoSuchFileEntryTypeException {
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.documentlibrary.NoSuchFileEntryTypeException {
 		return getPersistence().findByG_F(groupId, fileEntryTypeKey);
 	}
 
@@ -824,9 +926,11 @@ public class DLFileEntryTypeUtil {
 	* @param groupId the group ID
 	* @param fileEntryTypeKey the file entry type key
 	* @return the matching document library file entry type, or <code>null</code> if a matching document library file entry type could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.documentlibrary.model.DLFileEntryType fetchByG_F(
-		long groupId, java.lang.String fileEntryTypeKey) {
+		long groupId, java.lang.String fileEntryTypeKey)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByG_F(groupId, fileEntryTypeKey);
 	}
 
@@ -837,10 +941,12 @@ public class DLFileEntryTypeUtil {
 	* @param fileEntryTypeKey the file entry type key
 	* @param retrieveFromCache whether to use the finder cache
 	* @return the matching document library file entry type, or <code>null</code> if a matching document library file entry type could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.documentlibrary.model.DLFileEntryType fetchByG_F(
 		long groupId, java.lang.String fileEntryTypeKey,
-		boolean retrieveFromCache) {
+		boolean retrieveFromCache)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByG_F(groupId, fileEntryTypeKey, retrieveFromCache);
 	}
@@ -851,10 +957,12 @@ public class DLFileEntryTypeUtil {
 	* @param groupId the group ID
 	* @param fileEntryTypeKey the file entry type key
 	* @return the document library file entry type that was removed
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.documentlibrary.model.DLFileEntryType removeByG_F(
 		long groupId, java.lang.String fileEntryTypeKey)
-		throws com.liferay.portlet.documentlibrary.NoSuchFileEntryTypeException {
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.documentlibrary.NoSuchFileEntryTypeException {
 		return getPersistence().removeByG_F(groupId, fileEntryTypeKey);
 	}
 
@@ -864,8 +972,10 @@ public class DLFileEntryTypeUtil {
 	* @param groupId the group ID
 	* @param fileEntryTypeKey the file entry type key
 	* @return the number of matching document library file entry types
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByG_F(long groupId, java.lang.String fileEntryTypeKey) {
+	public static int countByG_F(long groupId, java.lang.String fileEntryTypeKey)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByG_F(groupId, fileEntryTypeKey);
 	}
 
@@ -906,15 +1016,18 @@ public class DLFileEntryTypeUtil {
 	* @param fileEntryTypeId the primary key of the document library file entry type
 	* @return the document library file entry type that was removed
 	* @throws com.liferay.portlet.documentlibrary.NoSuchFileEntryTypeException if a document library file entry type with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.documentlibrary.model.DLFileEntryType remove(
 		long fileEntryTypeId)
-		throws com.liferay.portlet.documentlibrary.NoSuchFileEntryTypeException {
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.documentlibrary.NoSuchFileEntryTypeException {
 		return getPersistence().remove(fileEntryTypeId);
 	}
 
 	public static com.liferay.portlet.documentlibrary.model.DLFileEntryType updateImpl(
-		com.liferay.portlet.documentlibrary.model.DLFileEntryType dlFileEntryType) {
+		com.liferay.portlet.documentlibrary.model.DLFileEntryType dlFileEntryType)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().updateImpl(dlFileEntryType);
 	}
 
@@ -924,10 +1037,12 @@ public class DLFileEntryTypeUtil {
 	* @param fileEntryTypeId the primary key of the document library file entry type
 	* @return the document library file entry type
 	* @throws com.liferay.portlet.documentlibrary.NoSuchFileEntryTypeException if a document library file entry type with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.documentlibrary.model.DLFileEntryType findByPrimaryKey(
 		long fileEntryTypeId)
-		throws com.liferay.portlet.documentlibrary.NoSuchFileEntryTypeException {
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.documentlibrary.NoSuchFileEntryTypeException {
 		return getPersistence().findByPrimaryKey(fileEntryTypeId);
 	}
 
@@ -936,23 +1051,22 @@ public class DLFileEntryTypeUtil {
 	*
 	* @param fileEntryTypeId the primary key of the document library file entry type
 	* @return the document library file entry type, or <code>null</code> if a document library file entry type with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.documentlibrary.model.DLFileEntryType fetchByPrimaryKey(
-		long fileEntryTypeId) {
+		long fileEntryTypeId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByPrimaryKey(fileEntryTypeId);
-	}
-
-	public static java.util.Map<java.io.Serializable, com.liferay.portlet.documentlibrary.model.DLFileEntryType> fetchByPrimaryKeys(
-		java.util.Set<java.io.Serializable> primaryKeys) {
-		return getPersistence().fetchByPrimaryKeys(primaryKeys);
 	}
 
 	/**
 	* Returns all the document library file entry types.
 	*
 	* @return the document library file entry types
+	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portlet.documentlibrary.model.DLFileEntryType> findAll() {
+	public static java.util.List<com.liferay.portlet.documentlibrary.model.DLFileEntryType> findAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll();
 	}
 
@@ -966,9 +1080,11 @@ public class DLFileEntryTypeUtil {
 	* @param start the lower bound of the range of document library file entry types
 	* @param end the upper bound of the range of document library file entry types (not inclusive)
 	* @return the range of document library file entry types
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.documentlibrary.model.DLFileEntryType> findAll(
-		int start, int end) {
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll(start, end);
 	}
 
@@ -983,17 +1099,22 @@ public class DLFileEntryTypeUtil {
 	* @param end the upper bound of the range of document library file entry types (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of document library file entry types
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.documentlibrary.model.DLFileEntryType> findAll(
 		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.documentlibrary.model.DLFileEntryType> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll(start, end, orderByComparator);
 	}
 
 	/**
 	* Removes all the document library file entry types from the database.
+	*
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeAll() {
+	public static void removeAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeAll();
 	}
 
@@ -1001,19 +1122,11 @@ public class DLFileEntryTypeUtil {
 	* Returns the number of document library file entry types.
 	*
 	* @return the number of document library file entry types
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countAll() {
+	public static int countAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countAll();
-	}
-
-	/**
-	* Returns the primaryKeys of document library folders associated with the document library file entry type.
-	*
-	* @param pk the primary key of the document library file entry type
-	* @return long[] of the primaryKeys of document library folders associated with the document library file entry type
-	*/
-	public static long[] getDLFolderPrimaryKeys(long pk) {
-		return getPersistence().getDLFolderPrimaryKeys(pk);
 	}
 
 	/**
@@ -1021,9 +1134,10 @@ public class DLFileEntryTypeUtil {
 	*
 	* @param pk the primary key of the document library file entry type
 	* @return the document library folders associated with the document library file entry type
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.documentlibrary.model.DLFolder> getDLFolders(
-		long pk) {
+		long pk) throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().getDLFolders(pk);
 	}
 
@@ -1038,9 +1152,11 @@ public class DLFileEntryTypeUtil {
 	* @param start the lower bound of the range of document library file entry types
 	* @param end the upper bound of the range of document library file entry types (not inclusive)
 	* @return the range of document library folders associated with the document library file entry type
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.documentlibrary.model.DLFolder> getDLFolders(
-		long pk, int start, int end) {
+		long pk, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().getDLFolders(pk, start, end);
 	}
 
@@ -1056,10 +1172,12 @@ public class DLFileEntryTypeUtil {
 	* @param end the upper bound of the range of document library file entry types (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of document library folders associated with the document library file entry type
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.documentlibrary.model.DLFolder> getDLFolders(
 		long pk, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.documentlibrary.model.DLFolder> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().getDLFolders(pk, start, end, orderByComparator);
 	}
 
@@ -1068,8 +1186,10 @@ public class DLFileEntryTypeUtil {
 	*
 	* @param pk the primary key of the document library file entry type
 	* @return the number of document library folders associated with the document library file entry type
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int getDLFoldersSize(long pk) {
+	public static int getDLFoldersSize(long pk)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().getDLFoldersSize(pk);
 	}
 
@@ -1079,8 +1199,10 @@ public class DLFileEntryTypeUtil {
 	* @param pk the primary key of the document library file entry type
 	* @param dlFolderPK the primary key of the document library folder
 	* @return <code>true</code> if the document library folder is associated with the document library file entry type; <code>false</code> otherwise
+	* @throws SystemException if a system exception occurred
 	*/
-	public static boolean containsDLFolder(long pk, long dlFolderPK) {
+	public static boolean containsDLFolder(long pk, long dlFolderPK)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().containsDLFolder(pk, dlFolderPK);
 	}
 
@@ -1089,8 +1211,10 @@ public class DLFileEntryTypeUtil {
 	*
 	* @param pk the primary key of the document library file entry type to check for associations with document library folders
 	* @return <code>true</code> if the document library file entry type has any document library folders associated with it; <code>false</code> otherwise
+	* @throws SystemException if a system exception occurred
 	*/
-	public static boolean containsDLFolders(long pk) {
+	public static boolean containsDLFolders(long pk)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().containsDLFolders(pk);
 	}
 
@@ -1099,8 +1223,10 @@ public class DLFileEntryTypeUtil {
 	*
 	* @param pk the primary key of the document library file entry type
 	* @param dlFolderPK the primary key of the document library folder
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void addDLFolder(long pk, long dlFolderPK) {
+	public static void addDLFolder(long pk, long dlFolderPK)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().addDLFolder(pk, dlFolderPK);
 	}
 
@@ -1109,9 +1235,11 @@ public class DLFileEntryTypeUtil {
 	*
 	* @param pk the primary key of the document library file entry type
 	* @param dlFolder the document library folder
+	* @throws SystemException if a system exception occurred
 	*/
 	public static void addDLFolder(long pk,
-		com.liferay.portlet.documentlibrary.model.DLFolder dlFolder) {
+		com.liferay.portlet.documentlibrary.model.DLFolder dlFolder)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().addDLFolder(pk, dlFolder);
 	}
 
@@ -1120,8 +1248,10 @@ public class DLFileEntryTypeUtil {
 	*
 	* @param pk the primary key of the document library file entry type
 	* @param dlFolderPKs the primary keys of the document library folders
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void addDLFolders(long pk, long[] dlFolderPKs) {
+	public static void addDLFolders(long pk, long[] dlFolderPKs)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().addDLFolders(pk, dlFolderPKs);
 	}
 
@@ -1130,9 +1260,11 @@ public class DLFileEntryTypeUtil {
 	*
 	* @param pk the primary key of the document library file entry type
 	* @param dlFolders the document library folders
+	* @throws SystemException if a system exception occurred
 	*/
 	public static void addDLFolders(long pk,
-		java.util.List<com.liferay.portlet.documentlibrary.model.DLFolder> dlFolders) {
+		java.util.List<com.liferay.portlet.documentlibrary.model.DLFolder> dlFolders)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().addDLFolders(pk, dlFolders);
 	}
 
@@ -1140,8 +1272,10 @@ public class DLFileEntryTypeUtil {
 	* Clears all associations between the document library file entry type and its document library folders. Also notifies the appropriate model listeners and clears the mapping table finder cache.
 	*
 	* @param pk the primary key of the document library file entry type to clear the associated document library folders from
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void clearDLFolders(long pk) {
+	public static void clearDLFolders(long pk)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().clearDLFolders(pk);
 	}
 
@@ -1150,8 +1284,10 @@ public class DLFileEntryTypeUtil {
 	*
 	* @param pk the primary key of the document library file entry type
 	* @param dlFolderPK the primary key of the document library folder
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeDLFolder(long pk, long dlFolderPK) {
+	public static void removeDLFolder(long pk, long dlFolderPK)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeDLFolder(pk, dlFolderPK);
 	}
 
@@ -1160,9 +1296,11 @@ public class DLFileEntryTypeUtil {
 	*
 	* @param pk the primary key of the document library file entry type
 	* @param dlFolder the document library folder
+	* @throws SystemException if a system exception occurred
 	*/
 	public static void removeDLFolder(long pk,
-		com.liferay.portlet.documentlibrary.model.DLFolder dlFolder) {
+		com.liferay.portlet.documentlibrary.model.DLFolder dlFolder)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeDLFolder(pk, dlFolder);
 	}
 
@@ -1171,8 +1309,10 @@ public class DLFileEntryTypeUtil {
 	*
 	* @param pk the primary key of the document library file entry type
 	* @param dlFolderPKs the primary keys of the document library folders
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeDLFolders(long pk, long[] dlFolderPKs) {
+	public static void removeDLFolders(long pk, long[] dlFolderPKs)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeDLFolders(pk, dlFolderPKs);
 	}
 
@@ -1181,9 +1321,11 @@ public class DLFileEntryTypeUtil {
 	*
 	* @param pk the primary key of the document library file entry type
 	* @param dlFolders the document library folders
+	* @throws SystemException if a system exception occurred
 	*/
 	public static void removeDLFolders(long pk,
-		java.util.List<com.liferay.portlet.documentlibrary.model.DLFolder> dlFolders) {
+		java.util.List<com.liferay.portlet.documentlibrary.model.DLFolder> dlFolders)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeDLFolders(pk, dlFolders);
 	}
 
@@ -1192,8 +1334,10 @@ public class DLFileEntryTypeUtil {
 	*
 	* @param pk the primary key of the document library file entry type
 	* @param dlFolderPKs the primary keys of the document library folders to be associated with the document library file entry type
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void setDLFolders(long pk, long[] dlFolderPKs) {
+	public static void setDLFolders(long pk, long[] dlFolderPKs)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().setDLFolders(pk, dlFolderPKs);
 	}
 
@@ -1202,20 +1346,12 @@ public class DLFileEntryTypeUtil {
 	*
 	* @param pk the primary key of the document library file entry type
 	* @param dlFolders the document library folders to be associated with the document library file entry type
+	* @throws SystemException if a system exception occurred
 	*/
 	public static void setDLFolders(long pk,
-		java.util.List<com.liferay.portlet.documentlibrary.model.DLFolder> dlFolders) {
+		java.util.List<com.liferay.portlet.documentlibrary.model.DLFolder> dlFolders)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().setDLFolders(pk, dlFolders);
-	}
-
-	/**
-	* Returns the primaryKeys of d d m structures associated with the document library file entry type.
-	*
-	* @param pk the primary key of the document library file entry type
-	* @return long[] of the primaryKeys of d d m structures associated with the document library file entry type
-	*/
-	public static long[] getDDMStructurePrimaryKeys(long pk) {
-		return getPersistence().getDDMStructurePrimaryKeys(pk);
 	}
 
 	/**
@@ -1223,9 +1359,10 @@ public class DLFileEntryTypeUtil {
 	*
 	* @param pk the primary key of the document library file entry type
 	* @return the d d m structures associated with the document library file entry type
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.dynamicdatamapping.model.DDMStructure> getDDMStructures(
-		long pk) {
+		long pk) throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().getDDMStructures(pk);
 	}
 
@@ -1240,9 +1377,11 @@ public class DLFileEntryTypeUtil {
 	* @param start the lower bound of the range of document library file entry types
 	* @param end the upper bound of the range of document library file entry types (not inclusive)
 	* @return the range of d d m structures associated with the document library file entry type
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.dynamicdatamapping.model.DDMStructure> getDDMStructures(
-		long pk, int start, int end) {
+		long pk, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().getDDMStructures(pk, start, end);
 	}
 
@@ -1258,10 +1397,12 @@ public class DLFileEntryTypeUtil {
 	* @param end the upper bound of the range of document library file entry types (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of d d m structures associated with the document library file entry type
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.dynamicdatamapping.model.DDMStructure> getDDMStructures(
 		long pk, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.dynamicdatamapping.model.DDMStructure> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .getDDMStructures(pk, start, end, orderByComparator);
 	}
@@ -1271,8 +1412,10 @@ public class DLFileEntryTypeUtil {
 	*
 	* @param pk the primary key of the document library file entry type
 	* @return the number of d d m structures associated with the document library file entry type
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int getDDMStructuresSize(long pk) {
+	public static int getDDMStructuresSize(long pk)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().getDDMStructuresSize(pk);
 	}
 
@@ -1282,8 +1425,10 @@ public class DLFileEntryTypeUtil {
 	* @param pk the primary key of the document library file entry type
 	* @param ddmStructurePK the primary key of the d d m structure
 	* @return <code>true</code> if the d d m structure is associated with the document library file entry type; <code>false</code> otherwise
+	* @throws SystemException if a system exception occurred
 	*/
-	public static boolean containsDDMStructure(long pk, long ddmStructurePK) {
+	public static boolean containsDDMStructure(long pk, long ddmStructurePK)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().containsDDMStructure(pk, ddmStructurePK);
 	}
 
@@ -1292,8 +1437,10 @@ public class DLFileEntryTypeUtil {
 	*
 	* @param pk the primary key of the document library file entry type to check for associations with d d m structures
 	* @return <code>true</code> if the document library file entry type has any d d m structures associated with it; <code>false</code> otherwise
+	* @throws SystemException if a system exception occurred
 	*/
-	public static boolean containsDDMStructures(long pk) {
+	public static boolean containsDDMStructures(long pk)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().containsDDMStructures(pk);
 	}
 
@@ -1302,8 +1449,10 @@ public class DLFileEntryTypeUtil {
 	*
 	* @param pk the primary key of the document library file entry type
 	* @param ddmStructurePK the primary key of the d d m structure
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void addDDMStructure(long pk, long ddmStructurePK) {
+	public static void addDDMStructure(long pk, long ddmStructurePK)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().addDDMStructure(pk, ddmStructurePK);
 	}
 
@@ -1312,9 +1461,11 @@ public class DLFileEntryTypeUtil {
 	*
 	* @param pk the primary key of the document library file entry type
 	* @param ddmStructure the d d m structure
+	* @throws SystemException if a system exception occurred
 	*/
 	public static void addDDMStructure(long pk,
-		com.liferay.portlet.dynamicdatamapping.model.DDMStructure ddmStructure) {
+		com.liferay.portlet.dynamicdatamapping.model.DDMStructure ddmStructure)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().addDDMStructure(pk, ddmStructure);
 	}
 
@@ -1323,8 +1474,10 @@ public class DLFileEntryTypeUtil {
 	*
 	* @param pk the primary key of the document library file entry type
 	* @param ddmStructurePKs the primary keys of the d d m structures
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void addDDMStructures(long pk, long[] ddmStructurePKs) {
+	public static void addDDMStructures(long pk, long[] ddmStructurePKs)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().addDDMStructures(pk, ddmStructurePKs);
 	}
 
@@ -1333,9 +1486,11 @@ public class DLFileEntryTypeUtil {
 	*
 	* @param pk the primary key of the document library file entry type
 	* @param ddmStructures the d d m structures
+	* @throws SystemException if a system exception occurred
 	*/
 	public static void addDDMStructures(long pk,
-		java.util.List<com.liferay.portlet.dynamicdatamapping.model.DDMStructure> ddmStructures) {
+		java.util.List<com.liferay.portlet.dynamicdatamapping.model.DDMStructure> ddmStructures)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().addDDMStructures(pk, ddmStructures);
 	}
 
@@ -1343,8 +1498,10 @@ public class DLFileEntryTypeUtil {
 	* Clears all associations between the document library file entry type and its d d m structures. Also notifies the appropriate model listeners and clears the mapping table finder cache.
 	*
 	* @param pk the primary key of the document library file entry type to clear the associated d d m structures from
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void clearDDMStructures(long pk) {
+	public static void clearDDMStructures(long pk)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().clearDDMStructures(pk);
 	}
 
@@ -1353,8 +1510,10 @@ public class DLFileEntryTypeUtil {
 	*
 	* @param pk the primary key of the document library file entry type
 	* @param ddmStructurePK the primary key of the d d m structure
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeDDMStructure(long pk, long ddmStructurePK) {
+	public static void removeDDMStructure(long pk, long ddmStructurePK)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeDDMStructure(pk, ddmStructurePK);
 	}
 
@@ -1363,9 +1522,11 @@ public class DLFileEntryTypeUtil {
 	*
 	* @param pk the primary key of the document library file entry type
 	* @param ddmStructure the d d m structure
+	* @throws SystemException if a system exception occurred
 	*/
 	public static void removeDDMStructure(long pk,
-		com.liferay.portlet.dynamicdatamapping.model.DDMStructure ddmStructure) {
+		com.liferay.portlet.dynamicdatamapping.model.DDMStructure ddmStructure)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeDDMStructure(pk, ddmStructure);
 	}
 
@@ -1374,8 +1535,10 @@ public class DLFileEntryTypeUtil {
 	*
 	* @param pk the primary key of the document library file entry type
 	* @param ddmStructurePKs the primary keys of the d d m structures
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeDDMStructures(long pk, long[] ddmStructurePKs) {
+	public static void removeDDMStructures(long pk, long[] ddmStructurePKs)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeDDMStructures(pk, ddmStructurePKs);
 	}
 
@@ -1384,9 +1547,11 @@ public class DLFileEntryTypeUtil {
 	*
 	* @param pk the primary key of the document library file entry type
 	* @param ddmStructures the d d m structures
+	* @throws SystemException if a system exception occurred
 	*/
 	public static void removeDDMStructures(long pk,
-		java.util.List<com.liferay.portlet.dynamicdatamapping.model.DDMStructure> ddmStructures) {
+		java.util.List<com.liferay.portlet.dynamicdatamapping.model.DDMStructure> ddmStructures)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeDDMStructures(pk, ddmStructures);
 	}
 
@@ -1395,8 +1560,10 @@ public class DLFileEntryTypeUtil {
 	*
 	* @param pk the primary key of the document library file entry type
 	* @param ddmStructurePKs the primary keys of the d d m structures to be associated with the document library file entry type
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void setDDMStructures(long pk, long[] ddmStructurePKs) {
+	public static void setDDMStructures(long pk, long[] ddmStructurePKs)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().setDDMStructures(pk, ddmStructurePKs);
 	}
 
@@ -1405,9 +1572,11 @@ public class DLFileEntryTypeUtil {
 	*
 	* @param pk the primary key of the document library file entry type
 	* @param ddmStructures the d d m structures to be associated with the document library file entry type
+	* @throws SystemException if a system exception occurred
 	*/
 	public static void setDDMStructures(long pk,
-		java.util.List<com.liferay.portlet.dynamicdatamapping.model.DDMStructure> ddmStructures) {
+		java.util.List<com.liferay.portlet.dynamicdatamapping.model.DDMStructure> ddmStructures)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().setDDMStructures(pk, ddmStructures);
 	}
 
@@ -1425,7 +1594,6 @@ public class DLFileEntryTypeUtil {
 	/**
 	 * @deprecated As of 6.2.0
 	 */
-	@Deprecated
 	public void setPersistence(DLFileEntryTypePersistence persistence) {
 	}
 

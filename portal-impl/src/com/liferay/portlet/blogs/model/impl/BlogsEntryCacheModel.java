@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -13,8 +13,6 @@
  */
 
 package com.liferay.portlet.blogs.model.impl;
-
-import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
@@ -36,12 +34,11 @@ import java.util.Date;
  * @see BlogsEntry
  * @generated
  */
-@ProviderType
 public class BlogsEntryCacheModel implements CacheModel<BlogsEntry>,
 	Externalizable {
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(51);
+		StringBundler sb = new StringBundler(47);
 
 		sb.append("{uuid=");
 		sb.append(uuid);
@@ -61,8 +58,6 @@ public class BlogsEntryCacheModel implements CacheModel<BlogsEntry>,
 		sb.append(modifiedDate);
 		sb.append(", title=");
 		sb.append(title);
-		sb.append(", subtitle=");
-		sb.append(subtitle);
 		sb.append(", urlTitle=");
 		sb.append(urlTitle);
 		sb.append(", description=");
@@ -79,8 +74,6 @@ public class BlogsEntryCacheModel implements CacheModel<BlogsEntry>,
 		sb.append(trackbacks);
 		sb.append(", smallImage=");
 		sb.append(smallImage);
-		sb.append(", smallImageFileEntryId=");
-		sb.append(smallImageFileEntryId);
 		sb.append(", smallImageId=");
 		sb.append(smallImageId);
 		sb.append(", smallImageURL=");
@@ -142,13 +135,6 @@ public class BlogsEntryCacheModel implements CacheModel<BlogsEntry>,
 			blogsEntryImpl.setTitle(title);
 		}
 
-		if (subtitle == null) {
-			blogsEntryImpl.setSubtitle(StringPool.BLANK);
-		}
-		else {
-			blogsEntryImpl.setSubtitle(subtitle);
-		}
-
 		if (urlTitle == null) {
 			blogsEntryImpl.setUrlTitle(StringPool.BLANK);
 		}
@@ -188,7 +174,6 @@ public class BlogsEntryCacheModel implements CacheModel<BlogsEntry>,
 		}
 
 		blogsEntryImpl.setSmallImage(smallImage);
-		blogsEntryImpl.setSmallImageFileEntryId(smallImageFileEntryId);
 		blogsEntryImpl.setSmallImageId(smallImageId);
 
 		if (smallImageURL == null) {
@@ -231,7 +216,6 @@ public class BlogsEntryCacheModel implements CacheModel<BlogsEntry>,
 		createDate = objectInput.readLong();
 		modifiedDate = objectInput.readLong();
 		title = objectInput.readUTF();
-		subtitle = objectInput.readUTF();
 		urlTitle = objectInput.readUTF();
 		description = objectInput.readUTF();
 		content = objectInput.readUTF();
@@ -240,7 +224,6 @@ public class BlogsEntryCacheModel implements CacheModel<BlogsEntry>,
 		allowTrackbacks = objectInput.readBoolean();
 		trackbacks = objectInput.readUTF();
 		smallImage = objectInput.readBoolean();
-		smallImageFileEntryId = objectInput.readLong();
 		smallImageId = objectInput.readLong();
 		smallImageURL = objectInput.readUTF();
 		status = objectInput.readInt();
@@ -281,13 +264,6 @@ public class BlogsEntryCacheModel implements CacheModel<BlogsEntry>,
 			objectOutput.writeUTF(title);
 		}
 
-		if (subtitle == null) {
-			objectOutput.writeUTF(StringPool.BLANK);
-		}
-		else {
-			objectOutput.writeUTF(subtitle);
-		}
-
 		if (urlTitle == null) {
 			objectOutput.writeUTF(StringPool.BLANK);
 		}
@@ -321,7 +297,6 @@ public class BlogsEntryCacheModel implements CacheModel<BlogsEntry>,
 		}
 
 		objectOutput.writeBoolean(smallImage);
-		objectOutput.writeLong(smallImageFileEntryId);
 		objectOutput.writeLong(smallImageId);
 
 		if (smallImageURL == null) {
@@ -353,7 +328,6 @@ public class BlogsEntryCacheModel implements CacheModel<BlogsEntry>,
 	public long createDate;
 	public long modifiedDate;
 	public String title;
-	public String subtitle;
 	public String urlTitle;
 	public String description;
 	public String content;
@@ -362,7 +336,6 @@ public class BlogsEntryCacheModel implements CacheModel<BlogsEntry>,
 	public boolean allowTrackbacks;
 	public String trackbacks;
 	public boolean smallImage;
-	public long smallImageFileEntryId;
 	public long smallImageId;
 	public String smallImageURL;
 	public int status;

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,11 +14,9 @@
 
 package com.liferay.portal.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.LocaleException;
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
-import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSON;
 import com.liferay.portal.kernel.lar.StagedModelType;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -32,9 +30,7 @@ import com.liferay.portal.model.CacheModel;
 import com.liferay.portal.model.Role;
 import com.liferay.portal.model.RoleModel;
 import com.liferay.portal.model.RoleSoap;
-import com.liferay.portal.model.User;
 import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.service.UserLocalServiceUtil;
 import com.liferay.portal.util.PortalUtil;
 
 import com.liferay.portlet.expando.model.ExpandoBridge;
@@ -67,7 +63,6 @@ import java.util.TreeSet;
  * @generated
  */
 @JSON(strict = true)
-@ProviderType
 public class RoleModelImpl extends BaseModelImpl<Role> implements RoleModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
@@ -76,7 +71,6 @@ public class RoleModelImpl extends BaseModelImpl<Role> implements RoleModel {
 	 */
 	public static final String TABLE_NAME = "Role_";
 	public static final Object[][] TABLE_COLUMNS = {
-			{ "mvccVersion", Types.BIGINT },
 			{ "uuid_", Types.VARCHAR },
 			{ "roleId", Types.BIGINT },
 			{ "companyId", Types.BIGINT },
@@ -92,7 +86,7 @@ public class RoleModelImpl extends BaseModelImpl<Role> implements RoleModel {
 			{ "type_", Types.INTEGER },
 			{ "subtype", Types.VARCHAR }
 		};
-	public static final String TABLE_SQL_CREATE = "create table Role_ (mvccVersion LONG default 0,uuid_ VARCHAR(75) null,roleId LONG not null primary key,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,classNameId LONG,classPK LONG,name VARCHAR(75) null,title STRING null,description STRING null,type_ INTEGER,subtype VARCHAR(75) null)";
+	public static final String TABLE_SQL_CREATE = "create table Role_ (uuid_ VARCHAR(75) null,roleId LONG not null primary key,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,classNameId LONG,classPK LONG,name VARCHAR(75) null,title STRING null,description STRING null,type_ INTEGER,subtype VARCHAR(75) null)";
 	public static final String TABLE_SQL_DROP = "drop table Role_";
 	public static final String ORDER_BY_JPQL = " ORDER BY role.name ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY Role_.name ASC";
@@ -108,13 +102,13 @@ public class RoleModelImpl extends BaseModelImpl<Role> implements RoleModel {
 	public static final boolean COLUMN_BITMASK_ENABLED = GetterUtil.getBoolean(com.liferay.portal.util.PropsUtil.get(
 				"value.object.column.bitmask.enabled.com.liferay.portal.model.Role"),
 			true);
-	public static final long CLASSNAMEID_COLUMN_BITMASK = 1L;
-	public static final long CLASSPK_COLUMN_BITMASK = 2L;
-	public static final long COMPANYID_COLUMN_BITMASK = 4L;
-	public static final long NAME_COLUMN_BITMASK = 8L;
-	public static final long SUBTYPE_COLUMN_BITMASK = 16L;
-	public static final long TYPE_COLUMN_BITMASK = 32L;
-	public static final long UUID_COLUMN_BITMASK = 64L;
+	public static long CLASSNAMEID_COLUMN_BITMASK = 1L;
+	public static long CLASSPK_COLUMN_BITMASK = 2L;
+	public static long COMPANYID_COLUMN_BITMASK = 4L;
+	public static long NAME_COLUMN_BITMASK = 8L;
+	public static long SUBTYPE_COLUMN_BITMASK = 16L;
+	public static long TYPE_COLUMN_BITMASK = 32L;
+	public static long UUID_COLUMN_BITMASK = 64L;
 
 	/**
 	 * Converts the soap model instance into a normal model instance.
@@ -129,7 +123,6 @@ public class RoleModelImpl extends BaseModelImpl<Role> implements RoleModel {
 
 		Role model = new RoleImpl();
 
-		model.setMvccVersion(soapModel.getMvccVersion());
 		model.setUuid(soapModel.getUuid());
 		model.setRoleId(soapModel.getRoleId());
 		model.setCompanyId(soapModel.getCompanyId());
@@ -178,8 +171,8 @@ public class RoleModelImpl extends BaseModelImpl<Role> implements RoleModel {
 				"value.object.finder.cache.enabled.Groups_Roles"), true);
 	public static final String MAPPING_TABLE_USERS_ROLES_NAME = "Users_Roles";
 	public static final Object[][] MAPPING_TABLE_USERS_ROLES_COLUMNS = {
-			{ "roleId", Types.BIGINT },
-			{ "userId", Types.BIGINT }
+			{ "userId", Types.BIGINT },
+			{ "roleId", Types.BIGINT }
 		};
 	public static final String MAPPING_TABLE_USERS_ROLES_SQL_CREATE = "create table Users_Roles (roleId LONG not null,userId LONG not null,primary key (roleId, userId))";
 	public static final boolean FINDER_CACHE_ENABLED_USERS_ROLES = GetterUtil.getBoolean(com.liferay.portal.util.PropsUtil.get(
@@ -224,7 +217,6 @@ public class RoleModelImpl extends BaseModelImpl<Role> implements RoleModel {
 	public Map<String, Object> getModelAttributes() {
 		Map<String, Object> attributes = new HashMap<String, Object>();
 
-		attributes.put("mvccVersion", getMvccVersion());
 		attributes.put("uuid", getUuid());
 		attributes.put("roleId", getRoleId());
 		attributes.put("companyId", getCompanyId());
@@ -240,20 +232,11 @@ public class RoleModelImpl extends BaseModelImpl<Role> implements RoleModel {
 		attributes.put("type", getType());
 		attributes.put("subtype", getSubtype());
 
-		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
-		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
-
 		return attributes;
 	}
 
 	@Override
 	public void setModelAttributes(Map<String, Object> attributes) {
-		Long mvccVersion = (Long)attributes.get("mvccVersion");
-
-		if (mvccVersion != null) {
-			setMvccVersion(mvccVersion);
-		}
-
 		String uuid = (String)attributes.get("uuid");
 
 		if (uuid != null) {
@@ -341,17 +324,6 @@ public class RoleModelImpl extends BaseModelImpl<Role> implements RoleModel {
 
 	@JSON
 	@Override
-	public long getMvccVersion() {
-		return _mvccVersion;
-	}
-
-	@Override
-	public void setMvccVersion(long mvccVersion) {
-		_mvccVersion = mvccVersion;
-	}
-
-	@JSON
-	@Override
 	public String getUuid() {
 		if (_uuid == null) {
 			return StringPool.BLANK;
@@ -420,19 +392,13 @@ public class RoleModelImpl extends BaseModelImpl<Role> implements RoleModel {
 	}
 
 	@Override
-	public String getUserUuid() {
-		try {
-			User user = UserLocalServiceUtil.getUserById(getUserId());
-
-			return user.getUuid();
-		}
-		catch (PortalException pe) {
-			return StringPool.BLANK;
-		}
+	public String getUserUuid() throws SystemException {
+		return PortalUtil.getUserValue(getUserId(), "uuid", _userUuid);
 	}
 
 	@Override
 	public void setUserUuid(String userUuid) {
+		_userUuid = userUuid;
 	}
 
 	@JSON
@@ -876,21 +842,12 @@ public class RoleModelImpl extends BaseModelImpl<Role> implements RoleModel {
 			return StringPool.BLANK;
 		}
 
-		Locale defaultLocale = LocaleUtil.getDefault();
-
-		return LocalizationUtil.getDefaultLanguageId(xml, defaultLocale);
+		return LocalizationUtil.getDefaultLanguageId(xml);
 	}
 
 	@Override
 	public void prepareLocalizedFieldsForImport() throws LocaleException {
-		Locale defaultLocale = LocaleUtil.fromLanguageId(getDefaultLanguageId());
-
-		Locale[] availableLocales = LocaleUtil.fromLanguageIds(getAvailableLanguageIds());
-
-		Locale defaultImportLocale = LocalizationUtil.getDefaultImportLocale(Role.class.getName(),
-				getPrimaryKey(), defaultLocale, availableLocales);
-
-		prepareLocalizedFieldsForImport(defaultImportLocale);
+		prepareLocalizedFieldsForImport(null);
 	}
 
 	@Override
@@ -935,7 +892,6 @@ public class RoleModelImpl extends BaseModelImpl<Role> implements RoleModel {
 	public Object clone() {
 		RoleImpl roleImpl = new RoleImpl();
 
-		roleImpl.setMvccVersion(getMvccVersion());
 		roleImpl.setUuid(getUuid());
 		roleImpl.setRoleId(getRoleId());
 		roleImpl.setCompanyId(getCompanyId());
@@ -997,16 +953,6 @@ public class RoleModelImpl extends BaseModelImpl<Role> implements RoleModel {
 	}
 
 	@Override
-	public boolean isEntityCacheEnabled() {
-		return ENTITY_CACHE_ENABLED;
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return FINDER_CACHE_ENABLED;
-	}
-
-	@Override
 	public void resetOriginalValues() {
 		RoleModelImpl roleModelImpl = this;
 
@@ -1038,8 +984,6 @@ public class RoleModelImpl extends BaseModelImpl<Role> implements RoleModel {
 	@Override
 	public CacheModel<Role> toCacheModel() {
 		RoleCacheModel roleCacheModel = new RoleCacheModel();
-
-		roleCacheModel.mvccVersion = getMvccVersion();
 
 		roleCacheModel.uuid = getUuid();
 
@@ -1124,11 +1068,9 @@ public class RoleModelImpl extends BaseModelImpl<Role> implements RoleModel {
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(31);
+		StringBundler sb = new StringBundler(29);
 
-		sb.append("{mvccVersion=");
-		sb.append(getMvccVersion());
-		sb.append(", uuid=");
+		sb.append("{uuid=");
 		sb.append(getUuid());
 		sb.append(", roleId=");
 		sb.append(getRoleId());
@@ -1163,16 +1105,12 @@ public class RoleModelImpl extends BaseModelImpl<Role> implements RoleModel {
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(49);
+		StringBundler sb = new StringBundler(46);
 
 		sb.append("<model><model-name>");
 		sb.append("com.liferay.portal.model.Role");
 		sb.append("</model-name>");
 
-		sb.append(
-			"<column><column-name>mvccVersion</column-name><column-value><![CDATA[");
-		sb.append(getMvccVersion());
-		sb.append("]]></column-value></column>");
 		sb.append(
 			"<column><column-name>uuid</column-name><column-value><![CDATA[");
 		sb.append(getUuid());
@@ -1235,11 +1173,8 @@ public class RoleModelImpl extends BaseModelImpl<Role> implements RoleModel {
 		return sb.toString();
 	}
 
-	private static final ClassLoader _classLoader = Role.class.getClassLoader();
-	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
-			Role.class
-		};
-	private long _mvccVersion;
+	private static ClassLoader _classLoader = Role.class.getClassLoader();
+	private static Class<?>[] _escapedModelInterfaces = new Class[] { Role.class };
 	private String _uuid;
 	private String _originalUuid;
 	private long _roleId;
@@ -1247,6 +1182,7 @@ public class RoleModelImpl extends BaseModelImpl<Role> implements RoleModel {
 	private long _originalCompanyId;
 	private boolean _setOriginalCompanyId;
 	private long _userId;
+	private String _userUuid;
 	private String _userName;
 	private Date _createDate;
 	private Date _modifiedDate;

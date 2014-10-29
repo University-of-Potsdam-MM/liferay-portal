@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -13,8 +13,6 @@
  */
 
 package com.liferay.portlet.journal.model.impl;
-
-import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
@@ -36,12 +34,11 @@ import java.util.Date;
  * @see JournalFolder
  * @generated
  */
-@ProviderType
 public class JournalFolderCacheModel implements CacheModel<JournalFolder>,
 	Externalizable {
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(35);
+		StringBundler sb = new StringBundler(33);
 
 		sb.append("{uuid=");
 		sb.append(uuid);
@@ -67,8 +64,6 @@ public class JournalFolderCacheModel implements CacheModel<JournalFolder>,
 		sb.append(name);
 		sb.append(", description=");
 		sb.append(description);
-		sb.append(", restrictionType=");
-		sb.append(restrictionType);
 		sb.append(", status=");
 		sb.append(status);
 		sb.append(", statusByUserId=");
@@ -142,7 +137,6 @@ public class JournalFolderCacheModel implements CacheModel<JournalFolder>,
 			journalFolderImpl.setDescription(description);
 		}
 
-		journalFolderImpl.setRestrictionType(restrictionType);
 		journalFolderImpl.setStatus(status);
 		journalFolderImpl.setStatusByUserId(statusByUserId);
 
@@ -179,7 +173,6 @@ public class JournalFolderCacheModel implements CacheModel<JournalFolder>,
 		treePath = objectInput.readUTF();
 		name = objectInput.readUTF();
 		description = objectInput.readUTF();
-		restrictionType = objectInput.readInt();
 		status = objectInput.readInt();
 		statusByUserId = objectInput.readLong();
 		statusByUserName = objectInput.readUTF();
@@ -233,7 +226,6 @@ public class JournalFolderCacheModel implements CacheModel<JournalFolder>,
 			objectOutput.writeUTF(description);
 		}
 
-		objectOutput.writeInt(restrictionType);
 		objectOutput.writeInt(status);
 		objectOutput.writeLong(statusByUserId);
 
@@ -259,7 +251,6 @@ public class JournalFolderCacheModel implements CacheModel<JournalFolder>,
 	public String treePath;
 	public String name;
 	public String description;
-	public int restrictionType;
 	public int status;
 	public long statusByUserId;
 	public String statusByUserName;

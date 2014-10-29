@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portlet;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.ActionResult;
@@ -320,7 +321,7 @@ public class SecurityPortletContainerWrapper implements PortletContainer {
 
 	protected boolean hasAccessPermission(
 			HttpServletRequest request, Portlet portlet)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		PermissionChecker permissionChecker =
 			PermissionThreadLocal.getPermissionChecker();
@@ -330,15 +331,8 @@ public class SecurityPortletContainerWrapper implements PortletContainer {
 
 		Layout layout = (Layout)request.getAttribute(WebKeys.LAYOUT);
 
-		PortletMode portletMode = PortletMode.VIEW;
-
-		String portletId = portlet.getPortletId();
-		String ppid = request.getParameter("p_p_id");
-		String ppmode = request.getParameter("p_p_mode");
-
-		if (portletId.equals(ppid) && (ppmode != null)) {
-			portletMode = PortletModeFactory.getPortletMode(ppmode);
-		}
+		PortletMode portletMode = PortletModeFactory.getPortletMode(
+			ParamUtil.getString(request, "p_p_mode"));
 
 		return PortletPermissionUtil.hasAccessPermission(
 			permissionChecker, themeDisplay.getScopeGroupId(), layout, portlet,
@@ -347,7 +341,7 @@ public class SecurityPortletContainerWrapper implements PortletContainer {
 
 	protected void isAccessAllowedToControlPanelPortlet(
 			HttpServletRequest request, Portlet portlet)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		PermissionChecker permissionChecker =
 			PermissionThreadLocal.getPermissionChecker();
@@ -374,7 +368,7 @@ public class SecurityPortletContainerWrapper implements PortletContainer {
 
 	protected boolean isAccessAllowedToLayoutPortlet(
 			HttpServletRequest request, Portlet portlet)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		if (isAccessGrantedByRuntimePortlet(request, portlet)) {
 			return true;
@@ -443,7 +437,7 @@ public class SecurityPortletContainerWrapper implements PortletContainer {
 
 	protected boolean isAccessGrantedByPortletOnPage(
 			HttpServletRequest request, Portlet portlet)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
 			WebKeys.THEME_DISPLAY);
@@ -489,7 +483,7 @@ public class SecurityPortletContainerWrapper implements PortletContainer {
 
 	protected boolean isLayoutConfigurationAllowed(
 			HttpServletRequest request, Portlet portlet)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
 			WebKeys.THEME_DISPLAY);

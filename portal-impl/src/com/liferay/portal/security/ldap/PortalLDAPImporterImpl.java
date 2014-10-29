@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -44,6 +44,8 @@ import com.liferay.portal.model.Role;
 import com.liferay.portal.model.RoleConstants;
 import com.liferay.portal.model.User;
 import com.liferay.portal.model.UserGroup;
+import com.liferay.portal.security.auth.ScreenNameGenerator;
+import com.liferay.portal.security.auth.ScreenNameGeneratorFactory;
 import com.liferay.portal.service.CompanyLocalServiceUtil;
 import com.liferay.portal.service.GroupLocalServiceUtil;
 import com.liferay.portal.service.LockLocalServiceUtil;
@@ -119,7 +121,7 @@ public class PortalLDAPImporterImpl implements PortalLDAPImporter {
 				if (_log.isDebugEnabled()) {
 					_log.debug(
 						"Skipping LDAP import for company " + companyId +
-							" because another LDAP import is in process");
+							"because another LDAP import is in process");
 				}
 
 				return;
@@ -599,16 +601,10 @@ public class PortalLDAPImporterImpl implements PortalLDAPImporter {
 		StringBundler sb = new StringBundler(7);
 
 		sb.append("(&");
-
-		String importGroupSearchFilter = PrefsPropsUtil.getString(
-			companyId, PropsKeys.LDAP_IMPORT_GROUP_SEARCH_FILTER + postfix);
-
-		LDAPUtil.validateFilter(
-			importGroupSearchFilter,
-			PropsKeys.LDAP_IMPORT_GROUP_SEARCH_FILTER + postfix);
-
-		sb.append(importGroupSearchFilter);
-
+		sb.append(
+			PrefsPropsUtil.getString(
+				companyId,
+				PropsKeys.LDAP_IMPORT_GROUP_SEARCH_FILTER + postfix));
 		sb.append(StringPool.OPEN_PARENTHESIS);
 		sb.append(groupMappings.getProperty("groupName"));
 		sb.append("=");
@@ -800,36 +796,15 @@ public class PortalLDAPImporterImpl implements PortalLDAPImporter {
 			Properties groupMappings)
 		throws Exception {
 
-		String groupMappingsUser = groupMappings.getProperty("user");
-
 		Set<Long> newUserGroupIds = new LinkedHashSet<Long>();
 
-		if (Validator.isNotNull(groupMappingsUser) &&
-			PrefsPropsUtil.getBoolean(
+		if (PrefsPropsUtil.getBoolean(
 				companyId, PropsKeys.LDAP_IMPORT_GROUP_SEARCH_FILTER_ENABLED)) {
 
 			String postfix = LDAPSettingsUtil.getPropertyPostfix(ldapServerId);
 
 			String baseDN = PrefsPropsUtil.getString(
 				companyId, PropsKeys.LDAP_BASE_DN + postfix);
-
-			StringBundler sb = new StringBundler(9);
-
-			sb.append(StringPool.OPEN_PARENTHESIS);
-			sb.append(StringPool.AMPERSAND);
-
-			String importGroupSearchFilter = PrefsPropsUtil.getString(
-				companyId, PropsKeys.LDAP_IMPORT_GROUP_SEARCH_FILTER + postfix);
-
-			LDAPUtil.validateFilter(
-				importGroupSearchFilter,
-				PropsKeys.LDAP_IMPORT_GROUP_SEARCH_FILTER + postfix);
-
-			sb.append(importGroupSearchFilter);
-
-			sb.append(StringPool.OPEN_PARENTHESIS);
-			sb.append(groupMappingsUser);
-			sb.append(StringPool.EQUAL);
 
 			Binding binding = PortalLDAPUtil.getUser(
 				ldapServerId, companyId, user.getScreenName(),
@@ -838,8 +813,18 @@ public class PortalLDAPImporterImpl implements PortalLDAPImporter {
 			String fullUserDN = PortalLDAPUtil.getNameInNamespace(
 				ldapServerId, companyId, binding);
 
-			sb.append(escapeValue(fullUserDN));
+			StringBundler sb = new StringBundler(9);
 
+			sb.append(StringPool.OPEN_PARENTHESIS);
+			sb.append(StringPool.AMPERSAND);
+			sb.append(
+				PrefsPropsUtil.getString(
+					companyId,
+					PropsKeys.LDAP_IMPORT_GROUP_SEARCH_FILTER + postfix));
+			sb.append(StringPool.OPEN_PARENTHESIS);
+			sb.append(groupMappings.getProperty("user"));
+			sb.append(StringPool.EQUAL);
+			sb.append(escapeValue(fullUserDN));
 			sb.append(StringPool.CLOSE_PARENTHESIS);
 			sb.append(StringPool.CLOSE_PARENTHESIS);
 
@@ -1169,7 +1154,7 @@ public class PortalLDAPImporterImpl implements PortalLDAPImporter {
 	protected void updateLDAPUser(
 			User ldapUser, Contact ldapContact, User user,
 			Properties userMappings, Properties contactMappings)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Contact contact = user.getContact();
 
@@ -1264,24 +1249,22 @@ public class PortalLDAPImporterImpl implements PortalLDAPImporter {
 			}
 		}
 
-		if (Validator.isNull(ldapUser.getScreenName()) ||
-			ldapUser.isAutoScreenName()) {
-
-			ldapUser.setScreenName(user.getScreenName());
+		if (Validator.isNull(ldapUser.getScreenName())) {
+			ldapUser.setAutoScreenName(true);
 		}
 
-		if (ldapUser.isUpdatePassword()) {
-			UserLocalServiceUtil.updatePassword(
-				user.getUserId(), password, password, passwordReset, true);
+		if (ldapUser.isAutoScreenName()) {
+			ScreenNameGenerator screenNameGenerator =
+				ScreenNameGeneratorFactory.getInstance();
+
+			ldapUser.setScreenName(
+				screenNameGenerator.generate(
+					companyId, user.getUserId(), ldapUser.getEmailAddress()));
 		}
-
-		Contact ldapContact = ldapUser.getContact();
-
-		updateLDAPUser(
-			ldapUser.getUser(), ldapContact, user, userMappings,
-			contactMappings);
 
 		Calendar birthdayCal = CalendarFactoryUtil.getCalendar();
+
+		Contact ldapContact = ldapUser.getContact();
 
 		birthdayCal.setTime(ldapContact.getBirthday());
 
@@ -1289,13 +1272,21 @@ public class PortalLDAPImporterImpl implements PortalLDAPImporter {
 		int birthdayDay = birthdayCal.get(Calendar.DAY_OF_MONTH);
 		int birthdayYear = birthdayCal.get(Calendar.YEAR);
 
+		if (ldapUser.isUpdatePassword()) {
+			UserLocalServiceUtil.updatePassword(
+				user.getUserId(), password, password, passwordReset, true);
+		}
+
+		updateLDAPUser(
+			ldapUser.getUser(), ldapContact, user, userMappings,
+			contactMappings);
+
 		user = UserLocalServiceUtil.updateUser(
 			user.getUserId(), password, StringPool.BLANK, StringPool.BLANK,
 			passwordReset, ldapUser.getReminderQueryQuestion(),
 			ldapUser.getReminderQueryAnswer(), ldapUser.getScreenName(),
 			ldapUser.getEmailAddress(), ldapUser.getFacebookId(),
-			ldapUser.getOpenId(), (ldapUser.getPortraitId() > 0),
-			ldapUser.getPortraitBytes(), ldapUser.getLanguageId(),
+			ldapUser.getOpenId(), ldapUser.getLanguageId(),
 			ldapUser.getTimeZoneId(), ldapUser.getGreeting(),
 			ldapUser.getComments(), ldapUser.getFirstName(),
 			ldapUser.getMiddleName(), ldapUser.getLastName(),
@@ -1314,16 +1305,28 @@ public class PortalLDAPImporterImpl implements PortalLDAPImporter {
 				user.getUserId(), ldapUserModifiedDate);
 		}
 
+		if (ldapUser.isUpdatePortrait()) {
+			byte[] portraitBytes = ldapUser.getPortraitBytes();
+
+			if (ArrayUtil.isNotEmpty(portraitBytes)) {
+				UserLocalServiceUtil.updatePortrait(
+					user.getUserId(), portraitBytes);
+			}
+			else {
+				UserLocalServiceUtil.deletePortrait(user.getUserId());
+			}
+		}
+
 		user = UserLocalServiceUtil.updateStatus(
-			user.getUserId(), ldapUser.getStatus(), new ServiceContext());
+			user.getUserId(), ldapUser.getStatus());
 
 		return user;
 	}
 
 	private static final String[] _CONTACT_PROPERTY_NAMES = {
-		"aimSn", "birthday", "employeeNumber", "facebookSn", "icqSn",
-		"jabberSn", "male", "msnSn", "mySpaceSn","prefixId", "skypeSn", "smsSn",
-		"suffixId", "twitterSn", "ymSn"
+		"aimSn", "employeeNumber", "facebookSn", "icqSn", "jabberSn", "male",
+		"msnSn", "mySpaceSn","prefixId", "skypeSn", "smsSn", "suffixId",
+		"twitterSn", "ymSn"
 	};
 
 	private static final String _IMPORT_BY_GROUP = "group";

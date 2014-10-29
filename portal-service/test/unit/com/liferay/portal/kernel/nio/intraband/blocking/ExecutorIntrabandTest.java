@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -20,11 +20,10 @@ import com.liferay.portal.kernel.nio.intraband.CompletionHandler;
 import com.liferay.portal.kernel.nio.intraband.Datagram;
 import com.liferay.portal.kernel.nio.intraband.DatagramHelper;
 import com.liferay.portal.kernel.nio.intraband.IntrabandTestUtil;
+import com.liferay.portal.kernel.nio.intraband.MockRegistrationReference;
 import com.liferay.portal.kernel.nio.intraband.RecordCompletionHandler;
 import com.liferay.portal.kernel.nio.intraband.blocking.ExecutorIntraband.ReadingCallable;
 import com.liferay.portal.kernel.nio.intraband.blocking.ExecutorIntraband.WritingCallable;
-import com.liferay.portal.kernel.nio.intraband.test.MockRegistrationReference;
-import com.liferay.portal.kernel.test.CaptureHandler;
 import com.liferay.portal.kernel.test.CodeCoverageAssertor;
 import com.liferay.portal.kernel.test.JDKLoggerTestUtil;
 import com.liferay.portal.kernel.util.Time;
@@ -282,7 +281,9 @@ public class ExecutorIntrabandTest {
 
 		randomAccessFile.setLength(Integer.MAX_VALUE);
 
-		try (FileChannel fileChannel = randomAccessFile.getChannel()) {
+		FileChannel fileChannel = randomAccessFile.getChannel();
+
+		try {
 			FutureRegistrationReference futureRegistrationReference =
 				(FutureRegistrationReference)_executorIntraband.registerChannel(
 					fileChannel);
@@ -301,6 +302,7 @@ public class ExecutorIntrabandTest {
 			while (threadPoolExecutor.getActiveCount() != 0);
 		}
 		finally {
+			fileChannel.close();
 			tempFile.delete();
 		}
 	}
@@ -406,11 +408,12 @@ public class ExecutorIntrabandTest {
 
 		tempFile.deleteOnExit();
 
-		try (RandomAccessFile randomAccessFile = new RandomAccessFile(
-				tempFile, "rw")) {
+		RandomAccessFile randomAccessFile = new RandomAccessFile(
+			tempFile, "rw");
 
-			randomAccessFile.setLength(Integer.MAX_VALUE);
-		}
+		randomAccessFile.setLength(Integer.MAX_VALUE);
+
+		randomAccessFile.close();
 
 		FileInputStream fileInputStream = new FileInputStream(tempFile);
 		FileOutputStream fileOutputStream = new FileOutputStream(
@@ -487,39 +490,32 @@ public class ExecutorIntrabandTest {
 
 		// Callback timeout, with log
 
-		CaptureHandler captureHandler = JDKLoggerTestUtil.configureJDKLogger(
+		List<LogRecord> logRecords = JDKLoggerTestUtil.configureJDKLogger(
 			BaseIntraband.class.getName(), Level.WARNING);
 
-		try {
-			List<LogRecord> logRecords = captureHandler.getLogRecords();
+		recordCompletionHandler = new RecordCompletionHandler<Object>();
 
-			recordCompletionHandler = new RecordCompletionHandler<Object>();
+		_executorIntraband.sendDatagram(
+			futureRegistrationReference,
+			Datagram.createRequestDatagram(_type, _data), attachment,
+			EnumSet.of(CompletionHandler.CompletionType.REPLIED),
+			recordCompletionHandler, 10, TimeUnit.MILLISECONDS);
 
-			_executorIntraband.sendDatagram(
-				futureRegistrationReference,
-				Datagram.createRequestDatagram(_type, _data), attachment,
-				EnumSet.of(CompletionHandler.CompletionType.REPLIED),
-				recordCompletionHandler, 10, TimeUnit.MILLISECONDS);
+		Thread.sleep(20);
 
-			Thread.sleep(20);
+		_executorIntraband.sendDatagram(
+			futureRegistrationReference,
+			Datagram.createRequestDatagram(_type, _data), attachment,
+			EnumSet.of(CompletionHandler.CompletionType.DELIVERED),
+			recordCompletionHandler, 10, TimeUnit.MILLISECONDS);
 
-			_executorIntraband.sendDatagram(
-				futureRegistrationReference,
-				Datagram.createRequestDatagram(_type, _data), attachment,
-				EnumSet.of(CompletionHandler.CompletionType.DELIVERED),
-				recordCompletionHandler, 10, TimeUnit.MILLISECONDS);
+		while (logRecords.isEmpty());
 
-			while (logRecords.isEmpty());
+		IntrabandTestUtil.assertMessageStartWith(
+			logRecords.get(0), "Removed timeout response waiting datagram");
 
-			IntrabandTestUtil.assertMessageStartWith(
-				logRecords.get(0), "Removed timeout response waiting datagram");
-
-			gatheringByteChannel.close();
-			scatteringByteChannel.close();
-		}
-		finally {
-			captureHandler.close();
-		}
+		gatheringByteChannel.close();
+		scatteringByteChannel.close();
 	}
 
 	@Test

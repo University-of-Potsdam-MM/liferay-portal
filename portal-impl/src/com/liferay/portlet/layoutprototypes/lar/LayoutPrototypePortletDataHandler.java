@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -21,11 +21,10 @@ import com.liferay.portal.kernel.lar.PortletDataContext;
 import com.liferay.portal.kernel.lar.PortletDataHandlerBoolean;
 import com.liferay.portal.kernel.lar.StagedModelDataHandlerUtil;
 import com.liferay.portal.kernel.lar.StagedModelType;
-import com.liferay.portal.kernel.lar.xstream.XStreamAliasRegistryUtil;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.model.LayoutPrototype;
-import com.liferay.portal.model.impl.LayoutPrototypeImpl;
 import com.liferay.portal.service.LayoutPrototypeLocalServiceUtil;
+import com.liferay.portal.service.persistence.LayoutPrototypeExportActionableDynamicQuery;
 
 import java.util.List;
 
@@ -46,9 +45,6 @@ public class LayoutPrototypePortletDataHandler extends BasePortletDataHandler {
 			new PortletDataHandlerBoolean(
 				NAMESPACE, "page-templates", true, true, null,
 				LayoutPrototype.class.getName()));
-
-		XStreamAliasRegistryUtil.register(
-			LayoutPrototypeImpl.class, "LayoutPrototype");
 	}
 
 	@Override
@@ -83,8 +79,7 @@ public class LayoutPrototypePortletDataHandler extends BasePortletDataHandler {
 			"group-id", String.valueOf(portletDataContext.getScopeGroupId()));
 
 		ActionableDynamicQuery actionableDynamicQuery =
-			LayoutPrototypeLocalServiceUtil.getExportActionableDynamicQuery(
-				portletDataContext);
+			new LayoutPrototypeExportActionableDynamicQuery(portletDataContext);
 
 		actionableDynamicQuery.performActions();
 
@@ -120,8 +115,7 @@ public class LayoutPrototypePortletDataHandler extends BasePortletDataHandler {
 		throws Exception {
 
 		ActionableDynamicQuery layoutPrototypeExportActionableDynamicQuery =
-			LayoutPrototypeLocalServiceUtil.getExportActionableDynamicQuery(
-				portletDataContext);
+			new LayoutPrototypeExportActionableDynamicQuery(portletDataContext);
 
 		layoutPrototypeExportActionableDynamicQuery.performCount();
 	}

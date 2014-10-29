@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -21,14 +21,15 @@ import com.liferay.portal.kernel.dao.orm.QueryPos;
 import com.liferay.portal.kernel.dao.orm.SQLQuery;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
+import com.liferay.portal.kernel.test.ExecutionTestListeners;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.test.TransactionalTestRule;
-import com.liferay.portal.test.runners.LiferayIntegrationJUnitTestRunner;
+import com.liferay.portal.service.persistence.PersistenceExecutionTestListener;
+import com.liferay.portal.test.LiferayPersistenceIntegrationJUnitTestRunner;
+import com.liferay.portal.test.MainServletExecutionTestListener;
 
 import java.util.List;
 
 import org.junit.Assert;
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -436,12 +437,13 @@ import org.junit.runner.RunWith;
  *
  * @author Shuyang Zhou
  */
-@RunWith(LiferayIntegrationJUnitTestRunner.class)
+@ExecutionTestListeners(
+	listeners = {
+		MainServletExecutionTestListener.class,
+		PersistenceExecutionTestListener.class
+	})
+@RunWith(LiferayPersistenceIntegrationJUnitTestRunner.class)
 public class SQLNullTest {
-
-	@ClassRule
-	public static TransactionalTestRule transactionalTestRule =
-		new TransactionalTestRule();
 
 	@Test
 	public void testBlankStringEqualsNull() {
@@ -454,7 +456,7 @@ public class SQLNullTest {
 		Session session = _sessionFactory.openSession();
 
 		try {
-			SQLQuery sqlQuery = session.createSynchronizedSQLQuery(sql);
+			SQLQuery sqlQuery = session.createSQLQuery(sql);
 
 			QueryPos qPos = QueryPos.getInstance(sqlQuery);
 
@@ -465,7 +467,7 @@ public class SQLNullTest {
 			Assert.assertTrue(list.isEmpty());
 		}
 		finally {
-			_sessionFactory.closeSession(session);
+			session.close();
 		}
 	}
 
@@ -480,7 +482,7 @@ public class SQLNullTest {
 		Session session = _sessionFactory.openSession();
 
 		try {
-			SQLQuery sqlQuery = session.createSynchronizedSQLQuery(sql);
+			SQLQuery sqlQuery = session.createSQLQuery(sql);
 
 			QueryPos qPos = QueryPos.getInstance(sqlQuery);
 
@@ -496,7 +498,7 @@ public class SQLNullTest {
 			}
 		}
 		finally {
-			_sessionFactory.closeSession(session);
+			session.close();
 		}
 	}
 
@@ -511,7 +513,7 @@ public class SQLNullTest {
 		Session session = _sessionFactory.openSession();
 
 		try {
-			SQLQuery sqlQuery = session.createSynchronizedSQLQuery(sql);
+			SQLQuery sqlQuery = session.createSQLQuery(sql);
 
 			QueryPos qPos = QueryPos.getInstance(sqlQuery);
 
@@ -527,7 +529,7 @@ public class SQLNullTest {
 			}
 		}
 		finally {
-			_sessionFactory.closeSession(session);
+			session.close();
 		}
 	}
 
@@ -536,8 +538,7 @@ public class SQLNullTest {
 		Session session = _sessionFactory.openSession();
 
 		try {
-			SQLQuery sqlQuery = session.createSynchronizedSQLQuery(
-				_SQL_LIKE_NULL);
+			SQLQuery sqlQuery = session.createSQLQuery(_SQL_LIKE_NULL);
 
 			QueryPos qPos = QueryPos.getInstance(sqlQuery);
 
@@ -548,7 +549,7 @@ public class SQLNullTest {
 			Assert.assertTrue(list.isEmpty());
 		}
 		finally {
-			_sessionFactory.closeSession(session);
+			session.close();
 		}
 	}
 
@@ -563,7 +564,7 @@ public class SQLNullTest {
 		Session session = _sessionFactory.openSession();
 
 		try {
-			SQLQuery sqlQuery = session.createSynchronizedSQLQuery(sql);
+			SQLQuery sqlQuery = session.createSQLQuery(sql);
 
 			QueryPos qPos = QueryPos.getInstance(sqlQuery);
 
@@ -579,7 +580,7 @@ public class SQLNullTest {
 			}
 		}
 		finally {
-			_sessionFactory.closeSession(session);
+			session.close();
 		}
 	}
 
@@ -588,8 +589,7 @@ public class SQLNullTest {
 		Session session = _sessionFactory.openSession();
 
 		try {
-			SQLQuery sqlQuery = session.createSynchronizedSQLQuery(
-				_SQL_NOT_LIKE_NULL);
+			SQLQuery sqlQuery = session.createSQLQuery(_SQL_NOT_LIKE_NULL);
 
 			QueryPos qPos = QueryPos.getInstance(sqlQuery);
 
@@ -605,7 +605,7 @@ public class SQLNullTest {
 			}
 		}
 		finally {
-			_sessionFactory.closeSession(session);
+			session.close();
 		}
 	}
 
@@ -620,7 +620,7 @@ public class SQLNullTest {
 		Session session = _sessionFactory.openSession();
 
 		try {
-			SQLQuery sqlQuery = session.createSynchronizedSQLQuery(sql);
+			SQLQuery sqlQuery = session.createSQLQuery(sql);
 
 			QueryPos qPos = QueryPos.getInstance(sqlQuery);
 
@@ -636,7 +636,7 @@ public class SQLNullTest {
 			}
 		}
 		finally {
-			_sessionFactory.closeSession(session);
+			session.close();
 		}
 	}
 
@@ -651,7 +651,7 @@ public class SQLNullTest {
 		Session session = _sessionFactory.openSession();
 
 		try {
-			SQLQuery sqlQuery = session.createSynchronizedSQLQuery(sql);
+			SQLQuery sqlQuery = session.createSQLQuery(sql);
 
 			QueryPos qPos = QueryPos.getInstance(sqlQuery);
 
@@ -662,7 +662,7 @@ public class SQLNullTest {
 			Assert.assertTrue(list.isEmpty());
 		}
 		finally {
-			_sessionFactory.closeSession(session);
+			session.close();
 		}
 	}
 
@@ -677,7 +677,7 @@ public class SQLNullTest {
 		Session session = _sessionFactory.openSession();
 
 		try {
-			SQLQuery sqlQuery = session.createSynchronizedSQLQuery(sql);
+			SQLQuery sqlQuery = session.createSQLQuery(sql);
 
 			QueryPos qPos = QueryPos.getInstance(sqlQuery);
 
@@ -688,7 +688,7 @@ public class SQLNullTest {
 			Assert.assertFalse(list.isEmpty());
 		}
 		finally {
-			_sessionFactory.closeSession(session);
+			session.close();
 		}
 	}
 
@@ -697,8 +697,7 @@ public class SQLNullTest {
 		Session session = _sessionFactory.openSession();
 
 		try {
-			SQLQuery sqlQuery = session.createSynchronizedSQLQuery(
-				_SQL_LIKE_NULL);
+			SQLQuery sqlQuery = session.createSQLQuery(_SQL_LIKE_NULL);
 
 			QueryPos qPos = QueryPos.getInstance(sqlQuery);
 
@@ -709,7 +708,7 @@ public class SQLNullTest {
 			Assert.assertTrue(list.isEmpty());
 		}
 		finally {
-			_sessionFactory.closeSession(session);
+			session.close();
 		}
 	}
 
@@ -724,7 +723,7 @@ public class SQLNullTest {
 		Session session = _sessionFactory.openSession();
 
 		try {
-			SQLQuery sqlQuery = session.createSynchronizedSQLQuery(sql);
+			SQLQuery sqlQuery = session.createSQLQuery(sql);
 
 			QueryPos qPos = QueryPos.getInstance(sqlQuery);
 
@@ -735,7 +734,7 @@ public class SQLNullTest {
 			Assert.assertTrue(list.isEmpty());
 		}
 		finally {
-			_sessionFactory.closeSession(session);
+			session.close();
 		}
 	}
 
@@ -744,8 +743,7 @@ public class SQLNullTest {
 		Session session = _sessionFactory.openSession();
 
 		try {
-			SQLQuery sqlQuery = session.createSynchronizedSQLQuery(
-				_SQL_NOT_LIKE_NULL);
+			SQLQuery sqlQuery = session.createSQLQuery(_SQL_NOT_LIKE_NULL);
 
 			QueryPos qPos = QueryPos.getInstance(sqlQuery);
 
@@ -761,7 +759,7 @@ public class SQLNullTest {
 			}
 		}
 		finally {
-			_sessionFactory.closeSession(session);
+			session.close();
 		}
 	}
 
@@ -770,8 +768,7 @@ public class SQLNullTest {
 		Session session = _sessionFactory.openSession();
 
 		try {
-			SQLQuery sqlQuery = session.createSynchronizedSQLQuery(
-				_SQL_EQUALS_NULL);
+			SQLQuery sqlQuery = session.createSQLQuery(_SQL_EQUALS_NULL);
 
 			QueryPos qPos = QueryPos.getInstance(sqlQuery);
 
@@ -782,7 +779,7 @@ public class SQLNullTest {
 			Assert.assertTrue(list.isEmpty());
 		}
 		finally {
-			_sessionFactory.closeSession(session);
+			session.close();
 		}
 	}
 
@@ -791,8 +788,7 @@ public class SQLNullTest {
 		Session session = _sessionFactory.openSession();
 
 		try {
-			SQLQuery sqlQuery = session.createSynchronizedSQLQuery(
-				_SQL_IS_NOT_NULL);
+			SQLQuery sqlQuery = session.createSQLQuery(_SQL_IS_NOT_NULL);
 
 			QueryPos qPos = QueryPos.getInstance(sqlQuery);
 
@@ -803,7 +799,7 @@ public class SQLNullTest {
 			Assert.assertFalse(list.isEmpty());
 		}
 		finally {
-			_sessionFactory.closeSession(session);
+			session.close();
 		}
 	}
 
@@ -812,8 +808,7 @@ public class SQLNullTest {
 		Session session = _sessionFactory.openSession();
 
 		try {
-			SQLQuery sqlQuery = session.createSynchronizedSQLQuery(
-				_SQL_IS_NULL);
+			SQLQuery sqlQuery = session.createSQLQuery(_SQL_IS_NULL);
 
 			QueryPos qPos = QueryPos.getInstance(sqlQuery);
 
@@ -824,7 +819,7 @@ public class SQLNullTest {
 			Assert.assertTrue(list.isEmpty());
 		}
 		finally {
-			_sessionFactory.closeSession(session);
+			session.close();
 		}
 	}
 
@@ -842,7 +837,7 @@ public class SQLNullTest {
 		Session session = _sessionFactory.openSession();
 
 		try {
-			SQLQuery sqlQuery = session.createSynchronizedSQLQuery(sql);
+			SQLQuery sqlQuery = session.createSQLQuery(sql);
 
 			QueryPos qPos = QueryPos.getInstance(sqlQuery);
 
@@ -853,7 +848,7 @@ public class SQLNullTest {
 			Assert.assertTrue(list.isEmpty());
 		}
 		finally {
-			_sessionFactory.closeSession(session);
+			session.close();
 		}
 	}
 
@@ -862,8 +857,7 @@ public class SQLNullTest {
 		Session session = _sessionFactory.openSession();
 
 		try {
-			SQLQuery sqlQuery = session.createSynchronizedSQLQuery(
-				_SQL_NOT_EQUALS_NULL);
+			SQLQuery sqlQuery = session.createSQLQuery(_SQL_NOT_EQUALS_NULL);
 
 			QueryPos qPos = QueryPos.getInstance(sqlQuery);
 
@@ -879,7 +873,7 @@ public class SQLNullTest {
 			}
 		}
 		finally {
-			_sessionFactory.closeSession(session);
+			session.close();
 		}
 	}
 
@@ -897,7 +891,7 @@ public class SQLNullTest {
 		Session session = _sessionFactory.openSession();
 
 		try {
-			SQLQuery sqlQuery = session.createSynchronizedSQLQuery(sql);
+			SQLQuery sqlQuery = session.createSQLQuery(sql);
 
 			QueryPos qPos = QueryPos.getInstance(sqlQuery);
 
@@ -913,7 +907,7 @@ public class SQLNullTest {
 			}
 		}
 		finally {
-			_sessionFactory.closeSession(session);
+			session.close();
 		}
 	}
 

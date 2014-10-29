@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -22,7 +22,6 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.pacl.DoPrivileged;
 import com.liferay.portal.kernel.util.StreamUtil;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.xml.Document;
 import com.liferay.portal.kernel.xml.Element;
@@ -202,10 +201,6 @@ public class JavadocManagerImpl implements JavadocManager {
 					JavadocMethod javadocMethod = parseJavadocMethod(
 						servletContextName, clazz, methodElement);
 
-					if (javadocMethod == null) {
-						continue;
-					}
-
 					_javadocMethods.put(
 						javadocMethod.getMethod(), javadocMethod);
 				}
@@ -253,12 +248,6 @@ public class JavadocManagerImpl implements JavadocManager {
 		throws Exception {
 
 		String name = methodElement.elementText("name");
-
-		if (name.equals(clazz.getSimpleName()) ||
-			name.startsWith(StringPool.UNDERLINE)) {
-
-			return null;
-		}
 
 		List<Element> paramElements = methodElement.elements("param");
 

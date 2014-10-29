@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,16 +14,10 @@
 
 package com.liferay.portlet.softwarecatalog.service.base;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.bean.IdentifiableBean;
-import com.liferay.portal.kernel.dao.db.DB;
-import com.liferay.portal.kernel.dao.db.DBFactoryUtil;
 import com.liferay.portal.kernel.dao.jdbc.SqlUpdate;
 import com.liferay.portal.kernel.dao.jdbc.SqlUpdateFactoryUtil;
-import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
-import com.liferay.portal.kernel.dao.orm.DefaultActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.Projection;
@@ -35,12 +29,16 @@ import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.model.PersistedModel;
 import com.liferay.portal.service.BaseLocalServiceImpl;
 import com.liferay.portal.service.PersistedModelLocalServiceRegistry;
-import com.liferay.portal.util.PortalUtil;
+import com.liferay.portal.service.persistence.UserFinder;
+import com.liferay.portal.service.persistence.UserPersistence;
 
 import com.liferay.portlet.softwarecatalog.model.SCLicense;
 import com.liferay.portlet.softwarecatalog.service.SCLicenseLocalService;
+import com.liferay.portlet.softwarecatalog.service.persistence.SCFrameworkVersionPersistence;
 import com.liferay.portlet.softwarecatalog.service.persistence.SCLicensePersistence;
 import com.liferay.portlet.softwarecatalog.service.persistence.SCProductEntryPersistence;
+import com.liferay.portlet.softwarecatalog.service.persistence.SCProductScreenshotPersistence;
+import com.liferay.portlet.softwarecatalog.service.persistence.SCProductVersionPersistence;
 
 import java.io.Serializable;
 
@@ -60,7 +58,6 @@ import javax.sql.DataSource;
  * @see com.liferay.portlet.softwarecatalog.service.SCLicenseLocalServiceUtil
  * @generated
  */
-@ProviderType
 public abstract class SCLicenseLocalServiceBaseImpl extends BaseLocalServiceImpl
 	implements SCLicenseLocalService, IdentifiableBean {
 	/*
@@ -74,10 +71,12 @@ public abstract class SCLicenseLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 *
 	 * @param scLicense the s c license
 	 * @return the s c license that was added
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
-	public SCLicense addSCLicense(SCLicense scLicense) {
+	public SCLicense addSCLicense(SCLicense scLicense)
+		throws SystemException {
 		scLicense.setNew(true);
 
 		return scLicensePersistence.update(scLicense);
@@ -100,10 +99,12 @@ public abstract class SCLicenseLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * @param licenseId the primary key of the s c license
 	 * @return the s c license that was removed
 	 * @throws PortalException if a s c license with the primary key could not be found
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.DELETE)
 	@Override
-	public SCLicense deleteSCLicense(long licenseId) throws PortalException {
+	public SCLicense deleteSCLicense(long licenseId)
+		throws PortalException, SystemException {
 		return scLicensePersistence.remove(licenseId);
 	}
 
@@ -112,10 +113,12 @@ public abstract class SCLicenseLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 *
 	 * @param scLicense the s c license
 	 * @return the s c license that was removed
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.DELETE)
 	@Override
-	public SCLicense deleteSCLicense(SCLicense scLicense) {
+	public SCLicense deleteSCLicense(SCLicense scLicense)
+		throws SystemException {
 		return scLicensePersistence.remove(scLicense);
 	}
 
@@ -132,9 +135,12 @@ public abstract class SCLicenseLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 *
 	 * @param dynamicQuery the dynamic query
 	 * @return the matching rows
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery) {
+	@SuppressWarnings("rawtypes")
+	public List dynamicQuery(DynamicQuery dynamicQuery)
+		throws SystemException {
 		return scLicensePersistence.findWithDynamicQuery(dynamicQuery);
 	}
 
@@ -149,10 +155,12 @@ public abstract class SCLicenseLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * @param start the lower bound of the range of model instances
 	 * @param end the upper bound of the range of model instances (not inclusive)
 	 * @return the range of matching rows
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
-		int end) {
+	@SuppressWarnings("rawtypes")
+	public List dynamicQuery(DynamicQuery dynamicQuery, int start, int end)
+		throws SystemException {
 		return scLicensePersistence.findWithDynamicQuery(dynamicQuery, start,
 			end);
 	}
@@ -169,10 +177,12 @@ public abstract class SCLicenseLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * @param end the upper bound of the range of model instances (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching rows
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
-		int end, OrderByComparator<T> orderByComparator) {
+	@SuppressWarnings("rawtypes")
+	public List dynamicQuery(DynamicQuery dynamicQuery, int start, int end,
+		OrderByComparator orderByComparator) throws SystemException {
 		return scLicensePersistence.findWithDynamicQuery(dynamicQuery, start,
 			end, orderByComparator);
 	}
@@ -182,9 +192,11 @@ public abstract class SCLicenseLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 *
 	 * @param dynamicQuery the dynamic query
 	 * @return the number of rows that match the dynamic query
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public long dynamicQueryCount(DynamicQuery dynamicQuery) {
+	public long dynamicQueryCount(DynamicQuery dynamicQuery)
+		throws SystemException {
 		return scLicensePersistence.countWithDynamicQuery(dynamicQuery);
 	}
 
@@ -194,16 +206,17 @@ public abstract class SCLicenseLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * @param dynamicQuery the dynamic query
 	 * @param projection the projection to apply to the query
 	 * @return the number of rows that match the dynamic query
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public long dynamicQueryCount(DynamicQuery dynamicQuery,
-		Projection projection) {
+		Projection projection) throws SystemException {
 		return scLicensePersistence.countWithDynamicQuery(dynamicQuery,
 			projection);
 	}
 
 	@Override
-	public SCLicense fetchSCLicense(long licenseId) {
+	public SCLicense fetchSCLicense(long licenseId) throws SystemException {
 		return scLicensePersistence.fetchByPrimaryKey(licenseId);
 	}
 
@@ -213,46 +226,17 @@ public abstract class SCLicenseLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * @param licenseId the primary key of the s c license
 	 * @return the s c license
 	 * @throws PortalException if a s c license with the primary key could not be found
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public SCLicense getSCLicense(long licenseId) throws PortalException {
+	public SCLicense getSCLicense(long licenseId)
+		throws PortalException, SystemException {
 		return scLicensePersistence.findByPrimaryKey(licenseId);
 	}
 
 	@Override
-	public ActionableDynamicQuery getActionableDynamicQuery() {
-		ActionableDynamicQuery actionableDynamicQuery = new DefaultActionableDynamicQuery();
-
-		actionableDynamicQuery.setBaseLocalService(com.liferay.portlet.softwarecatalog.service.SCLicenseLocalServiceUtil.getService());
-		actionableDynamicQuery.setClass(SCLicense.class);
-		actionableDynamicQuery.setClassLoader(getClassLoader());
-
-		actionableDynamicQuery.setPrimaryKeyPropertyName("licenseId");
-
-		return actionableDynamicQuery;
-	}
-
-	protected void initActionableDynamicQuery(
-		ActionableDynamicQuery actionableDynamicQuery) {
-		actionableDynamicQuery.setBaseLocalService(com.liferay.portlet.softwarecatalog.service.SCLicenseLocalServiceUtil.getService());
-		actionableDynamicQuery.setClass(SCLicense.class);
-		actionableDynamicQuery.setClassLoader(getClassLoader());
-
-		actionableDynamicQuery.setPrimaryKeyPropertyName("licenseId");
-	}
-
-	/**
-	 * @throws PortalException
-	 */
-	@Override
-	public PersistedModel deletePersistedModel(PersistedModel persistedModel)
-		throws PortalException {
-		return scLicenseLocalService.deleteSCLicense((SCLicense)persistedModel);
-	}
-
-	@Override
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
-		throws PortalException {
+		throws PortalException, SystemException {
 		return scLicensePersistence.findByPrimaryKey(primaryKeyObj);
 	}
 
@@ -266,9 +250,11 @@ public abstract class SCLicenseLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * @param start the lower bound of the range of s c licenses
 	 * @param end the upper bound of the range of s c licenses (not inclusive)
 	 * @return the range of s c licenses
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public List<SCLicense> getSCLicenses(int start, int end) {
+	public List<SCLicense> getSCLicenses(int start, int end)
+		throws SystemException {
 		return scLicensePersistence.findAll(start, end);
 	}
 
@@ -276,9 +262,10 @@ public abstract class SCLicenseLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 * Returns the number of s c licenses.
 	 *
 	 * @return the number of s c licenses
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public int getSCLicensesCount() {
+	public int getSCLicensesCount() throws SystemException {
 		return scLicensePersistence.countAll();
 	}
 
@@ -287,148 +274,218 @@ public abstract class SCLicenseLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 *
 	 * @param scLicense the s c license
 	 * @return the s c license that was updated
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
-	public SCLicense updateSCLicense(SCLicense scLicense) {
+	public SCLicense updateSCLicense(SCLicense scLicense)
+		throws SystemException {
 		return scLicensePersistence.update(scLicense);
 	}
 
 	/**
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public void addSCProductEntrySCLicense(long productEntryId, long licenseId) {
+	public void addSCProductEntrySCLicense(long productEntryId, long licenseId)
+		throws SystemException {
 		scProductEntryPersistence.addSCLicense(productEntryId, licenseId);
 	}
 
 	/**
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public void addSCProductEntrySCLicense(long productEntryId,
-		SCLicense scLicense) {
+		SCLicense scLicense) throws SystemException {
 		scProductEntryPersistence.addSCLicense(productEntryId, scLicense);
 	}
 
 	/**
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public void addSCProductEntrySCLicenses(long productEntryId,
-		long[] licenseIds) {
+		long[] licenseIds) throws SystemException {
 		scProductEntryPersistence.addSCLicenses(productEntryId, licenseIds);
 	}
 
 	/**
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public void addSCProductEntrySCLicenses(long productEntryId,
-		List<SCLicense> SCLicenses) {
+		List<SCLicense> SCLicenses) throws SystemException {
 		scProductEntryPersistence.addSCLicenses(productEntryId, SCLicenses);
 	}
 
 	/**
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public void clearSCProductEntrySCLicenses(long productEntryId) {
+	public void clearSCProductEntrySCLicenses(long productEntryId)
+		throws SystemException {
 		scProductEntryPersistence.clearSCLicenses(productEntryId);
 	}
 
 	/**
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public void deleteSCProductEntrySCLicense(long productEntryId,
-		long licenseId) {
+		long licenseId) throws SystemException {
 		scProductEntryPersistence.removeSCLicense(productEntryId, licenseId);
 	}
 
 	/**
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public void deleteSCProductEntrySCLicense(long productEntryId,
-		SCLicense scLicense) {
+		SCLicense scLicense) throws SystemException {
 		scProductEntryPersistence.removeSCLicense(productEntryId, scLicense);
 	}
 
 	/**
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public void deleteSCProductEntrySCLicenses(long productEntryId,
-		long[] licenseIds) {
+		long[] licenseIds) throws SystemException {
 		scProductEntryPersistence.removeSCLicenses(productEntryId, licenseIds);
 	}
 
 	/**
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public void deleteSCProductEntrySCLicenses(long productEntryId,
-		List<SCLicense> SCLicenses) {
+		List<SCLicense> SCLicenses) throws SystemException {
 		scProductEntryPersistence.removeSCLicenses(productEntryId, SCLicenses);
 	}
 
 	/**
-	 * Returns the productEntryIds of the s c product entries associated with the s c license.
-	 *
-	 * @param licenseId the licenseId of the s c license
-	 * @return long[] the productEntryIds of s c product entries associated with the s c license
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public long[] getSCProductEntryPrimaryKeys(long licenseId) {
-		return scLicensePersistence.getSCProductEntryPrimaryKeys(licenseId);
-	}
-
-	/**
-	 */
-	@Override
-	public List<SCLicense> getSCProductEntrySCLicenses(long productEntryId) {
+	public List<SCLicense> getSCProductEntrySCLicenses(long productEntryId)
+		throws SystemException {
 		return scProductEntryPersistence.getSCLicenses(productEntryId);
 	}
 
 	/**
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public List<SCLicense> getSCProductEntrySCLicenses(long productEntryId,
-		int start, int end) {
+		int start, int end) throws SystemException {
 		return scProductEntryPersistence.getSCLicenses(productEntryId, start,
 			end);
 	}
 
 	/**
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public List<SCLicense> getSCProductEntrySCLicenses(long productEntryId,
-		int start, int end, OrderByComparator<SCLicense> orderByComparator) {
+		int start, int end, OrderByComparator orderByComparator)
+		throws SystemException {
 		return scProductEntryPersistence.getSCLicenses(productEntryId, start,
 			end, orderByComparator);
 	}
 
 	/**
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public int getSCProductEntrySCLicensesCount(long productEntryId) {
+	public int getSCProductEntrySCLicensesCount(long productEntryId)
+		throws SystemException {
 		return scProductEntryPersistence.getSCLicensesSize(productEntryId);
 	}
 
 	/**
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public boolean hasSCProductEntrySCLicense(long productEntryId,
-		long licenseId) {
+		long licenseId) throws SystemException {
 		return scProductEntryPersistence.containsSCLicense(productEntryId,
 			licenseId);
 	}
 
 	/**
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public boolean hasSCProductEntrySCLicenses(long productEntryId) {
+	public boolean hasSCProductEntrySCLicenses(long productEntryId)
+		throws SystemException {
 		return scProductEntryPersistence.containsSCLicenses(productEntryId);
 	}
 
 	/**
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public void setSCProductEntrySCLicenses(long productEntryId,
-		long[] licenseIds) {
+		long[] licenseIds) throws SystemException {
 		scProductEntryPersistence.setSCLicenses(productEntryId, licenseIds);
+	}
+
+	/**
+	 * Returns the s c framework version local service.
+	 *
+	 * @return the s c framework version local service
+	 */
+	public com.liferay.portlet.softwarecatalog.service.SCFrameworkVersionLocalService getSCFrameworkVersionLocalService() {
+		return scFrameworkVersionLocalService;
+	}
+
+	/**
+	 * Sets the s c framework version local service.
+	 *
+	 * @param scFrameworkVersionLocalService the s c framework version local service
+	 */
+	public void setSCFrameworkVersionLocalService(
+		com.liferay.portlet.softwarecatalog.service.SCFrameworkVersionLocalService scFrameworkVersionLocalService) {
+		this.scFrameworkVersionLocalService = scFrameworkVersionLocalService;
+	}
+
+	/**
+	 * Returns the s c framework version remote service.
+	 *
+	 * @return the s c framework version remote service
+	 */
+	public com.liferay.portlet.softwarecatalog.service.SCFrameworkVersionService getSCFrameworkVersionService() {
+		return scFrameworkVersionService;
+	}
+
+	/**
+	 * Sets the s c framework version remote service.
+	 *
+	 * @param scFrameworkVersionService the s c framework version remote service
+	 */
+	public void setSCFrameworkVersionService(
+		com.liferay.portlet.softwarecatalog.service.SCFrameworkVersionService scFrameworkVersionService) {
+		this.scFrameworkVersionService = scFrameworkVersionService;
+	}
+
+	/**
+	 * Returns the s c framework version persistence.
+	 *
+	 * @return the s c framework version persistence
+	 */
+	public SCFrameworkVersionPersistence getSCFrameworkVersionPersistence() {
+		return scFrameworkVersionPersistence;
+	}
+
+	/**
+	 * Sets the s c framework version persistence.
+	 *
+	 * @param scFrameworkVersionPersistence the s c framework version persistence
+	 */
+	public void setSCFrameworkVersionPersistence(
+		SCFrameworkVersionPersistence scFrameworkVersionPersistence) {
+		this.scFrameworkVersionPersistence = scFrameworkVersionPersistence;
 	}
 
 	/**
@@ -489,25 +546,6 @@ public abstract class SCLicenseLocalServiceBaseImpl extends BaseLocalServiceImpl
 	}
 
 	/**
-	 * Returns the counter local service.
-	 *
-	 * @return the counter local service
-	 */
-	public com.liferay.counter.service.CounterLocalService getCounterLocalService() {
-		return counterLocalService;
-	}
-
-	/**
-	 * Sets the counter local service.
-	 *
-	 * @param counterLocalService the counter local service
-	 */
-	public void setCounterLocalService(
-		com.liferay.counter.service.CounterLocalService counterLocalService) {
-		this.counterLocalService = counterLocalService;
-	}
-
-	/**
 	 * Returns the s c product entry local service.
 	 *
 	 * @return the s c product entry local service
@@ -564,6 +602,213 @@ public abstract class SCLicenseLocalServiceBaseImpl extends BaseLocalServiceImpl
 		this.scProductEntryPersistence = scProductEntryPersistence;
 	}
 
+	/**
+	 * Returns the s c product screenshot local service.
+	 *
+	 * @return the s c product screenshot local service
+	 */
+	public com.liferay.portlet.softwarecatalog.service.SCProductScreenshotLocalService getSCProductScreenshotLocalService() {
+		return scProductScreenshotLocalService;
+	}
+
+	/**
+	 * Sets the s c product screenshot local service.
+	 *
+	 * @param scProductScreenshotLocalService the s c product screenshot local service
+	 */
+	public void setSCProductScreenshotLocalService(
+		com.liferay.portlet.softwarecatalog.service.SCProductScreenshotLocalService scProductScreenshotLocalService) {
+		this.scProductScreenshotLocalService = scProductScreenshotLocalService;
+	}
+
+	/**
+	 * Returns the s c product screenshot persistence.
+	 *
+	 * @return the s c product screenshot persistence
+	 */
+	public SCProductScreenshotPersistence getSCProductScreenshotPersistence() {
+		return scProductScreenshotPersistence;
+	}
+
+	/**
+	 * Sets the s c product screenshot persistence.
+	 *
+	 * @param scProductScreenshotPersistence the s c product screenshot persistence
+	 */
+	public void setSCProductScreenshotPersistence(
+		SCProductScreenshotPersistence scProductScreenshotPersistence) {
+		this.scProductScreenshotPersistence = scProductScreenshotPersistence;
+	}
+
+	/**
+	 * Returns the s c product version local service.
+	 *
+	 * @return the s c product version local service
+	 */
+	public com.liferay.portlet.softwarecatalog.service.SCProductVersionLocalService getSCProductVersionLocalService() {
+		return scProductVersionLocalService;
+	}
+
+	/**
+	 * Sets the s c product version local service.
+	 *
+	 * @param scProductVersionLocalService the s c product version local service
+	 */
+	public void setSCProductVersionLocalService(
+		com.liferay.portlet.softwarecatalog.service.SCProductVersionLocalService scProductVersionLocalService) {
+		this.scProductVersionLocalService = scProductVersionLocalService;
+	}
+
+	/**
+	 * Returns the s c product version remote service.
+	 *
+	 * @return the s c product version remote service
+	 */
+	public com.liferay.portlet.softwarecatalog.service.SCProductVersionService getSCProductVersionService() {
+		return scProductVersionService;
+	}
+
+	/**
+	 * Sets the s c product version remote service.
+	 *
+	 * @param scProductVersionService the s c product version remote service
+	 */
+	public void setSCProductVersionService(
+		com.liferay.portlet.softwarecatalog.service.SCProductVersionService scProductVersionService) {
+		this.scProductVersionService = scProductVersionService;
+	}
+
+	/**
+	 * Returns the s c product version persistence.
+	 *
+	 * @return the s c product version persistence
+	 */
+	public SCProductVersionPersistence getSCProductVersionPersistence() {
+		return scProductVersionPersistence;
+	}
+
+	/**
+	 * Sets the s c product version persistence.
+	 *
+	 * @param scProductVersionPersistence the s c product version persistence
+	 */
+	public void setSCProductVersionPersistence(
+		SCProductVersionPersistence scProductVersionPersistence) {
+		this.scProductVersionPersistence = scProductVersionPersistence;
+	}
+
+	/**
+	 * Returns the counter local service.
+	 *
+	 * @return the counter local service
+	 */
+	public com.liferay.counter.service.CounterLocalService getCounterLocalService() {
+		return counterLocalService;
+	}
+
+	/**
+	 * Sets the counter local service.
+	 *
+	 * @param counterLocalService the counter local service
+	 */
+	public void setCounterLocalService(
+		com.liferay.counter.service.CounterLocalService counterLocalService) {
+		this.counterLocalService = counterLocalService;
+	}
+
+	/**
+	 * Returns the resource local service.
+	 *
+	 * @return the resource local service
+	 */
+	public com.liferay.portal.service.ResourceLocalService getResourceLocalService() {
+		return resourceLocalService;
+	}
+
+	/**
+	 * Sets the resource local service.
+	 *
+	 * @param resourceLocalService the resource local service
+	 */
+	public void setResourceLocalService(
+		com.liferay.portal.service.ResourceLocalService resourceLocalService) {
+		this.resourceLocalService = resourceLocalService;
+	}
+
+	/**
+	 * Returns the user local service.
+	 *
+	 * @return the user local service
+	 */
+	public com.liferay.portal.service.UserLocalService getUserLocalService() {
+		return userLocalService;
+	}
+
+	/**
+	 * Sets the user local service.
+	 *
+	 * @param userLocalService the user local service
+	 */
+	public void setUserLocalService(
+		com.liferay.portal.service.UserLocalService userLocalService) {
+		this.userLocalService = userLocalService;
+	}
+
+	/**
+	 * Returns the user remote service.
+	 *
+	 * @return the user remote service
+	 */
+	public com.liferay.portal.service.UserService getUserService() {
+		return userService;
+	}
+
+	/**
+	 * Sets the user remote service.
+	 *
+	 * @param userService the user remote service
+	 */
+	public void setUserService(
+		com.liferay.portal.service.UserService userService) {
+		this.userService = userService;
+	}
+
+	/**
+	 * Returns the user persistence.
+	 *
+	 * @return the user persistence
+	 */
+	public UserPersistence getUserPersistence() {
+		return userPersistence;
+	}
+
+	/**
+	 * Sets the user persistence.
+	 *
+	 * @param userPersistence the user persistence
+	 */
+	public void setUserPersistence(UserPersistence userPersistence) {
+		this.userPersistence = userPersistence;
+	}
+
+	/**
+	 * Returns the user finder.
+	 *
+	 * @return the user finder
+	 */
+	public UserFinder getUserFinder() {
+		return userFinder;
+	}
+
+	/**
+	 * Sets the user finder.
+	 *
+	 * @param userFinder the user finder
+	 */
+	public void setUserFinder(UserFinder userFinder) {
+		this.userFinder = userFinder;
+	}
+
 	public void afterPropertiesSet() {
 		persistedModelLocalServiceRegistry.register("com.liferay.portlet.softwarecatalog.model.SCLicense",
 			scLicenseLocalService);
@@ -603,18 +848,13 @@ public abstract class SCLicenseLocalServiceBaseImpl extends BaseLocalServiceImpl
 	}
 
 	/**
-	 * Performs a SQL query.
+	 * Performs an SQL query.
 	 *
 	 * @param sql the sql query
 	 */
-	protected void runSQL(String sql) {
+	protected void runSQL(String sql) throws SystemException {
 		try {
 			DataSource dataSource = scLicensePersistence.getDataSource();
-
-			DB db = DBFactoryUtil.getDB();
-
-			sql = db.buildSQL(sql);
-			sql = PortalUtil.transformSQL(sql);
 
 			SqlUpdate sqlUpdate = SqlUpdateFactoryUtil.getSqlUpdate(dataSource,
 					sql, new int[0]);
@@ -626,20 +866,46 @@ public abstract class SCLicenseLocalServiceBaseImpl extends BaseLocalServiceImpl
 		}
 	}
 
+	@BeanReference(type = com.liferay.portlet.softwarecatalog.service.SCFrameworkVersionLocalService.class)
+	protected com.liferay.portlet.softwarecatalog.service.SCFrameworkVersionLocalService scFrameworkVersionLocalService;
+	@BeanReference(type = com.liferay.portlet.softwarecatalog.service.SCFrameworkVersionService.class)
+	protected com.liferay.portlet.softwarecatalog.service.SCFrameworkVersionService scFrameworkVersionService;
+	@BeanReference(type = SCFrameworkVersionPersistence.class)
+	protected SCFrameworkVersionPersistence scFrameworkVersionPersistence;
 	@BeanReference(type = com.liferay.portlet.softwarecatalog.service.SCLicenseLocalService.class)
 	protected com.liferay.portlet.softwarecatalog.service.SCLicenseLocalService scLicenseLocalService;
 	@BeanReference(type = com.liferay.portlet.softwarecatalog.service.SCLicenseService.class)
 	protected com.liferay.portlet.softwarecatalog.service.SCLicenseService scLicenseService;
 	@BeanReference(type = SCLicensePersistence.class)
 	protected SCLicensePersistence scLicensePersistence;
-	@BeanReference(type = com.liferay.counter.service.CounterLocalService.class)
-	protected com.liferay.counter.service.CounterLocalService counterLocalService;
 	@BeanReference(type = com.liferay.portlet.softwarecatalog.service.SCProductEntryLocalService.class)
 	protected com.liferay.portlet.softwarecatalog.service.SCProductEntryLocalService scProductEntryLocalService;
 	@BeanReference(type = com.liferay.portlet.softwarecatalog.service.SCProductEntryService.class)
 	protected com.liferay.portlet.softwarecatalog.service.SCProductEntryService scProductEntryService;
 	@BeanReference(type = SCProductEntryPersistence.class)
 	protected SCProductEntryPersistence scProductEntryPersistence;
+	@BeanReference(type = com.liferay.portlet.softwarecatalog.service.SCProductScreenshotLocalService.class)
+	protected com.liferay.portlet.softwarecatalog.service.SCProductScreenshotLocalService scProductScreenshotLocalService;
+	@BeanReference(type = SCProductScreenshotPersistence.class)
+	protected SCProductScreenshotPersistence scProductScreenshotPersistence;
+	@BeanReference(type = com.liferay.portlet.softwarecatalog.service.SCProductVersionLocalService.class)
+	protected com.liferay.portlet.softwarecatalog.service.SCProductVersionLocalService scProductVersionLocalService;
+	@BeanReference(type = com.liferay.portlet.softwarecatalog.service.SCProductVersionService.class)
+	protected com.liferay.portlet.softwarecatalog.service.SCProductVersionService scProductVersionService;
+	@BeanReference(type = SCProductVersionPersistence.class)
+	protected SCProductVersionPersistence scProductVersionPersistence;
+	@BeanReference(type = com.liferay.counter.service.CounterLocalService.class)
+	protected com.liferay.counter.service.CounterLocalService counterLocalService;
+	@BeanReference(type = com.liferay.portal.service.ResourceLocalService.class)
+	protected com.liferay.portal.service.ResourceLocalService resourceLocalService;
+	@BeanReference(type = com.liferay.portal.service.UserLocalService.class)
+	protected com.liferay.portal.service.UserLocalService userLocalService;
+	@BeanReference(type = com.liferay.portal.service.UserService.class)
+	protected com.liferay.portal.service.UserService userService;
+	@BeanReference(type = UserPersistence.class)
+	protected UserPersistence userPersistence;
+	@BeanReference(type = UserFinder.class)
+	protected UserFinder userFinder;
 	@BeanReference(type = PersistedModelLocalServiceRegistry.class)
 	protected PersistedModelLocalServiceRegistry persistedModelLocalServiceRegistry;
 	private String _beanIdentifier;

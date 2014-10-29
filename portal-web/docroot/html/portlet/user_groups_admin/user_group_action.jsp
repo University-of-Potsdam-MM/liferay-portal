@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -26,7 +26,7 @@ ResultRow row = (ResultRow)request.getAttribute(WebKeys.SEARCH_CONTAINER_RESULT_
 UserGroup userGroup = (UserGroup)row.getObject();
 %>
 
-<liferay-ui:icon-menu icon="<%= StringPool.BLANK %>" message="<%= StringPool.BLANK %>">
+<liferay-ui:icon-menu>
 	<c:if test="<%= UserGroupPermissionUtil.contains(permissionChecker, userGroup.getUserGroupId(), ActionKeys.UPDATE) %>">
 		<portlet:renderURL var="editURL">
 			<portlet:param name="struts_action" value="/users_admin/edit_user_group" />
@@ -35,8 +35,7 @@ UserGroup userGroup = (UserGroup)row.getObject();
 		</portlet:renderURL>
 
 		<liferay-ui:icon
-			iconCssClass="icon-edit"
-			message="edit"
+			image="edit"
 			url="<%= editURL %>"
 		/>
 	</c:if>
@@ -55,8 +54,7 @@ UserGroup userGroup = (UserGroup)row.getObject();
 		/>
 
 		<liferay-ui:icon
-			iconCssClass="icon-lock"
-			message="permissions"
+			image="permissions"
 			method="get"
 			url="<%= permissionsURL %>"
 			useDialog="<%= true %>"
@@ -66,18 +64,15 @@ UserGroup userGroup = (UserGroup)row.getObject();
 	<c:if test="<%= hasPermissionsPermission %>">
 		<liferay-security:permissionsURL
 			modelResource="<%= Group.class.getName() %>"
-			modelResourceDescription='<%= LanguageUtil.format(request, "site-for-user-group-x", userGroup.getName(), false) %>'
+			modelResourceDescription='<%= LanguageUtil.format(pageContext, "site-for-user-group-x", userGroup.getName()) %>'
 			resourcePrimKey="<%= String.valueOf(userGroup.getGroup().getGroupId()) %>"
 			var="permissionsURL"
-			windowState="<%= LiferayWindowState.POP_UP.toString() %>"
 		/>
 
 		<liferay-ui:icon
-			iconCssClass="icon-lock"
+			image="permissions"
 			message="site-permissions"
-			method="get"
 			url="<%= permissionsURL %>"
-			useDialog="<%= true %>"
 		/>
 	</c:if>
 
@@ -85,7 +80,7 @@ UserGroup userGroup = (UserGroup)row.getObject();
 	Group userGroupGroup = userGroup.getGroup();
 	%>
 
-	<c:if test="<%= GroupPermissionUtil.contains(permissionChecker, userGroupGroup, ActionKeys.MANAGE_LAYOUTS) %>">
+	<c:if test="<%= GroupPermissionUtil.contains(permissionChecker, userGroupGroup.getGroupId(), ActionKeys.MANAGE_LAYOUTS) %>">
 		<portlet:renderURL var="managePagesURL">
 			<portlet:param name="struts_action" value="/users_admin/edit_layouts" />
 			<portlet:param name="redirect" value="<%= redirect %>" />
@@ -93,14 +88,14 @@ UserGroup userGroup = (UserGroup)row.getObject();
 		</portlet:renderURL>
 
 		<liferay-ui:icon
-			iconCssClass="icon-copy"
+			image="pages"
 			message="manage-site-pages"
 			url="<%= managePagesURL %>"
 		/>
 	</c:if>
 
 	<%
-	boolean hasViewPermission = GroupPermissionUtil.contains(permissionChecker, userGroupGroup, ActionKeys.VIEW);
+	boolean hasViewPermission = GroupPermissionUtil.contains(permissionChecker, userGroupGroup.getGroupId(), ActionKeys.VIEW);
 	%>
 
 	<c:if test="<%= hasViewPermission && (userGroupGroup.getPublicLayoutsPageCount() > 0) %>">
@@ -112,7 +107,7 @@ UserGroup userGroup = (UserGroup)row.getObject();
 		</portlet:actionURL>
 
 		<liferay-ui:icon
-			iconCssClass="icon-search"
+			image="view"
 			message="go-to-the-site's-public-pages"
 			target="_blank"
 			url="<%= viewPublicPagesURL %>"
@@ -128,7 +123,7 @@ UserGroup userGroup = (UserGroup)row.getObject();
 		</portlet:actionURL>
 
 		<liferay-ui:icon
-			iconCssClass="icon-search"
+			image="view"
 			message="go-to-the-site's-private-pages"
 			target="_blank"
 			url="<%= viewPrivatePagesURL %>"
@@ -143,7 +138,7 @@ UserGroup userGroup = (UserGroup)row.getObject();
 		</portlet:renderURL>
 
 		<liferay-ui:icon
-			iconCssClass="icon-signin"
+			image="assign"
 			message="assign-members"
 			url="<%= assignURL %>"
 		/>
@@ -156,9 +151,7 @@ UserGroup userGroup = (UserGroup)row.getObject();
 		%>
 
 		<liferay-ui:icon
-			cssClass="item-remove"
-			iconCssClass="icon-remove"
-			message="delete"
+			image="delete"
 			url="<%= taglibDeleteURL %>"
 		/>
 	</c:if>

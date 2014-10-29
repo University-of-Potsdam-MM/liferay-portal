@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portlet.announcements.service.impl;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portlet.announcements.model.AnnouncementsFlag;
 import com.liferay.portlet.announcements.service.base.AnnouncementsFlagServiceBaseImpl;
@@ -27,12 +28,16 @@ public class AnnouncementsFlagServiceImpl
 	extends AnnouncementsFlagServiceBaseImpl {
 
 	@Override
-	public void addFlag(long entryId, int value) throws PortalException {
+	public void addFlag(long entryId, int value)
+		throws PortalException, SystemException {
+
 		announcementsFlagLocalService.addFlag(getUserId(), entryId, value);
 	}
 
 	@Override
-	public void deleteFlag(long flagId) throws PortalException {
+	public void deleteFlag(long flagId)
+		throws PortalException, SystemException {
+
 		AnnouncementsFlag flag = announcementsFlagPersistence.findByPrimaryKey(
 			flagId);
 
@@ -45,7 +50,7 @@ public class AnnouncementsFlagServiceImpl
 
 	@Override
 	public AnnouncementsFlag getFlag(long entryId, int value)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return announcementsFlagLocalService.getFlag(
 			getUserId(), entryId, value);

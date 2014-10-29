@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -150,102 +150,6 @@ public class SocialRequestWrapper implements SocialRequest,
 		}
 	}
 
-	@Override
-	public java.lang.Object clone() {
-		return new SocialRequestWrapper((SocialRequest)_socialRequest.clone());
-	}
-
-	@Override
-	public int compareTo(
-		com.liferay.portlet.social.model.SocialRequest socialRequest) {
-		return _socialRequest.compareTo(socialRequest);
-	}
-
-	/**
-	* Returns the fully qualified class name of this social request.
-	*
-	* @return the fully qualified class name of this social request
-	*/
-	@Override
-	public java.lang.String getClassName() {
-		return _socialRequest.getClassName();
-	}
-
-	/**
-	* Returns the class name ID of this social request.
-	*
-	* @return the class name ID of this social request
-	*/
-	@Override
-	public long getClassNameId() {
-		return _socialRequest.getClassNameId();
-	}
-
-	/**
-	* Returns the class p k of this social request.
-	*
-	* @return the class p k of this social request
-	*/
-	@Override
-	public long getClassPK() {
-		return _socialRequest.getClassPK();
-	}
-
-	/**
-	* Returns the company ID of this social request.
-	*
-	* @return the company ID of this social request
-	*/
-	@Override
-	public long getCompanyId() {
-		return _socialRequest.getCompanyId();
-	}
-
-	/**
-	* Returns the create date of this social request.
-	*
-	* @return the create date of this social request
-	*/
-	@Override
-	public long getCreateDate() {
-		return _socialRequest.getCreateDate();
-	}
-
-	@Override
-	public com.liferay.portlet.expando.model.ExpandoBridge getExpandoBridge() {
-		return _socialRequest.getExpandoBridge();
-	}
-
-	/**
-	* Returns the extra data of this social request.
-	*
-	* @return the extra data of this social request
-	*/
-	@Override
-	public java.lang.String getExtraData() {
-		return _socialRequest.getExtraData();
-	}
-
-	/**
-	* Returns the group ID of this social request.
-	*
-	* @return the group ID of this social request
-	*/
-	@Override
-	public long getGroupId() {
-		return _socialRequest.getGroupId();
-	}
-
-	/**
-	* Returns the modified date of this social request.
-	*
-	* @return the modified date of this social request
-	*/
-	@Override
-	public long getModifiedDate() {
-		return _socialRequest.getModifiedDate();
-	}
-
 	/**
 	* Returns the primary key of this social request.
 	*
@@ -256,29 +160,34 @@ public class SocialRequestWrapper implements SocialRequest,
 		return _socialRequest.getPrimaryKey();
 	}
 
+	/**
+	* Sets the primary key of this social request.
+	*
+	* @param primaryKey the primary key of this social request
+	*/
 	@Override
-	public java.io.Serializable getPrimaryKeyObj() {
-		return _socialRequest.getPrimaryKeyObj();
+	public void setPrimaryKey(long primaryKey) {
+		_socialRequest.setPrimaryKey(primaryKey);
 	}
 
 	/**
-	* Returns the receiver user ID of this social request.
+	* Returns the uuid of this social request.
 	*
-	* @return the receiver user ID of this social request
+	* @return the uuid of this social request
 	*/
 	@Override
-	public long getReceiverUserId() {
-		return _socialRequest.getReceiverUserId();
+	public java.lang.String getUuid() {
+		return _socialRequest.getUuid();
 	}
 
 	/**
-	* Returns the receiver user uuid of this social request.
+	* Sets the uuid of this social request.
 	*
-	* @return the receiver user uuid of this social request
+	* @param uuid the uuid of this social request
 	*/
 	@Override
-	public java.lang.String getReceiverUserUuid() {
-		return _socialRequest.getReceiverUserUuid();
+	public void setUuid(java.lang.String uuid) {
+		_socialRequest.setUuid(uuid);
 	}
 
 	/**
@@ -292,108 +201,43 @@ public class SocialRequestWrapper implements SocialRequest,
 	}
 
 	/**
-	* Returns the status of this social request.
+	* Sets the request ID of this social request.
 	*
-	* @return the status of this social request
+	* @param requestId the request ID of this social request
 	*/
 	@Override
-	public int getStatus() {
-		return _socialRequest.getStatus();
+	public void setRequestId(long requestId) {
+		_socialRequest.setRequestId(requestId);
 	}
 
 	/**
-	* Returns the type of this social request.
+	* Returns the group ID of this social request.
 	*
-	* @return the type of this social request
+	* @return the group ID of this social request
 	*/
 	@Override
-	public int getType() {
-		return _socialRequest.getType();
+	public long getGroupId() {
+		return _socialRequest.getGroupId();
 	}
 
 	/**
-	* Returns the user ID of this social request.
+	* Sets the group ID of this social request.
 	*
-	* @return the user ID of this social request
+	* @param groupId the group ID of this social request
 	*/
 	@Override
-	public long getUserId() {
-		return _socialRequest.getUserId();
+	public void setGroupId(long groupId) {
+		_socialRequest.setGroupId(groupId);
 	}
 
 	/**
-	* Returns the user uuid of this social request.
+	* Returns the company ID of this social request.
 	*
-	* @return the user uuid of this social request
+	* @return the company ID of this social request
 	*/
 	@Override
-	public java.lang.String getUserUuid() {
-		return _socialRequest.getUserUuid();
-	}
-
-	/**
-	* Returns the uuid of this social request.
-	*
-	* @return the uuid of this social request
-	*/
-	@Override
-	public java.lang.String getUuid() {
-		return _socialRequest.getUuid();
-	}
-
-	@Override
-	public int hashCode() {
-		return _socialRequest.hashCode();
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _socialRequest.isCachedModel();
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _socialRequest.isEscapedModel();
-	}
-
-	@Override
-	public boolean isNew() {
-		return _socialRequest.isNew();
-	}
-
-	@Override
-	public void persist() {
-		_socialRequest.persist();
-	}
-
-	@Override
-	public void setCachedModel(boolean cachedModel) {
-		_socialRequest.setCachedModel(cachedModel);
-	}
-
-	@Override
-	public void setClassName(java.lang.String className) {
-		_socialRequest.setClassName(className);
-	}
-
-	/**
-	* Sets the class name ID of this social request.
-	*
-	* @param classNameId the class name ID of this social request
-	*/
-	@Override
-	public void setClassNameId(long classNameId) {
-		_socialRequest.setClassNameId(classNameId);
-	}
-
-	/**
-	* Sets the class p k of this social request.
-	*
-	* @param classPK the class p k of this social request
-	*/
-	@Override
-	public void setClassPK(long classPK) {
-		_socialRequest.setClassPK(classPK);
+	public long getCompanyId() {
+		return _socialRequest.getCompanyId();
 	}
 
 	/**
@@ -407,6 +251,58 @@ public class SocialRequestWrapper implements SocialRequest,
 	}
 
 	/**
+	* Returns the user ID of this social request.
+	*
+	* @return the user ID of this social request
+	*/
+	@Override
+	public long getUserId() {
+		return _socialRequest.getUserId();
+	}
+
+	/**
+	* Sets the user ID of this social request.
+	*
+	* @param userId the user ID of this social request
+	*/
+	@Override
+	public void setUserId(long userId) {
+		_socialRequest.setUserId(userId);
+	}
+
+	/**
+	* Returns the user uuid of this social request.
+	*
+	* @return the user uuid of this social request
+	* @throws SystemException if a system exception occurred
+	*/
+	@Override
+	public java.lang.String getUserUuid()
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return _socialRequest.getUserUuid();
+	}
+
+	/**
+	* Sets the user uuid of this social request.
+	*
+	* @param userUuid the user uuid of this social request
+	*/
+	@Override
+	public void setUserUuid(java.lang.String userUuid) {
+		_socialRequest.setUserUuid(userUuid);
+	}
+
+	/**
+	* Returns the create date of this social request.
+	*
+	* @return the create date of this social request
+	*/
+	@Override
+	public long getCreateDate() {
+		return _socialRequest.getCreateDate();
+	}
+
+	/**
 	* Sets the create date of this social request.
 	*
 	* @param createDate the create date of this social request
@@ -414,6 +310,223 @@ public class SocialRequestWrapper implements SocialRequest,
 	@Override
 	public void setCreateDate(long createDate) {
 		_socialRequest.setCreateDate(createDate);
+	}
+
+	/**
+	* Returns the modified date of this social request.
+	*
+	* @return the modified date of this social request
+	*/
+	@Override
+	public long getModifiedDate() {
+		return _socialRequest.getModifiedDate();
+	}
+
+	/**
+	* Sets the modified date of this social request.
+	*
+	* @param modifiedDate the modified date of this social request
+	*/
+	@Override
+	public void setModifiedDate(long modifiedDate) {
+		_socialRequest.setModifiedDate(modifiedDate);
+	}
+
+	/**
+	* Returns the fully qualified class name of this social request.
+	*
+	* @return the fully qualified class name of this social request
+	*/
+	@Override
+	public java.lang.String getClassName() {
+		return _socialRequest.getClassName();
+	}
+
+	@Override
+	public void setClassName(java.lang.String className) {
+		_socialRequest.setClassName(className);
+	}
+
+	/**
+	* Returns the class name ID of this social request.
+	*
+	* @return the class name ID of this social request
+	*/
+	@Override
+	public long getClassNameId() {
+		return _socialRequest.getClassNameId();
+	}
+
+	/**
+	* Sets the class name ID of this social request.
+	*
+	* @param classNameId the class name ID of this social request
+	*/
+	@Override
+	public void setClassNameId(long classNameId) {
+		_socialRequest.setClassNameId(classNameId);
+	}
+
+	/**
+	* Returns the class p k of this social request.
+	*
+	* @return the class p k of this social request
+	*/
+	@Override
+	public long getClassPK() {
+		return _socialRequest.getClassPK();
+	}
+
+	/**
+	* Sets the class p k of this social request.
+	*
+	* @param classPK the class p k of this social request
+	*/
+	@Override
+	public void setClassPK(long classPK) {
+		_socialRequest.setClassPK(classPK);
+	}
+
+	/**
+	* Returns the type of this social request.
+	*
+	* @return the type of this social request
+	*/
+	@Override
+	public int getType() {
+		return _socialRequest.getType();
+	}
+
+	/**
+	* Sets the type of this social request.
+	*
+	* @param type the type of this social request
+	*/
+	@Override
+	public void setType(int type) {
+		_socialRequest.setType(type);
+	}
+
+	/**
+	* Returns the extra data of this social request.
+	*
+	* @return the extra data of this social request
+	*/
+	@Override
+	public java.lang.String getExtraData() {
+		return _socialRequest.getExtraData();
+	}
+
+	/**
+	* Sets the extra data of this social request.
+	*
+	* @param extraData the extra data of this social request
+	*/
+	@Override
+	public void setExtraData(java.lang.String extraData) {
+		_socialRequest.setExtraData(extraData);
+	}
+
+	/**
+	* Returns the receiver user ID of this social request.
+	*
+	* @return the receiver user ID of this social request
+	*/
+	@Override
+	public long getReceiverUserId() {
+		return _socialRequest.getReceiverUserId();
+	}
+
+	/**
+	* Sets the receiver user ID of this social request.
+	*
+	* @param receiverUserId the receiver user ID of this social request
+	*/
+	@Override
+	public void setReceiverUserId(long receiverUserId) {
+		_socialRequest.setReceiverUserId(receiverUserId);
+	}
+
+	/**
+	* Returns the receiver user uuid of this social request.
+	*
+	* @return the receiver user uuid of this social request
+	* @throws SystemException if a system exception occurred
+	*/
+	@Override
+	public java.lang.String getReceiverUserUuid()
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return _socialRequest.getReceiverUserUuid();
+	}
+
+	/**
+	* Sets the receiver user uuid of this social request.
+	*
+	* @param receiverUserUuid the receiver user uuid of this social request
+	*/
+	@Override
+	public void setReceiverUserUuid(java.lang.String receiverUserUuid) {
+		_socialRequest.setReceiverUserUuid(receiverUserUuid);
+	}
+
+	/**
+	* Returns the status of this social request.
+	*
+	* @return the status of this social request
+	*/
+	@Override
+	public int getStatus() {
+		return _socialRequest.getStatus();
+	}
+
+	/**
+	* Sets the status of this social request.
+	*
+	* @param status the status of this social request
+	*/
+	@Override
+	public void setStatus(int status) {
+		_socialRequest.setStatus(status);
+	}
+
+	@Override
+	public boolean isNew() {
+		return _socialRequest.isNew();
+	}
+
+	@Override
+	public void setNew(boolean n) {
+		_socialRequest.setNew(n);
+	}
+
+	@Override
+	public boolean isCachedModel() {
+		return _socialRequest.isCachedModel();
+	}
+
+	@Override
+	public void setCachedModel(boolean cachedModel) {
+		_socialRequest.setCachedModel(cachedModel);
+	}
+
+	@Override
+	public boolean isEscapedModel() {
+		return _socialRequest.isEscapedModel();
+	}
+
+	@Override
+	public java.io.Serializable getPrimaryKeyObj() {
+		return _socialRequest.getPrimaryKeyObj();
+	}
+
+	@Override
+	public void setPrimaryKeyObj(java.io.Serializable primaryKeyObj) {
+		_socialRequest.setPrimaryKeyObj(primaryKeyObj);
+	}
+
+	@Override
+	public com.liferay.portlet.expando.model.ExpandoBridge getExpandoBridge() {
+		return _socialRequest.getExpandoBridge();
 	}
 
 	@Override
@@ -434,134 +547,20 @@ public class SocialRequestWrapper implements SocialRequest,
 		_socialRequest.setExpandoBridgeAttributes(serviceContext);
 	}
 
-	/**
-	* Sets the extra data of this social request.
-	*
-	* @param extraData the extra data of this social request
-	*/
 	@Override
-	public void setExtraData(java.lang.String extraData) {
-		_socialRequest.setExtraData(extraData);
-	}
-
-	/**
-	* Sets the group ID of this social request.
-	*
-	* @param groupId the group ID of this social request
-	*/
-	@Override
-	public void setGroupId(long groupId) {
-		_socialRequest.setGroupId(groupId);
-	}
-
-	/**
-	* Sets the modified date of this social request.
-	*
-	* @param modifiedDate the modified date of this social request
-	*/
-	@Override
-	public void setModifiedDate(long modifiedDate) {
-		_socialRequest.setModifiedDate(modifiedDate);
+	public java.lang.Object clone() {
+		return new SocialRequestWrapper((SocialRequest)_socialRequest.clone());
 	}
 
 	@Override
-	public void setNew(boolean n) {
-		_socialRequest.setNew(n);
-	}
-
-	/**
-	* Sets the primary key of this social request.
-	*
-	* @param primaryKey the primary key of this social request
-	*/
-	@Override
-	public void setPrimaryKey(long primaryKey) {
-		_socialRequest.setPrimaryKey(primaryKey);
+	public int compareTo(
+		com.liferay.portlet.social.model.SocialRequest socialRequest) {
+		return _socialRequest.compareTo(socialRequest);
 	}
 
 	@Override
-	public void setPrimaryKeyObj(java.io.Serializable primaryKeyObj) {
-		_socialRequest.setPrimaryKeyObj(primaryKeyObj);
-	}
-
-	/**
-	* Sets the receiver user ID of this social request.
-	*
-	* @param receiverUserId the receiver user ID of this social request
-	*/
-	@Override
-	public void setReceiverUserId(long receiverUserId) {
-		_socialRequest.setReceiverUserId(receiverUserId);
-	}
-
-	/**
-	* Sets the receiver user uuid of this social request.
-	*
-	* @param receiverUserUuid the receiver user uuid of this social request
-	*/
-	@Override
-	public void setReceiverUserUuid(java.lang.String receiverUserUuid) {
-		_socialRequest.setReceiverUserUuid(receiverUserUuid);
-	}
-
-	/**
-	* Sets the request ID of this social request.
-	*
-	* @param requestId the request ID of this social request
-	*/
-	@Override
-	public void setRequestId(long requestId) {
-		_socialRequest.setRequestId(requestId);
-	}
-
-	/**
-	* Sets the status of this social request.
-	*
-	* @param status the status of this social request
-	*/
-	@Override
-	public void setStatus(int status) {
-		_socialRequest.setStatus(status);
-	}
-
-	/**
-	* Sets the type of this social request.
-	*
-	* @param type the type of this social request
-	*/
-	@Override
-	public void setType(int type) {
-		_socialRequest.setType(type);
-	}
-
-	/**
-	* Sets the user ID of this social request.
-	*
-	* @param userId the user ID of this social request
-	*/
-	@Override
-	public void setUserId(long userId) {
-		_socialRequest.setUserId(userId);
-	}
-
-	/**
-	* Sets the user uuid of this social request.
-	*
-	* @param userUuid the user uuid of this social request
-	*/
-	@Override
-	public void setUserUuid(java.lang.String userUuid) {
-		_socialRequest.setUserUuid(userUuid);
-	}
-
-	/**
-	* Sets the uuid of this social request.
-	*
-	* @param uuid the uuid of this social request
-	*/
-	@Override
-	public void setUuid(java.lang.String uuid) {
-		_socialRequest.setUuid(uuid);
+	public int hashCode() {
+		return _socialRequest.hashCode();
 	}
 
 	@Override
@@ -575,18 +574,24 @@ public class SocialRequestWrapper implements SocialRequest,
 	}
 
 	@Override
-	public java.lang.String toString() {
-		return _socialRequest.toString();
-	}
-
-	@Override
 	public com.liferay.portlet.social.model.SocialRequest toUnescapedModel() {
 		return new SocialRequestWrapper(_socialRequest.toUnescapedModel());
 	}
 
 	@Override
+	public java.lang.String toString() {
+		return _socialRequest.toString();
+	}
+
+	@Override
 	public java.lang.String toXmlString() {
 		return _socialRequest.toXmlString();
+	}
+
+	@Override
+	public void persist()
+		throws com.liferay.portal.kernel.exception.SystemException {
+		_socialRequest.persist();
 	}
 
 	@Override
@@ -611,7 +616,6 @@ public class SocialRequestWrapper implements SocialRequest,
 	/**
 	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedModel}
 	 */
-	@Deprecated
 	public SocialRequest getWrappedSocialRequest() {
 		return _socialRequest;
 	}
@@ -622,19 +626,9 @@ public class SocialRequestWrapper implements SocialRequest,
 	}
 
 	@Override
-	public boolean isEntityCacheEnabled() {
-		return _socialRequest.isEntityCacheEnabled();
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return _socialRequest.isFinderCacheEnabled();
-	}
-
-	@Override
 	public void resetOriginalValues() {
 		_socialRequest.resetOriginalValues();
 	}
 
-	private final SocialRequest _socialRequest;
+	private SocialRequest _socialRequest;
 }

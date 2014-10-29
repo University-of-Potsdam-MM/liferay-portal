@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -17,19 +17,11 @@ package com.liferay.portal.kernel.messaging.config;
 import com.liferay.portal.kernel.messaging.MessageBus;
 import com.liferay.portal.kernel.messaging.MessageBusUtil;
 import com.liferay.portal.kernel.portlet.PortletClassLoaderUtil;
-import com.liferay.portal.kernel.util.ClassLoaderPool;
 
 /**
  * @author Michael C. Han
  */
 public class PluginMessagingConfigurator extends AbstractMessagingConfigurator {
-
-	@Override
-	public void afterPropertiesSet() {
-		_servletContextName = PortletClassLoaderUtil.getServletContextName();
-
-		super.afterPropertiesSet();
-	}
 
 	@Override
 	protected MessageBus getMessageBus() {
@@ -38,8 +30,7 @@ public class PluginMessagingConfigurator extends AbstractMessagingConfigurator {
 
 	@Override
 	protected ClassLoader getOperatingClassloader() {
-		ClassLoader classLoader = ClassLoaderPool.getClassLoader(
-			_servletContextName);
+		ClassLoader classLoader = PortletClassLoaderUtil.getClassLoader();
 
 		if (classLoader == null) {
 			Thread currentThread = Thread.currentThread();
@@ -49,7 +40,5 @@ public class PluginMessagingConfigurator extends AbstractMessagingConfigurator {
 
 		return classLoader;
 	}
-
-	private String _servletContextName;
 
 }

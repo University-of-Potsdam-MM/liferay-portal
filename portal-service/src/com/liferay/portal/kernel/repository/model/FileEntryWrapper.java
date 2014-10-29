@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portal.kernel.repository.model;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.lar.StagedModelType;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.Lock;
@@ -46,7 +47,7 @@ public class FileEntryWrapper implements FileEntry, ModelWrapper<FileEntry> {
 	@Override
 	public boolean containsPermission(
 			PermissionChecker permissionChecker, String actionId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return _fileEntry.containsPermission(permissionChecker, actionId);
 	}
@@ -71,13 +72,6 @@ public class FileEntryWrapper implements FileEntry, ModelWrapper<FileEntry> {
 	}
 
 	@Override
-	public void execute(RepositoryModelOperation repositoryModelOperation)
-		throws PortalException {
-
-		repositoryModelOperation.execute(this);
-	}
-
-	@Override
 	public Map<String, Serializable> getAttributes() {
 		return _fileEntry.getAttributes();
 	}
@@ -88,12 +82,16 @@ public class FileEntryWrapper implements FileEntry, ModelWrapper<FileEntry> {
 	}
 
 	@Override
-	public InputStream getContentStream() throws PortalException {
+	public InputStream getContentStream()
+		throws PortalException, SystemException {
+
 		return _fileEntry.getContentStream();
 	}
 
 	@Override
-	public InputStream getContentStream(String version) throws PortalException {
+	public InputStream getContentStream(String version)
+		throws PortalException, SystemException {
+
 		return _fileEntry.getContentStream();
 	}
 
@@ -123,22 +121,23 @@ public class FileEntryWrapper implements FileEntry, ModelWrapper<FileEntry> {
 	}
 
 	@Override
-	public String getFileName() {
-		return _fileEntry.getFileName();
-	}
+	public FileVersion getFileVersion()
+		throws PortalException, SystemException {
 
-	@Override
-	public FileVersion getFileVersion() throws PortalException {
 		return _fileEntry.getFileVersion();
 	}
 
 	@Override
-	public FileVersion getFileVersion(String version) throws PortalException {
+	public FileVersion getFileVersion(String version)
+		throws PortalException, SystemException {
+
 		return _fileEntry.getFileVersion();
 	}
 
 	@Override
-	public List<FileVersion> getFileVersions(int status) {
+	public List<FileVersion> getFileVersions(int status)
+		throws SystemException {
+
 		return _fileEntry.getFileVersions(status);
 	}
 
@@ -163,20 +162,10 @@ public class FileEntryWrapper implements FileEntry, ModelWrapper<FileEntry> {
 	}
 
 	@Override
-	public String getIconCssClass() {
-		return _fileEntry.getIconCssClass();
-	}
+	public FileVersion getLatestFileVersion()
+		throws PortalException, SystemException {
 
-	@Override
-	public FileVersion getLatestFileVersion() throws PortalException {
 		return _fileEntry.getLatestFileVersion();
-	}
-
-	@Override
-	public FileVersion getLatestFileVersion(boolean trusted)
-		throws PortalException {
-
-		return _fileEntry.getLatestFileVersion(trusted);
 	}
 
 	@Override
@@ -260,7 +249,7 @@ public class FileEntryWrapper implements FileEntry, ModelWrapper<FileEntry> {
 	}
 
 	@Override
-	public String getUserUuid() {
+	public String getUserUuid() throws SystemException {
 		return _fileEntry.getUserUuid();
 	}
 
@@ -285,7 +274,7 @@ public class FileEntryWrapper implements FileEntry, ModelWrapper<FileEntry> {
 	}
 
 	@Override
-	public String getVersionUserUuid() {
+	public String getVersionUserUuid() throws SystemException {
 		return _fileEntry.getVersionUserUuid();
 	}
 

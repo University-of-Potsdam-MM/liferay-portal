@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,16 +15,13 @@
 package com.liferay.portal.repository.liferayrepository.model;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.lar.StagedModelType;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.FileVersion;
-import com.liferay.portal.kernel.repository.model.RepositoryModelOperation;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.security.auth.PrincipalThreadLocal;
 import com.liferay.portlet.documentlibrary.model.DLFileVersion;
-import com.liferay.portlet.documentlibrary.service.DLAppHelperLocalServiceUtil;
 import com.liferay.portlet.documentlibrary.service.DLFileEntryLocalServiceUtil;
 import com.liferay.portlet.expando.model.ExpandoBridge;
 
@@ -41,7 +38,7 @@ import java.util.Map;
 public class LiferayFileVersion extends LiferayModel implements FileVersion {
 
 	public LiferayFileVersion(DLFileVersion dlFileVersion) {
-		this(dlFileVersion, false);
+		_dlFileVersion = dlFileVersion;
 	}
 
 	public LiferayFileVersion(
@@ -96,13 +93,6 @@ public class LiferayFileVersion extends LiferayModel implements FileVersion {
 	}
 
 	@Override
-	public void execute(RepositoryModelOperation repositoryModelOperation)
-		throws PortalException {
-
-		repositoryModelOperation.execute(this);
-	}
-
-	@Override
 	public Map<String, Serializable> getAttributes() {
 		ExpandoBridge expandoBridge = _dlFileVersion.getExpandoBridge();
 
@@ -121,21 +111,9 @@ public class LiferayFileVersion extends LiferayModel implements FileVersion {
 
 	@Override
 	public InputStream getContentStream(boolean incrementCounter)
-		throws PortalException {
+		throws PortalException, SystemException {
 
-		InputStream inputStream = _dlFileVersion.getContentStream(
-			incrementCounter);
-
-		try {
-			DLAppHelperLocalServiceUtil.getFileAsStream(
-				PrincipalThreadLocal.getUserId(), getFileEntry(),
-				incrementCounter);
-		}
-		catch (Exception e) {
-			_log.error(e, e);
-		}
-
-		return inputStream;
+		return _dlFileVersion.getContentStream(incrementCounter);
 	}
 
 	@Override
@@ -163,25 +141,22 @@ public class LiferayFileVersion extends LiferayModel implements FileVersion {
 		return _dlFileVersion.getExtraSettings();
 	}
 
-	public File getFile(boolean incrementCounter) throws PortalException {
+	public File getFile(boolean incrementCounter)
+		throws PortalException, SystemException {
+
 		return DLFileEntryLocalServiceUtil.getFile(
-			_dlFileVersion.getFileEntryId(), _dlFileVersion.getVersion(),
-			incrementCounter);
+			PrincipalThreadLocal.getUserId(), _dlFileVersion.getFileEntryId(),
+			_dlFileVersion.getVersion(), incrementCounter);
 	}
 
 	@Override
-	public FileEntry getFileEntry() throws PortalException {
+	public FileEntry getFileEntry() throws PortalException, SystemException {
 		return new LiferayFileEntry(_dlFileVersion.getFileEntry());
 	}
 
 	@Override
 	public long getFileEntryId() {
 		return _dlFileVersion.getFileEntryId();
-	}
-
-	@Override
-	public String getFileName() {
-		return _dlFileVersion.getFileName();
 	}
 
 	@Override
@@ -265,7 +240,7 @@ public class LiferayFileVersion extends LiferayModel implements FileVersion {
 	}
 
 	@Override
-	public String getStatusByUserUuid() {
+	public String getStatusByUserUuid() throws SystemException {
 		return _dlFileVersion.getStatusByUserUuid();
 	}
 
@@ -290,7 +265,7 @@ public class LiferayFileVersion extends LiferayModel implements FileVersion {
 	}
 
 	@Override
-	public String getUserUuid() {
+	public String getUserUuid() throws SystemException {
 		return _dlFileVersion.getUserUuid();
 	}
 
@@ -414,9 +389,7 @@ public class LiferayFileVersion extends LiferayModel implements FileVersion {
 		}
 	}
 
-	private static Log _log = LogFactoryUtil.getLog(LiferayFileVersion.class);
-
-	private final DLFileVersion _dlFileVersion;
-	private final boolean _escapedModel;
+	private DLFileVersion _dlFileVersion;
+	private boolean _escapedModel;
 
 }

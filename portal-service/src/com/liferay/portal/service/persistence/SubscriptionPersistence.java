@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -43,9 +43,10 @@ public interface SubscriptionPersistence extends BasePersistence<Subscription> {
 	*
 	* @param userId the user ID
 	* @return the matching subscriptions
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.Subscription> findByUserId(
-		long userId);
+		long userId) throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns a range of all the subscriptions where userId = &#63;.
@@ -58,9 +59,11 @@ public interface SubscriptionPersistence extends BasePersistence<Subscription> {
 	* @param start the lower bound of the range of subscriptions
 	* @param end the upper bound of the range of subscriptions (not inclusive)
 	* @return the range of matching subscriptions
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.Subscription> findByUserId(
-		long userId, int start, int end);
+		long userId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns an ordered range of all the subscriptions where userId = &#63;.
@@ -74,10 +77,12 @@ public interface SubscriptionPersistence extends BasePersistence<Subscription> {
 	* @param end the upper bound of the range of subscriptions (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching subscriptions
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.Subscription> findByUserId(
 		long userId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Subscription> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the first subscription in the ordered set where userId = &#63;.
@@ -86,11 +91,13 @@ public interface SubscriptionPersistence extends BasePersistence<Subscription> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching subscription
 	* @throws com.liferay.portal.NoSuchSubscriptionException if a matching subscription could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.Subscription findByUserId_First(
 		long userId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Subscription> orderByComparator)
-		throws com.liferay.portal.NoSuchSubscriptionException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchSubscriptionException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the first subscription in the ordered set where userId = &#63;.
@@ -98,10 +105,12 @@ public interface SubscriptionPersistence extends BasePersistence<Subscription> {
 	* @param userId the user ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching subscription, or <code>null</code> if a matching subscription could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.Subscription fetchByUserId_First(
 		long userId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Subscription> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the last subscription in the ordered set where userId = &#63;.
@@ -110,11 +119,13 @@ public interface SubscriptionPersistence extends BasePersistence<Subscription> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching subscription
 	* @throws com.liferay.portal.NoSuchSubscriptionException if a matching subscription could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.Subscription findByUserId_Last(
 		long userId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Subscription> orderByComparator)
-		throws com.liferay.portal.NoSuchSubscriptionException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchSubscriptionException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the last subscription in the ordered set where userId = &#63;.
@@ -122,10 +133,12 @@ public interface SubscriptionPersistence extends BasePersistence<Subscription> {
 	* @param userId the user ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching subscription, or <code>null</code> if a matching subscription could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.Subscription fetchByUserId_Last(
 		long userId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Subscription> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the subscriptions before and after the current subscription in the ordered set where userId = &#63;.
@@ -135,26 +148,32 @@ public interface SubscriptionPersistence extends BasePersistence<Subscription> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next subscription
 	* @throws com.liferay.portal.NoSuchSubscriptionException if a subscription with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.Subscription[] findByUserId_PrevAndNext(
 		long subscriptionId, long userId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Subscription> orderByComparator)
-		throws com.liferay.portal.NoSuchSubscriptionException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchSubscriptionException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Removes all the subscriptions where userId = &#63; from the database.
 	*
 	* @param userId the user ID
+	* @throws SystemException if a system exception occurred
 	*/
-	public void removeByUserId(long userId);
+	public void removeByUserId(long userId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of subscriptions where userId = &#63;.
 	*
 	* @param userId the user ID
 	* @return the number of matching subscriptions
+	* @throws SystemException if a system exception occurred
 	*/
-	public int countByUserId(long userId);
+	public int countByUserId(long userId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns all the subscriptions where userId = &#63; and classNameId = &#63;.
@@ -162,9 +181,11 @@ public interface SubscriptionPersistence extends BasePersistence<Subscription> {
 	* @param userId the user ID
 	* @param classNameId the class name ID
 	* @return the matching subscriptions
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.Subscription> findByU_C(
-		long userId, long classNameId);
+		long userId, long classNameId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns a range of all the subscriptions where userId = &#63; and classNameId = &#63;.
@@ -178,9 +199,11 @@ public interface SubscriptionPersistence extends BasePersistence<Subscription> {
 	* @param start the lower bound of the range of subscriptions
 	* @param end the upper bound of the range of subscriptions (not inclusive)
 	* @return the range of matching subscriptions
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.Subscription> findByU_C(
-		long userId, long classNameId, int start, int end);
+		long userId, long classNameId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns an ordered range of all the subscriptions where userId = &#63; and classNameId = &#63;.
@@ -195,10 +218,12 @@ public interface SubscriptionPersistence extends BasePersistence<Subscription> {
 	* @param end the upper bound of the range of subscriptions (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching subscriptions
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.Subscription> findByU_C(
 		long userId, long classNameId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Subscription> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the first subscription in the ordered set where userId = &#63; and classNameId = &#63;.
@@ -208,11 +233,13 @@ public interface SubscriptionPersistence extends BasePersistence<Subscription> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching subscription
 	* @throws com.liferay.portal.NoSuchSubscriptionException if a matching subscription could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.Subscription findByU_C_First(long userId,
 		long classNameId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Subscription> orderByComparator)
-		throws com.liferay.portal.NoSuchSubscriptionException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchSubscriptionException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the first subscription in the ordered set where userId = &#63; and classNameId = &#63;.
@@ -221,10 +248,12 @@ public interface SubscriptionPersistence extends BasePersistence<Subscription> {
 	* @param classNameId the class name ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching subscription, or <code>null</code> if a matching subscription could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.Subscription fetchByU_C_First(long userId,
 		long classNameId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Subscription> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the last subscription in the ordered set where userId = &#63; and classNameId = &#63;.
@@ -234,11 +263,13 @@ public interface SubscriptionPersistence extends BasePersistence<Subscription> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching subscription
 	* @throws com.liferay.portal.NoSuchSubscriptionException if a matching subscription could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.Subscription findByU_C_Last(long userId,
 		long classNameId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Subscription> orderByComparator)
-		throws com.liferay.portal.NoSuchSubscriptionException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchSubscriptionException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the last subscription in the ordered set where userId = &#63; and classNameId = &#63;.
@@ -247,10 +278,12 @@ public interface SubscriptionPersistence extends BasePersistence<Subscription> {
 	* @param classNameId the class name ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching subscription, or <code>null</code> if a matching subscription could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.Subscription fetchByU_C_Last(long userId,
 		long classNameId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Subscription> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the subscriptions before and after the current subscription in the ordered set where userId = &#63; and classNameId = &#63;.
@@ -261,19 +294,23 @@ public interface SubscriptionPersistence extends BasePersistence<Subscription> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next subscription
 	* @throws com.liferay.portal.NoSuchSubscriptionException if a subscription with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.Subscription[] findByU_C_PrevAndNext(
 		long subscriptionId, long userId, long classNameId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Subscription> orderByComparator)
-		throws com.liferay.portal.NoSuchSubscriptionException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchSubscriptionException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Removes all the subscriptions where userId = &#63; and classNameId = &#63; from the database.
 	*
 	* @param userId the user ID
 	* @param classNameId the class name ID
+	* @throws SystemException if a system exception occurred
 	*/
-	public void removeByU_C(long userId, long classNameId);
+	public void removeByU_C(long userId, long classNameId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of subscriptions where userId = &#63; and classNameId = &#63;.
@@ -281,8 +318,10 @@ public interface SubscriptionPersistence extends BasePersistence<Subscription> {
 	* @param userId the user ID
 	* @param classNameId the class name ID
 	* @return the number of matching subscriptions
+	* @throws SystemException if a system exception occurred
 	*/
-	public int countByU_C(long userId, long classNameId);
+	public int countByU_C(long userId, long classNameId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns all the subscriptions where companyId = &#63; and classNameId = &#63; and classPK = &#63;.
@@ -291,9 +330,11 @@ public interface SubscriptionPersistence extends BasePersistence<Subscription> {
 	* @param classNameId the class name ID
 	* @param classPK the class p k
 	* @return the matching subscriptions
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.Subscription> findByC_C_C(
-		long companyId, long classNameId, long classPK);
+		long companyId, long classNameId, long classPK)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns a range of all the subscriptions where companyId = &#63; and classNameId = &#63; and classPK = &#63;.
@@ -308,9 +349,11 @@ public interface SubscriptionPersistence extends BasePersistence<Subscription> {
 	* @param start the lower bound of the range of subscriptions
 	* @param end the upper bound of the range of subscriptions (not inclusive)
 	* @return the range of matching subscriptions
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.Subscription> findByC_C_C(
-		long companyId, long classNameId, long classPK, int start, int end);
+		long companyId, long classNameId, long classPK, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns an ordered range of all the subscriptions where companyId = &#63; and classNameId = &#63; and classPK = &#63;.
@@ -326,10 +369,12 @@ public interface SubscriptionPersistence extends BasePersistence<Subscription> {
 	* @param end the upper bound of the range of subscriptions (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching subscriptions
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.Subscription> findByC_C_C(
 		long companyId, long classNameId, long classPK, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Subscription> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the first subscription in the ordered set where companyId = &#63; and classNameId = &#63; and classPK = &#63;.
@@ -340,11 +385,13 @@ public interface SubscriptionPersistence extends BasePersistence<Subscription> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching subscription
 	* @throws com.liferay.portal.NoSuchSubscriptionException if a matching subscription could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.Subscription findByC_C_C_First(
 		long companyId, long classNameId, long classPK,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Subscription> orderByComparator)
-		throws com.liferay.portal.NoSuchSubscriptionException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchSubscriptionException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the first subscription in the ordered set where companyId = &#63; and classNameId = &#63; and classPK = &#63;.
@@ -354,10 +401,12 @@ public interface SubscriptionPersistence extends BasePersistence<Subscription> {
 	* @param classPK the class p k
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching subscription, or <code>null</code> if a matching subscription could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.Subscription fetchByC_C_C_First(
 		long companyId, long classNameId, long classPK,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Subscription> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the last subscription in the ordered set where companyId = &#63; and classNameId = &#63; and classPK = &#63;.
@@ -368,11 +417,13 @@ public interface SubscriptionPersistence extends BasePersistence<Subscription> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching subscription
 	* @throws com.liferay.portal.NoSuchSubscriptionException if a matching subscription could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.Subscription findByC_C_C_Last(
 		long companyId, long classNameId, long classPK,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Subscription> orderByComparator)
-		throws com.liferay.portal.NoSuchSubscriptionException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchSubscriptionException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the last subscription in the ordered set where companyId = &#63; and classNameId = &#63; and classPK = &#63;.
@@ -382,10 +433,12 @@ public interface SubscriptionPersistence extends BasePersistence<Subscription> {
 	* @param classPK the class p k
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching subscription, or <code>null</code> if a matching subscription could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.Subscription fetchByC_C_C_Last(
 		long companyId, long classNameId, long classPK,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Subscription> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the subscriptions before and after the current subscription in the ordered set where companyId = &#63; and classNameId = &#63; and classPK = &#63;.
@@ -397,11 +450,13 @@ public interface SubscriptionPersistence extends BasePersistence<Subscription> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next subscription
 	* @throws com.liferay.portal.NoSuchSubscriptionException if a subscription with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.Subscription[] findByC_C_C_PrevAndNext(
 		long subscriptionId, long companyId, long classNameId, long classPK,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Subscription> orderByComparator)
-		throws com.liferay.portal.NoSuchSubscriptionException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchSubscriptionException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Removes all the subscriptions where companyId = &#63; and classNameId = &#63; and classPK = &#63; from the database.
@@ -409,8 +464,10 @@ public interface SubscriptionPersistence extends BasePersistence<Subscription> {
 	* @param companyId the company ID
 	* @param classNameId the class name ID
 	* @param classPK the class p k
+	* @throws SystemException if a system exception occurred
 	*/
-	public void removeByC_C_C(long companyId, long classNameId, long classPK);
+	public void removeByC_C_C(long companyId, long classNameId, long classPK)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of subscriptions where companyId = &#63; and classNameId = &#63; and classPK = &#63;.
@@ -419,8 +476,10 @@ public interface SubscriptionPersistence extends BasePersistence<Subscription> {
 	* @param classNameId the class name ID
 	* @param classPK the class p k
 	* @return the number of matching subscriptions
+	* @throws SystemException if a system exception occurred
 	*/
-	public int countByC_C_C(long companyId, long classNameId, long classPK);
+	public int countByC_C_C(long companyId, long classNameId, long classPK)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns all the subscriptions where companyId = &#63; and userId = &#63; and classNameId = &#63; and classPK = any &#63;.
@@ -434,9 +493,11 @@ public interface SubscriptionPersistence extends BasePersistence<Subscription> {
 	* @param classNameId the class name ID
 	* @param classPKs the class p ks
 	* @return the matching subscriptions
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.Subscription> findByC_U_C_C(
-		long companyId, long userId, long classNameId, long[] classPKs);
+		long companyId, long userId, long classNameId, long[] classPKs)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns a range of all the subscriptions where companyId = &#63; and userId = &#63; and classNameId = &#63; and classPK = any &#63;.
@@ -452,10 +513,12 @@ public interface SubscriptionPersistence extends BasePersistence<Subscription> {
 	* @param start the lower bound of the range of subscriptions
 	* @param end the upper bound of the range of subscriptions (not inclusive)
 	* @return the range of matching subscriptions
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.Subscription> findByC_U_C_C(
 		long companyId, long userId, long classNameId, long[] classPKs,
-		int start, int end);
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns an ordered range of all the subscriptions where companyId = &#63; and userId = &#63; and classNameId = &#63; and classPK = any &#63;.
@@ -472,11 +535,13 @@ public interface SubscriptionPersistence extends BasePersistence<Subscription> {
 	* @param end the upper bound of the range of subscriptions (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching subscriptions
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.Subscription> findByC_U_C_C(
 		long companyId, long userId, long classNameId, long[] classPKs,
 		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Subscription> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the subscription where companyId = &#63; and userId = &#63; and classNameId = &#63; and classPK = &#63; or throws a {@link com.liferay.portal.NoSuchSubscriptionException} if it could not be found.
@@ -487,10 +552,12 @@ public interface SubscriptionPersistence extends BasePersistence<Subscription> {
 	* @param classPK the class p k
 	* @return the matching subscription
 	* @throws com.liferay.portal.NoSuchSubscriptionException if a matching subscription could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.Subscription findByC_U_C_C(long companyId,
 		long userId, long classNameId, long classPK)
-		throws com.liferay.portal.NoSuchSubscriptionException;
+		throws com.liferay.portal.NoSuchSubscriptionException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the subscription where companyId = &#63; and userId = &#63; and classNameId = &#63; and classPK = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
@@ -500,9 +567,11 @@ public interface SubscriptionPersistence extends BasePersistence<Subscription> {
 	* @param classNameId the class name ID
 	* @param classPK the class p k
 	* @return the matching subscription, or <code>null</code> if a matching subscription could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.Subscription fetchByC_U_C_C(
-		long companyId, long userId, long classNameId, long classPK);
+		long companyId, long userId, long classNameId, long classPK)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the subscription where companyId = &#63; and userId = &#63; and classNameId = &#63; and classPK = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
@@ -513,10 +582,12 @@ public interface SubscriptionPersistence extends BasePersistence<Subscription> {
 	* @param classPK the class p k
 	* @param retrieveFromCache whether to use the finder cache
 	* @return the matching subscription, or <code>null</code> if a matching subscription could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.Subscription fetchByC_U_C_C(
 		long companyId, long userId, long classNameId, long classPK,
-		boolean retrieveFromCache);
+		boolean retrieveFromCache)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Removes the subscription where companyId = &#63; and userId = &#63; and classNameId = &#63; and classPK = &#63; from the database.
@@ -526,10 +597,12 @@ public interface SubscriptionPersistence extends BasePersistence<Subscription> {
 	* @param classNameId the class name ID
 	* @param classPK the class p k
 	* @return the subscription that was removed
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.Subscription removeByC_U_C_C(
 		long companyId, long userId, long classNameId, long classPK)
-		throws com.liferay.portal.NoSuchSubscriptionException;
+		throws com.liferay.portal.NoSuchSubscriptionException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of subscriptions where companyId = &#63; and userId = &#63; and classNameId = &#63; and classPK = &#63;.
@@ -539,9 +612,11 @@ public interface SubscriptionPersistence extends BasePersistence<Subscription> {
 	* @param classNameId the class name ID
 	* @param classPK the class p k
 	* @return the number of matching subscriptions
+	* @throws SystemException if a system exception occurred
 	*/
 	public int countByC_U_C_C(long companyId, long userId, long classNameId,
-		long classPK);
+		long classPK)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of subscriptions where companyId = &#63; and userId = &#63; and classNameId = &#63; and classPK = any &#63;.
@@ -551,9 +626,11 @@ public interface SubscriptionPersistence extends BasePersistence<Subscription> {
 	* @param classNameId the class name ID
 	* @param classPKs the class p ks
 	* @return the number of matching subscriptions
+	* @throws SystemException if a system exception occurred
 	*/
 	public int countByC_U_C_C(long companyId, long userId, long classNameId,
-		long[] classPKs);
+		long[] classPKs)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Caches the subscription in the entity cache if it is enabled.
@@ -584,12 +661,15 @@ public interface SubscriptionPersistence extends BasePersistence<Subscription> {
 	* @param subscriptionId the primary key of the subscription
 	* @return the subscription that was removed
 	* @throws com.liferay.portal.NoSuchSubscriptionException if a subscription with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.Subscription remove(long subscriptionId)
-		throws com.liferay.portal.NoSuchSubscriptionException;
+		throws com.liferay.portal.NoSuchSubscriptionException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	public com.liferay.portal.model.Subscription updateImpl(
-		com.liferay.portal.model.Subscription subscription);
+		com.liferay.portal.model.Subscription subscription)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the subscription with the primary key or throws a {@link com.liferay.portal.NoSuchSubscriptionException} if it could not be found.
@@ -597,30 +677,32 @@ public interface SubscriptionPersistence extends BasePersistence<Subscription> {
 	* @param subscriptionId the primary key of the subscription
 	* @return the subscription
 	* @throws com.liferay.portal.NoSuchSubscriptionException if a subscription with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.Subscription findByPrimaryKey(
 		long subscriptionId)
-		throws com.liferay.portal.NoSuchSubscriptionException;
+		throws com.liferay.portal.NoSuchSubscriptionException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the subscription with the primary key or returns <code>null</code> if it could not be found.
 	*
 	* @param subscriptionId the primary key of the subscription
 	* @return the subscription, or <code>null</code> if a subscription with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.Subscription fetchByPrimaryKey(
-		long subscriptionId);
-
-	@Override
-	public java.util.Map<java.io.Serializable, com.liferay.portal.model.Subscription> fetchByPrimaryKeys(
-		java.util.Set<java.io.Serializable> primaryKeys);
+		long subscriptionId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns all the subscriptions.
 	*
 	* @return the subscriptions
+	* @throws SystemException if a system exception occurred
 	*/
-	public java.util.List<com.liferay.portal.model.Subscription> findAll();
+	public java.util.List<com.liferay.portal.model.Subscription> findAll()
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns a range of all the subscriptions.
@@ -632,9 +714,11 @@ public interface SubscriptionPersistence extends BasePersistence<Subscription> {
 	* @param start the lower bound of the range of subscriptions
 	* @param end the upper bound of the range of subscriptions (not inclusive)
 	* @return the range of subscriptions
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.Subscription> findAll(
-		int start, int end);
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns an ordered range of all the subscriptions.
@@ -647,20 +731,27 @@ public interface SubscriptionPersistence extends BasePersistence<Subscription> {
 	* @param end the upper bound of the range of subscriptions (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of subscriptions
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.Subscription> findAll(
 		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Subscription> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Removes all the subscriptions from the database.
+	*
+	* @throws SystemException if a system exception occurred
 	*/
-	public void removeAll();
+	public void removeAll()
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of subscriptions.
 	*
 	* @return the number of subscriptions
+	* @throws SystemException if a system exception occurred
 	*/
-	public int countAll();
+	public int countAll()
+		throws com.liferay.portal.kernel.exception.SystemException;
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -13,8 +13,6 @@
  */
 
 package com.liferay.portal.model.impl;
-
-import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -51,7 +49,6 @@ import java.util.Map;
  * @see com.liferay.portal.model.PasswordPolicyRelModel
  * @generated
  */
-@ProviderType
 public class PasswordPolicyRelModelImpl extends BaseModelImpl<PasswordPolicyRel>
 	implements PasswordPolicyRelModel {
 	/*
@@ -61,13 +58,12 @@ public class PasswordPolicyRelModelImpl extends BaseModelImpl<PasswordPolicyRel>
 	 */
 	public static final String TABLE_NAME = "PasswordPolicyRel";
 	public static final Object[][] TABLE_COLUMNS = {
-			{ "mvccVersion", Types.BIGINT },
 			{ "passwordPolicyRelId", Types.BIGINT },
 			{ "passwordPolicyId", Types.BIGINT },
 			{ "classNameId", Types.BIGINT },
 			{ "classPK", Types.BIGINT }
 		};
-	public static final String TABLE_SQL_CREATE = "create table PasswordPolicyRel (mvccVersion LONG default 0,passwordPolicyRelId LONG not null primary key,passwordPolicyId LONG,classNameId LONG,classPK LONG)";
+	public static final String TABLE_SQL_CREATE = "create table PasswordPolicyRel (passwordPolicyRelId LONG not null primary key,passwordPolicyId LONG,classNameId LONG,classPK LONG)";
 	public static final String TABLE_SQL_DROP = "drop table PasswordPolicyRel";
 	public static final String ORDER_BY_JPQL = " ORDER BY passwordPolicyRel.passwordPolicyRelId ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY PasswordPolicyRel.passwordPolicyRelId ASC";
@@ -83,10 +79,10 @@ public class PasswordPolicyRelModelImpl extends BaseModelImpl<PasswordPolicyRel>
 	public static final boolean COLUMN_BITMASK_ENABLED = GetterUtil.getBoolean(com.liferay.portal.util.PropsUtil.get(
 				"value.object.column.bitmask.enabled.com.liferay.portal.model.PasswordPolicyRel"),
 			true);
-	public static final long CLASSNAMEID_COLUMN_BITMASK = 1L;
-	public static final long CLASSPK_COLUMN_BITMASK = 2L;
-	public static final long PASSWORDPOLICYID_COLUMN_BITMASK = 4L;
-	public static final long PASSWORDPOLICYRELID_COLUMN_BITMASK = 8L;
+	public static long CLASSNAMEID_COLUMN_BITMASK = 1L;
+	public static long CLASSPK_COLUMN_BITMASK = 2L;
+	public static long PASSWORDPOLICYID_COLUMN_BITMASK = 4L;
+	public static long PASSWORDPOLICYRELID_COLUMN_BITMASK = 8L;
 	public static final long LOCK_EXPIRATION_TIME = GetterUtil.getLong(com.liferay.portal.util.PropsUtil.get(
 				"lock.expiration.time.com.liferay.portal.model.PasswordPolicyRel"));
 
@@ -127,26 +123,16 @@ public class PasswordPolicyRelModelImpl extends BaseModelImpl<PasswordPolicyRel>
 	public Map<String, Object> getModelAttributes() {
 		Map<String, Object> attributes = new HashMap<String, Object>();
 
-		attributes.put("mvccVersion", getMvccVersion());
 		attributes.put("passwordPolicyRelId", getPasswordPolicyRelId());
 		attributes.put("passwordPolicyId", getPasswordPolicyId());
 		attributes.put("classNameId", getClassNameId());
 		attributes.put("classPK", getClassPK());
-
-		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
-		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
 
 		return attributes;
 	}
 
 	@Override
 	public void setModelAttributes(Map<String, Object> attributes) {
-		Long mvccVersion = (Long)attributes.get("mvccVersion");
-
-		if (mvccVersion != null) {
-			setMvccVersion(mvccVersion);
-		}
-
 		Long passwordPolicyRelId = (Long)attributes.get("passwordPolicyRelId");
 
 		if (passwordPolicyRelId != null) {
@@ -170,16 +156,6 @@ public class PasswordPolicyRelModelImpl extends BaseModelImpl<PasswordPolicyRel>
 		if (classPK != null) {
 			setClassPK(classPK);
 		}
-	}
-
-	@Override
-	public long getMvccVersion() {
-		return _mvccVersion;
-	}
-
-	@Override
-	public void setMvccVersion(long mvccVersion) {
-		_mvccVersion = mvccVersion;
 	}
 
 	@Override
@@ -309,7 +285,6 @@ public class PasswordPolicyRelModelImpl extends BaseModelImpl<PasswordPolicyRel>
 	public Object clone() {
 		PasswordPolicyRelImpl passwordPolicyRelImpl = new PasswordPolicyRelImpl();
 
-		passwordPolicyRelImpl.setMvccVersion(getMvccVersion());
 		passwordPolicyRelImpl.setPasswordPolicyRelId(getPasswordPolicyRelId());
 		passwordPolicyRelImpl.setPasswordPolicyId(getPasswordPolicyId());
 		passwordPolicyRelImpl.setClassNameId(getClassNameId());
@@ -363,16 +338,6 @@ public class PasswordPolicyRelModelImpl extends BaseModelImpl<PasswordPolicyRel>
 	}
 
 	@Override
-	public boolean isEntityCacheEnabled() {
-		return ENTITY_CACHE_ENABLED;
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return FINDER_CACHE_ENABLED;
-	}
-
-	@Override
 	public void resetOriginalValues() {
 		PasswordPolicyRelModelImpl passwordPolicyRelModelImpl = this;
 
@@ -395,8 +360,6 @@ public class PasswordPolicyRelModelImpl extends BaseModelImpl<PasswordPolicyRel>
 	public CacheModel<PasswordPolicyRel> toCacheModel() {
 		PasswordPolicyRelCacheModel passwordPolicyRelCacheModel = new PasswordPolicyRelCacheModel();
 
-		passwordPolicyRelCacheModel.mvccVersion = getMvccVersion();
-
 		passwordPolicyRelCacheModel.passwordPolicyRelId = getPasswordPolicyRelId();
 
 		passwordPolicyRelCacheModel.passwordPolicyId = getPasswordPolicyId();
@@ -410,11 +373,9 @@ public class PasswordPolicyRelModelImpl extends BaseModelImpl<PasswordPolicyRel>
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(11);
+		StringBundler sb = new StringBundler(9);
 
-		sb.append("{mvccVersion=");
-		sb.append(getMvccVersion());
-		sb.append(", passwordPolicyRelId=");
+		sb.append("{passwordPolicyRelId=");
 		sb.append(getPasswordPolicyRelId());
 		sb.append(", passwordPolicyId=");
 		sb.append(getPasswordPolicyId());
@@ -429,16 +390,12 @@ public class PasswordPolicyRelModelImpl extends BaseModelImpl<PasswordPolicyRel>
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(19);
+		StringBundler sb = new StringBundler(16);
 
 		sb.append("<model><model-name>");
 		sb.append("com.liferay.portal.model.PasswordPolicyRel");
 		sb.append("</model-name>");
 
-		sb.append(
-			"<column><column-name>mvccVersion</column-name><column-value><![CDATA[");
-		sb.append(getMvccVersion());
-		sb.append("]]></column-value></column>");
 		sb.append(
 			"<column><column-name>passwordPolicyRelId</column-name><column-value><![CDATA[");
 		sb.append(getPasswordPolicyRelId());
@@ -461,11 +418,10 @@ public class PasswordPolicyRelModelImpl extends BaseModelImpl<PasswordPolicyRel>
 		return sb.toString();
 	}
 
-	private static final ClassLoader _classLoader = PasswordPolicyRel.class.getClassLoader();
-	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
+	private static ClassLoader _classLoader = PasswordPolicyRel.class.getClassLoader();
+	private static Class<?>[] _escapedModelInterfaces = new Class[] {
 			PasswordPolicyRel.class
 		};
-	private long _mvccVersion;
 	private long _passwordPolicyRelId;
 	private long _passwordPolicyId;
 	private long _originalPasswordPolicyId;

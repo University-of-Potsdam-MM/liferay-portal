@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portlet;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.StringPool;
@@ -28,6 +29,7 @@ import com.liferay.portal.model.User;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 /**
  * @author Brian Wing Shun Chan
@@ -262,71 +264,57 @@ public class UserAttributes {
 	public UserAttributes(User user) {
 		_user = user;
 
-		Address businessAddress = null;
-		Address personalAddress = null;
-
-		Phone businessPhone = null;
-		Phone businessFaxPhone = null;
-		Phone mobilePhone = null;
-		Phone pagerPhone = null;
-		Phone personalPhone = null;
-		Phone personalFaxPhone = null;
-
 		try {
-			for (Address address : user.getAddresses()) {
+			List<Address> addresses = user.getAddresses();
+
+			for (Address address : addresses) {
 				ListType listType = address.getType();
 
 				String listTypeName = listType.getName();
 
 				if (listTypeName.equals("business")) {
-					businessAddress = address;
+					_businessAddress = address;
 				}
 				else if (listTypeName.equals("personal")) {
-					personalAddress = address;
+					_personalAddress = address;
 				}
 			}
 
-			for (Phone phone : user.getPhones()) {
+			List<Phone> phones = user.getPhones();
+
+			for (Phone phone : phones) {
 				ListType listType = phone.getType();
 
 				String listTypeName = listType.getName();
 
 				if (listTypeName.equals("business")) {
-					businessPhone = phone;
+					_businessPhone = phone;
 				}
 				else if (listTypeName.equals("business-fax")) {
-					businessFaxPhone = phone;
+					_businessFaxPhone = phone;
 				}
 				else if (listTypeName.equals("mobile-phone")) {
-					mobilePhone = phone;
+					_mobilePhone = phone;
 				}
 				else if (listTypeName.equals("pager")) {
-					pagerPhone = phone;
+					_pagerPhone = phone;
 				}
 				else if (listTypeName.equals("personal")) {
-					personalPhone = phone;
+					_personalPhone = phone;
 				}
 				else if (listTypeName.equals("personal-fax")) {
-					personalFaxPhone = phone;
+					_personalFaxPhone = phone;
 				}
 			}
 		}
 		catch (Exception e) {
 			_log.error(e, e);
 		}
-
-		_businessAddress = businessAddress;
-		_personalAddress = personalAddress;
-
-		_businessPhone = businessPhone;
-		_businessFaxPhone = businessFaxPhone;
-		_mobilePhone = mobilePhone;
-		_pagerPhone = pagerPhone;
-		_personalPhone = personalPhone;
-		_personalFaxPhone = personalFaxPhone;
 	}
 
-	public String getValue(String name) throws PortalException {
+	public String getValue(String name)
+		throws PortalException, SystemException {
+
 		if (name == null) {
 			return null;
 		}
@@ -759,15 +747,15 @@ public class UserAttributes {
 
 	private static Log _log = LogFactoryUtil.getLog(UserAttributes.class);
 
-	private final Address _businessAddress;
-	private final Phone _businessFaxPhone;
-	private final Phone _businessPhone;
-	private final Calendar _calendar = new GregorianCalendar();
-	private final Phone _mobilePhone;
-	private final Phone _pagerPhone;
-	private final Address _personalAddress;
-	private final Phone _personalFaxPhone;
-	private final Phone _personalPhone;
-	private final User _user;
+	private Address _businessAddress;
+	private Phone _businessFaxPhone;
+	private Phone _businessPhone;
+	private Calendar _calendar = new GregorianCalendar();
+	private Phone _mobilePhone;
+	private Phone _pagerPhone;
+	private Address _personalAddress;
+	private Phone _personalFaxPhone;
+	private Phone _personalPhone;
+	private User _user;
 
 }

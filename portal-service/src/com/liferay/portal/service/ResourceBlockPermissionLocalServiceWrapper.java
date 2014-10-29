@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -37,18 +37,13 @@ public class ResourceBlockPermissionLocalServiceWrapper
 	*
 	* @param resourceBlockPermission the resource block permission
 	* @return the resource block permission that was added
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
 	public com.liferay.portal.model.ResourceBlockPermission addResourceBlockPermission(
-		com.liferay.portal.model.ResourceBlockPermission resourceBlockPermission) {
+		com.liferay.portal.model.ResourceBlockPermission resourceBlockPermission)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return _resourceBlockPermissionLocalService.addResourceBlockPermission(resourceBlockPermission);
-	}
-
-	@Override
-	public void addResourceBlockPermissions(long resourceBlockId,
-		com.liferay.portal.model.ResourceBlockPermissionsContainer resourceBlockPermissionsContainer) {
-		_resourceBlockPermissionLocalService.addResourceBlockPermissions(resourceBlockId,
-			resourceBlockPermissionsContainer);
 	}
 
 	/**
@@ -64,13 +59,19 @@ public class ResourceBlockPermissionLocalServiceWrapper
 	}
 
 	/**
-	* @throws PortalException
+	* Deletes the resource block permission with the primary key from the database. Also notifies the appropriate model listeners.
+	*
+	* @param resourceBlockPermissionId the primary key of the resource block permission
+	* @return the resource block permission that was removed
+	* @throws PortalException if a resource block permission with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
-	public com.liferay.portal.model.PersistedModel deletePersistedModel(
-		com.liferay.portal.model.PersistedModel persistedModel)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _resourceBlockPermissionLocalService.deletePersistedModel(persistedModel);
+	public com.liferay.portal.model.ResourceBlockPermission deleteResourceBlockPermission(
+		long resourceBlockPermissionId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _resourceBlockPermissionLocalService.deleteResourceBlockPermission(resourceBlockPermissionId);
 	}
 
 	/**
@@ -78,30 +79,13 @@ public class ResourceBlockPermissionLocalServiceWrapper
 	*
 	* @param resourceBlockPermission the resource block permission
 	* @return the resource block permission that was removed
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
 	public com.liferay.portal.model.ResourceBlockPermission deleteResourceBlockPermission(
-		com.liferay.portal.model.ResourceBlockPermission resourceBlockPermission) {
+		com.liferay.portal.model.ResourceBlockPermission resourceBlockPermission)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return _resourceBlockPermissionLocalService.deleteResourceBlockPermission(resourceBlockPermission);
-	}
-
-	/**
-	* Deletes the resource block permission with the primary key from the database. Also notifies the appropriate model listeners.
-	*
-	* @param resourceBlockPermissionId the primary key of the resource block permission
-	* @return the resource block permission that was removed
-	* @throws PortalException if a resource block permission with the primary key could not be found
-	*/
-	@Override
-	public com.liferay.portal.model.ResourceBlockPermission deleteResourceBlockPermission(
-		long resourceBlockPermissionId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _resourceBlockPermissionLocalService.deleteResourceBlockPermission(resourceBlockPermissionId);
-	}
-
-	@Override
-	public void deleteResourceBlockPermissions(long resourceBlockId) {
-		_resourceBlockPermissionLocalService.deleteResourceBlockPermissions(resourceBlockId);
 	}
 
 	@Override
@@ -114,10 +98,13 @@ public class ResourceBlockPermissionLocalServiceWrapper
 	*
 	* @param dynamicQuery the dynamic query
 	* @return the matching rows
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
-	public <T> java.util.List<T> dynamicQuery(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery) {
+	@SuppressWarnings("rawtypes")
+	public java.util.List dynamicQuery(
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return _resourceBlockPermissionLocalService.dynamicQuery(dynamicQuery);
 	}
 
@@ -132,11 +119,13 @@ public class ResourceBlockPermissionLocalServiceWrapper
 	* @param start the lower bound of the range of model instances
 	* @param end the upper bound of the range of model instances (not inclusive)
 	* @return the range of matching rows
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
-	public <T> java.util.List<T> dynamicQuery(
+	@SuppressWarnings("rawtypes")
+	public java.util.List dynamicQuery(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
-		int end) {
+		int end) throws com.liferay.portal.kernel.exception.SystemException {
 		return _resourceBlockPermissionLocalService.dynamicQuery(dynamicQuery,
 			start, end);
 	}
@@ -153,12 +142,15 @@ public class ResourceBlockPermissionLocalServiceWrapper
 	* @param end the upper bound of the range of model instances (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching rows
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
-	public <T> java.util.List<T> dynamicQuery(
+	@SuppressWarnings("rawtypes")
+	public java.util.List dynamicQuery(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
 		int end,
-		com.liferay.portal.kernel.util.OrderByComparator<T> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return _resourceBlockPermissionLocalService.dynamicQuery(dynamicQuery,
 			start, end, orderByComparator);
 	}
@@ -168,10 +160,12 @@ public class ResourceBlockPermissionLocalServiceWrapper
 	*
 	* @param dynamicQuery the dynamic query
 	* @return the number of rows that match the dynamic query
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
 	public long dynamicQueryCount(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery) {
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return _resourceBlockPermissionLocalService.dynamicQueryCount(dynamicQuery);
 	}
 
@@ -181,65 +175,22 @@ public class ResourceBlockPermissionLocalServiceWrapper
 	* @param dynamicQuery the dynamic query
 	* @param projection the projection to apply to the query
 	* @return the number of rows that match the dynamic query
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
 	public long dynamicQueryCount(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery,
-		com.liferay.portal.kernel.dao.orm.Projection projection) {
+		com.liferay.portal.kernel.dao.orm.Projection projection)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return _resourceBlockPermissionLocalService.dynamicQueryCount(dynamicQuery,
 			projection);
 	}
 
 	@Override
 	public com.liferay.portal.model.ResourceBlockPermission fetchResourceBlockPermission(
-		long resourceBlockPermissionId) {
+		long resourceBlockPermissionId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return _resourceBlockPermissionLocalService.fetchResourceBlockPermission(resourceBlockPermissionId);
-	}
-
-	@Override
-	public com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery getActionableDynamicQuery() {
-		return _resourceBlockPermissionLocalService.getActionableDynamicQuery();
-	}
-
-	@Override
-	public java.util.Map<java.lang.Long, java.util.Set<java.lang.String>> getAvailableResourceBlockPermissionActionIds(
-		java.lang.String name, long primKey,
-		java.util.List<java.lang.String> actionIds)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _resourceBlockPermissionLocalService.getAvailableResourceBlockPermissionActionIds(name,
-			primKey, actionIds);
-	}
-
-	/**
-	* @deprecated As of 7.0.0, replaced by {@link
-	#getAvailableResourceBlockPermissionActionIds(
-	String, long, List)}
-	*/
-	@Deprecated
-	@Override
-	public java.util.Map<java.lang.Long, java.util.Set<java.lang.String>> getAvailableResourceBlockPermissionActionIds(
-		long[] roleIds, java.lang.String name, long primKey,
-		java.util.List<java.lang.String> actionIds)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _resourceBlockPermissionLocalService.getAvailableResourceBlockPermissionActionIds(roleIds,
-			name, primKey, actionIds);
-	}
-
-	/**
-	* Returns the Spring bean ID for this bean.
-	*
-	* @return the Spring bean ID for this bean
-	*/
-	@Override
-	public java.lang.String getBeanIdentifier() {
-		return _resourceBlockPermissionLocalService.getBeanIdentifier();
-	}
-
-	@Override
-	public com.liferay.portal.model.PersistedModel getPersistedModel(
-		java.io.Serializable primaryKeyObj)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _resourceBlockPermissionLocalService.getPersistedModel(primaryKeyObj);
 	}
 
 	/**
@@ -248,12 +199,22 @@ public class ResourceBlockPermissionLocalServiceWrapper
 	* @param resourceBlockPermissionId the primary key of the resource block permission
 	* @return the resource block permission
 	* @throws PortalException if a resource block permission with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
 	public com.liferay.portal.model.ResourceBlockPermission getResourceBlockPermission(
 		long resourceBlockPermissionId)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return _resourceBlockPermissionLocalService.getResourceBlockPermission(resourceBlockPermissionId);
+	}
+
+	@Override
+	public com.liferay.portal.model.PersistedModel getPersistedModel(
+		java.io.Serializable primaryKeyObj)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _resourceBlockPermissionLocalService.getPersistedModel(primaryKeyObj);
 	}
 
 	/**
@@ -266,35 +227,50 @@ public class ResourceBlockPermissionLocalServiceWrapper
 	* @param start the lower bound of the range of resource block permissions
 	* @param end the upper bound of the range of resource block permissions (not inclusive)
 	* @return the range of resource block permissions
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
 	public java.util.List<com.liferay.portal.model.ResourceBlockPermission> getResourceBlockPermissions(
-		int start, int end) {
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return _resourceBlockPermissionLocalService.getResourceBlockPermissions(start,
 			end);
-	}
-
-	@Override
-	public com.liferay.portal.model.ResourceBlockPermissionsContainer getResourceBlockPermissionsContainer(
-		long resourceBlockId) {
-		return _resourceBlockPermissionLocalService.getResourceBlockPermissionsContainer(resourceBlockId);
 	}
 
 	/**
 	* Returns the number of resource block permissions.
 	*
 	* @return the number of resource block permissions
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
-	public int getResourceBlockPermissionsCount() {
+	public int getResourceBlockPermissionsCount()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return _resourceBlockPermissionLocalService.getResourceBlockPermissionsCount();
 	}
 
+	/**
+	* Updates the resource block permission in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
+	*
+	* @param resourceBlockPermission the resource block permission
+	* @return the resource block permission that was updated
+	* @throws SystemException if a system exception occurred
+	*/
 	@Override
-	public int getResourceBlockPermissionsCount(long resourceBlockId,
-		long roleId) {
-		return _resourceBlockPermissionLocalService.getResourceBlockPermissionsCount(resourceBlockId,
-			roleId);
+	public com.liferay.portal.model.ResourceBlockPermission updateResourceBlockPermission(
+		com.liferay.portal.model.ResourceBlockPermission resourceBlockPermission)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return _resourceBlockPermissionLocalService.updateResourceBlockPermission(resourceBlockPermission);
+	}
+
+	/**
+	* Returns the Spring bean ID for this bean.
+	*
+	* @return the Spring bean ID for this bean
+	*/
+	@Override
+	public java.lang.String getBeanIdentifier() {
+		return _resourceBlockPermissionLocalService.getBeanIdentifier();
 	}
 
 	/**
@@ -308,28 +284,54 @@ public class ResourceBlockPermissionLocalServiceWrapper
 	}
 
 	@Override
+	public void addResourceBlockPermissions(long resourceBlockId,
+		com.liferay.portal.model.ResourceBlockPermissionsContainer resourceBlockPermissionsContainer)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		_resourceBlockPermissionLocalService.addResourceBlockPermissions(resourceBlockId,
+			resourceBlockPermissionsContainer);
+	}
+
+	@Override
+	public void deleteResourceBlockPermissions(long resourceBlockId)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		_resourceBlockPermissionLocalService.deleteResourceBlockPermissions(resourceBlockId);
+	}
+
+	@Override
+	public java.util.Map<java.lang.Long, java.util.Set<java.lang.String>> getAvailableResourceBlockPermissionActionIds(
+		long[] roleIds, java.lang.String name, long primKey,
+		java.util.List<java.lang.String> actionIds)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _resourceBlockPermissionLocalService.getAvailableResourceBlockPermissionActionIds(roleIds,
+			name, primKey, actionIds);
+	}
+
+	@Override
+	public com.liferay.portal.model.ResourceBlockPermissionsContainer getResourceBlockPermissionsContainer(
+		long resourceBlockId)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return _resourceBlockPermissionLocalService.getResourceBlockPermissionsContainer(resourceBlockId);
+	}
+
+	@Override
+	public int getResourceBlockPermissionsCount(long resourceBlockId,
+		long roleId) throws com.liferay.portal.kernel.exception.SystemException {
+		return _resourceBlockPermissionLocalService.getResourceBlockPermissionsCount(resourceBlockId,
+			roleId);
+	}
+
+	@Override
 	public void updateResourceBlockPermission(long resourceBlockId,
-		long roleId, long actionIdsLong, int operator) {
+		long roleId, long actionIdsLong, int operator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		_resourceBlockPermissionLocalService.updateResourceBlockPermission(resourceBlockId,
 			roleId, actionIdsLong, operator);
 	}
 
 	/**
-	* Updates the resource block permission in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
-	*
-	* @param resourceBlockPermission the resource block permission
-	* @return the resource block permission that was updated
-	*/
-	@Override
-	public com.liferay.portal.model.ResourceBlockPermission updateResourceBlockPermission(
-		com.liferay.portal.model.ResourceBlockPermission resourceBlockPermission) {
-		return _resourceBlockPermissionLocalService.updateResourceBlockPermission(resourceBlockPermission);
-	}
-
-	/**
 	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedService}
 	 */
-	@Deprecated
 	public ResourceBlockPermissionLocalService getWrappedResourceBlockPermissionLocalService() {
 		return _resourceBlockPermissionLocalService;
 	}
@@ -337,7 +339,6 @@ public class ResourceBlockPermissionLocalServiceWrapper
 	/**
 	 * @deprecated As of 6.1.0, replaced by {@link #setWrappedService}
 	 */
-	@Deprecated
 	public void setWrappedResourceBlockPermissionLocalService(
 		ResourceBlockPermissionLocalService resourceBlockPermissionLocalService) {
 		_resourceBlockPermissionLocalService = resourceBlockPermissionLocalService;

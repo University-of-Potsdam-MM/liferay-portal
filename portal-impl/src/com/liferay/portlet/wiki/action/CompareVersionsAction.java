@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,12 +14,14 @@
 
 package com.liferay.portlet.wiki.action;
 
-import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
+import com.liferay.portal.kernel.io.unsync.UnsyncStringReader;
 import com.liferay.portal.kernel.servlet.SessionErrors;
+import com.liferay.portal.kernel.util.DiffResult;
+import com.liferay.portal.kernel.util.DiffUtil;
+import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.struts.PortletAction;
 import com.liferay.portal.theme.ThemeDisplay;
-import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.WebKeys;
 import com.liferay.portlet.wiki.NoSuchPageException;
 import com.liferay.portlet.wiki.model.WikiNode;
@@ -27,16 +29,12 @@ import com.liferay.portlet.wiki.model.WikiPage;
 import com.liferay.portlet.wiki.service.WikiPageServiceUtil;
 import com.liferay.portlet.wiki.util.WikiUtil;
 
+import java.util.List;
+
 import javax.portlet.PortletConfig;
-import javax.portlet.PortletContext;
-import javax.portlet.PortletRequest;
-import javax.portlet.PortletRequestDispatcher;
-import javax.portlet.PortletResponse;
 import javax.portlet.PortletURL;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
-import javax.portlet.ResourceRequest;
-import javax.portlet.ResourceResponse;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -75,92 +73,80 @@ public class CompareVersionsAction extends PortletAction {
 		return actionMapping.findForward("portlet.wiki.compare_versions");
 	}
 
-	@Override
-	public void serveResource(
-			ActionMapping actionMapping, ActionForm actionForm,
-			PortletConfig portletConfig, ResourceRequest resourceRequest,
-			ResourceResponse resourceResponse)
-		throws Exception {
-
-		double sourceVersion = ParamUtil.getDouble(
-			resourceRequest, "filterSourceVersion");
-		double targetVersion = ParamUtil.getDouble(
-			resourceRequest, "filterTargetVersion");
-
-		String htmlDiffResult = getHtmlDiffResult(
-			sourceVersion, targetVersion, resourceRequest, resourceResponse);
-
-		resourceRequest.setAttribute(WebKeys.DIFF_HTML_RESULTS, htmlDiffResult);
-
-		PortletContext portletContext = portletConfig.getPortletContext();
-
-		PortletRequestDispatcher portletRequestDispatcher =
-			portletContext.getRequestDispatcher(
-				"/html/taglib/ui/diff_version_comparator/diff_html.jsp");
-
-		portletRequestDispatcher.include(resourceRequest, resourceResponse);
-	}
-
 	protected void compareVersions(
 			RenderRequest renderRequest, RenderResponse renderResponse)
 		throws Exception {
 
+		ThemeDisplay themeDisplay = (ThemeDisplay)renderRequest.getAttribute(
+			WebKeys.THEME_DISPLAY);
+
 		long nodeId = ParamUtil.getLong(renderRequest, "nodeId");
+
 		String title = ParamUtil.getString(renderRequest, "title");
+
 		double sourceVersion = ParamUtil.getDouble(
 			renderRequest, "sourceVersion");
 		double targetVersion = ParamUtil.getDouble(
 			renderRequest, "targetVersion");
-
-		String htmlDiffResult = getHtmlDiffResult(
-			sourceVersion, targetVersion, renderRequest, renderResponse);
-
-		renderRequest.setAttribute(WebKeys.DIFF_HTML_RESULTS, htmlDiffResult);
-		renderRequest.setAttribute(WebKeys.SOURCE_VERSION, sourceVersion);
-		renderRequest.setAttribute(WebKeys.TARGET_VERSION, targetVersion);
-		renderRequest.setAttribute(WebKeys.TITLE, title);
-		renderRequest.setAttribute(WebKeys.WIKI_NODE_ID, nodeId);
-	}
-
-	protected String getHtmlDiffResult(
-			double sourceVersion, double targetVersion,
-			PortletRequest portletRequest, PortletResponse portletResponse)
-		throws Exception {
-
-		ThemeDisplay themeDisplay = (ThemeDisplay)portletRequest.getAttribute(
-			WebKeys.THEME_DISPLAY);
-
-		long nodeId = ParamUtil.getLong(portletRequest, "nodeId");
-		String title = ParamUtil.getString(portletRequest, "title");
+		String type = ParamUtil.getString(renderRequest, "type", "escape");
 
 		WikiPage sourcePage = WikiPageServiceUtil.getPage(
 			nodeId, title, sourceVersion);
 		WikiPage targetPage = WikiPageServiceUtil.getPage(
 			nodeId, title, targetVersion);
 
-		LiferayPortletResponse liferayPortletResponse =
-			PortalUtil.getLiferayPortletResponse(portletResponse);
+		if (type.equals("html")) {
+			WikiNode sourceNode = sourcePage.getNode();
 
-		PortletURL viewPageURL = liferayPortletResponse.createRenderURL();
+			PortletURL viewPageURL = renderResponse.createRenderURL();
 
-		viewPageURL.setParameter("struts_action", "/wiki/view");
+			viewPageURL.setParameter("struts_action", "/wiki/view");
+			viewPageURL.setParameter("nodeName", sourceNode.getName());
 
-		WikiNode sourceNode = sourcePage.getNode();
+			PortletURL editPageURL = renderResponse.createRenderURL();
 
-		viewPageURL.setParameter("nodeName", sourceNode.getName());
+			editPageURL.setParameter("struts_action", "/wiki/edit_page");
+			editPageURL.setParameter("nodeId", String.valueOf(nodeId));
+			editPageURL.setParameter("title", title);
 
-		PortletURL editPageURL = liferayPortletResponse.createRenderURL();
+			String attachmentURLPrefix = WikiUtil.getAttachmentURLPrefix(
+				themeDisplay.getPathMain(), themeDisplay.getPlid(), nodeId,
+				title);
 
-		editPageURL.setParameter("struts_action", "/wiki/edit_page");
-		editPageURL.setParameter("nodeId", String.valueOf(nodeId));
-		editPageURL.setParameter("title", title);
+			String htmlDiffResult = WikiUtil.diffHtml(
+				sourcePage, targetPage, viewPageURL, editPageURL,
+				attachmentURLPrefix);
 
-		String attachmentURLPrefix = WikiUtil.getAttachmentURLPrefix(
-			themeDisplay.getPathMain(), themeDisplay.getPlid(), nodeId, title);
+			renderRequest.setAttribute(
+				WebKeys.DIFF_HTML_RESULTS, htmlDiffResult);
+		}
+		else {
+			String sourceContent = sourcePage.getContent();
+			String targetContent = targetPage.getContent();
 
-		return WikiUtil.diffHtml(
-			sourcePage, targetPage, viewPageURL, editPageURL,
-			attachmentURLPrefix);
+			sourceContent = WikiUtil.processContent(sourceContent);
+			targetContent = WikiUtil.processContent(targetContent);
+
+			if (type.equals("strip")) {
+				sourceContent = HtmlUtil.extractText(sourceContent);
+				targetContent = HtmlUtil.extractText(targetContent);
+			}
+			else {
+				sourceContent = HtmlUtil.escape(sourceContent);
+				targetContent = HtmlUtil.escape(targetContent);
+			}
+
+			List<DiffResult>[] diffResults = DiffUtil.diff(
+				new UnsyncStringReader(sourceContent),
+				new UnsyncStringReader(targetContent));
+
+			renderRequest.setAttribute(WebKeys.DIFF_RESULTS, diffResults);
+		}
+
+		renderRequest.setAttribute(WebKeys.WIKI_NODE_ID, nodeId);
+		renderRequest.setAttribute(WebKeys.TITLE, title);
+		renderRequest.setAttribute(WebKeys.SOURCE_VERSION, sourceVersion);
+		renderRequest.setAttribute(WebKeys.TARGET_VERSION, targetVersion);
 	}
 
 }

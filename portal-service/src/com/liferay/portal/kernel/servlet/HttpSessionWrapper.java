@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -66,7 +66,6 @@ public class HttpSessionWrapper implements HttpSession {
 	/**
 	 * @deprecated As of 6.1.0
 	 */
-	@Deprecated
 	@Override
 	public javax.servlet.http.HttpSessionContext getSessionContext() {
 		return _session.getSessionContext();
@@ -75,7 +74,6 @@ public class HttpSessionWrapper implements HttpSession {
 	/**
 	 * @deprecated As of 6.1.0
 	 */
-	@Deprecated
 	@Override
 	public Object getValue(String name) {
 		return _session.getValue(name);
@@ -84,7 +82,6 @@ public class HttpSessionWrapper implements HttpSession {
 	/**
 	 * @deprecated As of 6.1.0
 	 */
-	@Deprecated
 	@Override
 	public String[] getValueNames() {
 		return _session.getValueNames();
@@ -107,7 +104,6 @@ public class HttpSessionWrapper implements HttpSession {
 	/**
 	 * @deprecated As of 6.1.0
 	 */
-	@Deprecated
 	@Override
 	public void putValue(String name, Object value) {
 		_session.putValue(name, value);
@@ -121,7 +117,6 @@ public class HttpSessionWrapper implements HttpSession {
 	/**
 	 * @deprecated As of 6.1.0
 	 */
-	@Deprecated
 	@Override
 	public void removeValue(String name) {
 		_session.removeValue(name);

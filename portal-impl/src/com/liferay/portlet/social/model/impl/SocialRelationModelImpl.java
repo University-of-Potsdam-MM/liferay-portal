@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -13,8 +13,6 @@
  */
 
 package com.liferay.portlet.social.model.impl;
-
-import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -50,7 +48,6 @@ import java.util.Map;
  * @see com.liferay.portlet.social.model.SocialRelationModel
  * @generated
  */
-@ProviderType
 public class SocialRelationModelImpl extends BaseModelImpl<SocialRelation>
 	implements SocialRelationModel {
 	/*
@@ -84,12 +81,12 @@ public class SocialRelationModelImpl extends BaseModelImpl<SocialRelation>
 	public static final boolean COLUMN_BITMASK_ENABLED = GetterUtil.getBoolean(com.liferay.portal.util.PropsUtil.get(
 				"value.object.column.bitmask.enabled.com.liferay.portlet.social.model.SocialRelation"),
 			true);
-	public static final long COMPANYID_COLUMN_BITMASK = 1L;
-	public static final long TYPE_COLUMN_BITMASK = 2L;
-	public static final long USERID1_COLUMN_BITMASK = 4L;
-	public static final long USERID2_COLUMN_BITMASK = 8L;
-	public static final long UUID_COLUMN_BITMASK = 16L;
-	public static final long RELATIONID_COLUMN_BITMASK = 32L;
+	public static long COMPANYID_COLUMN_BITMASK = 1L;
+	public static long TYPE_COLUMN_BITMASK = 2L;
+	public static long USERID1_COLUMN_BITMASK = 4L;
+	public static long USERID2_COLUMN_BITMASK = 8L;
+	public static long UUID_COLUMN_BITMASK = 16L;
+	public static long RELATIONID_COLUMN_BITMASK = 32L;
 	public static final long LOCK_EXPIRATION_TIME = GetterUtil.getLong(com.liferay.portal.util.PropsUtil.get(
 				"lock.expiration.time.com.liferay.portlet.social.model.SocialRelation"));
 
@@ -137,9 +134,6 @@ public class SocialRelationModelImpl extends BaseModelImpl<SocialRelation>
 		attributes.put("userId1", getUserId1());
 		attributes.put("userId2", getUserId2());
 		attributes.put("type", getType());
-
-		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
-		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
 
 		return attributes;
 	}
@@ -407,16 +401,6 @@ public class SocialRelationModelImpl extends BaseModelImpl<SocialRelation>
 	}
 
 	@Override
-	public boolean isEntityCacheEnabled() {
-		return ENTITY_CACHE_ENABLED;
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return FINDER_CACHE_ENABLED;
-	}
-
-	@Override
 	public void resetOriginalValues() {
 		SocialRelationModelImpl socialRelationModelImpl = this;
 
@@ -533,8 +517,8 @@ public class SocialRelationModelImpl extends BaseModelImpl<SocialRelation>
 		return sb.toString();
 	}
 
-	private static final ClassLoader _classLoader = SocialRelation.class.getClassLoader();
-	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
+	private static ClassLoader _classLoader = SocialRelation.class.getClassLoader();
+	private static Class<?>[] _escapedModelInterfaces = new Class[] {
 			SocialRelation.class
 		};
 	private String _uuid;

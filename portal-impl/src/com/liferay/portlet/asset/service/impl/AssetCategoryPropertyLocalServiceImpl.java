@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portlet.asset.service.impl;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.model.User;
 import com.liferay.portlet.asset.CategoryPropertyKeyException;
 import com.liferay.portlet.asset.CategoryPropertyValueException;
@@ -35,7 +36,7 @@ public class AssetCategoryPropertyLocalServiceImpl
 	@Override
 	public AssetCategoryProperty addCategoryProperty(
 			long userId, long categoryId, String key, String value)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		User user = userPersistence.findByPrimaryKey(userId);
 		Date now = new Date();
@@ -62,7 +63,7 @@ public class AssetCategoryPropertyLocalServiceImpl
 	}
 
 	@Override
-	public void deleteCategoryProperties(long entryId) {
+	public void deleteCategoryProperties(long entryId) throws SystemException {
 		List<AssetCategoryProperty> categoryProperties =
 			assetCategoryPropertyPersistence.findByCategoryId(entryId);
 
@@ -72,13 +73,15 @@ public class AssetCategoryPropertyLocalServiceImpl
 	}
 
 	@Override
-	public void deleteCategoryProperty(AssetCategoryProperty categoryProperty) {
+	public void deleteCategoryProperty(AssetCategoryProperty categoryProperty)
+		throws SystemException {
+
 		assetCategoryPropertyPersistence.remove(categoryProperty);
 	}
 
 	@Override
 	public void deleteCategoryProperty(long categoryPropertyId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		AssetCategoryProperty categoryProperty =
 			assetCategoryPropertyPersistence.findByPrimaryKey(
@@ -88,18 +91,22 @@ public class AssetCategoryPropertyLocalServiceImpl
 	}
 
 	@Override
-	public List<AssetCategoryProperty> getCategoryProperties() {
+	public List<AssetCategoryProperty> getCategoryProperties()
+		throws SystemException {
+
 		return assetCategoryPropertyPersistence.findAll();
 	}
 
 	@Override
-	public List<AssetCategoryProperty> getCategoryProperties(long entryId) {
+	public List<AssetCategoryProperty> getCategoryProperties(long entryId)
+		throws SystemException {
+
 		return assetCategoryPropertyPersistence.findByCategoryId(entryId);
 	}
 
 	@Override
 	public AssetCategoryProperty getCategoryProperty(long categoryPropertyId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return assetCategoryPropertyPersistence.findByPrimaryKey(
 			categoryPropertyId);
@@ -108,35 +115,29 @@ public class AssetCategoryPropertyLocalServiceImpl
 	@Override
 	public AssetCategoryProperty getCategoryProperty(
 			long categoryId, String key)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return assetCategoryPropertyPersistence.findByCA_K(categoryId, key);
 	}
 
 	@Override
 	public List<AssetCategoryProperty> getCategoryPropertyValues(
-		long groupId, String key) {
+			long groupId, String key)
+		throws SystemException {
 
 		return assetCategoryPropertyFinder.findByG_K(groupId, key);
 	}
 
 	@Override
 	public AssetCategoryProperty updateCategoryProperty(
-			long userId, long categoryPropertyId, String key, String value)
-		throws PortalException {
+			long categoryPropertyId, String key, String value)
+		throws PortalException, SystemException {
 
 		validate(key, value);
 
 		AssetCategoryProperty categoryProperty =
 			assetCategoryPropertyPersistence.findByPrimaryKey(
 				categoryPropertyId);
-
-		if (userId != 0) {
-			User user = userPersistence.findByPrimaryKey(userId);
-
-			categoryProperty.setUserId(userId);
-			categoryProperty.setUserName(user.getFullName());
-		}
 
 		categoryProperty.setModifiedDate(new Date());
 		categoryProperty.setKey(key);
@@ -145,14 +146,6 @@ public class AssetCategoryPropertyLocalServiceImpl
 		assetCategoryPropertyPersistence.update(categoryProperty);
 
 		return categoryProperty;
-	}
-
-	@Override
-	public AssetCategoryProperty updateCategoryProperty(
-			long categoryPropertyId, String key, String value)
-		throws PortalException {
-
-		return updateCategoryProperty(0, categoryPropertyId, key, value);
 	}
 
 	protected void validate(String key, String value) throws PortalException {

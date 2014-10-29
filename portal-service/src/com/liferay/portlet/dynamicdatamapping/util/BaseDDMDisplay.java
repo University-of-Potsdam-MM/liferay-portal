@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,9 +14,8 @@
 
 package com.liferay.portlet.dynamicdatamapping.util;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
@@ -48,7 +47,6 @@ import javax.portlet.PortletURL;
 /**
  * @author Eduardo Garcia
  */
-@ProviderType
 public abstract class BaseDDMDisplay implements DDMDisplay {
 
 	@Override
@@ -201,12 +199,11 @@ public abstract class BaseDDMDisplay implements DDMDisplay {
 
 	@Override
 	public long[] getTemplateGroupIds(
-			ThemeDisplay themeDisplay, boolean includeAncestorTemplates)
+			ThemeDisplay themeDisplay, boolean showGlobalScope)
 		throws Exception {
 
-		if (includeAncestorTemplates) {
-			return PortalUtil.getCurrentAndAncestorSiteGroupIds(
-				themeDisplay.getScopeGroupId());
+		if (showGlobalScope) {
+			return PortalUtil.getSiteAndCompanyGroupIds(themeDisplay);
 		}
 
 		return new long[] {themeDisplay.getScopeGroupId()};
@@ -265,8 +262,7 @@ public abstract class BaseDDMDisplay implements DDMDisplay {
 
 	@Override
 	public String getViewTemplatesTitle(
-		DDMStructure structure, boolean controlPanel, boolean search,
-		Locale locale) {
+		DDMStructure structure, boolean controlPanel, Locale locale) {
 
 		if (structure != null) {
 			return LanguageUtil.format(
@@ -277,20 +273,9 @@ public abstract class BaseDDMDisplay implements DDMDisplay {
 		return getDefaultViewTemplateTitle(locale);
 	}
 
-	/**
-	 * @deprecated As of 7.0.0
-	 */
-	@Deprecated
-	@Override
-	public String getViewTemplatesTitle(
-		DDMStructure structure, boolean controlPanel, Locale locale) {
-
-		return getViewTemplatesTitle(structure, controlPanel, false, locale);
-	}
-
 	@Override
 	public String getViewTemplatesTitle(DDMStructure structure, Locale locale) {
-		return getViewTemplatesTitle(structure, false, false, locale);
+		return getViewTemplatesTitle(structure, false, locale);
 	}
 
 	@Override
@@ -311,7 +296,7 @@ public abstract class BaseDDMDisplay implements DDMDisplay {
 
 	protected long getControlPanelPlid(
 			LiferayPortletRequest liferayPortletRequest)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return PortalUtil.getControlPanelPlid(liferayPortletRequest);
 	}

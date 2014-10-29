@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,20 +15,18 @@
 package com.liferay.portal.security.auth;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.util.PropertiesUtil;
+import com.liferay.portal.kernel.util.InstanceFactory;
 import com.liferay.portal.kernel.util.PropsKeys;
+import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.service.UserLocalServiceUtil;
+import com.liferay.portal.util.ClassLoaderUtil;
 import com.liferay.portal.util.PortalUtil;
-import com.liferay.registry.Registry;
-import com.liferay.registry.RegistryUtil;
-import com.liferay.registry.ServiceReference;
-import com.liferay.registry.ServiceTracker;
-import com.liferay.registry.ServiceTrackerCustomizer;
+import com.liferay.portal.util.PropsValues;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,7 +43,6 @@ import jodd.util.Wildcard;
 
 /**
  * @author Tomas Polesovsky
- * @author Peter Fellwock
  */
 public class AuthVerifierPipeline {
 
@@ -59,25 +56,32 @@ public class AuthVerifierPipeline {
 			StringPool.PERIOD);
 	}
 
+	public static void register(
+		AuthVerifierConfiguration authVerifierConfiguration) {
+
+		_instance._register(authVerifierConfiguration);
+	}
+
+	public static void unregister(
+		AuthVerifierConfiguration authVerifierConfiguration) {
+
+		_instance._unregister(authVerifierConfiguration);
+	}
+
 	public static AuthVerifierResult verifyRequest(
 			AccessControlContext accessControlContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return _instance._verifyRequest(accessControlContext);
 	}
 
 	private AuthVerifierPipeline() {
-		Registry registry = RegistryUtil.getRegistry();
-
-		_serviceTracker = registry.trackServices(
-			AuthVerifier.class, new AuthVerifierTrackerCustomizer());
-
-		_serviceTracker.open();
+		_initAuthVerifierConfigurations();
 	}
 
 	private AuthVerifierResult _createGuestVerificationResult(
 			AccessControlContext accessControlContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		AuthVerifierResult authVerifierResult = new AuthVerifierResult();
 
@@ -120,6 +124,40 @@ public class AuthVerifierPipeline {
 		}
 
 		return authVerifierConfigurations;
+	}
+
+	private void _initAuthVerifierConfigurations() {
+		_authVerifierConfigurations =
+			new CopyOnWriteArrayList<AuthVerifierConfiguration>();
+
+		for (String authVerifierClassName :
+				PropsValues.AUTH_VERIFIER_PIPELINE) {
+
+			try {
+				AuthVerifierConfiguration authVerifierConfiguration =
+					new AuthVerifierConfiguration();
+
+				AuthVerifier authVerifier =
+					(AuthVerifier)InstanceFactory.newInstance(
+						ClassLoaderUtil.getPortalClassLoader(),
+						authVerifierClassName);
+
+				authVerifierConfiguration.setAuthVerifier(authVerifier);
+
+				authVerifierConfiguration.setAuthVerifierClassName(
+					authVerifierClassName);
+
+				Properties properties = PropsUtil.getProperties(
+					getAuthVerifierPropertyName(authVerifierClassName), true);
+
+				authVerifierConfiguration.setProperties(properties);
+
+				_authVerifierConfigurations.add(authVerifierConfiguration);
+			}
+			catch (Exception e) {
+				_log.error("Unable to initialize " + authVerifierClassName, e);
+			}
+		}
 	}
 
 	private boolean _isMatchingRequestURI(
@@ -227,9 +265,43 @@ public class AuthVerifierPipeline {
 		return mergedSettings;
 	}
 
+	private void _register(
+		AuthVerifierConfiguration authVerifierConfiguration) {
+
+		if (authVerifierConfiguration == null) {
+			throw new IllegalArgumentException(
+				"Auth verifier configuration is null");
+		}
+
+		if (authVerifierConfiguration.getAuthVerifier() == null) {
+			throw new IllegalArgumentException("Auth verifier is null");
+		}
+
+		if (authVerifierConfiguration.getAuthVerifierClassName() == null) {
+			throw new IllegalArgumentException("Class name is null");
+		}
+
+		if (authVerifierConfiguration.getProperties() == null) {
+			throw new IllegalArgumentException("Properties is null");
+		}
+
+		_authVerifierConfigurations.add(0, authVerifierConfiguration);
+	}
+
+	private void _unregister(
+		AuthVerifierConfiguration authVerifierConfiguration) {
+
+		if (authVerifierConfiguration == null) {
+			throw new IllegalArgumentException(
+				"Auth verifier configuration is null");
+		}
+
+		_authVerifierConfigurations.remove(authVerifierConfiguration);
+	}
+
 	private AuthVerifierResult _verifyRequest(
 			AccessControlContext accessControlContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		if (accessControlContext == null) {
 			throw new IllegalArgumentException(
@@ -254,11 +326,9 @@ public class AuthVerifierPipeline {
 					accessControlContext, properties);
 			}
 			catch (Exception e) {
-				if (_log.isDebugEnabled()) {
-					Class<?> authVerifierClass = authVerifier.getClass();
+				Class<?> authVerifierClass = authVerifier.getClass();
 
-					_log.debug("Skipping " + authVerifierClass.getName(), e);
-				}
+				_log.error("Skipping " + authVerifierClass.getName(), e);
 
 				continue;
 			}
@@ -294,77 +364,6 @@ public class AuthVerifierPipeline {
 
 	private static AuthVerifierPipeline _instance = new AuthVerifierPipeline();
 
-	private List<AuthVerifierConfiguration> _authVerifierConfigurations =
-		new CopyOnWriteArrayList<AuthVerifierConfiguration>();
-	private ServiceTracker<AuthVerifier, AuthVerifierConfiguration>
-		_serviceTracker;
-
-	private class AuthVerifierTrackerCustomizer
-		implements
-			ServiceTrackerCustomizer<AuthVerifier, AuthVerifierConfiguration> {
-
-		@Override
-		public AuthVerifierConfiguration addingService(
-			ServiceReference<AuthVerifier> serviceReference) {
-
-			if (Validator.isNull(
-					serviceReference.getProperty("urls.includes"))) {
-
-				return null;
-			}
-
-			Registry registry = RegistryUtil.getRegistry();
-
-			AuthVerifier authVerifier = registry.getService(serviceReference);
-
-			Class<?> authVerifierClass = authVerifier.getClass();
-
-			AuthVerifierConfiguration authVerifierConfiguration =
-				new AuthVerifierConfiguration();
-
-			authVerifierConfiguration.setAuthVerifier(authVerifier);
-			authVerifierConfiguration.setAuthVerifierClassName(
-				authVerifierClass.getName());
-			authVerifierConfiguration.setProperties(
-				PropertiesUtil.fromMap(serviceReference.getProperties()));
-
-			_authVerifierConfigurations.add(0, authVerifierConfiguration);
-
-			return authVerifierConfiguration;
-		}
-
-		@Override
-		public void modifiedService(
-			ServiceReference<AuthVerifier> serviceReference,
-			AuthVerifierConfiguration authVerifierConfiguration) {
-
-			AuthVerifierConfiguration newAuthVerifierConfiguration =
-				new AuthVerifierConfiguration();
-
-			newAuthVerifierConfiguration.setAuthVerifier(
-				authVerifierConfiguration.getAuthVerifier());
-			newAuthVerifierConfiguration.setAuthVerifierClassName(
-				authVerifierConfiguration.getAuthVerifierClassName());
-			newAuthVerifierConfiguration.setProperties(
-				PropertiesUtil.fromMap(serviceReference.getProperties()));
-
-			if (_authVerifierConfigurations.remove(authVerifierConfiguration)) {
-				_authVerifierConfigurations.add(
-					0, newAuthVerifierConfiguration);
-			}
-		}
-
-		@Override
-		public void removedService(
-			ServiceReference<AuthVerifier> serviceReference,
-			AuthVerifierConfiguration authVerifierConfiguration) {
-
-			Registry registry = RegistryUtil.getRegistry();
-
-			registry.ungetService(serviceReference);
-
-			_authVerifierConfigurations.remove(authVerifierConfiguration);
-		}
-	}
+	private List<AuthVerifierConfiguration> _authVerifierConfigurations;
 
 }

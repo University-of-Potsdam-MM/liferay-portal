@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -16,11 +16,13 @@ package com.liferay.portal.kernel.servlet;
 
 import com.liferay.portal.kernel.io.unsync.UnsyncByteArrayOutputStream;
 import com.liferay.portal.kernel.test.CodeCoverageAssertor;
-import com.liferay.portal.kernel.test.ReflectionTestUtil;
+import com.liferay.portal.kernel.util.ReflectionUtil;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+
+import java.lang.reflect.Field;
 
 import java.nio.ByteBuffer;
 
@@ -95,7 +97,7 @@ public class RestrictedByteBufferCacheServletResponseTest {
 	}
 
 	@Test
-	public void testGetByteBuffer() throws IOException {
+	public void testGetByteBuffer() throws Exception {
 		StubHttpServletResponse stubHttpServletResponse =
 			new StubHttpServletResponse() {
 
@@ -117,8 +119,11 @@ public class RestrictedByteBufferCacheServletResponseTest {
 				new RestrictedByteBufferCacheServletResponse(
 					stubHttpServletResponse, 1024);
 
-		ByteBuffer emptyByteBuffer = ReflectionTestUtil.getFieldValue(
-			restrictedByteBufferCacheServletResponse, "_emptyByteBuffer");
+		Field emptyByteBufferField = ReflectionUtil.getDeclaredField(
+			RestrictedByteBufferCacheServletResponse.class, "_emptyByteBuffer");
+
+		ByteBuffer emptyByteBuffer = (ByteBuffer)emptyByteBufferField.get(
+			restrictedByteBufferCacheServletResponse);
 
 		Assert.assertSame(
 			emptyByteBuffer,

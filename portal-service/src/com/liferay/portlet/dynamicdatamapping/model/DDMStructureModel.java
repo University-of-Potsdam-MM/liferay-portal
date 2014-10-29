@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,9 +18,9 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.LocaleException;
 import com.liferay.portal.kernel.bean.AutoEscape;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.model.BaseModel;
 import com.liferay.portal.model.CacheModel;
-import com.liferay.portal.model.LocalizedModel;
 import com.liferay.portal.model.StagedGroupedModel;
 import com.liferay.portal.model.TypedModel;
 import com.liferay.portal.service.ServiceContext;
@@ -48,7 +48,7 @@ import java.util.Map;
  */
 @ProviderType
 public interface DDMStructureModel extends BaseModel<DDMStructure>,
-	LocalizedModel, StagedGroupedModel, TypedModel {
+	StagedGroupedModel, TypedModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -152,9 +152,10 @@ public interface DDMStructureModel extends BaseModel<DDMStructure>,
 	 * Returns the user uuid of this d d m structure.
 	 *
 	 * @return the user uuid of this d d m structure
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public String getUserUuid();
+	public String getUserUuid() throws SystemException;
 
 	/**
 	 * Sets the user uuid of this d d m structure.
@@ -468,19 +469,19 @@ public interface DDMStructureModel extends BaseModel<DDMStructure>,
 		Locale defaultLocale);
 
 	/**
-	 * Returns the definition of this d d m structure.
+	 * Returns the xsd of this d d m structure.
 	 *
-	 * @return the definition of this d d m structure
+	 * @return the xsd of this d d m structure
 	 */
 	@AutoEscape
-	public String getDefinition();
+	public String getXsd();
 
 	/**
-	 * Sets the definition of this d d m structure.
+	 * Sets the xsd of this d d m structure.
 	 *
-	 * @param definition the definition of this d d m structure
+	 * @param xsd the xsd of this d d m structure
 	 */
-	public void setDefinition(String definition);
+	public void setXsd(String xsd);
 
 	/**
 	 * Returns the storage type of this d d m structure.
@@ -544,16 +545,12 @@ public interface DDMStructureModel extends BaseModel<DDMStructure>,
 	@Override
 	public void setExpandoBridgeAttributes(ServiceContext serviceContext);
 
-	@Override
 	public String[] getAvailableLanguageIds();
 
-	@Override
 	public String getDefaultLanguageId();
 
-	@Override
 	public void prepareLocalizedFieldsForImport() throws LocaleException;
 
-	@Override
 	public void prepareLocalizedFieldsForImport(Locale defaultImportLocale)
 		throws LocaleException;
 

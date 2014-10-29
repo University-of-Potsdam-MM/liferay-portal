@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,24 +15,17 @@
 package com.liferay.portal.lar.backgroundtask;
 
 import com.liferay.portal.kernel.backgroundtask.BackgroundTaskResult;
-import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.lar.ExportImportDateUtil;
 import com.liferay.portal.kernel.lar.MissingReferences;
 import com.liferay.portal.kernel.lar.PortletDataHandlerKeys;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.staging.StagingUtil;
 import com.liferay.portal.kernel.transaction.Propagation;
-import com.liferay.portal.kernel.util.DateRange;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.model.BackgroundTask;
-import com.liferay.portal.model.ExportImportConfiguration;
 import com.liferay.portal.model.Group;
-import com.liferay.portal.service.ExportImportConfigurationLocalServiceUtil;
 import com.liferay.portal.service.GroupLocalServiceUtil;
 import com.liferay.portal.service.LayoutLocalServiceUtil;
 import com.liferay.portal.service.LayoutSetBranchLocalServiceUtil;
@@ -44,6 +37,7 @@ import com.liferay.portal.spring.transaction.TransactionalCallableUtil;
 import java.io.File;
 import java.io.Serializable;
 
+import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
@@ -55,34 +49,19 @@ import org.springframework.transaction.interceptor.TransactionAttribute;
 public class LayoutStagingBackgroundTaskExecutor
 	extends BaseStagingBackgroundTaskExecutor {
 
-	public LayoutStagingBackgroundTaskExecutor() {
-		setBackgroundTaskStatusMessageTranslator(
-			new LayoutStagingBackgroundTaskStatusMessageTranslator());
-	}
-
 	@Override
 	public BackgroundTaskResult execute(BackgroundTask backgroundTask)
-		throws PortalException {
+		throws Exception {
 
 		Map<String, Serializable> taskContextMap =
 			backgroundTask.getTaskContextMap();
 
-		long exportImportConfigurationId = MapUtil.getLong(
-			taskContextMap, "exportImportConfigurationId");
-
-		ExportImportConfiguration exportImportConfiguration =
-			ExportImportConfigurationLocalServiceUtil.
-				getExportImportConfiguration(exportImportConfigurationId);
-
-		Map<String, Serializable> settingsMap =
-			exportImportConfiguration.getSettingsMap();
-
-		long userId = MapUtil.getLong(settingsMap, "userId");
-		long targetGroupId = MapUtil.getLong(settingsMap, "targetGroupId");
+		long userId = MapUtil.getLong(taskContextMap, "userId");
+		long targetGroupId = MapUtil.getLong(taskContextMap, "targetGroupId");
 
 		StagingUtil.lockGroup(userId, targetGroupId);
 
-		long sourceGroupId = MapUtil.getLong(settingsMap, "sourceGroupId");
+		long sourceGroupId = MapUtil.getLong(taskContextMap, "sourceGroupId");
 
 		clearBackgroundTaskStatus(backgroundTask);
 
@@ -91,45 +70,40 @@ public class LayoutStagingBackgroundTaskExecutor
 		try {
 			Callable<MissingReferences> layoutStagingCallable =
 				new LayoutStagingCallable(
-					backgroundTask.getBackgroundTaskId(),
-					exportImportConfiguration, sourceGroupId, targetGroupId,
-					userId);
+					backgroundTask, sourceGroupId, targetGroupId,
+					taskContextMap, userId);
 
 			missingReferences = TransactionalCallableUtil.call(
-				_transactionAttribute, layoutStagingCallable);
+					_transactionAttribute, layoutStagingCallable);
 		}
 		catch (Throwable t) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(t, t);
-			}
-			else if (_log.isWarnEnabled()) {
-				_log.warn("Unable to publish layout: " + t.getMessage());
-			}
-
 			Group sourceGroup = GroupLocalServiceUtil.getGroup(sourceGroupId);
 
+			ServiceContext serviceContext = (ServiceContext)taskContextMap.get(
+				"serviceContext");
+
 			if (sourceGroup.hasStagingGroup()) {
-				ServiceContext serviceContext = new ServiceContext();
-
-				serviceContext.setUserId(userId);
-
 				StagingLocalServiceUtil.disableStaging(
 					sourceGroup, serviceContext);
 			}
 
-			throw new SystemException(t);
+			if (t instanceof Exception) {
+				throw (Exception)t;
+			}
+			else {
+				throw new SystemException(t);
+			}
 		}
 		finally {
 			StagingUtil.unlockGroup(targetGroupId);
 		}
 
-		return processMissingReferences(
-			backgroundTask.getBackgroundTaskId(), missingReferences);
+		return processMissingReferences(backgroundTask, missingReferences);
 	}
 
 	protected void initLayoutSetBranches(
 			long userId, long sourceGroupId, long targetGroupId)
-		throws PortalException {
+		throws Exception {
 
 		Group sourceGroup = GroupLocalServiceUtil.getGroup(sourceGroupId);
 
@@ -154,13 +128,10 @@ public class LayoutStagingBackgroundTaskExecutor
 
 		serviceContext.setUserId(userId);
 
-		StagingLocalServiceUtil.checkDefaultLayoutSetBranches(
+		StagingUtil.checkDefaultLayoutSetBranches(
 			userId, sourceGroup, branchingPublic, branchingPrivate, false,
 			serviceContext);
 	}
-
-	private static Log _log = LogFactoryUtil.getLog(
-		LayoutStagingBackgroundTaskExecutor.class);
 
 	private TransactionAttribute _transactionAttribute =
 		TransactionAttributeBuilder.build(
@@ -168,37 +139,47 @@ public class LayoutStagingBackgroundTaskExecutor
 
 	private class LayoutStagingCallable implements Callable<MissingReferences> {
 
+		private LayoutStagingCallable(
+			BackgroundTask backgroundTask, long sourceGroupId,
+			long targetGroupId, Map<String, Serializable> taskContextMap,
+			long userId) {
+
+			_backgroundTask = backgroundTask;
+			_sourceGroupId = sourceGroupId;
+			_targetGroupId = targetGroupId;
+			_taskContextMap = taskContextMap;
+			_userId = userId;
+		}
+
 		@Override
-		public MissingReferences call() throws PortalException {
+		public MissingReferences call() throws Exception {
 			File file = null;
 			MissingReferences missingReferences = null;
 
 			try {
-				Map<String, Serializable> settingsMap =
-					_exportImportConfiguration.getSettingsMap();
-
 				boolean privateLayout = MapUtil.getBoolean(
-					settingsMap, "privateLayout");
+					_taskContextMap, "privateLayout");
 				long[] layoutIds = GetterUtil.getLongValues(
-					settingsMap.get("layoutIds"));
+					_taskContextMap.get("layoutIds"));
 				Map<String, String[]> parameterMap =
-					(Map<String, String[]>)settingsMap.get("parameterMap");
-				DateRange dateRange = ExportImportDateUtil.getDateRange(
-					_exportImportConfiguration,
-					ExportImportDateUtil.RANGE_FROM_LAST_PUBLISH_DATE);
+					(Map<String, String[]>)_taskContextMap.get("parameterMap");
+				Date startDate = (Date)_taskContextMap.get("startDate");
+				Date endDate = (Date)_taskContextMap.get("endDate");
 
 				file = LayoutLocalServiceUtil.exportLayoutsAsFile(
 					_sourceGroupId, privateLayout, layoutIds, parameterMap,
-					dateRange.getStartDate(), dateRange.getEndDate());
+					startDate, endDate);
 
-				markBackgroundTask(_backgroundTaskId, "exported");
+				_backgroundTask = markBackgroundTask(
+					_backgroundTask, "exported");
 
 				missingReferences =
 					LayoutLocalServiceUtil.validateImportLayoutsFile(
 						_userId, _targetGroupId, privateLayout, parameterMap,
 						file);
 
-				markBackgroundTask(_backgroundTaskId, "validated");
+				_backgroundTask = markBackgroundTask(
+					_backgroundTask, "validated");
 
 				LayoutLocalServiceUtil.importLayouts(
 					_userId, _targetGroupId, privateLayout, parameterMap, file);
@@ -215,13 +196,11 @@ public class LayoutStagingBackgroundTaskExecutor
 
 					if (!sourceGroup.hasStagingGroup()) {
 						StagingUtil.updateLastPublishDate(
-							_sourceGroupId, privateLayout,
-							dateRange.getEndDate());
+							_sourceGroupId, privateLayout, endDate);
 					}
 					else {
 						StagingUtil.updateLastPublishDate(
-							_targetGroupId, privateLayout,
-							dateRange.getEndDate());
+							_targetGroupId, privateLayout, endDate);
 					}
 				}
 			}
@@ -232,22 +211,10 @@ public class LayoutStagingBackgroundTaskExecutor
 			return missingReferences;
 		}
 
-		private LayoutStagingCallable(
-			long backgroundTaskId,
-			ExportImportConfiguration exportImportConfiguration,
-			long sourceGroupId, long targetGroupId, long userId) {
-
-			_backgroundTaskId = backgroundTaskId;
-			_exportImportConfiguration = exportImportConfiguration;
-			_sourceGroupId = sourceGroupId;
-			_targetGroupId = targetGroupId;
-			_userId = userId;
-		}
-
-		private long _backgroundTaskId;
-		private ExportImportConfiguration _exportImportConfiguration;
+		private BackgroundTask _backgroundTask;
 		private long _sourceGroupId;
 		private long _targetGroupId;
+		private Map<String, Serializable> _taskContextMap;
 		private long _userId;
 
 	}

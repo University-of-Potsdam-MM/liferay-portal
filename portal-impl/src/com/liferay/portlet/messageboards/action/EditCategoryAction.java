@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,15 +18,18 @@ import com.liferay.portal.kernel.captcha.CaptchaMaxChallengesException;
 import com.liferay.portal.kernel.captcha.CaptchaTextException;
 import com.liferay.portal.kernel.captcha.CaptchaUtil;
 import com.liferay.portal.kernel.servlet.SessionErrors;
+import com.liferay.portal.kernel.servlet.SessionMessages;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.model.TrashedModel;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextFactory;
 import com.liferay.portal.struts.PortletAction;
 import com.liferay.portal.theme.ThemeDisplay;
+import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.portal.util.WebKeys;
 import com.liferay.portlet.messageboards.CategoryNameException;
@@ -39,10 +42,9 @@ import com.liferay.portlet.messageboards.MailingListOutUserNameException;
 import com.liferay.portlet.messageboards.NoSuchCategoryException;
 import com.liferay.portlet.messageboards.model.MBCategory;
 import com.liferay.portlet.messageboards.service.MBCategoryServiceUtil;
-import com.liferay.portlet.trash.util.TrashUtil;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
@@ -149,6 +151,8 @@ public class EditCategoryAction extends PortletAction {
 		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
 
+		String deleteEntryTitle = null;
+
 		long[] deleteCategoryIds = null;
 
 		long categoryId = ParamUtil.getLong(actionRequest, "mbCategoryId");
@@ -161,14 +165,16 @@ public class EditCategoryAction extends PortletAction {
 				ParamUtil.getString(actionRequest, "deleteCategoryIds"), 0L);
 		}
 
-		List<TrashedModel> trashedModels = new ArrayList<TrashedModel>();
+		for (int i = 0; i < deleteCategoryIds.length; i++) {
+			long deleteCategoryId = deleteCategoryIds[i];
 
-		for (long deleteCategoryId : deleteCategoryIds) {
 			if (moveToTrash) {
 				MBCategory category = MBCategoryServiceUtil.moveCategoryToTrash(
 					deleteCategoryId);
 
-				trashedModels.add(category);
+				if (i == 0) {
+					deleteEntryTitle = category.getName();
+				}
 			}
 			else {
 				MBCategoryServiceUtil.deleteCategory(
@@ -176,8 +182,25 @@ public class EditCategoryAction extends PortletAction {
 			}
 		}
 
-		if (moveToTrash && !trashedModels.isEmpty()) {
-			TrashUtil.addTrashSessionMessages(actionRequest, trashedModels);
+		if (moveToTrash && (deleteCategoryIds.length > 0)) {
+			Map<String, String[]> data = new HashMap<String, String[]>();
+
+			data.put(
+				"deleteEntryClassName",
+				new String[] {MBCategory.class.getName()});
+
+			if (Validator.isNotNull(deleteEntryTitle)) {
+				data.put("deleteEntryTitle", new String[] {deleteEntryTitle});
+			}
+
+			data.put(
+				"restoreCategoryIds",
+				ArrayUtil.toStringArray(deleteCategoryIds));
+
+			SessionMessages.add(
+				actionRequest,
+				PortalUtil.getPortletId(actionRequest) +
+					SessionMessages.KEY_SUFFIX_DELETE_SUCCESS_DATA, data);
 
 			hideDefaultSuccessMessage(actionRequest);
 		}

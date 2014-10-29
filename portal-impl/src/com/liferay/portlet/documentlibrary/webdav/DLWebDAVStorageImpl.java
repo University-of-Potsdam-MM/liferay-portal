@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,6 +18,7 @@ import com.liferay.portal.DuplicateLockException;
 import com.liferay.portal.InvalidLockException;
 import com.liferay.portal.NoSuchLockException;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.repository.model.FileEntry;
@@ -51,7 +52,6 @@ import com.liferay.portlet.asset.service.AssetLinkLocalServiceUtil;
 import com.liferay.portlet.asset.service.AssetTagLocalServiceUtil;
 import com.liferay.portlet.documentlibrary.DuplicateFileException;
 import com.liferay.portlet.documentlibrary.DuplicateFolderNameException;
-import com.liferay.portlet.documentlibrary.FileSizeException;
 import com.liferay.portlet.documentlibrary.NoSuchFileEntryException;
 import com.liferay.portlet.documentlibrary.NoSuchFolderException;
 import com.liferay.portlet.documentlibrary.model.DLFileEntry;
@@ -739,14 +739,11 @@ public class DLWebDAVStorageImpl extends BaseWebDAVStorageImpl {
 
 			return HttpServletResponse.SC_CREATED;
 		}
-		catch (FileSizeException fse) {
-			return HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE;
+		catch (PrincipalException pe) {
+			return HttpServletResponse.SC_FORBIDDEN;
 		}
 		catch (NoSuchFolderException nsfe) {
 			return HttpServletResponse.SC_CONFLICT;
-		}
-		catch (PrincipalException pe) {
-			return HttpServletResponse.SC_FORBIDDEN;
 		}
 		catch (PortalException pe) {
 			if (_log.isWarnEnabled()) {
@@ -1003,7 +1000,8 @@ public class DLWebDAVStorageImpl extends BaseWebDAVStorageImpl {
 	}
 
 	protected void populateServiceContext(
-		ServiceContext serviceContext, FileEntry fileEntry) {
+			ServiceContext serviceContext, FileEntry fileEntry)
+		throws SystemException {
 
 		String className = DLFileEntryConstants.getClassName();
 
@@ -1018,8 +1016,8 @@ public class DLWebDAVStorageImpl extends BaseWebDAVStorageImpl {
 		List<AssetLink> assetLinks = AssetLinkLocalServiceUtil.getLinks(
 			assetEntry.getEntryId());
 
-		long[] assetLinkEntryIds = ListUtil.toLongArray(
-			assetLinks, AssetLink.ENTRY_ID2_ACCESSOR);
+		long[] assetLinkEntryIds = StringUtil.split(
+			ListUtil.toString(assetLinks, AssetLink.ENTRY_ID2_ACCESSOR), 0L);
 
 		serviceContext.setAssetLinkEntryIds(assetLinkEntryIds);
 

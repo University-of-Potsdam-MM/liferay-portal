@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,6 +14,7 @@
 
 package com.liferay.portlet.shopping.service.persistence;
 
+import com.liferay.portal.kernel.bean.PortalBeanLocatorUtil;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
@@ -22,75 +23,67 @@ import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.template.TemplateException;
-import com.liferay.portal.kernel.template.TemplateManagerUtil;
-import com.liferay.portal.kernel.transaction.Propagation;
+import com.liferay.portal.kernel.test.ExecutionTestListeners;
 import com.liferay.portal.kernel.util.IntegerWrapper;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.OrderByComparatorFactoryUtil;
 import com.liferay.portal.kernel.util.Time;
-import com.liferay.portal.test.TransactionalTestRule;
-import com.liferay.portal.test.runners.PersistenceIntegrationJUnitTestRunner;
-import com.liferay.portal.tools.DBUpgrader;
+import com.liferay.portal.service.ServiceTestUtil;
+import com.liferay.portal.service.persistence.BasePersistence;
+import com.liferay.portal.service.persistence.PersistenceExecutionTestListener;
+import com.liferay.portal.test.LiferayPersistenceIntegrationJUnitTestRunner;
+import com.liferay.portal.test.persistence.TransactionalPersistenceAdvice;
 import com.liferay.portal.util.PropsValues;
-import com.liferay.portal.util.test.RandomTestUtil;
 
 import com.liferay.portlet.shopping.NoSuchCartException;
 import com.liferay.portlet.shopping.model.ShoppingCart;
 import com.liferay.portlet.shopping.model.impl.ShoppingCartModelImpl;
-import com.liferay.portlet.shopping.service.ShoppingCartLocalServiceUtil;
 
 import org.junit.After;
 import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
 import org.junit.Test;
 
 import org.junit.runner.RunWith;
 
 import java.io.Serializable;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 /**
- * @generated
+ * @author Brian Wing Shun Chan
  */
-@RunWith(PersistenceIntegrationJUnitTestRunner.class)
+@ExecutionTestListeners(listeners =  {
+	PersistenceExecutionTestListener.class})
+@RunWith(LiferayPersistenceIntegrationJUnitTestRunner.class)
 public class ShoppingCartPersistenceTest {
-	@ClassRule
-	public static TransactionalTestRule transactionalTestRule = new TransactionalTestRule(Propagation.REQUIRED);
-
-	@BeforeClass
-	public static void setupClass() throws TemplateException {
-		try {
-			DBUpgrader.upgrade();
-		}
-		catch (Exception e) {
-			_log.error(e, e);
-		}
-
-		TemplateManagerUtil.init();
-	}
-
 	@After
 	public void tearDown() throws Exception {
-		Iterator<ShoppingCart> iterator = _shoppingCarts.iterator();
+		Map<Serializable, BasePersistence<?>> basePersistences = _transactionalPersistenceAdvice.getBasePersistences();
 
-		while (iterator.hasNext()) {
-			_persistence.remove(iterator.next());
+		Set<Serializable> primaryKeys = basePersistences.keySet();
 
-			iterator.remove();
+		for (Serializable primaryKey : primaryKeys) {
+			BasePersistence<?> basePersistence = basePersistences.get(primaryKey);
+
+			try {
+				basePersistence.remove(primaryKey);
+			}
+			catch (Exception e) {
+				if (_log.isDebugEnabled()) {
+					_log.debug("The model with primary key " + primaryKey +
+						" was already deleted");
+				}
+			}
 		}
+
+		_transactionalPersistenceAdvice.reset();
 	}
 
 	@Test
 	public void testCreate() throws Exception {
-		long pk = RandomTestUtil.nextLong();
+		long pk = ServiceTestUtil.nextLong();
 
 		ShoppingCart shoppingCart = _persistence.create(pk);
 
@@ -117,31 +110,31 @@ public class ShoppingCartPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
+		long pk = ServiceTestUtil.nextLong();
 
 		ShoppingCart newShoppingCart = _persistence.create(pk);
 
-		newShoppingCart.setGroupId(RandomTestUtil.nextLong());
+		newShoppingCart.setGroupId(ServiceTestUtil.nextLong());
 
-		newShoppingCart.setCompanyId(RandomTestUtil.nextLong());
+		newShoppingCart.setCompanyId(ServiceTestUtil.nextLong());
 
-		newShoppingCart.setUserId(RandomTestUtil.nextLong());
+		newShoppingCart.setUserId(ServiceTestUtil.nextLong());
 
-		newShoppingCart.setUserName(RandomTestUtil.randomString());
+		newShoppingCart.setUserName(ServiceTestUtil.randomString());
 
-		newShoppingCart.setCreateDate(RandomTestUtil.nextDate());
+		newShoppingCart.setCreateDate(ServiceTestUtil.nextDate());
 
-		newShoppingCart.setModifiedDate(RandomTestUtil.nextDate());
+		newShoppingCart.setModifiedDate(ServiceTestUtil.nextDate());
 
-		newShoppingCart.setItemIds(RandomTestUtil.randomString());
+		newShoppingCart.setItemIds(ServiceTestUtil.randomString());
 
-		newShoppingCart.setCouponCodes(RandomTestUtil.randomString());
+		newShoppingCart.setCouponCodes(ServiceTestUtil.randomString());
 
-		newShoppingCart.setAltShipping(RandomTestUtil.nextInt());
+		newShoppingCart.setAltShipping(ServiceTestUtil.nextInt());
 
-		newShoppingCart.setInsure(RandomTestUtil.randomBoolean());
+		newShoppingCart.setInsure(ServiceTestUtil.randomBoolean());
 
-		_shoppingCarts.add(_persistence.update(newShoppingCart));
+		_persistence.update(newShoppingCart);
 
 		ShoppingCart existingShoppingCart = _persistence.findByPrimaryKey(newShoppingCart.getPrimaryKey());
 
@@ -172,43 +165,6 @@ public class ShoppingCartPersistenceTest {
 	}
 
 	@Test
-	public void testCountByGroupId() {
-		try {
-			_persistence.countByGroupId(RandomTestUtil.nextLong());
-
-			_persistence.countByGroupId(0L);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByUserId() {
-		try {
-			_persistence.countByUserId(RandomTestUtil.nextLong());
-
-			_persistence.countByUserId(0L);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByG_U() {
-		try {
-			_persistence.countByG_U(RandomTestUtil.nextLong(),
-				RandomTestUtil.nextLong());
-
-			_persistence.countByG_U(0L, 0L);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
 	public void testFindByPrimaryKeyExisting() throws Exception {
 		ShoppingCart newShoppingCart = addShoppingCart();
 
@@ -219,7 +175,7 @@ public class ShoppingCartPersistenceTest {
 
 	@Test
 	public void testFindByPrimaryKeyMissing() throws Exception {
-		long pk = RandomTestUtil.nextLong();
+		long pk = ServiceTestUtil.nextLong();
 
 		try {
 			_persistence.findByPrimaryKey(pk);
@@ -241,7 +197,7 @@ public class ShoppingCartPersistenceTest {
 		}
 	}
 
-	protected OrderByComparator<ShoppingCart> getOrderByComparator() {
+	protected OrderByComparator getOrderByComparator() {
 		return OrderByComparatorFactoryUtil.create("ShoppingCart", "cartId",
 			true, "groupId", true, "companyId", true, "userId", true,
 			"userName", true, "createDate", true, "modifiedDate", true,
@@ -260,7 +216,7 @@ public class ShoppingCartPersistenceTest {
 
 	@Test
 	public void testFetchByPrimaryKeyMissing() throws Exception {
-		long pk = RandomTestUtil.nextLong();
+		long pk = ServiceTestUtil.nextLong();
 
 		ShoppingCart missingShoppingCart = _persistence.fetchByPrimaryKey(pk);
 
@@ -268,103 +224,19 @@ public class ShoppingCartPersistenceTest {
 	}
 
 	@Test
-	public void testFetchByPrimaryKeysWithMultiplePrimaryKeysWhereAllPrimaryKeysExist()
-		throws Exception {
-		ShoppingCart newShoppingCart1 = addShoppingCart();
-		ShoppingCart newShoppingCart2 = addShoppingCart();
-
-		Set<Serializable> primaryKeys = new HashSet<Serializable>();
-
-		primaryKeys.add(newShoppingCart1.getPrimaryKey());
-		primaryKeys.add(newShoppingCart2.getPrimaryKey());
-
-		Map<Serializable, ShoppingCart> shoppingCarts = _persistence.fetchByPrimaryKeys(primaryKeys);
-
-		Assert.assertEquals(2, shoppingCarts.size());
-		Assert.assertEquals(newShoppingCart1,
-			shoppingCarts.get(newShoppingCart1.getPrimaryKey()));
-		Assert.assertEquals(newShoppingCart2,
-			shoppingCarts.get(newShoppingCart2.getPrimaryKey()));
-	}
-
-	@Test
-	public void testFetchByPrimaryKeysWithMultiplePrimaryKeysWhereNoPrimaryKeysExist()
-		throws Exception {
-		long pk1 = RandomTestUtil.nextLong();
-
-		long pk2 = RandomTestUtil.nextLong();
-
-		Set<Serializable> primaryKeys = new HashSet<Serializable>();
-
-		primaryKeys.add(pk1);
-		primaryKeys.add(pk2);
-
-		Map<Serializable, ShoppingCart> shoppingCarts = _persistence.fetchByPrimaryKeys(primaryKeys);
-
-		Assert.assertTrue(shoppingCarts.isEmpty());
-	}
-
-	@Test
-	public void testFetchByPrimaryKeysWithMultiplePrimaryKeysWhereSomePrimaryKeysExist()
-		throws Exception {
-		ShoppingCart newShoppingCart = addShoppingCart();
-
-		long pk = RandomTestUtil.nextLong();
-
-		Set<Serializable> primaryKeys = new HashSet<Serializable>();
-
-		primaryKeys.add(newShoppingCart.getPrimaryKey());
-		primaryKeys.add(pk);
-
-		Map<Serializable, ShoppingCart> shoppingCarts = _persistence.fetchByPrimaryKeys(primaryKeys);
-
-		Assert.assertEquals(1, shoppingCarts.size());
-		Assert.assertEquals(newShoppingCart,
-			shoppingCarts.get(newShoppingCart.getPrimaryKey()));
-	}
-
-	@Test
-	public void testFetchByPrimaryKeysWithNoPrimaryKeys()
-		throws Exception {
-		Set<Serializable> primaryKeys = new HashSet<Serializable>();
-
-		Map<Serializable, ShoppingCart> shoppingCarts = _persistence.fetchByPrimaryKeys(primaryKeys);
-
-		Assert.assertTrue(shoppingCarts.isEmpty());
-	}
-
-	@Test
-	public void testFetchByPrimaryKeysWithOnePrimaryKey()
-		throws Exception {
-		ShoppingCart newShoppingCart = addShoppingCart();
-
-		Set<Serializable> primaryKeys = new HashSet<Serializable>();
-
-		primaryKeys.add(newShoppingCart.getPrimaryKey());
-
-		Map<Serializable, ShoppingCart> shoppingCarts = _persistence.fetchByPrimaryKeys(primaryKeys);
-
-		Assert.assertEquals(1, shoppingCarts.size());
-		Assert.assertEquals(newShoppingCart,
-			shoppingCarts.get(newShoppingCart.getPrimaryKey()));
-	}
-
-	@Test
 	public void testActionableDynamicQuery() throws Exception {
 		final IntegerWrapper count = new IntegerWrapper();
 
-		ActionableDynamicQuery actionableDynamicQuery = ShoppingCartLocalServiceUtil.getActionableDynamicQuery();
-
-		actionableDynamicQuery.setPerformActionMethod(new ActionableDynamicQuery.PerformActionMethod() {
+		ActionableDynamicQuery actionableDynamicQuery = new ShoppingCartActionableDynamicQuery() {
 				@Override
-				public void performAction(Object object) {
+				protected void performAction(Object object) {
 					ShoppingCart shoppingCart = (ShoppingCart)object;
 
 					Assert.assertNotNull(shoppingCart);
 
 					count.increment();
 				}
-			});
+			};
 
 		actionableDynamicQuery.performActions();
 
@@ -397,7 +269,7 @@ public class ShoppingCartPersistenceTest {
 				ShoppingCart.class.getClassLoader());
 
 		dynamicQuery.add(RestrictionsFactoryUtil.eq("cartId",
-				RandomTestUtil.nextLong()));
+				ServiceTestUtil.nextLong()));
 
 		List<ShoppingCart> result = _persistence.findWithDynamicQuery(dynamicQuery);
 
@@ -436,7 +308,7 @@ public class ShoppingCartPersistenceTest {
 		dynamicQuery.setProjection(ProjectionFactoryUtil.property("cartId"));
 
 		dynamicQuery.add(RestrictionsFactoryUtil.in("cartId",
-				new Object[] { RandomTestUtil.nextLong() }));
+				new Object[] { ServiceTestUtil.nextLong() }));
 
 		List<Object> result = _persistence.findWithDynamicQuery(dynamicQuery);
 
@@ -462,36 +334,36 @@ public class ShoppingCartPersistenceTest {
 	}
 
 	protected ShoppingCart addShoppingCart() throws Exception {
-		long pk = RandomTestUtil.nextLong();
+		long pk = ServiceTestUtil.nextLong();
 
 		ShoppingCart shoppingCart = _persistence.create(pk);
 
-		shoppingCart.setGroupId(RandomTestUtil.nextLong());
+		shoppingCart.setGroupId(ServiceTestUtil.nextLong());
 
-		shoppingCart.setCompanyId(RandomTestUtil.nextLong());
+		shoppingCart.setCompanyId(ServiceTestUtil.nextLong());
 
-		shoppingCart.setUserId(RandomTestUtil.nextLong());
+		shoppingCart.setUserId(ServiceTestUtil.nextLong());
 
-		shoppingCart.setUserName(RandomTestUtil.randomString());
+		shoppingCart.setUserName(ServiceTestUtil.randomString());
 
-		shoppingCart.setCreateDate(RandomTestUtil.nextDate());
+		shoppingCart.setCreateDate(ServiceTestUtil.nextDate());
 
-		shoppingCart.setModifiedDate(RandomTestUtil.nextDate());
+		shoppingCart.setModifiedDate(ServiceTestUtil.nextDate());
 
-		shoppingCart.setItemIds(RandomTestUtil.randomString());
+		shoppingCart.setItemIds(ServiceTestUtil.randomString());
 
-		shoppingCart.setCouponCodes(RandomTestUtil.randomString());
+		shoppingCart.setCouponCodes(ServiceTestUtil.randomString());
 
-		shoppingCart.setAltShipping(RandomTestUtil.nextInt());
+		shoppingCart.setAltShipping(ServiceTestUtil.nextInt());
 
-		shoppingCart.setInsure(RandomTestUtil.randomBoolean());
+		shoppingCart.setInsure(ServiceTestUtil.randomBoolean());
 
-		_shoppingCarts.add(_persistence.update(shoppingCart));
+		_persistence.update(shoppingCart);
 
 		return shoppingCart;
 	}
 
 	private static Log _log = LogFactoryUtil.getLog(ShoppingCartPersistenceTest.class);
-	private List<ShoppingCart> _shoppingCarts = new ArrayList<ShoppingCart>();
-	private ShoppingCartPersistence _persistence = ShoppingCartUtil.getPersistence();
+	private ShoppingCartPersistence _persistence = (ShoppingCartPersistence)PortalBeanLocatorUtil.locate(ShoppingCartPersistence.class.getName());
+	private TransactionalPersistenceAdvice _transactionalPersistenceAdvice = (TransactionalPersistenceAdvice)PortalBeanLocatorUtil.locate(TransactionalPersistenceAdvice.class.getName());
 }

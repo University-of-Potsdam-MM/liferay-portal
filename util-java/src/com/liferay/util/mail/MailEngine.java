@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -27,7 +27,6 @@ import com.liferay.portal.kernel.mail.SMTPAccount;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.InfrastructureUtil;
-import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -178,11 +177,13 @@ public class MailEngine {
 			List<FileAttachment> fileAttachments, SMTPAccount smtpAccount)
 		throws MailEngineException {
 
-		StopWatch stopWatch = new StopWatch();
-
-		stopWatch.start();
+		StopWatch stopWatch = null;
 
 		if (_log.isDebugEnabled()) {
+			stopWatch = new StopWatch();
+
+			stopWatch.start();
+
 			_log.debug("From: " + from);
 			_log.debug("To: " + Arrays.toString(to));
 			_log.debug("CC: " + Arrays.toString(cc));
@@ -215,23 +216,23 @@ public class MailEngine {
 		try {
 			InternetAddressUtil.validateAddress(from);
 
-			if (ArrayUtil.isNotEmpty(to)) {
+			if (to != null) {
 				InternetAddressUtil.validateAddresses(to);
 			}
 
-			if (ArrayUtil.isNotEmpty(cc)) {
+			if (cc != null) {
 				InternetAddressUtil.validateAddresses(cc);
 			}
 
-			if (ArrayUtil.isNotEmpty(bcc)) {
+			if (bcc != null) {
 				InternetAddressUtil.validateAddresses(bcc);
 			}
 
-			if (ArrayUtil.isNotEmpty(replyTo)) {
+			if (replyTo != null) {
 				InternetAddressUtil.validateAddresses(replyTo);
 			}
 
-			if (ArrayUtil.isNotEmpty(bulkAddresses)) {
+			if (bulkAddresses != null) {
 				InternetAddressUtil.validateAddresses(bulkAddresses);
 			}
 
@@ -251,15 +252,15 @@ public class MailEngine {
 
 			message.setFrom(from);
 
-			if (ArrayUtil.isNotEmpty(to)) {
+			if (to != null) {
 				message.setRecipients(Message.RecipientType.TO, to);
 			}
 
-			if (ArrayUtil.isNotEmpty(cc)) {
+			if (cc != null) {
 				message.setRecipients(Message.RecipientType.CC, cc);
 			}
 
-			if (ArrayUtil.isNotEmpty(bcc)) {
+			if (bcc != null) {
 				message.setRecipients(Message.RecipientType.BCC, bcc);
 			}
 
@@ -267,7 +268,7 @@ public class MailEngine {
 
 			message.setSubject(subject);
 
-			if (ListUtil.isNotEmpty(fileAttachments)) {
+			if ((fileAttachments != null) && (fileAttachments.size() > 0)) {
 				MimeMultipart rootMultipart = new MimeMultipart(
 					_MULTIPART_TYPE_MIXED);
 
@@ -336,7 +337,7 @@ public class MailEngine {
 
 			message.setSentDate(new Date());
 
-			if (ArrayUtil.isNotEmpty(replyTo)) {
+			if (replyTo != null) {
 				message.setReplyTo(replyTo);
 			}
 
@@ -356,10 +357,6 @@ public class MailEngine {
 		}
 		catch (SendFailedException sfe) {
 			_log.error(sfe);
-
-			if (_isThrowsExceptionOnFailure()) {
-				throw new MailEngineException(sfe);
-			}
 		}
 		catch (Exception e) {
 			throw new MailEngineException(e);
@@ -516,15 +513,9 @@ public class MailEngine {
 		}
 	}
 
-	private static boolean _isThrowsExceptionOnFailure() {
-		return GetterUtil.getBoolean(
-			PropsUtil.get(PropsKeys.MAIL_THROWS_EXCEPTION_ON_FAILURE));
-	}
-
 	private static void _send(
-			Session session, Message message, InternetAddress[] bulkAddresses,
-			int batchSize)
-		throws MailEngineException {
+		Session session, Message message, InternetAddress[] bulkAddresses,
+		int batchSize) {
 
 		try {
 			boolean smtpAuth = GetterUtil.getBoolean(
@@ -600,10 +591,6 @@ public class MailEngine {
 			}
 			else {
 				LogUtil.log(_log, me);
-			}
-
-			if (_isThrowsExceptionOnFailure()) {
-				throw new MailEngineException(me);
 			}
 		}
 	}

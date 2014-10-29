@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,10 +14,8 @@
 
 package com.liferay.portal.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
-import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSON;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
@@ -28,9 +26,7 @@ import com.liferay.portal.model.CacheModel;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.GroupModel;
 import com.liferay.portal.model.GroupSoap;
-import com.liferay.portal.model.User;
 import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.service.UserLocalServiceUtil;
 import com.liferay.portal.util.PortalUtil;
 
 import com.liferay.portlet.expando.model.ExpandoBridge;
@@ -59,7 +55,6 @@ import java.util.Map;
  * @generated
  */
 @JSON(strict = true)
-@ProviderType
 public class GroupModelImpl extends BaseModelImpl<Group> implements GroupModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
@@ -68,7 +63,6 @@ public class GroupModelImpl extends BaseModelImpl<Group> implements GroupModel {
 	 */
 	public static final String TABLE_NAME = "Group_";
 	public static final Object[][] TABLE_COLUMNS = {
-			{ "mvccVersion", Types.BIGINT },
 			{ "uuid_", Types.VARCHAR },
 			{ "groupId", Types.BIGINT },
 			{ "companyId", Types.BIGINT },
@@ -89,7 +83,7 @@ public class GroupModelImpl extends BaseModelImpl<Group> implements GroupModel {
 			{ "remoteStagingGroupCount", Types.INTEGER },
 			{ "active_", Types.BOOLEAN }
 		};
-	public static final String TABLE_SQL_CREATE = "create table Group_ (mvccVersion LONG default 0,uuid_ VARCHAR(75) null,groupId LONG not null primary key,companyId LONG,creatorUserId LONG,classNameId LONG,classPK LONG,parentGroupId LONG,liveGroupId LONG,treePath STRING null,name VARCHAR(150) null,description STRING null,type_ INTEGER,typeSettings TEXT null,manualMembership BOOLEAN,membershipRestriction INTEGER,friendlyURL VARCHAR(255) null,site BOOLEAN,remoteStagingGroupCount INTEGER,active_ BOOLEAN)";
+	public static final String TABLE_SQL_CREATE = "create table Group_ (uuid_ VARCHAR(75) null,groupId LONG not null primary key,companyId LONG,creatorUserId LONG,classNameId LONG,classPK LONG,parentGroupId LONG,liveGroupId LONG,treePath STRING null,name VARCHAR(150) null,description STRING null,type_ INTEGER,typeSettings TEXT null,manualMembership BOOLEAN,membershipRestriction INTEGER,friendlyURL VARCHAR(255) null,site BOOLEAN,remoteStagingGroupCount INTEGER,active_ BOOLEAN)";
 	public static final String TABLE_SQL_DROP = "drop table Group_";
 	public static final String ORDER_BY_JPQL = " ORDER BY group_.name ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY Group_.name ASC";
@@ -105,18 +99,18 @@ public class GroupModelImpl extends BaseModelImpl<Group> implements GroupModel {
 	public static final boolean COLUMN_BITMASK_ENABLED = GetterUtil.getBoolean(com.liferay.portal.util.PropsUtil.get(
 				"value.object.column.bitmask.enabled.com.liferay.portal.model.Group"),
 			true);
-	public static final long ACTIVE_COLUMN_BITMASK = 1L;
-	public static final long CLASSNAMEID_COLUMN_BITMASK = 2L;
-	public static final long CLASSPK_COLUMN_BITMASK = 4L;
-	public static final long COMPANYID_COLUMN_BITMASK = 8L;
-	public static final long FRIENDLYURL_COLUMN_BITMASK = 16L;
-	public static final long GROUPID_COLUMN_BITMASK = 32L;
-	public static final long LIVEGROUPID_COLUMN_BITMASK = 64L;
-	public static final long NAME_COLUMN_BITMASK = 128L;
-	public static final long PARENTGROUPID_COLUMN_BITMASK = 256L;
-	public static final long SITE_COLUMN_BITMASK = 512L;
-	public static final long TYPE_COLUMN_BITMASK = 1024L;
-	public static final long UUID_COLUMN_BITMASK = 2048L;
+	public static long ACTIVE_COLUMN_BITMASK = 1L;
+	public static long CLASSNAMEID_COLUMN_BITMASK = 2L;
+	public static long CLASSPK_COLUMN_BITMASK = 4L;
+	public static long COMPANYID_COLUMN_BITMASK = 8L;
+	public static long FRIENDLYURL_COLUMN_BITMASK = 16L;
+	public static long GROUPID_COLUMN_BITMASK = 32L;
+	public static long LIVEGROUPID_COLUMN_BITMASK = 64L;
+	public static long NAME_COLUMN_BITMASK = 128L;
+	public static long PARENTGROUPID_COLUMN_BITMASK = 256L;
+	public static long SITE_COLUMN_BITMASK = 512L;
+	public static long TYPE_COLUMN_BITMASK = 1024L;
+	public static long UUID_COLUMN_BITMASK = 2048L;
 
 	/**
 	 * Converts the soap model instance into a normal model instance.
@@ -131,7 +125,6 @@ public class GroupModelImpl extends BaseModelImpl<Group> implements GroupModel {
 
 		Group model = new GroupImpl();
 
-		model.setMvccVersion(soapModel.getMvccVersion());
 		model.setUuid(soapModel.getUuid());
 		model.setGroupId(soapModel.getGroupId());
 		model.setCompanyId(soapModel.getCompanyId());
@@ -201,8 +194,8 @@ public class GroupModelImpl extends BaseModelImpl<Group> implements GroupModel {
 				"value.object.finder.cache.enabled.Groups_UserGroups"), true);
 	public static final String MAPPING_TABLE_USERS_GROUPS_NAME = "Users_Groups";
 	public static final Object[][] MAPPING_TABLE_USERS_GROUPS_COLUMNS = {
-			{ "groupId", Types.BIGINT },
-			{ "userId", Types.BIGINT }
+			{ "userId", Types.BIGINT },
+			{ "groupId", Types.BIGINT }
 		};
 	public static final String MAPPING_TABLE_USERS_GROUPS_SQL_CREATE = "create table Users_Groups (groupId LONG not null,userId LONG not null,primary key (groupId, userId))";
 	public static final boolean FINDER_CACHE_ENABLED_USERS_GROUPS = GetterUtil.getBoolean(com.liferay.portal.util.PropsUtil.get(
@@ -247,7 +240,6 @@ public class GroupModelImpl extends BaseModelImpl<Group> implements GroupModel {
 	public Map<String, Object> getModelAttributes() {
 		Map<String, Object> attributes = new HashMap<String, Object>();
 
-		attributes.put("mvccVersion", getMvccVersion());
 		attributes.put("uuid", getUuid());
 		attributes.put("groupId", getGroupId());
 		attributes.put("companyId", getCompanyId());
@@ -268,20 +260,11 @@ public class GroupModelImpl extends BaseModelImpl<Group> implements GroupModel {
 		attributes.put("remoteStagingGroupCount", getRemoteStagingGroupCount());
 		attributes.put("active", getActive());
 
-		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
-		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
-
 		return attributes;
 	}
 
 	@Override
 	public void setModelAttributes(Map<String, Object> attributes) {
-		Long mvccVersion = (Long)attributes.get("mvccVersion");
-
-		if (mvccVersion != null) {
-			setMvccVersion(mvccVersion);
-		}
-
 		String uuid = (String)attributes.get("uuid");
 
 		if (uuid != null) {
@@ -401,17 +384,6 @@ public class GroupModelImpl extends BaseModelImpl<Group> implements GroupModel {
 
 	@JSON
 	@Override
-	public long getMvccVersion() {
-		return _mvccVersion;
-	}
-
-	@Override
-	public void setMvccVersion(long mvccVersion) {
-		_mvccVersion = mvccVersion;
-	}
-
-	@JSON
-	@Override
 	public String getUuid() {
 		if (_uuid == null) {
 			return StringPool.BLANK;
@@ -492,19 +464,14 @@ public class GroupModelImpl extends BaseModelImpl<Group> implements GroupModel {
 	}
 
 	@Override
-	public String getCreatorUserUuid() {
-		try {
-			User user = UserLocalServiceUtil.getUserById(getCreatorUserId());
-
-			return user.getUuid();
-		}
-		catch (PortalException pe) {
-			return StringPool.BLANK;
-		}
+	public String getCreatorUserUuid() throws SystemException {
+		return PortalUtil.getUserValue(getCreatorUserId(), "uuid",
+			_creatorUserUuid);
 	}
 
 	@Override
 	public void setCreatorUserUuid(String creatorUserUuid) {
+		_creatorUserUuid = creatorUserUuid;
 	}
 
 	@Override
@@ -867,7 +834,6 @@ public class GroupModelImpl extends BaseModelImpl<Group> implements GroupModel {
 	public Object clone() {
 		GroupImpl groupImpl = new GroupImpl();
 
-		groupImpl.setMvccVersion(getMvccVersion());
 		groupImpl.setUuid(getUuid());
 		groupImpl.setGroupId(getGroupId());
 		groupImpl.setCompanyId(getCompanyId());
@@ -934,16 +900,6 @@ public class GroupModelImpl extends BaseModelImpl<Group> implements GroupModel {
 	}
 
 	@Override
-	public boolean isEntityCacheEnabled() {
-		return ENTITY_CACHE_ENABLED;
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return FINDER_CACHE_ENABLED;
-	}
-
-	@Override
 	public void resetOriginalValues() {
 		GroupModelImpl groupModelImpl = this;
 
@@ -995,8 +951,6 @@ public class GroupModelImpl extends BaseModelImpl<Group> implements GroupModel {
 	@Override
 	public CacheModel<Group> toCacheModel() {
 		GroupCacheModel groupCacheModel = new GroupCacheModel();
-
-		groupCacheModel.mvccVersion = getMvccVersion();
 
 		groupCacheModel.uuid = getUuid();
 
@@ -1077,11 +1031,9 @@ public class GroupModelImpl extends BaseModelImpl<Group> implements GroupModel {
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(41);
+		StringBundler sb = new StringBundler(39);
 
-		sb.append("{mvccVersion=");
-		sb.append(getMvccVersion());
-		sb.append(", uuid=");
+		sb.append("{uuid=");
 		sb.append(getUuid());
 		sb.append(", groupId=");
 		sb.append(getGroupId());
@@ -1126,16 +1078,12 @@ public class GroupModelImpl extends BaseModelImpl<Group> implements GroupModel {
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(64);
+		StringBundler sb = new StringBundler(61);
 
 		sb.append("<model><model-name>");
 		sb.append("com.liferay.portal.model.Group");
 		sb.append("</model-name>");
 
-		sb.append(
-			"<column><column-name>mvccVersion</column-name><column-value><![CDATA[");
-		sb.append(getMvccVersion());
-		sb.append("]]></column-value></column>");
 		sb.append(
 			"<column><column-name>uuid</column-name><column-value><![CDATA[");
 		sb.append(getUuid());
@@ -1218,11 +1166,8 @@ public class GroupModelImpl extends BaseModelImpl<Group> implements GroupModel {
 		return sb.toString();
 	}
 
-	private static final ClassLoader _classLoader = Group.class.getClassLoader();
-	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
-			Group.class
-		};
-	private long _mvccVersion;
+	private static ClassLoader _classLoader = Group.class.getClassLoader();
+	private static Class<?>[] _escapedModelInterfaces = new Class[] { Group.class };
 	private String _uuid;
 	private String _originalUuid;
 	private long _groupId;
@@ -1232,6 +1177,7 @@ public class GroupModelImpl extends BaseModelImpl<Group> implements GroupModel {
 	private long _originalCompanyId;
 	private boolean _setOriginalCompanyId;
 	private long _creatorUserId;
+	private String _creatorUserUuid;
 	private long _classNameId;
 	private long _originalClassNameId;
 	private boolean _setOriginalClassNameId;

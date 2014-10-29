@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -16,8 +16,6 @@ package com.liferay.portal.scripting.groovy;
 
 import com.liferay.portal.kernel.cache.PortalCache;
 import com.liferay.portal.kernel.cache.SingleVMPoolUtil;
-import com.liferay.portal.kernel.concurrent.ConcurrentReferenceKeyHashMap;
-import com.liferay.portal.kernel.memory.FinalizeManager;
 import com.liferay.portal.kernel.scripting.BaseScriptingExecutor;
 import com.liferay.portal.kernel.scripting.ExecutionException;
 import com.liferay.portal.kernel.scripting.ScriptingException;
@@ -32,7 +30,7 @@ import groovy.lang.Script;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentMap;
+import java.util.WeakHashMap;
 
 /**
  * @author Alberto Montero
@@ -117,16 +115,15 @@ public class GroovyExecutor extends BaseScriptingExecutor {
 			AggregateClassLoader.getAggregateClassLoader(
 				ClassLoaderUtil.getPortalClassLoader(), classLoaders);
 
-		GroovyShell groovyShell = _groovyShells.get(aggregateClassLoader);
+		GroovyShell groovyShell = null;
 
-		if (groovyShell == null) {
-			groovyShell = new GroovyShell(aggregateClassLoader);
+		if (!_groovyShells.containsKey(aggregateClassLoader)) {
+			synchronized (this) {
+				if (!_groovyShells.containsKey(aggregateClassLoader)) {
+					groovyShell = new GroovyShell(aggregateClassLoader);
 
-			GroovyShell oldGroovyShell = _groovyShells.putIfAbsent(
-				aggregateClassLoader, groovyShell);
-
-			if (oldGroovyShell != null) {
-				groovyShell = oldGroovyShell;
+					_groovyShells.put(aggregateClassLoader, groovyShell);
+				}
 			}
 		}
 
@@ -138,9 +135,8 @@ public class GroovyExecutor extends BaseScriptingExecutor {
 	private static final String _LANGUAGE = "groovy";
 
 	private volatile GroovyShell _groovyShell = new GroovyShell();
-	private final ConcurrentMap<ClassLoader, GroovyShell> _groovyShells =
-		new ConcurrentReferenceKeyHashMap<ClassLoader, GroovyShell>(
-			FinalizeManager.WEAK_REFERENCE_FACTORY);
+	private volatile Map<ClassLoader, GroovyShell> _groovyShells =
+		new WeakHashMap<ClassLoader, GroovyShell>();
 	private PortalCache<String, Script> _portalCache =
 		SingleVMPoolUtil.getCache(_CACHE_NAME);
 

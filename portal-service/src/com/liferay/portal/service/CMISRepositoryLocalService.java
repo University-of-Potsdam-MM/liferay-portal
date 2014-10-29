@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -51,10 +51,6 @@ public interface CMISRepositoryLocalService extends BaseLocalService {
 	*/
 	public java.lang.String getBeanIdentifier();
 
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public java.lang.Object getSession(long repositoryId)
-		throws com.liferay.portal.kernel.exception.PortalException;
-
 	/**
 	* Sets the Spring bean ID for this bean.
 	*
@@ -62,15 +58,23 @@ public interface CMISRepositoryLocalService extends BaseLocalService {
 	*/
 	public void setBeanIdentifier(java.lang.String beanIdentifier);
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public java.lang.Object getSession(long repositoryId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException;
+
 	public com.liferay.portal.kernel.repository.model.FileEntry toFileEntry(
 		long repositoryId, java.lang.Object object)
-		throws com.liferay.portal.kernel.exception.PortalException;
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	public com.liferay.portal.kernel.repository.model.FileVersion toFileVersion(
 		long repositoryId, java.lang.Object object)
-		throws com.liferay.portal.kernel.exception.PortalException;
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	public com.liferay.portal.kernel.repository.model.Folder toFolder(
 		long repositoryId, java.lang.Object object)
-		throws com.liferay.portal.kernel.exception.PortalException;
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException;
 }

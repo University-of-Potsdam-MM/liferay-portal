@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -17,7 +17,6 @@ package com.liferay.taglib.ui;
 import com.liferay.portal.kernel.editor.EditorUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.model.Portlet;
-import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.taglib.util.IncludeTag;
 
 import java.util.Map;
@@ -29,16 +28,8 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class InputEditorTag extends IncludeTag {
 
-	public void setAllowBrowseDocuments(boolean allowBrowseDocuments) {
-		_allowBrowseDocuments = allowBrowseDocuments;
-	}
-
 	public void setConfigParams(Map<String, String> configParams) {
 		_configParams = configParams;
-	}
-
-	public void setContents(String contents) {
-		_contents = contents;
 	}
 
 	public void setContentsLanguageId(String contentsLanguageId) {
@@ -61,10 +52,6 @@ public class InputEditorTag extends IncludeTag {
 		_height = height;
 	}
 
-	/**
-	 * @deprecated As of 7.0.0, replaced by {@link #setContents(String)}
-	 */
-	@Deprecated
 	public void setInitMethod(String initMethod) {
 		_initMethod = initMethod;
 	}
@@ -93,10 +80,6 @@ public class InputEditorTag extends IncludeTag {
 		_onFocusMethod = onFocusMethod;
 	}
 
-	public void setPlaceholder(String placeholder) {
-		_placeholder = placeholder;
-	}
-
 	public void setResizable(boolean resizable) {
 		_resizable = resizable;
 	}
@@ -115,9 +98,7 @@ public class InputEditorTag extends IncludeTag {
 
 	@Override
 	protected void cleanUp() {
-		_allowBrowseDocuments = true;
 		_configParams = null;
-		_contents = null;
 		_contentsLanguageId = null;
 		_cssClass = null;
 		_editorImpl = null;
@@ -131,7 +112,6 @@ public class InputEditorTag extends IncludeTag {
 		_onBlurMethod = null;
 		_onFocusMethod = null;
 		_page = null;
-		_placeholder = null;
 		_resizable = true;
 		_skipEditorLoading = false;
 		_toolbarSet = "liferay";
@@ -145,13 +125,6 @@ public class InputEditorTag extends IncludeTag {
 
 	@Override
 	protected void setAttributes(HttpServletRequest request) {
-		if (_contentsLanguageId == null) {
-			ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
-				WebKeys.THEME_DISPLAY);
-
-			_contentsLanguageId = themeDisplay.getLanguageId();
-		}
-
 		String cssClasses = "portlet ";
 
 		Portlet portlet = (Portlet)request.getAttribute(WebKeys.RENDER_PORTLET);
@@ -165,11 +138,7 @@ public class InputEditorTag extends IncludeTag {
 		_page = "/html/js/editor/" + editorImpl + ".jsp";
 
 		request.setAttribute(
-			"liferay-ui:input-editor:allowBrowseDocuments",
-			String.valueOf(_allowBrowseDocuments));
-		request.setAttribute(
 			"liferay-ui:input-editor:configParams", _configParams);
-		request.setAttribute("liferay-ui:input-editor:contents", _contents);
 		request.setAttribute(
 			"liferay-ui:input-editor:contentsLanguageId", _contentsLanguageId);
 		request.setAttribute("liferay-ui:input-editor:cssClass", _cssClass);
@@ -191,8 +160,6 @@ public class InputEditorTag extends IncludeTag {
 		request.setAttribute(
 			"liferay-ui:input-editor:onFocusMethod", _onFocusMethod);
 		request.setAttribute(
-			"liferay-ui:input-editor:placeholder", _placeholder);
-		request.setAttribute(
 			"liferay-ui:input-editor:resizable", String.valueOf(_resizable));
 		request.setAttribute(
 			"liferay-ui:input-editor:skipEditorLoading",
@@ -201,9 +168,7 @@ public class InputEditorTag extends IncludeTag {
 		request.setAttribute("liferay-ui:input-editor:width", _width);
 	}
 
-	private boolean _allowBrowseDocuments = true;
 	private Map<String, String> _configParams;
-	private String _contents;
 	private String _contentsLanguageId;
 	private String _cssClass;
 	private String _editorImpl;
@@ -217,7 +182,6 @@ public class InputEditorTag extends IncludeTag {
 	private String _onChangeMethod;
 	private String _onFocusMethod;
 	private String _page;
-	private String _placeholder;
 	private boolean _resizable = true;
 	private boolean _skipEditorLoading;
 	private String _toolbarSet = "liferay";

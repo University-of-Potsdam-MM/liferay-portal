@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -13,8 +13,6 @@
  */
 
 package com.liferay.portal.model.impl;
-
-import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
 import com.liferay.portal.kernel.json.JSON;
@@ -50,7 +48,6 @@ import java.util.Map;
  * @generated
  */
 @JSON(strict = true)
-@ProviderType
 public class UserGroupGroupRoleModelImpl extends BaseModelImpl<UserGroupGroupRole>
 	implements UserGroupGroupRoleModel {
 	/*
@@ -60,12 +57,11 @@ public class UserGroupGroupRoleModelImpl extends BaseModelImpl<UserGroupGroupRol
 	 */
 	public static final String TABLE_NAME = "UserGroupGroupRole";
 	public static final Object[][] TABLE_COLUMNS = {
-			{ "mvccVersion", Types.BIGINT },
 			{ "userGroupId", Types.BIGINT },
 			{ "groupId", Types.BIGINT },
 			{ "roleId", Types.BIGINT }
 		};
-	public static final String TABLE_SQL_CREATE = "create table UserGroupGroupRole (mvccVersion LONG default 0,userGroupId LONG not null,groupId LONG not null,roleId LONG not null,primary key (userGroupId, groupId, roleId))";
+	public static final String TABLE_SQL_CREATE = "create table UserGroupGroupRole (userGroupId LONG not null,groupId LONG not null,roleId LONG not null,primary key (userGroupId, groupId, roleId))";
 	public static final String TABLE_SQL_DROP = "drop table UserGroupGroupRole";
 	public static final String ORDER_BY_JPQL = " ORDER BY userGroupGroupRole.id.userGroupId ASC, userGroupGroupRole.id.groupId ASC, userGroupGroupRole.id.roleId ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY UserGroupGroupRole.userGroupId ASC, UserGroupGroupRole.groupId ASC, UserGroupGroupRole.roleId ASC";
@@ -81,9 +77,9 @@ public class UserGroupGroupRoleModelImpl extends BaseModelImpl<UserGroupGroupRol
 	public static final boolean COLUMN_BITMASK_ENABLED = GetterUtil.getBoolean(com.liferay.portal.util.PropsUtil.get(
 				"value.object.column.bitmask.enabled.com.liferay.portal.model.UserGroupGroupRole"),
 			true);
-	public static final long GROUPID_COLUMN_BITMASK = 1L;
-	public static final long ROLEID_COLUMN_BITMASK = 2L;
-	public static final long USERGROUPID_COLUMN_BITMASK = 4L;
+	public static long GROUPID_COLUMN_BITMASK = 1L;
+	public static long ROLEID_COLUMN_BITMASK = 2L;
+	public static long USERGROUPID_COLUMN_BITMASK = 4L;
 
 	/**
 	 * Converts the soap model instance into a normal model instance.
@@ -98,7 +94,6 @@ public class UserGroupGroupRoleModelImpl extends BaseModelImpl<UserGroupGroupRol
 
 		UserGroupGroupRole model = new UserGroupGroupRoleImpl();
 
-		model.setMvccVersion(soapModel.getMvccVersion());
 		model.setUserGroupId(soapModel.getUserGroupId());
 		model.setGroupId(soapModel.getGroupId());
 		model.setRoleId(soapModel.getRoleId());
@@ -169,25 +164,15 @@ public class UserGroupGroupRoleModelImpl extends BaseModelImpl<UserGroupGroupRol
 	public Map<String, Object> getModelAttributes() {
 		Map<String, Object> attributes = new HashMap<String, Object>();
 
-		attributes.put("mvccVersion", getMvccVersion());
 		attributes.put("userGroupId", getUserGroupId());
 		attributes.put("groupId", getGroupId());
 		attributes.put("roleId", getRoleId());
-
-		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
-		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
 
 		return attributes;
 	}
 
 	@Override
 	public void setModelAttributes(Map<String, Object> attributes) {
-		Long mvccVersion = (Long)attributes.get("mvccVersion");
-
-		if (mvccVersion != null) {
-			setMvccVersion(mvccVersion);
-		}
-
 		Long userGroupId = (Long)attributes.get("userGroupId");
 
 		if (userGroupId != null) {
@@ -205,17 +190,6 @@ public class UserGroupGroupRoleModelImpl extends BaseModelImpl<UserGroupGroupRol
 		if (roleId != null) {
 			setRoleId(roleId);
 		}
-	}
-
-	@JSON
-	@Override
-	public long getMvccVersion() {
-		return _mvccVersion;
-	}
-
-	@Override
-	public void setMvccVersion(long mvccVersion) {
-		_mvccVersion = mvccVersion;
 	}
 
 	@JSON
@@ -305,7 +279,6 @@ public class UserGroupGroupRoleModelImpl extends BaseModelImpl<UserGroupGroupRol
 	public Object clone() {
 		UserGroupGroupRoleImpl userGroupGroupRoleImpl = new UserGroupGroupRoleImpl();
 
-		userGroupGroupRoleImpl.setMvccVersion(getMvccVersion());
 		userGroupGroupRoleImpl.setUserGroupId(getUserGroupId());
 		userGroupGroupRoleImpl.setGroupId(getGroupId());
 		userGroupGroupRoleImpl.setRoleId(getRoleId());
@@ -350,16 +323,6 @@ public class UserGroupGroupRoleModelImpl extends BaseModelImpl<UserGroupGroupRol
 	}
 
 	@Override
-	public boolean isEntityCacheEnabled() {
-		return ENTITY_CACHE_ENABLED;
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return FINDER_CACHE_ENABLED;
-	}
-
-	@Override
 	public void resetOriginalValues() {
 		UserGroupGroupRoleModelImpl userGroupGroupRoleModelImpl = this;
 
@@ -382,8 +345,6 @@ public class UserGroupGroupRoleModelImpl extends BaseModelImpl<UserGroupGroupRol
 	public CacheModel<UserGroupGroupRole> toCacheModel() {
 		UserGroupGroupRoleCacheModel userGroupGroupRoleCacheModel = new UserGroupGroupRoleCacheModel();
 
-		userGroupGroupRoleCacheModel.mvccVersion = getMvccVersion();
-
 		userGroupGroupRoleCacheModel.userGroupId = getUserGroupId();
 
 		userGroupGroupRoleCacheModel.groupId = getGroupId();
@@ -395,11 +356,9 @@ public class UserGroupGroupRoleModelImpl extends BaseModelImpl<UserGroupGroupRol
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(9);
+		StringBundler sb = new StringBundler(7);
 
-		sb.append("{mvccVersion=");
-		sb.append(getMvccVersion());
-		sb.append(", userGroupId=");
+		sb.append("{userGroupId=");
 		sb.append(getUserGroupId());
 		sb.append(", groupId=");
 		sb.append(getGroupId());
@@ -412,16 +371,12 @@ public class UserGroupGroupRoleModelImpl extends BaseModelImpl<UserGroupGroupRol
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(16);
+		StringBundler sb = new StringBundler(13);
 
 		sb.append("<model><model-name>");
 		sb.append("com.liferay.portal.model.UserGroupGroupRole");
 		sb.append("</model-name>");
 
-		sb.append(
-			"<column><column-name>mvccVersion</column-name><column-value><![CDATA[");
-		sb.append(getMvccVersion());
-		sb.append("]]></column-value></column>");
 		sb.append(
 			"<column><column-name>userGroupId</column-name><column-value><![CDATA[");
 		sb.append(getUserGroupId());
@@ -440,11 +395,10 @@ public class UserGroupGroupRoleModelImpl extends BaseModelImpl<UserGroupGroupRol
 		return sb.toString();
 	}
 
-	private static final ClassLoader _classLoader = UserGroupGroupRole.class.getClassLoader();
-	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
+	private static ClassLoader _classLoader = UserGroupGroupRole.class.getClassLoader();
+	private static Class<?>[] _escapedModelInterfaces = new Class[] {
 			UserGroupGroupRole.class
 		};
-	private long _mvccVersion;
 	private long _userGroupId;
 	private long _originalUserGroupId;
 	private boolean _setOriginalUserGroupId;

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portal.security.permission;
 
 import com.liferay.portal.NoSuchResourceActionException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.Organization;
 import com.liferay.portal.model.PasswordPolicy;
@@ -29,7 +30,7 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Locale;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.PageContext;
 
 /**
  * @author Brian Wing Shun Chan
@@ -40,20 +41,17 @@ public interface ResourceActions {
 	/**
 	 * @deprecated As of 6.2.0, replaced by {@link #getActionNamePrefix}
 	 */
-	@Deprecated
 	public static final String ACTION_NAME_PREFIX = "action.";
 
 	/**
 	 * @deprecated As of 6.2.0, replaced by {@link #getModelResourceNamePrefix}
 	 */
-	@Deprecated
 	public static final String MODEL_RESOURCE_NAME_PREFIX = "model.resource.";
 
 	/**
 	 * @deprecated As of 6.2.0, replaced by {@link
 	 *             #getOrganizationModelResources}
 	 */
-	@Deprecated
 	public static final String[] ORGANIZATION_MODEL_RESOURCES = {
 		Organization.class.getName(), PasswordPolicy.class.getName(),
 		User.class.getName()
@@ -62,7 +60,6 @@ public interface ResourceActions {
 	/**
 	 * @deprecated As of 6.2.0, replaced by {@link #getPortalModelResources}
 	 */
-	@Deprecated
 	public static final String[] PORTAL_MODEL_RESOURCES = {
 		ExpandoColumn.class.getName(), Organization.class.getName(),
 		PasswordPolicy.class.getName(), Role.class.getName(),
@@ -72,25 +69,25 @@ public interface ResourceActions {
 	public void checkAction(String name, String actionId)
 		throws NoSuchResourceActionException;
 
-	public String getAction(HttpServletRequest request, String action);
-
 	public String getAction(Locale locale, String action);
+
+	public String getAction(PageContext pageContext, String action);
 
 	public String getActionNamePrefix();
 
 	public List<String> getActionsNames(
-		HttpServletRequest request, List<String> actions);
+		PageContext pageContext, List<String> actions);
 
 	public List<String> getActionsNames(
-		HttpServletRequest request, String name, long actionIds);
+		PageContext pageContext, String name, long actionIds);
 
 	public List<String> getModelNames();
 
 	public List<String> getModelPortletResources(String name);
 
-	public String getModelResource(HttpServletRequest request, String name);
-
 	public String getModelResource(Locale locale, String name);
+
+	public String getModelResource(PageContext pageContext, String name);
 
 	public List<String> getModelResourceActions(String name);
 
@@ -144,12 +141,13 @@ public interface ResourceActions {
 	 * @deprecated As of 6.1.0, replaced by {@link #getRoles(long, Group,
 	 *             String, int[])}
 	 */
-	@Deprecated
 	public List<Role> getRoles(
-		long companyId, Group group, String modelResource);
+			long companyId, Group group, String modelResource)
+		throws SystemException;
 
 	public List<Role> getRoles(
-		long companyId, Group group, String modelResource, int[] roleTypes);
+			long companyId, Group group, String modelResource, int[] roleTypes)
+		throws SystemException;
 
 	public boolean hasModelResourceActions(String name);
 

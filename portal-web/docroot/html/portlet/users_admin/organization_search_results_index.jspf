@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -19,17 +19,27 @@ organizationParams.put("expandoAttributes", searchTerms.getKeywords());
 
 Sort sort = SortFactoryUtil.getSort(Organization.class, organizationSearchContainer.getOrderByCol(), organizationSearchContainer.getOrderByType());
 
-BaseModelSearchResult<Organization> baseModelSearchResult = null;
+boolean corruptIndex = false;
 
-if (searchTerms.isAdvancedSearch()) {
-	baseModelSearchResult = OrganizationLocalServiceUtil.searchOrganizations(company.getCompanyId(), parentOrganizationId, searchTerms.getName(), searchTerms.getType(), searchTerms.getStreet(), searchTerms.getCity(), searchTerms.getZip(), searchTerms.getRegionName(), searchTerms.getCountryName(), organizationParams, searchTerms.isAndOperator(), organizationSearchContainer.getStart(), organizationSearchContainer.getEnd(), sort);
-}
-else {
-	baseModelSearchResult = OrganizationLocalServiceUtil.searchOrganizations(company.getCompanyId(), parentOrganizationId, searchTerms.getKeywords(), organizationParams, organizationSearchContainer.getStart(), organizationSearchContainer.getEnd(), sort);
-}
+Hits hits = null;
+Tuple tuple = null;
 
-results = baseModelSearchResult.getBaseModels();
+do {
+	if (searchTerms.isAdvancedSearch()) {
+		hits = OrganizationLocalServiceUtil.search(company.getCompanyId(), parentOrganizationId, searchTerms.getName(), searchTerms.getType(), searchTerms.getStreet(), searchTerms.getCity(), searchTerms.getZip(), searchTerms.getRegionName(), searchTerms.getCountryName(), organizationParams, searchTerms.isAndOperator(), organizationSearchContainer.getStart(), organizationSearchContainer.getEnd(), sort);
+	}
+	else {
+		hits = OrganizationLocalServiceUtil.search(company.getCompanyId(), parentOrganizationId, searchTerms.getKeywords(), organizationParams, organizationSearchContainer.getStart(), organizationSearchContainer.getEnd(), sort);
+	}
+
+	tuple = UsersAdminUtil.getOrganizations(hits);
+
+	corruptIndex = (Boolean)tuple.getObject(1);
+}
+while (corruptIndex);
+
+results = (List<Organization>)tuple.getObject(0);
 
 organizationSearchContainer.setResults(results);
-organizationSearchContainer.setTotal(baseModelSearchResult.getLength());
+organizationSearchContainer.setTotal(hits.getLength());
 %>

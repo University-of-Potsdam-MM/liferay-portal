@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portal.struts;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.PortletResponseUtil;
@@ -256,7 +257,7 @@ public class PortletAction extends Action {
 
 	protected PortletPreferences getStrictPortletSetup(
 			Layout layout, String portletId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		if (Validator.isNull(portletId)) {
 			return null;
@@ -275,7 +276,7 @@ public class PortletAction extends Action {
 
 	protected PortletPreferences getStrictPortletSetup(
 			PortletRequest portletRequest)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		String portletResource = ParamUtil.getString(
 			portletRequest, "portletResource");
@@ -286,18 +287,9 @@ public class PortletAction extends Action {
 		return getStrictPortletSetup(themeDisplay.getLayout(), portletResource);
 	}
 
-	protected void hideDefaultErrorMessage(PortletRequest portletRequest) {
-		SessionMessages.add(
-			portletRequest,
-			PortalUtil.getPortletId(portletRequest) +
-				SessionMessages.KEY_SUFFIX_HIDE_DEFAULT_ERROR_MESSAGE);
-	}
-
 	/**
-	 * @deprecated As of 6.2.0 {@link
-	 *             #hideDefaultSuccessMessage(PortletRequest)}
+	 * @deprecated As of 6.2.0 {@link #hideDefaultSuccessMessage(PortletRequest)
 	 */
-	@Deprecated
 	protected void hideDefaultSuccessMessage(
 		PortletConfig portletConfig, PortletRequest portletRequest) {
 
@@ -315,7 +307,9 @@ public class PortletAction extends Action {
 		return _CHECK_METHOD_ON_PROCESS_ACTION;
 	}
 
-	protected boolean isDisplaySuccessMessage(PortletRequest portletRequest) {
+	protected boolean isDisplaySuccessMessage(PortletRequest portletRequest)
+		throws SystemException {
+
 		if (!SessionErrors.isEmpty(portletRequest)) {
 			return false;
 		}
@@ -380,7 +374,7 @@ public class PortletAction extends Action {
 
 	protected void sendRedirect(
 			ActionRequest actionRequest, ActionResponse actionResponse)
-		throws IOException {
+		throws IOException, SystemException {
 
 		sendRedirect(actionRequest, actionResponse, null);
 	}
@@ -388,7 +382,7 @@ public class PortletAction extends Action {
 	protected void sendRedirect(
 			ActionRequest actionRequest, ActionResponse actionResponse,
 			String redirect)
-		throws IOException {
+		throws IOException, SystemException {
 
 		sendRedirect(null, actionRequest, actionResponse, redirect, null);
 	}
@@ -397,7 +391,7 @@ public class PortletAction extends Action {
 			PortletConfig portletConfig, ActionRequest actionRequest,
 			ActionResponse actionResponse, String redirect,
 			String closeRedirect)
-		throws IOException {
+		throws IOException, SystemException {
 
 		if (isDisplaySuccessMessage(actionRequest)) {
 			addSuccessMessage(actionRequest, actionResponse);
@@ -463,19 +457,10 @@ public class PortletAction extends Action {
 			Object json)
 		throws IOException {
 
-		HttpServletRequest request = PortalUtil.getHttpServletRequest(
-			portletRequest);
-
-		String contentType = ContentTypes.APPLICATION_JSON;
-
-		if (BrowserSnifferUtil.isIe(request)) {
-			contentType = ContentTypes.TEXT_HTML;
-		}
-
 		HttpServletResponse response = PortalUtil.getHttpServletResponse(
 			actionResponse);
 
-		response.setContentType(contentType);
+		response.setContentType(ContentTypes.APPLICATION_JSON);
 
 		ServletResponseUtil.write(response, json.toString());
 
@@ -489,16 +474,7 @@ public class PortletAction extends Action {
 			Object json)
 		throws IOException {
 
-		HttpServletRequest request = PortalUtil.getHttpServletRequest(
-			portletRequest);
-
-		String contentType = ContentTypes.APPLICATION_JSON;
-
-		if (BrowserSnifferUtil.isIe(request)) {
-			contentType = ContentTypes.TEXT_HTML;
-		}
-
-		mimeResponse.setContentType(contentType);
+		mimeResponse.setContentType(ContentTypes.APPLICATION_JSON);
 
 		PortletResponseUtil.write(mimeResponse, json.toString());
 

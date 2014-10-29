@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -17,23 +17,17 @@ package com.liferay.portal.lar.backgroundtask;
 import com.liferay.portal.NoSuchLayoutException;
 import com.liferay.portal.RemoteExportException;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTaskResult;
-import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.lar.ExportImportDateUtil;
 import com.liferay.portal.kernel.lar.ExportImportHelperUtil;
 import com.liferay.portal.kernel.lar.MissingReferences;
 import com.liferay.portal.kernel.lar.PortletDataHandlerKeys;
 import com.liferay.portal.kernel.staging.StagingUtil;
-import com.liferay.portal.kernel.util.DateRange;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.StreamUtil;
 import com.liferay.portal.model.BackgroundTask;
-import com.liferay.portal.model.ExportImportConfiguration;
 import com.liferay.portal.model.Layout;
 import com.liferay.portal.security.auth.HttpPrincipal;
-import com.liferay.portal.service.ExportImportConfigurationLocalServiceUtil;
 import com.liferay.portal.service.LayoutLocalServiceUtil;
 import com.liferay.portal.service.http.LayoutServiceHttp;
 import com.liferay.portal.service.http.StagingServiceHttp;
@@ -41,7 +35,6 @@ import com.liferay.portal.util.PropsValues;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.Serializable;
 
 import java.util.ArrayList;
@@ -55,39 +48,23 @@ import java.util.Map;
 public class LayoutRemoteStagingBackgroundTaskExecutor
 	extends BaseStagingBackgroundTaskExecutor {
 
-	public LayoutRemoteStagingBackgroundTaskExecutor() {
-		setBackgroundTaskStatusMessageTranslator(
-			new LayoutStagingBackgroundTaskStatusMessageTranslator());
-	}
-
 	@Override
 	public BackgroundTaskResult execute(BackgroundTask backgroundTask)
-		throws PortalException {
+		throws Exception {
 
 		Map<String, Serializable> taskContextMap =
 			backgroundTask.getTaskContextMap();
 
-		long exportImportConfigurationId = MapUtil.getLong(
-			taskContextMap, "exportImportConfigurationId");
-
-		ExportImportConfiguration exportImportConfiguration =
-			ExportImportConfigurationLocalServiceUtil.
-				getExportImportConfiguration(exportImportConfigurationId);
-
-		Map<String, Serializable> settingsMap =
-			exportImportConfiguration.getSettingsMap();
-
-		long sourceGroupId = MapUtil.getLong(settingsMap, "sourceGroupId");
+		long sourceGroupId = MapUtil.getLong(taskContextMap, "groupId");
 		boolean privateLayout = MapUtil.getBoolean(
-			settingsMap, "privateLayout");
-		Map<Long, Boolean> layoutIdMap = (Map<Long, Boolean>)settingsMap.get(
+			taskContextMap, "privateLayout");
+		Map<Long, Boolean> layoutIdMap = (Map<Long, Boolean>)taskContextMap.get(
 			"layoutIdMap");
 		Map<String, String[]> parameterMap =
-			(Map<String, String[]>)settingsMap.get("parameterMap");
-		long remoteGroupId = MapUtil.getLong(settingsMap, "remoteGroupId");
-		DateRange dateRange = ExportImportDateUtil.getDateRange(
-			exportImportConfiguration,
-			ExportImportDateUtil.RANGE_FROM_LAST_PUBLISH_DATE);
+			(Map<String, String[]>)taskContextMap.get("parameterMap");
+		long remoteGroupId = MapUtil.getLong(taskContextMap, "remoteGroupId");
+		Date startDate = (Date)taskContextMap.get("startDate");
+		Date endDate = (Date)taskContextMap.get("endDate");
 		HttpPrincipal httpPrincipal = (HttpPrincipal)taskContextMap.get(
 			"httpPrincipal");
 
@@ -102,8 +79,7 @@ public class LayoutRemoteStagingBackgroundTaskExecutor
 		try {
 			file = exportLayoutsAsFile(
 				sourceGroupId, privateLayout, layoutIdMap, parameterMap,
-				remoteGroupId, dateRange.getStartDate(), dateRange.getEndDate(),
-				httpPrincipal);
+				remoteGroupId, startDate, endDate, httpPrincipal);
 
 			String checksum = FileUtil.getMD5Checksum(file);
 
@@ -116,42 +92,32 @@ public class LayoutRemoteStagingBackgroundTaskExecutor
 				new byte[PropsValues.STAGING_REMOTE_TRANSFER_BUFFER_SIZE];
 
 			int i = 0;
-			int j = 0;
-
-			String numberFormat = String.format(
-				"%%0%dd",
-				String.valueOf(
-					(int)(file.length() / bytes.length)).length() + 1);
 
 			while ((i = fileInputStream.read(bytes)) >= 0) {
-				String fileName =
-					file.getName() + String.format(numberFormat, j++);
-
 				if (i < PropsValues.STAGING_REMOTE_TRANSFER_BUFFER_SIZE) {
 					byte[] tempBytes = new byte[i];
 
 					System.arraycopy(bytes, 0, tempBytes, 0, i);
 
 					StagingServiceHttp.updateStagingRequest(
-						httpPrincipal, stagingRequestId, fileName, tempBytes);
+						httpPrincipal, stagingRequestId, file.getName(),
+						tempBytes);
 				}
 				else {
 					StagingServiceHttp.updateStagingRequest(
-						httpPrincipal, stagingRequestId, fileName, bytes);
+						httpPrincipal, stagingRequestId, file.getName(), bytes);
 				}
 
 				bytes =
 					new byte[PropsValues.STAGING_REMOTE_TRANSFER_BUFFER_SIZE];
 			}
 
-			markBackgroundTask(
-				backgroundTask.getBackgroundTaskId(), "exported");
+			backgroundTask = markBackgroundTask(backgroundTask, "exported");
 
 			missingReferences = StagingServiceHttp.validateStagingRequest(
 				httpPrincipal, stagingRequestId, privateLayout, parameterMap);
 
-			markBackgroundTask(
-				backgroundTask.getBackgroundTaskId(), "validated");
+			backgroundTask = markBackgroundTask(backgroundTask, "validated");
 
 			StagingServiceHttp.publishStagingRequest(
 				httpPrincipal, stagingRequestId, privateLayout, parameterMap);
@@ -161,11 +127,8 @@ public class LayoutRemoteStagingBackgroundTaskExecutor
 
 			if (updateLastPublishDate) {
 				StagingUtil.updateLastPublishDate(
-					sourceGroupId, privateLayout, dateRange.getEndDate());
+					sourceGroupId, privateLayout, endDate);
 			}
-		}
-		catch (IOException ioe) {
-			throw new SystemException(ioe);
 		}
 		finally {
 			StreamUtil.cleanUp(fileInputStream);
@@ -178,8 +141,7 @@ public class LayoutRemoteStagingBackgroundTaskExecutor
 			}
 		}
 
-		return processMissingReferences(
-			backgroundTask.getBackgroundTaskId(), missingReferences);
+		return processMissingReferences(backgroundTask, missingReferences);
 	}
 
 	protected File exportLayoutsAsFile(
@@ -187,7 +149,7 @@ public class LayoutRemoteStagingBackgroundTaskExecutor
 			Map<Long, Boolean> layoutIdMap, Map<String, String[]> parameterMap,
 			long remoteGroupId, Date startDate, Date endDate,
 			HttpPrincipal httpPrincipal)
-		throws PortalException {
+		throws Exception {
 
 		if ((layoutIdMap == null) || layoutIdMap.isEmpty()) {
 			return LayoutLocalServiceUtil.exportLayoutsAsFile(
@@ -239,12 +201,12 @@ public class LayoutRemoteStagingBackgroundTaskExecutor
 	}
 
 	/**
-	 * @see com.liferay.portal.lar.ExportImportHelperImpl#getMissingParentLayouts(
+	 * @see com.liferay.portal.staging.StagingImpl#getMissingParentLayouts(
 	 *      Layout, long)
 	 */
 	protected List<Layout> getMissingRemoteParentLayouts(
 			HttpPrincipal httpPrincipal, Layout layout, long remoteGroupId)
-		throws PortalException {
+		throws Exception {
 
 		List<Layout> missingRemoteParentLayouts = new ArrayList<Layout>();
 
@@ -259,7 +221,7 @@ public class LayoutRemoteStagingBackgroundTaskExecutor
 					httpPrincipal, parentLayout.getUuid(), remoteGroupId,
 					parentLayout.getPrivateLayout());
 
-				// If one parent is found, all others are assumed to exist
+				// If one parent is found all others are assumed to exist
 
 				break;
 			}

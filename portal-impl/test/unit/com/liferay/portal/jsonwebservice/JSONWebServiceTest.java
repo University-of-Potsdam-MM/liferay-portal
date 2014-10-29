@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,7 +15,6 @@
 package com.liferay.portal.jsonwebservice;
 
 import com.liferay.portal.kernel.jsonwebservice.JSONWebServiceAction;
-import com.liferay.portal.kernel.jsonwebservice.NoSuchJSONWebServiceException;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.service.ServiceContext;
@@ -58,7 +57,6 @@ public class JSONWebServiceTest extends BaseJSONWebServiceTestCase {
 
 		registerActionClass(CamelFooService.class);
 		registerActionClass(FooService.class);
-		registerActionClass(FooService.class, "test-context");
 	}
 
 	@Before
@@ -80,7 +78,7 @@ public class JSONWebServiceTest extends BaseJSONWebServiceTestCase {
 
 			Assert.fail();
 		}
-		catch (NoSuchJSONWebServiceException jsjsonwse) {
+		catch (RuntimeException re) {
 		}
 
 		mockHttpServletRequest = createHttpRequest(
@@ -173,7 +171,7 @@ public class JSONWebServiceTest extends BaseJSONWebServiceTestCase {
 
 			Assert.fail();
 		}
-		catch (Exception e) {
+		catch (IllegalArgumentException iae) {
 		}
 
 		mockHttpServletRequest = createHttpRequest(
@@ -193,8 +191,7 @@ public class JSONWebServiceTest extends BaseJSONWebServiceTestCase {
 			"/foo/use1");
 
 		mockHttpServletRequest.setParameter(
-			"fooData",
-			"{\"height\": 121, \"name\":\"Felix\", \"value\":\"!!!\"}");
+			"fooData", "{height: 121, name:'Felix', value:'!!!'}");
 
 		JSONWebServiceAction jsonWebServiceAction = lookupJSONWebServiceAction(
 			mockHttpServletRequest);
@@ -218,19 +215,6 @@ public class JSONWebServiceTest extends BaseJSONWebServiceTestCase {
 		}
 		catch (Exception e) {
 		}
-
-		mockHttpServletRequest = createHttpRequest("/foo/use2");
-
-		mockHttpServletRequest.setParameter(
-			"fooData:" + FooDataImpl.class.getName(),
-			"{\"height\": 121, \"name\":\"Felix\", \"value\":\"!!!\"}");
-
-		jsonWebServiceAction = lookupJSONWebServiceAction(
-			mockHttpServletRequest);
-
-		Assert.assertEquals(
-			"using #2: h=121/id=-1/n=Felix/v=!!!",
-			jsonWebServiceAction.invoke());
 	}
 
 	@Test
@@ -312,77 +296,12 @@ public class JSONWebServiceTest extends BaseJSONWebServiceTestCase {
 	}
 
 	@Test
-	public void testMatchingOverloadInContext() throws Exception {
-		MockHttpServletRequest mockHttpServletRequest = createHttpRequest(
-			"/foo/method-one/id/123");
-
-		setServletContext(mockHttpServletRequest, "test-context");
-
-		try {
-			lookupJSONWebServiceAction(mockHttpServletRequest);
-
-			Assert.fail();
-		}
-		catch (Exception e) {
-		}
-
-		mockHttpServletRequest = createHttpRequest(
-			"/foo/method-one/id/123/name/Name");
-
-		setServletContext(mockHttpServletRequest, "test-context");
-
-		JSONWebServiceAction jsonWebServiceAction = lookupJSONWebServiceAction(
-			mockHttpServletRequest);
-
-		Assert.assertEquals("m-1", jsonWebServiceAction.invoke());
-
-		mockHttpServletRequest = createHttpRequest(
-			"/foo/method-one/id/123/name-id/321");
-
-		setServletContext(mockHttpServletRequest, "test-context");
-
-		jsonWebServiceAction = lookupJSONWebServiceAction(
-			mockHttpServletRequest);
-
-		Assert.assertEquals("m-2", jsonWebServiceAction.invoke());
-
-		mockHttpServletRequest = createHttpRequest(
-			"/foo/method-one.3/id/123/name-id/321");
-
-		setServletContext(mockHttpServletRequest, "test-context");
-
-		jsonWebServiceAction = lookupJSONWebServiceAction(
-			mockHttpServletRequest);
-
-		Assert.assertEquals("m-3", jsonWebServiceAction.invoke());
-
-		mockHttpServletRequest = createHttpRequest(
-			"/foo/method-one/id/123/name/Name/name-id/321");
-
-		setServletContext(mockHttpServletRequest, "test-context");
-
-		jsonWebServiceAction = lookupJSONWebServiceAction(
-			mockHttpServletRequest);
-
-		Assert.assertEquals("m-1", jsonWebServiceAction.invoke());
-
-		mockHttpServletRequest = createHttpRequest("/foo/method-one.2/id/123");
-
-		setServletContext(mockHttpServletRequest, "test-context");
-
-		jsonWebServiceAction = lookupJSONWebServiceAction(
-			mockHttpServletRequest);
-
-		Assert.assertEquals("m-1", jsonWebServiceAction.invoke());
-	}
-
-	@Test
 	public void testModifyServiceContext() throws Exception {
 		MockHttpServletRequest mockHttpServletRequest = createHttpRequest(
 			"/foo/srvcctx2");
 
 		mockHttpServletRequest.setParameter(
-			"serviceContext", "{\"failOnPortalException\" : false}");
+			"serviceContext", "{'failOnPortalException' : false}");
 
 		JSONWebServiceAction jsonWebServiceAction = lookupJSONWebServiceAction(
 			mockHttpServletRequest);
@@ -394,7 +313,7 @@ public class JSONWebServiceTest extends BaseJSONWebServiceTestCase {
 	}
 
 	@Test
-	public void testNaming() throws Exception {
+	public void testNaming() {
 		MockHttpServletRequest mockHttpServletRequest = createHttpRequest(
 			"/foo/not-found");
 
@@ -403,7 +322,7 @@ public class JSONWebServiceTest extends BaseJSONWebServiceTestCase {
 
 			Assert.fail();
 		}
-		catch (NoSuchJSONWebServiceException jsjsonwse) {
+		catch (RuntimeException re) {
 		}
 
 		mockHttpServletRequest = createHttpRequest("/foo/hello");
@@ -428,7 +347,7 @@ public class JSONWebServiceTest extends BaseJSONWebServiceTestCase {
 
 			Assert.fail();
 		}
-		catch (NoSuchJSONWebServiceException jsjsonwse) {
+		catch (RuntimeException re) {
 		}
 
 		mockHttpServletRequest = createHttpRequest("/camelfoo/cool-new-world");
@@ -486,7 +405,7 @@ public class JSONWebServiceTest extends BaseJSONWebServiceTestCase {
 
 		mockHttpServletRequest.setParameter("calendar", "1330419334285");
 		mockHttpServletRequest.setParameter("userIds", "1,2,3");
-		mockHttpServletRequest.setParameter("locales", "\"en\",\"fr\"");
+		mockHttpServletRequest.setParameter("locales", "en,fr");
 		mockHttpServletRequest.setParameter("ids", "173,-7,007");
 
 		JSONWebServiceAction jsonWebServiceAction = lookupJSONWebServiceAction(
@@ -503,7 +422,7 @@ public class JSONWebServiceTest extends BaseJSONWebServiceTestCase {
 
 		mockHttpServletRequest.setParameter("calendar", "1330419334285");
 		mockHttpServletRequest.setParameter("userIds", "[1,2,3]");
-		mockHttpServletRequest.setParameter("locales", "[\"en\",\"fr\"]");
+		mockHttpServletRequest.setParameter("locales", "[en,fr]");
 		mockHttpServletRequest.setParameter("ids", "[173,-7,007]");
 
 		JSONWebServiceAction jsonWebServiceAction = lookupJSONWebServiceAction(

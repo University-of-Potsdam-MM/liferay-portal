@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -16,13 +16,15 @@
 
 <%@ include file="/html/portlet/asset_categories_navigation/init.jsp" %>
 
-<liferay-portlet:actionURL portletConfiguration="true" var="configurationActionURL" />
+<%
+String redirect = ParamUtil.getString(request, "redirect");
+%>
 
-<liferay-portlet:renderURL portletConfiguration="true" var="configurationRenderURL" />
+<liferay-portlet:actionURL portletConfiguration="true" var="configurationURL" />
 
-<aui:form action="<%= configurationActionURL %>" method="post" name="fm" onSubmit='<%= "event.preventDefault(); " + renderResponse.getNamespace() + "saveConfiguration();" %>'>
+<aui:form action="<%= configurationURL %>" method="post" name="fm" onSubmit='<%= "event.preventDefault(); " + renderResponse.getNamespace() + "saveConfiguration();" %>'>
 	<aui:input name="<%= Constants.CMD %>" type="hidden" value="<%= Constants.UPDATE %>" />
-	<aui:input name="redirect" type="hidden" value="<%= configurationRenderURL %>" />
+	<aui:input name="redirect" type="hidden" value="<%= redirect %>" />
 
 	<aui:fieldset>
 		<aui:select label="vocabularies" name="preferences--allAssetVocabularies--">
@@ -92,7 +94,7 @@
 				classNameId="<%= PortalUtil.getClassNameId(templateHandler.getClassName()) %>"
 				displayStyle="<%= displayStyle %>"
 				displayStyleGroupId="<%= displayStyleGroupId %>"
-				refreshURL="<%= configurationRenderURL %>"
+				refreshURL="<%= currentURL %>"
 				showEmptyOption="<%= true %>"
 			/>
 		</div>

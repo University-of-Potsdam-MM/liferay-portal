@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -20,15 +20,15 @@ package com.liferay.portal.parsers.creole.ast;
 public abstract class TextNode extends BaseParentableNode {
 
 	public TextNode(ASTNode astNode) {
-		this(astNode, 0, null);
+		super((CollectionNode)astNode);
 	}
 
 	public TextNode(int tokenType) {
-		this(null, tokenType, null);
+		super(tokenType);
 	}
 
 	public TextNode(String content) {
-		this(null, 0, content);
+		_content = content;
 	}
 
 	public String getContent() {
@@ -44,12 +44,6 @@ public abstract class TextNode extends BaseParentableNode {
 		}
 	}
 
-	protected TextNode(ASTNode astNode, int tokenType, String content) {
-		super((CollectionNode)astNode, tokenType);
-
-		_content = content;
-	}
-
-	private final String _content;
+	private String _content;
 
 }

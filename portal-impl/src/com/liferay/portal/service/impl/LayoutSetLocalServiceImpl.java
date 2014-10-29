@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -22,7 +22,6 @@ import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.ColorSchemeFactoryUtil;
-import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -34,11 +33,12 @@ import com.liferay.portal.model.LayoutSet;
 import com.liferay.portal.model.VirtualHost;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.base.LayoutSetLocalServiceBaseImpl;
-import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.PrefsPropsUtil;
 import com.liferay.portal.util.PropsValues;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -54,7 +54,7 @@ public class LayoutSetLocalServiceImpl extends LayoutSetLocalServiceBaseImpl {
 
 	@Override
 	public LayoutSet addLayoutSet(long groupId, boolean privateLayout)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Group group = groupPersistence.findByPrimaryKey(groupId);
 
@@ -80,7 +80,7 @@ public class LayoutSetLocalServiceImpl extends LayoutSetLocalServiceBaseImpl {
 	@Override
 	public void deleteLayoutSet(
 			long groupId, boolean privateLayout, ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Group group = groupPersistence.findByPrimaryKey(groupId);
 
@@ -136,7 +136,9 @@ public class LayoutSetLocalServiceImpl extends LayoutSetLocalServiceBaseImpl {
 	}
 
 	@Override
-	public LayoutSet fetchLayoutSet(String virtualHostname) {
+	public LayoutSet fetchLayoutSet(String virtualHostname)
+		throws SystemException {
+
 		virtualHostname = StringUtil.toLowerCase(virtualHostname.trim());
 
 		VirtualHost virtualHost = virtualHostPersistence.fetchByHostname(
@@ -152,14 +154,14 @@ public class LayoutSetLocalServiceImpl extends LayoutSetLocalServiceBaseImpl {
 
 	@Override
 	public LayoutSet getLayoutSet(long groupId, boolean privateLayout)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return layoutSetPersistence.findByG_P(groupId, privateLayout);
 	}
 
 	@Override
 	public LayoutSet getLayoutSet(String virtualHostname)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		virtualHostname = StringUtil.toLowerCase(virtualHostname.trim());
 
@@ -178,7 +180,8 @@ public class LayoutSetLocalServiceImpl extends LayoutSetLocalServiceBaseImpl {
 
 	@Override
 	public List<LayoutSet> getLayoutSetsByLayoutSetPrototypeUuid(
-		String layoutSetPrototypeUuid) {
+			String layoutSetPrototypeUuid)
+		throws SystemException {
 
 		return layoutSetPersistence.findByLayoutSetPrototypeUuid(
 			layoutSetPrototypeUuid);
@@ -202,16 +205,16 @@ public class LayoutSetLocalServiceImpl extends LayoutSetLocalServiceBaseImpl {
 	 * @param      layoutSetPrototypeLinkEnabled whether the layout set
 	 *             prototype is link enabled
 	 * @throws     PortalException if a portal exception occurred
+	 * @throws     SystemException if a system exception occurred
 	 * @deprecated As of 6.1.0, replaced by {@link
 	 *             #updateLayoutSetPrototypeLinkEnabled(long, boolean, boolean,
 	 *             String)}
 	 */
-	@Deprecated
 	@Override
 	public void updateLayoutSetPrototypeLinkEnabled(
 			long groupId, boolean privateLayout,
 			boolean layoutSetPrototypeLinkEnabled)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		updateLayoutSetPrototypeLinkEnabled(
 			groupId, privateLayout, layoutSetPrototypeLinkEnabled, null);
@@ -227,13 +230,14 @@ public class LayoutSetLocalServiceImpl extends LayoutSetLocalServiceBaseImpl {
 	 * @param  layoutSetPrototypeUuid the uuid of the layout set prototype to
 	 *         link with
 	 * @throws PortalException if a portal exception occurred
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public void updateLayoutSetPrototypeLinkEnabled(
 			long groupId, boolean privateLayout,
 			boolean layoutSetPrototypeLinkEnabled,
 			String layoutSetPrototypeUuid)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		LayoutSet layoutSet = layoutSetPersistence.findByG_P(
 			groupId, privateLayout);
@@ -256,39 +260,40 @@ public class LayoutSetLocalServiceImpl extends LayoutSetLocalServiceBaseImpl {
 	@Override
 	public LayoutSet updateLogo(
 			long groupId, boolean privateLayout, boolean logo, byte[] bytes)
-		throws PortalException {
+		throws PortalException, SystemException {
 
-		LayoutSet layoutSet = layoutSetPersistence.findByG_P(
-			groupId, privateLayout);
+		InputStream is = null;
 
-		layoutSet.setModifiedDate(new Date());
+		if (logo) {
+			is = new ByteArrayInputStream(bytes);
+		}
 
-		PortalUtil.updateImageId(layoutSet, logo, bytes, "logoId", 0, 0, 0);
-
-		return layoutSetPersistence.update(layoutSet);
+		return updateLogo(groupId, privateLayout, logo, is);
 	}
 
 	@Override
 	public LayoutSet updateLogo(
 			long groupId, boolean privateLayout, boolean logo, File file)
-		throws PortalException {
+		throws PortalException, SystemException {
 
-		byte[] bytes = null;
+		InputStream is = null;
 
-		try {
-			bytes = FileUtil.getBytes(file);
+		if (logo) {
+			try {
+				is = new FileInputStream(file);
+			}
+			catch (IOException ioe) {
+				throw new SystemException(ioe);
+			}
 		}
-		catch (IOException ioe) {
-			throw new SystemException(ioe);
-		}
 
-		return updateLogo(groupId, privateLayout, logo, bytes);
+		return updateLogo(groupId, privateLayout, logo, is);
 	}
 
 	@Override
 	public LayoutSet updateLogo(
 			long groupId, boolean privateLayout, boolean logo, InputStream is)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return updateLogo(groupId, privateLayout, logo, is, true);
 	}
@@ -297,25 +302,43 @@ public class LayoutSetLocalServiceImpl extends LayoutSetLocalServiceBaseImpl {
 	public LayoutSet updateLogo(
 			long groupId, boolean privateLayout, boolean logo, InputStream is,
 			boolean cleanUpStream)
-		throws PortalException {
+		throws PortalException, SystemException {
 
-		byte[] bytes = null;
+		LayoutSet layoutSet = layoutSetPersistence.findByG_P(
+			groupId, privateLayout);
 
-		try {
-			bytes = FileUtil.getBytes(is, -1, cleanUpStream);
+		layoutSet.setModifiedDate(new Date());
+		layoutSet.setLogo(logo);
+
+		if (logo) {
+			long logoId = layoutSet.getLogoId();
+
+			if (logoId <= 0) {
+				logoId = counterLocalService.increment();
+
+				layoutSet.setLogoId(logoId);
+			}
 		}
-		catch (IOException ioe) {
-			throw new SystemException(ioe);
+		else {
+			layoutSet.setLogoId(0);
 		}
 
-		return updateLogo(groupId, privateLayout, logo, bytes);
+		if (logo) {
+			imageLocalService.updateImage(
+				layoutSet.getLogoId(), is, cleanUpStream);
+		}
+		else {
+			imageLocalService.deleteImage(layoutSet.getLogoId());
+		}
+
+		return layoutSetPersistence.update(layoutSet);
 	}
 
 	@Override
 	public LayoutSet updateLookAndFeel(
 			long groupId, boolean privateLayout, String themeId,
 			String colorSchemeId, String css, boolean wapTheme)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		LayoutSet layoutSet = layoutSetPersistence.findByG_P(
 			groupId, privateLayout);
@@ -370,7 +393,7 @@ public class LayoutSetLocalServiceImpl extends LayoutSetLocalServiceBaseImpl {
 	public void updateLookAndFeel(
 			long groupId, String themeId, String colorSchemeId, String css,
 			boolean wapTheme)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		updateLookAndFeel(
 			groupId, false, themeId, colorSchemeId, css, wapTheme);
@@ -379,7 +402,7 @@ public class LayoutSetLocalServiceImpl extends LayoutSetLocalServiceBaseImpl {
 
 	@Override
 	public LayoutSet updatePageCount(long groupId, boolean privateLayout)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		int pageCount = layoutPersistence.countByG_P(groupId, privateLayout);
 
@@ -397,7 +420,7 @@ public class LayoutSetLocalServiceImpl extends LayoutSetLocalServiceBaseImpl {
 	@Override
 	public LayoutSet updateSettings(
 			long groupId, boolean privateLayout, String settings)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		LayoutSet layoutSet = layoutSetPersistence.findByG_P(
 			groupId, privateLayout);
@@ -413,7 +436,7 @@ public class LayoutSetLocalServiceImpl extends LayoutSetLocalServiceBaseImpl {
 	@Override
 	public LayoutSet updateVirtualHost(
 			long groupId, boolean privateLayout, String virtualHostname)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		virtualHostname = StringUtil.toLowerCase(virtualHostname.trim());
 
@@ -457,7 +480,7 @@ public class LayoutSetLocalServiceImpl extends LayoutSetLocalServiceBaseImpl {
 	}
 
 	protected LayoutSet initLayoutSet(LayoutSet layoutSet)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Group group = layoutSet.getGroup();
 
@@ -475,6 +498,7 @@ public class LayoutSetLocalServiceImpl extends LayoutSetLocalServiceBaseImpl {
 				liveLayoutSet = liveGroup.getPublicLayoutSet();
 			}
 
+			layoutSet.setLogo(liveLayoutSet.getLogo());
 			layoutSet.setLogoId(liveLayoutSet.getLogoId());
 
 			if (liveLayoutSet.isLogo()) {

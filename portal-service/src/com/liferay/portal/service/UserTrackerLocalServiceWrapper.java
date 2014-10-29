@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -31,26 +31,17 @@ public class UserTrackerLocalServiceWrapper implements UserTrackerLocalService,
 		_userTrackerLocalService = userTrackerLocalService;
 	}
 
-	@Override
-	public com.liferay.portal.model.UserTracker addUserTracker(long companyId,
-		long userId, java.util.Date modifiedDate, java.lang.String sessionId,
-		java.lang.String remoteAddr, java.lang.String remoteHost,
-		java.lang.String userAgent,
-		java.util.List<com.liferay.portal.model.UserTrackerPath> userTrackerPaths) {
-		return _userTrackerLocalService.addUserTracker(companyId, userId,
-			modifiedDate, sessionId, remoteAddr, remoteHost, userAgent,
-			userTrackerPaths);
-	}
-
 	/**
 	* Adds the user tracker to the database. Also notifies the appropriate model listeners.
 	*
 	* @param userTracker the user tracker
 	* @return the user tracker that was added
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
 	public com.liferay.portal.model.UserTracker addUserTracker(
-		com.liferay.portal.model.UserTracker userTracker) {
+		com.liferay.portal.model.UserTracker userTracker)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return _userTrackerLocalService.addUserTracker(userTracker);
 	}
 
@@ -67,13 +58,19 @@ public class UserTrackerLocalServiceWrapper implements UserTrackerLocalService,
 	}
 
 	/**
-	* @throws PortalException
+	* Deletes the user tracker with the primary key from the database. Also notifies the appropriate model listeners.
+	*
+	* @param userTrackerId the primary key of the user tracker
+	* @return the user tracker that was removed
+	* @throws PortalException if a user tracker with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
-	public com.liferay.portal.model.PersistedModel deletePersistedModel(
-		com.liferay.portal.model.PersistedModel persistedModel)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _userTrackerLocalService.deletePersistedModel(persistedModel);
+	public com.liferay.portal.model.UserTracker deleteUserTracker(
+		long userTrackerId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _userTrackerLocalService.deleteUserTracker(userTrackerId);
 	}
 
 	/**
@@ -81,25 +78,13 @@ public class UserTrackerLocalServiceWrapper implements UserTrackerLocalService,
 	*
 	* @param userTracker the user tracker
 	* @return the user tracker that was removed
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
 	public com.liferay.portal.model.UserTracker deleteUserTracker(
-		com.liferay.portal.model.UserTracker userTracker) {
+		com.liferay.portal.model.UserTracker userTracker)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return _userTrackerLocalService.deleteUserTracker(userTracker);
-	}
-
-	/**
-	* Deletes the user tracker with the primary key from the database. Also notifies the appropriate model listeners.
-	*
-	* @param userTrackerId the primary key of the user tracker
-	* @return the user tracker that was removed
-	* @throws PortalException if a user tracker with the primary key could not be found
-	*/
-	@Override
-	public com.liferay.portal.model.UserTracker deleteUserTracker(
-		long userTrackerId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _userTrackerLocalService.deleteUserTracker(userTrackerId);
 	}
 
 	@Override
@@ -112,10 +97,13 @@ public class UserTrackerLocalServiceWrapper implements UserTrackerLocalService,
 	*
 	* @param dynamicQuery the dynamic query
 	* @return the matching rows
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
-	public <T> java.util.List<T> dynamicQuery(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery) {
+	@SuppressWarnings("rawtypes")
+	public java.util.List dynamicQuery(
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return _userTrackerLocalService.dynamicQuery(dynamicQuery);
 	}
 
@@ -130,11 +118,13 @@ public class UserTrackerLocalServiceWrapper implements UserTrackerLocalService,
 	* @param start the lower bound of the range of model instances
 	* @param end the upper bound of the range of model instances (not inclusive)
 	* @return the range of matching rows
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
-	public <T> java.util.List<T> dynamicQuery(
+	@SuppressWarnings("rawtypes")
+	public java.util.List dynamicQuery(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
-		int end) {
+		int end) throws com.liferay.portal.kernel.exception.SystemException {
 		return _userTrackerLocalService.dynamicQuery(dynamicQuery, start, end);
 	}
 
@@ -150,12 +140,15 @@ public class UserTrackerLocalServiceWrapper implements UserTrackerLocalService,
 	* @param end the upper bound of the range of model instances (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching rows
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
-	public <T> java.util.List<T> dynamicQuery(
+	@SuppressWarnings("rawtypes")
+	public java.util.List dynamicQuery(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
 		int end,
-		com.liferay.portal.kernel.util.OrderByComparator<T> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return _userTrackerLocalService.dynamicQuery(dynamicQuery, start, end,
 			orderByComparator);
 	}
@@ -165,10 +158,12 @@ public class UserTrackerLocalServiceWrapper implements UserTrackerLocalService,
 	*
 	* @param dynamicQuery the dynamic query
 	* @return the number of rows that match the dynamic query
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
 	public long dynamicQueryCount(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery) {
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return _userTrackerLocalService.dynamicQueryCount(dynamicQuery);
 	}
 
@@ -178,41 +173,22 @@ public class UserTrackerLocalServiceWrapper implements UserTrackerLocalService,
 	* @param dynamicQuery the dynamic query
 	* @param projection the projection to apply to the query
 	* @return the number of rows that match the dynamic query
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
 	public long dynamicQueryCount(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery,
-		com.liferay.portal.kernel.dao.orm.Projection projection) {
+		com.liferay.portal.kernel.dao.orm.Projection projection)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return _userTrackerLocalService.dynamicQueryCount(dynamicQuery,
 			projection);
 	}
 
 	@Override
 	public com.liferay.portal.model.UserTracker fetchUserTracker(
-		long userTrackerId) {
+		long userTrackerId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return _userTrackerLocalService.fetchUserTracker(userTrackerId);
-	}
-
-	@Override
-	public com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery getActionableDynamicQuery() {
-		return _userTrackerLocalService.getActionableDynamicQuery();
-	}
-
-	/**
-	* Returns the Spring bean ID for this bean.
-	*
-	* @return the Spring bean ID for this bean
-	*/
-	@Override
-	public java.lang.String getBeanIdentifier() {
-		return _userTrackerLocalService.getBeanIdentifier();
-	}
-
-	@Override
-	public com.liferay.portal.model.PersistedModel getPersistedModel(
-		java.io.Serializable primaryKeyObj)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _userTrackerLocalService.getPersistedModel(primaryKeyObj);
 	}
 
 	/**
@@ -221,18 +197,22 @@ public class UserTrackerLocalServiceWrapper implements UserTrackerLocalService,
 	* @param userTrackerId the primary key of the user tracker
 	* @return the user tracker
 	* @throws PortalException if a user tracker with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
 	public com.liferay.portal.model.UserTracker getUserTracker(
 		long userTrackerId)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return _userTrackerLocalService.getUserTracker(userTrackerId);
 	}
 
 	@Override
-	public java.util.List<com.liferay.portal.model.UserTracker> getUserTrackers(
-		long companyId, int start, int end) {
-		return _userTrackerLocalService.getUserTrackers(companyId, start, end);
+	public com.liferay.portal.model.PersistedModel getPersistedModel(
+		java.io.Serializable primaryKeyObj)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _userTrackerLocalService.getPersistedModel(primaryKeyObj);
 	}
 
 	/**
@@ -245,10 +225,12 @@ public class UserTrackerLocalServiceWrapper implements UserTrackerLocalService,
 	* @param start the lower bound of the range of user trackers
 	* @param end the upper bound of the range of user trackers (not inclusive)
 	* @return the range of user trackers
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
 	public java.util.List<com.liferay.portal.model.UserTracker> getUserTrackers(
-		int start, int end) {
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return _userTrackerLocalService.getUserTrackers(start, end);
 	}
 
@@ -256,10 +238,36 @@ public class UserTrackerLocalServiceWrapper implements UserTrackerLocalService,
 	* Returns the number of user trackers.
 	*
 	* @return the number of user trackers
+	* @throws SystemException if a system exception occurred
 	*/
 	@Override
-	public int getUserTrackersCount() {
+	public int getUserTrackersCount()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return _userTrackerLocalService.getUserTrackersCount();
+	}
+
+	/**
+	* Updates the user tracker in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
+	*
+	* @param userTracker the user tracker
+	* @return the user tracker that was updated
+	* @throws SystemException if a system exception occurred
+	*/
+	@Override
+	public com.liferay.portal.model.UserTracker updateUserTracker(
+		com.liferay.portal.model.UserTracker userTracker)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return _userTrackerLocalService.updateUserTracker(userTracker);
+	}
+
+	/**
+	* Returns the Spring bean ID for this bean.
+	*
+	* @return the Spring bean ID for this bean
+	*/
+	@Override
+	public java.lang.String getBeanIdentifier() {
+		return _userTrackerLocalService.getBeanIdentifier();
 	}
 
 	/**
@@ -272,22 +280,28 @@ public class UserTrackerLocalServiceWrapper implements UserTrackerLocalService,
 		_userTrackerLocalService.setBeanIdentifier(beanIdentifier);
 	}
 
-	/**
-	* Updates the user tracker in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
-	*
-	* @param userTracker the user tracker
-	* @return the user tracker that was updated
-	*/
 	@Override
-	public com.liferay.portal.model.UserTracker updateUserTracker(
-		com.liferay.portal.model.UserTracker userTracker) {
-		return _userTrackerLocalService.updateUserTracker(userTracker);
+	public com.liferay.portal.model.UserTracker addUserTracker(long companyId,
+		long userId, java.util.Date modifiedDate, java.lang.String sessionId,
+		java.lang.String remoteAddr, java.lang.String remoteHost,
+		java.lang.String userAgent,
+		java.util.List<com.liferay.portal.model.UserTrackerPath> userTrackerPaths)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return _userTrackerLocalService.addUserTracker(companyId, userId,
+			modifiedDate, sessionId, remoteAddr, remoteHost, userAgent,
+			userTrackerPaths);
+	}
+
+	@Override
+	public java.util.List<com.liferay.portal.model.UserTracker> getUserTrackers(
+		long companyId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return _userTrackerLocalService.getUserTrackers(companyId, start, end);
 	}
 
 	/**
 	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedService}
 	 */
-	@Deprecated
 	public UserTrackerLocalService getWrappedUserTrackerLocalService() {
 		return _userTrackerLocalService;
 	}
@@ -295,7 +309,6 @@ public class UserTrackerLocalServiceWrapper implements UserTrackerLocalService,
 	/**
 	 * @deprecated As of 6.1.0, replaced by {@link #setWrappedService}
 	 */
-	@Deprecated
 	public void setWrappedUserTrackerLocalService(
 		UserTrackerLocalService userTrackerLocalService) {
 		_userTrackerLocalService = userTrackerLocalService;

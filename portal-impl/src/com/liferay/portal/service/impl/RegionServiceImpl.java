@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -17,6 +17,7 @@ package com.liferay.portal.service.impl;
 import com.liferay.portal.RegionCodeException;
 import com.liferay.portal.RegionNameException;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.Region;
 import com.liferay.portal.security.auth.PrincipalException;
@@ -32,7 +33,7 @@ public class RegionServiceImpl extends RegionServiceBaseImpl {
 	@Override
 	public Region addRegion(
 			long countryId, String regionCode, String name, boolean active)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		if (!getPermissionChecker().isOmniadmin()) {
 			throw new PrincipalException();
@@ -63,44 +64,45 @@ public class RegionServiceImpl extends RegionServiceBaseImpl {
 	}
 
 	@Override
-	public Region fetchRegion(long regionId) {
-		return regionPersistence.fetchByPrimaryKey(regionId);
-	}
+	public Region fetchRegion(long countryId, String regionCode)
+		throws SystemException {
 
-	@Override
-	public Region fetchRegion(long countryId, String regionCode) {
 		return regionPersistence.fetchByC_R(countryId, regionCode);
 	}
 
 	@Override
-	public Region getRegion(long regionId) throws PortalException {
+	public Region getRegion(long regionId)
+		throws PortalException, SystemException {
+
 		return regionPersistence.findByPrimaryKey(regionId);
 	}
 
 	@Override
 	public Region getRegion(long countryId, String regionCode)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return regionPersistence.findByC_R(countryId, regionCode);
 	}
 
 	@Override
-	public List<Region> getRegions() {
+	public List<Region> getRegions() throws SystemException {
 		return regionPersistence.findAll();
 	}
 
 	@Override
-	public List<Region> getRegions(boolean active) {
+	public List<Region> getRegions(boolean active) throws SystemException {
 		return regionPersistence.findByActive(active);
 	}
 
 	@Override
-	public List<Region> getRegions(long countryId) {
+	public List<Region> getRegions(long countryId) throws SystemException {
 		return regionPersistence.findByCountryId(countryId);
 	}
 
 	@Override
-	public List<Region> getRegions(long countryId, boolean active) {
+	public List<Region> getRegions(long countryId, boolean active)
+		throws SystemException {
+
 		return regionPersistence.findByC_A(countryId, active);
 	}
 

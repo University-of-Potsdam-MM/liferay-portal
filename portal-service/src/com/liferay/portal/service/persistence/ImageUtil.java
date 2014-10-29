@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,6 +18,7 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.bean.PortalBeanLocatorUtil;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ReferenceRegistry;
 import com.liferay.portal.model.Image;
@@ -62,14 +63,16 @@ public class ImageUtil {
 	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#countWithDynamicQuery(DynamicQuery)
 	 */
-	public static long countWithDynamicQuery(DynamicQuery dynamicQuery) {
+	public static long countWithDynamicQuery(DynamicQuery dynamicQuery)
+		throws SystemException {
 		return getPersistence().countWithDynamicQuery(dynamicQuery);
 	}
 
 	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#findWithDynamicQuery(DynamicQuery)
 	 */
-	public static List<Image> findWithDynamicQuery(DynamicQuery dynamicQuery) {
+	public static List<Image> findWithDynamicQuery(DynamicQuery dynamicQuery)
+		throws SystemException {
 		return getPersistence().findWithDynamicQuery(dynamicQuery);
 	}
 
@@ -77,7 +80,7 @@ public class ImageUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#findWithDynamicQuery(DynamicQuery, int, int)
 	 */
 	public static List<Image> findWithDynamicQuery(DynamicQuery dynamicQuery,
-		int start, int end) {
+		int start, int end) throws SystemException {
 		return getPersistence().findWithDynamicQuery(dynamicQuery, start, end);
 	}
 
@@ -85,7 +88,8 @@ public class ImageUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#findWithDynamicQuery(DynamicQuery, int, int, OrderByComparator)
 	 */
 	public static List<Image> findWithDynamicQuery(DynamicQuery dynamicQuery,
-		int start, int end, OrderByComparator<Image> orderByComparator) {
+		int start, int end, OrderByComparator orderByComparator)
+		throws SystemException {
 		return getPersistence()
 				   .findWithDynamicQuery(dynamicQuery, start, end,
 			orderByComparator);
@@ -94,14 +98,15 @@ public class ImageUtil {
 	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel)
 	 */
-	public static Image update(Image image) {
+	public static Image update(Image image) throws SystemException {
 		return getPersistence().update(image);
 	}
 
 	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, ServiceContext)
 	 */
-	public static Image update(Image image, ServiceContext serviceContext) {
+	public static Image update(Image image, ServiceContext serviceContext)
+		throws SystemException {
 		return getPersistence().update(image, serviceContext);
 	}
 
@@ -110,9 +115,10 @@ public class ImageUtil {
 	*
 	* @param size the size
 	* @return the matching images
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portal.model.Image> findByLtSize(
-		int size) {
+		int size) throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByLtSize(size);
 	}
 
@@ -127,9 +133,11 @@ public class ImageUtil {
 	* @param start the lower bound of the range of images
 	* @param end the upper bound of the range of images (not inclusive)
 	* @return the range of matching images
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portal.model.Image> findByLtSize(
-		int size, int start, int end) {
+		int size, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByLtSize(size, start, end);
 	}
 
@@ -145,10 +153,12 @@ public class ImageUtil {
 	* @param end the upper bound of the range of images (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching images
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portal.model.Image> findByLtSize(
 		int size, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Image> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByLtSize(size, start, end, orderByComparator);
 	}
 
@@ -159,10 +169,12 @@ public class ImageUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching image
 	* @throws com.liferay.portal.NoSuchImageException if a matching image could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.Image findByLtSize_First(int size,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Image> orderByComparator)
-		throws com.liferay.portal.NoSuchImageException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchImageException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByLtSize_First(size, orderByComparator);
 	}
 
@@ -172,9 +184,11 @@ public class ImageUtil {
 	* @param size the size
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching image, or <code>null</code> if a matching image could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.Image fetchByLtSize_First(int size,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Image> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByLtSize_First(size, orderByComparator);
 	}
 
@@ -185,10 +199,12 @@ public class ImageUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching image
 	* @throws com.liferay.portal.NoSuchImageException if a matching image could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.Image findByLtSize_Last(int size,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Image> orderByComparator)
-		throws com.liferay.portal.NoSuchImageException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchImageException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByLtSize_Last(size, orderByComparator);
 	}
 
@@ -198,9 +214,11 @@ public class ImageUtil {
 	* @param size the size
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching image, or <code>null</code> if a matching image could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.Image fetchByLtSize_Last(int size,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Image> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByLtSize_Last(size, orderByComparator);
 	}
 
@@ -212,11 +230,13 @@ public class ImageUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next image
 	* @throws com.liferay.portal.NoSuchImageException if a image with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.Image[] findByLtSize_PrevAndNext(
 		long imageId, int size,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Image> orderByComparator)
-		throws com.liferay.portal.NoSuchImageException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchImageException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByLtSize_PrevAndNext(imageId, size, orderByComparator);
 	}
@@ -225,8 +245,10 @@ public class ImageUtil {
 	* Removes all the images where size &lt; &#63; from the database.
 	*
 	* @param size the size
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByLtSize(int size) {
+	public static void removeByLtSize(int size)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeByLtSize(size);
 	}
 
@@ -235,8 +257,10 @@ public class ImageUtil {
 	*
 	* @param size the size
 	* @return the number of matching images
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByLtSize(int size) {
+	public static int countByLtSize(int size)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByLtSize(size);
 	}
 
@@ -275,14 +299,17 @@ public class ImageUtil {
 	* @param imageId the primary key of the image
 	* @return the image that was removed
 	* @throws com.liferay.portal.NoSuchImageException if a image with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.Image remove(long imageId)
-		throws com.liferay.portal.NoSuchImageException {
+		throws com.liferay.portal.NoSuchImageException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().remove(imageId);
 	}
 
 	public static com.liferay.portal.model.Image updateImpl(
-		com.liferay.portal.model.Image image) {
+		com.liferay.portal.model.Image image)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().updateImpl(image);
 	}
 
@@ -292,9 +319,11 @@ public class ImageUtil {
 	* @param imageId the primary key of the image
 	* @return the image
 	* @throws com.liferay.portal.NoSuchImageException if a image with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.Image findByPrimaryKey(long imageId)
-		throws com.liferay.portal.NoSuchImageException {
+		throws com.liferay.portal.NoSuchImageException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByPrimaryKey(imageId);
 	}
 
@@ -303,22 +332,21 @@ public class ImageUtil {
 	*
 	* @param imageId the primary key of the image
 	* @return the image, or <code>null</code> if a image with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
-	public static com.liferay.portal.model.Image fetchByPrimaryKey(long imageId) {
+	public static com.liferay.portal.model.Image fetchByPrimaryKey(long imageId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByPrimaryKey(imageId);
-	}
-
-	public static java.util.Map<java.io.Serializable, com.liferay.portal.model.Image> fetchByPrimaryKeys(
-		java.util.Set<java.io.Serializable> primaryKeys) {
-		return getPersistence().fetchByPrimaryKeys(primaryKeys);
 	}
 
 	/**
 	* Returns all the images.
 	*
 	* @return the images
+	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portal.model.Image> findAll() {
+	public static java.util.List<com.liferay.portal.model.Image> findAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll();
 	}
 
@@ -332,9 +360,11 @@ public class ImageUtil {
 	* @param start the lower bound of the range of images
 	* @param end the upper bound of the range of images (not inclusive)
 	* @return the range of images
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portal.model.Image> findAll(
-		int start, int end) {
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll(start, end);
 	}
 
@@ -349,17 +379,22 @@ public class ImageUtil {
 	* @param end the upper bound of the range of images (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of images
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portal.model.Image> findAll(
 		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Image> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll(start, end, orderByComparator);
 	}
 
 	/**
 	* Removes all the images from the database.
+	*
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeAll() {
+	public static void removeAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeAll();
 	}
 
@@ -367,8 +402,10 @@ public class ImageUtil {
 	* Returns the number of images.
 	*
 	* @return the number of images
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countAll() {
+	public static int countAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countAll();
 	}
 
@@ -385,7 +422,6 @@ public class ImageUtil {
 	/**
 	 * @deprecated As of 6.2.0
 	 */
-	@Deprecated
 	public void setPersistence(ImagePersistence persistence) {
 	}
 

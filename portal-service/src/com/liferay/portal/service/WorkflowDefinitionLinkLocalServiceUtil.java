@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -40,25 +40,17 @@ public class WorkflowDefinitionLinkLocalServiceUtil {
 	 *
 	 * Never modify this class directly. Add custom service methods to {@link com.liferay.portal.service.impl.WorkflowDefinitionLinkLocalServiceImpl} and rerun ServiceBuilder to regenerate this class.
 	 */
-	public static com.liferay.portal.model.WorkflowDefinitionLink addWorkflowDefinitionLink(
-		long userId, long companyId, long groupId, java.lang.String className,
-		long classPK, long typePK, java.lang.String workflowDefinitionName,
-		int workflowDefinitionVersion)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService()
-				   .addWorkflowDefinitionLink(userId, companyId, groupId,
-			className, classPK, typePK, workflowDefinitionName,
-			workflowDefinitionVersion);
-	}
 
 	/**
 	* Adds the workflow definition link to the database. Also notifies the appropriate model listeners.
 	*
 	* @param workflowDefinitionLink the workflow definition link
 	* @return the workflow definition link that was added
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.WorkflowDefinitionLink addWorkflowDefinitionLink(
-		com.liferay.portal.model.WorkflowDefinitionLink workflowDefinitionLink) {
+		com.liferay.portal.model.WorkflowDefinitionLink workflowDefinitionLink)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().addWorkflowDefinitionLink(workflowDefinitionLink);
 	}
 
@@ -75,19 +67,19 @@ public class WorkflowDefinitionLinkLocalServiceUtil {
 	}
 
 	/**
-	* @throws PortalException
+	* Deletes the workflow definition link with the primary key from the database. Also notifies the appropriate model listeners.
+	*
+	* @param workflowDefinitionLinkId the primary key of the workflow definition link
+	* @return the workflow definition link that was removed
+	* @throws PortalException if a workflow definition link with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
-	public static com.liferay.portal.model.PersistedModel deletePersistedModel(
-		com.liferay.portal.model.PersistedModel persistedModel)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().deletePersistedModel(persistedModel);
-	}
-
-	public static void deleteWorkflowDefinitionLink(long companyId,
-		long groupId, java.lang.String className, long classPK, long typePK) {
-		getService()
-			.deleteWorkflowDefinitionLink(companyId, groupId, className,
-			classPK, typePK);
+	public static com.liferay.portal.model.WorkflowDefinitionLink deleteWorkflowDefinitionLink(
+		long workflowDefinitionLinkId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getService()
+				   .deleteWorkflowDefinitionLink(workflowDefinitionLinkId);
 	}
 
 	/**
@@ -95,24 +87,12 @@ public class WorkflowDefinitionLinkLocalServiceUtil {
 	*
 	* @param workflowDefinitionLink the workflow definition link
 	* @return the workflow definition link that was removed
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.WorkflowDefinitionLink deleteWorkflowDefinitionLink(
-		com.liferay.portal.model.WorkflowDefinitionLink workflowDefinitionLink) {
+		com.liferay.portal.model.WorkflowDefinitionLink workflowDefinitionLink)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().deleteWorkflowDefinitionLink(workflowDefinitionLink);
-	}
-
-	/**
-	* Deletes the workflow definition link with the primary key from the database. Also notifies the appropriate model listeners.
-	*
-	* @param workflowDefinitionLinkId the primary key of the workflow definition link
-	* @return the workflow definition link that was removed
-	* @throws PortalException if a workflow definition link with the primary key could not be found
-	*/
-	public static com.liferay.portal.model.WorkflowDefinitionLink deleteWorkflowDefinitionLink(
-		long workflowDefinitionLinkId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService()
-				   .deleteWorkflowDefinitionLink(workflowDefinitionLinkId);
 	}
 
 	public static com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery() {
@@ -124,9 +104,12 @@ public class WorkflowDefinitionLinkLocalServiceUtil {
 	*
 	* @param dynamicQuery the dynamic query
 	* @return the matching rows
+	* @throws SystemException if a system exception occurred
 	*/
-	public static <T> java.util.List<T> dynamicQuery(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery) {
+	@SuppressWarnings("rawtypes")
+	public static java.util.List dynamicQuery(
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().dynamicQuery(dynamicQuery);
 	}
 
@@ -141,10 +124,12 @@ public class WorkflowDefinitionLinkLocalServiceUtil {
 	* @param start the lower bound of the range of model instances
 	* @param end the upper bound of the range of model instances (not inclusive)
 	* @return the range of matching rows
+	* @throws SystemException if a system exception occurred
 	*/
-	public static <T> java.util.List<T> dynamicQuery(
+	@SuppressWarnings("rawtypes")
+	public static java.util.List dynamicQuery(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
-		int end) {
+		int end) throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().dynamicQuery(dynamicQuery, start, end);
 	}
 
@@ -160,11 +145,14 @@ public class WorkflowDefinitionLinkLocalServiceUtil {
 	* @param end the upper bound of the range of model instances (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching rows
+	* @throws SystemException if a system exception occurred
 	*/
-	public static <T> java.util.List<T> dynamicQuery(
+	@SuppressWarnings("rawtypes")
+	public static java.util.List dynamicQuery(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
 		int end,
-		com.liferay.portal.kernel.util.OrderByComparator<T> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService()
 				   .dynamicQuery(dynamicQuery, start, end, orderByComparator);
 	}
@@ -174,9 +162,11 @@ public class WorkflowDefinitionLinkLocalServiceUtil {
 	*
 	* @param dynamicQuery the dynamic query
 	* @return the number of rows that match the dynamic query
+	* @throws SystemException if a system exception occurred
 	*/
 	public static long dynamicQueryCount(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery) {
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().dynamicQueryCount(dynamicQuery);
 	}
 
@@ -186,83 +176,19 @@ public class WorkflowDefinitionLinkLocalServiceUtil {
 	* @param dynamicQuery the dynamic query
 	* @param projection the projection to apply to the query
 	* @return the number of rows that match the dynamic query
+	* @throws SystemException if a system exception occurred
 	*/
 	public static long dynamicQueryCount(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery,
-		com.liferay.portal.kernel.dao.orm.Projection projection) {
+		com.liferay.portal.kernel.dao.orm.Projection projection)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().dynamicQueryCount(dynamicQuery, projection);
 	}
 
-	public static com.liferay.portal.model.WorkflowDefinitionLink fetchDefaultWorkflowDefinitionLink(
-		long companyId, java.lang.String className, long classPK, long typePK) {
-		return getService()
-				   .fetchDefaultWorkflowDefinitionLink(companyId, className,
-			classPK, typePK);
-	}
-
 	public static com.liferay.portal.model.WorkflowDefinitionLink fetchWorkflowDefinitionLink(
-		long companyId, long groupId, java.lang.String className, long classPK,
-		long typePK) {
-		return getService()
-				   .fetchWorkflowDefinitionLink(companyId, groupId, className,
-			classPK, typePK);
-	}
-
-	public static com.liferay.portal.model.WorkflowDefinitionLink fetchWorkflowDefinitionLink(
-		long companyId, long groupId, java.lang.String className, long classPK,
-		long typePK, boolean strict) {
-		return getService()
-				   .fetchWorkflowDefinitionLink(companyId, groupId, className,
-			classPK, typePK, strict);
-	}
-
-	public static com.liferay.portal.model.WorkflowDefinitionLink fetchWorkflowDefinitionLink(
-		long workflowDefinitionLinkId) {
+		long workflowDefinitionLinkId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().fetchWorkflowDefinitionLink(workflowDefinitionLinkId);
-	}
-
-	public static com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery getActionableDynamicQuery() {
-		return getService().getActionableDynamicQuery();
-	}
-
-	/**
-	* Returns the Spring bean ID for this bean.
-	*
-	* @return the Spring bean ID for this bean
-	*/
-	public static java.lang.String getBeanIdentifier() {
-		return getService().getBeanIdentifier();
-	}
-
-	public static com.liferay.portal.model.WorkflowDefinitionLink getDefaultWorkflowDefinitionLink(
-		long companyId, java.lang.String className, long classPK, long typePK)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService()
-				   .getDefaultWorkflowDefinitionLink(companyId, className,
-			classPK, typePK);
-	}
-
-	public static com.liferay.portal.model.PersistedModel getPersistedModel(
-		java.io.Serializable primaryKeyObj)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().getPersistedModel(primaryKeyObj);
-	}
-
-	public static com.liferay.portal.model.WorkflowDefinitionLink getWorkflowDefinitionLink(
-		long companyId, long groupId, java.lang.String className, long classPK,
-		long typePK) throws com.liferay.portal.kernel.exception.PortalException {
-		return getService()
-				   .getWorkflowDefinitionLink(companyId, groupId, className,
-			classPK, typePK);
-	}
-
-	public static com.liferay.portal.model.WorkflowDefinitionLink getWorkflowDefinitionLink(
-		long companyId, long groupId, java.lang.String className, long classPK,
-		long typePK, boolean strict)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService()
-				   .getWorkflowDefinitionLink(companyId, groupId, className,
-			classPK, typePK, strict);
 	}
 
 	/**
@@ -271,11 +197,20 @@ public class WorkflowDefinitionLinkLocalServiceUtil {
 	* @param workflowDefinitionLinkId the primary key of the workflow definition link
 	* @return the workflow definition link
 	* @throws PortalException if a workflow definition link with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.WorkflowDefinitionLink getWorkflowDefinitionLink(
 		long workflowDefinitionLinkId)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getService().getWorkflowDefinitionLink(workflowDefinitionLinkId);
+	}
+
+	public static com.liferay.portal.model.PersistedModel getPersistedModel(
+		java.io.Serializable primaryKeyObj)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getService().getPersistedModel(primaryKeyObj);
 	}
 
 	/**
@@ -288,9 +223,11 @@ public class WorkflowDefinitionLinkLocalServiceUtil {
 	* @param start the lower bound of the range of workflow definition links
 	* @param end the upper bound of the range of workflow definition links (not inclusive)
 	* @return the range of workflow definition links
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portal.model.WorkflowDefinitionLink> getWorkflowDefinitionLinks(
-		int start, int end) {
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().getWorkflowDefinitionLinks(start, end);
 	}
 
@@ -298,43 +235,33 @@ public class WorkflowDefinitionLinkLocalServiceUtil {
 	* Returns the number of workflow definition links.
 	*
 	* @return the number of workflow definition links
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int getWorkflowDefinitionLinksCount() {
+	public static int getWorkflowDefinitionLinksCount()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().getWorkflowDefinitionLinksCount();
 	}
 
-	public static int getWorkflowDefinitionLinksCount(long companyId,
-		long groupId, java.lang.String className) {
-		return getService()
-				   .getWorkflowDefinitionLinksCount(companyId, groupId,
-			className);
+	/**
+	* Updates the workflow definition link in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
+	*
+	* @param workflowDefinitionLink the workflow definition link
+	* @return the workflow definition link that was updated
+	* @throws SystemException if a system exception occurred
+	*/
+	public static com.liferay.portal.model.WorkflowDefinitionLink updateWorkflowDefinitionLink(
+		com.liferay.portal.model.WorkflowDefinitionLink workflowDefinitionLink)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().updateWorkflowDefinitionLink(workflowDefinitionLink);
 	}
 
-	public static int getWorkflowDefinitionLinksCount(long companyId,
-		java.lang.String workflowDefinitionName, int workflowDefinitionVersion) {
-		return getService()
-				   .getWorkflowDefinitionLinksCount(companyId,
-			workflowDefinitionName, workflowDefinitionVersion);
-	}
-
-	public static boolean hasWorkflowDefinitionLink(long companyId,
-		long groupId, java.lang.String className) {
-		return getService()
-				   .hasWorkflowDefinitionLink(companyId, groupId, className);
-	}
-
-	public static boolean hasWorkflowDefinitionLink(long companyId,
-		long groupId, java.lang.String className, long classPK) {
-		return getService()
-				   .hasWorkflowDefinitionLink(companyId, groupId, className,
-			classPK);
-	}
-
-	public static boolean hasWorkflowDefinitionLink(long companyId,
-		long groupId, java.lang.String className, long classPK, long typePK) {
-		return getService()
-				   .hasWorkflowDefinitionLink(companyId, groupId, className,
-			classPK, typePK);
+	/**
+	* Returns the Spring bean ID for this bean.
+	*
+	* @return the Spring bean ID for this bean
+	*/
+	public static java.lang.String getBeanIdentifier() {
+		return getService().getBeanIdentifier();
 	}
 
 	/**
@@ -346,10 +273,123 @@ public class WorkflowDefinitionLinkLocalServiceUtil {
 		getService().setBeanIdentifier(beanIdentifier);
 	}
 
+	public static com.liferay.portal.model.WorkflowDefinitionLink addWorkflowDefinitionLink(
+		long userId, long companyId, long groupId, java.lang.String className,
+		long classPK, long typePK, java.lang.String workflowDefinitionName,
+		int workflowDefinitionVersion)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getService()
+				   .addWorkflowDefinitionLink(userId, companyId, groupId,
+			className, classPK, typePK, workflowDefinitionName,
+			workflowDefinitionVersion);
+	}
+
+	public static void deleteWorkflowDefinitionLink(long companyId,
+		long groupId, java.lang.String className, long classPK, long typePK)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		getService()
+			.deleteWorkflowDefinitionLink(companyId, groupId, className,
+			classPK, typePK);
+	}
+
+	public static com.liferay.portal.model.WorkflowDefinitionLink fetchDefaultWorkflowDefinitionLink(
+		long companyId, java.lang.String className, long classPK, long typePK)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService()
+				   .fetchDefaultWorkflowDefinitionLink(companyId, className,
+			classPK, typePK);
+	}
+
+	public static com.liferay.portal.model.WorkflowDefinitionLink fetchWorkflowDefinitionLink(
+		long companyId, long groupId, java.lang.String className, long classPK,
+		long typePK)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getService()
+				   .fetchWorkflowDefinitionLink(companyId, groupId, className,
+			classPK, typePK);
+	}
+
+	public static com.liferay.portal.model.WorkflowDefinitionLink fetchWorkflowDefinitionLink(
+		long companyId, long groupId, java.lang.String className, long classPK,
+		long typePK, boolean strict)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getService()
+				   .fetchWorkflowDefinitionLink(companyId, groupId, className,
+			classPK, typePK, strict);
+	}
+
+	public static com.liferay.portal.model.WorkflowDefinitionLink getDefaultWorkflowDefinitionLink(
+		long companyId, java.lang.String className, long classPK, long typePK)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getService()
+				   .getDefaultWorkflowDefinitionLink(companyId, className,
+			classPK, typePK);
+	}
+
+	public static com.liferay.portal.model.WorkflowDefinitionLink getWorkflowDefinitionLink(
+		long companyId, long groupId, java.lang.String className, long classPK,
+		long typePK)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getService()
+				   .getWorkflowDefinitionLink(companyId, groupId, className,
+			classPK, typePK);
+	}
+
+	public static com.liferay.portal.model.WorkflowDefinitionLink getWorkflowDefinitionLink(
+		long companyId, long groupId, java.lang.String className, long classPK,
+		long typePK, boolean strict)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getService()
+				   .getWorkflowDefinitionLink(companyId, groupId, className,
+			classPK, typePK, strict);
+	}
+
+	public static int getWorkflowDefinitionLinksCount(long companyId,
+		java.lang.String workflowDefinitionName, int workflowDefinitionVersion)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService()
+				   .getWorkflowDefinitionLinksCount(companyId,
+			workflowDefinitionName, workflowDefinitionVersion);
+	}
+
+	public static boolean hasWorkflowDefinitionLink(long companyId,
+		long groupId, java.lang.String className)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getService()
+				   .hasWorkflowDefinitionLink(companyId, groupId, className);
+	}
+
+	public static boolean hasWorkflowDefinitionLink(long companyId,
+		long groupId, java.lang.String className, long classPK)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getService()
+				   .hasWorkflowDefinitionLink(companyId, groupId, className,
+			classPK);
+	}
+
+	public static boolean hasWorkflowDefinitionLink(long companyId,
+		long groupId, java.lang.String className, long classPK, long typePK)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getService()
+				   .hasWorkflowDefinitionLink(companyId, groupId, className,
+			classPK, typePK);
+	}
+
 	public static void updateWorkflowDefinitionLink(long userId,
 		long companyId, long groupId, java.lang.String className, long classPK,
 		long typePK, java.lang.String workflowDefinition)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		getService()
 			.updateWorkflowDefinitionLink(userId, companyId, groupId,
 			className, classPK, typePK, workflowDefinition);
@@ -359,28 +399,19 @@ public class WorkflowDefinitionLinkLocalServiceUtil {
 		long userId, long companyId, long groupId, java.lang.String className,
 		long classPK, long typePK, java.lang.String workflowDefinitionName,
 		int workflowDefinitionVersion)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getService()
 				   .updateWorkflowDefinitionLink(userId, companyId, groupId,
 			className, classPK, typePK, workflowDefinitionName,
 			workflowDefinitionVersion);
 	}
 
-	/**
-	* Updates the workflow definition link in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
-	*
-	* @param workflowDefinitionLink the workflow definition link
-	* @return the workflow definition link that was updated
-	*/
-	public static com.liferay.portal.model.WorkflowDefinitionLink updateWorkflowDefinitionLink(
-		com.liferay.portal.model.WorkflowDefinitionLink workflowDefinitionLink) {
-		return getService().updateWorkflowDefinitionLink(workflowDefinitionLink);
-	}
-
 	public static void updateWorkflowDefinitionLinks(long userId,
 		long companyId, long groupId, java.lang.String className, long classPK,
 		java.util.List<com.liferay.portal.kernel.util.ObjectValuePair<java.lang.Long, java.lang.String>> workflowDefinitionOVPs)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		getService()
 			.updateWorkflowDefinitionLinks(userId, companyId, groupId,
 			className, classPK, workflowDefinitionOVPs);
@@ -400,7 +431,6 @@ public class WorkflowDefinitionLinkLocalServiceUtil {
 	/**
 	 * @deprecated As of 6.2.0
 	 */
-	@Deprecated
 	public void setService(WorkflowDefinitionLinkLocalService service) {
 	}
 

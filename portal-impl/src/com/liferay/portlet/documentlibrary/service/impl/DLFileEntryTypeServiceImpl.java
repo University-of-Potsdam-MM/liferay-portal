@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portlet.documentlibrary.service.impl;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
@@ -45,7 +46,7 @@ public class DLFileEntryTypeServiceImpl extends DLFileEntryTypeServiceBaseImpl {
 			long groupId, String fileEntryTypeKey, Map<Locale, String> nameMap,
 			Map<Locale, String> descriptionMap, long[] ddmStructureIds,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		DLPermission.check(
 			getPermissionChecker(), groupId, ActionKeys.ADD_DOCUMENT_TYPE);
@@ -59,7 +60,7 @@ public class DLFileEntryTypeServiceImpl extends DLFileEntryTypeServiceBaseImpl {
 	public DLFileEntryType addFileEntryType(
 			long groupId, String name, String description,
 			long[] ddmStructureIds, ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Map<Locale, String> nameMap = new HashMap<Locale, String>();
 
@@ -76,7 +77,7 @@ public class DLFileEntryTypeServiceImpl extends DLFileEntryTypeServiceBaseImpl {
 
 	@Override
 	public void deleteFileEntryType(long fileEntryTypeId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		DLFileEntryTypePermission.check(
 			getPermissionChecker(), fileEntryTypeId, ActionKeys.DELETE);
@@ -86,7 +87,7 @@ public class DLFileEntryTypeServiceImpl extends DLFileEntryTypeServiceBaseImpl {
 
 	@Override
 	public DLFileEntryType getFileEntryType(long fileEntryTypeId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		DLFileEntryTypePermission.check(
 			getPermissionChecker(), fileEntryTypeId, ActionKeys.VIEW);
@@ -95,27 +96,30 @@ public class DLFileEntryTypeServiceImpl extends DLFileEntryTypeServiceBaseImpl {
 	}
 
 	@Override
-	public List<DLFileEntryType> getFileEntryTypes(long[] groupIds) {
+	public List<DLFileEntryType> getFileEntryTypes(long[] groupIds)
+		throws SystemException {
+
 		return dlFileEntryTypePersistence.filterFindByGroupId(groupIds);
 	}
 
 	@Override
 	public List<DLFileEntryType> getFileEntryTypes(
-		long[] groupIds, int start, int end) {
+			long[] groupIds, int start, int end)
+		throws SystemException {
 
 		return dlFileEntryTypePersistence.filterFindByGroupId(
 			groupIds, start, end);
 	}
 
 	@Override
-	public int getFileEntryTypesCount(long[] groupIds) {
+	public int getFileEntryTypesCount(long[] groupIds) throws SystemException {
 		return dlFileEntryTypePersistence.filterCountByGroupId(groupIds);
 	}
 
 	@Override
 	public List<DLFileEntryType> getFolderFileEntryTypes(
 			long[] groupIds, long folderId, boolean inherited)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return filterFileEntryTypes(
 			dlFileEntryTypeLocalService.getFolderFileEntryTypes(
@@ -124,9 +128,10 @@ public class DLFileEntryTypeServiceImpl extends DLFileEntryTypeServiceBaseImpl {
 
 	@Override
 	public List<DLFileEntryType> search(
-		long companyId, long[] groupIds, String keywords,
-		boolean includeBasicFileEntryType, int start, int end,
-		OrderByComparator<DLFileEntryType> orderByComparator) {
+			long companyId, long[] groupIds, String keywords,
+			boolean includeBasicFileEntryType, int start, int end,
+			OrderByComparator orderByComparator)
+		throws SystemException {
 
 		return dlFileEntryTypeFinder.filterFindByKeywords(
 			companyId, groupIds, keywords, includeBasicFileEntryType, start,
@@ -135,8 +140,9 @@ public class DLFileEntryTypeServiceImpl extends DLFileEntryTypeServiceBaseImpl {
 
 	@Override
 	public int searchCount(
-		long companyId, long[] groupIds, String keywords,
-		boolean includeBasicFileEntryType) {
+			long companyId, long[] groupIds, String keywords,
+			boolean includeBasicFileEntryType)
+		throws SystemException {
 
 		return dlFileEntryTypeFinder.filterCountByKeywords(
 			companyId, groupIds, keywords, includeBasicFileEntryType);
@@ -147,7 +153,7 @@ public class DLFileEntryTypeServiceImpl extends DLFileEntryTypeServiceBaseImpl {
 			long fileEntryTypeId, Map<Locale, String> nameMap,
 			Map<Locale, String> descriptionMap, long[] ddmStructureIds,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		DLFileEntryTypePermission.check(
 			getPermissionChecker(), fileEntryTypeId, ActionKeys.UPDATE);
@@ -161,7 +167,7 @@ public class DLFileEntryTypeServiceImpl extends DLFileEntryTypeServiceBaseImpl {
 	public void updateFileEntryType(
 			long fileEntryTypeId, String name, String description,
 			long[] ddmStructureIds, ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Map<Locale, String> nameMap = new HashMap<Locale, String>();
 

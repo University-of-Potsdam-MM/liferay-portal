@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -46,88 +46,12 @@ public class CalEventLocalServiceUtil {
 	*
 	* @param calEvent the cal event
 	* @return the cal event that was added
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.calendar.model.CalEvent addCalEvent(
-		com.liferay.portlet.calendar.model.CalEvent calEvent) {
+		com.liferay.portlet.calendar.model.CalEvent calEvent)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().addCalEvent(calEvent);
-	}
-
-	public static com.liferay.portlet.calendar.model.CalEvent addEvent(
-		long userId, java.lang.String title, java.lang.String description,
-		java.lang.String location, int startDateMonth, int startDateDay,
-		int startDateYear, int startDateHour, int startDateMinute,
-		int durationHour, int durationMinute, boolean allDay,
-		boolean timeZoneSensitive, java.lang.String type, boolean repeating,
-		com.liferay.portal.kernel.cal.TZSRecurrence recurrence, int remindBy,
-		int firstReminder, int secondReminder,
-		com.liferay.portal.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService()
-				   .addEvent(userId, title, description, location,
-			startDateMonth, startDateDay, startDateYear, startDateHour,
-			startDateMinute, durationHour, durationMinute, allDay,
-			timeZoneSensitive, type, repeating, recurrence, remindBy,
-			firstReminder, secondReminder, serviceContext);
-	}
-
-	/**
-	* @deprecated As of 6.2.0, replaced by {@link #addEvent(long, String,
-	String, String, int, int, int, int, int, int, int, boolean,
-	boolean, String, boolean, TZSRecurrence, int, int, int,
-	ServiceContext)}
-	*/
-	@Deprecated
-	public static com.liferay.portlet.calendar.model.CalEvent addEvent(
-		long userId, java.lang.String title, java.lang.String description,
-		java.lang.String location, int startDateMonth, int startDateDay,
-		int startDateYear, int startDateHour, int startDateMinute,
-		int endDateMonth, int endDateDay, int endDateYear, int durationHour,
-		int durationMinute, boolean allDay, boolean timeZoneSensitive,
-		java.lang.String type, boolean repeating,
-		com.liferay.portal.kernel.cal.TZSRecurrence recurrence, int remindBy,
-		int firstReminder, int secondReminder,
-		com.liferay.portal.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService()
-				   .addEvent(userId, title, description, location,
-			startDateMonth, startDateDay, startDateYear, startDateHour,
-			startDateMinute, endDateMonth, endDateDay, endDateYear,
-			durationHour, durationMinute, allDay, timeZoneSensitive, type,
-			repeating, recurrence, remindBy, firstReminder, secondReminder,
-			serviceContext);
-	}
-
-	public static void addEventResources(
-		com.liferay.portlet.calendar.model.CalEvent event,
-		boolean addGroupPermissions, boolean addGuestPermissions)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		getService()
-			.addEventResources(event, addGroupPermissions, addGuestPermissions);
-	}
-
-	public static void addEventResources(
-		com.liferay.portlet.calendar.model.CalEvent event,
-		java.lang.String[] groupPermissions, java.lang.String[] guestPermissions)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		getService().addEventResources(event, groupPermissions, guestPermissions);
-	}
-
-	public static void addEventResources(long eventId,
-		boolean addGroupPermissions, boolean addGuestPermissions)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		getService()
-			.addEventResources(eventId, addGroupPermissions, addGuestPermissions);
-	}
-
-	public static void addEventResources(long eventId,
-		java.lang.String[] groupPermissions, java.lang.String[] guestPermissions)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		getService()
-			.addEventResources(eventId, groupPermissions, guestPermissions);
-	}
-
-	public static void checkEvents() {
-		getService().checkEvents();
 	}
 
 	/**
@@ -142,53 +66,31 @@ public class CalEventLocalServiceUtil {
 	}
 
 	/**
-	* Deletes the cal event from the database. Also notifies the appropriate model listeners.
-	*
-	* @param calEvent the cal event
-	* @return the cal event that was removed
-	*/
-	public static com.liferay.portlet.calendar.model.CalEvent deleteCalEvent(
-		com.liferay.portlet.calendar.model.CalEvent calEvent) {
-		return getService().deleteCalEvent(calEvent);
-	}
-
-	/**
 	* Deletes the cal event with the primary key from the database. Also notifies the appropriate model listeners.
 	*
 	* @param eventId the primary key of the cal event
 	* @return the cal event that was removed
 	* @throws PortalException if a cal event with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.calendar.model.CalEvent deleteCalEvent(
 		long eventId)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getService().deleteCalEvent(eventId);
 	}
 
-	public static com.liferay.portlet.calendar.model.CalEvent deleteEvent(
-		com.liferay.portlet.calendar.model.CalEvent event)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().deleteEvent(event);
-	}
-
-	public static com.liferay.portlet.calendar.model.CalEvent deleteEvent(
-		long eventId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().deleteEvent(eventId);
-	}
-
-	public static void deleteEvents(long groupId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		getService().deleteEvents(groupId);
-	}
-
 	/**
-	* @throws PortalException
+	* Deletes the cal event from the database. Also notifies the appropriate model listeners.
+	*
+	* @param calEvent the cal event
+	* @return the cal event that was removed
+	* @throws SystemException if a system exception occurred
 	*/
-	public static com.liferay.portal.model.PersistedModel deletePersistedModel(
-		com.liferay.portal.model.PersistedModel persistedModel)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().deletePersistedModel(persistedModel);
+	public static com.liferay.portlet.calendar.model.CalEvent deleteCalEvent(
+		com.liferay.portlet.calendar.model.CalEvent calEvent)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().deleteCalEvent(calEvent);
 	}
 
 	public static com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery() {
@@ -200,9 +102,12 @@ public class CalEventLocalServiceUtil {
 	*
 	* @param dynamicQuery the dynamic query
 	* @return the matching rows
+	* @throws SystemException if a system exception occurred
 	*/
-	public static <T> java.util.List<T> dynamicQuery(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery) {
+	@SuppressWarnings("rawtypes")
+	public static java.util.List dynamicQuery(
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().dynamicQuery(dynamicQuery);
 	}
 
@@ -217,10 +122,12 @@ public class CalEventLocalServiceUtil {
 	* @param start the lower bound of the range of model instances
 	* @param end the upper bound of the range of model instances (not inclusive)
 	* @return the range of matching rows
+	* @throws SystemException if a system exception occurred
 	*/
-	public static <T> java.util.List<T> dynamicQuery(
+	@SuppressWarnings("rawtypes")
+	public static java.util.List dynamicQuery(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
-		int end) {
+		int end) throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().dynamicQuery(dynamicQuery, start, end);
 	}
 
@@ -236,11 +143,14 @@ public class CalEventLocalServiceUtil {
 	* @param end the upper bound of the range of model instances (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching rows
+	* @throws SystemException if a system exception occurred
 	*/
-	public static <T> java.util.List<T> dynamicQuery(
+	@SuppressWarnings("rawtypes")
+	public static java.util.List dynamicQuery(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
 		int end,
-		com.liferay.portal.kernel.util.OrderByComparator<T> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService()
 				   .dynamicQuery(dynamicQuery, start, end, orderByComparator);
 	}
@@ -250,9 +160,11 @@ public class CalEventLocalServiceUtil {
 	*
 	* @param dynamicQuery the dynamic query
 	* @return the number of rows that match the dynamic query
+	* @throws SystemException if a system exception occurred
 	*/
 	public static long dynamicQueryCount(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery) {
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().dynamicQueryCount(dynamicQuery);
 	}
 
@@ -262,34 +174,33 @@ public class CalEventLocalServiceUtil {
 	* @param dynamicQuery the dynamic query
 	* @param projection the projection to apply to the query
 	* @return the number of rows that match the dynamic query
+	* @throws SystemException if a system exception occurred
 	*/
 	public static long dynamicQueryCount(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery,
-		com.liferay.portal.kernel.dao.orm.Projection projection) {
+		com.liferay.portal.kernel.dao.orm.Projection projection)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().dynamicQueryCount(dynamicQuery, projection);
 	}
 
-	public static java.io.File exportEvent(long userId, long eventId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().exportEvent(userId, eventId);
-	}
-
-	public static java.io.File exportEvents(long userId,
-		java.util.List<com.liferay.portlet.calendar.model.CalEvent> events,
-		java.lang.String fileName)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().exportEvents(userId, events, fileName);
-	}
-
-	public static java.io.File exportGroupEvents(long userId, long groupId,
-		java.lang.String fileName)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().exportGroupEvents(userId, groupId, fileName);
-	}
-
 	public static com.liferay.portlet.calendar.model.CalEvent fetchCalEvent(
-		long eventId) {
+		long eventId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().fetchCalEvent(eventId);
+	}
+
+	/**
+	* Returns the cal event with the matching UUID and company.
+	*
+	* @param uuid the cal event's UUID
+	* @param companyId the primary key of the company
+	* @return the matching cal event, or <code>null</code> if a matching cal event could not be found
+	* @throws SystemException if a system exception occurred
+	*/
+	public static com.liferay.portlet.calendar.model.CalEvent fetchCalEventByUuidAndCompanyId(
+		java.lang.String uuid, long companyId)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().fetchCalEventByUuidAndCompanyId(uuid, companyId);
 	}
 
 	/**
@@ -298,23 +209,12 @@ public class CalEventLocalServiceUtil {
 	* @param uuid the cal event's UUID
 	* @param groupId the primary key of the group
 	* @return the matching cal event, or <code>null</code> if a matching cal event could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.calendar.model.CalEvent fetchCalEventByUuidAndGroupId(
-		java.lang.String uuid, long groupId) {
+		java.lang.String uuid, long groupId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().fetchCalEventByUuidAndGroupId(uuid, groupId);
-	}
-
-	public static com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery getActionableDynamicQuery() {
-		return getService().getActionableDynamicQuery();
-	}
-
-	/**
-	* Returns the Spring bean ID for this bean.
-	*
-	* @return the Spring bean ID for this bean
-	*/
-	public static java.lang.String getBeanIdentifier() {
-		return getService().getBeanIdentifier();
 	}
 
 	/**
@@ -323,11 +223,36 @@ public class CalEventLocalServiceUtil {
 	* @param eventId the primary key of the cal event
 	* @return the cal event
 	* @throws PortalException if a cal event with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.calendar.model.CalEvent getCalEvent(
 		long eventId)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getService().getCalEvent(eventId);
+	}
+
+	public static com.liferay.portal.model.PersistedModel getPersistedModel(
+		java.io.Serializable primaryKeyObj)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getService().getPersistedModel(primaryKeyObj);
+	}
+
+	/**
+	* Returns the cal event with the matching UUID and company.
+	*
+	* @param uuid the cal event's UUID
+	* @param companyId the primary key of the company
+	* @return the matching cal event
+	* @throws PortalException if a matching cal event could not be found
+	* @throws SystemException if a system exception occurred
+	*/
+	public static com.liferay.portlet.calendar.model.CalEvent getCalEventByUuidAndCompanyId(
+		java.lang.String uuid, long companyId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getService().getCalEventByUuidAndCompanyId(uuid, companyId);
 	}
 
 	/**
@@ -337,10 +262,12 @@ public class CalEventLocalServiceUtil {
 	* @param groupId the primary key of the group
 	* @return the matching cal event
 	* @throws PortalException if a matching cal event could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.calendar.model.CalEvent getCalEventByUuidAndGroupId(
 		java.lang.String uuid, long groupId)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getService().getCalEventByUuidAndGroupId(uuid, groupId);
 	}
 
@@ -354,125 +281,45 @@ public class CalEventLocalServiceUtil {
 	* @param start the lower bound of the range of cal events
 	* @param end the upper bound of the range of cal events (not inclusive)
 	* @return the range of cal events
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.calendar.model.CalEvent> getCalEvents(
-		int start, int end) {
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().getCalEvents(start, end);
-	}
-
-	public static java.util.List<com.liferay.portlet.calendar.model.CalEvent> getCalEventsByUuidAndCompanyId(
-		java.lang.String uuid, long companyId) {
-		return getService().getCalEventsByUuidAndCompanyId(uuid, companyId);
-	}
-
-	public static java.util.List<com.liferay.portlet.calendar.model.CalEvent> getCalEventsByUuidAndCompanyId(
-		java.lang.String uuid, long companyId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.calendar.model.CalEvent> orderByComparator) {
-		return getService()
-				   .getCalEventsByUuidAndCompanyId(uuid, companyId, start, end,
-			orderByComparator);
 	}
 
 	/**
 	* Returns the number of cal events.
 	*
 	* @return the number of cal events
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int getCalEventsCount() {
+	public static int getCalEventsCount()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().getCalEventsCount();
 	}
 
-	public static java.util.List<com.liferay.portlet.calendar.model.CalEvent> getCompanyEvents(
-		long companyId, int start, int end) {
-		return getService().getCompanyEvents(companyId, start, end);
+	/**
+	* Updates the cal event in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
+	*
+	* @param calEvent the cal event
+	* @return the cal event that was updated
+	* @throws SystemException if a system exception occurred
+	*/
+	public static com.liferay.portlet.calendar.model.CalEvent updateCalEvent(
+		com.liferay.portlet.calendar.model.CalEvent calEvent)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().updateCalEvent(calEvent);
 	}
 
-	public static int getCompanyEventsCount(long companyId) {
-		return getService().getCompanyEventsCount(companyId);
-	}
-
-	public static com.liferay.portlet.calendar.model.CalEvent getEvent(
-		long eventId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().getEvent(eventId);
-	}
-
-	public static java.util.List<com.liferay.portlet.calendar.model.CalEvent> getEvents(
-		long groupId, java.util.Calendar cal) {
-		return getService().getEvents(groupId, cal);
-	}
-
-	public static java.util.List<com.liferay.portlet.calendar.model.CalEvent> getEvents(
-		long groupId, java.util.Calendar cal, java.lang.String type) {
-		return getService().getEvents(groupId, cal, type);
-	}
-
-	public static java.util.List<com.liferay.portlet.calendar.model.CalEvent> getEvents(
-		long groupId, java.util.Calendar cal, java.lang.String[] types) {
-		return getService().getEvents(groupId, cal, types);
-	}
-
-	public static java.util.List<com.liferay.portlet.calendar.model.CalEvent> getEvents(
-		long groupId, java.lang.String type, int start, int end) {
-		return getService().getEvents(groupId, type, start, end);
-	}
-
-	public static java.util.List<com.liferay.portlet.calendar.model.CalEvent> getEvents(
-		long groupId, java.lang.String[] types, int start, int end) {
-		return getService().getEvents(groupId, types, start, end);
-	}
-
-	public static int getEventsCount(long groupId, java.lang.String type) {
-		return getService().getEventsCount(groupId, type);
-	}
-
-	public static int getEventsCount(long groupId, java.lang.String[] types) {
-		return getService().getEventsCount(groupId, types);
-	}
-
-	public static com.liferay.portal.kernel.dao.orm.ExportActionableDynamicQuery getExportActionableDynamicQuery(
-		com.liferay.portal.kernel.lar.PortletDataContext portletDataContext) {
-		return getService().getExportActionableDynamicQuery(portletDataContext);
-	}
-
-	public static java.util.List<com.liferay.portlet.calendar.model.CalEvent> getNoAssetEvents() {
-		return getService().getNoAssetEvents();
-	}
-
-	public static com.liferay.portal.model.PersistedModel getPersistedModel(
-		java.io.Serializable primaryKeyObj)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().getPersistedModel(primaryKeyObj);
-	}
-
-	public static java.util.List<com.liferay.portlet.calendar.model.CalEvent> getRepeatingEvents(
-		long groupId) {
-		return getService().getRepeatingEvents(groupId);
-	}
-
-	public static java.util.List<com.liferay.portlet.calendar.model.CalEvent> getRepeatingEvents(
-		long groupId, java.util.Calendar cal, java.lang.String[] types) {
-		return getService().getRepeatingEvents(groupId, cal, types);
-	}
-
-	public static boolean hasEvents(long groupId, java.util.Calendar cal) {
-		return getService().hasEvents(groupId, cal);
-	}
-
-	public static boolean hasEvents(long groupId, java.util.Calendar cal,
-		java.lang.String type) {
-		return getService().hasEvents(groupId, cal, type);
-	}
-
-	public static boolean hasEvents(long groupId, java.util.Calendar cal,
-		java.lang.String[] types) {
-		return getService().hasEvents(groupId, cal, types);
-	}
-
-	public static void importICal4j(long userId, long groupId,
-		java.io.InputStream inputStream)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		getService().importICal4j(userId, groupId, inputStream);
+	/**
+	* Returns the Spring bean ID for this bean.
+	*
+	* @return the Spring bean ID for this bean
+	*/
+	public static java.lang.String getBeanIdentifier() {
+		return getService().getBeanIdentifier();
 	}
 
 	/**
@@ -484,25 +331,239 @@ public class CalEventLocalServiceUtil {
 		getService().setBeanIdentifier(beanIdentifier);
 	}
 
+	public static com.liferay.portlet.calendar.model.CalEvent addEvent(
+		long userId, java.lang.String title, java.lang.String description,
+		java.lang.String location, int startDateMonth, int startDateDay,
+		int startDateYear, int startDateHour, int startDateMinute,
+		int durationHour, int durationMinute, boolean allDay,
+		boolean timeZoneSensitive, java.lang.String type, boolean repeating,
+		com.liferay.portal.kernel.cal.TZSRecurrence recurrence, int remindBy,
+		int firstReminder, int secondReminder,
+		com.liferay.portal.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getService()
+				   .addEvent(userId, title, description, location,
+			startDateMonth, startDateDay, startDateYear, startDateHour,
+			startDateMinute, durationHour, durationMinute, allDay,
+			timeZoneSensitive, type, repeating, recurrence, remindBy,
+			firstReminder, secondReminder, serviceContext);
+	}
+
+	/**
+	* @deprecated As of 6.2.0, replaced by {@link #addEvent(long, String,
+	String, String, int, int, int, int, int, int, int, boolean,
+	boolean, String, boolean, TZSRecurrence, int, int, int,
+	ServiceContext)}
+	*/
+	public static com.liferay.portlet.calendar.model.CalEvent addEvent(
+		long userId, java.lang.String title, java.lang.String description,
+		java.lang.String location, int startDateMonth, int startDateDay,
+		int startDateYear, int startDateHour, int startDateMinute,
+		int endDateMonth, int endDateDay, int endDateYear, int durationHour,
+		int durationMinute, boolean allDay, boolean timeZoneSensitive,
+		java.lang.String type, boolean repeating,
+		com.liferay.portal.kernel.cal.TZSRecurrence recurrence, int remindBy,
+		int firstReminder, int secondReminder,
+		com.liferay.portal.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getService()
+				   .addEvent(userId, title, description, location,
+			startDateMonth, startDateDay, startDateYear, startDateHour,
+			startDateMinute, endDateMonth, endDateDay, endDateYear,
+			durationHour, durationMinute, allDay, timeZoneSensitive, type,
+			repeating, recurrence, remindBy, firstReminder, secondReminder,
+			serviceContext);
+	}
+
+	public static void addEventResources(
+		com.liferay.portlet.calendar.model.CalEvent event,
+		boolean addGroupPermissions, boolean addGuestPermissions)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		getService()
+			.addEventResources(event, addGroupPermissions, addGuestPermissions);
+	}
+
+	public static void addEventResources(
+		com.liferay.portlet.calendar.model.CalEvent event,
+		java.lang.String[] groupPermissions, java.lang.String[] guestPermissions)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		getService().addEventResources(event, groupPermissions, guestPermissions);
+	}
+
+	public static void addEventResources(long eventId,
+		boolean addGroupPermissions, boolean addGuestPermissions)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		getService()
+			.addEventResources(eventId, addGroupPermissions, addGuestPermissions);
+	}
+
+	public static void addEventResources(long eventId,
+		java.lang.String[] groupPermissions, java.lang.String[] guestPermissions)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		getService()
+			.addEventResources(eventId, groupPermissions, guestPermissions);
+	}
+
+	public static void checkEvents()
+		throws com.liferay.portal.kernel.exception.SystemException {
+		getService().checkEvents();
+	}
+
+	public static com.liferay.portlet.calendar.model.CalEvent deleteEvent(
+		com.liferay.portlet.calendar.model.CalEvent event)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getService().deleteEvent(event);
+	}
+
+	public static com.liferay.portlet.calendar.model.CalEvent deleteEvent(
+		long eventId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getService().deleteEvent(eventId);
+	}
+
+	public static void deleteEvents(long groupId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		getService().deleteEvents(groupId);
+	}
+
+	public static java.io.File exportEvent(long userId, long eventId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getService().exportEvent(userId, eventId);
+	}
+
+	public static java.io.File exportEvents(long userId,
+		java.util.List<com.liferay.portlet.calendar.model.CalEvent> events,
+		java.lang.String fileName)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getService().exportEvents(userId, events, fileName);
+	}
+
+	public static java.io.File exportGroupEvents(long userId, long groupId,
+		java.lang.String fileName)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getService().exportGroupEvents(userId, groupId, fileName);
+	}
+
+	public static java.util.List<com.liferay.portlet.calendar.model.CalEvent> getCompanyEvents(
+		long companyId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().getCompanyEvents(companyId, start, end);
+	}
+
+	public static int getCompanyEventsCount(long companyId)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().getCompanyEventsCount(companyId);
+	}
+
+	public static com.liferay.portlet.calendar.model.CalEvent getEvent(
+		long eventId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getService().getEvent(eventId);
+	}
+
+	public static java.util.List<com.liferay.portlet.calendar.model.CalEvent> getEvents(
+		long groupId, java.util.Calendar cal)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().getEvents(groupId, cal);
+	}
+
+	public static java.util.List<com.liferay.portlet.calendar.model.CalEvent> getEvents(
+		long groupId, java.util.Calendar cal, java.lang.String type)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().getEvents(groupId, cal, type);
+	}
+
+	public static java.util.List<com.liferay.portlet.calendar.model.CalEvent> getEvents(
+		long groupId, java.util.Calendar cal, java.lang.String[] types)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().getEvents(groupId, cal, types);
+	}
+
+	public static java.util.List<com.liferay.portlet.calendar.model.CalEvent> getEvents(
+		long groupId, java.lang.String type, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().getEvents(groupId, type, start, end);
+	}
+
+	public static java.util.List<com.liferay.portlet.calendar.model.CalEvent> getEvents(
+		long groupId, java.lang.String[] types, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().getEvents(groupId, types, start, end);
+	}
+
+	public static int getEventsCount(long groupId, java.lang.String type)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().getEventsCount(groupId, type);
+	}
+
+	public static int getEventsCount(long groupId, java.lang.String[] types)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().getEventsCount(groupId, types);
+	}
+
+	public static java.util.List<com.liferay.portlet.calendar.model.CalEvent> getNoAssetEvents()
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().getNoAssetEvents();
+	}
+
+	public static java.util.List<com.liferay.portlet.calendar.model.CalEvent> getRepeatingEvents(
+		long groupId)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().getRepeatingEvents(groupId);
+	}
+
+	public static java.util.List<com.liferay.portlet.calendar.model.CalEvent> getRepeatingEvents(
+		long groupId, java.util.Calendar cal, java.lang.String[] types)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().getRepeatingEvents(groupId, cal, types);
+	}
+
+	public static boolean hasEvents(long groupId, java.util.Calendar cal)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().hasEvents(groupId, cal);
+	}
+
+	public static boolean hasEvents(long groupId, java.util.Calendar cal,
+		java.lang.String type)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().hasEvents(groupId, cal, type);
+	}
+
+	public static boolean hasEvents(long groupId, java.util.Calendar cal,
+		java.lang.String[] types)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().hasEvents(groupId, cal, types);
+	}
+
+	public static void importICal4j(long userId, long groupId,
+		java.io.InputStream inputStream)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		getService().importICal4j(userId, groupId, inputStream);
+	}
+
 	public static void updateAsset(long userId,
 		com.liferay.portlet.calendar.model.CalEvent event,
 		long[] assetCategoryIds, java.lang.String[] assetTagNames,
 		long[] assetLinkEntryIds)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		getService()
 			.updateAsset(userId, event, assetCategoryIds, assetTagNames,
 			assetLinkEntryIds);
-	}
-
-	/**
-	* Updates the cal event in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
-	*
-	* @param calEvent the cal event
-	* @return the cal event that was updated
-	*/
-	public static com.liferay.portlet.calendar.model.CalEvent updateCalEvent(
-		com.liferay.portlet.calendar.model.CalEvent calEvent) {
-		return getService().updateCalEvent(calEvent);
 	}
 
 	public static com.liferay.portlet.calendar.model.CalEvent updateEvent(
@@ -515,7 +576,8 @@ public class CalEventLocalServiceUtil {
 		com.liferay.portal.kernel.cal.TZSRecurrence recurrence, int remindBy,
 		int firstReminder, int secondReminder,
 		com.liferay.portal.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getService()
 				   .updateEvent(userId, eventId, title, description, location,
 			startDateMonth, startDateDay, startDateYear, startDateHour,
@@ -530,7 +592,6 @@ public class CalEventLocalServiceUtil {
 	boolean, boolean, String, boolean, TZSRecurrence, int, int,
 	int, ServiceContext)}
 	*/
-	@Deprecated
 	public static com.liferay.portlet.calendar.model.CalEvent updateEvent(
 		long userId, long eventId, java.lang.String title,
 		java.lang.String description, java.lang.String location,
@@ -542,7 +603,8 @@ public class CalEventLocalServiceUtil {
 		com.liferay.portal.kernel.cal.TZSRecurrence recurrence, int remindBy,
 		int firstReminder, int secondReminder,
 		com.liferay.portal.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getService()
 				   .updateEvent(userId, eventId, title, description, location,
 			startDateMonth, startDateDay, startDateYear, startDateHour,
@@ -566,7 +628,6 @@ public class CalEventLocalServiceUtil {
 	/**
 	 * @deprecated As of 6.2.0
 	 */
-	@Deprecated
 	public void setService(CalEventLocalService service) {
 	}
 

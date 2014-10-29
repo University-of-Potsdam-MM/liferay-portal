@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portlet.asset.service.impl;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.security.permission.ActionKeys;
 import com.liferay.portlet.asset.model.AssetTagProperty;
 import com.liferay.portlet.asset.service.base.AssetTagPropertyServiceBaseImpl;
@@ -40,10 +41,11 @@ public class AssetTagPropertyServiceImpl
 	 * @return the created asset tag property
 	 * @throws PortalException if the user did not have permission to update the
 	 *         asset tag, or if the key or value were invalid
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public AssetTagProperty addTagProperty(long tagId, String key, String value)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		AssetTagPermission.check(
 			getPermissionChecker(), tagId, ActionKeys.UPDATE);
@@ -59,9 +61,12 @@ public class AssetTagPropertyServiceImpl
 	 * @throws PortalException if an asset tag property with the primary key
 	 *         could not be found or if the user did not have permission to
 	 *         update the asset tag property
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public void deleteTagProperty(long tagPropertyId) throws PortalException {
+	public void deleteTagProperty(long tagPropertyId)
+		throws PortalException, SystemException {
+
 		AssetTagProperty assetTagProperty =
 			assetTagPropertyLocalService.getTagProperty(tagPropertyId);
 
@@ -77,9 +82,12 @@ public class AssetTagPropertyServiceImpl
 	 *
 	 * @param  tagId the primary key of the tag
 	 * @return the matching asset tag properties
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public List<AssetTagProperty> getTagProperties(long tagId) {
+	public List<AssetTagProperty> getTagProperties(long tagId)
+		throws SystemException {
+
 		return assetTagPropertyLocalService.getTagProperties(tagId);
 	}
 
@@ -89,10 +97,12 @@ public class AssetTagPropertyServiceImpl
 	 * @param  companyId the primary key of the company
 	 * @param  key the key that refers to some value
 	 * @return the matching asset tag properties
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public List<AssetTagProperty> getTagPropertyValues(
-		long companyId, String key) {
+			long companyId, String key)
+		throws SystemException {
 
 		return assetTagPropertyLocalService.getTagPropertyValues(
 			companyId, key);
@@ -108,11 +118,12 @@ public class AssetTagPropertyServiceImpl
 	 * @throws PortalException if an asset tag property with the primary key
 	 *         could not be found, if the user did not have permission to update
 	 *         the asset tag, or if the key or value were invalid
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public AssetTagProperty updateTagProperty(
 			long tagPropertyId, String key, String value)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		AssetTagProperty assetTagProperty =
 			assetTagPropertyLocalService.getTagProperty(tagPropertyId);

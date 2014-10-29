@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -32,9 +32,9 @@ boolean showSyntaxHelp = ((toggleValue != null) && toggleValue.equals("block"));
 <div align="right">
 	<liferay-ui:toggle
 		defaultShowContent="<%= false %>"
-		hideMessage='<%= LanguageUtil.get(request, "hide-syntax-help") + " &raquo;" %>'
+		hideMessage='<%= LanguageUtil.get(pageContext, "hide-syntax-help") + " &raquo;" %>'
 		id="<%= toggleId %>"
-		showMessage='<%= "&laquo; " + LanguageUtil.get(request, "show-syntax-help") %>'
+		showMessage='<%= "&laquo; " + LanguageUtil.get(pageContext, "show-syntax-help") %>'
 	/>
 </div>
 
@@ -48,7 +48,6 @@ boolean showSyntaxHelp = ((toggleValue != null) && toggleValue.equals("block"));
 			<c:when test='<%= format.equals("creole") %>'>
 				<liferay-ui:input-editor
 					configParams="<%= configParams %>"
-					contents="<%= content %>"
 					editorImpl="<%= EDITOR_WYSIWYG_IMPL_KEY %>"
 					fileBrowserParams="<%= fileBrowserParams %>"
 					toolbarSet="creole"
@@ -58,10 +57,10 @@ boolean showSyntaxHelp = ((toggleValue != null) && toggleValue.equals("block"));
 			<c:otherwise>
 				<liferay-ui:input-editor
 					configParams="<%= configParams %>"
-					contents="<%= content %>"
 					editorImpl="<%= EDITOR_SIMPLE_IMPL_KEY %>"
 					fileBrowserParams="<%= fileBrowserParams %>"
 					name="content"
+					resizable="<%= false %>"
 					width="100%"
 				/>
 			</c:otherwise>
@@ -82,10 +81,16 @@ boolean showSyntaxHelp = ((toggleValue != null) && toggleValue.equals("block"));
 	</aui:row>
 </div>
 
-<aui:script use="aui-base">
-	var CSS_EDITOR_WIDTH = 'col-md-8';
+<aui:script>
+	function <portlet:namespace />initEditor() {
+		return "<%= UnicodeFormatter.toString(content) %>";
+	}
+</aui:script>
 
-	var CSS_EDITOR_WIDTH_EXPANDED = 'col-md-12';
+<aui:script use="aui-base">
+	var CSS_EDITOR_WIDTH = 'span8';
+
+	var CSS_EDITOR_WIDTH_EXPANDED = 'span12';
 
 	Liferay.on(
 		'toggle:stateChange',

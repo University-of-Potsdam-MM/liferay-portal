@@ -26,7 +26,7 @@ AUI.add(
 
 		var AddApplication = A.Component.create(
 			{
-				AUGMENTS: Liferay.PortletBase,
+				AUGMENTS: [Dockbar.AddApplicationSearch, Liferay.PortletBase],
 
 				EXTENDS: Dockbar.AddBase,
 
@@ -41,9 +41,7 @@ AUI.add(
 						instance._addApplicationForm = instance.byId('addApplicationForm');
 						instance._entriesPanel = instance.byId('applicationList');
 
-						var togglerSelector = instance.ns('addApplicationPanelContainer');
-
-						var togglerDelegate = Liferay.component(togglerSelector);
+						var togglerDelegate = Liferay.component(instance.ns('addApplicationPanelContainer'));
 
 						if (togglerDelegate) {
 							togglerDelegate.plug(
@@ -54,17 +52,6 @@ AUI.add(
 								}
 							);
 						}
-
-						new Liferay.PanelSearch(
-							{
-								categorySelector: '.panel-page-category',
-								inputNode: instance.get('inputNode'),
-								nodeContainerSelector: '.lfr-content-item',
-								nodeList: config.nodeList,
-								nodeSelector: '.drag-content-item',
-								togglerId: togglerSelector
-							}
-						);
 
 						instance._bindUI();
 					},
@@ -84,11 +71,23 @@ AUI.add(
 					_bindUI: function() {
 						var instance = this;
 
-						instance._eventHandles.push(
-							instance._entriesPanel.delegate(STR_CLICK, instance._addApplication, SELECTOR_ADD_CONTENT_ITEM, instance),
-							instance._entriesPanel.delegate(STR_KEY, instance._addApplication, STR_ENTER_DOWN, SELECTOR_CONTENT_ITEM, instance),
-							Liferay.on('closePortlet', instance._onPortletClose, instance)
-						);
+						instance._entriesPanel.delegate(STR_CLICK, instance._addApplication, SELECTOR_ADD_CONTENT_ITEM, instance);
+
+						instance._entriesPanel.delegate(STR_KEY, instance._addApplication, STR_ENTER_DOWN, SELECTOR_CONTENT_ITEM, instance);
+
+						Liferay.on('closePortlet', instance._onPortletClose, instance);
+
+						Liferay.on('showTab', instance._onShowTab, instance);
+					},
+
+					_onShowTab: function(event) {
+						var instance = this;
+
+						if (event.namespace.indexOf(instance.get('namespace')) === 0) {
+							var index = event.selectedIndex;
+
+							Liferay.Store('liferay_addpanel_tab', event.names[index]);
+						}
 					},
 
 					_onPortletClose: function(event) {
@@ -110,6 +109,6 @@ AUI.add(
 	},
 	'',
 	{
-		requires: ['aui-io-request', 'event-key', 'event-mouseenter', 'liferay-dockbar', 'liferay-dockbar-add-base', 'liferay-panel-search', 'liferay-portlet-base', 'liferay-toggler-interaction']
+		requires: ['key-event', 'liferay-dockbar', 'liferay-dockbar-add-base', 'liferay-dockbar-add-application-search', 'liferay-toggler-interaction']
 	}
 );

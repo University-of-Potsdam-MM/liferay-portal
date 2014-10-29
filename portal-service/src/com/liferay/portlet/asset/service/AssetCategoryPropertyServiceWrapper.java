@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -34,20 +34,6 @@ public class AssetCategoryPropertyServiceWrapper
 		_assetCategoryPropertyService = assetCategoryPropertyService;
 	}
 
-	@Override
-	public com.liferay.portlet.asset.model.AssetCategoryProperty addCategoryProperty(
-		long entryId, java.lang.String key, java.lang.String value)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _assetCategoryPropertyService.addCategoryProperty(entryId, key,
-			value);
-	}
-
-	@Override
-	public void deleteCategoryProperty(long categoryPropertyId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_assetCategoryPropertyService.deleteCategoryProperty(categoryPropertyId);
-	}
-
 	/**
 	* Returns the Spring bean ID for this bean.
 	*
@@ -56,19 +42,6 @@ public class AssetCategoryPropertyServiceWrapper
 	@Override
 	public java.lang.String getBeanIdentifier() {
 		return _assetCategoryPropertyService.getBeanIdentifier();
-	}
-
-	@Override
-	public java.util.List<com.liferay.portlet.asset.model.AssetCategoryProperty> getCategoryProperties(
-		long entryId) {
-		return _assetCategoryPropertyService.getCategoryProperties(entryId);
-	}
-
-	@Override
-	public java.util.List<com.liferay.portlet.asset.model.AssetCategoryProperty> getCategoryPropertyValues(
-		long companyId, java.lang.String key) {
-		return _assetCategoryPropertyService.getCategoryPropertyValues(companyId,
-			key);
 	}
 
 	/**
@@ -82,26 +55,48 @@ public class AssetCategoryPropertyServiceWrapper
 	}
 
 	@Override
-	public com.liferay.portlet.asset.model.AssetCategoryProperty updateCategoryProperty(
-		long categoryPropertyId, java.lang.String key, java.lang.String value)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _assetCategoryPropertyService.updateCategoryProperty(categoryPropertyId,
-			key, value);
+	public com.liferay.portlet.asset.model.AssetCategoryProperty addCategoryProperty(
+		long entryId, java.lang.String key, java.lang.String value)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _assetCategoryPropertyService.addCategoryProperty(entryId, key,
+			value);
+	}
+
+	@Override
+	public void deleteCategoryProperty(long categoryPropertyId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		_assetCategoryPropertyService.deleteCategoryProperty(categoryPropertyId);
+	}
+
+	@Override
+	public java.util.List<com.liferay.portlet.asset.model.AssetCategoryProperty> getCategoryProperties(
+		long entryId)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return _assetCategoryPropertyService.getCategoryProperties(entryId);
+	}
+
+	@Override
+	public java.util.List<com.liferay.portlet.asset.model.AssetCategoryProperty> getCategoryPropertyValues(
+		long companyId, java.lang.String key)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return _assetCategoryPropertyService.getCategoryPropertyValues(companyId,
+			key);
 	}
 
 	@Override
 	public com.liferay.portlet.asset.model.AssetCategoryProperty updateCategoryProperty(
-		long userId, long categoryPropertyId, java.lang.String key,
-		java.lang.String value)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _assetCategoryPropertyService.updateCategoryProperty(userId,
-			categoryPropertyId, key, value);
+		long categoryPropertyId, java.lang.String key, java.lang.String value)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _assetCategoryPropertyService.updateCategoryProperty(categoryPropertyId,
+			key, value);
 	}
 
 	/**
 	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedService}
 	 */
-	@Deprecated
 	public AssetCategoryPropertyService getWrappedAssetCategoryPropertyService() {
 		return _assetCategoryPropertyService;
 	}
@@ -109,7 +104,6 @@ public class AssetCategoryPropertyServiceWrapper
 	/**
 	 * @deprecated As of 6.1.0, replaced by {@link #setWrappedService}
 	 */
-	@Deprecated
 	public void setWrappedAssetCategoryPropertyService(
 		AssetCategoryPropertyService assetCategoryPropertyService) {
 		_assetCategoryPropertyService = assetCategoryPropertyService;

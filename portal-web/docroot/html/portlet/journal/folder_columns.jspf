@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,63 +14,37 @@
  */
 --%>
 
-<liferay-ui:search-container-column-text
-	name="id"
-	value="<%= String.valueOf(curFolder.getFolderId()) %>"
-/>
+<%
 
-<liferay-ui:search-container-column-text
-	name="title"
->
+// Article id
 
-	<%
-	AssetRendererFactory assetRendererFactory = AssetRendererFactoryRegistryUtil.getAssetRendererFactoryByClassName(JournalFolder.class.getName());
+row.addText(String.valueOf(curFolder.getFolderId()));
 
-	AssetRenderer assetRenderer = assetRendererFactory.getAssetRenderer(curFolder.getFolderId());
+// Title
 
-	PortletURL rowURL = liferayPortletResponse.createRenderURL();
+TextSearchEntry folderTitleTextSearchEntry = new TextSearchEntry();
 
-	rowURL.setParameter("struts_action", "/journal/view");
-	rowURL.setParameter("redirect", currentURL);
-	rowURL.setParameter("groupId", String.valueOf(curFolder.getGroupId()));
-	rowURL.setParameter("folderId", String.valueOf(curFolder.getFolderId()));
-	rowURL.setParameter("displayStyle", displayStyle);
-	%>
+folderTitleTextSearchEntry.setName(folderTitle);
 
-	<liferay-ui:icon
-		iconCssClass="<%= assetRenderer.getIconCssClass() %>"
-		label="<%= true %>"
-		message="<%= HtmlUtil.escape(curFolder.getName()) %>"
-		url="<%= rowURL.toString() %>"
-	/>
-</liferay-ui:search-container-column-text>
+row.addSearchEntry(folderTitleTextSearchEntry);
 
-<liferay-ui:search-container-column-text
-	name="status"
-	value="--"
-/>
+// Status
 
-<liferay-ui:search-container-column-date
-	name="modified-date"
-	value="<%= curFolder.getModifiedDate() %>"
-/>
+row.addText("--");
 
-<liferay-ui:search-container-column-text
-	name="display-date"
-	value="--"
-/>
+// Modified date
 
-<liferay-ui:search-container-column-text
-	name="author"
-	value="<%= PortalUtil.getUserName(curFolder) %>"
-/>
+row.addDate(curFolder.getModifiedDate());
 
-<liferay-ui:search-container-column-text
-	name="type"
-	value="--"
-/>
+// Display date
 
-<liferay-ui:search-container-column-jsp
-	cssClass="entry-action"
-	path="/html/portlet/journal/folder_action.jsp"
-/>
+row.addText("--");
+
+// Author
+
+row.addText(PortalUtil.getUserName(curFolder));
+
+// Action
+
+row.addJSP("right", SearchEntry.DEFAULT_VALIGN, "/html/portlet/journal/folder_action.jsp");
+%>

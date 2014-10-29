@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,10 +18,6 @@
 
 <%
 String tabs1 = ParamUtil.getString(request, "tabs1", "my-sites");
-
-if (!tabs1.equals("my-sites") && !tabs1.equals("available-sites")) {
-	tabs1 = "my-sites";
-}
 
 PortletURL portletURL = renderResponse.createRenderURL();
 
@@ -58,7 +54,7 @@ request.setAttribute("view.jsp-tabs1", tabs1);
 			groupParams.put("usersGroups", new Long(user.getUserId()));
 			groupParams.put("active", Boolean.TRUE);
 		}
-		else {
+		else if (tabs1.equals("available-sites")) {
 			List types = new ArrayList();
 
 			types.add(new Integer(GroupConstants.TYPE_SITE_OPEN));
@@ -93,7 +89,7 @@ request.setAttribute("view.jsp-tabs1", tabs1);
 		</liferay-ui:search-container-results>
 
 		<aui:nav-bar>
-			<aui:nav-bar-search file="/html/portlet/users_admin/group_search.jsp" searchContainer="<%= searchContainer %>" />
+			<aui:nav-bar-search cssClass="pull-right" file="/html/portlet/users_admin/group_search.jsp" searchContainer="<%= searchContainer %>" />
 		</aui:nav-bar>
 
 		<liferay-ui:error exception="<%= RequiredGroupException.class %>">
@@ -146,25 +142,32 @@ request.setAttribute("view.jsp-tabs1", tabs1);
 			%>
 
 			<liferay-ui:search-container-column-text
+				buffer="buffer"
 				name="name"
 				orderable="<%= true %>"
 			>
-				<c:choose>
-					<c:when test="<%= rowURL != null %>">
-						<a href="<%= rowURL %>" target="_blank">
-							<strong><%= HtmlUtil.escape(group.getDescriptiveName(locale)) %></strong>
-						</a>
-					</c:when>
-					<c:otherwise>
-						<strong><%= HtmlUtil.escape(group.getDescriptiveName(locale)) %></strong>
-					</c:otherwise>
-				</c:choose>
 
-				<c:if test='<%= !tabs1.equals("my-sites") && Validator.isNotNull(group.getDescription()) %>'>
-					<br />
+			<%
+			if (rowURL != null) {
+				buffer.append("<a href=\"");
+				buffer.append(rowURL.toString());
+				buffer.append("\" target=\"_blank\"><strong>");
+				buffer.append(HtmlUtil.escape(group.getDescriptiveName(locale)));
+				buffer.append("</strong></a>");
+			}
+			else {
+				buffer.append("<strong>");
+				buffer.append(HtmlUtil.escape(group.getDescriptiveName(locale)));
+				buffer.append("</strong>");
+			}
 
-					<em><%= HtmlUtil.escape(group.getDescription()) %></em>
-				</c:if>
+			if (!tabs1.equals("my-sites") && Validator.isNotNull(group.getDescription())) {
+				buffer.append("<br /><em>");
+				buffer.append(HtmlUtil.escape(group.getDescription()));
+				buffer.append("</em>");
+			}
+			%>
+
 			</liferay-ui:search-container-column-text>
 
 			<%
@@ -197,9 +200,9 @@ request.setAttribute("view.jsp-tabs1", tabs1);
 
 			<liferay-ui:search-container-column-jsp
 				align="right"
-				cssClass="entry-action"
 				path="/html/portlet/my_sites/site_action.jsp"
 			/>
+
 		</liferay-ui:search-container-row>
 
 		<liferay-ui:search-iterator />

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,19 +14,17 @@
 
 package com.liferay.portlet.messageboards.lar;
 
-import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.lar.BaseStagedModelDataHandler;
 import com.liferay.portal.kernel.lar.ExportImportPathUtil;
 import com.liferay.portal.kernel.lar.PortletDataContext;
 import com.liferay.portal.kernel.lar.StagedModelDataHandlerUtil;
-import com.liferay.portal.kernel.lar.StagedModelModifiedDateComparator;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.trash.TrashHandler;
 import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.ObjectValuePair;
 import com.liferay.portal.kernel.util.StreamUtil;
@@ -34,18 +32,13 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portlet.documentlibrary.lar.FileEntryUtil;
-import com.liferay.portlet.documentlibrary.model.DLFileEntry;
 import com.liferay.portlet.documentlibrary.model.DLFolderConstants;
 import com.liferay.portlet.messageboards.model.MBCategory;
 import com.liferay.portlet.messageboards.model.MBCategoryConstants;
-import com.liferay.portlet.messageboards.model.MBDiscussion;
 import com.liferay.portlet.messageboards.model.MBMessage;
 import com.liferay.portlet.messageboards.model.MBThread;
-import com.liferay.portlet.messageboards.service.MBDiscussionLocalServiceUtil;
 import com.liferay.portlet.messageboards.service.MBMessageLocalServiceUtil;
 import com.liferay.portlet.messageboards.service.MBThreadLocalServiceUtil;
-import com.liferay.portlet.ratings.model.RatingsEntry;
-import com.liferay.portlet.ratings.service.RatingsEntryLocalServiceUtil;
 
 import java.io.InputStream;
 
@@ -65,37 +58,15 @@ public class MBMessageStagedModelDataHandler
 	@Override
 	public void deleteStagedModel(
 			String uuid, long groupId, String className, String extraData)
-		throws PortalException {
+		throws PortalException, SystemException {
 
-		MBMessage message = fetchStagedModelByUuidAndGroupId(uuid, groupId);
+		MBMessage message =
+			MBMessageLocalServiceUtil.fetchMBMessageByUuidAndGroupId(
+				uuid, groupId);
 
 		if (message != null) {
 			MBMessageLocalServiceUtil.deleteMessage(message);
 		}
-	}
-
-	@Override
-	public MBMessage fetchStagedModelByUuidAndCompanyId(
-		String uuid, long companyId) {
-
-		List<MBMessage> messages =
-			MBMessageLocalServiceUtil.getMBMessagesByUuidAndCompanyId(
-				uuid, companyId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-				new StagedModelModifiedDateComparator<MBMessage>());
-
-		if (ListUtil.isEmpty(messages)) {
-			return null;
-		}
-
-		return messages.get(0);
-	}
-
-	@Override
-	public MBMessage fetchStagedModelByUuidAndGroupId(
-		String uuid, long groupId) {
-
-		return MBMessageLocalServiceUtil.fetchMBMessageByUuidAndGroupId(
-			uuid, groupId);
 	}
 
 	@Override
@@ -108,84 +79,27 @@ public class MBMessageStagedModelDataHandler
 		return message.getSubject();
 	}
 
-	protected MBMessage addDiscussionMessage(
-			PortletDataContext portletDataContext, long userId, long threadId,
-			long parentMessageId, MBMessage message,
-			ServiceContext serviceContext)
-		throws PortalException {
-
-		MBDiscussion discussion =
-			MBDiscussionLocalServiceUtil.getThreadDiscussion(threadId);
-
-		MBMessage importedMessage = null;
-
-		if (!message.isRoot()) {
-			importedMessage = MBMessageLocalServiceUtil.addDiscussionMessage(
-				userId, message.getUserName(),
-				portletDataContext.getScopeGroupId(), discussion.getClassName(),
-				discussion.getClassPK(), threadId, parentMessageId,
-				message.getSubject(), message.getBody(), serviceContext);
-		}
-		else {
-			MBThread thread = MBThreadLocalServiceUtil.getThread(threadId);
-
-			importedMessage = MBMessageLocalServiceUtil.getMBMessage(
-				thread.getRootMessageId());
-		}
-
-		return importedMessage;
-	}
-
 	@Override
 	protected void doExportStagedModel(
 			PortletDataContext portletDataContext, MBMessage message)
 		throws Exception {
 
-		if (message.isDiscussion()) {
-			MBDiscussion discussion =
-				MBDiscussionLocalServiceUtil.getDiscussion(
-					message.getClassName(), message.getClassPK());
+		if (message.getCategoryId() ==
+				MBCategoryConstants.DISCUSSION_CATEGORY_ID) {
 
-			StagedModelDataHandlerUtil.exportReferenceStagedModel(
-				portletDataContext, message, discussion,
-				PortletDataContext.REFERENCE_TYPE_PARENT);
-
-			// Ratings that belong to discussion messages cannot be exported
-			// automatically because of the special class name and class PK pair
-
-			List<RatingsEntry> ratingsEntries =
-				RatingsEntryLocalServiceUtil.getEntries(
-					MBDiscussion.class.getName(), message.getMessageId());
-
-			for (RatingsEntry ratingsEntry : ratingsEntries) {
-				StagedModelDataHandlerUtil.exportReferenceStagedModel(
-					portletDataContext, message, ratingsEntry,
-					PortletDataContext.REFERENCE_TYPE_WEAK);
-			}
-		}
-		else if (message.getCategoryId() !=
-					MBCategoryConstants.DEFAULT_PARENT_CATEGORY_ID) {
-
-			StagedModelDataHandlerUtil.exportReferenceStagedModel(
-				portletDataContext, message, message.getCategory(),
-				PortletDataContext.REFERENCE_TYPE_PARENT);
+			return;
 		}
 
-		if (!message.isRoot()) {
-			MBMessage parentMessage = MBMessageLocalServiceUtil.getMessage(
-				message.getParentMessageId());
+		StagedModelDataHandlerUtil.exportReferenceStagedModel(
+			portletDataContext, message, message.getCategory(),
+			PortletDataContext.REFERENCE_TYPE_PARENT);
 
-			StagedModelDataHandlerUtil.exportReferenceStagedModel(
-				portletDataContext, message, parentMessage,
-				PortletDataContext.REFERENCE_TYPE_PARENT);
-		}
+		Element messageElement = portletDataContext.getExportDataElement(
+			message);
 
 		message.setPriority(message.getPriority());
 
 		MBThread thread = message.getThread();
-
-		Element messageElement = portletDataContext.getExportDataElement(
-			message);
 
 		messageElement.addAttribute(
 			"question", String.valueOf(thread.isQuestion()));
@@ -200,8 +114,8 @@ public class MBMessageStagedModelDataHandler
 		if (hasAttachmentsFileEntries) {
 			for (FileEntry fileEntry : message.getAttachmentsFileEntries()) {
 				StagedModelDataHandlerUtil.exportReferenceStagedModel(
-					portletDataContext, message, fileEntry,
-					PortletDataContext.REFERENCE_TYPE_WEAK);
+					portletDataContext, message, MBMessage.class, fileEntry,
+					FileEntry.class, PortletDataContext.REFERENCE_TYPE_WEAK);
 			}
 
 			long folderId = message.getAttachmentsFolderId();
@@ -222,6 +136,8 @@ public class MBMessageStagedModelDataHandler
 		throws Exception {
 
 		long userId = portletDataContext.getUserId(message.getUserUuid());
+
+		String userName = message.getUserName();
 
 		Map<Long, Long> categoryIds =
 			(Map<Long, Long>)portletDataContext.getNewPrimaryKeysMap(
@@ -254,88 +170,65 @@ public class MBMessageStagedModelDataHandler
 			ServiceContext serviceContext =
 				portletDataContext.createServiceContext(message);
 
+			if ((parentCategoryId !=
+					MBCategoryConstants.DEFAULT_PARENT_CATEGORY_ID) &&
+				(parentCategoryId !=
+					MBCategoryConstants.DISCUSSION_CATEGORY_ID) &&
+				(parentCategoryId == message.getCategoryId())) {
+
+				StagedModelDataHandlerUtil.importReferenceStagedModel(
+					portletDataContext, message, MBCategory.class,
+					parentCategoryId);
+
+				parentCategoryId = MapUtil.getLong(
+					categoryIds, message.getCategoryId(),
+					message.getCategoryId());
+			}
+
 			MBMessage importedMessage = null;
 
 			if (portletDataContext.isDataStrategyMirror()) {
-				MBMessage existingMessage = fetchStagedModelByUuidAndGroupId(
-					message.getUuid(), portletDataContext.getScopeGroupId());
+				MBMessage existingMessage =
+					MBMessageLocalServiceUtil.fetchMBMessageByUuidAndGroupId(
+						message.getUuid(),
+						portletDataContext.getScopeGroupId());
 
 				if (existingMessage == null) {
 					serviceContext.setUuid(message.getUuid());
 
-					if (message.isDiscussion()) {
-						importedMessage = addDiscussionMessage(
-							portletDataContext, userId, threadId,
-							parentMessageId, message, serviceContext);
-					}
-					else {
-						importedMessage = MBMessageLocalServiceUtil.addMessage(
-							userId, message.getUserName(),
-							portletDataContext.getScopeGroupId(),
-							parentCategoryId, threadId, parentMessageId,
-							message.getSubject(), message.getBody(),
-							message.getFormat(), inputStreamOVPs,
-							message.getAnonymous(), message.getPriority(),
-							message.getAllowPingbacks(), serviceContext);
-					}
-				}
-				else {
-					if (!message.isRoot() && message.isDiscussion()) {
-						MBDiscussion discussion =
-							MBDiscussionLocalServiceUtil.getThreadDiscussion(
-								threadId);
-
-						importedMessage =
-							MBMessageLocalServiceUtil.updateDiscussionMessage(
-								userId, existingMessage.getMessageId(),
-								discussion.getClassName(),
-								discussion.getClassPK(), message.getSubject(),
-								message.getBody(), serviceContext);
-					}
-					else {
-						importedMessage =
-							MBMessageLocalServiceUtil.updateMessage(
-								userId, existingMessage.getMessageId(),
-								message.getSubject(), message.getBody(),
-								inputStreamOVPs, new ArrayList<String>(),
-								message.getPriority(),
-								message.getAllowPingbacks(), serviceContext);
-					}
-				}
-			}
-			else {
-				if (message.isDiscussion()) {
-					importedMessage = addDiscussionMessage(
-						portletDataContext, userId, threadId, parentMessageId,
-						message, serviceContext);
-				}
-				else {
 					importedMessage = MBMessageLocalServiceUtil.addMessage(
-						userId, message.getUserName(),
-						portletDataContext.getScopeGroupId(), parentCategoryId,
-						threadId, parentMessageId, message.getSubject(),
-						message.getBody(), message.getFormat(), inputStreamOVPs,
+						userId, userName, portletDataContext.getScopeGroupId(),
+						parentCategoryId, threadId, parentMessageId,
+						message.getSubject(), message.getBody(),
+						message.getFormat(), inputStreamOVPs,
 						message.getAnonymous(), message.getPriority(),
 						message.getAllowPingbacks(), serviceContext);
 				}
+				else {
+					importedMessage = MBMessageLocalServiceUtil.updateMessage(
+						userId, existingMessage.getMessageId(),
+						message.getSubject(), message.getBody(),
+						inputStreamOVPs, new ArrayList<String>(),
+						message.getPriority(), message.getAllowPingbacks(),
+						serviceContext);
+				}
+			}
+			else {
+				importedMessage = MBMessageLocalServiceUtil.addMessage(
+					userId, userName, portletDataContext.getScopeGroupId(),
+					parentCategoryId, threadId, parentMessageId,
+					message.getSubject(), message.getBody(),
+					message.getFormat(), inputStreamOVPs,
+					message.getAnonymous(), message.getPriority(),
+					message.getAllowPingbacks(), serviceContext);
 			}
 
-			MBMessageLocalServiceUtil.updateAnswer(
-				importedMessage, message.isAnswer(), false);
+			importedMessage.setAnswer(message.getAnswer());
 
-			if (importedMessage.isRoot() && !importedMessage.isDiscussion()) {
+			if (importedMessage.isRoot()) {
 				MBThreadLocalServiceUtil.updateQuestion(
 					importedMessage.getThreadId(),
 					GetterUtil.getBoolean(element.attributeValue("question")));
-			}
-
-			if (message.isDiscussion()) {
-				Map<Long, Long> discussionIds =
-					(Map<Long, Long>)portletDataContext.getNewPrimaryKeysMap(
-						MBDiscussion.class);
-
-				discussionIds.put(
-					message.getMessageId(), importedMessage.getMessageId());
 			}
 
 			threadIds.put(message.getThreadId(), importedMessage.getThreadId());
@@ -360,8 +253,9 @@ public class MBMessageStagedModelDataHandler
 
 		long userId = portletDataContext.getUserId(message.getUserUuid());
 
-		MBMessage existingMessage = fetchStagedModelByUuidAndGroupId(
-			message.getUuid(), portletDataContext.getScopeGroupId());
+		MBMessage existingMessage =
+			MBMessageLocalServiceUtil.fetchMBMessageByUuidAndGroupId(
+				message.getUuid(), portletDataContext.getScopeGroupId());
 
 		if (existingMessage == null) {
 			return;
@@ -404,7 +298,7 @@ public class MBMessageStagedModelDataHandler
 
 		List<Element> attachmentElements =
 			portletDataContext.getReferenceDataElements(
-				messageElement, DLFileEntry.class,
+				messageElement, FileEntry.class,
 				PortletDataContext.REFERENCE_TYPE_WEAK);
 
 		for (Element attachmentElement : attachmentElements) {

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,19 +14,22 @@
 
 package com.liferay.portal.json.transformer;
 
-import com.liferay.portal.kernel.json.JSONContext;
 import com.liferay.portal.kernel.repository.model.RepositoryModel;
+
+import flexjson.JSONContext;
 
 /**
  * @author Igor Spasic
  */
-public class RepositoryModelJSONTransformer extends ObjectTransformer {
+public class RepositoryModelJSONTransformer extends BaseJSONTransformer {
 
 	@Override
-	public void transform(JSONContext jsonContext, Object object) {
+	public void transform(Object object) {
 		RepositoryModel<?> repositoryModel = (RepositoryModel<?>)object;
 
-		super.transform(jsonContext, repositoryModel.getModel());
+		JSONContext jsonContext = getContext();
+
+		jsonContext.transform(repositoryModel.getModel());
 	}
 
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -13,8 +13,6 @@
  */
 
 package com.liferay.portal.service.http;
-
-import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -51,14 +49,14 @@ import com.liferay.portal.service.OrgLaborServiceUtil;
  * @see com.liferay.portal.service.OrgLaborServiceUtil
  * @generated
  */
-@ProviderType
 public class OrgLaborServiceHttp {
 	public static com.liferay.portal.model.OrgLabor addOrgLabor(
 		HttpPrincipal httpPrincipal, long organizationId, int typeId,
 		int sunOpen, int sunClose, int monOpen, int monClose, int tueOpen,
 		int tueClose, int wedOpen, int wedClose, int thuOpen, int thuClose,
 		int friOpen, int friClose, int satOpen, int satClose)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(OrgLaborServiceUtil.class,
 					"addOrgLabor", _addOrgLaborParameterTypes0);
@@ -78,6 +76,10 @@ public class OrgLaborServiceHttp {
 					throw (com.liferay.portal.kernel.exception.PortalException)e;
 				}
 
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
+				}
+
 				throw new com.liferay.portal.kernel.exception.SystemException(e);
 			}
 
@@ -92,7 +94,8 @@ public class OrgLaborServiceHttp {
 
 	public static void deleteOrgLabor(HttpPrincipal httpPrincipal,
 		long orgLaborId)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(OrgLaborServiceUtil.class,
 					"deleteOrgLabor", _deleteOrgLaborParameterTypes1);
@@ -108,6 +111,10 @@ public class OrgLaborServiceHttp {
 					throw (com.liferay.portal.kernel.exception.PortalException)e;
 				}
 
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
+				}
+
 				throw new com.liferay.portal.kernel.exception.SystemException(e);
 			}
 		}
@@ -120,7 +127,8 @@ public class OrgLaborServiceHttp {
 
 	public static com.liferay.portal.model.OrgLabor getOrgLabor(
 		HttpPrincipal httpPrincipal, long orgLaborId)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(OrgLaborServiceUtil.class,
 					"getOrgLabor", _getOrgLaborParameterTypes2);
@@ -138,6 +146,10 @@ public class OrgLaborServiceHttp {
 					throw (com.liferay.portal.kernel.exception.PortalException)e;
 				}
 
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
+				}
+
 				throw new com.liferay.portal.kernel.exception.SystemException(e);
 			}
 
@@ -152,7 +164,8 @@ public class OrgLaborServiceHttp {
 
 	public static java.util.List<com.liferay.portal.model.OrgLabor> getOrgLabors(
 		HttpPrincipal httpPrincipal, long organizationId)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(OrgLaborServiceUtil.class,
 					"getOrgLabors", _getOrgLaborsParameterTypes3);
@@ -168,6 +181,10 @@ public class OrgLaborServiceHttp {
 			catch (Exception e) {
 				if (e instanceof com.liferay.portal.kernel.exception.PortalException) {
 					throw (com.liferay.portal.kernel.exception.PortalException)e;
+				}
+
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
 				}
 
 				throw new com.liferay.portal.kernel.exception.SystemException(e);
@@ -187,7 +204,8 @@ public class OrgLaborServiceHttp {
 		int sunClose, int monOpen, int monClose, int tueOpen, int tueClose,
 		int wedOpen, int wedClose, int thuOpen, int thuClose, int friOpen,
 		int friClose, int satOpen, int satClose)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(OrgLaborServiceUtil.class,
 					"updateOrgLabor", _updateOrgLaborParameterTypes4);
@@ -205,6 +223,10 @@ public class OrgLaborServiceHttp {
 			catch (Exception e) {
 				if (e instanceof com.liferay.portal.kernel.exception.PortalException) {
 					throw (com.liferay.portal.kernel.exception.PortalException)e;
+				}
+
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
 				}
 
 				throw new com.liferay.portal.kernel.exception.SystemException(e);

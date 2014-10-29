@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -39,7 +39,7 @@ PortalUtil.addPortletBreadcrumbEntry(request, wikiPage.getTitle(), portletURL.to
 
 portletURL.setParameter("struts_action", "/wiki/view_page_attachments");
 
-PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.get(request, "attachments"), portletURL.toString());
+PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.get(pageContext, "attachments"), portletURL.toString());
 %>
 
 <c:if test="<%= !viewTrashAttachments %>">
@@ -99,9 +99,9 @@ PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.get(request, "attachm
 
 				<liferay-ui:icon
 					cssClass="trash-attachments"
-					iconCssClass="icon-trash"
+					image="delete_attachment"
 					label="<%= true %>"
-					message='<%= LanguageUtil.format(request, (deletedAttachmentsCount == 1) ? "x-recently-removed-attachment" : "x-recently-removed-attachments", deletedAttachmentsCount, false) %>'
+					message='<%= LanguageUtil.format(pageContext, (deletedAttachmentsCount == 1) ? "x-recently-removed-attachment" : "x-recently-removed-attachments", deletedAttachmentsCount) %>'
 					url="<%= viewTrashAttachmentsURL %>"
 				/>
 			</c:if>
@@ -176,25 +176,14 @@ iteratorURL.setParameter("viewTrashAttachments", String.valueOf(viewTrashAttachm
 			status = WorkflowConstants.STATUS_IN_TRASH;
 		}
 
-		String rowHREF = PortletFileRepositoryUtil.getDownloadPortletFileEntryURL(themeDisplay, fileEntry, "status=" + status);
+		String rowHREF = PortletFileRepositoryUtil.getPortletFileEntryURL(themeDisplay, fileEntry, "status=" + status);
 		%>
 
 		<liferay-ui:search-container-column-text
 			href="<%= rowHREF %>"
 			name="file-name"
 		>
-
-			<%
-			AssetRendererFactory assetRendererFactory = AssetRendererFactoryRegistryUtil.getAssetRendererFactoryByClassName(DLFileEntry.class.getName());
-
-			AssetRenderer assetRenderer = assetRendererFactory.getAssetRenderer(fileEntry.getFileEntryId());
-			%>
-
-			<liferay-ui:icon
-				iconCssClass="<%= assetRenderer.getIconCssClass() %>"
-				label="<%= true %>"
-				message="<%= TrashUtil.getOriginalTitle(fileEntry.getTitle()) %>"
-			/>
+			<img align="left" alt="" border="0" src="<%= themeDisplay.getPathThemeImages() %>/file_system/small/<%= DLUtil.getFileIcon(fileEntry.getExtension()) %>.png"> <%= TrashUtil.getOriginalTitle(fileEntry.getTitle()) %>
 		</liferay-ui:search-container-column-text>
 
 		<liferay-ui:search-container-column-text
@@ -205,7 +194,6 @@ iteratorURL.setParameter("viewTrashAttachments", String.valueOf(viewTrashAttachm
 
 		<liferay-ui:search-container-column-jsp
 			align="right"
-			cssClass="entry-action"
 			path="/html/portlet/wiki/page_attachment_action.jsp"
 		/>
 	</liferay-ui:search-container-row>

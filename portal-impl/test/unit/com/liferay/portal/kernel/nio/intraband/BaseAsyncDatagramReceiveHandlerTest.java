@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,11 +14,10 @@
 
 package com.liferay.portal.kernel.nio.intraband;
 
-import com.liferay.portal.kernel.test.CaptureHandler;
 import com.liferay.portal.kernel.test.CodeCoverageAssertor;
 import com.liferay.portal.kernel.test.JDKLoggerTestUtil;
 import com.liferay.portal.test.AdviseWith;
-import com.liferay.portal.test.runners.AspectJMockingNewClassLoaderJUnitTestRunner;
+import com.liferay.portal.test.AspectJMockingNewClassLoaderJUnitTestRunner;
 
 import java.util.List;
 import java.util.logging.Level;
@@ -42,30 +41,33 @@ public class BaseAsyncDatagramReceiveHandlerTest {
 	@AdviseWith(adviceClasses = {PortalExecutorManagerUtilAdvice.class})
 	@Test
 	public void testErrorDispatch() {
-		CaptureHandler captureHandler = JDKLoggerTestUtil.configureJDKLogger(
+		List<LogRecord> logRecords = JDKLoggerTestUtil.configureJDKLogger(
 			BaseAsyncDatagramReceiveHandler.class.getName(), Level.SEVERE);
 
-		try {
-			List<LogRecord> logRecords = captureHandler.getLogRecords();
+		ErrorAsyncDatagramReceiveHandler errorAsyncDatagramReceiveHandler =
+			new ErrorAsyncDatagramReceiveHandler();
 
-			ErrorAsyncDatagramReceiveHandler errorAsyncDatagramReceiveHandler =
-				new ErrorAsyncDatagramReceiveHandler();
+		errorAsyncDatagramReceiveHandler.receive(null, null);
 
-			errorAsyncDatagramReceiveHandler.receive(null, null);
+		Assert.assertEquals(1, logRecords.size());
 
-			Assert.assertEquals(1, logRecords.size());
+		LogRecord logRecord = logRecords.get(0);
 
-			LogRecord logRecord = logRecords.get(0);
+		Assert.assertEquals("Unable to dispatch", logRecord.getMessage());
 
-			Assert.assertEquals("Unable to dispatch", logRecord.getMessage());
+		Throwable throwable = logRecord.getThrown();
 
-			Throwable throwable = logRecord.getThrown();
+		Assert.assertEquals(Exception.class, throwable.getClass());
 
-			Assert.assertEquals(Exception.class, throwable.getClass());
-		}
-		finally {
-			captureHandler.close();
-		}
+		logRecords = JDKLoggerTestUtil.configureJDKLogger(
+			BaseAsyncDatagramReceiveHandler.class.getName(), Level.OFF);
+
+		errorAsyncDatagramReceiveHandler =
+			new ErrorAsyncDatagramReceiveHandler();
+
+		errorAsyncDatagramReceiveHandler.receive(null, null);
+
+		Assert.assertTrue(logRecords.isEmpty());
 	}
 
 	@AdviseWith(adviceClasses = {PortalExecutorManagerUtilAdvice.class})
@@ -74,7 +76,7 @@ public class BaseAsyncDatagramReceiveHandlerTest {
 		DummyAsyncDatagramReceiveHandler dummyAsyncDatagramReceiveHandler =
 			new DummyAsyncDatagramReceiveHandler();
 
-		dummyAsyncDatagramReceiveHandler.receive(null, null);
+		dummyAsyncDatagramReceiveHandler.doReceive(null, null);
 
 		Assert.assertTrue(dummyAsyncDatagramReceiveHandler._received);
 	}

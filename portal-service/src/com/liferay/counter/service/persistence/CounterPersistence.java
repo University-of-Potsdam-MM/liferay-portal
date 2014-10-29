@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -69,12 +69,15 @@ public interface CounterPersistence extends BasePersistence<Counter> {
 	* @param name the primary key of the counter
 	* @return the counter that was removed
 	* @throws com.liferay.counter.NoSuchCounterException if a counter with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.counter.model.Counter remove(java.lang.String name)
-		throws com.liferay.counter.NoSuchCounterException;
+		throws com.liferay.counter.NoSuchCounterException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	public com.liferay.counter.model.Counter updateImpl(
-		com.liferay.counter.model.Counter counter);
+		com.liferay.counter.model.Counter counter)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the counter with the primary key or throws a {@link com.liferay.counter.NoSuchCounterException} if it could not be found.
@@ -82,30 +85,32 @@ public interface CounterPersistence extends BasePersistence<Counter> {
 	* @param name the primary key of the counter
 	* @return the counter
 	* @throws com.liferay.counter.NoSuchCounterException if a counter with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.counter.model.Counter findByPrimaryKey(
 		java.lang.String name)
-		throws com.liferay.counter.NoSuchCounterException;
+		throws com.liferay.counter.NoSuchCounterException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the counter with the primary key or returns <code>null</code> if it could not be found.
 	*
 	* @param name the primary key of the counter
 	* @return the counter, or <code>null</code> if a counter with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.counter.model.Counter fetchByPrimaryKey(
-		java.lang.String name);
-
-	@Override
-	public java.util.Map<java.io.Serializable, com.liferay.counter.model.Counter> fetchByPrimaryKeys(
-		java.util.Set<java.io.Serializable> primaryKeys);
+		java.lang.String name)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns all the counters.
 	*
 	* @return the counters
+	* @throws SystemException if a system exception occurred
 	*/
-	public java.util.List<com.liferay.counter.model.Counter> findAll();
+	public java.util.List<com.liferay.counter.model.Counter> findAll()
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns a range of all the counters.
@@ -117,9 +122,11 @@ public interface CounterPersistence extends BasePersistence<Counter> {
 	* @param start the lower bound of the range of counters
 	* @param end the upper bound of the range of counters (not inclusive)
 	* @return the range of counters
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.counter.model.Counter> findAll(
-		int start, int end);
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns an ordered range of all the counters.
@@ -132,20 +139,27 @@ public interface CounterPersistence extends BasePersistence<Counter> {
 	* @param end the upper bound of the range of counters (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of counters
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.counter.model.Counter> findAll(
 		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.counter.model.Counter> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Removes all the counters from the database.
+	*
+	* @throws SystemException if a system exception occurred
 	*/
-	public void removeAll();
+	public void removeAll()
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of counters.
 	*
 	* @return the number of counters
+	* @throws SystemException if a system exception occurred
 	*/
-	public int countAll();
+	public int countAll()
+		throws com.liferay.portal.kernel.exception.SystemException;
 }

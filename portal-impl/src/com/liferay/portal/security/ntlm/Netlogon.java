@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -116,13 +116,13 @@ public class Netlogon {
 
 	private static Log _log = LogFactoryUtil.getLog(Netlogon.class);
 
+	private String _domainController;
+	private String _domainControllerName;
+	private NtlmServiceAccount _ntlmServiceAccount;
+
 	static {
 		DcerpcBinding.addInterface(
 			"netlogon", "12345678-1234-abcd-ef00-01234567cffb:1.0");
 	}
-
-	private String _domainController;
-	private String _domainControllerName;
-	private NtlmServiceAccount _ntlmServiceAccount;
 
 }

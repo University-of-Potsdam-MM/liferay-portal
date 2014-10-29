@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -13,8 +13,6 @@
  */
 
 package com.liferay.portal.service.http;
-
-import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -51,11 +49,11 @@ import com.liferay.portal.service.UserGroupRoleServiceUtil;
  * @see com.liferay.portal.service.UserGroupRoleServiceUtil
  * @generated
  */
-@ProviderType
 public class UserGroupRoleServiceHttp {
 	public static void addUserGroupRoles(HttpPrincipal httpPrincipal,
 		long userId, long groupId, long[] roleIds)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(UserGroupRoleServiceUtil.class,
 					"addUserGroupRoles", _addUserGroupRolesParameterTypes0);
@@ -71,6 +69,10 @@ public class UserGroupRoleServiceHttp {
 					throw (com.liferay.portal.kernel.exception.PortalException)e;
 				}
 
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
+				}
+
 				throw new com.liferay.portal.kernel.exception.SystemException(e);
 			}
 		}
@@ -83,7 +85,8 @@ public class UserGroupRoleServiceHttp {
 
 	public static void addUserGroupRoles(HttpPrincipal httpPrincipal,
 		long[] userIds, long groupId, long roleId)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(UserGroupRoleServiceUtil.class,
 					"addUserGroupRoles", _addUserGroupRolesParameterTypes1);
@@ -99,6 +102,10 @@ public class UserGroupRoleServiceHttp {
 					throw (com.liferay.portal.kernel.exception.PortalException)e;
 				}
 
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
+				}
+
 				throw new com.liferay.portal.kernel.exception.SystemException(e);
 			}
 		}
@@ -111,7 +118,8 @@ public class UserGroupRoleServiceHttp {
 
 	public static void deleteUserGroupRoles(HttpPrincipal httpPrincipal,
 		long userId, long groupId, long[] roleIds)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(UserGroupRoleServiceUtil.class,
 					"deleteUserGroupRoles", _deleteUserGroupRolesParameterTypes2);
@@ -127,6 +135,10 @@ public class UserGroupRoleServiceHttp {
 					throw (com.liferay.portal.kernel.exception.PortalException)e;
 				}
 
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
+				}
+
 				throw new com.liferay.portal.kernel.exception.SystemException(e);
 			}
 		}
@@ -139,7 +151,8 @@ public class UserGroupRoleServiceHttp {
 
 	public static void deleteUserGroupRoles(HttpPrincipal httpPrincipal,
 		long[] userIds, long groupId, long roleId)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(UserGroupRoleServiceUtil.class,
 					"deleteUserGroupRoles", _deleteUserGroupRolesParameterTypes3);
@@ -153,6 +166,10 @@ public class UserGroupRoleServiceHttp {
 			catch (Exception e) {
 				if (e instanceof com.liferay.portal.kernel.exception.PortalException) {
 					throw (com.liferay.portal.kernel.exception.PortalException)e;
+				}
+
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
 				}
 
 				throw new com.liferay.portal.kernel.exception.SystemException(e);

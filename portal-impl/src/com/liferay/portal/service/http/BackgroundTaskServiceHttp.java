@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -13,8 +13,6 @@
  */
 
 package com.liferay.portal.service.http;
-
-import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -51,11 +49,11 @@ import com.liferay.portal.service.BackgroundTaskServiceUtil;
  * @see com.liferay.portal.service.BackgroundTaskServiceUtil
  * @generated
  */
-@ProviderType
 public class BackgroundTaskServiceHttp {
 	public static int getBackgroundTasksCount(HttpPrincipal httpPrincipal,
 		long groupId, java.lang.String taskExecutorClassName,
-		java.lang.String completed) {
+		java.lang.String completed)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(BackgroundTaskServiceUtil.class,
 					"getBackgroundTasksCount",
@@ -70,6 +68,10 @@ public class BackgroundTaskServiceHttp {
 				returnObj = TunnelUtil.invoke(httpPrincipal, methodHandler);
 			}
 			catch (Exception e) {
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
+				}
+
 				throw new com.liferay.portal.kernel.exception.SystemException(e);
 			}
 
@@ -83,7 +85,8 @@ public class BackgroundTaskServiceHttp {
 	}
 
 	public static java.lang.String getBackgroundTaskStatusJSON(
-		HttpPrincipal httpPrincipal, long backgroundTaskId) {
+		HttpPrincipal httpPrincipal, long backgroundTaskId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(BackgroundTaskServiceUtil.class,
 					"getBackgroundTaskStatusJSON",

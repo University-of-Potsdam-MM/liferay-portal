@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -16,6 +16,7 @@ package com.liferay.portal.subscription;
 
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.messaging.BaseMessageListener;
@@ -80,7 +81,7 @@ public class CleanUpSubscriptionMessageListener extends BaseMessageListener {
 
 	protected void processAssetEntry(
 			Subscription subscription, long groupId, long[] groupIds)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		String className = subscription.getClassName();
 
@@ -106,7 +107,7 @@ public class CleanUpSubscriptionMessageListener extends BaseMessageListener {
 
 	protected void processLayout(
 			Subscription subscription, long groupId, long[] groupIds)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Layout layout = LayoutLocalServiceUtil.fetchLayout(
 			subscription.getClassPK());
@@ -122,7 +123,7 @@ public class CleanUpSubscriptionMessageListener extends BaseMessageListener {
 
 	protected void processMBCategory(
 			Subscription subscription, long groupId, long[] groupIds)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		MBCategory mbCategory = MBCategoryLocalServiceUtil.fetchMBCategory(
 			subscription.getClassPK());
@@ -151,7 +152,7 @@ public class CleanUpSubscriptionMessageListener extends BaseMessageListener {
 
 	protected void processMBThread(
 			Subscription subscription, long groupId, long[] groupIds)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		MBThread mbThread = MBThreadLocalServiceUtil.fetchThread(
 			subscription.getClassPK());
@@ -167,7 +168,7 @@ public class CleanUpSubscriptionMessageListener extends BaseMessageListener {
 
 	protected void processSubscription(
 			Subscription subscription, long groupId, long[] groupIds)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		String className = subscription.getClassName();
 
@@ -193,7 +194,8 @@ public class CleanUpSubscriptionMessageListener extends BaseMessageListener {
 		throw new PortalException();
 	}
 
-	protected void processUser(User user, long groupId) throws PortalException {
+	protected void processUser(User user, long groupId)
+		throws PortalException, SystemException {
 
 		// Get the list of groups the current user is still a member of and
 		// verify that subscriptions outside those groups are automatically
@@ -232,7 +234,7 @@ public class CleanUpSubscriptionMessageListener extends BaseMessageListener {
 
 	protected void processWikiNode(
 			Subscription subscription, long groupId, long[] groupIds)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		WikiNode wikiNode = WikiNodeLocalServiceUtil.fetchWikiNode(
 			subscription.getClassPK());
@@ -248,7 +250,7 @@ public class CleanUpSubscriptionMessageListener extends BaseMessageListener {
 
 	protected void processWorkflowInstance(
 			Subscription subscription, long groupId, long[] groupIds)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		WorkflowInstance workflowInstance =
 			WorkflowInstanceManagerUtil.getWorkflowInstance(

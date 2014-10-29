@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,8 +18,8 @@ import com.liferay.portal.kernel.test.ExecutionTestListeners;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.search.lucene.IndexAccessorImpl;
-import com.liferay.portal.test.listeners.MainServletExecutionTestListener;
-import com.liferay.portal.test.runners.LiferayIntegrationJUnitTestRunner;
+import com.liferay.portal.test.EnvironmentExecutionTestListener;
+import com.liferay.portal.test.LiferayIntegrationJUnitTestRunner;
 import com.liferay.portal.util.PropsValues;
 
 import java.io.ByteArrayInputStream;
@@ -40,16 +40,20 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import org.powermock.api.mockito.PowerMockito;
+
 /**
  * @author Shuyang Zhou
  * @author Mate Thurzo
  */
-@ExecutionTestListeners(listeners = {MainServletExecutionTestListener.class})
+@ExecutionTestListeners(listeners = {EnvironmentExecutionTestListener.class})
 @RunWith(LiferayIntegrationJUnitTestRunner.class)
-public class IndexAccessorImplTest {
+public class IndexAccessorImplTest extends PowerMockito {
 
 	@AfterClass
 	public static void tearDownClass() throws Exception {
+		System.gc();
+
 		String indexPath = PropsValues.LUCENE_DIR.concat(
 			String.valueOf(_TEST_COMPANY_ID)).concat(StringPool.SLASH);
 
@@ -209,30 +213,34 @@ public class IndexAccessorImplTest {
 	}
 
 	private void _assertHits(String key, boolean expectHit) throws Exception {
-		try (IndexReader indexReader = IndexReader.open(
-				_indexAccessorImpl.getLuceneDir());
-			IndexSearcher indexSearcher = new IndexSearcher(indexReader)) {
+		IndexReader indexReader = IndexReader.open(
+			_indexAccessorImpl.getLuceneDir());
 
-			for (int i = 0; i < _documentsCount * 2; i++) {
-				Term term = new Term("name", key + i);
+		IndexSearcher indexSearcher = new IndexSearcher(indexReader);
 
-				TermQuery termQuery = new TermQuery(term);
+		for (int i = 0; i < _documentsCount * 2; i++) {
+			Term term = new Term("name", key + i);
 
-				TopDocs topDocs = indexSearcher.search(termQuery, 1);
+			TermQuery termQuery = new TermQuery(term);
 
-				if (i < _documentsCount) {
-					if (expectHit) {
-						Assert.assertEquals(1, topDocs.totalHits);
-					}
-					else {
-						Assert.assertEquals(0, topDocs.totalHits);
-					}
+			TopDocs topDocs = indexSearcher.search(termQuery, 1);
+
+			if (i < _documentsCount) {
+				if (expectHit) {
+					Assert.assertEquals(1, topDocs.totalHits);
 				}
 				else {
 					Assert.assertEquals(0, topDocs.totalHits);
 				}
 			}
+			else {
+				Assert.assertEquals(0, topDocs.totalHits);
+			}
 		}
+
+		indexSearcher.close();
+
+		indexReader.close();
 	}
 
 	private void _deleteDocuments(String key) throws Exception {

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,6 +14,7 @@
 
 package com.liferay.portlet.announcements.service.persistence;
 
+import com.liferay.portal.kernel.bean.PortalBeanLocatorUtil;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
@@ -22,74 +23,65 @@ import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.template.TemplateException;
-import com.liferay.portal.kernel.template.TemplateManagerUtil;
-import com.liferay.portal.kernel.transaction.Propagation;
+import com.liferay.portal.kernel.test.ExecutionTestListeners;
 import com.liferay.portal.kernel.util.IntegerWrapper;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.OrderByComparatorFactoryUtil;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Time;
-import com.liferay.portal.test.TransactionalTestRule;
-import com.liferay.portal.test.runners.PersistenceIntegrationJUnitTestRunner;
-import com.liferay.portal.tools.DBUpgrader;
-import com.liferay.portal.util.test.RandomTestUtil;
+import com.liferay.portal.service.ServiceTestUtil;
+import com.liferay.portal.service.persistence.BasePersistence;
+import com.liferay.portal.service.persistence.PersistenceExecutionTestListener;
+import com.liferay.portal.test.LiferayPersistenceIntegrationJUnitTestRunner;
+import com.liferay.portal.test.persistence.TransactionalPersistenceAdvice;
 
 import com.liferay.portlet.announcements.NoSuchEntryException;
 import com.liferay.portlet.announcements.model.AnnouncementsEntry;
-import com.liferay.portlet.announcements.service.AnnouncementsEntryLocalServiceUtil;
 
 import org.junit.After;
 import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
 import org.junit.Test;
 
 import org.junit.runner.RunWith;
 
 import java.io.Serializable;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 /**
- * @generated
+ * @author Brian Wing Shun Chan
  */
-@RunWith(PersistenceIntegrationJUnitTestRunner.class)
+@ExecutionTestListeners(listeners =  {
+	PersistenceExecutionTestListener.class})
+@RunWith(LiferayPersistenceIntegrationJUnitTestRunner.class)
 public class AnnouncementsEntryPersistenceTest {
-	@ClassRule
-	public static TransactionalTestRule transactionalTestRule = new TransactionalTestRule(Propagation.REQUIRED);
-
-	@BeforeClass
-	public static void setupClass() throws TemplateException {
-		try {
-			DBUpgrader.upgrade();
-		}
-		catch (Exception e) {
-			_log.error(e, e);
-		}
-
-		TemplateManagerUtil.init();
-	}
-
 	@After
 	public void tearDown() throws Exception {
-		Iterator<AnnouncementsEntry> iterator = _announcementsEntries.iterator();
+		Map<Serializable, BasePersistence<?>> basePersistences = _transactionalPersistenceAdvice.getBasePersistences();
 
-		while (iterator.hasNext()) {
-			_persistence.remove(iterator.next());
+		Set<Serializable> primaryKeys = basePersistences.keySet();
 
-			iterator.remove();
+		for (Serializable primaryKey : primaryKeys) {
+			BasePersistence<?> basePersistence = basePersistences.get(primaryKey);
+
+			try {
+				basePersistence.remove(primaryKey);
+			}
+			catch (Exception e) {
+				if (_log.isDebugEnabled()) {
+					_log.debug("The model with primary key " + primaryKey +
+						" was already deleted");
+				}
+			}
 		}
+
+		_transactionalPersistenceAdvice.reset();
 	}
 
 	@Test
 	public void testCreate() throws Exception {
-		long pk = RandomTestUtil.nextLong();
+		long pk = ServiceTestUtil.nextLong();
 
 		AnnouncementsEntry announcementsEntry = _persistence.create(pk);
 
@@ -116,43 +108,43 @@ public class AnnouncementsEntryPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
+		long pk = ServiceTestUtil.nextLong();
 
 		AnnouncementsEntry newAnnouncementsEntry = _persistence.create(pk);
 
-		newAnnouncementsEntry.setUuid(RandomTestUtil.randomString());
+		newAnnouncementsEntry.setUuid(ServiceTestUtil.randomString());
 
-		newAnnouncementsEntry.setCompanyId(RandomTestUtil.nextLong());
+		newAnnouncementsEntry.setCompanyId(ServiceTestUtil.nextLong());
 
-		newAnnouncementsEntry.setUserId(RandomTestUtil.nextLong());
+		newAnnouncementsEntry.setUserId(ServiceTestUtil.nextLong());
 
-		newAnnouncementsEntry.setUserName(RandomTestUtil.randomString());
+		newAnnouncementsEntry.setUserName(ServiceTestUtil.randomString());
 
-		newAnnouncementsEntry.setCreateDate(RandomTestUtil.nextDate());
+		newAnnouncementsEntry.setCreateDate(ServiceTestUtil.nextDate());
 
-		newAnnouncementsEntry.setModifiedDate(RandomTestUtil.nextDate());
+		newAnnouncementsEntry.setModifiedDate(ServiceTestUtil.nextDate());
 
-		newAnnouncementsEntry.setClassNameId(RandomTestUtil.nextLong());
+		newAnnouncementsEntry.setClassNameId(ServiceTestUtil.nextLong());
 
-		newAnnouncementsEntry.setClassPK(RandomTestUtil.nextLong());
+		newAnnouncementsEntry.setClassPK(ServiceTestUtil.nextLong());
 
-		newAnnouncementsEntry.setTitle(RandomTestUtil.randomString());
+		newAnnouncementsEntry.setTitle(ServiceTestUtil.randomString());
 
-		newAnnouncementsEntry.setContent(RandomTestUtil.randomString());
+		newAnnouncementsEntry.setContent(ServiceTestUtil.randomString());
 
-		newAnnouncementsEntry.setUrl(RandomTestUtil.randomString());
+		newAnnouncementsEntry.setUrl(ServiceTestUtil.randomString());
 
-		newAnnouncementsEntry.setType(RandomTestUtil.randomString());
+		newAnnouncementsEntry.setType(ServiceTestUtil.randomString());
 
-		newAnnouncementsEntry.setDisplayDate(RandomTestUtil.nextDate());
+		newAnnouncementsEntry.setDisplayDate(ServiceTestUtil.nextDate());
 
-		newAnnouncementsEntry.setExpirationDate(RandomTestUtil.nextDate());
+		newAnnouncementsEntry.setExpirationDate(ServiceTestUtil.nextDate());
 
-		newAnnouncementsEntry.setPriority(RandomTestUtil.nextInt());
+		newAnnouncementsEntry.setPriority(ServiceTestUtil.nextInt());
 
-		newAnnouncementsEntry.setAlert(RandomTestUtil.randomBoolean());
+		newAnnouncementsEntry.setAlert(ServiceTestUtil.randomBoolean());
 
-		_announcementsEntries.add(_persistence.update(newAnnouncementsEntry));
+		_persistence.update(newAnnouncementsEntry);
 
 		AnnouncementsEntry existingAnnouncementsEntry = _persistence.findByPrimaryKey(newAnnouncementsEntry.getPrimaryKey());
 
@@ -197,73 +189,6 @@ public class AnnouncementsEntryPersistenceTest {
 	}
 
 	@Test
-	public void testCountByUuid() {
-		try {
-			_persistence.countByUuid(StringPool.BLANK);
-
-			_persistence.countByUuid(StringPool.NULL);
-
-			_persistence.countByUuid((String)null);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByUuid_C() {
-		try {
-			_persistence.countByUuid_C(StringPool.BLANK,
-				RandomTestUtil.nextLong());
-
-			_persistence.countByUuid_C(StringPool.NULL, 0L);
-
-			_persistence.countByUuid_C((String)null, 0L);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByUserId() {
-		try {
-			_persistence.countByUserId(RandomTestUtil.nextLong());
-
-			_persistence.countByUserId(0L);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByC_C() {
-		try {
-			_persistence.countByC_C(RandomTestUtil.nextLong(),
-				RandomTestUtil.nextLong());
-
-			_persistence.countByC_C(0L, 0L);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByC_C_A() {
-		try {
-			_persistence.countByC_C_A(RandomTestUtil.nextLong(),
-				RandomTestUtil.nextLong(), RandomTestUtil.randomBoolean());
-
-			_persistence.countByC_C_A(0L, 0L, RandomTestUtil.randomBoolean());
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
 	public void testFindByPrimaryKeyExisting() throws Exception {
 		AnnouncementsEntry newAnnouncementsEntry = addAnnouncementsEntry();
 
@@ -274,7 +199,7 @@ public class AnnouncementsEntryPersistenceTest {
 
 	@Test
 	public void testFindByPrimaryKeyMissing() throws Exception {
-		long pk = RandomTestUtil.nextLong();
+		long pk = ServiceTestUtil.nextLong();
 
 		try {
 			_persistence.findByPrimaryKey(pk);
@@ -296,7 +221,7 @@ public class AnnouncementsEntryPersistenceTest {
 		}
 	}
 
-	protected OrderByComparator<AnnouncementsEntry> getOrderByComparator() {
+	protected OrderByComparator getOrderByComparator() {
 		return OrderByComparatorFactoryUtil.create("AnnouncementsEntry",
 			"uuid", true, "entryId", true, "companyId", true, "userId", true,
 			"userName", true, "createDate", true, "modifiedDate", true,
@@ -316,7 +241,7 @@ public class AnnouncementsEntryPersistenceTest {
 
 	@Test
 	public void testFetchByPrimaryKeyMissing() throws Exception {
-		long pk = RandomTestUtil.nextLong();
+		long pk = ServiceTestUtil.nextLong();
 
 		AnnouncementsEntry missingAnnouncementsEntry = _persistence.fetchByPrimaryKey(pk);
 
@@ -324,103 +249,19 @@ public class AnnouncementsEntryPersistenceTest {
 	}
 
 	@Test
-	public void testFetchByPrimaryKeysWithMultiplePrimaryKeysWhereAllPrimaryKeysExist()
-		throws Exception {
-		AnnouncementsEntry newAnnouncementsEntry1 = addAnnouncementsEntry();
-		AnnouncementsEntry newAnnouncementsEntry2 = addAnnouncementsEntry();
-
-		Set<Serializable> primaryKeys = new HashSet<Serializable>();
-
-		primaryKeys.add(newAnnouncementsEntry1.getPrimaryKey());
-		primaryKeys.add(newAnnouncementsEntry2.getPrimaryKey());
-
-		Map<Serializable, AnnouncementsEntry> announcementsEntries = _persistence.fetchByPrimaryKeys(primaryKeys);
-
-		Assert.assertEquals(2, announcementsEntries.size());
-		Assert.assertEquals(newAnnouncementsEntry1,
-			announcementsEntries.get(newAnnouncementsEntry1.getPrimaryKey()));
-		Assert.assertEquals(newAnnouncementsEntry2,
-			announcementsEntries.get(newAnnouncementsEntry2.getPrimaryKey()));
-	}
-
-	@Test
-	public void testFetchByPrimaryKeysWithMultiplePrimaryKeysWhereNoPrimaryKeysExist()
-		throws Exception {
-		long pk1 = RandomTestUtil.nextLong();
-
-		long pk2 = RandomTestUtil.nextLong();
-
-		Set<Serializable> primaryKeys = new HashSet<Serializable>();
-
-		primaryKeys.add(pk1);
-		primaryKeys.add(pk2);
-
-		Map<Serializable, AnnouncementsEntry> announcementsEntries = _persistence.fetchByPrimaryKeys(primaryKeys);
-
-		Assert.assertTrue(announcementsEntries.isEmpty());
-	}
-
-	@Test
-	public void testFetchByPrimaryKeysWithMultiplePrimaryKeysWhereSomePrimaryKeysExist()
-		throws Exception {
-		AnnouncementsEntry newAnnouncementsEntry = addAnnouncementsEntry();
-
-		long pk = RandomTestUtil.nextLong();
-
-		Set<Serializable> primaryKeys = new HashSet<Serializable>();
-
-		primaryKeys.add(newAnnouncementsEntry.getPrimaryKey());
-		primaryKeys.add(pk);
-
-		Map<Serializable, AnnouncementsEntry> announcementsEntries = _persistence.fetchByPrimaryKeys(primaryKeys);
-
-		Assert.assertEquals(1, announcementsEntries.size());
-		Assert.assertEquals(newAnnouncementsEntry,
-			announcementsEntries.get(newAnnouncementsEntry.getPrimaryKey()));
-	}
-
-	@Test
-	public void testFetchByPrimaryKeysWithNoPrimaryKeys()
-		throws Exception {
-		Set<Serializable> primaryKeys = new HashSet<Serializable>();
-
-		Map<Serializable, AnnouncementsEntry> announcementsEntries = _persistence.fetchByPrimaryKeys(primaryKeys);
-
-		Assert.assertTrue(announcementsEntries.isEmpty());
-	}
-
-	@Test
-	public void testFetchByPrimaryKeysWithOnePrimaryKey()
-		throws Exception {
-		AnnouncementsEntry newAnnouncementsEntry = addAnnouncementsEntry();
-
-		Set<Serializable> primaryKeys = new HashSet<Serializable>();
-
-		primaryKeys.add(newAnnouncementsEntry.getPrimaryKey());
-
-		Map<Serializable, AnnouncementsEntry> announcementsEntries = _persistence.fetchByPrimaryKeys(primaryKeys);
-
-		Assert.assertEquals(1, announcementsEntries.size());
-		Assert.assertEquals(newAnnouncementsEntry,
-			announcementsEntries.get(newAnnouncementsEntry.getPrimaryKey()));
-	}
-
-	@Test
 	public void testActionableDynamicQuery() throws Exception {
 		final IntegerWrapper count = new IntegerWrapper();
 
-		ActionableDynamicQuery actionableDynamicQuery = AnnouncementsEntryLocalServiceUtil.getActionableDynamicQuery();
-
-		actionableDynamicQuery.setPerformActionMethod(new ActionableDynamicQuery.PerformActionMethod() {
+		ActionableDynamicQuery actionableDynamicQuery = new AnnouncementsEntryActionableDynamicQuery() {
 				@Override
-				public void performAction(Object object) {
+				protected void performAction(Object object) {
 					AnnouncementsEntry announcementsEntry = (AnnouncementsEntry)object;
 
 					Assert.assertNotNull(announcementsEntry);
 
 					count.increment();
 				}
-			});
+			};
 
 		actionableDynamicQuery.performActions();
 
@@ -453,7 +294,7 @@ public class AnnouncementsEntryPersistenceTest {
 				AnnouncementsEntry.class.getClassLoader());
 
 		dynamicQuery.add(RestrictionsFactoryUtil.eq("entryId",
-				RandomTestUtil.nextLong()));
+				ServiceTestUtil.nextLong()));
 
 		List<AnnouncementsEntry> result = _persistence.findWithDynamicQuery(dynamicQuery);
 
@@ -492,7 +333,7 @@ public class AnnouncementsEntryPersistenceTest {
 		dynamicQuery.setProjection(ProjectionFactoryUtil.property("entryId"));
 
 		dynamicQuery.add(RestrictionsFactoryUtil.in("entryId",
-				new Object[] { RandomTestUtil.nextLong() }));
+				new Object[] { ServiceTestUtil.nextLong() }));
 
 		List<Object> result = _persistence.findWithDynamicQuery(dynamicQuery);
 
@@ -501,48 +342,48 @@ public class AnnouncementsEntryPersistenceTest {
 
 	protected AnnouncementsEntry addAnnouncementsEntry()
 		throws Exception {
-		long pk = RandomTestUtil.nextLong();
+		long pk = ServiceTestUtil.nextLong();
 
 		AnnouncementsEntry announcementsEntry = _persistence.create(pk);
 
-		announcementsEntry.setUuid(RandomTestUtil.randomString());
+		announcementsEntry.setUuid(ServiceTestUtil.randomString());
 
-		announcementsEntry.setCompanyId(RandomTestUtil.nextLong());
+		announcementsEntry.setCompanyId(ServiceTestUtil.nextLong());
 
-		announcementsEntry.setUserId(RandomTestUtil.nextLong());
+		announcementsEntry.setUserId(ServiceTestUtil.nextLong());
 
-		announcementsEntry.setUserName(RandomTestUtil.randomString());
+		announcementsEntry.setUserName(ServiceTestUtil.randomString());
 
-		announcementsEntry.setCreateDate(RandomTestUtil.nextDate());
+		announcementsEntry.setCreateDate(ServiceTestUtil.nextDate());
 
-		announcementsEntry.setModifiedDate(RandomTestUtil.nextDate());
+		announcementsEntry.setModifiedDate(ServiceTestUtil.nextDate());
 
-		announcementsEntry.setClassNameId(RandomTestUtil.nextLong());
+		announcementsEntry.setClassNameId(ServiceTestUtil.nextLong());
 
-		announcementsEntry.setClassPK(RandomTestUtil.nextLong());
+		announcementsEntry.setClassPK(ServiceTestUtil.nextLong());
 
-		announcementsEntry.setTitle(RandomTestUtil.randomString());
+		announcementsEntry.setTitle(ServiceTestUtil.randomString());
 
-		announcementsEntry.setContent(RandomTestUtil.randomString());
+		announcementsEntry.setContent(ServiceTestUtil.randomString());
 
-		announcementsEntry.setUrl(RandomTestUtil.randomString());
+		announcementsEntry.setUrl(ServiceTestUtil.randomString());
 
-		announcementsEntry.setType(RandomTestUtil.randomString());
+		announcementsEntry.setType(ServiceTestUtil.randomString());
 
-		announcementsEntry.setDisplayDate(RandomTestUtil.nextDate());
+		announcementsEntry.setDisplayDate(ServiceTestUtil.nextDate());
 
-		announcementsEntry.setExpirationDate(RandomTestUtil.nextDate());
+		announcementsEntry.setExpirationDate(ServiceTestUtil.nextDate());
 
-		announcementsEntry.setPriority(RandomTestUtil.nextInt());
+		announcementsEntry.setPriority(ServiceTestUtil.nextInt());
 
-		announcementsEntry.setAlert(RandomTestUtil.randomBoolean());
+		announcementsEntry.setAlert(ServiceTestUtil.randomBoolean());
 
-		_announcementsEntries.add(_persistence.update(announcementsEntry));
+		_persistence.update(announcementsEntry);
 
 		return announcementsEntry;
 	}
 
 	private static Log _log = LogFactoryUtil.getLog(AnnouncementsEntryPersistenceTest.class);
-	private List<AnnouncementsEntry> _announcementsEntries = new ArrayList<AnnouncementsEntry>();
-	private AnnouncementsEntryPersistence _persistence = AnnouncementsEntryUtil.getPersistence();
+	private AnnouncementsEntryPersistence _persistence = (AnnouncementsEntryPersistence)PortalBeanLocatorUtil.locate(AnnouncementsEntryPersistence.class.getName());
+	private TransactionalPersistenceAdvice _transactionalPersistenceAdvice = (TransactionalPersistenceAdvice)PortalBeanLocatorUtil.locate(TransactionalPersistenceAdvice.class.getName());
 }

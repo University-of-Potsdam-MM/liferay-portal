@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -31,14 +31,27 @@ public class ModuleFrameworkClassLoader extends URLClassLoader {
 
 	public ModuleFrameworkClassLoader(URL[] urls, ClassLoader parent) {
 		super(urls, parent);
+
+		// Some application servers include their own OSGi framework in the
+		// bootstrap class loader
+
+		//_systemClassLoader = getSystemClassLoader();
 	}
 
 	@Override
 	public URL getResource(String name) {
-		URL url = findResource(name);
+		URL url = null;
+
+		if (_systemClassLoader != null) {
+			url = _systemClassLoader.getResource(name);
+		}
 
 		if (url == null) {
-			url = super.getResource(name);
+			url = findResource(name);
+
+			if (url == null) {
+				url = super.getResource(name);
+			}
 		}
 
 		return url;
@@ -48,7 +61,13 @@ public class ModuleFrameworkClassLoader extends URLClassLoader {
 	public Enumeration<URL> getResources(String name) throws IOException {
 		final List<URL> urls = new ArrayList<URL>();
 
-		urls.addAll(_buildURLs(null));
+		Enumeration<URL> systemURLs = null;
+
+		if (_systemClassLoader != null) {
+			systemURLs = _systemClassLoader.getResources(name);
+		}
+
+		urls.addAll(_buildURLs(systemURLs));
 
 		Enumeration<URL> localURLs = findResources(name);
 
@@ -81,13 +100,19 @@ public class ModuleFrameworkClassLoader extends URLClassLoader {
 	}
 
 	@Override
-	protected Class<?> loadClass(String name, boolean resolve)
+	protected synchronized Class<?> loadClass(String name, boolean resolve)
 		throws ClassNotFoundException {
 
-		Object lock = getClassLoadingLock(name);
+		Class<?> clazz = findLoadedClass(name);
 
-		synchronized (lock) {
-			Class<?> clazz = findLoadedClass(name);
+		if (clazz == null) {
+			if (_systemClassLoader != null) {
+				try {
+					clazz = _systemClassLoader.loadClass(name);
+				}
+				catch (ClassNotFoundException cnfe) {
+				}
+			}
 
 			if (clazz == null) {
 				try {
@@ -97,13 +122,13 @@ public class ModuleFrameworkClassLoader extends URLClassLoader {
 					clazz = super.loadClass(name, resolve);
 				}
 			}
-
-			if (resolve) {
-				resolveClass(clazz);
-			}
-
-			return clazz;
 		}
+
+		if (resolve) {
+			resolveClass(clazz);
+		}
+
+		return clazz;
 	}
 
 	private List<URL> _buildURLs(Enumeration<URL> url) {
@@ -120,8 +145,6 @@ public class ModuleFrameworkClassLoader extends URLClassLoader {
 		return urls;
 	}
 
-	static {
-		ClassLoader.registerAsParallelCapable();
-	}
+	private ClassLoader _systemClassLoader;
 
 }

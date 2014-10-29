@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,43 +14,39 @@
 
 package com.liferay.portal.kernel.atom;
 
-import aQute.bnd.annotation.ProviderType;
-
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.util.ListUtil;
-import com.liferay.registry.Registry;
-import com.liferay.registry.RegistryUtil;
-import com.liferay.registry.ServiceReference;
-import com.liferay.registry.ServiceRegistration;
-import com.liferay.registry.ServiceTracker;
-import com.liferay.registry.ServiceTrackerCustomizer;
-import com.liferay.registry.collections.ServiceRegistrationMap;
+import com.liferay.portal.kernel.security.pacl.permission.PortalRuntimePermission;
 
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author Igor Spasic
  */
-@ProviderType
 public class AtomCollectionAdapterRegistryUtil {
 
 	public static AtomCollectionAdapter<?> getAtomCollectionAdapter(
 		String collectionName) {
 
-		return _instance._getAtomCollectionAdapter(collectionName);
+		return getAtomCollectionAdapterRegistry().getAtomCollectionAdapter(
+			collectionName);
+	}
+
+	public static AtomCollectionAdapterRegistry
+		getAtomCollectionAdapterRegistry() {
+
+		PortalRuntimePermission.checkGetBeanProperty(
+			AtomCollectionAdapterRegistryUtil.class);
+
+		return _atomCollectionAdapterRegistry;
 	}
 
 	public static List<AtomCollectionAdapter<?>> getAtomCollectionAdapters() {
-		return _instance._getAtomCollectionAdapters();
+		return getAtomCollectionAdapterRegistry().getAtomCollectionAdapters();
 	}
 
 	public static void register(
 		AtomCollectionAdapter<?> atomCollectionAdapter) {
 
-		_instance._register(atomCollectionAdapter);
+		getAtomCollectionAdapterRegistry().register(atomCollectionAdapter);
 	}
 
 	public static void register(
@@ -66,7 +62,7 @@ public class AtomCollectionAdapterRegistryUtil {
 	public static void unregister(
 		AtomCollectionAdapter<?> atomCollectionAdapter) {
 
-		_instance._unregister(atomCollectionAdapter);
+		getAtomCollectionAdapterRegistry().unregister(atomCollectionAdapter);
 	}
 
 	public static void unregister(
@@ -79,113 +75,14 @@ public class AtomCollectionAdapterRegistryUtil {
 		}
 	}
 
-	private AtomCollectionAdapterRegistryUtil() {
-		Registry registry = RegistryUtil.getRegistry();
+	public void setAtomCollectionAdapterRegistry(
+		AtomCollectionAdapterRegistry atomCollectionAdapterRegistry) {
 
-		_serviceTracker = registry.trackServices(
-			(Class<AtomCollectionAdapter<?>>)(Class<?>)
-				AtomCollectionAdapter.class,
-			new AtomCollectionAdapterServiceTrackerCustomizer());
+		PortalRuntimePermission.checkSetBeanProperty(getClass());
 
-		_serviceTracker.open();
+		_atomCollectionAdapterRegistry = atomCollectionAdapterRegistry;
 	}
 
-	private AtomCollectionAdapter<?> _getAtomCollectionAdapter(
-		String collectionName) {
-
-		return _atomCollectionAdapters.get(collectionName);
-	}
-
-	private List<AtomCollectionAdapter<?>> _getAtomCollectionAdapters() {
-		return ListUtil.fromMapValues(_atomCollectionAdapters);
-	}
-
-	private void _register(AtomCollectionAdapter<?> atomCollectionAdapter) {
-		Registry registry = RegistryUtil.getRegistry();
-
-		ServiceRegistration<AtomCollectionAdapter<?>> serviceRegistration =
-			registry.registerService(
-				(Class<AtomCollectionAdapter<?>>)(Class<?>)
-					AtomCollectionAdapter.class,
-				atomCollectionAdapter);
-
-		_serviceRegistrations.put(atomCollectionAdapter, serviceRegistration);
-	}
-
-	private void _unregister(AtomCollectionAdapter<?> atomCollectionAdapter) {
-		ServiceRegistration<AtomCollectionAdapter<?>> serviceRegistration =
-			_serviceRegistrations.remove(atomCollectionAdapter);
-
-		if (serviceRegistration != null) {
-			serviceRegistration.unregister();
-		}
-	}
-
-	private static Log _log = LogFactoryUtil.getLog(
-		AtomCollectionAdapterRegistryUtil.class);
-
-	private static AtomCollectionAdapterRegistryUtil _instance =
-		new AtomCollectionAdapterRegistryUtil();
-
-	private Map<String, AtomCollectionAdapter<?>> _atomCollectionAdapters =
-		new ConcurrentHashMap<String, AtomCollectionAdapter<?>>();
-	private ServiceRegistrationMap<AtomCollectionAdapter<?>>
-		_serviceRegistrations =
-			new ServiceRegistrationMap<AtomCollectionAdapter<?>>();
-	private ServiceTracker<AtomCollectionAdapter<?>, AtomCollectionAdapter<?>>
-		_serviceTracker;
-
-	private class AtomCollectionAdapterServiceTrackerCustomizer
-		implements ServiceTrackerCustomizer
-			<AtomCollectionAdapter<?>, AtomCollectionAdapter<?>> {
-
-		@Override
-		public AtomCollectionAdapter<?> addingService(
-			ServiceReference<AtomCollectionAdapter<?>> serviceReference) {
-
-			Registry registry = RegistryUtil.getRegistry();
-
-			AtomCollectionAdapter<?> atomCollectionAdapter =
-				registry.getService(serviceReference);
-
-			if (_atomCollectionAdapters.containsKey(
-					atomCollectionAdapter.getCollectionName())) {
-
-				if (_log.isWarnEnabled()) {
-					_log.warn(
-						"Duplicate collection name " +
-							atomCollectionAdapter.getCollectionName());
-				}
-
-				return null;
-			}
-
-			_atomCollectionAdapters.put(
-				atomCollectionAdapter.getCollectionName(),
-				atomCollectionAdapter);
-
-			return atomCollectionAdapter;
-		}
-
-		@Override
-		public void modifiedService(
-			ServiceReference<AtomCollectionAdapter<?>> serviceReference,
-			AtomCollectionAdapter<?> atomCollectionAdapter) {
-		}
-
-		@Override
-		public void removedService(
-			ServiceReference<AtomCollectionAdapter<?>> serviceReference,
-			AtomCollectionAdapter<?> atomCollectionAdapter) {
-
-			Registry registry = RegistryUtil.getRegistry();
-
-			registry.ungetService(serviceReference);
-
-			_atomCollectionAdapters.remove(
-				atomCollectionAdapter.getCollectionName());
-		}
-
-	}
+	private static AtomCollectionAdapterRegistry _atomCollectionAdapterRegistry;
 
 }

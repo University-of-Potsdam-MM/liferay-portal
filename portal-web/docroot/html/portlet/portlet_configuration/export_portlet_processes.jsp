@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -35,7 +35,7 @@ else {
 	orderByType = portalPreferences.getValue(PortletKeys.BACKGROUND_TASK, "entries-order-by-type", "desc");
 }
 
-OrderByComparator<BackgroundTask> orderByComparator = BackgroundTaskComparatorFactoryUtil.getBackgroundTaskOrderByComparator(orderByCol, orderByType);
+OrderByComparator orderByComparator = BackgroundTaskComparatorFactoryUtil.getBackgroundTaskOrderByComparator(orderByCol, orderByType);
 %>
 
 <liferay-ui:search-container
@@ -56,16 +56,9 @@ OrderByComparator<BackgroundTask> orderByComparator = BackgroundTaskComparatorFa
 		modelVar="backgroundTask"
 	>
 		<liferay-ui:search-container-column-text
-			cssClass="background-task-user-column"
-			name="user"
-		>
-			<liferay-ui:user-display
-				displayStyle="3"
-				showUserDetails="<%= false %>"
-				showUserName="<%= false %>"
-				userId="<%= backgroundTask.getUserId() %>"
-			/>
-		</liferay-ui:search-container-column-text>
+			name="user-name"
+			value="<%= HtmlUtil.escape(backgroundTask.getUserName()) %>"
+		/>
 
 		<liferay-ui:search-container-column-jsp
 			cssClass="background-task-status-column"
@@ -110,10 +103,10 @@ OrderByComparator<BackgroundTask> orderByComparator = BackgroundTaskComparatorFa
 						%>
 
 						<liferay-ui:icon
-							iconCssClass="icon-download"
+							image="download"
 							label="<%= true %>"
 							message="<%= sb.toString() %>"
-							url="<%= PortletFileRepositoryUtil.getDownloadPortletFileEntryURL(themeDisplay, fileEntry, StringPool.BLANK) %>"
+							url="<%= PortletFileRepositoryUtil.getPortletFileEntryURL(themeDisplay, fileEntry, StringPool.BLANK) %>"
 						/>
 
 					<%
@@ -128,7 +121,7 @@ OrderByComparator<BackgroundTask> orderByComparator = BackgroundTaskComparatorFa
 					%>
 
 					<liferay-ui:icon
-						iconCssClass="icon-download"
+						image="download"
 						label="<%= true %>"
 						message='<%= HtmlUtil.escape(MapUtil.getString(taskContextMap, "fileName")) %>'
 					/>
@@ -139,16 +132,15 @@ OrderByComparator<BackgroundTask> orderByComparator = BackgroundTaskComparatorFa
 
 		<liferay-ui:search-container-column-text>
 			<c:if test="<%= !backgroundTask.isInProgress() %>">
-
-				<%
-				Date completionDate = backgroundTask.getCompletionDate();
-				%>
-
 				<portlet:actionURL var="deleteBackgroundTaskURL">
 					<portlet:param name="struts_action" value="/group_pages/delete_background_task" />
 					<portlet:param name="redirect" value="<%= portletURL.toString() %>" />
 					<portlet:param name="backgroundTaskId" value="<%= String.valueOf(backgroundTask.getBackgroundTaskId()) %>" />
 				</portlet:actionURL>
+
+				<%
+				Date completionDate = backgroundTask.getCompletionDate();
+				%>
 
 				<liferay-ui:icon-delete
 					label="true"

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -29,11 +29,9 @@ import com.liferay.portal.RequiredGroupException;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.servlet.MultiSessionMessages;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.staging.StagingConstants;
 import com.liferay.portal.kernel.staging.StagingUtil;
-import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HttpUtil;
@@ -45,6 +43,7 @@ import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
+import com.liferay.portal.kernel.util.UniqueList;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.liveusers.LiveUsers;
 import com.liferay.portal.model.Group;
@@ -71,7 +70,6 @@ import com.liferay.portal.service.MembershipRequestServiceUtil;
 import com.liferay.portal.service.RoleLocalServiceUtil;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextFactory;
-import com.liferay.portal.service.ServiceContextThreadLocal;
 import com.liferay.portal.service.TeamLocalServiceUtil;
 import com.liferay.portal.struts.PortletAction;
 import com.liferay.portal.theme.ThemeDisplay;
@@ -153,10 +151,6 @@ public class EditGroupAction extends PortletAction {
 					redirect = siteAdministrationURL.toString();
 
 					hideDefaultSuccessMessage(actionRequest);
-
-					MultiSessionMessages.add(
-						actionRequest,
-						PortletKeys.SITE_SETTINGS + "requestProcessed");
 				}
 				else {
 					String oldFriendlyURL = (String)returnValue[1];
@@ -330,11 +324,10 @@ public class EditGroupAction extends PortletAction {
 	protected List<Team> getTeams(PortletRequest portletRequest)
 		throws Exception {
 
-		List<Team> teams = new ArrayList<Team>();
+		List<Team> teams = new UniqueList<Team>();
 
-		long[] teamsTeamIds = ArrayUtil.unique(
-			StringUtil.split(
-				ParamUtil.getString(portletRequest, "teamsTeamIds"), 0L));
+		long[] teamsTeamIds = StringUtil.split(
+			ParamUtil.getString(portletRequest, "teamsTeamIds"), 0L);
 
 		for (long teamsTeamId : teamsTeamIds) {
 			if (teamsTeamId == 0) {
@@ -434,7 +427,7 @@ public class EditGroupAction extends PortletAction {
 	protected String updateCloseRedirect(
 			String closeRedirect, Group group, ThemeDisplay themeDisplay,
 			String oldFriendlyURL, String oldStagingFriendlyURL)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		if (Validator.isNull(closeRedirect) || (group == null)) {
 			return closeRedirect;
@@ -519,8 +512,6 @@ public class EditGroupAction extends PortletAction {
 
 		ServiceContext serviceContext = ServiceContextFactory.getInstance(
 			Group.class.getName(), actionRequest);
-
-		ServiceContextThreadLocal.pushServiceContext(serviceContext);
 
 		Group liveGroup = null;
 		String oldFriendlyURL = null;
@@ -760,55 +751,48 @@ public class EditGroupAction extends PortletAction {
 
 		// Layout set prototypes
 
-		long privateLayoutSetPrototypeId = ParamUtil.getLong(
-			actionRequest, "privateLayoutSetPrototypeId");
-		long publicLayoutSetPrototypeId = ParamUtil.getLong(
-			actionRequest, "publicLayoutSetPrototypeId");
+		if (!liveGroup.isStaged()) {
+			long privateLayoutSetPrototypeId = ParamUtil.getLong(
+				actionRequest, "privateLayoutSetPrototypeId");
+			long publicLayoutSetPrototypeId = ParamUtil.getLong(
+				actionRequest, "publicLayoutSetPrototypeId");
 
-		boolean privateLayoutSetPrototypeLinkEnabled = ParamUtil.getBoolean(
-			actionRequest, "privateLayoutSetPrototypeLinkEnabled",
-			privateLayoutSet.isLayoutSetPrototypeLinkEnabled());
-		boolean publicLayoutSetPrototypeLinkEnabled = ParamUtil.getBoolean(
-			actionRequest, "publicLayoutSetPrototypeLinkEnabled",
-			publicLayoutSet.isLayoutSetPrototypeLinkEnabled());
+			boolean privateLayoutSetPrototypeLinkEnabled = ParamUtil.getBoolean(
+				actionRequest, "privateLayoutSetPrototypeLinkEnabled",
+				privateLayoutSet.isLayoutSetPrototypeLinkEnabled());
+			boolean publicLayoutSetPrototypeLinkEnabled = ParamUtil.getBoolean(
+				actionRequest, "publicLayoutSetPrototypeLinkEnabled",
+				publicLayoutSet.isLayoutSetPrototypeLinkEnabled());
 
-		if ((privateLayoutSetPrototypeId == 0) &&
-			(publicLayoutSetPrototypeId == 0) &&
-			!privateLayoutSetPrototypeLinkEnabled &&
-			!publicLayoutSetPrototypeLinkEnabled) {
+			if ((privateLayoutSetPrototypeId == 0) &&
+				(publicLayoutSetPrototypeId == 0) &&
+				!privateLayoutSetPrototypeLinkEnabled &&
+				!publicLayoutSetPrototypeLinkEnabled) {
 
-			long layoutSetPrototypeId = ParamUtil.getLong(
-				actionRequest, "layoutSetPrototypeId");
-			int layoutSetVisibility = ParamUtil.getInteger(
-				actionRequest, "layoutSetVisibility");
-			boolean layoutSetPrototypeLinkEnabled = ParamUtil.getBoolean(
-				actionRequest, "layoutSetPrototypeLinkEnabled",
-				(layoutSetPrototypeId > 0));
+				long layoutSetPrototypeId = ParamUtil.getLong(
+					actionRequest, "layoutSetPrototypeId");
+				int layoutSetVisibility = ParamUtil.getInteger(
+					actionRequest, "layoutSetVisibility");
+				boolean layoutSetPrototypeLinkEnabled = ParamUtil.getBoolean(
+					actionRequest, "layoutSetPrototypeLinkEnabled",
+					(layoutSetPrototypeId > 0));
 
-			if (layoutSetVisibility == _LAYOUT_SET_VISIBILITY_PRIVATE) {
-				privateLayoutSetPrototypeId = layoutSetPrototypeId;
+				if (layoutSetVisibility == _LAYOUT_SET_VISIBILITY_PRIVATE) {
+					privateLayoutSetPrototypeId = layoutSetPrototypeId;
 
-				privateLayoutSetPrototypeLinkEnabled =
-					layoutSetPrototypeLinkEnabled;
+					privateLayoutSetPrototypeLinkEnabled =
+						layoutSetPrototypeLinkEnabled;
+				}
+				else {
+					publicLayoutSetPrototypeId = layoutSetPrototypeId;
+
+					publicLayoutSetPrototypeLinkEnabled =
+						layoutSetPrototypeLinkEnabled;
+				}
 			}
-			else {
-				publicLayoutSetPrototypeId = layoutSetPrototypeId;
 
-				publicLayoutSetPrototypeLinkEnabled =
-					layoutSetPrototypeLinkEnabled;
-			}
-		}
-
-		if (!liveGroup.isStaged() || liveGroup.isStagedRemotely()) {
 			SitesUtil.updateLayoutSetPrototypesLinks(
 				liveGroup, publicLayoutSetPrototypeId,
-				privateLayoutSetPrototypeId,
-				publicLayoutSetPrototypeLinkEnabled,
-				privateLayoutSetPrototypeLinkEnabled);
-		}
-		else {
-			SitesUtil.updateLayoutSetPrototypesLinks(
-				liveGroup.getStagingGroup(), publicLayoutSetPrototypeId,
 				privateLayoutSetPrototypeId,
 				publicLayoutSetPrototypeLinkEnabled,
 				privateLayoutSetPrototypeLinkEnabled);

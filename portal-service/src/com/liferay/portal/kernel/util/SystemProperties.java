@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -83,15 +83,14 @@ public class SystemProperties {
 		// system.properties
 
 		try {
-			Enumeration<URL> enumeration = classLoader.getResources(
-				"system.properties");
+			URL url = classLoader.getResource("system.properties");
 
-			while (enumeration.hasMoreElements()) {
-				URL url = enumeration.nextElement();
+			if (url != null) {
+				InputStream inputStream = url.openStream();
 
-				try (InputStream inputStream = url.openStream()) {
-					properties.load(inputStream);
-				}
+				properties.load(inputStream);
+
+				inputStream.close();
 
 				if (!systemPropertiesQuiet) {
 					System.out.println("Loading " + url);
@@ -105,17 +104,16 @@ public class SystemProperties {
 		// system-ext.properties
 
 		try {
-			Enumeration<URL> enumeration = classLoader.getResources(
-				"system-ext.properties");
+			URL url = classLoader.getResource("system-ext.properties");
 
-			while (enumeration.hasMoreElements()) {
-				URL url = enumeration.nextElement();
-
+			if (url != null) {
 				_loaded = true;
 
-				try (InputStream inputStream = url.openStream()) {
-					properties.load(inputStream);
-				}
+				InputStream inputStream = url.openStream();
+
+				properties.load(inputStream);
+
+				inputStream.close();
 
 				if (!systemPropertiesQuiet) {
 					System.out.println("Loading " + url);

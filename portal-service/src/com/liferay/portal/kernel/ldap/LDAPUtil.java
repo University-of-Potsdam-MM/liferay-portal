@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -25,7 +25,6 @@ import java.text.DateFormat;
 
 import java.util.Date;
 import java.util.Properties;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.naming.NamingException;
@@ -227,31 +226,23 @@ public class LDAPUtil {
 
 		// Cannot have two filter types in a sequence
 
-		Matcher matcher = _pattern1.matcher(filter);
-
-		if (matcher.matches()) {
+		if (Pattern.matches(".*[~<>]*=[~<>]*=.*", filter)) {
 			return false;
 		}
 
 		// Cannot have a filter type after an opening parenthesis
 
-		matcher = _pattern2.matcher(filter);
-
-		if (matcher.matches()) {
+		if (Pattern.matches("\\([~<>]*=.*", filter)) {
 			return false;
 		}
 
 		// Cannot have an attribute without a filter type or extensible
 
-		matcher = _pattern3.matcher(filter);
-
-		if (matcher.matches()) {
+		if (Pattern.matches("\\([^~<>=]*\\)", filter)) {
 			return false;
 		}
 
-		matcher = _pattern4.matcher(filter);
-
-		if (matcher.matches()) {
+		if (Pattern.matches(".*[^~<>=]*[~<>]*=\\)", filter)) {
 			return false;
 		}
 
@@ -294,20 +285,5 @@ public class LDAPUtil {
 			throw new LDAPFilterException("Invalid filter " + filter);
 		}
 	}
-
-	public static void validateFilter(String filter, String filterPropertyName)
-		throws PortalException {
-
-		if (!isValidFilter(filter)) {
-			throw new LDAPFilterException(
-				"Invalid filter " + filter + " defined by " +
-					filterPropertyName);
-		}
-	}
-
-	private static Pattern _pattern1 = Pattern.compile(".*[~<>]*=[~<>]*=.*");
-	private static Pattern _pattern2 = Pattern.compile("\\([~<>]*=.*");
-	private static Pattern _pattern3 = Pattern.compile("\\([^~<>=]*\\)");
-	private static Pattern _pattern4 = Pattern.compile(".*[^~<>=]*[~<>]*=\\)");
 
 }

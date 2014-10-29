@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -34,11 +34,9 @@ import javax.security.auth.spi.LoginModule;
 public class PortalLoginModule implements LoginModule {
 
 	public PortalLoginModule() {
-		LoginModule loginModule = null;
-
 		if (Validator.isNotNull(PropsValues.PORTAL_JAAS_IMPL)) {
 			try {
-				loginModule = (LoginModule)InstanceFactory.newInstance(
+				_loginModule = (LoginModule)InstanceFactory.newInstance(
 					PropsValues.PORTAL_JAAS_IMPL);
 			}
 			catch (Exception e) {
@@ -46,44 +44,42 @@ public class PortalLoginModule implements LoginModule {
 			}
 		}
 
-		if (loginModule == null) {
+		if (_loginModule == null) {
 			if (ServerDetector.isJBoss()) {
-				loginModule =
+				_loginModule =
 					new com.liferay.portal.security.jaas.ext.jboss.
 						PortalLoginModule();
 			}
 			else if (ServerDetector.isJetty()) {
-				loginModule =
+				_loginModule =
 					new com.liferay.portal.security.jaas.ext.jetty.
 						PortalLoginModule();
 			}
 			else if (ServerDetector.isJOnAS()) {
-				loginModule =
+				_loginModule =
 					new com.liferay.portal.security.jaas.ext.jonas.
 						PortalLoginModule();
 			}
 			else if (ServerDetector.isResin()) {
-				loginModule =
+				_loginModule =
 					new com.liferay.portal.security.jaas.ext.resin.
 						PortalLoginModule();
 			}
 			else if (ServerDetector.isTomcat()) {
-				loginModule =
+				_loginModule =
 					new com.liferay.portal.security.jaas.ext.tomcat.
 						PortalLoginModule();
 			}
 			else if (ServerDetector.isWebLogic()) {
-				loginModule =
+				_loginModule =
 					new com.liferay.portal.security.jaas.ext.weblogic.
 						PortalLoginModule();
 			}
 		}
 
 		if (_log.isDebugEnabled()) {
-			_log.debug(loginModule.getClass().getName());
+			_log.debug(_loginModule.getClass().getName());
 		}
-
-		_loginModule = loginModule;
 	}
 
 	@Override
@@ -116,6 +112,6 @@ public class PortalLoginModule implements LoginModule {
 
 	private static Log _log = LogFactoryUtil.getLog(PortalLoginModule.class);
 
-	private final LoginModule _loginModule;
+	private LoginModule _loginModule;
 
 }

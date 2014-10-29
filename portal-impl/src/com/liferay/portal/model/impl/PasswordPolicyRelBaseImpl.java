@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,8 +14,7 @@
 
 package com.liferay.portal.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.model.PasswordPolicyRel;
 import com.liferay.portal.service.PasswordPolicyRelLocalServiceUtil;
 
@@ -31,7 +30,6 @@ import com.liferay.portal.service.PasswordPolicyRelLocalServiceUtil;
  * @see com.liferay.portal.model.PasswordPolicyRel
  * @generated
  */
-@ProviderType
 public abstract class PasswordPolicyRelBaseImpl
 	extends PasswordPolicyRelModelImpl implements PasswordPolicyRel {
 	/*
@@ -40,7 +38,7 @@ public abstract class PasswordPolicyRelBaseImpl
 	 * Never modify or reference this class directly. All methods that expect a password policy rel model instance should use the {@link PasswordPolicyRel} interface instead.
 	 */
 	@Override
-	public void persist() {
+	public void persist() throws SystemException {
 		if (this.isNew()) {
 			PasswordPolicyRelLocalServiceUtil.addPasswordPolicyRel(this);
 		}

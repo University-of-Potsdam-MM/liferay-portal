@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portlet.usersadmin.lar;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.lar.BaseStagedModelDataHandler;
 import com.liferay.portal.kernel.lar.ExportImportPathUtil;
 import com.liferay.portal.kernel.lar.PortletDataContext;
@@ -36,24 +37,17 @@ public class WebsiteStagedModelDataHandler
 	@Override
 	public void deleteStagedModel(
 			String uuid, long groupId, String className, String extraData)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Group group = GroupLocalServiceUtil.getGroup(groupId);
 
-		Website website = fetchStagedModelByUuidAndCompanyId(
-			uuid, group.getCompanyId());
+		Website website =
+			WebsiteLocalServiceUtil.fetchWebsiteByUuidAndCompanyId(
+				uuid, group.getCompanyId());
 
 		if (website != null) {
 			WebsiteLocalServiceUtil.deleteWebsite(website);
 		}
-	}
-
-	@Override
-	public Website fetchStagedModelByUuidAndCompanyId(
-		String uuid, long companyId) {
-
-		return WebsiteLocalServiceUtil.fetchWebsiteByUuidAndCompanyId(
-			uuid, companyId);
 	}
 
 	@Override
@@ -84,8 +78,9 @@ public class WebsiteStagedModelDataHandler
 		ServiceContext serviceContext = portletDataContext.createServiceContext(
 			website);
 
-		Website existingWebsite = fetchStagedModelByUuidAndCompanyId(
-			website.getUuid(), portletDataContext.getCompanyGroupId());
+		Website existingWebsite =
+			WebsiteLocalServiceUtil.fetchWebsiteByUuidAndCompanyId(
+				website.getUuid(), portletDataContext.getCompanyId());
 
 		Website importedWebsite = null;
 

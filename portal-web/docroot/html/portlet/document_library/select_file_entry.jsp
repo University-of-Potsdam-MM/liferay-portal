@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -85,15 +85,20 @@ if (folder != null) {
 				rowURL = null;
 			}
 
-			AssetRendererFactory assetRendererFactory = AssetRendererFactoryRegistryUtil.getAssetRendererFactoryByClassName(DLFolder.class.getName());
+			String image = null;
 
-			AssetRenderer assetRenderer = assetRendererFactory.getAssetRenderer(curFolder.getFolderId());
+			if ((foldersCount + fileEntriesCount) > 0) {
+				image = "folder_full_document";
+			}
+			else {
+				image = "folder_empty";
+			}
 			%>
 
 			<liferay-ui:search-container-column-text
 				name="folder"
 			>
-				<liferay-ui:icon iconCssClass="<%= assetRenderer.getIconCssClass() %>" label="<%= true %>" message="<%= HtmlUtil.escape(curFolder.getName()) %>" url="<%= rowURL.toString() %>" />
+				<liferay-ui:icon image="<%= image %>" label="<%= true %>" message="<%= HtmlUtil.escape(curFolder.getName()) %>" url="<%= rowURL.toString() %>" />
 			</liferay-ui:search-container-column-text>
 
 			<liferay-ui:search-container-column-text
@@ -107,6 +112,7 @@ if (folder != null) {
 				name="num-of-documents"
 				value="<%= String.valueOf(fileEntriesCount) %>"
 			/>
+
 		</liferay-ui:search-container-row>
 
 		<liferay-ui:search-iterator />
@@ -132,21 +138,19 @@ if (folder != null) {
 			modelVar="curFile"
 			rowVar="row"
 		>
+
+			<%
+			String icon = "../file_system/small/" + curFile.getIcon();
+			%>
+
 			<liferay-ui:search-container-column-text
 				name="document"
 			>
-
-				<%
-				AssetRendererFactory assetRendererFactory = AssetRendererFactoryRegistryUtil.getAssetRendererFactoryByClassName(DLFileEntry.class.getName());
-
-				AssetRenderer assetRenderer = assetRendererFactory.getAssetRenderer(curFile.getFileEntryId());
-				%>
-
-				<liferay-ui:icon iconCssClass="<%= assetRenderer.getIconCssClass() %>" label="<%= true %>" message="<%= HtmlUtil.escape(curFile.getTitle()) %>" />
+				<liferay-ui:icon image="<%= icon %>" label="<%= true %>" message="<%= HtmlUtil.escape(curFile.getTitle()) %>" />
 
 				<c:if test="<%= Validator.isNotNull(curFile.getDescription()) %>">
 					<br />
-					<%= HtmlUtil.escape(curFile.getDescription()) %>
+					<%= curFile.getDescription() %>
 				</c:if>
 			</liferay-ui:search-container-column-text>
 
@@ -164,7 +168,7 @@ if (folder != null) {
 
 			<liferay-ui:search-container-column-text
 				name="locked"
-				value='<%= LanguageUtil.get(request, curFile.isCheckedOut() ? "yes" : "no") %>'
+				value='<%= LanguageUtil.get(pageContext, curFile.isCheckedOut() ? "yes" : "no") %>'
 			/>
 
 			<liferay-ui:search-container-column-text>
@@ -185,5 +189,17 @@ if (folder != null) {
 </aui:form>
 
 <aui:script use="aui-base">
-	Liferay.Util.selectEntityHandler('#<portlet:namespace />selectFileEntryFm', '<%= HtmlUtil.escapeJS(eventName) %>');
+	var Util = Liferay.Util;
+
+	A.one('#<portlet:namespace />selectFileEntryFm').delegate(
+		'click',
+		function(event) {
+			var result = Util.getAttributes(event.currentTarget, 'data-');
+
+			Util.getOpener().Liferay.fire('<%= HtmlUtil.escapeJS(eventName) %>', result);
+
+			Util.getWindow().hide();
+		},
+		'.selector-button'
+	);
 </aui:script>

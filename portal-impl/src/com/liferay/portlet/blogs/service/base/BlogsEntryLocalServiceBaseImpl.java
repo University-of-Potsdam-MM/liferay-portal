@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,31 +14,15 @@
 
 package com.liferay.portlet.blogs.service.base;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.bean.IdentifiableBean;
-import com.liferay.portal.kernel.dao.db.DB;
-import com.liferay.portal.kernel.dao.db.DBFactoryUtil;
 import com.liferay.portal.kernel.dao.jdbc.SqlUpdate;
 import com.liferay.portal.kernel.dao.jdbc.SqlUpdateFactoryUtil;
-import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
-import com.liferay.portal.kernel.dao.orm.DefaultActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
-import com.liferay.portal.kernel.dao.orm.ExportActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Projection;
-import com.liferay.portal.kernel.dao.orm.Property;
-import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.lar.ExportImportHelperUtil;
-import com.liferay.portal.kernel.lar.ManifestSummary;
-import com.liferay.portal.kernel.lar.PortletDataContext;
-import com.liferay.portal.kernel.lar.StagedModelDataHandler;
-import com.liferay.portal.kernel.lar.StagedModelDataHandlerRegistryUtil;
-import com.liferay.portal.kernel.lar.StagedModelDataHandlerUtil;
-import com.liferay.portal.kernel.lar.StagedModelType;
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.util.OrderByComparator;
@@ -57,11 +41,12 @@ import com.liferay.portal.service.persistence.SubscriptionPersistence;
 import com.liferay.portal.service.persistence.UserFinder;
 import com.liferay.portal.service.persistence.UserPersistence;
 import com.liferay.portal.service.persistence.WorkflowInstanceLinkPersistence;
-import com.liferay.portal.util.PortalUtil;
 
 import com.liferay.portlet.asset.service.persistence.AssetEntryFinder;
 import com.liferay.portlet.asset.service.persistence.AssetEntryPersistence;
 import com.liferay.portlet.asset.service.persistence.AssetLinkPersistence;
+import com.liferay.portlet.asset.service.persistence.AssetTagFinder;
+import com.liferay.portlet.asset.service.persistence.AssetTagPersistence;
 import com.liferay.portlet.blogs.model.BlogsEntry;
 import com.liferay.portlet.blogs.service.BlogsEntryLocalService;
 import com.liferay.portlet.blogs.service.persistence.BlogsEntryFinder;
@@ -69,6 +54,8 @@ import com.liferay.portlet.blogs.service.persistence.BlogsEntryPersistence;
 import com.liferay.portlet.blogs.service.persistence.BlogsStatsUserFinder;
 import com.liferay.portlet.blogs.service.persistence.BlogsStatsUserPersistence;
 import com.liferay.portlet.expando.service.persistence.ExpandoRowPersistence;
+import com.liferay.portlet.messageboards.service.persistence.MBMessageFinder;
+import com.liferay.portlet.messageboards.service.persistence.MBMessagePersistence;
 import com.liferay.portlet.ratings.service.persistence.RatingsStatsFinder;
 import com.liferay.portlet.ratings.service.persistence.RatingsStatsPersistence;
 import com.liferay.portlet.social.service.persistence.SocialActivityFinder;
@@ -93,7 +80,6 @@ import javax.sql.DataSource;
  * @see com.liferay.portlet.blogs.service.BlogsEntryLocalServiceUtil
  * @generated
  */
-@ProviderType
 public abstract class BlogsEntryLocalServiceBaseImpl
 	extends BaseLocalServiceImpl implements BlogsEntryLocalService,
 		IdentifiableBean {
@@ -108,10 +94,12 @@ public abstract class BlogsEntryLocalServiceBaseImpl
 	 *
 	 * @param blogsEntry the blogs entry
 	 * @return the blogs entry that was added
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
-	public BlogsEntry addBlogsEntry(BlogsEntry blogsEntry) {
+	public BlogsEntry addBlogsEntry(BlogsEntry blogsEntry)
+		throws SystemException {
 		blogsEntry.setNew(true);
 
 		return blogsEntryPersistence.update(blogsEntry);
@@ -134,10 +122,12 @@ public abstract class BlogsEntryLocalServiceBaseImpl
 	 * @param entryId the primary key of the blogs entry
 	 * @return the blogs entry that was removed
 	 * @throws PortalException if a blogs entry with the primary key could not be found
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.DELETE)
 	@Override
-	public BlogsEntry deleteBlogsEntry(long entryId) throws PortalException {
+	public BlogsEntry deleteBlogsEntry(long entryId)
+		throws PortalException, SystemException {
 		return blogsEntryPersistence.remove(entryId);
 	}
 
@@ -146,10 +136,12 @@ public abstract class BlogsEntryLocalServiceBaseImpl
 	 *
 	 * @param blogsEntry the blogs entry
 	 * @return the blogs entry that was removed
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.DELETE)
 	@Override
-	public BlogsEntry deleteBlogsEntry(BlogsEntry blogsEntry) {
+	public BlogsEntry deleteBlogsEntry(BlogsEntry blogsEntry)
+		throws SystemException {
 		return blogsEntryPersistence.remove(blogsEntry);
 	}
 
@@ -166,9 +158,12 @@ public abstract class BlogsEntryLocalServiceBaseImpl
 	 *
 	 * @param dynamicQuery the dynamic query
 	 * @return the matching rows
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery) {
+	@SuppressWarnings("rawtypes")
+	public List dynamicQuery(DynamicQuery dynamicQuery)
+		throws SystemException {
 		return blogsEntryPersistence.findWithDynamicQuery(dynamicQuery);
 	}
 
@@ -183,10 +178,12 @@ public abstract class BlogsEntryLocalServiceBaseImpl
 	 * @param start the lower bound of the range of model instances
 	 * @param end the upper bound of the range of model instances (not inclusive)
 	 * @return the range of matching rows
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
-		int end) {
+	@SuppressWarnings("rawtypes")
+	public List dynamicQuery(DynamicQuery dynamicQuery, int start, int end)
+		throws SystemException {
 		return blogsEntryPersistence.findWithDynamicQuery(dynamicQuery, start,
 			end);
 	}
@@ -203,10 +200,12 @@ public abstract class BlogsEntryLocalServiceBaseImpl
 	 * @param end the upper bound of the range of model instances (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching rows
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
-		int end, OrderByComparator<T> orderByComparator) {
+	@SuppressWarnings("rawtypes")
+	public List dynamicQuery(DynamicQuery dynamicQuery, int start, int end,
+		OrderByComparator orderByComparator) throws SystemException {
 		return blogsEntryPersistence.findWithDynamicQuery(dynamicQuery, start,
 			end, orderByComparator);
 	}
@@ -216,9 +215,11 @@ public abstract class BlogsEntryLocalServiceBaseImpl
 	 *
 	 * @param dynamicQuery the dynamic query
 	 * @return the number of rows that match the dynamic query
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public long dynamicQueryCount(DynamicQuery dynamicQuery) {
+	public long dynamicQueryCount(DynamicQuery dynamicQuery)
+		throws SystemException {
 		return blogsEntryPersistence.countWithDynamicQuery(dynamicQuery);
 	}
 
@@ -228,17 +229,32 @@ public abstract class BlogsEntryLocalServiceBaseImpl
 	 * @param dynamicQuery the dynamic query
 	 * @param projection the projection to apply to the query
 	 * @return the number of rows that match the dynamic query
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public long dynamicQueryCount(DynamicQuery dynamicQuery,
-		Projection projection) {
+		Projection projection) throws SystemException {
 		return blogsEntryPersistence.countWithDynamicQuery(dynamicQuery,
 			projection);
 	}
 
 	@Override
-	public BlogsEntry fetchBlogsEntry(long entryId) {
+	public BlogsEntry fetchBlogsEntry(long entryId) throws SystemException {
 		return blogsEntryPersistence.fetchByPrimaryKey(entryId);
+	}
+
+	/**
+	 * Returns the blogs entry with the matching UUID and company.
+	 *
+	 * @param uuid the blogs entry's UUID
+	 * @param  companyId the primary key of the company
+	 * @return the matching blogs entry, or <code>null</code> if a matching blogs entry could not be found
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public BlogsEntry fetchBlogsEntryByUuidAndCompanyId(String uuid,
+		long companyId) throws SystemException {
+		return blogsEntryPersistence.fetchByUuid_C_First(uuid, companyId, null);
 	}
 
 	/**
@@ -247,9 +263,11 @@ public abstract class BlogsEntryLocalServiceBaseImpl
 	 * @param uuid the blogs entry's UUID
 	 * @param groupId the primary key of the group
 	 * @return the matching blogs entry, or <code>null</code> if a matching blogs entry could not be found
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public BlogsEntry fetchBlogsEntryByUuidAndGroupId(String uuid, long groupId) {
+	public BlogsEntry fetchBlogsEntryByUuidAndGroupId(String uuid, long groupId)
+		throws SystemException {
 		return blogsEntryPersistence.fetchByUUID_G(uuid, groupId);
 	}
 
@@ -259,124 +277,33 @@ public abstract class BlogsEntryLocalServiceBaseImpl
 	 * @param entryId the primary key of the blogs entry
 	 * @return the blogs entry
 	 * @throws PortalException if a blogs entry with the primary key could not be found
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public BlogsEntry getBlogsEntry(long entryId) throws PortalException {
+	public BlogsEntry getBlogsEntry(long entryId)
+		throws PortalException, SystemException {
 		return blogsEntryPersistence.findByPrimaryKey(entryId);
 	}
 
 	@Override
-	public ActionableDynamicQuery getActionableDynamicQuery() {
-		ActionableDynamicQuery actionableDynamicQuery = new DefaultActionableDynamicQuery();
-
-		actionableDynamicQuery.setBaseLocalService(com.liferay.portlet.blogs.service.BlogsEntryLocalServiceUtil.getService());
-		actionableDynamicQuery.setClass(BlogsEntry.class);
-		actionableDynamicQuery.setClassLoader(getClassLoader());
-
-		actionableDynamicQuery.setPrimaryKeyPropertyName("entryId");
-
-		return actionableDynamicQuery;
-	}
-
-	protected void initActionableDynamicQuery(
-		ActionableDynamicQuery actionableDynamicQuery) {
-		actionableDynamicQuery.setBaseLocalService(com.liferay.portlet.blogs.service.BlogsEntryLocalServiceUtil.getService());
-		actionableDynamicQuery.setClass(BlogsEntry.class);
-		actionableDynamicQuery.setClassLoader(getClassLoader());
-
-		actionableDynamicQuery.setPrimaryKeyPropertyName("entryId");
-	}
-
-	@Override
-	public ExportActionableDynamicQuery getExportActionableDynamicQuery(
-		final PortletDataContext portletDataContext) {
-		final ExportActionableDynamicQuery exportActionableDynamicQuery = new ExportActionableDynamicQuery() {
-				@Override
-				public long performCount() throws PortalException {
-					ManifestSummary manifestSummary = portletDataContext.getManifestSummary();
-
-					StagedModelType stagedModelType = getStagedModelType();
-
-					long modelAdditionCount = super.performCount();
-
-					manifestSummary.addModelAdditionCount(stagedModelType.toString(),
-						modelAdditionCount);
-
-					long modelDeletionCount = ExportImportHelperUtil.getModelDeletionCount(portletDataContext,
-							stagedModelType);
-
-					manifestSummary.addModelDeletionCount(stagedModelType.toString(),
-						modelDeletionCount);
-
-					return modelAdditionCount;
-				}
-			};
-
-		initActionableDynamicQuery(exportActionableDynamicQuery);
-
-		exportActionableDynamicQuery.setAddCriteriaMethod(new ActionableDynamicQuery.AddCriteriaMethod() {
-				@Override
-				public void addCriteria(DynamicQuery dynamicQuery) {
-					portletDataContext.addDateRangeCriteria(dynamicQuery,
-						"modifiedDate");
-
-					StagedModelDataHandler<?> stagedModelDataHandler = StagedModelDataHandlerRegistryUtil.getStagedModelDataHandler(BlogsEntry.class.getName());
-
-					Property workflowStatusProperty = PropertyFactoryUtil.forName(
-							"status");
-
-					dynamicQuery.add(workflowStatusProperty.in(
-							stagedModelDataHandler.getExportableStatuses()));
-				}
-			});
-
-		exportActionableDynamicQuery.setCompanyId(portletDataContext.getCompanyId());
-
-		exportActionableDynamicQuery.setGroupId(portletDataContext.getScopeGroupId());
-
-		exportActionableDynamicQuery.setPerformActionMethod(new ActionableDynamicQuery.PerformActionMethod() {
-				@Override
-				public void performAction(Object object)
-					throws PortalException {
-					BlogsEntry stagedModel = (BlogsEntry)object;
-
-					StagedModelDataHandlerUtil.exportStagedModel(portletDataContext,
-						stagedModel);
-				}
-			});
-		exportActionableDynamicQuery.setStagedModelType(new StagedModelType(
-				PortalUtil.getClassNameId(BlogsEntry.class.getName())));
-
-		return exportActionableDynamicQuery;
-	}
-
-	/**
-	 * @throws PortalException
-	 */
-	@Override
-	public PersistedModel deletePersistedModel(PersistedModel persistedModel)
-		throws PortalException {
-		return blogsEntryLocalService.deleteBlogsEntry((BlogsEntry)persistedModel);
-	}
-
-	@Override
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
-		throws PortalException {
+		throws PortalException, SystemException {
 		return blogsEntryPersistence.findByPrimaryKey(primaryKeyObj);
 	}
 
+	/**
+	 * Returns the blogs entry with the matching UUID and company.
+	 *
+	 * @param uuid the blogs entry's UUID
+	 * @param  companyId the primary key of the company
+	 * @return the matching blogs entry
+	 * @throws PortalException if a matching blogs entry could not be found
+	 * @throws SystemException if a system exception occurred
+	 */
 	@Override
-	public List<BlogsEntry> getBlogsEntriesByUuidAndCompanyId(String uuid,
-		long companyId) {
-		return blogsEntryPersistence.findByUuid_C(uuid, companyId);
-	}
-
-	@Override
-	public List<BlogsEntry> getBlogsEntriesByUuidAndCompanyId(String uuid,
-		long companyId, int start, int end,
-		OrderByComparator<BlogsEntry> orderByComparator) {
-		return blogsEntryPersistence.findByUuid_C(uuid, companyId, start, end,
-			orderByComparator);
+	public BlogsEntry getBlogsEntryByUuidAndCompanyId(String uuid,
+		long companyId) throws PortalException, SystemException {
+		return blogsEntryPersistence.findByUuid_C_First(uuid, companyId, null);
 	}
 
 	/**
@@ -386,10 +313,11 @@ public abstract class BlogsEntryLocalServiceBaseImpl
 	 * @param groupId the primary key of the group
 	 * @return the matching blogs entry
 	 * @throws PortalException if a matching blogs entry could not be found
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public BlogsEntry getBlogsEntryByUuidAndGroupId(String uuid, long groupId)
-		throws PortalException {
+		throws PortalException, SystemException {
 		return blogsEntryPersistence.findByUUID_G(uuid, groupId);
 	}
 
@@ -403,9 +331,11 @@ public abstract class BlogsEntryLocalServiceBaseImpl
 	 * @param start the lower bound of the range of blogs entries
 	 * @param end the upper bound of the range of blogs entries (not inclusive)
 	 * @return the range of blogs entries
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public List<BlogsEntry> getBlogsEntries(int start, int end) {
+	public List<BlogsEntry> getBlogsEntries(int start, int end)
+		throws SystemException {
 		return blogsEntryPersistence.findAll(start, end);
 	}
 
@@ -413,9 +343,10 @@ public abstract class BlogsEntryLocalServiceBaseImpl
 	 * Returns the number of blogs entries.
 	 *
 	 * @return the number of blogs entries
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public int getBlogsEntriesCount() {
+	public int getBlogsEntriesCount() throws SystemException {
 		return blogsEntryPersistence.countAll();
 	}
 
@@ -424,10 +355,12 @@ public abstract class BlogsEntryLocalServiceBaseImpl
 	 *
 	 * @param blogsEntry the blogs entry
 	 * @return the blogs entry that was updated
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
-	public BlogsEntry updateBlogsEntry(BlogsEntry blogsEntry) {
+	public BlogsEntry updateBlogsEntry(BlogsEntry blogsEntry)
+		throws SystemException {
 		return blogsEntryPersistence.update(blogsEntry);
 	}
 
@@ -504,6 +437,63 @@ public abstract class BlogsEntryLocalServiceBaseImpl
 	 */
 	public void setBlogsEntryFinder(BlogsEntryFinder blogsEntryFinder) {
 		this.blogsEntryFinder = blogsEntryFinder;
+	}
+
+	/**
+	 * Returns the blogs stats user local service.
+	 *
+	 * @return the blogs stats user local service
+	 */
+	public com.liferay.portlet.blogs.service.BlogsStatsUserLocalService getBlogsStatsUserLocalService() {
+		return blogsStatsUserLocalService;
+	}
+
+	/**
+	 * Sets the blogs stats user local service.
+	 *
+	 * @param blogsStatsUserLocalService the blogs stats user local service
+	 */
+	public void setBlogsStatsUserLocalService(
+		com.liferay.portlet.blogs.service.BlogsStatsUserLocalService blogsStatsUserLocalService) {
+		this.blogsStatsUserLocalService = blogsStatsUserLocalService;
+	}
+
+	/**
+	 * Returns the blogs stats user persistence.
+	 *
+	 * @return the blogs stats user persistence
+	 */
+	public BlogsStatsUserPersistence getBlogsStatsUserPersistence() {
+		return blogsStatsUserPersistence;
+	}
+
+	/**
+	 * Sets the blogs stats user persistence.
+	 *
+	 * @param blogsStatsUserPersistence the blogs stats user persistence
+	 */
+	public void setBlogsStatsUserPersistence(
+		BlogsStatsUserPersistence blogsStatsUserPersistence) {
+		this.blogsStatsUserPersistence = blogsStatsUserPersistence;
+	}
+
+	/**
+	 * Returns the blogs stats user finder.
+	 *
+	 * @return the blogs stats user finder
+	 */
+	public BlogsStatsUserFinder getBlogsStatsUserFinder() {
+		return blogsStatsUserFinder;
+	}
+
+	/**
+	 * Sets the blogs stats user finder.
+	 *
+	 * @param blogsStatsUserFinder the blogs stats user finder
+	 */
+	public void setBlogsStatsUserFinder(
+		BlogsStatsUserFinder blogsStatsUserFinder) {
+		this.blogsStatsUserFinder = blogsStatsUserFinder;
 	}
 
 	/**
@@ -1145,6 +1135,80 @@ public abstract class BlogsEntryLocalServiceBaseImpl
 	}
 
 	/**
+	 * Returns the asset tag local service.
+	 *
+	 * @return the asset tag local service
+	 */
+	public com.liferay.portlet.asset.service.AssetTagLocalService getAssetTagLocalService() {
+		return assetTagLocalService;
+	}
+
+	/**
+	 * Sets the asset tag local service.
+	 *
+	 * @param assetTagLocalService the asset tag local service
+	 */
+	public void setAssetTagLocalService(
+		com.liferay.portlet.asset.service.AssetTagLocalService assetTagLocalService) {
+		this.assetTagLocalService = assetTagLocalService;
+	}
+
+	/**
+	 * Returns the asset tag remote service.
+	 *
+	 * @return the asset tag remote service
+	 */
+	public com.liferay.portlet.asset.service.AssetTagService getAssetTagService() {
+		return assetTagService;
+	}
+
+	/**
+	 * Sets the asset tag remote service.
+	 *
+	 * @param assetTagService the asset tag remote service
+	 */
+	public void setAssetTagService(
+		com.liferay.portlet.asset.service.AssetTagService assetTagService) {
+		this.assetTagService = assetTagService;
+	}
+
+	/**
+	 * Returns the asset tag persistence.
+	 *
+	 * @return the asset tag persistence
+	 */
+	public AssetTagPersistence getAssetTagPersistence() {
+		return assetTagPersistence;
+	}
+
+	/**
+	 * Sets the asset tag persistence.
+	 *
+	 * @param assetTagPersistence the asset tag persistence
+	 */
+	public void setAssetTagPersistence(AssetTagPersistence assetTagPersistence) {
+		this.assetTagPersistence = assetTagPersistence;
+	}
+
+	/**
+	 * Returns the asset tag finder.
+	 *
+	 * @return the asset tag finder
+	 */
+	public AssetTagFinder getAssetTagFinder() {
+		return assetTagFinder;
+	}
+
+	/**
+	 * Sets the asset tag finder.
+	 *
+	 * @param assetTagFinder the asset tag finder
+	 */
+	public void setAssetTagFinder(AssetTagFinder assetTagFinder) {
+		this.assetTagFinder = assetTagFinder;
+	}
+
+	/**
 	 * Returns the expando row local service.
 	 *
 	 * @return the expando row local service
@@ -1180,6 +1244,81 @@ public abstract class BlogsEntryLocalServiceBaseImpl
 	public void setExpandoRowPersistence(
 		ExpandoRowPersistence expandoRowPersistence) {
 		this.expandoRowPersistence = expandoRowPersistence;
+	}
+
+	/**
+	 * Returns the message-boards message local service.
+	 *
+	 * @return the message-boards message local service
+	 */
+	public com.liferay.portlet.messageboards.service.MBMessageLocalService getMBMessageLocalService() {
+		return mbMessageLocalService;
+	}
+
+	/**
+	 * Sets the message-boards message local service.
+	 *
+	 * @param mbMessageLocalService the message-boards message local service
+	 */
+	public void setMBMessageLocalService(
+		com.liferay.portlet.messageboards.service.MBMessageLocalService mbMessageLocalService) {
+		this.mbMessageLocalService = mbMessageLocalService;
+	}
+
+	/**
+	 * Returns the message-boards message remote service.
+	 *
+	 * @return the message-boards message remote service
+	 */
+	public com.liferay.portlet.messageboards.service.MBMessageService getMBMessageService() {
+		return mbMessageService;
+	}
+
+	/**
+	 * Sets the message-boards message remote service.
+	 *
+	 * @param mbMessageService the message-boards message remote service
+	 */
+	public void setMBMessageService(
+		com.liferay.portlet.messageboards.service.MBMessageService mbMessageService) {
+		this.mbMessageService = mbMessageService;
+	}
+
+	/**
+	 * Returns the message-boards message persistence.
+	 *
+	 * @return the message-boards message persistence
+	 */
+	public MBMessagePersistence getMBMessagePersistence() {
+		return mbMessagePersistence;
+	}
+
+	/**
+	 * Sets the message-boards message persistence.
+	 *
+	 * @param mbMessagePersistence the message-boards message persistence
+	 */
+	public void setMBMessagePersistence(
+		MBMessagePersistence mbMessagePersistence) {
+		this.mbMessagePersistence = mbMessagePersistence;
+	}
+
+	/**
+	 * Returns the message-boards message finder.
+	 *
+	 * @return the message-boards message finder
+	 */
+	public MBMessageFinder getMBMessageFinder() {
+		return mbMessageFinder;
+	}
+
+	/**
+	 * Sets the message-boards message finder.
+	 *
+	 * @param mbMessageFinder the message-boards message finder
+	 */
+	public void setMBMessageFinder(MBMessageFinder mbMessageFinder) {
+		this.mbMessageFinder = mbMessageFinder;
 	}
 
 	/**
@@ -1371,63 +1510,6 @@ public abstract class BlogsEntryLocalServiceBaseImpl
 		this.trashEntryPersistence = trashEntryPersistence;
 	}
 
-	/**
-	 * Returns the blogs stats user local service.
-	 *
-	 * @return the blogs stats user local service
-	 */
-	public com.liferay.portlet.blogs.service.BlogsStatsUserLocalService getBlogsStatsUserLocalService() {
-		return blogsStatsUserLocalService;
-	}
-
-	/**
-	 * Sets the blogs stats user local service.
-	 *
-	 * @param blogsStatsUserLocalService the blogs stats user local service
-	 */
-	public void setBlogsStatsUserLocalService(
-		com.liferay.portlet.blogs.service.BlogsStatsUserLocalService blogsStatsUserLocalService) {
-		this.blogsStatsUserLocalService = blogsStatsUserLocalService;
-	}
-
-	/**
-	 * Returns the blogs stats user persistence.
-	 *
-	 * @return the blogs stats user persistence
-	 */
-	public BlogsStatsUserPersistence getBlogsStatsUserPersistence() {
-		return blogsStatsUserPersistence;
-	}
-
-	/**
-	 * Sets the blogs stats user persistence.
-	 *
-	 * @param blogsStatsUserPersistence the blogs stats user persistence
-	 */
-	public void setBlogsStatsUserPersistence(
-		BlogsStatsUserPersistence blogsStatsUserPersistence) {
-		this.blogsStatsUserPersistence = blogsStatsUserPersistence;
-	}
-
-	/**
-	 * Returns the blogs stats user finder.
-	 *
-	 * @return the blogs stats user finder
-	 */
-	public BlogsStatsUserFinder getBlogsStatsUserFinder() {
-		return blogsStatsUserFinder;
-	}
-
-	/**
-	 * Sets the blogs stats user finder.
-	 *
-	 * @param blogsStatsUserFinder the blogs stats user finder
-	 */
-	public void setBlogsStatsUserFinder(
-		BlogsStatsUserFinder blogsStatsUserFinder) {
-		this.blogsStatsUserFinder = blogsStatsUserFinder;
-	}
-
 	public void afterPropertiesSet() {
 		persistedModelLocalServiceRegistry.register("com.liferay.portlet.blogs.model.BlogsEntry",
 			blogsEntryLocalService);
@@ -1467,18 +1549,13 @@ public abstract class BlogsEntryLocalServiceBaseImpl
 	}
 
 	/**
-	 * Performs a SQL query.
+	 * Performs an SQL query.
 	 *
 	 * @param sql the sql query
 	 */
-	protected void runSQL(String sql) {
+	protected void runSQL(String sql) throws SystemException {
 		try {
 			DataSource dataSource = blogsEntryPersistence.getDataSource();
-
-			DB db = DBFactoryUtil.getDB();
-
-			sql = db.buildSQL(sql);
-			sql = PortalUtil.transformSQL(sql);
 
 			SqlUpdate sqlUpdate = SqlUpdateFactoryUtil.getSqlUpdate(dataSource,
 					sql, new int[0]);
@@ -1498,6 +1575,12 @@ public abstract class BlogsEntryLocalServiceBaseImpl
 	protected BlogsEntryPersistence blogsEntryPersistence;
 	@BeanReference(type = BlogsEntryFinder.class)
 	protected BlogsEntryFinder blogsEntryFinder;
+	@BeanReference(type = com.liferay.portlet.blogs.service.BlogsStatsUserLocalService.class)
+	protected com.liferay.portlet.blogs.service.BlogsStatsUserLocalService blogsStatsUserLocalService;
+	@BeanReference(type = BlogsStatsUserPersistence.class)
+	protected BlogsStatsUserPersistence blogsStatsUserPersistence;
+	@BeanReference(type = BlogsStatsUserFinder.class)
+	protected BlogsStatsUserFinder blogsStatsUserFinder;
 	@BeanReference(type = com.liferay.counter.service.CounterLocalService.class)
 	protected com.liferay.counter.service.CounterLocalService counterLocalService;
 	@BeanReference(type = com.liferay.portal.service.CompanyLocalService.class)
@@ -1566,10 +1649,26 @@ public abstract class BlogsEntryLocalServiceBaseImpl
 	protected com.liferay.portlet.asset.service.AssetLinkLocalService assetLinkLocalService;
 	@BeanReference(type = AssetLinkPersistence.class)
 	protected AssetLinkPersistence assetLinkPersistence;
+	@BeanReference(type = com.liferay.portlet.asset.service.AssetTagLocalService.class)
+	protected com.liferay.portlet.asset.service.AssetTagLocalService assetTagLocalService;
+	@BeanReference(type = com.liferay.portlet.asset.service.AssetTagService.class)
+	protected com.liferay.portlet.asset.service.AssetTagService assetTagService;
+	@BeanReference(type = AssetTagPersistence.class)
+	protected AssetTagPersistence assetTagPersistence;
+	@BeanReference(type = AssetTagFinder.class)
+	protected AssetTagFinder assetTagFinder;
 	@BeanReference(type = com.liferay.portlet.expando.service.ExpandoRowLocalService.class)
 	protected com.liferay.portlet.expando.service.ExpandoRowLocalService expandoRowLocalService;
 	@BeanReference(type = ExpandoRowPersistence.class)
 	protected ExpandoRowPersistence expandoRowPersistence;
+	@BeanReference(type = com.liferay.portlet.messageboards.service.MBMessageLocalService.class)
+	protected com.liferay.portlet.messageboards.service.MBMessageLocalService mbMessageLocalService;
+	@BeanReference(type = com.liferay.portlet.messageboards.service.MBMessageService.class)
+	protected com.liferay.portlet.messageboards.service.MBMessageService mbMessageService;
+	@BeanReference(type = MBMessagePersistence.class)
+	protected MBMessagePersistence mbMessagePersistence;
+	@BeanReference(type = MBMessageFinder.class)
+	protected MBMessageFinder mbMessageFinder;
 	@BeanReference(type = com.liferay.portlet.ratings.service.RatingsStatsLocalService.class)
 	protected com.liferay.portlet.ratings.service.RatingsStatsLocalService ratingsStatsLocalService;
 	@BeanReference(type = RatingsStatsPersistence.class)
@@ -1590,12 +1689,6 @@ public abstract class BlogsEntryLocalServiceBaseImpl
 	protected com.liferay.portlet.trash.service.TrashEntryService trashEntryService;
 	@BeanReference(type = TrashEntryPersistence.class)
 	protected TrashEntryPersistence trashEntryPersistence;
-	@BeanReference(type = com.liferay.portlet.blogs.service.BlogsStatsUserLocalService.class)
-	protected com.liferay.portlet.blogs.service.BlogsStatsUserLocalService blogsStatsUserLocalService;
-	@BeanReference(type = BlogsStatsUserPersistence.class)
-	protected BlogsStatsUserPersistence blogsStatsUserPersistence;
-	@BeanReference(type = BlogsStatsUserFinder.class)
-	protected BlogsStatsUserFinder blogsStatsUserFinder;
 	@BeanReference(type = PersistedModelLocalServiceRegistry.class)
 	protected PersistedModelLocalServiceRegistry persistedModelLocalServiceRegistry;
 	private String _beanIdentifier;

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -32,11 +32,6 @@ import java.util.Map;
 public class PortletStagingBackgroundTaskExecutor
 	extends BaseStagingBackgroundTaskExecutor {
 
-	public PortletStagingBackgroundTaskExecutor() {
-		setBackgroundTaskStatusMessageTranslator(
-			new PortletStagingBackgroundTaskStatusMessageTranslator());
-	}
-
 	@Override
 	public BackgroundTaskResult execute(BackgroundTask backgroundTask)
 		throws Exception {
@@ -60,7 +55,7 @@ public class PortletStagingBackgroundTaskExecutor
 			sourcePlid, sourceGroupId, portletId, parameterMap, startDate,
 			endDate);
 
-		markBackgroundTask(backgroundTask.getBackgroundTaskId(), "exported");
+		backgroundTask = markBackgroundTask(backgroundTask, "exported");
 
 		MissingReferences missingReferences = null;
 
@@ -70,8 +65,7 @@ public class PortletStagingBackgroundTaskExecutor
 					userId, targetPlid, targetGroupId, portletId, parameterMap,
 					larFile);
 
-			markBackgroundTask(
-				backgroundTask.getBackgroundTaskId(), "validated");
+			backgroundTask = markBackgroundTask(backgroundTask, "validated");
 
 			LayoutLocalServiceUtil.importPortletInfo(
 				userId, targetPlid, targetGroupId, portletId, parameterMap,
@@ -81,8 +75,7 @@ public class PortletStagingBackgroundTaskExecutor
 			larFile.delete();
 		}
 
-		return processMissingReferences(
-			backgroundTask.getBackgroundTaskId(), missingReferences);
+		return processMissingReferences(backgroundTask, missingReferences);
 	}
 
 }

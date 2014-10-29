@@ -1,8 +1,6 @@
 AUI.add(
 	'liferay-logo-selector',
 	function(A) {
-		var Lang = A.Lang;
-
 		var DELETE_LOGO = 'DELETE_LOGO';
 
 		var MAP_DELETE_LOGO = {
@@ -13,20 +11,6 @@ AUI.add(
 			{
 				ATTRS: {
 					defaultLogoURL: {
-						value: ''
-					},
-
-					editLogoFn: {
-						setter: function(value) {
-							var fn = function() {};
-
-							if (Lang.isFunction(window[value])) {
-								fn = window[value] || fn;
-							}
-
-							return fn;
-						},
-						validator: A.Lang.isString,
 						value: ''
 					},
 
@@ -62,7 +46,7 @@ AUI.add(
 						instance._portletNamespace = instance.get('portletNamespace');
 						instance._randomNamespace = instance.get('randomNamespace');
 
-						window[instance._randomNamespace + 'changeLogo'] = A.bind('_changeLogo', instance);
+						window[instance._portletNamespace + 'changeLogo'] = A.bind('_changeLogo', instance);
 					},
 
 					renderUI: function() {
@@ -71,12 +55,17 @@ AUI.add(
 						var portletNamespace = instance._portletNamespace;
 						var randomNamespace = instance._randomNamespace;
 
+						var logoDisplaySelector = instance.get('logoDisplaySelector');
+
+						if (logoDisplaySelector) {
+							instance._logoDisplay = A.one(logoDisplaySelector);
+						}
+
 						var contentBox = instance.get('contentBox');
 
 						instance._avatar = contentBox.one('#' + randomNamespace + 'avatar');
 						instance._deleteLogoButton = contentBox.one('.delete-logo');
 						instance._deleteLogoInput = contentBox.one('#' + portletNamespace + 'deleteLogo');
-						instance._fileEntryIdInput = contentBox.one('#' + portletNamespace + 'fileEntryId');
 					},
 
 					bindUI: function() {
@@ -86,14 +75,10 @@ AUI.add(
 						instance.get('contentBox').delegate('click', instance._onDeleteLogoClick, '.delete-logo', instance);
 					},
 
-					_changeLogo: function(url, fileEntryId) {
+					_changeLogo: function(url) {
 						var instance = this;
 
 						instance.set('logoURL', url);
-
-						if (fileEntryId) {
-							instance._fileEntryIdInput.val(fileEntryId);
-						}
 					},
 
 					_onDeleteLogoClick: function(event) {
@@ -109,7 +94,6 @@ AUI.add(
 
 						Liferay.Util.openWindow(
 							{
-								cache: false,
 								dialog: {
 									destroyOnHide: true,
 									width: 600
@@ -127,26 +111,18 @@ AUI.add(
 						var instance = this;
 
 						var logoURL = value;
-
-						var logoDisplaySelector = instance.get('logoDisplaySelector');
+						var logoDisplay = instance._logoDisplay;
 
 						var deleteLogo = src == DELETE_LOGO;
 
 						instance._avatar.attr('src', logoURL);
 
-						if (logoDisplaySelector) {
-							var logoDisplay = A.one(logoDisplaySelector);
-
-							if (logoDisplay) {
-								logoDisplay.attr('src', logoURL);
-							}
+						if (logoDisplay) {
+							logoDisplay.attr('src', logoURL);
 						}
-
-						instance.get('editLogoFn').apply(instance, [logoURL, deleteLogo]);
 
 						instance._deleteLogoInput.val(deleteLogo);
 						instance._deleteLogoButton.attr('disabled', deleteLogo ? 'disabled' : '');
-						instance._deleteLogoButton.toggleClass('disabled', deleteLogo);
 					}
 				}
 			}

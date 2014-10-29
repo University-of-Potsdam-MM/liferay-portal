@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,7 +14,6 @@
 
 package com.liferay.portal.security.ldap;
 
-import com.liferay.portal.kernel.ldap.LDAPUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.log.LogUtil;
@@ -146,12 +145,8 @@ public class PortalLDAPUtil {
 			String groupFilter = PrefsPropsUtil.getString(
 				companyId, PropsKeys.LDAP_IMPORT_GROUP_SEARCH_FILTER + postfix);
 
-			LDAPUtil.validateFilter(
-				groupFilter,
-				PropsKeys.LDAP_IMPORT_GROUP_SEARCH_FILTER + postfix);
-
 			StringBundler sb = new StringBundler(
-				Validator.isNotNull(groupFilter) ? 9 : 5);
+				Validator.isNotNull(groupFilter) ? 11 : 5);
 
 			if (Validator.isNotNull(groupFilter)) {
 				sb.append(StringPool.OPEN_PARENTHESIS);
@@ -170,7 +165,9 @@ public class PortalLDAPUtil {
 			sb.append(StringPool.CLOSE_PARENTHESIS);
 
 			if (Validator.isNotNull(groupFilter)) {
+				sb.append(StringPool.OPEN_PARENTHESIS);
 				sb.append(groupFilter);
+				sb.append(StringPool.CLOSE_PARENTHESIS);
 				sb.append(StringPool.CLOSE_PARENTHESIS);
 			}
 
@@ -222,24 +219,10 @@ public class PortalLDAPUtil {
 			mappedGroupAttributeIds.add(groupMappings.getProperty("user"));
 		}
 
-		Attributes attributes = _getAttributes(
+		return _getAttributes(
 			ldapContext, fullDistinguishedName,
 			mappedGroupAttributeIds.toArray(
 				new String[mappedGroupAttributeIds.size()]));
-
-		if (_log.isDebugEnabled()) {
-			for (String attributeId : mappedGroupAttributeIds) {
-				Attribute attribute = attributes.get(attributeId);
-
-				if (attribute == null) {
-					continue;
-				}
-
-				_log.debug("LDAP group attribute " + attribute.toString());
-			}
-		}
-
-		return attributes;
 	}
 
 	public static byte[] getGroups(
@@ -315,11 +298,13 @@ public class PortalLDAPUtil {
 		long preferredLDAPServerId = LDAPSettingsUtil.getPreferredLDAPServerId(
 			companyId, screenName);
 
-		if ((preferredLDAPServerId >= 0) &&
-			hasUser(
-				preferredLDAPServerId, companyId, screenName, emailAddress)) {
+		if (preferredLDAPServerId >= 0) {
+			if (hasUser(
+					preferredLDAPServerId, companyId, screenName,
+					emailAddress)) {
 
-			return preferredLDAPServerId;
+				return preferredLDAPServerId;
+			}
 		}
 
 		long[] ldapServerIds = StringUtil.split(
@@ -451,15 +436,6 @@ public class PortalLDAPUtil {
 			String emailAddress)
 		throws Exception {
 
-		return getUser(
-			ldapServerId, companyId, screenName, emailAddress, false);
-	}
-
-	public static Binding getUser(
-			long ldapServerId, long companyId, String screenName,
-			String emailAddress, boolean checkOriginalEmail)
-		throws Exception {
-
 		String postfix = LDAPSettingsUtil.getPropertyPostfix(ldapServerId);
 
 		LdapContext ldapContext = getContext(ldapServerId, companyId);
@@ -477,11 +453,8 @@ public class PortalLDAPUtil {
 			String userFilter = PrefsPropsUtil.getString(
 				companyId, PropsKeys.LDAP_IMPORT_USER_SEARCH_FILTER + postfix);
 
-			LDAPUtil.validateFilter(
-				userFilter, PropsKeys.LDAP_IMPORT_USER_SEARCH_FILTER + postfix);
-
 			StringBundler sb = new StringBundler(
-				Validator.isNotNull(userFilter) ? 9 : 5);
+				Validator.isNotNull(userFilter) ? 11 : 5);
 
 			if (Validator.isNotNull(userFilter)) {
 				sb.append(StringPool.OPEN_PARENTHESIS);
@@ -520,7 +493,9 @@ public class PortalLDAPUtil {
 			sb.append(StringPool.CLOSE_PARENTHESIS);
 
 			if (Validator.isNotNull(userFilter)) {
+				sb.append(StringPool.OPEN_PARENTHESIS);
 				sb.append(userFilter);
+				sb.append(StringPool.CLOSE_PARENTHESIS);
 				sb.append(StringPool.CLOSE_PARENTHESIS);
 			}
 
@@ -531,19 +506,6 @@ public class PortalLDAPUtil {
 
 			if (enu.hasMoreElements()) {
 				return enu.nextElement();
-			}
-
-			if (checkOriginalEmail) {
-				String originalEmailAddress =
-					LDAPUserTransactionThreadLocal.getOriginalEmailAddress();
-
-				if (Validator.isNotNull(originalEmailAddress) &&
-					!emailAddress.equals(originalEmailAddress)) {
-
-					return PortalLDAPUtil.getUser(
-						ldapServerId, companyId, screenName,
-						originalEmailAddress, false);
-				}
 			}
 
 			return null;
@@ -583,22 +545,8 @@ public class PortalLDAPUtil {
 		String[] mappedUserAttributeIds = ArrayUtil.toStringArray(
 			userMappings.values().toArray(new Object[userMappings.size()]));
 
-		Attributes attributes = _getAttributes(
+		return _getAttributes(
 			ldapContext, fullDistinguishedName, mappedUserAttributeIds);
-
-		if (_log.isDebugEnabled()) {
-			for (String attributeId : mappedUserAttributeIds) {
-				Attribute attribute = attributes.get(attributeId);
-
-				if (attribute == null) {
-					continue;
-				}
-
-				_log.debug("LDAP user attribute " + attribute.toString());
-			}
-		}
-
-		return attributes;
 	}
 
 	public static byte[] getUsers(

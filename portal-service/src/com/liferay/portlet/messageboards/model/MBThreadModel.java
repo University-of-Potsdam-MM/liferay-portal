@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,6 +18,7 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.bean.AutoEscape;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.trash.TrashHandler;
 import com.liferay.portal.model.BaseModel;
 import com.liferay.portal.model.CacheModel;
@@ -153,9 +154,10 @@ public interface MBThreadModel extends BaseModel<MBThread>, ContainerModel,
 	 * Returns the user uuid of this message boards thread.
 	 *
 	 * @return the user uuid of this message boards thread
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public String getUserUuid();
+	public String getUserUuid() throws SystemException;
 
 	/**
 	 * Sets the user uuid of this message boards thread.
@@ -260,8 +262,9 @@ public interface MBThreadModel extends BaseModel<MBThread>, ContainerModel,
 	 * Returns the root message user uuid of this message boards thread.
 	 *
 	 * @return the root message user uuid of this message boards thread
+	 * @throws SystemException if a system exception occurred
 	 */
-	public String getRootMessageUserUuid();
+	public String getRootMessageUserUuid() throws SystemException;
 
 	/**
 	 * Sets the root message user uuid of this message boards thread.
@@ -316,8 +319,9 @@ public interface MBThreadModel extends BaseModel<MBThread>, ContainerModel,
 	 * Returns the last post by user uuid of this message boards thread.
 	 *
 	 * @return the last post by user uuid of this message boards thread
+	 * @throws SystemException if a system exception occurred
 	 */
-	public String getLastPostByUserUuid();
+	public String getLastPostByUserUuid() throws SystemException;
 
 	/**
 	 * Sets the last post by user uuid of this message boards thread.
@@ -411,9 +415,10 @@ public interface MBThreadModel extends BaseModel<MBThread>, ContainerModel,
 	 * Returns the status by user uuid of this message boards thread.
 	 *
 	 * @return the status by user uuid of this message boards thread
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public String getStatusByUserUuid();
+	public String getStatusByUserUuid() throws SystemException;
 
 	/**
 	 * Sets the status by user uuid of this message boards thread.
@@ -460,9 +465,10 @@ public interface MBThreadModel extends BaseModel<MBThread>, ContainerModel,
 	 * Returns the trash entry created when this message boards thread was moved to the Recycle Bin. The trash entry may belong to one of the ancestors of this message boards thread.
 	 *
 	 * @return the trash entry created when this message boards thread was moved to the Recycle Bin
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public TrashEntry getTrashEntry() throws PortalException;
+	public TrashEntry getTrashEntry() throws PortalException, SystemException;
 
 	/**
 	 * Returns the class primary key of the trash entry for this message boards thread.
@@ -492,20 +498,14 @@ public interface MBThreadModel extends BaseModel<MBThread>, ContainerModel,
 	 * Returns <code>true</code> if the parent of this message boards thread is in the Recycle Bin.
 	 *
 	 * @return <code>true</code> if the parent of this message boards thread is in the Recycle Bin; <code>false</code> otherwise
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public boolean isInTrashContainer();
 
-	@Override
-	public boolean isInTrashExplicitly();
-
-	@Override
-	public boolean isInTrashImplicitly();
-
 	/**
 	 * @deprecated As of 6.1.0, replaced by {@link #isApproved()}
 	 */
-	@Deprecated
 	@Override
 	public boolean getApproved();
 

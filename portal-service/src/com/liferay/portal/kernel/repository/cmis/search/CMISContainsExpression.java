@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,41 +14,20 @@
 
 package com.liferay.portal.kernel.repository.cmis.search;
 
-import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
-
-import java.util.List;
-
 /**
  * @author Mika Koivisto
  */
-public class CMISContainsExpression extends CMISJunction {
+public class CMISContainsExpression implements CMISCriterion {
+
+	public CMISContainsExpression(String content) {
+		_content = content;
+	}
 
 	@Override
 	public String toQueryFragment() {
-		if (isEmpty()) {
-			return StringPool.BLANK;
-		}
-
-		List<CMISCriterion> cmisCriterions = list();
-
-		StringBundler sb = new StringBundler(cmisCriterions.size() * 2 + 1);
-
-		sb.append("CONTAINS('");
-
-		for (int i = 0; i < cmisCriterions.size(); i++) {
-			CMISCriterion cmisCriterion = cmisCriterions.get(i);
-
-			if (i != 0) {
-				sb.append(" ");
-			}
-
-			sb.append(cmisCriterion.toQueryFragment());
-		}
-
-		sb.append("')");
-
-		return sb.toString();
+		return "CONTAINS('".concat(_content).concat("')");
 	}
+
+	private String _content;
 
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -43,9 +43,11 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	*
 	* @param uuid the uuid
 	* @return the matching email addresses
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.EmailAddress> findByUuid(
-		java.lang.String uuid);
+		java.lang.String uuid)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns a range of all the email addresses where uuid = &#63;.
@@ -58,9 +60,11 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param start the lower bound of the range of email addresses
 	* @param end the upper bound of the range of email addresses (not inclusive)
 	* @return the range of matching email addresses
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.EmailAddress> findByUuid(
-		java.lang.String uuid, int start, int end);
+		java.lang.String uuid, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns an ordered range of all the email addresses where uuid = &#63;.
@@ -74,10 +78,12 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param end the upper bound of the range of email addresses (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching email addresses
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.EmailAddress> findByUuid(
 		java.lang.String uuid, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.EmailAddress> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the first email address in the ordered set where uuid = &#63;.
@@ -86,11 +92,13 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching email address
 	* @throws com.liferay.portal.NoSuchEmailAddressException if a matching email address could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.EmailAddress findByUuid_First(
 		java.lang.String uuid,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.EmailAddress> orderByComparator)
-		throws com.liferay.portal.NoSuchEmailAddressException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchEmailAddressException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the first email address in the ordered set where uuid = &#63;.
@@ -98,10 +106,12 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param uuid the uuid
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching email address, or <code>null</code> if a matching email address could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.EmailAddress fetchByUuid_First(
 		java.lang.String uuid,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.EmailAddress> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the last email address in the ordered set where uuid = &#63;.
@@ -110,11 +120,13 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching email address
 	* @throws com.liferay.portal.NoSuchEmailAddressException if a matching email address could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.EmailAddress findByUuid_Last(
 		java.lang.String uuid,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.EmailAddress> orderByComparator)
-		throws com.liferay.portal.NoSuchEmailAddressException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchEmailAddressException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the last email address in the ordered set where uuid = &#63;.
@@ -122,10 +134,12 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param uuid the uuid
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching email address, or <code>null</code> if a matching email address could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.EmailAddress fetchByUuid_Last(
 		java.lang.String uuid,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.EmailAddress> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the email addresses before and after the current email address in the ordered set where uuid = &#63;.
@@ -135,26 +149,32 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next email address
 	* @throws com.liferay.portal.NoSuchEmailAddressException if a email address with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.EmailAddress[] findByUuid_PrevAndNext(
 		long emailAddressId, java.lang.String uuid,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.EmailAddress> orderByComparator)
-		throws com.liferay.portal.NoSuchEmailAddressException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchEmailAddressException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Removes all the email addresses where uuid = &#63; from the database.
 	*
 	* @param uuid the uuid
+	* @throws SystemException if a system exception occurred
 	*/
-	public void removeByUuid(java.lang.String uuid);
+	public void removeByUuid(java.lang.String uuid)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of email addresses where uuid = &#63;.
 	*
 	* @param uuid the uuid
 	* @return the number of matching email addresses
+	* @throws SystemException if a system exception occurred
 	*/
-	public int countByUuid(java.lang.String uuid);
+	public int countByUuid(java.lang.String uuid)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns all the email addresses where uuid = &#63; and companyId = &#63;.
@@ -162,9 +182,11 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param uuid the uuid
 	* @param companyId the company ID
 	* @return the matching email addresses
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.EmailAddress> findByUuid_C(
-		java.lang.String uuid, long companyId);
+		java.lang.String uuid, long companyId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns a range of all the email addresses where uuid = &#63; and companyId = &#63;.
@@ -178,9 +200,11 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param start the lower bound of the range of email addresses
 	* @param end the upper bound of the range of email addresses (not inclusive)
 	* @return the range of matching email addresses
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.EmailAddress> findByUuid_C(
-		java.lang.String uuid, long companyId, int start, int end);
+		java.lang.String uuid, long companyId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns an ordered range of all the email addresses where uuid = &#63; and companyId = &#63;.
@@ -195,10 +219,12 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param end the upper bound of the range of email addresses (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching email addresses
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.EmailAddress> findByUuid_C(
 		java.lang.String uuid, long companyId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.EmailAddress> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the first email address in the ordered set where uuid = &#63; and companyId = &#63;.
@@ -208,11 +234,13 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching email address
 	* @throws com.liferay.portal.NoSuchEmailAddressException if a matching email address could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.EmailAddress findByUuid_C_First(
 		java.lang.String uuid, long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.EmailAddress> orderByComparator)
-		throws com.liferay.portal.NoSuchEmailAddressException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchEmailAddressException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the first email address in the ordered set where uuid = &#63; and companyId = &#63;.
@@ -221,10 +249,12 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching email address, or <code>null</code> if a matching email address could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.EmailAddress fetchByUuid_C_First(
 		java.lang.String uuid, long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.EmailAddress> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the last email address in the ordered set where uuid = &#63; and companyId = &#63;.
@@ -234,11 +264,13 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching email address
 	* @throws com.liferay.portal.NoSuchEmailAddressException if a matching email address could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.EmailAddress findByUuid_C_Last(
 		java.lang.String uuid, long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.EmailAddress> orderByComparator)
-		throws com.liferay.portal.NoSuchEmailAddressException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchEmailAddressException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the last email address in the ordered set where uuid = &#63; and companyId = &#63;.
@@ -247,10 +279,12 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching email address, or <code>null</code> if a matching email address could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.EmailAddress fetchByUuid_C_Last(
 		java.lang.String uuid, long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.EmailAddress> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the email addresses before and after the current email address in the ordered set where uuid = &#63; and companyId = &#63;.
@@ -261,19 +295,23 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next email address
 	* @throws com.liferay.portal.NoSuchEmailAddressException if a email address with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.EmailAddress[] findByUuid_C_PrevAndNext(
 		long emailAddressId, java.lang.String uuid, long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.EmailAddress> orderByComparator)
-		throws com.liferay.portal.NoSuchEmailAddressException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchEmailAddressException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Removes all the email addresses where uuid = &#63; and companyId = &#63; from the database.
 	*
 	* @param uuid the uuid
 	* @param companyId the company ID
+	* @throws SystemException if a system exception occurred
 	*/
-	public void removeByUuid_C(java.lang.String uuid, long companyId);
+	public void removeByUuid_C(java.lang.String uuid, long companyId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of email addresses where uuid = &#63; and companyId = &#63;.
@@ -281,17 +319,21 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param uuid the uuid
 	* @param companyId the company ID
 	* @return the number of matching email addresses
+	* @throws SystemException if a system exception occurred
 	*/
-	public int countByUuid_C(java.lang.String uuid, long companyId);
+	public int countByUuid_C(java.lang.String uuid, long companyId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns all the email addresses where companyId = &#63;.
 	*
 	* @param companyId the company ID
 	* @return the matching email addresses
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.EmailAddress> findByCompanyId(
-		long companyId);
+		long companyId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns a range of all the email addresses where companyId = &#63;.
@@ -304,9 +346,11 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param start the lower bound of the range of email addresses
 	* @param end the upper bound of the range of email addresses (not inclusive)
 	* @return the range of matching email addresses
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.EmailAddress> findByCompanyId(
-		long companyId, int start, int end);
+		long companyId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns an ordered range of all the email addresses where companyId = &#63;.
@@ -320,10 +364,12 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param end the upper bound of the range of email addresses (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching email addresses
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.EmailAddress> findByCompanyId(
 		long companyId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.EmailAddress> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the first email address in the ordered set where companyId = &#63;.
@@ -332,11 +378,13 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching email address
 	* @throws com.liferay.portal.NoSuchEmailAddressException if a matching email address could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.EmailAddress findByCompanyId_First(
 		long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.EmailAddress> orderByComparator)
-		throws com.liferay.portal.NoSuchEmailAddressException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchEmailAddressException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the first email address in the ordered set where companyId = &#63;.
@@ -344,10 +392,12 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching email address, or <code>null</code> if a matching email address could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.EmailAddress fetchByCompanyId_First(
 		long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.EmailAddress> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the last email address in the ordered set where companyId = &#63;.
@@ -356,11 +406,13 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching email address
 	* @throws com.liferay.portal.NoSuchEmailAddressException if a matching email address could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.EmailAddress findByCompanyId_Last(
 		long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.EmailAddress> orderByComparator)
-		throws com.liferay.portal.NoSuchEmailAddressException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchEmailAddressException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the last email address in the ordered set where companyId = &#63;.
@@ -368,10 +420,12 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching email address, or <code>null</code> if a matching email address could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.EmailAddress fetchByCompanyId_Last(
 		long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.EmailAddress> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the email addresses before and after the current email address in the ordered set where companyId = &#63;.
@@ -381,35 +435,42 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next email address
 	* @throws com.liferay.portal.NoSuchEmailAddressException if a email address with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.EmailAddress[] findByCompanyId_PrevAndNext(
 		long emailAddressId, long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.EmailAddress> orderByComparator)
-		throws com.liferay.portal.NoSuchEmailAddressException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchEmailAddressException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Removes all the email addresses where companyId = &#63; from the database.
 	*
 	* @param companyId the company ID
+	* @throws SystemException if a system exception occurred
 	*/
-	public void removeByCompanyId(long companyId);
+	public void removeByCompanyId(long companyId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of email addresses where companyId = &#63;.
 	*
 	* @param companyId the company ID
 	* @return the number of matching email addresses
+	* @throws SystemException if a system exception occurred
 	*/
-	public int countByCompanyId(long companyId);
+	public int countByCompanyId(long companyId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns all the email addresses where userId = &#63;.
 	*
 	* @param userId the user ID
 	* @return the matching email addresses
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.EmailAddress> findByUserId(
-		long userId);
+		long userId) throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns a range of all the email addresses where userId = &#63;.
@@ -422,9 +483,11 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param start the lower bound of the range of email addresses
 	* @param end the upper bound of the range of email addresses (not inclusive)
 	* @return the range of matching email addresses
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.EmailAddress> findByUserId(
-		long userId, int start, int end);
+		long userId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns an ordered range of all the email addresses where userId = &#63;.
@@ -438,10 +501,12 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param end the upper bound of the range of email addresses (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching email addresses
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.EmailAddress> findByUserId(
 		long userId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.EmailAddress> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the first email address in the ordered set where userId = &#63;.
@@ -450,11 +515,13 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching email address
 	* @throws com.liferay.portal.NoSuchEmailAddressException if a matching email address could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.EmailAddress findByUserId_First(
 		long userId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.EmailAddress> orderByComparator)
-		throws com.liferay.portal.NoSuchEmailAddressException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchEmailAddressException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the first email address in the ordered set where userId = &#63;.
@@ -462,10 +529,12 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param userId the user ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching email address, or <code>null</code> if a matching email address could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.EmailAddress fetchByUserId_First(
 		long userId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.EmailAddress> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the last email address in the ordered set where userId = &#63;.
@@ -474,11 +543,13 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching email address
 	* @throws com.liferay.portal.NoSuchEmailAddressException if a matching email address could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.EmailAddress findByUserId_Last(
 		long userId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.EmailAddress> orderByComparator)
-		throws com.liferay.portal.NoSuchEmailAddressException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchEmailAddressException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the last email address in the ordered set where userId = &#63;.
@@ -486,10 +557,12 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param userId the user ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching email address, or <code>null</code> if a matching email address could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.EmailAddress fetchByUserId_Last(
 		long userId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.EmailAddress> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the email addresses before and after the current email address in the ordered set where userId = &#63;.
@@ -499,26 +572,32 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next email address
 	* @throws com.liferay.portal.NoSuchEmailAddressException if a email address with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.EmailAddress[] findByUserId_PrevAndNext(
 		long emailAddressId, long userId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.EmailAddress> orderByComparator)
-		throws com.liferay.portal.NoSuchEmailAddressException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchEmailAddressException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Removes all the email addresses where userId = &#63; from the database.
 	*
 	* @param userId the user ID
+	* @throws SystemException if a system exception occurred
 	*/
-	public void removeByUserId(long userId);
+	public void removeByUserId(long userId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of email addresses where userId = &#63;.
 	*
 	* @param userId the user ID
 	* @return the number of matching email addresses
+	* @throws SystemException if a system exception occurred
 	*/
-	public int countByUserId(long userId);
+	public int countByUserId(long userId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns all the email addresses where companyId = &#63; and classNameId = &#63;.
@@ -526,9 +605,11 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param companyId the company ID
 	* @param classNameId the class name ID
 	* @return the matching email addresses
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.EmailAddress> findByC_C(
-		long companyId, long classNameId);
+		long companyId, long classNameId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns a range of all the email addresses where companyId = &#63; and classNameId = &#63;.
@@ -542,9 +623,11 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param start the lower bound of the range of email addresses
 	* @param end the upper bound of the range of email addresses (not inclusive)
 	* @return the range of matching email addresses
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.EmailAddress> findByC_C(
-		long companyId, long classNameId, int start, int end);
+		long companyId, long classNameId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns an ordered range of all the email addresses where companyId = &#63; and classNameId = &#63;.
@@ -559,10 +642,12 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param end the upper bound of the range of email addresses (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching email addresses
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.EmailAddress> findByC_C(
 		long companyId, long classNameId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.EmailAddress> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the first email address in the ordered set where companyId = &#63; and classNameId = &#63;.
@@ -572,11 +657,13 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching email address
 	* @throws com.liferay.portal.NoSuchEmailAddressException if a matching email address could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.EmailAddress findByC_C_First(
 		long companyId, long classNameId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.EmailAddress> orderByComparator)
-		throws com.liferay.portal.NoSuchEmailAddressException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchEmailAddressException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the first email address in the ordered set where companyId = &#63; and classNameId = &#63;.
@@ -585,10 +672,12 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param classNameId the class name ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching email address, or <code>null</code> if a matching email address could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.EmailAddress fetchByC_C_First(
 		long companyId, long classNameId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.EmailAddress> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the last email address in the ordered set where companyId = &#63; and classNameId = &#63;.
@@ -598,11 +687,13 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching email address
 	* @throws com.liferay.portal.NoSuchEmailAddressException if a matching email address could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.EmailAddress findByC_C_Last(
 		long companyId, long classNameId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.EmailAddress> orderByComparator)
-		throws com.liferay.portal.NoSuchEmailAddressException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchEmailAddressException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the last email address in the ordered set where companyId = &#63; and classNameId = &#63;.
@@ -611,10 +702,12 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param classNameId the class name ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching email address, or <code>null</code> if a matching email address could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.EmailAddress fetchByC_C_Last(
 		long companyId, long classNameId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.EmailAddress> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the email addresses before and after the current email address in the ordered set where companyId = &#63; and classNameId = &#63;.
@@ -625,19 +718,23 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next email address
 	* @throws com.liferay.portal.NoSuchEmailAddressException if a email address with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.EmailAddress[] findByC_C_PrevAndNext(
 		long emailAddressId, long companyId, long classNameId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.EmailAddress> orderByComparator)
-		throws com.liferay.portal.NoSuchEmailAddressException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchEmailAddressException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Removes all the email addresses where companyId = &#63; and classNameId = &#63; from the database.
 	*
 	* @param companyId the company ID
 	* @param classNameId the class name ID
+	* @throws SystemException if a system exception occurred
 	*/
-	public void removeByC_C(long companyId, long classNameId);
+	public void removeByC_C(long companyId, long classNameId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of email addresses where companyId = &#63; and classNameId = &#63;.
@@ -645,8 +742,10 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param companyId the company ID
 	* @param classNameId the class name ID
 	* @return the number of matching email addresses
+	* @throws SystemException if a system exception occurred
 	*/
-	public int countByC_C(long companyId, long classNameId);
+	public int countByC_C(long companyId, long classNameId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns all the email addresses where companyId = &#63; and classNameId = &#63; and classPK = &#63;.
@@ -655,9 +754,11 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param classNameId the class name ID
 	* @param classPK the class p k
 	* @return the matching email addresses
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.EmailAddress> findByC_C_C(
-		long companyId, long classNameId, long classPK);
+		long companyId, long classNameId, long classPK)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns a range of all the email addresses where companyId = &#63; and classNameId = &#63; and classPK = &#63;.
@@ -672,9 +773,11 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param start the lower bound of the range of email addresses
 	* @param end the upper bound of the range of email addresses (not inclusive)
 	* @return the range of matching email addresses
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.EmailAddress> findByC_C_C(
-		long companyId, long classNameId, long classPK, int start, int end);
+		long companyId, long classNameId, long classPK, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns an ordered range of all the email addresses where companyId = &#63; and classNameId = &#63; and classPK = &#63;.
@@ -690,10 +793,12 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param end the upper bound of the range of email addresses (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching email addresses
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.EmailAddress> findByC_C_C(
 		long companyId, long classNameId, long classPK, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.EmailAddress> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the first email address in the ordered set where companyId = &#63; and classNameId = &#63; and classPK = &#63;.
@@ -704,11 +809,13 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching email address
 	* @throws com.liferay.portal.NoSuchEmailAddressException if a matching email address could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.EmailAddress findByC_C_C_First(
 		long companyId, long classNameId, long classPK,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.EmailAddress> orderByComparator)
-		throws com.liferay.portal.NoSuchEmailAddressException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchEmailAddressException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the first email address in the ordered set where companyId = &#63; and classNameId = &#63; and classPK = &#63;.
@@ -718,10 +825,12 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param classPK the class p k
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching email address, or <code>null</code> if a matching email address could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.EmailAddress fetchByC_C_C_First(
 		long companyId, long classNameId, long classPK,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.EmailAddress> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the last email address in the ordered set where companyId = &#63; and classNameId = &#63; and classPK = &#63;.
@@ -732,11 +841,13 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching email address
 	* @throws com.liferay.portal.NoSuchEmailAddressException if a matching email address could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.EmailAddress findByC_C_C_Last(
 		long companyId, long classNameId, long classPK,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.EmailAddress> orderByComparator)
-		throws com.liferay.portal.NoSuchEmailAddressException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchEmailAddressException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the last email address in the ordered set where companyId = &#63; and classNameId = &#63; and classPK = &#63;.
@@ -746,10 +857,12 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param classPK the class p k
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching email address, or <code>null</code> if a matching email address could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.EmailAddress fetchByC_C_C_Last(
 		long companyId, long classNameId, long classPK,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.EmailAddress> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the email addresses before and after the current email address in the ordered set where companyId = &#63; and classNameId = &#63; and classPK = &#63;.
@@ -761,11 +874,13 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next email address
 	* @throws com.liferay.portal.NoSuchEmailAddressException if a email address with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.EmailAddress[] findByC_C_C_PrevAndNext(
 		long emailAddressId, long companyId, long classNameId, long classPK,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.EmailAddress> orderByComparator)
-		throws com.liferay.portal.NoSuchEmailAddressException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchEmailAddressException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Removes all the email addresses where companyId = &#63; and classNameId = &#63; and classPK = &#63; from the database.
@@ -773,8 +888,10 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param companyId the company ID
 	* @param classNameId the class name ID
 	* @param classPK the class p k
+	* @throws SystemException if a system exception occurred
 	*/
-	public void removeByC_C_C(long companyId, long classNameId, long classPK);
+	public void removeByC_C_C(long companyId, long classNameId, long classPK)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of email addresses where companyId = &#63; and classNameId = &#63; and classPK = &#63;.
@@ -783,8 +900,10 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param classNameId the class name ID
 	* @param classPK the class p k
 	* @return the number of matching email addresses
+	* @throws SystemException if a system exception occurred
 	*/
-	public int countByC_C_C(long companyId, long classNameId, long classPK);
+	public int countByC_C_C(long companyId, long classNameId, long classPK)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns all the email addresses where companyId = &#63; and classNameId = &#63; and classPK = &#63; and primary = &#63;.
@@ -794,9 +913,11 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param classPK the class p k
 	* @param primary the primary
 	* @return the matching email addresses
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.EmailAddress> findByC_C_C_P(
-		long companyId, long classNameId, long classPK, boolean primary);
+		long companyId, long classNameId, long classPK, boolean primary)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns a range of all the email addresses where companyId = &#63; and classNameId = &#63; and classPK = &#63; and primary = &#63;.
@@ -812,10 +933,12 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param start the lower bound of the range of email addresses
 	* @param end the upper bound of the range of email addresses (not inclusive)
 	* @return the range of matching email addresses
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.EmailAddress> findByC_C_C_P(
 		long companyId, long classNameId, long classPK, boolean primary,
-		int start, int end);
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns an ordered range of all the email addresses where companyId = &#63; and classNameId = &#63; and classPK = &#63; and primary = &#63;.
@@ -832,11 +955,13 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param end the upper bound of the range of email addresses (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching email addresses
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.EmailAddress> findByC_C_C_P(
 		long companyId, long classNameId, long classPK, boolean primary,
 		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.EmailAddress> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the first email address in the ordered set where companyId = &#63; and classNameId = &#63; and classPK = &#63; and primary = &#63;.
@@ -848,11 +973,13 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching email address
 	* @throws com.liferay.portal.NoSuchEmailAddressException if a matching email address could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.EmailAddress findByC_C_C_P_First(
 		long companyId, long classNameId, long classPK, boolean primary,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.EmailAddress> orderByComparator)
-		throws com.liferay.portal.NoSuchEmailAddressException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchEmailAddressException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the first email address in the ordered set where companyId = &#63; and classNameId = &#63; and classPK = &#63; and primary = &#63;.
@@ -863,10 +990,12 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param primary the primary
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching email address, or <code>null</code> if a matching email address could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.EmailAddress fetchByC_C_C_P_First(
 		long companyId, long classNameId, long classPK, boolean primary,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.EmailAddress> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the last email address in the ordered set where companyId = &#63; and classNameId = &#63; and classPK = &#63; and primary = &#63;.
@@ -878,11 +1007,13 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching email address
 	* @throws com.liferay.portal.NoSuchEmailAddressException if a matching email address could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.EmailAddress findByC_C_C_P_Last(
 		long companyId, long classNameId, long classPK, boolean primary,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.EmailAddress> orderByComparator)
-		throws com.liferay.portal.NoSuchEmailAddressException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchEmailAddressException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the last email address in the ordered set where companyId = &#63; and classNameId = &#63; and classPK = &#63; and primary = &#63;.
@@ -893,10 +1024,12 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param primary the primary
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching email address, or <code>null</code> if a matching email address could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.EmailAddress fetchByC_C_C_P_Last(
 		long companyId, long classNameId, long classPK, boolean primary,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.EmailAddress> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the email addresses before and after the current email address in the ordered set where companyId = &#63; and classNameId = &#63; and classPK = &#63; and primary = &#63;.
@@ -909,12 +1042,14 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next email address
 	* @throws com.liferay.portal.NoSuchEmailAddressException if a email address with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.EmailAddress[] findByC_C_C_P_PrevAndNext(
 		long emailAddressId, long companyId, long classNameId, long classPK,
 		boolean primary,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.EmailAddress> orderByComparator)
-		throws com.liferay.portal.NoSuchEmailAddressException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchEmailAddressException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Removes all the email addresses where companyId = &#63; and classNameId = &#63; and classPK = &#63; and primary = &#63; from the database.
@@ -923,9 +1058,11 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param classNameId the class name ID
 	* @param classPK the class p k
 	* @param primary the primary
+	* @throws SystemException if a system exception occurred
 	*/
 	public void removeByC_C_C_P(long companyId, long classNameId, long classPK,
-		boolean primary);
+		boolean primary)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of email addresses where companyId = &#63; and classNameId = &#63; and classPK = &#63; and primary = &#63;.
@@ -935,9 +1072,11 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param classPK the class p k
 	* @param primary the primary
 	* @return the number of matching email addresses
+	* @throws SystemException if a system exception occurred
 	*/
 	public int countByC_C_C_P(long companyId, long classNameId, long classPK,
-		boolean primary);
+		boolean primary)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Caches the email address in the entity cache if it is enabled.
@@ -968,12 +1107,15 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param emailAddressId the primary key of the email address
 	* @return the email address that was removed
 	* @throws com.liferay.portal.NoSuchEmailAddressException if a email address with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.EmailAddress remove(long emailAddressId)
-		throws com.liferay.portal.NoSuchEmailAddressException;
+		throws com.liferay.portal.NoSuchEmailAddressException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	public com.liferay.portal.model.EmailAddress updateImpl(
-		com.liferay.portal.model.EmailAddress emailAddress);
+		com.liferay.portal.model.EmailAddress emailAddress)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the email address with the primary key or throws a {@link com.liferay.portal.NoSuchEmailAddressException} if it could not be found.
@@ -981,30 +1123,32 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param emailAddressId the primary key of the email address
 	* @return the email address
 	* @throws com.liferay.portal.NoSuchEmailAddressException if a email address with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.EmailAddress findByPrimaryKey(
 		long emailAddressId)
-		throws com.liferay.portal.NoSuchEmailAddressException;
+		throws com.liferay.portal.NoSuchEmailAddressException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the email address with the primary key or returns <code>null</code> if it could not be found.
 	*
 	* @param emailAddressId the primary key of the email address
 	* @return the email address, or <code>null</code> if a email address with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portal.model.EmailAddress fetchByPrimaryKey(
-		long emailAddressId);
-
-	@Override
-	public java.util.Map<java.io.Serializable, com.liferay.portal.model.EmailAddress> fetchByPrimaryKeys(
-		java.util.Set<java.io.Serializable> primaryKeys);
+		long emailAddressId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns all the email addresses.
 	*
 	* @return the email addresses
+	* @throws SystemException if a system exception occurred
 	*/
-	public java.util.List<com.liferay.portal.model.EmailAddress> findAll();
+	public java.util.List<com.liferay.portal.model.EmailAddress> findAll()
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns a range of all the email addresses.
@@ -1016,9 +1160,11 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param start the lower bound of the range of email addresses
 	* @param end the upper bound of the range of email addresses (not inclusive)
 	* @return the range of email addresses
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.EmailAddress> findAll(
-		int start, int end);
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns an ordered range of all the email addresses.
@@ -1031,20 +1177,27 @@ public interface EmailAddressPersistence extends BasePersistence<EmailAddress> {
 	* @param end the upper bound of the range of email addresses (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of email addresses
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portal.model.EmailAddress> findAll(
 		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.EmailAddress> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Removes all the email addresses from the database.
+	*
+	* @throws SystemException if a system exception occurred
 	*/
-	public void removeAll();
+	public void removeAll()
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of email addresses.
 	*
 	* @return the number of email addresses
+	* @throws SystemException if a system exception occurred
 	*/
-	public int countAll();
+	public int countAll()
+		throws com.liferay.portal.kernel.exception.SystemException;
 }

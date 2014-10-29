@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,26 +14,24 @@
 
 package com.liferay.portal.lar;
 
+import com.liferay.portal.kernel.dao.orm.FinderCacheUtil;
 import com.liferay.portal.kernel.staging.MergeLayoutPrototypesThreadLocal;
 import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.model.Company;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.Layout;
 import com.liferay.portal.model.LayoutPrototype;
 import com.liferay.portal.service.LayoutLocalServiceUtil;
 import com.liferay.portal.service.ServiceContextThreadLocal;
+import com.liferay.portal.service.ServiceTestUtil;
 import com.liferay.portal.service.persistence.CompanyUtil;
+import com.liferay.portal.util.GroupTestUtil;
+import com.liferay.portal.util.LayoutTestUtil;
 import com.liferay.portal.util.PortletKeys;
-import com.liferay.portal.util.test.GroupTestUtil;
-import com.liferay.portal.util.test.LayoutTestUtil;
-import com.liferay.portal.util.test.RandomTestUtil;
-import com.liferay.portal.util.test.ServiceContextTestUtil;
-import com.liferay.portal.util.test.TestPropsValues;
+import com.liferay.portal.util.TestPropsValues;
 import com.liferay.portlet.journal.model.JournalArticle;
-import com.liferay.portlet.journal.util.test.JournalTestUtil;
+import com.liferay.portlet.journal.util.JournalTestUtil;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,15 +41,19 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import org.powermock.api.mockito.PowerMockito;
+
 /**
  * @author Eduardo Garcia
  */
-public abstract class BasePrototypePropagationTestCase {
+public abstract class BasePrototypePropagationTestCase extends PowerMockito {
 
 	@Before
 	public void setUp() throws Exception {
+		FinderCacheUtil.clearCache();
+
 		ServiceContextThreadLocal.pushServiceContext(
-			ServiceContextTestUtil.getServiceContext());
+			ServiceTestUtil.getServiceContext());
 
 		// Group
 
@@ -69,7 +71,7 @@ public abstract class BasePrototypePropagationTestCase {
 		// Layout prototype
 
 		layoutPrototype = LayoutTestUtil.addLayoutPrototype(
-			RandomTestUtil.randomString());
+			ServiceTestUtil.randomString());
 
 		layoutPrototypeLayout = layoutPrototype.getLayout();
 
@@ -154,10 +156,6 @@ public abstract class BasePrototypePropagationTestCase {
 				initialPortletCount, LayoutTestUtil.getPortlets(layout).size());
 		}
 
-		prototypeLayout = updateModifiedDate(
-			prototypeLayout,
-			new Date(System.currentTimeMillis() + Time.MINUTE));
-
 		layout = propagateChanges(layout);
 
 		if (linkEnabled) {
@@ -196,22 +194,26 @@ public abstract class BasePrototypePropagationTestCase {
 
 		setLinkEnabled(linkEnabled);
 
+		PortletPreferences layoutSetPrototypePortletPreferences =
+			LayoutTestUtil.getPortletPreferences(
+				prototypeLayout, journalContentPortletId);
+
 		MergeLayoutPrototypesThreadLocal.clearMergeComplete();
 
-		Map<String, String> portletPreferencesMap =
-			new HashMap<String, String>();
+		layoutSetPrototypePortletPreferences.setValue(
+			"articleId", StringPool.BLANK);
 
-		portletPreferencesMap.put("articleId", StringPool.BLANK);
-		portletPreferencesMap.put(
+		layoutSetPrototypePortletPreferences.setValue(
 			"showAvailableLocales", Boolean.FALSE.toString());
 
 		if (globalScope) {
-			portletPreferencesMap.put("groupId", String.valueOf(globalGroupId));
-			portletPreferencesMap.put("lfrScopeType", "company");
+			layoutSetPrototypePortletPreferences.setValue(
+				"groupId", String.valueOf(globalGroupId));
+			layoutSetPrototypePortletPreferences.setValue(
+				"lfrScopeType", "company");
 		}
 
-		LayoutTestUtil.updateLayoutPortletPreferences(
-			prototypeLayout, journalContentPortletId, portletPreferencesMap);
+		layoutSetPrototypePortletPreferences.store();
 
 		layout = propagateChanges(layout);
 
@@ -254,16 +256,6 @@ public abstract class BasePrototypePropagationTestCase {
 
 	protected abstract void setLinkEnabled(boolean linkEnabled)
 		throws Exception;
-
-	protected Layout updateModifiedDate(Layout layout, Date date)
-		throws Exception {
-
-		layout = LayoutLocalServiceUtil.getLayout(layout.getPlid());
-
-		layout.setModifiedDate(date);
-
-		return LayoutLocalServiceUtil.updateLayout(layout);
-	}
 
 	protected long globalGroupId;
 	protected JournalArticle globalJournalArticle;

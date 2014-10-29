@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -13,8 +13,6 @@
  */
 
 package com.liferay.portlet.journal.model.impl;
-
-import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -50,7 +48,6 @@ import java.util.Map;
  * @see com.liferay.portlet.journal.model.JournalContentSearchModel
  * @generated
  */
-@ProviderType
 public class JournalContentSearchModelImpl extends BaseModelImpl<JournalContentSearch>
 	implements JournalContentSearchModel {
 	/*
@@ -84,12 +81,12 @@ public class JournalContentSearchModelImpl extends BaseModelImpl<JournalContentS
 	public static final boolean COLUMN_BITMASK_ENABLED = GetterUtil.getBoolean(com.liferay.portal.util.PropsUtil.get(
 				"value.object.column.bitmask.enabled.com.liferay.portlet.journal.model.JournalContentSearch"),
 			true);
-	public static final long ARTICLEID_COLUMN_BITMASK = 1L;
-	public static final long GROUPID_COLUMN_BITMASK = 2L;
-	public static final long LAYOUTID_COLUMN_BITMASK = 4L;
-	public static final long PORTLETID_COLUMN_BITMASK = 8L;
-	public static final long PRIVATELAYOUT_COLUMN_BITMASK = 16L;
-	public static final long CONTENTSEARCHID_COLUMN_BITMASK = 32L;
+	public static long ARTICLEID_COLUMN_BITMASK = 1L;
+	public static long GROUPID_COLUMN_BITMASK = 2L;
+	public static long LAYOUTID_COLUMN_BITMASK = 4L;
+	public static long PORTLETID_COLUMN_BITMASK = 8L;
+	public static long PRIVATELAYOUT_COLUMN_BITMASK = 16L;
+	public static long CONTENTSEARCHID_COLUMN_BITMASK = 32L;
 	public static final long LOCK_EXPIRATION_TIME = GetterUtil.getLong(com.liferay.portal.util.PropsUtil.get(
 				"lock.expiration.time.com.liferay.portlet.journal.model.JournalContentSearch"));
 
@@ -137,9 +134,6 @@ public class JournalContentSearchModelImpl extends BaseModelImpl<JournalContentS
 		attributes.put("layoutId", getLayoutId());
 		attributes.put("portletId", getPortletId());
 		attributes.put("articleId", getArticleId());
-
-		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
-		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
 
 		return attributes;
 	}
@@ -417,16 +411,6 @@ public class JournalContentSearchModelImpl extends BaseModelImpl<JournalContentS
 	}
 
 	@Override
-	public boolean isEntityCacheEnabled() {
-		return ENTITY_CACHE_ENABLED;
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return FINDER_CACHE_ENABLED;
-	}
-
-	@Override
 	public void resetOriginalValues() {
 		JournalContentSearchModelImpl journalContentSearchModelImpl = this;
 
@@ -547,8 +531,8 @@ public class JournalContentSearchModelImpl extends BaseModelImpl<JournalContentS
 		return sb.toString();
 	}
 
-	private static final ClassLoader _classLoader = JournalContentSearch.class.getClassLoader();
-	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
+	private static ClassLoader _classLoader = JournalContentSearch.class.getClassLoader();
+	private static Class<?>[] _escapedModelInterfaces = new Class[] {
 			JournalContentSearch.class
 		};
 	private long _contentSearchId;

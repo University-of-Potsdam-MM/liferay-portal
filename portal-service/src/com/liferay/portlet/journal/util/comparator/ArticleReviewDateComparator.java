@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -21,8 +21,7 @@ import com.liferay.portlet.journal.model.JournalArticle;
 /**
  * @author Brian Wing Shun Chan
  */
-public class ArticleReviewDateComparator
-	extends OrderByComparator<JournalArticle> {
+public class ArticleReviewDateComparator extends OrderByComparator {
 
 	public static final String ORDER_BY_ASC =
 		"JournalArticle.reviewDate ASC, JournalArticle.version ASC";
@@ -41,7 +40,10 @@ public class ArticleReviewDateComparator
 	}
 
 	@Override
-	public int compare(JournalArticle article1, JournalArticle article2) {
+	public int compare(Object obj1, Object obj2) {
+		JournalArticle article1 = (JournalArticle)obj1;
+		JournalArticle article2 = (JournalArticle)obj2;
+
 		int value = DateUtil.compareTo(
 			article1.getReviewDate(), article2.getReviewDate());
 

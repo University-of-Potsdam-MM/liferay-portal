@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -17,6 +17,7 @@ package com.liferay.portal.model;
 import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.bean.AutoEscape;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.service.ServiceContext;
 
 import com.liferay.portlet.expando.model.ExpandoBridge;
@@ -39,7 +40,7 @@ import java.util.Date;
  * @generated
  */
 @ProviderType
-public interface UserTrackerModel extends BaseModel<UserTracker>, MVCCModel {
+public interface UserTrackerModel extends BaseModel<UserTracker> {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -59,22 +60,6 @@ public interface UserTrackerModel extends BaseModel<UserTracker>, MVCCModel {
 	 * @param primaryKey the primary key of this user tracker
 	 */
 	public void setPrimaryKey(long primaryKey);
-
-	/**
-	 * Returns the mvcc version of this user tracker.
-	 *
-	 * @return the mvcc version of this user tracker
-	 */
-	@Override
-	public long getMvccVersion();
-
-	/**
-	 * Sets the mvcc version of this user tracker.
-	 *
-	 * @param mvccVersion the mvcc version of this user tracker
-	 */
-	@Override
-	public void setMvccVersion(long mvccVersion);
 
 	/**
 	 * Returns the user tracker ID of this user tracker.
@@ -122,8 +107,9 @@ public interface UserTrackerModel extends BaseModel<UserTracker>, MVCCModel {
 	 * Returns the user uuid of this user tracker.
 	 *
 	 * @return the user uuid of this user tracker
+	 * @throws SystemException if a system exception occurred
 	 */
-	public String getUserUuid();
+	public String getUserUuid() throws SystemException;
 
 	/**
 	 * Sets the user uuid of this user tracker.

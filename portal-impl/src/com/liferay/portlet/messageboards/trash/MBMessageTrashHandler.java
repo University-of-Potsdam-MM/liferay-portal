@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portlet.messageboards.trash;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.trash.BaseTrashHandler;
 import com.liferay.portal.model.ContainerModel;
@@ -49,19 +50,19 @@ public class MBMessageTrashHandler extends BaseTrashHandler {
 
 	@Override
 	public ContainerModel getContainerModel(long containerModelId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return MBThreadLocalServiceUtil.getThread(containerModelId);
 	}
 
 	@Override
-	public String getContainerModelClassName(long classPK) {
+	public String getContainerModelClassName() {
 		return MBThread.class.getName();
 	}
 
 	@Override
 	public ContainerModel getParentContainerModel(TrashedModel trashedModel)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		MBMessage message = (MBMessage)trashedModel;
 
@@ -69,7 +70,9 @@ public class MBMessageTrashHandler extends BaseTrashHandler {
 	}
 
 	@Override
-	public TrashEntry getTrashEntry(long classPK) throws PortalException {
+	public TrashEntry getTrashEntry(long classPK)
+		throws PortalException, SystemException {
+
 		MBMessage message = MBMessageLocalServiceUtil.getMessage(classPK);
 
 		return message.getTrashEntry();
@@ -81,14 +84,18 @@ public class MBMessageTrashHandler extends BaseTrashHandler {
 	}
 
 	@Override
-	public boolean isInTrash(long classPK) throws PortalException {
+	public boolean isInTrash(long classPK)
+		throws PortalException, SystemException {
+
 		MBMessage message = MBMessageLocalServiceUtil.getMessage(classPK);
 
 		return message.isInTrash();
 	}
 
 	@Override
-	public boolean isInTrashContainer(long classPK) throws PortalException {
+	public boolean isInTrashContainer(long classPK)
+		throws PortalException, SystemException {
+
 		MBMessage message = MBMessageLocalServiceUtil.getMessage(classPK);
 
 		return message.isInTrashContainer();
@@ -96,7 +103,7 @@ public class MBMessageTrashHandler extends BaseTrashHandler {
 
 	@Override
 	public void restoreRelatedTrashEntry(String className, long classPK)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		if (!className.equals(DLFileEntry.class.getName())) {
 			return;
@@ -118,7 +125,7 @@ public class MBMessageTrashHandler extends BaseTrashHandler {
 	@Override
 	protected boolean hasPermission(
 			PermissionChecker permissionChecker, long classPK, String actionId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return MBMessagePermission.contains(
 			permissionChecker, classPK, actionId);

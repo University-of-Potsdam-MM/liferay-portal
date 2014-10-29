@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -29,12 +29,6 @@ import java.io.Writer;
 import javax.portlet.PortletPreferences;
 
 /**
- * Provides general configuration methods for the portlet, providing access to
- * the portlet's content, instance, theme, URLs, and more. This class contains
- * contextual information about the currently rendered portlet. An object of this
- * class is only available in the context of a single portlet and is not
- * available in the context of any page.
- *
  * @author Brian Wing Shun Chan
  * @author Eduardo Lundgren
  */
@@ -133,7 +127,6 @@ public class PortletDisplay implements Serializable {
 		slave.setModeView(_modeView);
 		slave.setNamespace(_namespace);
 		slave.setPortletName(_portletName);
-		slave.setPortletResource(_portletResource);
 		slave.setPortletSetup(_portletSetup);
 		slave.setResourcePK(_resourcePK);
 		slave.setRestoreCurrentView(_restoreCurrentView);
@@ -194,15 +187,6 @@ public class PortletDisplay implements Serializable {
 		return _content;
 	}
 
-	/**
-	 * Returns the control panel category where the current portlet resides. A
-	 * portlet's control panel category is configured in its
-	 * <code>liferay-portlet.xml</code> file.
-	 *
-	 * @return the control panel category where the current portlet resides, or
-	 * an empty string if the portlet is not configured to appear in the
-	 * control panel.
-	 */
 	public String getControlPanelCategory() {
 		return _controlPanelCategory;
 	}
@@ -229,10 +213,6 @@ public class PortletDisplay implements Serializable {
 
 	public String getPortletName() {
 		return _portletName;
-	}
-
-	public String getPortletResource() {
-		return _portletResource;
 	}
 
 	public PortletPreferences getPortletSetup() {
@@ -275,7 +255,7 @@ public class PortletDisplay implements Serializable {
 		sb.append("_\', \'");
 		sb.append(_id);
 		sb.append("\', \'");
-		sb.append(HtmlUtil.escapeJS(_urlConfiguration));
+		sb.append(_urlConfiguration);
 		sb.append(" \', \'");
 		sb.append(_namespace);
 		sb.append(" \', \'");
@@ -330,9 +310,8 @@ public class PortletDisplay implements Serializable {
 	}
 
 	/**
-	 * @deprecated As of 6.2.0, with no direct replacement
+	 * @deprecated As of 6.2.0 with no direct replacement
 	 */
-	@Deprecated
 	public boolean isAccess() {
 		return true;
 	}
@@ -538,9 +517,8 @@ public class PortletDisplay implements Serializable {
 	}
 
 	/**
-	 * @deprecated As of 6.2.0, with no direct replacement
+	 * @deprecated As of 6.2.0 with no direct replacement
 	 */
-	@Deprecated
 	public void setAccess(boolean access) {
 	}
 
@@ -633,10 +611,6 @@ public class PortletDisplay implements Serializable {
 
 	public void setPortletName(String portletName) {
 		_portletName = portletName;
-	}
-
-	public void setPortletResource(String portletResource) {
-		_portletResource = portletResource;
 	}
 
 	public void setPortletSetup(PortletPreferences portletSetup) {
@@ -740,6 +714,8 @@ public class PortletDisplay implements Serializable {
 	}
 
 	public void setTitle(String title) {
+		title = HtmlUtil.escape(title);
+
 		_title = title;
 
 		// LEP-5317
@@ -839,7 +815,6 @@ public class PortletDisplay implements Serializable {
 	private boolean _modeView;
 	private String _namespace = StringPool.BLANK;
 	private String _portletName = StringPool.BLANK;
-	private String _portletResource = StringPool.BLANK;
 	private PortletPreferences _portletSetup;
 	private String _resourcePK = StringPool.BLANK;
 	private boolean _restoreCurrentView;

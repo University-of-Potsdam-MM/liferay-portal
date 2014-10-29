@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portal.kernel.util;
 
 import java.util.Comparator;
+import java.util.Locale;
 import java.util.TimeZone;
 
 /**
@@ -22,26 +23,27 @@ import java.util.TimeZone;
  */
 public class TimeZoneComparator implements Comparator<TimeZone> {
 
-	public TimeZoneComparator() {
+	public TimeZoneComparator(Locale locale) {
+		_locale = locale;
 	}
 
 	@Override
 	public int compare(TimeZone timeZone1, TimeZone timeZone2) {
-		Integer totalOffset1 =
-			timeZone1.getRawOffset() + timeZone1.getDSTSavings();
-		Integer totalOffset2 =
-			timeZone2.getRawOffset() + timeZone2.getDSTSavings();
+		Integer rawOffset1 = timeZone1.getRawOffset();
+		Integer rawOffset2 = timeZone2.getRawOffset();
 
-		int value = totalOffset1.compareTo(totalOffset2);
+		int value = rawOffset1.compareTo(rawOffset2);
 
 		if (value == 0) {
-			String timeZoneId1 = timeZone1.getID();
-			String timeZoneId2 = timeZone2.getID();
+			String displayName1 = timeZone1.getDisplayName(_locale);
+			String displayName2 = timeZone2.getDisplayName(_locale);
 
-			value = timeZoneId1.compareTo(timeZoneId2);
+			value = displayName1.compareTo(displayName2);
 		}
 
 		return value;
 	}
+
+	private Locale _locale;
 
 }

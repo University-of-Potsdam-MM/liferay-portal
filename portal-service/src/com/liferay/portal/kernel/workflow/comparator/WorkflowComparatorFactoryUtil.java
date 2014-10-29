@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -16,148 +16,126 @@ package com.liferay.portal.kernel.workflow.comparator;
 
 import com.liferay.portal.kernel.security.pacl.permission.PortalRuntimePermission;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portal.kernel.workflow.WorkflowDefinition;
-import com.liferay.portal.kernel.workflow.WorkflowInstance;
-import com.liferay.portal.kernel.workflow.WorkflowLog;
-import com.liferay.portal.kernel.workflow.WorkflowTask;
 
 /**
  * @author Michael C. Han
  */
 public class WorkflowComparatorFactoryUtil {
 
-	public static OrderByComparator<WorkflowDefinition>
-		getDefinitionNameComparator() {
-
+	public static OrderByComparator getDefinitionNameComparator() {
 		return getWorkflowComparatorFactory().getDefinitionNameComparator(
 			false);
 	}
 
-	public static OrderByComparator<WorkflowDefinition>
-		getDefinitionNameComparator(boolean ascending) {
+	public static OrderByComparator getDefinitionNameComparator(
+		boolean ascending) {
 
 		return getWorkflowComparatorFactory().getDefinitionNameComparator(
 			ascending);
 	}
 
-	public static OrderByComparator<WorkflowInstance>
-		getInstanceEndDateComparator() {
-
+	public static OrderByComparator getInstanceEndDateComparator() {
 		return getWorkflowComparatorFactory().getInstanceEndDateComparator(
 			false);
 	}
 
-	public static OrderByComparator<WorkflowInstance>
-		getInstanceEndDateComparator(boolean ascending) {
+	public static OrderByComparator getInstanceEndDateComparator(
+		boolean ascending) {
 
 		return getWorkflowComparatorFactory().getInstanceEndDateComparator(
 			ascending);
 	}
 
-	public static OrderByComparator<WorkflowInstance>
-		getInstanceStartDateComparator() {
-
+	public static OrderByComparator getInstanceStartDateComparator() {
 		return getWorkflowComparatorFactory().getInstanceStartDateComparator(
 			false);
 	}
 
-	public static OrderByComparator<WorkflowInstance>
-		getInstanceStartDateComparator(boolean ascending) {
+	public static OrderByComparator getInstanceStartDateComparator(
+		boolean ascending) {
 
 		return getWorkflowComparatorFactory().getInstanceStartDateComparator(
 			ascending);
 	}
 
-	public static OrderByComparator<WorkflowInstance>
-		getInstanceStateComparator() {
-
+	public static OrderByComparator getInstanceStateComparator() {
 		return getWorkflowComparatorFactory().getInstanceStateComparator(false);
 	}
 
-	public static OrderByComparator<WorkflowInstance>
-		getInstanceStateComparator(boolean ascending) {
+	public static OrderByComparator getInstanceStateComparator(
+		boolean ascending) {
 
 		return getWorkflowComparatorFactory().getInstanceStateComparator(
 			ascending);
 	}
 
-	public static OrderByComparator<WorkflowLog> getLogCreateDateComparator() {
+	public static OrderByComparator getLogCreateDateComparator() {
 		return getWorkflowComparatorFactory().getLogCreateDateComparator(false);
 	}
 
-	public static OrderByComparator<WorkflowLog> getLogCreateDateComparator(
+	public static OrderByComparator getLogCreateDateComparator(
 		boolean ascending) {
 
 		return getWorkflowComparatorFactory().getLogCreateDateComparator(
 			ascending);
 	}
 
-	public static OrderByComparator<WorkflowLog> getLogUserIdComparator() {
+	public static OrderByComparator getLogUserIdComparator() {
 		return getWorkflowComparatorFactory().getLogUserIdComparator(false);
 	}
 
-	public static OrderByComparator<WorkflowLog> getLogUserIdComparator(
-		boolean ascending) {
-
+	public static OrderByComparator getLogUserIdComparator(boolean ascending) {
 		return getWorkflowComparatorFactory().getLogUserIdComparator(ascending);
 	}
 
-	public static OrderByComparator<WorkflowTask>
-		getTaskCompletionDateComparator() {
-
+	public static OrderByComparator getTaskCompletionDateComparator() {
 		return getWorkflowComparatorFactory().getTaskCompletionDateComparator(
 			false);
 	}
 
-	public static OrderByComparator<WorkflowTask>
-		getTaskCompletionDateComparator(boolean ascending) {
+	public static OrderByComparator getTaskCompletionDateComparator(
+		boolean ascending) {
 
 		return getWorkflowComparatorFactory().getTaskCompletionDateComparator(
 			ascending);
 	}
 
-	public static OrderByComparator<WorkflowTask>
-		getTaskCreateDateComparator() {
-
+	public static OrderByComparator getTaskCreateDateComparator() {
 		return getWorkflowComparatorFactory().getTaskCreateDateComparator(
 			false);
 	}
 
-	public static OrderByComparator<WorkflowTask> getTaskCreateDateComparator(
+	public static OrderByComparator getTaskCreateDateComparator(
 		boolean ascending) {
 
 		return getWorkflowComparatorFactory().getTaskCreateDateComparator(
 			ascending);
 	}
 
-	public static OrderByComparator<WorkflowTask> getTaskDueDateComparator() {
+	public static OrderByComparator getTaskDueDateComparator() {
 		return getWorkflowComparatorFactory().getTaskDueDateComparator(false);
 	}
 
-	public static OrderByComparator<WorkflowTask> getTaskDueDateComparator(
+	public static OrderByComparator getTaskDueDateComparator(
 		boolean ascending) {
 
 		return getWorkflowComparatorFactory().getTaskDueDateComparator(
 			ascending);
 	}
 
-	public static OrderByComparator<WorkflowTask> getTaskNameComparator() {
+	public static OrderByComparator getTaskNameComparator() {
 		return getWorkflowComparatorFactory().getTaskNameComparator(false);
 	}
 
-	public static OrderByComparator<WorkflowTask> getTaskNameComparator(
-		boolean ascending) {
-
+	public static OrderByComparator getTaskNameComparator(boolean ascending) {
 		return getWorkflowComparatorFactory().getTaskNameComparator(ascending);
 	}
 
-	public static OrderByComparator<WorkflowTask> getTaskUserIdComparator() {
+	public static OrderByComparator getTaskUserIdComparator() {
 		return getWorkflowComparatorFactory().getTaskUserIdComparator(false);
 	}
 
-	public static OrderByComparator<WorkflowTask> getTaskUserIdComparator(
-		boolean ascending) {
-
+	public static OrderByComparator getTaskUserIdComparator(boolean ascending) {
 		return getWorkflowComparatorFactory().getTaskUserIdComparator(
 			ascending);
 	}

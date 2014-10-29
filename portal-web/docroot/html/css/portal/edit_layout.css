@@ -1,17 +1,9 @@
-@import "mixins";
-
 .lfr-edit-layout-panel {
 	width: 440px;
 
 	.navbar {
 		margin-bottom: 0;
 		margin-top: 20px;
-
-		.container-fluid {
-			@include respond-to(desktop) {
-				padding: 0;
-			}
-		}
 	}
 
 	.site-admin-link {
@@ -31,15 +23,15 @@
 			width: 405px;
 		}
 
-		.panel-group {
+		.accordion {
 			margin: 20px 0 50px;
 
 			.accordion-group.lfr-panel-extended {
-				.panel-heading {
+				.accordion-heading {
 					cursor: pointer;
 				}
 
-				.panel-body {
+				.accordion-inner {
 					padding: 15px;
 
 					h3 {

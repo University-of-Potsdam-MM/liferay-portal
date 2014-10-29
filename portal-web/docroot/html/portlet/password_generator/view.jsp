@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -17,10 +17,10 @@
 <%@ include file="/html/portlet/password_generator/init.jsp" %>
 
 <%
-int length = ParamUtil.getInteger(request, "length", 8);
-boolean numbers = ParamUtil.getBoolean(request, "numbers");
-boolean lowerCaseLetters = ParamUtil.getBoolean(request, "lowerCaseLetters");
-boolean upperCaseLetters = ParamUtil.getBoolean(request, "upperCaseLetters");
+int length = ParamUtil.get(request, "length", 8);
+boolean numbers = ParamUtil.get(request, "numbers", true);
+boolean lowerCaseLetters = ParamUtil.get(request, "lowerCaseLetters", true);
+boolean upperCaseLetters = ParamUtil.get(request, "upperCaseLetters", true);
 
 String key = StringPool.BLANK;
 
@@ -45,43 +45,70 @@ catch (Exception e) {
 }
 %>
 
-<liferay-portlet:renderURL var="generatePasswordUrl" windowState="<%= LiferayWindowState.EXCLUSIVE.toString() %>">
-	<portlet:param name="struts_action" value="/password_generator/view" />
-</liferay-portlet:renderURL>
+<form action="<liferay-portlet:renderURL windowState="<%= LiferayWindowState.EXCLUSIVE.toString() %>"><portlet:param name="struts_action" value="/password_generator/view" /></liferay-portlet:renderURL>" id="<portlet:namespace />fm" method="post" name="<portlet:namespace />fm">
 
-<aui:form action="<%= generatePasswordUrl %>" method="post" name="fm">
-	<aui:fieldset>
-		<aui:field-wrapper label="password-settings">
-			<aui:input name="numbers" type="checkbox" value="<%= numbers %>" />
+<table class="lfr-table">
+<tr>
+	<td>
+		<liferay-ui:message key="numbers" />
+	</td>
+	<td>
+		<select name="<portlet:namespace />numbers">
+			<option <%= numbers ? "selected" : "" %> value="1"><liferay-ui:message key="yes" /></option>
+			<option <%= !numbers ? "selected" : "" %> value="0"><liferay-ui:message key="no" /></option>
+		</select>
+	</td>
+</tr>
+<tr>
+	<td>
+		<liferay-ui:message key="lower-case-letters" />
+	</td>
+	<td>
+		<liferay-ui:input-checkbox defaultValue="<%= lowerCaseLetters %>" param="lowerCaseLetters" />
+	</td>
+</tr>
+<tr>
+	<td>
+		<liferay-ui:message key="upper-case-letters" />
+	</td>
+	<td>
+		<liferay-ui:input-checkbox defaultValue="<%= upperCaseLetters %>" param="upperCaseLetters" />
+	</td>
+</tr>
+<tr>
+	<td>
+		<liferay-ui:message key="length" />
+	</td>
+	<td>
+		<select name="<portlet:namespace />length">
 
-			<aui:input name="lowerCaseLetters" type="checkbox" value="<%= lowerCaseLetters %>" />
+			<%
+			for (int i = 4; i <= 16; i++) {
+			%>
 
-			<aui:input name="upperCaseLetters" type="checkbox" value="<%= upperCaseLetters %>" />
+				<option <%= (i == length) ? "selected" : "" %> value="<%= i %>"><%= i %></option>
 
-			<aui:select name="length">
+			<%
+			}
+			%>
 
-				<%
-				for (int i = 4; i <= 16; i++) {
-				%>
+		</select>
+	</td>
+</tr>
+</table>
 
-					<aui:option label="<%= i %>" selected="<%= (i == length) %>" value="<%= i %>" />
+<br />
 
-				<%
-				}
-				%>
+<strong><%= newPassword %></strong>
 
-			</aui:select>
+<br /><br />
 
-			<aui:input name="newPassword" type="resource" value="<%= newPassword %>" />
-		</aui:field-wrapper>
-	</aui:fieldset>
+<input type="submit" value="<liferay-ui:message key="generate" />" />
 
-	<aui:button type="submit"  value="generate" />
-</aui:form>
+</form>
 
 <aui:script use="aui-io-request,aui-parse-content">
 	var form = A.one('#<portlet:namespace />fm');
-
 	var parentNode = form.get('parentNode');
 
 	parentNode.plug(A.Plugin.ParseContent);

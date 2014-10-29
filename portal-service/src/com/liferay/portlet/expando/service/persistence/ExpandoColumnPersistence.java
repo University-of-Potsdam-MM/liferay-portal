@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -45,9 +45,11 @@ public interface ExpandoColumnPersistence extends BasePersistence<ExpandoColumn>
 	*
 	* @param tableId the table ID
 	* @return the matching expando columns
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portlet.expando.model.ExpandoColumn> findByTableId(
-		long tableId);
+		long tableId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns a range of all the expando columns where tableId = &#63;.
@@ -60,9 +62,11 @@ public interface ExpandoColumnPersistence extends BasePersistence<ExpandoColumn>
 	* @param start the lower bound of the range of expando columns
 	* @param end the upper bound of the range of expando columns (not inclusive)
 	* @return the range of matching expando columns
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portlet.expando.model.ExpandoColumn> findByTableId(
-		long tableId, int start, int end);
+		long tableId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns an ordered range of all the expando columns where tableId = &#63;.
@@ -76,10 +80,12 @@ public interface ExpandoColumnPersistence extends BasePersistence<ExpandoColumn>
 	* @param end the upper bound of the range of expando columns (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching expando columns
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portlet.expando.model.ExpandoColumn> findByTableId(
 		long tableId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.expando.model.ExpandoColumn> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the first expando column in the ordered set where tableId = &#63;.
@@ -88,11 +94,13 @@ public interface ExpandoColumnPersistence extends BasePersistence<ExpandoColumn>
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching expando column
 	* @throws com.liferay.portlet.expando.NoSuchColumnException if a matching expando column could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.expando.model.ExpandoColumn findByTableId_First(
 		long tableId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.expando.model.ExpandoColumn> orderByComparator)
-		throws com.liferay.portlet.expando.NoSuchColumnException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.expando.NoSuchColumnException;
 
 	/**
 	* Returns the first expando column in the ordered set where tableId = &#63;.
@@ -100,10 +108,12 @@ public interface ExpandoColumnPersistence extends BasePersistence<ExpandoColumn>
 	* @param tableId the table ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching expando column, or <code>null</code> if a matching expando column could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.expando.model.ExpandoColumn fetchByTableId_First(
 		long tableId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.expando.model.ExpandoColumn> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the last expando column in the ordered set where tableId = &#63;.
@@ -112,11 +122,13 @@ public interface ExpandoColumnPersistence extends BasePersistence<ExpandoColumn>
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching expando column
 	* @throws com.liferay.portlet.expando.NoSuchColumnException if a matching expando column could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.expando.model.ExpandoColumn findByTableId_Last(
 		long tableId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.expando.model.ExpandoColumn> orderByComparator)
-		throws com.liferay.portlet.expando.NoSuchColumnException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.expando.NoSuchColumnException;
 
 	/**
 	* Returns the last expando column in the ordered set where tableId = &#63;.
@@ -124,10 +136,12 @@ public interface ExpandoColumnPersistence extends BasePersistence<ExpandoColumn>
 	* @param tableId the table ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching expando column, or <code>null</code> if a matching expando column could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.expando.model.ExpandoColumn fetchByTableId_Last(
 		long tableId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.expando.model.ExpandoColumn> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the expando columns before and after the current expando column in the ordered set where tableId = &#63;.
@@ -137,20 +151,24 @@ public interface ExpandoColumnPersistence extends BasePersistence<ExpandoColumn>
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next expando column
 	* @throws com.liferay.portlet.expando.NoSuchColumnException if a expando column with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.expando.model.ExpandoColumn[] findByTableId_PrevAndNext(
 		long columnId, long tableId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.expando.model.ExpandoColumn> orderByComparator)
-		throws com.liferay.portlet.expando.NoSuchColumnException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.expando.NoSuchColumnException;
 
 	/**
 	* Returns all the expando columns that the user has permission to view where tableId = &#63;.
 	*
 	* @param tableId the table ID
 	* @return the matching expando columns that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portlet.expando.model.ExpandoColumn> filterFindByTableId(
-		long tableId);
+		long tableId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns a range of all the expando columns that the user has permission to view where tableId = &#63;.
@@ -163,9 +181,11 @@ public interface ExpandoColumnPersistence extends BasePersistence<ExpandoColumn>
 	* @param start the lower bound of the range of expando columns
 	* @param end the upper bound of the range of expando columns (not inclusive)
 	* @return the range of matching expando columns that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portlet.expando.model.ExpandoColumn> filterFindByTableId(
-		long tableId, int start, int end);
+		long tableId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns an ordered range of all the expando columns that the user has permissions to view where tableId = &#63;.
@@ -179,10 +199,12 @@ public interface ExpandoColumnPersistence extends BasePersistence<ExpandoColumn>
 	* @param end the upper bound of the range of expando columns (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching expando columns that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portlet.expando.model.ExpandoColumn> filterFindByTableId(
 		long tableId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.expando.model.ExpandoColumn> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the expando columns before and after the current expando column in the ordered set of expando columns that the user has permission to view where tableId = &#63;.
@@ -192,34 +214,42 @@ public interface ExpandoColumnPersistence extends BasePersistence<ExpandoColumn>
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next expando column
 	* @throws com.liferay.portlet.expando.NoSuchColumnException if a expando column with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.expando.model.ExpandoColumn[] filterFindByTableId_PrevAndNext(
 		long columnId, long tableId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.expando.model.ExpandoColumn> orderByComparator)
-		throws com.liferay.portlet.expando.NoSuchColumnException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.expando.NoSuchColumnException;
 
 	/**
 	* Removes all the expando columns where tableId = &#63; from the database.
 	*
 	* @param tableId the table ID
+	* @throws SystemException if a system exception occurred
 	*/
-	public void removeByTableId(long tableId);
+	public void removeByTableId(long tableId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of expando columns where tableId = &#63;.
 	*
 	* @param tableId the table ID
 	* @return the number of matching expando columns
+	* @throws SystemException if a system exception occurred
 	*/
-	public int countByTableId(long tableId);
+	public int countByTableId(long tableId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of expando columns that the user has permission to view where tableId = &#63;.
 	*
 	* @param tableId the table ID
 	* @return the number of matching expando columns that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
-	public int filterCountByTableId(long tableId);
+	public int filterCountByTableId(long tableId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns all the expando columns where tableId = &#63; and name = any &#63;.
@@ -231,9 +261,11 @@ public interface ExpandoColumnPersistence extends BasePersistence<ExpandoColumn>
 	* @param tableId the table ID
 	* @param names the names
 	* @return the matching expando columns
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portlet.expando.model.ExpandoColumn> findByT_N(
-		long tableId, java.lang.String[] names);
+		long tableId, java.lang.String[] names)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns a range of all the expando columns where tableId = &#63; and name = any &#63;.
@@ -247,9 +279,11 @@ public interface ExpandoColumnPersistence extends BasePersistence<ExpandoColumn>
 	* @param start the lower bound of the range of expando columns
 	* @param end the upper bound of the range of expando columns (not inclusive)
 	* @return the range of matching expando columns
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portlet.expando.model.ExpandoColumn> findByT_N(
-		long tableId, java.lang.String[] names, int start, int end);
+		long tableId, java.lang.String[] names, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns an ordered range of all the expando columns where tableId = &#63; and name = any &#63;.
@@ -264,10 +298,12 @@ public interface ExpandoColumnPersistence extends BasePersistence<ExpandoColumn>
 	* @param end the upper bound of the range of expando columns (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching expando columns
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portlet.expando.model.ExpandoColumn> findByT_N(
 		long tableId, java.lang.String[] names, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.expando.model.ExpandoColumn> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the expando column where tableId = &#63; and name = &#63; or throws a {@link com.liferay.portlet.expando.NoSuchColumnException} if it could not be found.
@@ -276,10 +312,12 @@ public interface ExpandoColumnPersistence extends BasePersistence<ExpandoColumn>
 	* @param name the name
 	* @return the matching expando column
 	* @throws com.liferay.portlet.expando.NoSuchColumnException if a matching expando column could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.expando.model.ExpandoColumn findByT_N(
 		long tableId, java.lang.String name)
-		throws com.liferay.portlet.expando.NoSuchColumnException;
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.expando.NoSuchColumnException;
 
 	/**
 	* Returns the expando column where tableId = &#63; and name = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
@@ -287,9 +325,11 @@ public interface ExpandoColumnPersistence extends BasePersistence<ExpandoColumn>
 	* @param tableId the table ID
 	* @param name the name
 	* @return the matching expando column, or <code>null</code> if a matching expando column could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.expando.model.ExpandoColumn fetchByT_N(
-		long tableId, java.lang.String name);
+		long tableId, java.lang.String name)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the expando column where tableId = &#63; and name = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
@@ -298,9 +338,11 @@ public interface ExpandoColumnPersistence extends BasePersistence<ExpandoColumn>
 	* @param name the name
 	* @param retrieveFromCache whether to use the finder cache
 	* @return the matching expando column, or <code>null</code> if a matching expando column could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.expando.model.ExpandoColumn fetchByT_N(
-		long tableId, java.lang.String name, boolean retrieveFromCache);
+		long tableId, java.lang.String name, boolean retrieveFromCache)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Removes the expando column where tableId = &#63; and name = &#63; from the database.
@@ -308,10 +350,12 @@ public interface ExpandoColumnPersistence extends BasePersistence<ExpandoColumn>
 	* @param tableId the table ID
 	* @param name the name
 	* @return the expando column that was removed
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.expando.model.ExpandoColumn removeByT_N(
 		long tableId, java.lang.String name)
-		throws com.liferay.portlet.expando.NoSuchColumnException;
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.expando.NoSuchColumnException;
 
 	/**
 	* Returns the number of expando columns where tableId = &#63; and name = &#63;.
@@ -319,8 +363,10 @@ public interface ExpandoColumnPersistence extends BasePersistence<ExpandoColumn>
 	* @param tableId the table ID
 	* @param name the name
 	* @return the number of matching expando columns
+	* @throws SystemException if a system exception occurred
 	*/
-	public int countByT_N(long tableId, java.lang.String name);
+	public int countByT_N(long tableId, java.lang.String name)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of expando columns where tableId = &#63; and name = any &#63;.
@@ -328,8 +374,10 @@ public interface ExpandoColumnPersistence extends BasePersistence<ExpandoColumn>
 	* @param tableId the table ID
 	* @param names the names
 	* @return the number of matching expando columns
+	* @throws SystemException if a system exception occurred
 	*/
-	public int countByT_N(long tableId, java.lang.String[] names);
+	public int countByT_N(long tableId, java.lang.String[] names)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of expando columns that the user has permission to view where tableId = &#63; and name = &#63;.
@@ -337,8 +385,10 @@ public interface ExpandoColumnPersistence extends BasePersistence<ExpandoColumn>
 	* @param tableId the table ID
 	* @param name the name
 	* @return the number of matching expando columns that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
-	public int filterCountByT_N(long tableId, java.lang.String name);
+	public int filterCountByT_N(long tableId, java.lang.String name)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of expando columns that the user has permission to view where tableId = &#63; and name = any &#63;.
@@ -346,8 +396,10 @@ public interface ExpandoColumnPersistence extends BasePersistence<ExpandoColumn>
 	* @param tableId the table ID
 	* @param names the names
 	* @return the number of matching expando columns that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
-	public int filterCountByT_N(long tableId, java.lang.String[] names);
+	public int filterCountByT_N(long tableId, java.lang.String[] names)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Caches the expando column in the entity cache if it is enabled.
@@ -379,12 +431,15 @@ public interface ExpandoColumnPersistence extends BasePersistence<ExpandoColumn>
 	* @param columnId the primary key of the expando column
 	* @return the expando column that was removed
 	* @throws com.liferay.portlet.expando.NoSuchColumnException if a expando column with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.expando.model.ExpandoColumn remove(long columnId)
-		throws com.liferay.portlet.expando.NoSuchColumnException;
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.expando.NoSuchColumnException;
 
 	public com.liferay.portlet.expando.model.ExpandoColumn updateImpl(
-		com.liferay.portlet.expando.model.ExpandoColumn expandoColumn);
+		com.liferay.portlet.expando.model.ExpandoColumn expandoColumn)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the expando column with the primary key or throws a {@link com.liferay.portlet.expando.NoSuchColumnException} if it could not be found.
@@ -392,29 +447,32 @@ public interface ExpandoColumnPersistence extends BasePersistence<ExpandoColumn>
 	* @param columnId the primary key of the expando column
 	* @return the expando column
 	* @throws com.liferay.portlet.expando.NoSuchColumnException if a expando column with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.expando.model.ExpandoColumn findByPrimaryKey(
-		long columnId) throws com.liferay.portlet.expando.NoSuchColumnException;
+		long columnId)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.expando.NoSuchColumnException;
 
 	/**
 	* Returns the expando column with the primary key or returns <code>null</code> if it could not be found.
 	*
 	* @param columnId the primary key of the expando column
 	* @return the expando column, or <code>null</code> if a expando column with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.expando.model.ExpandoColumn fetchByPrimaryKey(
-		long columnId);
-
-	@Override
-	public java.util.Map<java.io.Serializable, com.liferay.portlet.expando.model.ExpandoColumn> fetchByPrimaryKeys(
-		java.util.Set<java.io.Serializable> primaryKeys);
+		long columnId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns all the expando columns.
 	*
 	* @return the expando columns
+	* @throws SystemException if a system exception occurred
 	*/
-	public java.util.List<com.liferay.portlet.expando.model.ExpandoColumn> findAll();
+	public java.util.List<com.liferay.portlet.expando.model.ExpandoColumn> findAll()
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns a range of all the expando columns.
@@ -426,9 +484,11 @@ public interface ExpandoColumnPersistence extends BasePersistence<ExpandoColumn>
 	* @param start the lower bound of the range of expando columns
 	* @param end the upper bound of the range of expando columns (not inclusive)
 	* @return the range of expando columns
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portlet.expando.model.ExpandoColumn> findAll(
-		int start, int end);
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns an ordered range of all the expando columns.
@@ -441,20 +501,27 @@ public interface ExpandoColumnPersistence extends BasePersistence<ExpandoColumn>
 	* @param end the upper bound of the range of expando columns (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of expando columns
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portlet.expando.model.ExpandoColumn> findAll(
 		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.expando.model.ExpandoColumn> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Removes all the expando columns from the database.
+	*
+	* @throws SystemException if a system exception occurred
 	*/
-	public void removeAll();
+	public void removeAll()
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of expando columns.
 	*
 	* @return the number of expando columns
+	* @throws SystemException if a system exception occurred
 	*/
-	public int countAll();
+	public int countAll()
+		throws com.liferay.portal.kernel.exception.SystemException;
 }

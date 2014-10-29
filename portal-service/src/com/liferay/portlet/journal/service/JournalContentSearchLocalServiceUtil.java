@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -46,15 +46,12 @@ public class JournalContentSearchLocalServiceUtil {
 	*
 	* @param journalContentSearch the journal content search
 	* @return the journal content search that was added
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.journal.model.JournalContentSearch addJournalContentSearch(
-		com.liferay.portlet.journal.model.JournalContentSearch journalContentSearch) {
+		com.liferay.portlet.journal.model.JournalContentSearch journalContentSearch)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().addJournalContentSearch(journalContentSearch);
-	}
-
-	public static void checkContentSearches(long companyId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		getService().checkContentSearches(companyId);
 	}
 
 	/**
@@ -68,29 +65,18 @@ public class JournalContentSearchLocalServiceUtil {
 		return getService().createJournalContentSearch(contentSearchId);
 	}
 
-	public static void deleteArticleContentSearch(long groupId,
-		boolean privateLayout, long layoutId, java.lang.String portletId,
-		java.lang.String articleId) {
-		getService()
-			.deleteArticleContentSearch(groupId, privateLayout, layoutId,
-			portletId, articleId);
-	}
-
-	public static void deleteArticleContentSearches(long groupId,
-		java.lang.String articleId) {
-		getService().deleteArticleContentSearches(groupId, articleId);
-	}
-
 	/**
 	* Deletes the journal content search with the primary key from the database. Also notifies the appropriate model listeners.
 	*
 	* @param contentSearchId the primary key of the journal content search
 	* @return the journal content search that was removed
 	* @throws PortalException if a journal content search with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.journal.model.JournalContentSearch deleteJournalContentSearch(
 		long contentSearchId)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getService().deleteJournalContentSearch(contentSearchId);
 	}
 
@@ -99,30 +85,12 @@ public class JournalContentSearchLocalServiceUtil {
 	*
 	* @param journalContentSearch the journal content search
 	* @return the journal content search that was removed
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.journal.model.JournalContentSearch deleteJournalContentSearch(
-		com.liferay.portlet.journal.model.JournalContentSearch journalContentSearch) {
+		com.liferay.portlet.journal.model.JournalContentSearch journalContentSearch)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().deleteJournalContentSearch(journalContentSearch);
-	}
-
-	public static void deleteLayoutContentSearches(long groupId,
-		boolean privateLayout, long layoutId) {
-		getService()
-			.deleteLayoutContentSearches(groupId, privateLayout, layoutId);
-	}
-
-	public static void deleteOwnerContentSearches(long groupId,
-		boolean privateLayout) {
-		getService().deleteOwnerContentSearches(groupId, privateLayout);
-	}
-
-	/**
-	* @throws PortalException
-	*/
-	public static com.liferay.portal.model.PersistedModel deletePersistedModel(
-		com.liferay.portal.model.PersistedModel persistedModel)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().deletePersistedModel(persistedModel);
 	}
 
 	public static com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery() {
@@ -134,9 +102,12 @@ public class JournalContentSearchLocalServiceUtil {
 	*
 	* @param dynamicQuery the dynamic query
 	* @return the matching rows
+	* @throws SystemException if a system exception occurred
 	*/
-	public static <T> java.util.List<T> dynamicQuery(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery) {
+	@SuppressWarnings("rawtypes")
+	public static java.util.List dynamicQuery(
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().dynamicQuery(dynamicQuery);
 	}
 
@@ -151,10 +122,12 @@ public class JournalContentSearchLocalServiceUtil {
 	* @param start the lower bound of the range of model instances
 	* @param end the upper bound of the range of model instances (not inclusive)
 	* @return the range of matching rows
+	* @throws SystemException if a system exception occurred
 	*/
-	public static <T> java.util.List<T> dynamicQuery(
+	@SuppressWarnings("rawtypes")
+	public static java.util.List dynamicQuery(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
-		int end) {
+		int end) throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().dynamicQuery(dynamicQuery, start, end);
 	}
 
@@ -170,11 +143,14 @@ public class JournalContentSearchLocalServiceUtil {
 	* @param end the upper bound of the range of model instances (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching rows
+	* @throws SystemException if a system exception occurred
 	*/
-	public static <T> java.util.List<T> dynamicQuery(
+	@SuppressWarnings("rawtypes")
+	public static java.util.List dynamicQuery(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
 		int end,
-		com.liferay.portal.kernel.util.OrderByComparator<T> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService()
 				   .dynamicQuery(dynamicQuery, start, end, orderByComparator);
 	}
@@ -184,9 +160,11 @@ public class JournalContentSearchLocalServiceUtil {
 	*
 	* @param dynamicQuery the dynamic query
 	* @return the number of rows that match the dynamic query
+	* @throws SystemException if a system exception occurred
 	*/
 	public static long dynamicQueryCount(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery) {
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().dynamicQueryCount(dynamicQuery);
 	}
 
@@ -196,43 +174,19 @@ public class JournalContentSearchLocalServiceUtil {
 	* @param dynamicQuery the dynamic query
 	* @param projection the projection to apply to the query
 	* @return the number of rows that match the dynamic query
+	* @throws SystemException if a system exception occurred
 	*/
 	public static long dynamicQueryCount(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery,
-		com.liferay.portal.kernel.dao.orm.Projection projection) {
+		com.liferay.portal.kernel.dao.orm.Projection projection)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().dynamicQueryCount(dynamicQuery, projection);
 	}
 
 	public static com.liferay.portlet.journal.model.JournalContentSearch fetchJournalContentSearch(
-		long contentSearchId) {
+		long contentSearchId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().fetchJournalContentSearch(contentSearchId);
-	}
-
-	public static com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery getActionableDynamicQuery() {
-		return getService().getActionableDynamicQuery();
-	}
-
-	public static java.util.List<com.liferay.portlet.journal.model.JournalContentSearch> getArticleContentSearches() {
-		return getService().getArticleContentSearches();
-	}
-
-	public static java.util.List<com.liferay.portlet.journal.model.JournalContentSearch> getArticleContentSearches(
-		java.lang.String articleId) {
-		return getService().getArticleContentSearches(articleId);
-	}
-
-	public static java.util.List<com.liferay.portlet.journal.model.JournalContentSearch> getArticleContentSearches(
-		long groupId, java.lang.String articleId) {
-		return getService().getArticleContentSearches(groupId, articleId);
-	}
-
-	/**
-	* Returns the Spring bean ID for this bean.
-	*
-	* @return the Spring bean ID for this bean
-	*/
-	public static java.lang.String getBeanIdentifier() {
-		return getService().getBeanIdentifier();
 	}
 
 	/**
@@ -241,11 +195,20 @@ public class JournalContentSearchLocalServiceUtil {
 	* @param contentSearchId the primary key of the journal content search
 	* @return the journal content search
 	* @throws PortalException if a journal content search with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.journal.model.JournalContentSearch getJournalContentSearch(
 		long contentSearchId)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getService().getJournalContentSearch(contentSearchId);
+	}
+
+	public static com.liferay.portal.model.PersistedModel getPersistedModel(
+		java.io.Serializable primaryKeyObj)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getService().getPersistedModel(primaryKeyObj);
 	}
 
 	/**
@@ -258,9 +221,11 @@ public class JournalContentSearchLocalServiceUtil {
 	* @param start the lower bound of the range of journal content searchs
 	* @param end the upper bound of the range of journal content searchs (not inclusive)
 	* @return the range of journal content searchs
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.journal.model.JournalContentSearch> getJournalContentSearchs(
-		int start, int end) {
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().getJournalContentSearchs(start, end);
 	}
 
@@ -268,34 +233,33 @@ public class JournalContentSearchLocalServiceUtil {
 	* Returns the number of journal content searchs.
 	*
 	* @return the number of journal content searchs
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int getJournalContentSearchsCount() {
+	public static int getJournalContentSearchsCount()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().getJournalContentSearchsCount();
 	}
 
-	public static java.util.List<java.lang.Long> getLayoutIds(long groupId,
-		boolean privateLayout, java.lang.String articleId) {
-		return getService().getLayoutIds(groupId, privateLayout, articleId);
+	/**
+	* Updates the journal content search in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
+	*
+	* @param journalContentSearch the journal content search
+	* @return the journal content search that was updated
+	* @throws SystemException if a system exception occurred
+	*/
+	public static com.liferay.portlet.journal.model.JournalContentSearch updateJournalContentSearch(
+		com.liferay.portlet.journal.model.JournalContentSearch journalContentSearch)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().updateJournalContentSearch(journalContentSearch);
 	}
 
-	public static int getLayoutIdsCount(java.lang.String articleId) {
-		return getService().getLayoutIdsCount(articleId);
-	}
-
-	public static int getLayoutIdsCount(long groupId, boolean privateLayout,
-		java.lang.String articleId) {
-		return getService().getLayoutIdsCount(groupId, privateLayout, articleId);
-	}
-
-	public static com.liferay.portal.model.PersistedModel getPersistedModel(
-		java.io.Serializable primaryKeyObj)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().getPersistedModel(primaryKeyObj);
-	}
-
-	public static java.util.List<com.liferay.portlet.journal.model.JournalContentSearch> getPortletContentSearches(
-		java.lang.String portletId) {
-		return getService().getPortletContentSearches(portletId);
+	/**
+	* Returns the Spring bean ID for this bean.
+	*
+	* @return the Spring bean ID for this bean
+	*/
+	public static java.lang.String getBeanIdentifier() {
+		return getService().getBeanIdentifier();
 	}
 
 	/**
@@ -307,10 +271,85 @@ public class JournalContentSearchLocalServiceUtil {
 		getService().setBeanIdentifier(beanIdentifier);
 	}
 
+	public static void checkContentSearches(long companyId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		getService().checkContentSearches(companyId);
+	}
+
+	public static void deleteArticleContentSearch(long groupId,
+		boolean privateLayout, long layoutId, java.lang.String portletId,
+		java.lang.String articleId)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		getService()
+			.deleteArticleContentSearch(groupId, privateLayout, layoutId,
+			portletId, articleId);
+	}
+
+	public static void deleteArticleContentSearches(long groupId,
+		java.lang.String articleId)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		getService().deleteArticleContentSearches(groupId, articleId);
+	}
+
+	public static void deleteLayoutContentSearches(long groupId,
+		boolean privateLayout, long layoutId)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		getService()
+			.deleteLayoutContentSearches(groupId, privateLayout, layoutId);
+	}
+
+	public static void deleteOwnerContentSearches(long groupId,
+		boolean privateLayout)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		getService().deleteOwnerContentSearches(groupId, privateLayout);
+	}
+
+	public static java.util.List<com.liferay.portlet.journal.model.JournalContentSearch> getArticleContentSearches()
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().getArticleContentSearches();
+	}
+
+	public static java.util.List<com.liferay.portlet.journal.model.JournalContentSearch> getArticleContentSearches(
+		long groupId, java.lang.String articleId)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().getArticleContentSearches(groupId, articleId);
+	}
+
+	public static java.util.List<com.liferay.portlet.journal.model.JournalContentSearch> getArticleContentSearches(
+		java.lang.String articleId)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().getArticleContentSearches(articleId);
+	}
+
+	public static java.util.List<java.lang.Long> getLayoutIds(long groupId,
+		boolean privateLayout, java.lang.String articleId)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().getLayoutIds(groupId, privateLayout, articleId);
+	}
+
+	public static int getLayoutIdsCount(long groupId, boolean privateLayout,
+		java.lang.String articleId)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().getLayoutIdsCount(groupId, privateLayout, articleId);
+	}
+
+	public static int getLayoutIdsCount(java.lang.String articleId)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().getLayoutIdsCount(articleId);
+	}
+
+	public static java.util.List<com.liferay.portlet.journal.model.JournalContentSearch> getPortletContentSearches(
+		java.lang.String portletId)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().getPortletContentSearches(portletId);
+	}
+
 	public static com.liferay.portlet.journal.model.JournalContentSearch updateContentSearch(
 		long groupId, boolean privateLayout, long layoutId,
 		java.lang.String portletId, java.lang.String articleId)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getService()
 				   .updateContentSearch(groupId, privateLayout, layoutId,
 			portletId, articleId);
@@ -319,7 +358,8 @@ public class JournalContentSearchLocalServiceUtil {
 	public static com.liferay.portlet.journal.model.JournalContentSearch updateContentSearch(
 		long groupId, boolean privateLayout, long layoutId,
 		java.lang.String portletId, java.lang.String articleId, boolean purge)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getService()
 				   .updateContentSearch(groupId, privateLayout, layoutId,
 			portletId, articleId, purge);
@@ -328,21 +368,11 @@ public class JournalContentSearchLocalServiceUtil {
 	public static java.util.List<com.liferay.portlet.journal.model.JournalContentSearch> updateContentSearch(
 		long groupId, boolean privateLayout, long layoutId,
 		java.lang.String portletId, java.lang.String[] articleIds)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getService()
 				   .updateContentSearch(groupId, privateLayout, layoutId,
 			portletId, articleIds);
-	}
-
-	/**
-	* Updates the journal content search in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
-	*
-	* @param journalContentSearch the journal content search
-	* @return the journal content search that was updated
-	*/
-	public static com.liferay.portlet.journal.model.JournalContentSearch updateJournalContentSearch(
-		com.liferay.portlet.journal.model.JournalContentSearch journalContentSearch) {
-		return getService().updateJournalContentSearch(journalContentSearch);
 	}
 
 	public static JournalContentSearchLocalService getService() {
@@ -359,7 +389,6 @@ public class JournalContentSearchLocalServiceUtil {
 	/**
 	 * @deprecated As of 6.2.0
 	 */
-	@Deprecated
 	public void setService(JournalContentSearchLocalService service) {
 	}
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,6 +18,7 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.bean.PortalBeanLocatorUtil;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ReferenceRegistry;
 import com.liferay.portal.service.ServiceContext;
@@ -63,7 +64,8 @@ public class BookmarksEntryUtil {
 	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#countWithDynamicQuery(DynamicQuery)
 	 */
-	public static long countWithDynamicQuery(DynamicQuery dynamicQuery) {
+	public static long countWithDynamicQuery(DynamicQuery dynamicQuery)
+		throws SystemException {
 		return getPersistence().countWithDynamicQuery(dynamicQuery);
 	}
 
@@ -71,7 +73,7 @@ public class BookmarksEntryUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#findWithDynamicQuery(DynamicQuery)
 	 */
 	public static List<BookmarksEntry> findWithDynamicQuery(
-		DynamicQuery dynamicQuery) {
+		DynamicQuery dynamicQuery) throws SystemException {
 		return getPersistence().findWithDynamicQuery(dynamicQuery);
 	}
 
@@ -79,7 +81,8 @@ public class BookmarksEntryUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#findWithDynamicQuery(DynamicQuery, int, int)
 	 */
 	public static List<BookmarksEntry> findWithDynamicQuery(
-		DynamicQuery dynamicQuery, int start, int end) {
+		DynamicQuery dynamicQuery, int start, int end)
+		throws SystemException {
 		return getPersistence().findWithDynamicQuery(dynamicQuery, start, end);
 	}
 
@@ -88,7 +91,7 @@ public class BookmarksEntryUtil {
 	 */
 	public static List<BookmarksEntry> findWithDynamicQuery(
 		DynamicQuery dynamicQuery, int start, int end,
-		OrderByComparator<BookmarksEntry> orderByComparator) {
+		OrderByComparator orderByComparator) throws SystemException {
 		return getPersistence()
 				   .findWithDynamicQuery(dynamicQuery, start, end,
 			orderByComparator);
@@ -97,7 +100,8 @@ public class BookmarksEntryUtil {
 	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel)
 	 */
-	public static BookmarksEntry update(BookmarksEntry bookmarksEntry) {
+	public static BookmarksEntry update(BookmarksEntry bookmarksEntry)
+		throws SystemException {
 		return getPersistence().update(bookmarksEntry);
 	}
 
@@ -105,7 +109,7 @@ public class BookmarksEntryUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, ServiceContext)
 	 */
 	public static BookmarksEntry update(BookmarksEntry bookmarksEntry,
-		ServiceContext serviceContext) {
+		ServiceContext serviceContext) throws SystemException {
 		return getPersistence().update(bookmarksEntry, serviceContext);
 	}
 
@@ -114,9 +118,11 @@ public class BookmarksEntryUtil {
 	*
 	* @param resourceBlockId the resource block ID
 	* @return the matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> findByResourceBlockId(
-		long resourceBlockId) {
+		long resourceBlockId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByResourceBlockId(resourceBlockId);
 	}
 
@@ -131,9 +137,11 @@ public class BookmarksEntryUtil {
 	* @param start the lower bound of the range of bookmarks entries
 	* @param end the upper bound of the range of bookmarks entries (not inclusive)
 	* @return the range of matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> findByResourceBlockId(
-		long resourceBlockId, int start, int end) {
+		long resourceBlockId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByResourceBlockId(resourceBlockId, start, end);
 	}
@@ -150,10 +158,12 @@ public class BookmarksEntryUtil {
 	* @param end the upper bound of the range of bookmarks entries (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> findByResourceBlockId(
 		long resourceBlockId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByResourceBlockId(resourceBlockId, start, end,
 			orderByComparator);
@@ -166,11 +176,13 @@ public class BookmarksEntryUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching bookmarks entry
 	* @throws com.liferay.portlet.bookmarks.NoSuchEntryException if a matching bookmarks entry could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry findByResourceBlockId_First(
 		long resourceBlockId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator)
-		throws com.liferay.portlet.bookmarks.NoSuchEntryException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.bookmarks.NoSuchEntryException {
 		return getPersistence()
 				   .findByResourceBlockId_First(resourceBlockId,
 			orderByComparator);
@@ -182,10 +194,12 @@ public class BookmarksEntryUtil {
 	* @param resourceBlockId the resource block ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching bookmarks entry, or <code>null</code> if a matching bookmarks entry could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry fetchByResourceBlockId_First(
 		long resourceBlockId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByResourceBlockId_First(resourceBlockId,
 			orderByComparator);
@@ -198,11 +212,13 @@ public class BookmarksEntryUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching bookmarks entry
 	* @throws com.liferay.portlet.bookmarks.NoSuchEntryException if a matching bookmarks entry could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry findByResourceBlockId_Last(
 		long resourceBlockId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator)
-		throws com.liferay.portlet.bookmarks.NoSuchEntryException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.bookmarks.NoSuchEntryException {
 		return getPersistence()
 				   .findByResourceBlockId_Last(resourceBlockId,
 			orderByComparator);
@@ -214,10 +230,12 @@ public class BookmarksEntryUtil {
 	* @param resourceBlockId the resource block ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching bookmarks entry, or <code>null</code> if a matching bookmarks entry could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry fetchByResourceBlockId_Last(
 		long resourceBlockId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByResourceBlockId_Last(resourceBlockId,
 			orderByComparator);
@@ -231,11 +249,13 @@ public class BookmarksEntryUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next bookmarks entry
 	* @throws com.liferay.portlet.bookmarks.NoSuchEntryException if a bookmarks entry with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry[] findByResourceBlockId_PrevAndNext(
 		long entryId, long resourceBlockId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator)
-		throws com.liferay.portlet.bookmarks.NoSuchEntryException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.bookmarks.NoSuchEntryException {
 		return getPersistence()
 				   .findByResourceBlockId_PrevAndNext(entryId, resourceBlockId,
 			orderByComparator);
@@ -245,8 +265,10 @@ public class BookmarksEntryUtil {
 	* Removes all the bookmarks entries where resourceBlockId = &#63; from the database.
 	*
 	* @param resourceBlockId the resource block ID
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByResourceBlockId(long resourceBlockId) {
+	public static void removeByResourceBlockId(long resourceBlockId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeByResourceBlockId(resourceBlockId);
 	}
 
@@ -255,8 +277,10 @@ public class BookmarksEntryUtil {
 	*
 	* @param resourceBlockId the resource block ID
 	* @return the number of matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByResourceBlockId(long resourceBlockId) {
+	public static int countByResourceBlockId(long resourceBlockId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByResourceBlockId(resourceBlockId);
 	}
 
@@ -265,9 +289,11 @@ public class BookmarksEntryUtil {
 	*
 	* @param uuid the uuid
 	* @return the matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> findByUuid(
-		java.lang.String uuid) {
+		java.lang.String uuid)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByUuid(uuid);
 	}
 
@@ -282,9 +308,11 @@ public class BookmarksEntryUtil {
 	* @param start the lower bound of the range of bookmarks entries
 	* @param end the upper bound of the range of bookmarks entries (not inclusive)
 	* @return the range of matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> findByUuid(
-		java.lang.String uuid, int start, int end) {
+		java.lang.String uuid, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByUuid(uuid, start, end);
 	}
 
@@ -300,10 +328,12 @@ public class BookmarksEntryUtil {
 	* @param end the upper bound of the range of bookmarks entries (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> findByUuid(
 		java.lang.String uuid, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByUuid(uuid, start, end, orderByComparator);
 	}
 
@@ -314,11 +344,13 @@ public class BookmarksEntryUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching bookmarks entry
 	* @throws com.liferay.portlet.bookmarks.NoSuchEntryException if a matching bookmarks entry could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry findByUuid_First(
 		java.lang.String uuid,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator)
-		throws com.liferay.portlet.bookmarks.NoSuchEntryException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.bookmarks.NoSuchEntryException {
 		return getPersistence().findByUuid_First(uuid, orderByComparator);
 	}
 
@@ -328,10 +360,12 @@ public class BookmarksEntryUtil {
 	* @param uuid the uuid
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching bookmarks entry, or <code>null</code> if a matching bookmarks entry could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry fetchByUuid_First(
 		java.lang.String uuid,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByUuid_First(uuid, orderByComparator);
 	}
 
@@ -342,11 +376,13 @@ public class BookmarksEntryUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching bookmarks entry
 	* @throws com.liferay.portlet.bookmarks.NoSuchEntryException if a matching bookmarks entry could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry findByUuid_Last(
 		java.lang.String uuid,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator)
-		throws com.liferay.portlet.bookmarks.NoSuchEntryException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.bookmarks.NoSuchEntryException {
 		return getPersistence().findByUuid_Last(uuid, orderByComparator);
 	}
 
@@ -356,10 +392,12 @@ public class BookmarksEntryUtil {
 	* @param uuid the uuid
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching bookmarks entry, or <code>null</code> if a matching bookmarks entry could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry fetchByUuid_Last(
 		java.lang.String uuid,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByUuid_Last(uuid, orderByComparator);
 	}
 
@@ -371,11 +409,13 @@ public class BookmarksEntryUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next bookmarks entry
 	* @throws com.liferay.portlet.bookmarks.NoSuchEntryException if a bookmarks entry with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry[] findByUuid_PrevAndNext(
 		long entryId, java.lang.String uuid,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator)
-		throws com.liferay.portlet.bookmarks.NoSuchEntryException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.bookmarks.NoSuchEntryException {
 		return getPersistence()
 				   .findByUuid_PrevAndNext(entryId, uuid, orderByComparator);
 	}
@@ -384,8 +424,10 @@ public class BookmarksEntryUtil {
 	* Removes all the bookmarks entries where uuid = &#63; from the database.
 	*
 	* @param uuid the uuid
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByUuid(java.lang.String uuid) {
+	public static void removeByUuid(java.lang.String uuid)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeByUuid(uuid);
 	}
 
@@ -394,8 +436,10 @@ public class BookmarksEntryUtil {
 	*
 	* @param uuid the uuid
 	* @return the number of matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByUuid(java.lang.String uuid) {
+	public static int countByUuid(java.lang.String uuid)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByUuid(uuid);
 	}
 
@@ -406,10 +450,12 @@ public class BookmarksEntryUtil {
 	* @param groupId the group ID
 	* @return the matching bookmarks entry
 	* @throws com.liferay.portlet.bookmarks.NoSuchEntryException if a matching bookmarks entry could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry findByUUID_G(
 		java.lang.String uuid, long groupId)
-		throws com.liferay.portlet.bookmarks.NoSuchEntryException {
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.bookmarks.NoSuchEntryException {
 		return getPersistence().findByUUID_G(uuid, groupId);
 	}
 
@@ -419,9 +465,11 @@ public class BookmarksEntryUtil {
 	* @param uuid the uuid
 	* @param groupId the group ID
 	* @return the matching bookmarks entry, or <code>null</code> if a matching bookmarks entry could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry fetchByUUID_G(
-		java.lang.String uuid, long groupId) {
+		java.lang.String uuid, long groupId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByUUID_G(uuid, groupId);
 	}
 
@@ -432,9 +480,11 @@ public class BookmarksEntryUtil {
 	* @param groupId the group ID
 	* @param retrieveFromCache whether to use the finder cache
 	* @return the matching bookmarks entry, or <code>null</code> if a matching bookmarks entry could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry fetchByUUID_G(
-		java.lang.String uuid, long groupId, boolean retrieveFromCache) {
+		java.lang.String uuid, long groupId, boolean retrieveFromCache)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByUUID_G(uuid, groupId, retrieveFromCache);
 	}
 
@@ -444,10 +494,12 @@ public class BookmarksEntryUtil {
 	* @param uuid the uuid
 	* @param groupId the group ID
 	* @return the bookmarks entry that was removed
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry removeByUUID_G(
 		java.lang.String uuid, long groupId)
-		throws com.liferay.portlet.bookmarks.NoSuchEntryException {
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.bookmarks.NoSuchEntryException {
 		return getPersistence().removeByUUID_G(uuid, groupId);
 	}
 
@@ -457,8 +509,10 @@ public class BookmarksEntryUtil {
 	* @param uuid the uuid
 	* @param groupId the group ID
 	* @return the number of matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByUUID_G(java.lang.String uuid, long groupId) {
+	public static int countByUUID_G(java.lang.String uuid, long groupId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByUUID_G(uuid, groupId);
 	}
 
@@ -468,9 +522,11 @@ public class BookmarksEntryUtil {
 	* @param uuid the uuid
 	* @param companyId the company ID
 	* @return the matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> findByUuid_C(
-		java.lang.String uuid, long companyId) {
+		java.lang.String uuid, long companyId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByUuid_C(uuid, companyId);
 	}
 
@@ -486,9 +542,11 @@ public class BookmarksEntryUtil {
 	* @param start the lower bound of the range of bookmarks entries
 	* @param end the upper bound of the range of bookmarks entries (not inclusive)
 	* @return the range of matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> findByUuid_C(
-		java.lang.String uuid, long companyId, int start, int end) {
+		java.lang.String uuid, long companyId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByUuid_C(uuid, companyId, start, end);
 	}
 
@@ -505,10 +563,12 @@ public class BookmarksEntryUtil {
 	* @param end the upper bound of the range of bookmarks entries (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> findByUuid_C(
 		java.lang.String uuid, long companyId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByUuid_C(uuid, companyId, start, end, orderByComparator);
 	}
@@ -521,11 +581,13 @@ public class BookmarksEntryUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching bookmarks entry
 	* @throws com.liferay.portlet.bookmarks.NoSuchEntryException if a matching bookmarks entry could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry findByUuid_C_First(
 		java.lang.String uuid, long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator)
-		throws com.liferay.portlet.bookmarks.NoSuchEntryException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.bookmarks.NoSuchEntryException {
 		return getPersistence()
 				   .findByUuid_C_First(uuid, companyId, orderByComparator);
 	}
@@ -537,10 +599,12 @@ public class BookmarksEntryUtil {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching bookmarks entry, or <code>null</code> if a matching bookmarks entry could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry fetchByUuid_C_First(
 		java.lang.String uuid, long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByUuid_C_First(uuid, companyId, orderByComparator);
 	}
@@ -553,11 +617,13 @@ public class BookmarksEntryUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching bookmarks entry
 	* @throws com.liferay.portlet.bookmarks.NoSuchEntryException if a matching bookmarks entry could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry findByUuid_C_Last(
 		java.lang.String uuid, long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator)
-		throws com.liferay.portlet.bookmarks.NoSuchEntryException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.bookmarks.NoSuchEntryException {
 		return getPersistence()
 				   .findByUuid_C_Last(uuid, companyId, orderByComparator);
 	}
@@ -569,10 +635,12 @@ public class BookmarksEntryUtil {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching bookmarks entry, or <code>null</code> if a matching bookmarks entry could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry fetchByUuid_C_Last(
 		java.lang.String uuid, long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByUuid_C_Last(uuid, companyId, orderByComparator);
 	}
@@ -586,11 +654,13 @@ public class BookmarksEntryUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next bookmarks entry
 	* @throws com.liferay.portlet.bookmarks.NoSuchEntryException if a bookmarks entry with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry[] findByUuid_C_PrevAndNext(
 		long entryId, java.lang.String uuid, long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator)
-		throws com.liferay.portlet.bookmarks.NoSuchEntryException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.bookmarks.NoSuchEntryException {
 		return getPersistence()
 				   .findByUuid_C_PrevAndNext(entryId, uuid, companyId,
 			orderByComparator);
@@ -601,8 +671,10 @@ public class BookmarksEntryUtil {
 	*
 	* @param uuid the uuid
 	* @param companyId the company ID
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByUuid_C(java.lang.String uuid, long companyId) {
+	public static void removeByUuid_C(java.lang.String uuid, long companyId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeByUuid_C(uuid, companyId);
 	}
 
@@ -612,8 +684,10 @@ public class BookmarksEntryUtil {
 	* @param uuid the uuid
 	* @param companyId the company ID
 	* @return the number of matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByUuid_C(java.lang.String uuid, long companyId) {
+	public static int countByUuid_C(java.lang.String uuid, long companyId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByUuid_C(uuid, companyId);
 	}
 
@@ -622,9 +696,11 @@ public class BookmarksEntryUtil {
 	*
 	* @param companyId the company ID
 	* @return the matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> findByCompanyId(
-		long companyId) {
+		long companyId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByCompanyId(companyId);
 	}
 
@@ -639,9 +715,11 @@ public class BookmarksEntryUtil {
 	* @param start the lower bound of the range of bookmarks entries
 	* @param end the upper bound of the range of bookmarks entries (not inclusive)
 	* @return the range of matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> findByCompanyId(
-		long companyId, int start, int end) {
+		long companyId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByCompanyId(companyId, start, end);
 	}
 
@@ -657,10 +735,12 @@ public class BookmarksEntryUtil {
 	* @param end the upper bound of the range of bookmarks entries (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> findByCompanyId(
 		long companyId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByCompanyId(companyId, start, end, orderByComparator);
 	}
@@ -672,11 +752,13 @@ public class BookmarksEntryUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching bookmarks entry
 	* @throws com.liferay.portlet.bookmarks.NoSuchEntryException if a matching bookmarks entry could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry findByCompanyId_First(
 		long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator)
-		throws com.liferay.portlet.bookmarks.NoSuchEntryException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.bookmarks.NoSuchEntryException {
 		return getPersistence()
 				   .findByCompanyId_First(companyId, orderByComparator);
 	}
@@ -687,10 +769,12 @@ public class BookmarksEntryUtil {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching bookmarks entry, or <code>null</code> if a matching bookmarks entry could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry fetchByCompanyId_First(
 		long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByCompanyId_First(companyId, orderByComparator);
 	}
@@ -702,11 +786,13 @@ public class BookmarksEntryUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching bookmarks entry
 	* @throws com.liferay.portlet.bookmarks.NoSuchEntryException if a matching bookmarks entry could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry findByCompanyId_Last(
 		long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator)
-		throws com.liferay.portlet.bookmarks.NoSuchEntryException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.bookmarks.NoSuchEntryException {
 		return getPersistence()
 				   .findByCompanyId_Last(companyId, orderByComparator);
 	}
@@ -717,10 +803,12 @@ public class BookmarksEntryUtil {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching bookmarks entry, or <code>null</code> if a matching bookmarks entry could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry fetchByCompanyId_Last(
 		long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByCompanyId_Last(companyId, orderByComparator);
 	}
@@ -733,11 +821,13 @@ public class BookmarksEntryUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next bookmarks entry
 	* @throws com.liferay.portlet.bookmarks.NoSuchEntryException if a bookmarks entry with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry[] findByCompanyId_PrevAndNext(
 		long entryId, long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator)
-		throws com.liferay.portlet.bookmarks.NoSuchEntryException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.bookmarks.NoSuchEntryException {
 		return getPersistence()
 				   .findByCompanyId_PrevAndNext(entryId, companyId,
 			orderByComparator);
@@ -747,8 +837,10 @@ public class BookmarksEntryUtil {
 	* Removes all the bookmarks entries where companyId = &#63; from the database.
 	*
 	* @param companyId the company ID
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByCompanyId(long companyId) {
+	public static void removeByCompanyId(long companyId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeByCompanyId(companyId);
 	}
 
@@ -757,8 +849,10 @@ public class BookmarksEntryUtil {
 	*
 	* @param companyId the company ID
 	* @return the number of matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByCompanyId(long companyId) {
+	public static int countByCompanyId(long companyId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByCompanyId(companyId);
 	}
 
@@ -768,9 +862,11 @@ public class BookmarksEntryUtil {
 	* @param groupId the group ID
 	* @param folderId the folder ID
 	* @return the matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> findByG_F(
-		long groupId, long folderId) {
+		long groupId, long folderId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByG_F(groupId, folderId);
 	}
 
@@ -786,9 +882,11 @@ public class BookmarksEntryUtil {
 	* @param start the lower bound of the range of bookmarks entries
 	* @param end the upper bound of the range of bookmarks entries (not inclusive)
 	* @return the range of matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> findByG_F(
-		long groupId, long folderId, int start, int end) {
+		long groupId, long folderId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByG_F(groupId, folderId, start, end);
 	}
 
@@ -805,10 +903,12 @@ public class BookmarksEntryUtil {
 	* @param end the upper bound of the range of bookmarks entries (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> findByG_F(
 		long groupId, long folderId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByG_F(groupId, folderId, start, end, orderByComparator);
 	}
@@ -821,11 +921,13 @@ public class BookmarksEntryUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching bookmarks entry
 	* @throws com.liferay.portlet.bookmarks.NoSuchEntryException if a matching bookmarks entry could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry findByG_F_First(
 		long groupId, long folderId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator)
-		throws com.liferay.portlet.bookmarks.NoSuchEntryException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.bookmarks.NoSuchEntryException {
 		return getPersistence()
 				   .findByG_F_First(groupId, folderId, orderByComparator);
 	}
@@ -837,10 +939,12 @@ public class BookmarksEntryUtil {
 	* @param folderId the folder ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching bookmarks entry, or <code>null</code> if a matching bookmarks entry could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry fetchByG_F_First(
 		long groupId, long folderId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByG_F_First(groupId, folderId, orderByComparator);
 	}
@@ -853,11 +957,13 @@ public class BookmarksEntryUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching bookmarks entry
 	* @throws com.liferay.portlet.bookmarks.NoSuchEntryException if a matching bookmarks entry could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry findByG_F_Last(
 		long groupId, long folderId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator)
-		throws com.liferay.portlet.bookmarks.NoSuchEntryException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.bookmarks.NoSuchEntryException {
 		return getPersistence()
 				   .findByG_F_Last(groupId, folderId, orderByComparator);
 	}
@@ -869,10 +975,12 @@ public class BookmarksEntryUtil {
 	* @param folderId the folder ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching bookmarks entry, or <code>null</code> if a matching bookmarks entry could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry fetchByG_F_Last(
 		long groupId, long folderId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByG_F_Last(groupId, folderId, orderByComparator);
 	}
@@ -886,11 +994,13 @@ public class BookmarksEntryUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next bookmarks entry
 	* @throws com.liferay.portlet.bookmarks.NoSuchEntryException if a bookmarks entry with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry[] findByG_F_PrevAndNext(
 		long entryId, long groupId, long folderId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator)
-		throws com.liferay.portlet.bookmarks.NoSuchEntryException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.bookmarks.NoSuchEntryException {
 		return getPersistence()
 				   .findByG_F_PrevAndNext(entryId, groupId, folderId,
 			orderByComparator);
@@ -902,9 +1012,11 @@ public class BookmarksEntryUtil {
 	* @param groupId the group ID
 	* @param folderId the folder ID
 	* @return the matching bookmarks entries that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> filterFindByG_F(
-		long groupId, long folderId) {
+		long groupId, long folderId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().filterFindByG_F(groupId, folderId);
 	}
 
@@ -920,9 +1032,11 @@ public class BookmarksEntryUtil {
 	* @param start the lower bound of the range of bookmarks entries
 	* @param end the upper bound of the range of bookmarks entries (not inclusive)
 	* @return the range of matching bookmarks entries that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> filterFindByG_F(
-		long groupId, long folderId, int start, int end) {
+		long groupId, long folderId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().filterFindByG_F(groupId, folderId, start, end);
 	}
 
@@ -939,10 +1053,12 @@ public class BookmarksEntryUtil {
 	* @param end the upper bound of the range of bookmarks entries (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching bookmarks entries that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> filterFindByG_F(
 		long groupId, long folderId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .filterFindByG_F(groupId, folderId, start, end,
 			orderByComparator);
@@ -957,11 +1073,13 @@ public class BookmarksEntryUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next bookmarks entry
 	* @throws com.liferay.portlet.bookmarks.NoSuchEntryException if a bookmarks entry with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry[] filterFindByG_F_PrevAndNext(
 		long entryId, long groupId, long folderId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator)
-		throws com.liferay.portlet.bookmarks.NoSuchEntryException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.bookmarks.NoSuchEntryException {
 		return getPersistence()
 				   .filterFindByG_F_PrevAndNext(entryId, groupId, folderId,
 			orderByComparator);
@@ -973,9 +1091,11 @@ public class BookmarksEntryUtil {
 	* @param groupId the group ID
 	* @param folderIds the folder IDs
 	* @return the matching bookmarks entries that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> filterFindByG_F(
-		long groupId, long[] folderIds) {
+		long groupId, long[] folderIds)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().filterFindByG_F(groupId, folderIds);
 	}
 
@@ -991,9 +1111,11 @@ public class BookmarksEntryUtil {
 	* @param start the lower bound of the range of bookmarks entries
 	* @param end the upper bound of the range of bookmarks entries (not inclusive)
 	* @return the range of matching bookmarks entries that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> filterFindByG_F(
-		long groupId, long[] folderIds, int start, int end) {
+		long groupId, long[] folderIds, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().filterFindByG_F(groupId, folderIds, start, end);
 	}
 
@@ -1010,10 +1132,12 @@ public class BookmarksEntryUtil {
 	* @param end the upper bound of the range of bookmarks entries (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching bookmarks entries that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> filterFindByG_F(
 		long groupId, long[] folderIds, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .filterFindByG_F(groupId, folderIds, start, end,
 			orderByComparator);
@@ -1029,9 +1153,11 @@ public class BookmarksEntryUtil {
 	* @param groupId the group ID
 	* @param folderIds the folder IDs
 	* @return the matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> findByG_F(
-		long groupId, long[] folderIds) {
+		long groupId, long[] folderIds)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByG_F(groupId, folderIds);
 	}
 
@@ -1047,9 +1173,11 @@ public class BookmarksEntryUtil {
 	* @param start the lower bound of the range of bookmarks entries
 	* @param end the upper bound of the range of bookmarks entries (not inclusive)
 	* @return the range of matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> findByG_F(
-		long groupId, long[] folderIds, int start, int end) {
+		long groupId, long[] folderIds, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByG_F(groupId, folderIds, start, end);
 	}
 
@@ -1066,10 +1194,12 @@ public class BookmarksEntryUtil {
 	* @param end the upper bound of the range of bookmarks entries (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> findByG_F(
 		long groupId, long[] folderIds, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByG_F(groupId, folderIds, start, end, orderByComparator);
 	}
@@ -1079,8 +1209,10 @@ public class BookmarksEntryUtil {
 	*
 	* @param groupId the group ID
 	* @param folderId the folder ID
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByG_F(long groupId, long folderId) {
+	public static void removeByG_F(long groupId, long folderId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeByG_F(groupId, folderId);
 	}
 
@@ -1090,8 +1222,10 @@ public class BookmarksEntryUtil {
 	* @param groupId the group ID
 	* @param folderId the folder ID
 	* @return the number of matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByG_F(long groupId, long folderId) {
+	public static int countByG_F(long groupId, long folderId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByG_F(groupId, folderId);
 	}
 
@@ -1101,8 +1235,10 @@ public class BookmarksEntryUtil {
 	* @param groupId the group ID
 	* @param folderIds the folder IDs
 	* @return the number of matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByG_F(long groupId, long[] folderIds) {
+	public static int countByG_F(long groupId, long[] folderIds)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByG_F(groupId, folderIds);
 	}
 
@@ -1112,8 +1248,10 @@ public class BookmarksEntryUtil {
 	* @param groupId the group ID
 	* @param folderId the folder ID
 	* @return the number of matching bookmarks entries that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int filterCountByG_F(long groupId, long folderId) {
+	public static int filterCountByG_F(long groupId, long folderId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().filterCountByG_F(groupId, folderId);
 	}
 
@@ -1123,8 +1261,10 @@ public class BookmarksEntryUtil {
 	* @param groupId the group ID
 	* @param folderIds the folder IDs
 	* @return the number of matching bookmarks entries that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int filterCountByG_F(long groupId, long[] folderIds) {
+	public static int filterCountByG_F(long groupId, long[] folderIds)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().filterCountByG_F(groupId, folderIds);
 	}
 
@@ -1134,9 +1274,11 @@ public class BookmarksEntryUtil {
 	* @param groupId the group ID
 	* @param status the status
 	* @return the matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> findByG_S(
-		long groupId, int status) {
+		long groupId, int status)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByG_S(groupId, status);
 	}
 
@@ -1152,9 +1294,11 @@ public class BookmarksEntryUtil {
 	* @param start the lower bound of the range of bookmarks entries
 	* @param end the upper bound of the range of bookmarks entries (not inclusive)
 	* @return the range of matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> findByG_S(
-		long groupId, int status, int start, int end) {
+		long groupId, int status, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByG_S(groupId, status, start, end);
 	}
 
@@ -1171,10 +1315,12 @@ public class BookmarksEntryUtil {
 	* @param end the upper bound of the range of bookmarks entries (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> findByG_S(
 		long groupId, int status, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByG_S(groupId, status, start, end, orderByComparator);
 	}
@@ -1187,11 +1333,13 @@ public class BookmarksEntryUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching bookmarks entry
 	* @throws com.liferay.portlet.bookmarks.NoSuchEntryException if a matching bookmarks entry could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry findByG_S_First(
 		long groupId, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator)
-		throws com.liferay.portlet.bookmarks.NoSuchEntryException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.bookmarks.NoSuchEntryException {
 		return getPersistence()
 				   .findByG_S_First(groupId, status, orderByComparator);
 	}
@@ -1203,10 +1351,12 @@ public class BookmarksEntryUtil {
 	* @param status the status
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching bookmarks entry, or <code>null</code> if a matching bookmarks entry could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry fetchByG_S_First(
 		long groupId, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByG_S_First(groupId, status, orderByComparator);
 	}
@@ -1219,11 +1369,13 @@ public class BookmarksEntryUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching bookmarks entry
 	* @throws com.liferay.portlet.bookmarks.NoSuchEntryException if a matching bookmarks entry could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry findByG_S_Last(
 		long groupId, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator)
-		throws com.liferay.portlet.bookmarks.NoSuchEntryException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.bookmarks.NoSuchEntryException {
 		return getPersistence()
 				   .findByG_S_Last(groupId, status, orderByComparator);
 	}
@@ -1235,10 +1387,12 @@ public class BookmarksEntryUtil {
 	* @param status the status
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching bookmarks entry, or <code>null</code> if a matching bookmarks entry could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry fetchByG_S_Last(
 		long groupId, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByG_S_Last(groupId, status, orderByComparator);
 	}
@@ -1252,11 +1406,13 @@ public class BookmarksEntryUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next bookmarks entry
 	* @throws com.liferay.portlet.bookmarks.NoSuchEntryException if a bookmarks entry with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry[] findByG_S_PrevAndNext(
 		long entryId, long groupId, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator)
-		throws com.liferay.portlet.bookmarks.NoSuchEntryException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.bookmarks.NoSuchEntryException {
 		return getPersistence()
 				   .findByG_S_PrevAndNext(entryId, groupId, status,
 			orderByComparator);
@@ -1268,9 +1424,11 @@ public class BookmarksEntryUtil {
 	* @param groupId the group ID
 	* @param status the status
 	* @return the matching bookmarks entries that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> filterFindByG_S(
-		long groupId, int status) {
+		long groupId, int status)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().filterFindByG_S(groupId, status);
 	}
 
@@ -1286,9 +1444,11 @@ public class BookmarksEntryUtil {
 	* @param start the lower bound of the range of bookmarks entries
 	* @param end the upper bound of the range of bookmarks entries (not inclusive)
 	* @return the range of matching bookmarks entries that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> filterFindByG_S(
-		long groupId, int status, int start, int end) {
+		long groupId, int status, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().filterFindByG_S(groupId, status, start, end);
 	}
 
@@ -1305,10 +1465,12 @@ public class BookmarksEntryUtil {
 	* @param end the upper bound of the range of bookmarks entries (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching bookmarks entries that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> filterFindByG_S(
 		long groupId, int status, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .filterFindByG_S(groupId, status, start, end,
 			orderByComparator);
@@ -1323,11 +1485,13 @@ public class BookmarksEntryUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next bookmarks entry
 	* @throws com.liferay.portlet.bookmarks.NoSuchEntryException if a bookmarks entry with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry[] filterFindByG_S_PrevAndNext(
 		long entryId, long groupId, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator)
-		throws com.liferay.portlet.bookmarks.NoSuchEntryException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.bookmarks.NoSuchEntryException {
 		return getPersistence()
 				   .filterFindByG_S_PrevAndNext(entryId, groupId, status,
 			orderByComparator);
@@ -1338,8 +1502,10 @@ public class BookmarksEntryUtil {
 	*
 	* @param groupId the group ID
 	* @param status the status
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByG_S(long groupId, int status) {
+	public static void removeByG_S(long groupId, int status)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeByG_S(groupId, status);
 	}
 
@@ -1349,8 +1515,10 @@ public class BookmarksEntryUtil {
 	* @param groupId the group ID
 	* @param status the status
 	* @return the number of matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByG_S(long groupId, int status) {
+	public static int countByG_S(long groupId, int status)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByG_S(groupId, status);
 	}
 
@@ -1360,8 +1528,10 @@ public class BookmarksEntryUtil {
 	* @param groupId the group ID
 	* @param status the status
 	* @return the number of matching bookmarks entries that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int filterCountByG_S(long groupId, int status) {
+	public static int filterCountByG_S(long groupId, int status)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().filterCountByG_S(groupId, status);
 	}
 
@@ -1371,9 +1541,11 @@ public class BookmarksEntryUtil {
 	* @param groupId the group ID
 	* @param status the status
 	* @return the matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> findByG_NotS(
-		long groupId, int status) {
+		long groupId, int status)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByG_NotS(groupId, status);
 	}
 
@@ -1389,9 +1561,11 @@ public class BookmarksEntryUtil {
 	* @param start the lower bound of the range of bookmarks entries
 	* @param end the upper bound of the range of bookmarks entries (not inclusive)
 	* @return the range of matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> findByG_NotS(
-		long groupId, int status, int start, int end) {
+		long groupId, int status, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByG_NotS(groupId, status, start, end);
 	}
 
@@ -1408,10 +1582,12 @@ public class BookmarksEntryUtil {
 	* @param end the upper bound of the range of bookmarks entries (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> findByG_NotS(
 		long groupId, int status, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByG_NotS(groupId, status, start, end, orderByComparator);
 	}
@@ -1424,11 +1600,13 @@ public class BookmarksEntryUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching bookmarks entry
 	* @throws com.liferay.portlet.bookmarks.NoSuchEntryException if a matching bookmarks entry could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry findByG_NotS_First(
 		long groupId, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator)
-		throws com.liferay.portlet.bookmarks.NoSuchEntryException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.bookmarks.NoSuchEntryException {
 		return getPersistence()
 				   .findByG_NotS_First(groupId, status, orderByComparator);
 	}
@@ -1440,10 +1618,12 @@ public class BookmarksEntryUtil {
 	* @param status the status
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching bookmarks entry, or <code>null</code> if a matching bookmarks entry could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry fetchByG_NotS_First(
 		long groupId, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByG_NotS_First(groupId, status, orderByComparator);
 	}
@@ -1456,11 +1636,13 @@ public class BookmarksEntryUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching bookmarks entry
 	* @throws com.liferay.portlet.bookmarks.NoSuchEntryException if a matching bookmarks entry could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry findByG_NotS_Last(
 		long groupId, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator)
-		throws com.liferay.portlet.bookmarks.NoSuchEntryException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.bookmarks.NoSuchEntryException {
 		return getPersistence()
 				   .findByG_NotS_Last(groupId, status, orderByComparator);
 	}
@@ -1472,10 +1654,12 @@ public class BookmarksEntryUtil {
 	* @param status the status
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching bookmarks entry, or <code>null</code> if a matching bookmarks entry could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry fetchByG_NotS_Last(
 		long groupId, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByG_NotS_Last(groupId, status, orderByComparator);
 	}
@@ -1489,11 +1673,13 @@ public class BookmarksEntryUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next bookmarks entry
 	* @throws com.liferay.portlet.bookmarks.NoSuchEntryException if a bookmarks entry with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry[] findByG_NotS_PrevAndNext(
 		long entryId, long groupId, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator)
-		throws com.liferay.portlet.bookmarks.NoSuchEntryException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.bookmarks.NoSuchEntryException {
 		return getPersistence()
 				   .findByG_NotS_PrevAndNext(entryId, groupId, status,
 			orderByComparator);
@@ -1505,9 +1691,11 @@ public class BookmarksEntryUtil {
 	* @param groupId the group ID
 	* @param status the status
 	* @return the matching bookmarks entries that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> filterFindByG_NotS(
-		long groupId, int status) {
+		long groupId, int status)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().filterFindByG_NotS(groupId, status);
 	}
 
@@ -1523,9 +1711,11 @@ public class BookmarksEntryUtil {
 	* @param start the lower bound of the range of bookmarks entries
 	* @param end the upper bound of the range of bookmarks entries (not inclusive)
 	* @return the range of matching bookmarks entries that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> filterFindByG_NotS(
-		long groupId, int status, int start, int end) {
+		long groupId, int status, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().filterFindByG_NotS(groupId, status, start, end);
 	}
 
@@ -1542,10 +1732,12 @@ public class BookmarksEntryUtil {
 	* @param end the upper bound of the range of bookmarks entries (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching bookmarks entries that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> filterFindByG_NotS(
 		long groupId, int status, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .filterFindByG_NotS(groupId, status, start, end,
 			orderByComparator);
@@ -1560,11 +1752,13 @@ public class BookmarksEntryUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next bookmarks entry
 	* @throws com.liferay.portlet.bookmarks.NoSuchEntryException if a bookmarks entry with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry[] filterFindByG_NotS_PrevAndNext(
 		long entryId, long groupId, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator)
-		throws com.liferay.portlet.bookmarks.NoSuchEntryException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.bookmarks.NoSuchEntryException {
 		return getPersistence()
 				   .filterFindByG_NotS_PrevAndNext(entryId, groupId, status,
 			orderByComparator);
@@ -1575,8 +1769,10 @@ public class BookmarksEntryUtil {
 	*
 	* @param groupId the group ID
 	* @param status the status
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByG_NotS(long groupId, int status) {
+	public static void removeByG_NotS(long groupId, int status)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeByG_NotS(groupId, status);
 	}
 
@@ -1586,8 +1782,10 @@ public class BookmarksEntryUtil {
 	* @param groupId the group ID
 	* @param status the status
 	* @return the number of matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByG_NotS(long groupId, int status) {
+	public static int countByG_NotS(long groupId, int status)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByG_NotS(groupId, status);
 	}
 
@@ -1597,8 +1795,10 @@ public class BookmarksEntryUtil {
 	* @param groupId the group ID
 	* @param status the status
 	* @return the number of matching bookmarks entries that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int filterCountByG_NotS(long groupId, int status) {
+	public static int filterCountByG_NotS(long groupId, int status)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().filterCountByG_NotS(groupId, status);
 	}
 
@@ -1608,9 +1808,11 @@ public class BookmarksEntryUtil {
 	* @param companyId the company ID
 	* @param status the status
 	* @return the matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> findByC_NotS(
-		long companyId, int status) {
+		long companyId, int status)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByC_NotS(companyId, status);
 	}
 
@@ -1626,9 +1828,11 @@ public class BookmarksEntryUtil {
 	* @param start the lower bound of the range of bookmarks entries
 	* @param end the upper bound of the range of bookmarks entries (not inclusive)
 	* @return the range of matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> findByC_NotS(
-		long companyId, int status, int start, int end) {
+		long companyId, int status, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByC_NotS(companyId, status, start, end);
 	}
 
@@ -1645,10 +1849,12 @@ public class BookmarksEntryUtil {
 	* @param end the upper bound of the range of bookmarks entries (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> findByC_NotS(
 		long companyId, int status, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByC_NotS(companyId, status, start, end,
 			orderByComparator);
@@ -1662,11 +1868,13 @@ public class BookmarksEntryUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching bookmarks entry
 	* @throws com.liferay.portlet.bookmarks.NoSuchEntryException if a matching bookmarks entry could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry findByC_NotS_First(
 		long companyId, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator)
-		throws com.liferay.portlet.bookmarks.NoSuchEntryException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.bookmarks.NoSuchEntryException {
 		return getPersistence()
 				   .findByC_NotS_First(companyId, status, orderByComparator);
 	}
@@ -1678,10 +1886,12 @@ public class BookmarksEntryUtil {
 	* @param status the status
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching bookmarks entry, or <code>null</code> if a matching bookmarks entry could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry fetchByC_NotS_First(
 		long companyId, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByC_NotS_First(companyId, status, orderByComparator);
 	}
@@ -1694,11 +1904,13 @@ public class BookmarksEntryUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching bookmarks entry
 	* @throws com.liferay.portlet.bookmarks.NoSuchEntryException if a matching bookmarks entry could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry findByC_NotS_Last(
 		long companyId, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator)
-		throws com.liferay.portlet.bookmarks.NoSuchEntryException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.bookmarks.NoSuchEntryException {
 		return getPersistence()
 				   .findByC_NotS_Last(companyId, status, orderByComparator);
 	}
@@ -1710,10 +1922,12 @@ public class BookmarksEntryUtil {
 	* @param status the status
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching bookmarks entry, or <code>null</code> if a matching bookmarks entry could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry fetchByC_NotS_Last(
 		long companyId, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByC_NotS_Last(companyId, status, orderByComparator);
 	}
@@ -1727,11 +1941,13 @@ public class BookmarksEntryUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next bookmarks entry
 	* @throws com.liferay.portlet.bookmarks.NoSuchEntryException if a bookmarks entry with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry[] findByC_NotS_PrevAndNext(
 		long entryId, long companyId, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator)
-		throws com.liferay.portlet.bookmarks.NoSuchEntryException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.bookmarks.NoSuchEntryException {
 		return getPersistence()
 				   .findByC_NotS_PrevAndNext(entryId, companyId, status,
 			orderByComparator);
@@ -1742,8 +1958,10 @@ public class BookmarksEntryUtil {
 	*
 	* @param companyId the company ID
 	* @param status the status
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByC_NotS(long companyId, int status) {
+	public static void removeByC_NotS(long companyId, int status)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeByC_NotS(companyId, status);
 	}
 
@@ -1753,8 +1971,10 @@ public class BookmarksEntryUtil {
 	* @param companyId the company ID
 	* @param status the status
 	* @return the number of matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByC_NotS(long companyId, int status) {
+	public static int countByC_NotS(long companyId, int status)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByC_NotS(companyId, status);
 	}
 
@@ -1765,9 +1985,11 @@ public class BookmarksEntryUtil {
 	* @param userId the user ID
 	* @param status the status
 	* @return the matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> findByG_U_S(
-		long groupId, long userId, int status) {
+		long groupId, long userId, int status)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByG_U_S(groupId, userId, status);
 	}
 
@@ -1784,9 +2006,11 @@ public class BookmarksEntryUtil {
 	* @param start the lower bound of the range of bookmarks entries
 	* @param end the upper bound of the range of bookmarks entries (not inclusive)
 	* @return the range of matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> findByG_U_S(
-		long groupId, long userId, int status, int start, int end) {
+		long groupId, long userId, int status, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByG_U_S(groupId, userId, status, start, end);
 	}
 
@@ -1804,10 +2028,12 @@ public class BookmarksEntryUtil {
 	* @param end the upper bound of the range of bookmarks entries (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> findByG_U_S(
 		long groupId, long userId, int status, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByG_U_S(groupId, userId, status, start, end,
 			orderByComparator);
@@ -1822,11 +2048,13 @@ public class BookmarksEntryUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching bookmarks entry
 	* @throws com.liferay.portlet.bookmarks.NoSuchEntryException if a matching bookmarks entry could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry findByG_U_S_First(
 		long groupId, long userId, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator)
-		throws com.liferay.portlet.bookmarks.NoSuchEntryException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.bookmarks.NoSuchEntryException {
 		return getPersistence()
 				   .findByG_U_S_First(groupId, userId, status, orderByComparator);
 	}
@@ -1839,10 +2067,12 @@ public class BookmarksEntryUtil {
 	* @param status the status
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching bookmarks entry, or <code>null</code> if a matching bookmarks entry could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry fetchByG_U_S_First(
 		long groupId, long userId, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByG_U_S_First(groupId, userId, status,
 			orderByComparator);
@@ -1857,11 +2087,13 @@ public class BookmarksEntryUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching bookmarks entry
 	* @throws com.liferay.portlet.bookmarks.NoSuchEntryException if a matching bookmarks entry could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry findByG_U_S_Last(
 		long groupId, long userId, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator)
-		throws com.liferay.portlet.bookmarks.NoSuchEntryException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.bookmarks.NoSuchEntryException {
 		return getPersistence()
 				   .findByG_U_S_Last(groupId, userId, status, orderByComparator);
 	}
@@ -1874,10 +2106,12 @@ public class BookmarksEntryUtil {
 	* @param status the status
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching bookmarks entry, or <code>null</code> if a matching bookmarks entry could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry fetchByG_U_S_Last(
 		long groupId, long userId, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByG_U_S_Last(groupId, userId, status, orderByComparator);
 	}
@@ -1892,11 +2126,13 @@ public class BookmarksEntryUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next bookmarks entry
 	* @throws com.liferay.portlet.bookmarks.NoSuchEntryException if a bookmarks entry with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry[] findByG_U_S_PrevAndNext(
 		long entryId, long groupId, long userId, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator)
-		throws com.liferay.portlet.bookmarks.NoSuchEntryException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.bookmarks.NoSuchEntryException {
 		return getPersistence()
 				   .findByG_U_S_PrevAndNext(entryId, groupId, userId, status,
 			orderByComparator);
@@ -1909,9 +2145,11 @@ public class BookmarksEntryUtil {
 	* @param userId the user ID
 	* @param status the status
 	* @return the matching bookmarks entries that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> filterFindByG_U_S(
-		long groupId, long userId, int status) {
+		long groupId, long userId, int status)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().filterFindByG_U_S(groupId, userId, status);
 	}
 
@@ -1928,9 +2166,11 @@ public class BookmarksEntryUtil {
 	* @param start the lower bound of the range of bookmarks entries
 	* @param end the upper bound of the range of bookmarks entries (not inclusive)
 	* @return the range of matching bookmarks entries that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> filterFindByG_U_S(
-		long groupId, long userId, int status, int start, int end) {
+		long groupId, long userId, int status, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .filterFindByG_U_S(groupId, userId, status, start, end);
 	}
@@ -1949,10 +2189,12 @@ public class BookmarksEntryUtil {
 	* @param end the upper bound of the range of bookmarks entries (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching bookmarks entries that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> filterFindByG_U_S(
 		long groupId, long userId, int status, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .filterFindByG_U_S(groupId, userId, status, start, end,
 			orderByComparator);
@@ -1968,11 +2210,13 @@ public class BookmarksEntryUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next bookmarks entry
 	* @throws com.liferay.portlet.bookmarks.NoSuchEntryException if a bookmarks entry with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry[] filterFindByG_U_S_PrevAndNext(
 		long entryId, long groupId, long userId, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator)
-		throws com.liferay.portlet.bookmarks.NoSuchEntryException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.bookmarks.NoSuchEntryException {
 		return getPersistence()
 				   .filterFindByG_U_S_PrevAndNext(entryId, groupId, userId,
 			status, orderByComparator);
@@ -1984,8 +2228,10 @@ public class BookmarksEntryUtil {
 	* @param groupId the group ID
 	* @param userId the user ID
 	* @param status the status
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByG_U_S(long groupId, long userId, int status) {
+	public static void removeByG_U_S(long groupId, long userId, int status)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeByG_U_S(groupId, userId, status);
 	}
 
@@ -1996,8 +2242,10 @@ public class BookmarksEntryUtil {
 	* @param userId the user ID
 	* @param status the status
 	* @return the number of matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByG_U_S(long groupId, long userId, int status) {
+	public static int countByG_U_S(long groupId, long userId, int status)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByG_U_S(groupId, userId, status);
 	}
 
@@ -2008,8 +2256,10 @@ public class BookmarksEntryUtil {
 	* @param userId the user ID
 	* @param status the status
 	* @return the number of matching bookmarks entries that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int filterCountByG_U_S(long groupId, long userId, int status) {
+	public static int filterCountByG_U_S(long groupId, long userId, int status)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().filterCountByG_U_S(groupId, userId, status);
 	}
 
@@ -2020,9 +2270,11 @@ public class BookmarksEntryUtil {
 	* @param userId the user ID
 	* @param status the status
 	* @return the matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> findByG_U_NotS(
-		long groupId, long userId, int status) {
+		long groupId, long userId, int status)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByG_U_NotS(groupId, userId, status);
 	}
 
@@ -2039,9 +2291,11 @@ public class BookmarksEntryUtil {
 	* @param start the lower bound of the range of bookmarks entries
 	* @param end the upper bound of the range of bookmarks entries (not inclusive)
 	* @return the range of matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> findByG_U_NotS(
-		long groupId, long userId, int status, int start, int end) {
+		long groupId, long userId, int status, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByG_U_NotS(groupId, userId, status, start, end);
 	}
@@ -2060,10 +2314,12 @@ public class BookmarksEntryUtil {
 	* @param end the upper bound of the range of bookmarks entries (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> findByG_U_NotS(
 		long groupId, long userId, int status, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByG_U_NotS(groupId, userId, status, start, end,
 			orderByComparator);
@@ -2078,11 +2334,13 @@ public class BookmarksEntryUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching bookmarks entry
 	* @throws com.liferay.portlet.bookmarks.NoSuchEntryException if a matching bookmarks entry could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry findByG_U_NotS_First(
 		long groupId, long userId, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator)
-		throws com.liferay.portlet.bookmarks.NoSuchEntryException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.bookmarks.NoSuchEntryException {
 		return getPersistence()
 				   .findByG_U_NotS_First(groupId, userId, status,
 			orderByComparator);
@@ -2096,10 +2354,12 @@ public class BookmarksEntryUtil {
 	* @param status the status
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching bookmarks entry, or <code>null</code> if a matching bookmarks entry could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry fetchByG_U_NotS_First(
 		long groupId, long userId, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByG_U_NotS_First(groupId, userId, status,
 			orderByComparator);
@@ -2114,11 +2374,13 @@ public class BookmarksEntryUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching bookmarks entry
 	* @throws com.liferay.portlet.bookmarks.NoSuchEntryException if a matching bookmarks entry could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry findByG_U_NotS_Last(
 		long groupId, long userId, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator)
-		throws com.liferay.portlet.bookmarks.NoSuchEntryException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.bookmarks.NoSuchEntryException {
 		return getPersistence()
 				   .findByG_U_NotS_Last(groupId, userId, status,
 			orderByComparator);
@@ -2132,10 +2394,12 @@ public class BookmarksEntryUtil {
 	* @param status the status
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching bookmarks entry, or <code>null</code> if a matching bookmarks entry could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry fetchByG_U_NotS_Last(
 		long groupId, long userId, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByG_U_NotS_Last(groupId, userId, status,
 			orderByComparator);
@@ -2151,11 +2415,13 @@ public class BookmarksEntryUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next bookmarks entry
 	* @throws com.liferay.portlet.bookmarks.NoSuchEntryException if a bookmarks entry with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry[] findByG_U_NotS_PrevAndNext(
 		long entryId, long groupId, long userId, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator)
-		throws com.liferay.portlet.bookmarks.NoSuchEntryException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.bookmarks.NoSuchEntryException {
 		return getPersistence()
 				   .findByG_U_NotS_PrevAndNext(entryId, groupId, userId,
 			status, orderByComparator);
@@ -2168,9 +2434,11 @@ public class BookmarksEntryUtil {
 	* @param userId the user ID
 	* @param status the status
 	* @return the matching bookmarks entries that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> filterFindByG_U_NotS(
-		long groupId, long userId, int status) {
+		long groupId, long userId, int status)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().filterFindByG_U_NotS(groupId, userId, status);
 	}
 
@@ -2187,9 +2455,11 @@ public class BookmarksEntryUtil {
 	* @param start the lower bound of the range of bookmarks entries
 	* @param end the upper bound of the range of bookmarks entries (not inclusive)
 	* @return the range of matching bookmarks entries that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> filterFindByG_U_NotS(
-		long groupId, long userId, int status, int start, int end) {
+		long groupId, long userId, int status, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .filterFindByG_U_NotS(groupId, userId, status, start, end);
 	}
@@ -2208,10 +2478,12 @@ public class BookmarksEntryUtil {
 	* @param end the upper bound of the range of bookmarks entries (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching bookmarks entries that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> filterFindByG_U_NotS(
 		long groupId, long userId, int status, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .filterFindByG_U_NotS(groupId, userId, status, start, end,
 			orderByComparator);
@@ -2227,11 +2499,13 @@ public class BookmarksEntryUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next bookmarks entry
 	* @throws com.liferay.portlet.bookmarks.NoSuchEntryException if a bookmarks entry with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry[] filterFindByG_U_NotS_PrevAndNext(
 		long entryId, long groupId, long userId, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator)
-		throws com.liferay.portlet.bookmarks.NoSuchEntryException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.bookmarks.NoSuchEntryException {
 		return getPersistence()
 				   .filterFindByG_U_NotS_PrevAndNext(entryId, groupId, userId,
 			status, orderByComparator);
@@ -2243,8 +2517,10 @@ public class BookmarksEntryUtil {
 	* @param groupId the group ID
 	* @param userId the user ID
 	* @param status the status
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByG_U_NotS(long groupId, long userId, int status) {
+	public static void removeByG_U_NotS(long groupId, long userId, int status)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeByG_U_NotS(groupId, userId, status);
 	}
 
@@ -2255,8 +2531,10 @@ public class BookmarksEntryUtil {
 	* @param userId the user ID
 	* @param status the status
 	* @return the number of matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByG_U_NotS(long groupId, long userId, int status) {
+	public static int countByG_U_NotS(long groupId, long userId, int status)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByG_U_NotS(groupId, userId, status);
 	}
 
@@ -2267,9 +2545,10 @@ public class BookmarksEntryUtil {
 	* @param userId the user ID
 	* @param status the status
 	* @return the number of matching bookmarks entries that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public static int filterCountByG_U_NotS(long groupId, long userId,
-		int status) {
+		int status) throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().filterCountByG_U_NotS(groupId, userId, status);
 	}
 
@@ -2280,9 +2559,11 @@ public class BookmarksEntryUtil {
 	* @param folderId the folder ID
 	* @param status the status
 	* @return the matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> findByG_F_S(
-		long groupId, long folderId, int status) {
+		long groupId, long folderId, int status)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByG_F_S(groupId, folderId, status);
 	}
 
@@ -2299,9 +2580,11 @@ public class BookmarksEntryUtil {
 	* @param start the lower bound of the range of bookmarks entries
 	* @param end the upper bound of the range of bookmarks entries (not inclusive)
 	* @return the range of matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> findByG_F_S(
-		long groupId, long folderId, int status, int start, int end) {
+		long groupId, long folderId, int status, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByG_F_S(groupId, folderId, status, start, end);
 	}
@@ -2320,10 +2603,12 @@ public class BookmarksEntryUtil {
 	* @param end the upper bound of the range of bookmarks entries (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> findByG_F_S(
 		long groupId, long folderId, int status, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByG_F_S(groupId, folderId, status, start, end,
 			orderByComparator);
@@ -2338,11 +2623,13 @@ public class BookmarksEntryUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching bookmarks entry
 	* @throws com.liferay.portlet.bookmarks.NoSuchEntryException if a matching bookmarks entry could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry findByG_F_S_First(
 		long groupId, long folderId, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator)
-		throws com.liferay.portlet.bookmarks.NoSuchEntryException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.bookmarks.NoSuchEntryException {
 		return getPersistence()
 				   .findByG_F_S_First(groupId, folderId, status,
 			orderByComparator);
@@ -2356,10 +2643,12 @@ public class BookmarksEntryUtil {
 	* @param status the status
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching bookmarks entry, or <code>null</code> if a matching bookmarks entry could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry fetchByG_F_S_First(
 		long groupId, long folderId, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByG_F_S_First(groupId, folderId, status,
 			orderByComparator);
@@ -2374,11 +2663,13 @@ public class BookmarksEntryUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching bookmarks entry
 	* @throws com.liferay.portlet.bookmarks.NoSuchEntryException if a matching bookmarks entry could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry findByG_F_S_Last(
 		long groupId, long folderId, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator)
-		throws com.liferay.portlet.bookmarks.NoSuchEntryException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.bookmarks.NoSuchEntryException {
 		return getPersistence()
 				   .findByG_F_S_Last(groupId, folderId, status,
 			orderByComparator);
@@ -2392,10 +2683,12 @@ public class BookmarksEntryUtil {
 	* @param status the status
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching bookmarks entry, or <code>null</code> if a matching bookmarks entry could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry fetchByG_F_S_Last(
 		long groupId, long folderId, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByG_F_S_Last(groupId, folderId, status,
 			orderByComparator);
@@ -2411,11 +2704,13 @@ public class BookmarksEntryUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next bookmarks entry
 	* @throws com.liferay.portlet.bookmarks.NoSuchEntryException if a bookmarks entry with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry[] findByG_F_S_PrevAndNext(
 		long entryId, long groupId, long folderId, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator)
-		throws com.liferay.portlet.bookmarks.NoSuchEntryException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.bookmarks.NoSuchEntryException {
 		return getPersistence()
 				   .findByG_F_S_PrevAndNext(entryId, groupId, folderId, status,
 			orderByComparator);
@@ -2428,9 +2723,11 @@ public class BookmarksEntryUtil {
 	* @param folderId the folder ID
 	* @param status the status
 	* @return the matching bookmarks entries that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> filterFindByG_F_S(
-		long groupId, long folderId, int status) {
+		long groupId, long folderId, int status)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().filterFindByG_F_S(groupId, folderId, status);
 	}
 
@@ -2447,9 +2744,11 @@ public class BookmarksEntryUtil {
 	* @param start the lower bound of the range of bookmarks entries
 	* @param end the upper bound of the range of bookmarks entries (not inclusive)
 	* @return the range of matching bookmarks entries that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> filterFindByG_F_S(
-		long groupId, long folderId, int status, int start, int end) {
+		long groupId, long folderId, int status, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .filterFindByG_F_S(groupId, folderId, status, start, end);
 	}
@@ -2468,10 +2767,12 @@ public class BookmarksEntryUtil {
 	* @param end the upper bound of the range of bookmarks entries (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching bookmarks entries that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> filterFindByG_F_S(
 		long groupId, long folderId, int status, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .filterFindByG_F_S(groupId, folderId, status, start, end,
 			orderByComparator);
@@ -2487,11 +2788,13 @@ public class BookmarksEntryUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next bookmarks entry
 	* @throws com.liferay.portlet.bookmarks.NoSuchEntryException if a bookmarks entry with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry[] filterFindByG_F_S_PrevAndNext(
 		long entryId, long groupId, long folderId, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator)
-		throws com.liferay.portlet.bookmarks.NoSuchEntryException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.bookmarks.NoSuchEntryException {
 		return getPersistence()
 				   .filterFindByG_F_S_PrevAndNext(entryId, groupId, folderId,
 			status, orderByComparator);
@@ -2504,9 +2807,11 @@ public class BookmarksEntryUtil {
 	* @param folderIds the folder IDs
 	* @param status the status
 	* @return the matching bookmarks entries that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> filterFindByG_F_S(
-		long groupId, long[] folderIds, int status) {
+		long groupId, long[] folderIds, int status)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().filterFindByG_F_S(groupId, folderIds, status);
 	}
 
@@ -2523,9 +2828,11 @@ public class BookmarksEntryUtil {
 	* @param start the lower bound of the range of bookmarks entries
 	* @param end the upper bound of the range of bookmarks entries (not inclusive)
 	* @return the range of matching bookmarks entries that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> filterFindByG_F_S(
-		long groupId, long[] folderIds, int status, int start, int end) {
+		long groupId, long[] folderIds, int status, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .filterFindByG_F_S(groupId, folderIds, status, start, end);
 	}
@@ -2544,10 +2851,12 @@ public class BookmarksEntryUtil {
 	* @param end the upper bound of the range of bookmarks entries (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching bookmarks entries that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> filterFindByG_F_S(
 		long groupId, long[] folderIds, int status, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .filterFindByG_F_S(groupId, folderIds, status, start, end,
 			orderByComparator);
@@ -2564,9 +2873,11 @@ public class BookmarksEntryUtil {
 	* @param folderIds the folder IDs
 	* @param status the status
 	* @return the matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> findByG_F_S(
-		long groupId, long[] folderIds, int status) {
+		long groupId, long[] folderIds, int status)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByG_F_S(groupId, folderIds, status);
 	}
 
@@ -2583,9 +2894,11 @@ public class BookmarksEntryUtil {
 	* @param start the lower bound of the range of bookmarks entries
 	* @param end the upper bound of the range of bookmarks entries (not inclusive)
 	* @return the range of matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> findByG_F_S(
-		long groupId, long[] folderIds, int status, int start, int end) {
+		long groupId, long[] folderIds, int status, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByG_F_S(groupId, folderIds, status, start, end);
 	}
@@ -2604,10 +2917,12 @@ public class BookmarksEntryUtil {
 	* @param end the upper bound of the range of bookmarks entries (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> findByG_F_S(
 		long groupId, long[] folderIds, int status, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByG_F_S(groupId, folderIds, status, start, end,
 			orderByComparator);
@@ -2619,8 +2934,10 @@ public class BookmarksEntryUtil {
 	* @param groupId the group ID
 	* @param folderId the folder ID
 	* @param status the status
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByG_F_S(long groupId, long folderId, int status) {
+	public static void removeByG_F_S(long groupId, long folderId, int status)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeByG_F_S(groupId, folderId, status);
 	}
 
@@ -2631,8 +2948,10 @@ public class BookmarksEntryUtil {
 	* @param folderId the folder ID
 	* @param status the status
 	* @return the number of matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByG_F_S(long groupId, long folderId, int status) {
+	public static int countByG_F_S(long groupId, long folderId, int status)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByG_F_S(groupId, folderId, status);
 	}
 
@@ -2643,8 +2962,10 @@ public class BookmarksEntryUtil {
 	* @param folderIds the folder IDs
 	* @param status the status
 	* @return the number of matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByG_F_S(long groupId, long[] folderIds, int status) {
+	public static int countByG_F_S(long groupId, long[] folderIds, int status)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByG_F_S(groupId, folderIds, status);
 	}
 
@@ -2655,8 +2976,10 @@ public class BookmarksEntryUtil {
 	* @param folderId the folder ID
 	* @param status the status
 	* @return the number of matching bookmarks entries that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int filterCountByG_F_S(long groupId, long folderId, int status) {
+	public static int filterCountByG_F_S(long groupId, long folderId, int status)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().filterCountByG_F_S(groupId, folderId, status);
 	}
 
@@ -2667,9 +2990,10 @@ public class BookmarksEntryUtil {
 	* @param folderIds the folder IDs
 	* @param status the status
 	* @return the number of matching bookmarks entries that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public static int filterCountByG_F_S(long groupId, long[] folderIds,
-		int status) {
+		int status) throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().filterCountByG_F_S(groupId, folderIds, status);
 	}
 
@@ -2680,9 +3004,11 @@ public class BookmarksEntryUtil {
 	* @param folderId the folder ID
 	* @param status the status
 	* @return the matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> findByG_F_NotS(
-		long groupId, long folderId, int status) {
+		long groupId, long folderId, int status)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByG_F_NotS(groupId, folderId, status);
 	}
 
@@ -2699,9 +3025,11 @@ public class BookmarksEntryUtil {
 	* @param start the lower bound of the range of bookmarks entries
 	* @param end the upper bound of the range of bookmarks entries (not inclusive)
 	* @return the range of matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> findByG_F_NotS(
-		long groupId, long folderId, int status, int start, int end) {
+		long groupId, long folderId, int status, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByG_F_NotS(groupId, folderId, status, start, end);
 	}
@@ -2720,10 +3048,12 @@ public class BookmarksEntryUtil {
 	* @param end the upper bound of the range of bookmarks entries (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> findByG_F_NotS(
 		long groupId, long folderId, int status, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByG_F_NotS(groupId, folderId, status, start, end,
 			orderByComparator);
@@ -2738,11 +3068,13 @@ public class BookmarksEntryUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching bookmarks entry
 	* @throws com.liferay.portlet.bookmarks.NoSuchEntryException if a matching bookmarks entry could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry findByG_F_NotS_First(
 		long groupId, long folderId, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator)
-		throws com.liferay.portlet.bookmarks.NoSuchEntryException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.bookmarks.NoSuchEntryException {
 		return getPersistence()
 				   .findByG_F_NotS_First(groupId, folderId, status,
 			orderByComparator);
@@ -2756,10 +3088,12 @@ public class BookmarksEntryUtil {
 	* @param status the status
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching bookmarks entry, or <code>null</code> if a matching bookmarks entry could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry fetchByG_F_NotS_First(
 		long groupId, long folderId, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByG_F_NotS_First(groupId, folderId, status,
 			orderByComparator);
@@ -2774,11 +3108,13 @@ public class BookmarksEntryUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching bookmarks entry
 	* @throws com.liferay.portlet.bookmarks.NoSuchEntryException if a matching bookmarks entry could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry findByG_F_NotS_Last(
 		long groupId, long folderId, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator)
-		throws com.liferay.portlet.bookmarks.NoSuchEntryException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.bookmarks.NoSuchEntryException {
 		return getPersistence()
 				   .findByG_F_NotS_Last(groupId, folderId, status,
 			orderByComparator);
@@ -2792,10 +3128,12 @@ public class BookmarksEntryUtil {
 	* @param status the status
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching bookmarks entry, or <code>null</code> if a matching bookmarks entry could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry fetchByG_F_NotS_Last(
 		long groupId, long folderId, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByG_F_NotS_Last(groupId, folderId, status,
 			orderByComparator);
@@ -2811,11 +3149,13 @@ public class BookmarksEntryUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next bookmarks entry
 	* @throws com.liferay.portlet.bookmarks.NoSuchEntryException if a bookmarks entry with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry[] findByG_F_NotS_PrevAndNext(
 		long entryId, long groupId, long folderId, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator)
-		throws com.liferay.portlet.bookmarks.NoSuchEntryException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.bookmarks.NoSuchEntryException {
 		return getPersistence()
 				   .findByG_F_NotS_PrevAndNext(entryId, groupId, folderId,
 			status, orderByComparator);
@@ -2828,9 +3168,11 @@ public class BookmarksEntryUtil {
 	* @param folderId the folder ID
 	* @param status the status
 	* @return the matching bookmarks entries that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> filterFindByG_F_NotS(
-		long groupId, long folderId, int status) {
+		long groupId, long folderId, int status)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().filterFindByG_F_NotS(groupId, folderId, status);
 	}
 
@@ -2847,9 +3189,11 @@ public class BookmarksEntryUtil {
 	* @param start the lower bound of the range of bookmarks entries
 	* @param end the upper bound of the range of bookmarks entries (not inclusive)
 	* @return the range of matching bookmarks entries that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> filterFindByG_F_NotS(
-		long groupId, long folderId, int status, int start, int end) {
+		long groupId, long folderId, int status, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .filterFindByG_F_NotS(groupId, folderId, status, start, end);
 	}
@@ -2868,10 +3212,12 @@ public class BookmarksEntryUtil {
 	* @param end the upper bound of the range of bookmarks entries (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching bookmarks entries that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> filterFindByG_F_NotS(
 		long groupId, long folderId, int status, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .filterFindByG_F_NotS(groupId, folderId, status, start, end,
 			orderByComparator);
@@ -2887,11 +3233,13 @@ public class BookmarksEntryUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next bookmarks entry
 	* @throws com.liferay.portlet.bookmarks.NoSuchEntryException if a bookmarks entry with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry[] filterFindByG_F_NotS_PrevAndNext(
 		long entryId, long groupId, long folderId, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator)
-		throws com.liferay.portlet.bookmarks.NoSuchEntryException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.bookmarks.NoSuchEntryException {
 		return getPersistence()
 				   .filterFindByG_F_NotS_PrevAndNext(entryId, groupId,
 			folderId, status, orderByComparator);
@@ -2904,9 +3252,11 @@ public class BookmarksEntryUtil {
 	* @param folderIds the folder IDs
 	* @param status the status
 	* @return the matching bookmarks entries that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> filterFindByG_F_NotS(
-		long groupId, long[] folderIds, int status) {
+		long groupId, long[] folderIds, int status)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().filterFindByG_F_NotS(groupId, folderIds, status);
 	}
 
@@ -2923,9 +3273,11 @@ public class BookmarksEntryUtil {
 	* @param start the lower bound of the range of bookmarks entries
 	* @param end the upper bound of the range of bookmarks entries (not inclusive)
 	* @return the range of matching bookmarks entries that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> filterFindByG_F_NotS(
-		long groupId, long[] folderIds, int status, int start, int end) {
+		long groupId, long[] folderIds, int status, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .filterFindByG_F_NotS(groupId, folderIds, status, start, end);
 	}
@@ -2944,10 +3296,12 @@ public class BookmarksEntryUtil {
 	* @param end the upper bound of the range of bookmarks entries (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching bookmarks entries that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> filterFindByG_F_NotS(
 		long groupId, long[] folderIds, int status, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .filterFindByG_F_NotS(groupId, folderIds, status, start,
 			end, orderByComparator);
@@ -2964,9 +3318,11 @@ public class BookmarksEntryUtil {
 	* @param folderIds the folder IDs
 	* @param status the status
 	* @return the matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> findByG_F_NotS(
-		long groupId, long[] folderIds, int status) {
+		long groupId, long[] folderIds, int status)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByG_F_NotS(groupId, folderIds, status);
 	}
 
@@ -2983,9 +3339,11 @@ public class BookmarksEntryUtil {
 	* @param start the lower bound of the range of bookmarks entries
 	* @param end the upper bound of the range of bookmarks entries (not inclusive)
 	* @return the range of matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> findByG_F_NotS(
-		long groupId, long[] folderIds, int status, int start, int end) {
+		long groupId, long[] folderIds, int status, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByG_F_NotS(groupId, folderIds, status, start, end);
 	}
@@ -3004,10 +3362,12 @@ public class BookmarksEntryUtil {
 	* @param end the upper bound of the range of bookmarks entries (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> findByG_F_NotS(
 		long groupId, long[] folderIds, int status, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByG_F_NotS(groupId, folderIds, status, start, end,
 			orderByComparator);
@@ -3019,8 +3379,10 @@ public class BookmarksEntryUtil {
 	* @param groupId the group ID
 	* @param folderId the folder ID
 	* @param status the status
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByG_F_NotS(long groupId, long folderId, int status) {
+	public static void removeByG_F_NotS(long groupId, long folderId, int status)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeByG_F_NotS(groupId, folderId, status);
 	}
 
@@ -3031,8 +3393,10 @@ public class BookmarksEntryUtil {
 	* @param folderId the folder ID
 	* @param status the status
 	* @return the number of matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByG_F_NotS(long groupId, long folderId, int status) {
+	public static int countByG_F_NotS(long groupId, long folderId, int status)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByG_F_NotS(groupId, folderId, status);
 	}
 
@@ -3043,8 +3407,10 @@ public class BookmarksEntryUtil {
 	* @param folderIds the folder IDs
 	* @param status the status
 	* @return the number of matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByG_F_NotS(long groupId, long[] folderIds, int status) {
+	public static int countByG_F_NotS(long groupId, long[] folderIds, int status)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByG_F_NotS(groupId, folderIds, status);
 	}
 
@@ -3055,9 +3421,10 @@ public class BookmarksEntryUtil {
 	* @param folderId the folder ID
 	* @param status the status
 	* @return the number of matching bookmarks entries that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public static int filterCountByG_F_NotS(long groupId, long folderId,
-		int status) {
+		int status) throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().filterCountByG_F_NotS(groupId, folderId, status);
 	}
 
@@ -3068,9 +3435,10 @@ public class BookmarksEntryUtil {
 	* @param folderIds the folder IDs
 	* @param status the status
 	* @return the number of matching bookmarks entries that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public static int filterCountByG_F_NotS(long groupId, long[] folderIds,
-		int status) {
+		int status) throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().filterCountByG_F_NotS(groupId, folderIds, status);
 	}
 
@@ -3082,9 +3450,11 @@ public class BookmarksEntryUtil {
 	* @param folderId the folder ID
 	* @param status the status
 	* @return the matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> findByG_U_F_S(
-		long groupId, long userId, long folderId, int status) {
+		long groupId, long userId, long folderId, int status)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByG_U_F_S(groupId, userId, folderId, status);
 	}
 
@@ -3102,9 +3472,11 @@ public class BookmarksEntryUtil {
 	* @param start the lower bound of the range of bookmarks entries
 	* @param end the upper bound of the range of bookmarks entries (not inclusive)
 	* @return the range of matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> findByG_U_F_S(
-		long groupId, long userId, long folderId, int status, int start, int end) {
+		long groupId, long userId, long folderId, int status, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByG_U_F_S(groupId, userId, folderId, status, start, end);
 	}
@@ -3124,11 +3496,13 @@ public class BookmarksEntryUtil {
 	* @param end the upper bound of the range of bookmarks entries (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> findByG_U_F_S(
 		long groupId, long userId, long folderId, int status, int start,
 		int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByG_U_F_S(groupId, userId, folderId, status, start,
 			end, orderByComparator);
@@ -3144,11 +3518,13 @@ public class BookmarksEntryUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching bookmarks entry
 	* @throws com.liferay.portlet.bookmarks.NoSuchEntryException if a matching bookmarks entry could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry findByG_U_F_S_First(
 		long groupId, long userId, long folderId, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator)
-		throws com.liferay.portlet.bookmarks.NoSuchEntryException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.bookmarks.NoSuchEntryException {
 		return getPersistence()
 				   .findByG_U_F_S_First(groupId, userId, folderId, status,
 			orderByComparator);
@@ -3163,10 +3539,12 @@ public class BookmarksEntryUtil {
 	* @param status the status
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching bookmarks entry, or <code>null</code> if a matching bookmarks entry could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry fetchByG_U_F_S_First(
 		long groupId, long userId, long folderId, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByG_U_F_S_First(groupId, userId, folderId, status,
 			orderByComparator);
@@ -3182,11 +3560,13 @@ public class BookmarksEntryUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching bookmarks entry
 	* @throws com.liferay.portlet.bookmarks.NoSuchEntryException if a matching bookmarks entry could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry findByG_U_F_S_Last(
 		long groupId, long userId, long folderId, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator)
-		throws com.liferay.portlet.bookmarks.NoSuchEntryException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.bookmarks.NoSuchEntryException {
 		return getPersistence()
 				   .findByG_U_F_S_Last(groupId, userId, folderId, status,
 			orderByComparator);
@@ -3201,10 +3581,12 @@ public class BookmarksEntryUtil {
 	* @param status the status
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching bookmarks entry, or <code>null</code> if a matching bookmarks entry could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry fetchByG_U_F_S_Last(
 		long groupId, long userId, long folderId, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByG_U_F_S_Last(groupId, userId, folderId, status,
 			orderByComparator);
@@ -3221,11 +3603,13 @@ public class BookmarksEntryUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next bookmarks entry
 	* @throws com.liferay.portlet.bookmarks.NoSuchEntryException if a bookmarks entry with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry[] findByG_U_F_S_PrevAndNext(
 		long entryId, long groupId, long userId, long folderId, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator)
-		throws com.liferay.portlet.bookmarks.NoSuchEntryException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.bookmarks.NoSuchEntryException {
 		return getPersistence()
 				   .findByG_U_F_S_PrevAndNext(entryId, groupId, userId,
 			folderId, status, orderByComparator);
@@ -3239,9 +3623,11 @@ public class BookmarksEntryUtil {
 	* @param folderId the folder ID
 	* @param status the status
 	* @return the matching bookmarks entries that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> filterFindByG_U_F_S(
-		long groupId, long userId, long folderId, int status) {
+		long groupId, long userId, long folderId, int status)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .filterFindByG_U_F_S(groupId, userId, folderId, status);
 	}
@@ -3260,9 +3646,11 @@ public class BookmarksEntryUtil {
 	* @param start the lower bound of the range of bookmarks entries
 	* @param end the upper bound of the range of bookmarks entries (not inclusive)
 	* @return the range of matching bookmarks entries that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> filterFindByG_U_F_S(
-		long groupId, long userId, long folderId, int status, int start, int end) {
+		long groupId, long userId, long folderId, int status, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .filterFindByG_U_F_S(groupId, userId, folderId, status,
 			start, end);
@@ -3283,11 +3671,13 @@ public class BookmarksEntryUtil {
 	* @param end the upper bound of the range of bookmarks entries (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching bookmarks entries that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> filterFindByG_U_F_S(
 		long groupId, long userId, long folderId, int status, int start,
 		int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .filterFindByG_U_F_S(groupId, userId, folderId, status,
 			start, end, orderByComparator);
@@ -3304,11 +3694,13 @@ public class BookmarksEntryUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next bookmarks entry
 	* @throws com.liferay.portlet.bookmarks.NoSuchEntryException if a bookmarks entry with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry[] filterFindByG_U_F_S_PrevAndNext(
 		long entryId, long groupId, long userId, long folderId, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator)
-		throws com.liferay.portlet.bookmarks.NoSuchEntryException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.bookmarks.NoSuchEntryException {
 		return getPersistence()
 				   .filterFindByG_U_F_S_PrevAndNext(entryId, groupId, userId,
 			folderId, status, orderByComparator);
@@ -3322,9 +3714,11 @@ public class BookmarksEntryUtil {
 	* @param folderIds the folder IDs
 	* @param status the status
 	* @return the matching bookmarks entries that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> filterFindByG_U_F_S(
-		long groupId, long userId, long[] folderIds, int status) {
+		long groupId, long userId, long[] folderIds, int status)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .filterFindByG_U_F_S(groupId, userId, folderIds, status);
 	}
@@ -3343,10 +3737,11 @@ public class BookmarksEntryUtil {
 	* @param start the lower bound of the range of bookmarks entries
 	* @param end the upper bound of the range of bookmarks entries (not inclusive)
 	* @return the range of matching bookmarks entries that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> filterFindByG_U_F_S(
 		long groupId, long userId, long[] folderIds, int status, int start,
-		int end) {
+		int end) throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .filterFindByG_U_F_S(groupId, userId, folderIds, status,
 			start, end);
@@ -3367,11 +3762,13 @@ public class BookmarksEntryUtil {
 	* @param end the upper bound of the range of bookmarks entries (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching bookmarks entries that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> filterFindByG_U_F_S(
 		long groupId, long userId, long[] folderIds, int status, int start,
 		int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .filterFindByG_U_F_S(groupId, userId, folderIds, status,
 			start, end, orderByComparator);
@@ -3389,9 +3786,11 @@ public class BookmarksEntryUtil {
 	* @param folderIds the folder IDs
 	* @param status the status
 	* @return the matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> findByG_U_F_S(
-		long groupId, long userId, long[] folderIds, int status) {
+		long groupId, long userId, long[] folderIds, int status)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByG_U_F_S(groupId, userId, folderIds, status);
 	}
 
@@ -3409,10 +3808,11 @@ public class BookmarksEntryUtil {
 	* @param start the lower bound of the range of bookmarks entries
 	* @param end the upper bound of the range of bookmarks entries (not inclusive)
 	* @return the range of matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> findByG_U_F_S(
 		long groupId, long userId, long[] folderIds, int status, int start,
-		int end) {
+		int end) throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByG_U_F_S(groupId, userId, folderIds, status, start, end);
 	}
@@ -3432,11 +3832,13 @@ public class BookmarksEntryUtil {
 	* @param end the upper bound of the range of bookmarks entries (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> findByG_U_F_S(
 		long groupId, long userId, long[] folderIds, int status, int start,
 		int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByG_U_F_S(groupId, userId, folderIds, status, start,
 			end, orderByComparator);
@@ -3449,9 +3851,11 @@ public class BookmarksEntryUtil {
 	* @param userId the user ID
 	* @param folderId the folder ID
 	* @param status the status
+	* @throws SystemException if a system exception occurred
 	*/
 	public static void removeByG_U_F_S(long groupId, long userId,
-		long folderId, int status) {
+		long folderId, int status)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeByG_U_F_S(groupId, userId, folderId, status);
 	}
 
@@ -3463,9 +3867,10 @@ public class BookmarksEntryUtil {
 	* @param folderId the folder ID
 	* @param status the status
 	* @return the number of matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
 	public static int countByG_U_F_S(long groupId, long userId, long folderId,
-		int status) {
+		int status) throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByG_U_F_S(groupId, userId, folderId, status);
 	}
 
@@ -3477,9 +3882,11 @@ public class BookmarksEntryUtil {
 	* @param folderIds the folder IDs
 	* @param status the status
 	* @return the number of matching bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
 	public static int countByG_U_F_S(long groupId, long userId,
-		long[] folderIds, int status) {
+		long[] folderIds, int status)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .countByG_U_F_S(groupId, userId, folderIds, status);
 	}
@@ -3492,9 +3899,11 @@ public class BookmarksEntryUtil {
 	* @param folderId the folder ID
 	* @param status the status
 	* @return the number of matching bookmarks entries that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public static int filterCountByG_U_F_S(long groupId, long userId,
-		long folderId, int status) {
+		long folderId, int status)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .filterCountByG_U_F_S(groupId, userId, folderId, status);
 	}
@@ -3507,9 +3916,11 @@ public class BookmarksEntryUtil {
 	* @param folderIds the folder IDs
 	* @param status the status
 	* @return the number of matching bookmarks entries that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public static int filterCountByG_U_F_S(long groupId, long userId,
-		long[] folderIds, int status) {
+		long[] folderIds, int status)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .filterCountByG_U_F_S(groupId, userId, folderIds, status);
 	}
@@ -3551,14 +3962,18 @@ public class BookmarksEntryUtil {
 	* @param entryId the primary key of the bookmarks entry
 	* @return the bookmarks entry that was removed
 	* @throws com.liferay.portlet.bookmarks.NoSuchEntryException if a bookmarks entry with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry remove(
-		long entryId) throws com.liferay.portlet.bookmarks.NoSuchEntryException {
+		long entryId)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.bookmarks.NoSuchEntryException {
 		return getPersistence().remove(entryId);
 	}
 
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry updateImpl(
-		com.liferay.portlet.bookmarks.model.BookmarksEntry bookmarksEntry) {
+		com.liferay.portlet.bookmarks.model.BookmarksEntry bookmarksEntry)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().updateImpl(bookmarksEntry);
 	}
 
@@ -3568,9 +3983,12 @@ public class BookmarksEntryUtil {
 	* @param entryId the primary key of the bookmarks entry
 	* @return the bookmarks entry
 	* @throws com.liferay.portlet.bookmarks.NoSuchEntryException if a bookmarks entry with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry findByPrimaryKey(
-		long entryId) throws com.liferay.portlet.bookmarks.NoSuchEntryException {
+		long entryId)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.bookmarks.NoSuchEntryException {
 		return getPersistence().findByPrimaryKey(entryId);
 	}
 
@@ -3579,23 +3997,22 @@ public class BookmarksEntryUtil {
 	*
 	* @param entryId the primary key of the bookmarks entry
 	* @return the bookmarks entry, or <code>null</code> if a bookmarks entry with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.bookmarks.model.BookmarksEntry fetchByPrimaryKey(
-		long entryId) {
+		long entryId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByPrimaryKey(entryId);
-	}
-
-	public static java.util.Map<java.io.Serializable, com.liferay.portlet.bookmarks.model.BookmarksEntry> fetchByPrimaryKeys(
-		java.util.Set<java.io.Serializable> primaryKeys) {
-		return getPersistence().fetchByPrimaryKeys(primaryKeys);
 	}
 
 	/**
 	* Returns all the bookmarks entries.
 	*
 	* @return the bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> findAll() {
+	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> findAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll();
 	}
 
@@ -3609,9 +4026,11 @@ public class BookmarksEntryUtil {
 	* @param start the lower bound of the range of bookmarks entries
 	* @param end the upper bound of the range of bookmarks entries (not inclusive)
 	* @return the range of bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> findAll(
-		int start, int end) {
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll(start, end);
 	}
 
@@ -3626,17 +4045,22 @@ public class BookmarksEntryUtil {
 	* @param end the upper bound of the range of bookmarks entries (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.bookmarks.model.BookmarksEntry> findAll(
 		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.bookmarks.model.BookmarksEntry> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll(start, end, orderByComparator);
 	}
 
 	/**
 	* Removes all the bookmarks entries from the database.
+	*
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeAll() {
+	public static void removeAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeAll();
 	}
 
@@ -3644,8 +4068,10 @@ public class BookmarksEntryUtil {
 	* Returns the number of bookmarks entries.
 	*
 	* @return the number of bookmarks entries
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countAll() {
+	public static int countAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countAll();
 	}
 
@@ -3663,7 +4089,6 @@ public class BookmarksEntryUtil {
 	/**
 	 * @deprecated As of 6.2.0
 	 */
-	@Deprecated
 	public void setPersistence(BookmarksEntryPersistence persistence) {
 	}
 

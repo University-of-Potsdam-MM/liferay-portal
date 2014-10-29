@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -21,8 +21,7 @@ import com.liferay.portlet.documentlibrary.model.DLFileRank;
 /**
  * @author Brian Wing Shun Chan
  */
-public class FileRankCreateDateComparator
-	extends OrderByComparator<DLFileRank> {
+public class FileRankCreateDateComparator extends OrderByComparator {
 
 	public static final String ORDER_BY_ASC = "DLFileRank.createDate ASC";
 
@@ -39,7 +38,10 @@ public class FileRankCreateDateComparator
 	}
 
 	@Override
-	public int compare(DLFileRank dlFileRank1, DLFileRank dlFileRank2) {
+	public int compare(Object obj1, Object obj2) {
+		DLFileRank dlFileRank1 = (DLFileRank)obj1;
+		DLFileRank dlFileRank2 = (DLFileRank)obj2;
+
 		int value = DateUtil.compareTo(
 			dlFileRank1.getCreateDate(), dlFileRank2.getCreateDate());
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,8 +14,6 @@
 
 package com.liferay.portal.model;
 
-import aQute.bnd.annotation.ProviderType;
-
 import java.io.Serializable;
 
 import java.util.ArrayList;
@@ -28,12 +26,10 @@ import java.util.List;
  * @author Brian Wing Shun Chan
  * @generated
  */
-@ProviderType
 public class LayoutFriendlyURLSoap implements Serializable {
 	public static LayoutFriendlyURLSoap toSoapModel(LayoutFriendlyURL model) {
 		LayoutFriendlyURLSoap soapModel = new LayoutFriendlyURLSoap();
 
-		soapModel.setMvccVersion(model.getMvccVersion());
 		soapModel.setUuid(model.getUuid());
 		soapModel.setLayoutFriendlyURLId(model.getLayoutFriendlyURLId());
 		soapModel.setGroupId(model.getGroupId());
@@ -99,14 +95,6 @@ public class LayoutFriendlyURLSoap implements Serializable {
 
 	public void setPrimaryKey(long pk) {
 		setLayoutFriendlyURLId(pk);
-	}
-
-	public long getMvccVersion() {
-		return _mvccVersion;
-	}
-
-	public void setMvccVersion(long mvccVersion) {
-		_mvccVersion = mvccVersion;
 	}
 
 	public String getUuid() {
@@ -209,7 +197,6 @@ public class LayoutFriendlyURLSoap implements Serializable {
 		_languageId = languageId;
 	}
 
-	private long _mvccVersion;
 	private String _uuid;
 	private long _layoutFriendlyURLId;
 	private long _groupId;

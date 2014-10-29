@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,47 +14,34 @@
 
 package com.liferay.portlet.dynamicdatamapping.service.base;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.bean.IdentifiableBean;
-import com.liferay.portal.kernel.dao.db.DB;
-import com.liferay.portal.kernel.dao.db.DBFactoryUtil;
 import com.liferay.portal.kernel.dao.jdbc.SqlUpdate;
 import com.liferay.portal.kernel.dao.jdbc.SqlUpdateFactoryUtil;
-import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
-import com.liferay.portal.kernel.dao.orm.DefaultActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
-import com.liferay.portal.kernel.dao.orm.ExportActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Projection;
-import com.liferay.portal.kernel.dao.orm.Property;
-import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.lar.ExportImportHelperUtil;
-import com.liferay.portal.kernel.lar.ManifestSummary;
-import com.liferay.portal.kernel.lar.PortletDataContext;
-import com.liferay.portal.kernel.lar.StagedModelDataHandlerUtil;
-import com.liferay.portal.kernel.lar.StagedModelType;
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.model.PersistedModel;
 import com.liferay.portal.service.BaseLocalServiceImpl;
 import com.liferay.portal.service.PersistedModelLocalServiceRegistry;
-import com.liferay.portal.service.persistence.ClassNamePersistence;
 import com.liferay.portal.service.persistence.GroupFinder;
 import com.liferay.portal.service.persistence.GroupPersistence;
 import com.liferay.portal.service.persistence.ImagePersistence;
 import com.liferay.portal.service.persistence.SystemEventPersistence;
 import com.liferay.portal.service.persistence.UserFinder;
 import com.liferay.portal.service.persistence.UserPersistence;
-import com.liferay.portal.util.PortalUtil;
 
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
 import com.liferay.portlet.dynamicdatamapping.service.DDMTemplateLocalService;
+import com.liferay.portlet.dynamicdatamapping.service.persistence.DDMContentPersistence;
+import com.liferay.portlet.dynamicdatamapping.service.persistence.DDMStorageLinkPersistence;
 import com.liferay.portlet.dynamicdatamapping.service.persistence.DDMStructureFinder;
+import com.liferay.portlet.dynamicdatamapping.service.persistence.DDMStructureLinkPersistence;
 import com.liferay.portlet.dynamicdatamapping.service.persistence.DDMStructurePersistence;
 import com.liferay.portlet.dynamicdatamapping.service.persistence.DDMTemplateFinder;
 import com.liferay.portlet.dynamicdatamapping.service.persistence.DDMTemplatePersistence;
@@ -77,7 +64,6 @@ import javax.sql.DataSource;
  * @see com.liferay.portlet.dynamicdatamapping.service.DDMTemplateLocalServiceUtil
  * @generated
  */
-@ProviderType
 public abstract class DDMTemplateLocalServiceBaseImpl
 	extends BaseLocalServiceImpl implements DDMTemplateLocalService,
 		IdentifiableBean {
@@ -92,10 +78,12 @@ public abstract class DDMTemplateLocalServiceBaseImpl
 	 *
 	 * @param ddmTemplate the d d m template
 	 * @return the d d m template that was added
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
-	public DDMTemplate addDDMTemplate(DDMTemplate ddmTemplate) {
+	public DDMTemplate addDDMTemplate(DDMTemplate ddmTemplate)
+		throws SystemException {
 		ddmTemplate.setNew(true);
 
 		return ddmTemplatePersistence.update(ddmTemplate);
@@ -118,11 +106,12 @@ public abstract class DDMTemplateLocalServiceBaseImpl
 	 * @param templateId the primary key of the d d m template
 	 * @return the d d m template that was removed
 	 * @throws PortalException if a d d m template with the primary key could not be found
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.DELETE)
 	@Override
 	public DDMTemplate deleteDDMTemplate(long templateId)
-		throws PortalException {
+		throws PortalException, SystemException {
 		return ddmTemplatePersistence.remove(templateId);
 	}
 
@@ -131,10 +120,12 @@ public abstract class DDMTemplateLocalServiceBaseImpl
 	 *
 	 * @param ddmTemplate the d d m template
 	 * @return the d d m template that was removed
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.DELETE)
 	@Override
-	public DDMTemplate deleteDDMTemplate(DDMTemplate ddmTemplate) {
+	public DDMTemplate deleteDDMTemplate(DDMTemplate ddmTemplate)
+		throws SystemException {
 		return ddmTemplatePersistence.remove(ddmTemplate);
 	}
 
@@ -151,9 +142,12 @@ public abstract class DDMTemplateLocalServiceBaseImpl
 	 *
 	 * @param dynamicQuery the dynamic query
 	 * @return the matching rows
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery) {
+	@SuppressWarnings("rawtypes")
+	public List dynamicQuery(DynamicQuery dynamicQuery)
+		throws SystemException {
 		return ddmTemplatePersistence.findWithDynamicQuery(dynamicQuery);
 	}
 
@@ -168,10 +162,12 @@ public abstract class DDMTemplateLocalServiceBaseImpl
 	 * @param start the lower bound of the range of model instances
 	 * @param end the upper bound of the range of model instances (not inclusive)
 	 * @return the range of matching rows
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
-		int end) {
+	@SuppressWarnings("rawtypes")
+	public List dynamicQuery(DynamicQuery dynamicQuery, int start, int end)
+		throws SystemException {
 		return ddmTemplatePersistence.findWithDynamicQuery(dynamicQuery, start,
 			end);
 	}
@@ -188,10 +184,12 @@ public abstract class DDMTemplateLocalServiceBaseImpl
 	 * @param end the upper bound of the range of model instances (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching rows
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
-		int end, OrderByComparator<T> orderByComparator) {
+	@SuppressWarnings("rawtypes")
+	public List dynamicQuery(DynamicQuery dynamicQuery, int start, int end,
+		OrderByComparator orderByComparator) throws SystemException {
 		return ddmTemplatePersistence.findWithDynamicQuery(dynamicQuery, start,
 			end, orderByComparator);
 	}
@@ -201,9 +199,11 @@ public abstract class DDMTemplateLocalServiceBaseImpl
 	 *
 	 * @param dynamicQuery the dynamic query
 	 * @return the number of rows that match the dynamic query
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public long dynamicQueryCount(DynamicQuery dynamicQuery) {
+	public long dynamicQueryCount(DynamicQuery dynamicQuery)
+		throws SystemException {
 		return ddmTemplatePersistence.countWithDynamicQuery(dynamicQuery);
 	}
 
@@ -213,17 +213,33 @@ public abstract class DDMTemplateLocalServiceBaseImpl
 	 * @param dynamicQuery the dynamic query
 	 * @param projection the projection to apply to the query
 	 * @return the number of rows that match the dynamic query
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public long dynamicQueryCount(DynamicQuery dynamicQuery,
-		Projection projection) {
+		Projection projection) throws SystemException {
 		return ddmTemplatePersistence.countWithDynamicQuery(dynamicQuery,
 			projection);
 	}
 
 	@Override
-	public DDMTemplate fetchDDMTemplate(long templateId) {
+	public DDMTemplate fetchDDMTemplate(long templateId)
+		throws SystemException {
 		return ddmTemplatePersistence.fetchByPrimaryKey(templateId);
+	}
+
+	/**
+	 * Returns the d d m template with the matching UUID and company.
+	 *
+	 * @param uuid the d d m template's UUID
+	 * @param  companyId the primary key of the company
+	 * @return the matching d d m template, or <code>null</code> if a matching d d m template could not be found
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public DDMTemplate fetchDDMTemplateByUuidAndCompanyId(String uuid,
+		long companyId) throws SystemException {
+		return ddmTemplatePersistence.fetchByUuid_C_First(uuid, companyId, null);
 	}
 
 	/**
@@ -232,10 +248,11 @@ public abstract class DDMTemplateLocalServiceBaseImpl
 	 * @param uuid the d d m template's UUID
 	 * @param groupId the primary key of the group
 	 * @return the matching d d m template, or <code>null</code> if a matching d d m template could not be found
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public DDMTemplate fetchDDMTemplateByUuidAndGroupId(String uuid,
-		long groupId) {
+		long groupId) throws SystemException {
 		return ddmTemplatePersistence.fetchByUUID_G(uuid, groupId);
 	}
 
@@ -245,127 +262,33 @@ public abstract class DDMTemplateLocalServiceBaseImpl
 	 * @param templateId the primary key of the d d m template
 	 * @return the d d m template
 	 * @throws PortalException if a d d m template with the primary key could not be found
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public DDMTemplate getDDMTemplate(long templateId)
-		throws PortalException {
+		throws PortalException, SystemException {
 		return ddmTemplatePersistence.findByPrimaryKey(templateId);
 	}
 
 	@Override
-	public ActionableDynamicQuery getActionableDynamicQuery() {
-		ActionableDynamicQuery actionableDynamicQuery = new DefaultActionableDynamicQuery();
-
-		actionableDynamicQuery.setBaseLocalService(com.liferay.portlet.dynamicdatamapping.service.DDMTemplateLocalServiceUtil.getService());
-		actionableDynamicQuery.setClass(DDMTemplate.class);
-		actionableDynamicQuery.setClassLoader(getClassLoader());
-
-		actionableDynamicQuery.setPrimaryKeyPropertyName("templateId");
-
-		return actionableDynamicQuery;
-	}
-
-	protected void initActionableDynamicQuery(
-		ActionableDynamicQuery actionableDynamicQuery) {
-		actionableDynamicQuery.setBaseLocalService(com.liferay.portlet.dynamicdatamapping.service.DDMTemplateLocalServiceUtil.getService());
-		actionableDynamicQuery.setClass(DDMTemplate.class);
-		actionableDynamicQuery.setClassLoader(getClassLoader());
-
-		actionableDynamicQuery.setPrimaryKeyPropertyName("templateId");
-	}
-
-	@Override
-	public ExportActionableDynamicQuery getExportActionableDynamicQuery(
-		final PortletDataContext portletDataContext) {
-		final ExportActionableDynamicQuery exportActionableDynamicQuery = new ExportActionableDynamicQuery() {
-				@Override
-				public long performCount() throws PortalException {
-					ManifestSummary manifestSummary = portletDataContext.getManifestSummary();
-
-					StagedModelType stagedModelType = getStagedModelType();
-
-					long modelAdditionCount = super.performCount();
-
-					manifestSummary.addModelAdditionCount(stagedModelType.toString(),
-						modelAdditionCount);
-
-					long modelDeletionCount = ExportImportHelperUtil.getModelDeletionCount(portletDataContext,
-							stagedModelType);
-
-					manifestSummary.addModelDeletionCount(stagedModelType.toString(),
-						modelDeletionCount);
-
-					return modelAdditionCount;
-				}
-			};
-
-		initActionableDynamicQuery(exportActionableDynamicQuery);
-
-		exportActionableDynamicQuery.setAddCriteriaMethod(new ActionableDynamicQuery.AddCriteriaMethod() {
-				@Override
-				public void addCriteria(DynamicQuery dynamicQuery) {
-					portletDataContext.addDateRangeCriteria(dynamicQuery,
-						"modifiedDate");
-
-					StagedModelType stagedModelType = exportActionableDynamicQuery.getStagedModelType();
-
-					if (stagedModelType.getReferrerClassNameId() >= 0) {
-						Property classNameIdProperty = PropertyFactoryUtil.forName(
-								"classNameId");
-
-						dynamicQuery.add(classNameIdProperty.eq(
-								stagedModelType.getReferrerClassNameId()));
-					}
-				}
-			});
-
-		exportActionableDynamicQuery.setCompanyId(portletDataContext.getCompanyId());
-
-		exportActionableDynamicQuery.setGroupId(portletDataContext.getScopeGroupId());
-
-		exportActionableDynamicQuery.setPerformActionMethod(new ActionableDynamicQuery.PerformActionMethod() {
-				@Override
-				public void performAction(Object object)
-					throws PortalException {
-					DDMTemplate stagedModel = (DDMTemplate)object;
-
-					StagedModelDataHandlerUtil.exportStagedModel(portletDataContext,
-						stagedModel);
-				}
-			});
-		exportActionableDynamicQuery.setStagedModelType(new StagedModelType(
-				PortalUtil.getClassNameId(DDMTemplate.class.getName())));
-
-		return exportActionableDynamicQuery;
-	}
-
-	/**
-	 * @throws PortalException
-	 */
-	@Override
-	public PersistedModel deletePersistedModel(PersistedModel persistedModel)
-		throws PortalException {
-		return ddmTemplateLocalService.deleteDDMTemplate((DDMTemplate)persistedModel);
-	}
-
-	@Override
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
-		throws PortalException {
+		throws PortalException, SystemException {
 		return ddmTemplatePersistence.findByPrimaryKey(primaryKeyObj);
 	}
 
+	/**
+	 * Returns the d d m template with the matching UUID and company.
+	 *
+	 * @param uuid the d d m template's UUID
+	 * @param  companyId the primary key of the company
+	 * @return the matching d d m template
+	 * @throws PortalException if a matching d d m template could not be found
+	 * @throws SystemException if a system exception occurred
+	 */
 	@Override
-	public List<DDMTemplate> getDDMTemplatesByUuidAndCompanyId(String uuid,
-		long companyId) {
-		return ddmTemplatePersistence.findByUuid_C(uuid, companyId);
-	}
-
-	@Override
-	public List<DDMTemplate> getDDMTemplatesByUuidAndCompanyId(String uuid,
-		long companyId, int start, int end,
-		OrderByComparator<DDMTemplate> orderByComparator) {
-		return ddmTemplatePersistence.findByUuid_C(uuid, companyId, start, end,
-			orderByComparator);
+	public DDMTemplate getDDMTemplateByUuidAndCompanyId(String uuid,
+		long companyId) throws PortalException, SystemException {
+		return ddmTemplatePersistence.findByUuid_C_First(uuid, companyId, null);
 	}
 
 	/**
@@ -375,10 +298,11 @@ public abstract class DDMTemplateLocalServiceBaseImpl
 	 * @param groupId the primary key of the group
 	 * @return the matching d d m template
 	 * @throws PortalException if a matching d d m template could not be found
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public DDMTemplate getDDMTemplateByUuidAndGroupId(String uuid, long groupId)
-		throws PortalException {
+		throws PortalException, SystemException {
 		return ddmTemplatePersistence.findByUUID_G(uuid, groupId);
 	}
 
@@ -392,9 +316,11 @@ public abstract class DDMTemplateLocalServiceBaseImpl
 	 * @param start the lower bound of the range of d d m templates
 	 * @param end the upper bound of the range of d d m templates (not inclusive)
 	 * @return the range of d d m templates
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public List<DDMTemplate> getDDMTemplates(int start, int end) {
+	public List<DDMTemplate> getDDMTemplates(int start, int end)
+		throws SystemException {
 		return ddmTemplatePersistence.findAll(start, end);
 	}
 
@@ -402,9 +328,10 @@ public abstract class DDMTemplateLocalServiceBaseImpl
 	 * Returns the number of d d m templates.
 	 *
 	 * @return the number of d d m templates
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public int getDDMTemplatesCount() {
+	public int getDDMTemplatesCount() throws SystemException {
 		return ddmTemplatePersistence.countAll();
 	}
 
@@ -413,11 +340,202 @@ public abstract class DDMTemplateLocalServiceBaseImpl
 	 *
 	 * @param ddmTemplate the d d m template
 	 * @return the d d m template that was updated
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
-	public DDMTemplate updateDDMTemplate(DDMTemplate ddmTemplate) {
+	public DDMTemplate updateDDMTemplate(DDMTemplate ddmTemplate)
+		throws SystemException {
 		return ddmTemplatePersistence.update(ddmTemplate);
+	}
+
+	/**
+	 * Returns the d d m content local service.
+	 *
+	 * @return the d d m content local service
+	 */
+	public com.liferay.portlet.dynamicdatamapping.service.DDMContentLocalService getDDMContentLocalService() {
+		return ddmContentLocalService;
+	}
+
+	/**
+	 * Sets the d d m content local service.
+	 *
+	 * @param ddmContentLocalService the d d m content local service
+	 */
+	public void setDDMContentLocalService(
+		com.liferay.portlet.dynamicdatamapping.service.DDMContentLocalService ddmContentLocalService) {
+		this.ddmContentLocalService = ddmContentLocalService;
+	}
+
+	/**
+	 * Returns the d d m content persistence.
+	 *
+	 * @return the d d m content persistence
+	 */
+	public DDMContentPersistence getDDMContentPersistence() {
+		return ddmContentPersistence;
+	}
+
+	/**
+	 * Sets the d d m content persistence.
+	 *
+	 * @param ddmContentPersistence the d d m content persistence
+	 */
+	public void setDDMContentPersistence(
+		DDMContentPersistence ddmContentPersistence) {
+		this.ddmContentPersistence = ddmContentPersistence;
+	}
+
+	/**
+	 * Returns the d d m storage link local service.
+	 *
+	 * @return the d d m storage link local service
+	 */
+	public com.liferay.portlet.dynamicdatamapping.service.DDMStorageLinkLocalService getDDMStorageLinkLocalService() {
+		return ddmStorageLinkLocalService;
+	}
+
+	/**
+	 * Sets the d d m storage link local service.
+	 *
+	 * @param ddmStorageLinkLocalService the d d m storage link local service
+	 */
+	public void setDDMStorageLinkLocalService(
+		com.liferay.portlet.dynamicdatamapping.service.DDMStorageLinkLocalService ddmStorageLinkLocalService) {
+		this.ddmStorageLinkLocalService = ddmStorageLinkLocalService;
+	}
+
+	/**
+	 * Returns the d d m storage link persistence.
+	 *
+	 * @return the d d m storage link persistence
+	 */
+	public DDMStorageLinkPersistence getDDMStorageLinkPersistence() {
+		return ddmStorageLinkPersistence;
+	}
+
+	/**
+	 * Sets the d d m storage link persistence.
+	 *
+	 * @param ddmStorageLinkPersistence the d d m storage link persistence
+	 */
+	public void setDDMStorageLinkPersistence(
+		DDMStorageLinkPersistence ddmStorageLinkPersistence) {
+		this.ddmStorageLinkPersistence = ddmStorageLinkPersistence;
+	}
+
+	/**
+	 * Returns the d d m structure local service.
+	 *
+	 * @return the d d m structure local service
+	 */
+	public com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalService getDDMStructureLocalService() {
+		return ddmStructureLocalService;
+	}
+
+	/**
+	 * Sets the d d m structure local service.
+	 *
+	 * @param ddmStructureLocalService the d d m structure local service
+	 */
+	public void setDDMStructureLocalService(
+		com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalService ddmStructureLocalService) {
+		this.ddmStructureLocalService = ddmStructureLocalService;
+	}
+
+	/**
+	 * Returns the d d m structure remote service.
+	 *
+	 * @return the d d m structure remote service
+	 */
+	public com.liferay.portlet.dynamicdatamapping.service.DDMStructureService getDDMStructureService() {
+		return ddmStructureService;
+	}
+
+	/**
+	 * Sets the d d m structure remote service.
+	 *
+	 * @param ddmStructureService the d d m structure remote service
+	 */
+	public void setDDMStructureService(
+		com.liferay.portlet.dynamicdatamapping.service.DDMStructureService ddmStructureService) {
+		this.ddmStructureService = ddmStructureService;
+	}
+
+	/**
+	 * Returns the d d m structure persistence.
+	 *
+	 * @return the d d m structure persistence
+	 */
+	public DDMStructurePersistence getDDMStructurePersistence() {
+		return ddmStructurePersistence;
+	}
+
+	/**
+	 * Sets the d d m structure persistence.
+	 *
+	 * @param ddmStructurePersistence the d d m structure persistence
+	 */
+	public void setDDMStructurePersistence(
+		DDMStructurePersistence ddmStructurePersistence) {
+		this.ddmStructurePersistence = ddmStructurePersistence;
+	}
+
+	/**
+	 * Returns the d d m structure finder.
+	 *
+	 * @return the d d m structure finder
+	 */
+	public DDMStructureFinder getDDMStructureFinder() {
+		return ddmStructureFinder;
+	}
+
+	/**
+	 * Sets the d d m structure finder.
+	 *
+	 * @param ddmStructureFinder the d d m structure finder
+	 */
+	public void setDDMStructureFinder(DDMStructureFinder ddmStructureFinder) {
+		this.ddmStructureFinder = ddmStructureFinder;
+	}
+
+	/**
+	 * Returns the d d m structure link local service.
+	 *
+	 * @return the d d m structure link local service
+	 */
+	public com.liferay.portlet.dynamicdatamapping.service.DDMStructureLinkLocalService getDDMStructureLinkLocalService() {
+		return ddmStructureLinkLocalService;
+	}
+
+	/**
+	 * Sets the d d m structure link local service.
+	 *
+	 * @param ddmStructureLinkLocalService the d d m structure link local service
+	 */
+	public void setDDMStructureLinkLocalService(
+		com.liferay.portlet.dynamicdatamapping.service.DDMStructureLinkLocalService ddmStructureLinkLocalService) {
+		this.ddmStructureLinkLocalService = ddmStructureLinkLocalService;
+	}
+
+	/**
+	 * Returns the d d m structure link persistence.
+	 *
+	 * @return the d d m structure link persistence
+	 */
+	public DDMStructureLinkPersistence getDDMStructureLinkPersistence() {
+		return ddmStructureLinkPersistence;
+	}
+
+	/**
+	 * Sets the d d m structure link persistence.
+	 *
+	 * @param ddmStructureLinkPersistence the d d m structure link persistence
+	 */
+	public void setDDMStructureLinkPersistence(
+		DDMStructureLinkPersistence ddmStructureLinkPersistence) {
+		this.ddmStructureLinkPersistence = ddmStructureLinkPersistence;
 	}
 
 	/**
@@ -512,63 +630,6 @@ public abstract class DDMTemplateLocalServiceBaseImpl
 	public void setCounterLocalService(
 		com.liferay.counter.service.CounterLocalService counterLocalService) {
 		this.counterLocalService = counterLocalService;
-	}
-
-	/**
-	 * Returns the class name local service.
-	 *
-	 * @return the class name local service
-	 */
-	public com.liferay.portal.service.ClassNameLocalService getClassNameLocalService() {
-		return classNameLocalService;
-	}
-
-	/**
-	 * Sets the class name local service.
-	 *
-	 * @param classNameLocalService the class name local service
-	 */
-	public void setClassNameLocalService(
-		com.liferay.portal.service.ClassNameLocalService classNameLocalService) {
-		this.classNameLocalService = classNameLocalService;
-	}
-
-	/**
-	 * Returns the class name remote service.
-	 *
-	 * @return the class name remote service
-	 */
-	public com.liferay.portal.service.ClassNameService getClassNameService() {
-		return classNameService;
-	}
-
-	/**
-	 * Sets the class name remote service.
-	 *
-	 * @param classNameService the class name remote service
-	 */
-	public void setClassNameService(
-		com.liferay.portal.service.ClassNameService classNameService) {
-		this.classNameService = classNameService;
-	}
-
-	/**
-	 * Returns the class name persistence.
-	 *
-	 * @return the class name persistence
-	 */
-	public ClassNamePersistence getClassNamePersistence() {
-		return classNamePersistence;
-	}
-
-	/**
-	 * Sets the class name persistence.
-	 *
-	 * @param classNamePersistence the class name persistence
-	 */
-	public void setClassNamePersistence(
-		ClassNamePersistence classNamePersistence) {
-		this.classNamePersistence = classNamePersistence;
 	}
 
 	/**
@@ -832,81 +893,6 @@ public abstract class DDMTemplateLocalServiceBaseImpl
 		this.userFinder = userFinder;
 	}
 
-	/**
-	 * Returns the d d m structure local service.
-	 *
-	 * @return the d d m structure local service
-	 */
-	public com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalService getDDMStructureLocalService() {
-		return ddmStructureLocalService;
-	}
-
-	/**
-	 * Sets the d d m structure local service.
-	 *
-	 * @param ddmStructureLocalService the d d m structure local service
-	 */
-	public void setDDMStructureLocalService(
-		com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalService ddmStructureLocalService) {
-		this.ddmStructureLocalService = ddmStructureLocalService;
-	}
-
-	/**
-	 * Returns the d d m structure remote service.
-	 *
-	 * @return the d d m structure remote service
-	 */
-	public com.liferay.portlet.dynamicdatamapping.service.DDMStructureService getDDMStructureService() {
-		return ddmStructureService;
-	}
-
-	/**
-	 * Sets the d d m structure remote service.
-	 *
-	 * @param ddmStructureService the d d m structure remote service
-	 */
-	public void setDDMStructureService(
-		com.liferay.portlet.dynamicdatamapping.service.DDMStructureService ddmStructureService) {
-		this.ddmStructureService = ddmStructureService;
-	}
-
-	/**
-	 * Returns the d d m structure persistence.
-	 *
-	 * @return the d d m structure persistence
-	 */
-	public DDMStructurePersistence getDDMStructurePersistence() {
-		return ddmStructurePersistence;
-	}
-
-	/**
-	 * Sets the d d m structure persistence.
-	 *
-	 * @param ddmStructurePersistence the d d m structure persistence
-	 */
-	public void setDDMStructurePersistence(
-		DDMStructurePersistence ddmStructurePersistence) {
-		this.ddmStructurePersistence = ddmStructurePersistence;
-	}
-
-	/**
-	 * Returns the d d m structure finder.
-	 *
-	 * @return the d d m structure finder
-	 */
-	public DDMStructureFinder getDDMStructureFinder() {
-		return ddmStructureFinder;
-	}
-
-	/**
-	 * Sets the d d m structure finder.
-	 *
-	 * @param ddmStructureFinder the d d m structure finder
-	 */
-	public void setDDMStructureFinder(DDMStructureFinder ddmStructureFinder) {
-		this.ddmStructureFinder = ddmStructureFinder;
-	}
-
 	public void afterPropertiesSet() {
 		persistedModelLocalServiceRegistry.register("com.liferay.portlet.dynamicdatamapping.model.DDMTemplate",
 			ddmTemplateLocalService);
@@ -946,18 +932,13 @@ public abstract class DDMTemplateLocalServiceBaseImpl
 	}
 
 	/**
-	 * Performs a SQL query.
+	 * Performs an SQL query.
 	 *
 	 * @param sql the sql query
 	 */
-	protected void runSQL(String sql) {
+	protected void runSQL(String sql) throws SystemException {
 		try {
 			DataSource dataSource = ddmTemplatePersistence.getDataSource();
-
-			DB db = DBFactoryUtil.getDB();
-
-			sql = db.buildSQL(sql);
-			sql = PortalUtil.transformSQL(sql);
 
 			SqlUpdate sqlUpdate = SqlUpdateFactoryUtil.getSqlUpdate(dataSource,
 					sql, new int[0]);
@@ -969,6 +950,26 @@ public abstract class DDMTemplateLocalServiceBaseImpl
 		}
 	}
 
+	@BeanReference(type = com.liferay.portlet.dynamicdatamapping.service.DDMContentLocalService.class)
+	protected com.liferay.portlet.dynamicdatamapping.service.DDMContentLocalService ddmContentLocalService;
+	@BeanReference(type = DDMContentPersistence.class)
+	protected DDMContentPersistence ddmContentPersistence;
+	@BeanReference(type = com.liferay.portlet.dynamicdatamapping.service.DDMStorageLinkLocalService.class)
+	protected com.liferay.portlet.dynamicdatamapping.service.DDMStorageLinkLocalService ddmStorageLinkLocalService;
+	@BeanReference(type = DDMStorageLinkPersistence.class)
+	protected DDMStorageLinkPersistence ddmStorageLinkPersistence;
+	@BeanReference(type = com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalService.class)
+	protected com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalService ddmStructureLocalService;
+	@BeanReference(type = com.liferay.portlet.dynamicdatamapping.service.DDMStructureService.class)
+	protected com.liferay.portlet.dynamicdatamapping.service.DDMStructureService ddmStructureService;
+	@BeanReference(type = DDMStructurePersistence.class)
+	protected DDMStructurePersistence ddmStructurePersistence;
+	@BeanReference(type = DDMStructureFinder.class)
+	protected DDMStructureFinder ddmStructureFinder;
+	@BeanReference(type = com.liferay.portlet.dynamicdatamapping.service.DDMStructureLinkLocalService.class)
+	protected com.liferay.portlet.dynamicdatamapping.service.DDMStructureLinkLocalService ddmStructureLinkLocalService;
+	@BeanReference(type = DDMStructureLinkPersistence.class)
+	protected DDMStructureLinkPersistence ddmStructureLinkPersistence;
 	@BeanReference(type = com.liferay.portlet.dynamicdatamapping.service.DDMTemplateLocalService.class)
 	protected com.liferay.portlet.dynamicdatamapping.service.DDMTemplateLocalService ddmTemplateLocalService;
 	@BeanReference(type = com.liferay.portlet.dynamicdatamapping.service.DDMTemplateService.class)
@@ -979,12 +980,6 @@ public abstract class DDMTemplateLocalServiceBaseImpl
 	protected DDMTemplateFinder ddmTemplateFinder;
 	@BeanReference(type = com.liferay.counter.service.CounterLocalService.class)
 	protected com.liferay.counter.service.CounterLocalService counterLocalService;
-	@BeanReference(type = com.liferay.portal.service.ClassNameLocalService.class)
-	protected com.liferay.portal.service.ClassNameLocalService classNameLocalService;
-	@BeanReference(type = com.liferay.portal.service.ClassNameService.class)
-	protected com.liferay.portal.service.ClassNameService classNameService;
-	@BeanReference(type = ClassNamePersistence.class)
-	protected ClassNamePersistence classNamePersistence;
 	@BeanReference(type = com.liferay.portal.service.GroupLocalService.class)
 	protected com.liferay.portal.service.GroupLocalService groupLocalService;
 	@BeanReference(type = com.liferay.portal.service.GroupService.class)
@@ -1013,14 +1008,6 @@ public abstract class DDMTemplateLocalServiceBaseImpl
 	protected UserPersistence userPersistence;
 	@BeanReference(type = UserFinder.class)
 	protected UserFinder userFinder;
-	@BeanReference(type = com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalService.class)
-	protected com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalService ddmStructureLocalService;
-	@BeanReference(type = com.liferay.portlet.dynamicdatamapping.service.DDMStructureService.class)
-	protected com.liferay.portlet.dynamicdatamapping.service.DDMStructureService ddmStructureService;
-	@BeanReference(type = DDMStructurePersistence.class)
-	protected DDMStructurePersistence ddmStructurePersistence;
-	@BeanReference(type = DDMStructureFinder.class)
-	protected DDMStructureFinder ddmStructureFinder;
 	@BeanReference(type = PersistedModelLocalServiceRegistry.class)
 	protected PersistedModelLocalServiceRegistry persistedModelLocalServiceRegistry;
 	private String _beanIdentifier;

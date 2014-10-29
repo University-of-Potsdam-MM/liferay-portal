@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portlet.dynamicdatalists.service.impl;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.security.permission.ActionKeys;
 import com.liferay.portal.service.ServiceContext;
@@ -41,7 +42,7 @@ public class DDLRecordSetServiceImpl extends DDLRecordSetServiceBaseImpl {
 			long groupId, long ddmStructureId, String recordSetKey,
 			Map<Locale, String> nameMap, Map<Locale, String> descriptionMap,
 			int minDisplayRows, int scope, ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		DDLPermission.check(
 			getPermissionChecker(), groupId, ActionKeys.ADD_RECORD_SET);
@@ -52,7 +53,9 @@ public class DDLRecordSetServiceImpl extends DDLRecordSetServiceBaseImpl {
 	}
 
 	@Override
-	public void deleteRecordSet(long recordSetId) throws PortalException {
+	public void deleteRecordSet(long recordSetId)
+		throws PortalException, SystemException {
+
 		DDLRecordSetPermission.check(
 			getPermissionChecker(), recordSetId, ActionKeys.DELETE);
 
@@ -60,7 +63,9 @@ public class DDLRecordSetServiceImpl extends DDLRecordSetServiceBaseImpl {
 	}
 
 	@Override
-	public DDLRecordSet getRecordSet(long recordSetId) throws PortalException {
+	public DDLRecordSet getRecordSet(long recordSetId)
+		throws PortalException, SystemException {
+
 		DDLRecordSetPermission.check(
 			getPermissionChecker(), recordSetId, ActionKeys.VIEW);
 
@@ -69,8 +74,9 @@ public class DDLRecordSetServiceImpl extends DDLRecordSetServiceBaseImpl {
 
 	@Override
 	public List<DDLRecordSet> search(
-		long companyId, long groupId, String keywords, int scope, int start,
-		int end, OrderByComparator<DDLRecordSet> orderByComparator) {
+			long companyId, long groupId, String keywords, int scope, int start,
+			int end, OrderByComparator orderByComparator)
+		throws SystemException {
 
 		return ddlRecordSetFinder.filterFindByKeywords(
 			companyId, groupId, keywords, scope, start, end, orderByComparator);
@@ -78,9 +84,10 @@ public class DDLRecordSetServiceImpl extends DDLRecordSetServiceBaseImpl {
 
 	@Override
 	public List<DDLRecordSet> search(
-		long companyId, long groupId, String name, String description,
-		int scope, boolean andOperator, int start, int end,
-		OrderByComparator<DDLRecordSet> orderByComparator) {
+			long companyId, long groupId, String name, String description,
+			int scope, boolean andOperator, int start, int end,
+			OrderByComparator orderByComparator)
+		throws SystemException {
 
 		return ddlRecordSetFinder.filterFindByC_G_N_D_S(
 			companyId, groupId, name, description, scope, andOperator, start,
@@ -89,7 +96,8 @@ public class DDLRecordSetServiceImpl extends DDLRecordSetServiceBaseImpl {
 
 	@Override
 	public int searchCount(
-		long companyId, long groupId, String keywords, int scope) {
+			long companyId, long groupId, String keywords, int scope)
+		throws SystemException {
 
 		return ddlRecordSetFinder.filterCountByKeywords(
 			companyId, groupId, keywords, scope);
@@ -97,8 +105,9 @@ public class DDLRecordSetServiceImpl extends DDLRecordSetServiceBaseImpl {
 
 	@Override
 	public int searchCount(
-		long companyId, long groupId, String name, String description,
-		int scope, boolean andOperator) {
+			long companyId, long groupId, String name, String description,
+			int scope, boolean andOperator)
+		throws SystemException {
 
 		return ddlRecordSetFinder.filterCountByC_G_N_D_S(
 			companyId, groupId, name, description, scope, andOperator);
@@ -107,7 +116,7 @@ public class DDLRecordSetServiceImpl extends DDLRecordSetServiceBaseImpl {
 	@Override
 	public DDLRecordSet updateMinDisplayRows(
 			long recordSetId, int minDisplayRows, ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		DDLRecordSetPermission.check(
 			getPermissionChecker(), recordSetId, ActionKeys.UPDATE);
@@ -121,7 +130,7 @@ public class DDLRecordSetServiceImpl extends DDLRecordSetServiceBaseImpl {
 			long recordSetId, long ddmStructureId, Map<Locale, String> nameMap,
 			Map<Locale, String> descriptionMap, int minDisplayRows,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		DDLRecordSetPermission.check(
 			getPermissionChecker(), recordSetId, ActionKeys.UPDATE);
@@ -136,7 +145,7 @@ public class DDLRecordSetServiceImpl extends DDLRecordSetServiceBaseImpl {
 			long groupId, long ddmStructureId, String recordSetKey,
 			Map<Locale, String> nameMap, Map<Locale, String> descriptionMap,
 			int minDisplayRows, ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		DDLRecordSetPermission.check(
 			getPermissionChecker(), groupId, recordSetKey, ActionKeys.UPDATE);

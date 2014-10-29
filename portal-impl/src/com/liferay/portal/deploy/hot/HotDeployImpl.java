@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,7 +14,6 @@
 
 package com.liferay.portal.deploy.hot;
 
-import com.liferay.portal.deploy.RequiredPluginsUtil;
 import com.liferay.portal.kernel.deploy.hot.HotDeploy;
 import com.liferay.portal.kernel.deploy.hot.HotDeployEvent;
 import com.liferay.portal.kernel.deploy.hot.HotDeployException;
@@ -32,7 +31,6 @@ import com.liferay.portal.kernel.util.PortalLifecycleUtil;
 import com.liferay.portal.kernel.util.PropertiesUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.util.ClassLoaderUtil;
 
 import java.util.ArrayList;
@@ -103,16 +101,19 @@ public class HotDeployImpl implements HotDeploy {
 		for (int i = _hotDeployListeners.size() - 1; i >= 0; i--) {
 			HotDeployListener hotDeployListener = _hotDeployListeners.get(i);
 
-			PortletClassLoaderUtil.setServletContextName(
-				hotDeployEvent.getServletContextName());
-
 			try {
+				PortletClassLoaderUtil.setClassLoader(
+					hotDeployEvent.getContextClassLoader());
+				PortletClassLoaderUtil.setServletContextName(
+					hotDeployEvent.getServletContextName());
+
 				hotDeployListener.invokeUndeploy(hotDeployEvent);
 			}
 			catch (HotDeployException hde) {
 				_log.error(hde, hde);
 			}
 			finally {
+				PortletClassLoaderUtil.setClassLoader(null);
 				PortletClassLoaderUtil.setServletContextName(null);
 			}
 		}
@@ -125,26 +126,6 @@ public class HotDeployImpl implements HotDeploy {
 		TemplateManagerUtil.destroy(classLoader);
 
 		_pacl.unregister(classLoader);
-
-		RequiredPluginsUtil.startCheckingRequiredPlugins();
-	}
-
-	@Override
-	public synchronized boolean registerDependentPortalLifecycle(
-		String servletContextName, PortalLifecycle portalLifecycle) {
-
-		for (HotDeployEvent hotDeployEvent : _dependentHotDeployEvents) {
-			if (Validator.equals(
-					servletContextName,
-					hotDeployEvent.getServletContextName())) {
-
-				hotDeployEvent.addPortalLifecycle(portalLifecycle);
-
-				return true;
-			}
-		}
-
-		return false;
 	}
 
 	@Override
@@ -181,7 +162,7 @@ public class HotDeployImpl implements HotDeploy {
 		_hotDeployListeners.clear();
 	}
 
-	public interface PACL {
+	public static interface PACL {
 
 		public void initPolicy(
 			String servletContextName, ClassLoader classLoader,
@@ -217,20 +198,20 @@ public class HotDeployImpl implements HotDeploy {
 				_log.info("Deploying " + servletContextName + " from queue");
 			}
 
-			for (int i = 0; i < _hotDeployListeners.size(); i++) {
-				HotDeployListener hotDeployListener = _hotDeployListeners.get(
-					i);
-
-				PortletClassLoaderUtil.setServletContextName(
-					hotDeployEvent.getServletContextName());
-
+			for (HotDeployListener hotDeployListener : _hotDeployListeners) {
 				try {
+					PortletClassLoaderUtil.setClassLoader(
+						hotDeployEvent.getContextClassLoader());
+					PortletClassLoaderUtil.setServletContextName(
+						hotDeployEvent.getServletContextName());
+
 					hotDeployListener.invokeDeploy(hotDeployEvent);
 				}
 				catch (HotDeployException hde) {
 					_log.error(hde, hde);
 				}
 				finally {
+					PortletClassLoaderUtil.setClassLoader(null);
 					PortletClassLoaderUtil.setServletContextName(null);
 				}
 			}
@@ -252,8 +233,6 @@ public class HotDeployImpl implements HotDeploy {
 						dependentEvent.getContextClassLoader());
 
 					doFireDeployEvent(dependentEvent);
-
-					dependentEvent.flushInits();
 				}
 			}
 			finally {

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,20 +14,14 @@
 
 package com.liferay.portal.kernel.io;
 
-import com.liferay.portal.kernel.io.unsync.UnsyncByteArrayOutputStream;
 import com.liferay.portal.kernel.test.CodeCoverageAssertor;
-import com.liferay.portal.kernel.test.ReflectionTestUtil;
+import com.liferay.portal.kernel.util.ReflectionUtil;
 import com.liferay.portal.kernel.util.StringPool;
 
 import java.io.IOException;
 import java.io.OutputStream;
 
-import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
-import java.nio.charset.CharsetEncoder;
-import java.nio.charset.CodingErrorAction;
-
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.lang.reflect.Field;
 
 import org.junit.Assert;
 import org.junit.ClassRule;
@@ -46,95 +40,42 @@ public class OutputStreamWriterTest {
 	public void testClose() throws IOException {
 		MarkerOutputStream markerOutputStream = new MarkerOutputStream();
 
-		try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(
-				markerOutputStream)) {
+		OutputStreamWriter outputStreamWriter = new OutputStreamWriter(
+			markerOutputStream);
 
-			Assert.assertFalse(markerOutputStream._closed);
-		}
+		Assert.assertFalse(markerOutputStream._closed);
+
+		outputStreamWriter.close();
 
 		Assert.assertTrue(markerOutputStream._closed);
 	}
 
 	@Test
-	public void testConstructor() {
+	public void testConstructor() throws Exception {
 		DummyOutputStream dummyOutputStream = new DummyOutputStream();
 
 		OutputStreamWriter outputStreamWriter = new OutputStreamWriter(
 			dummyOutputStream);
 
-		Assert.assertSame(
-			dummyOutputStream, _getOutputStream(outputStreamWriter));
+		OutputStream outputStream = _getOutputStream(outputStreamWriter);
+
+		Assert.assertSame(dummyOutputStream, outputStream);
 		Assert.assertSame(
 			StringPool.DEFAULT_CHARSET_NAME, outputStreamWriter.getEncoding());
-		Assert.assertEquals(
-			_getDefaultOutputBufferSize(),
-			_getOutputBufferSize(outputStreamWriter));
-		Assert.assertFalse(_isAutoFlush(outputStreamWriter));
 
 		outputStreamWriter = new OutputStreamWriter(dummyOutputStream, null);
 
-		Assert.assertSame(
-			dummyOutputStream, _getOutputStream(outputStreamWriter));
+		Assert.assertSame(dummyOutputStream, outputStream);
 		Assert.assertSame(
 			StringPool.DEFAULT_CHARSET_NAME, outputStreamWriter.getEncoding());
-		Assert.assertEquals(
-			_getDefaultOutputBufferSize(),
-			_getOutputBufferSize(outputStreamWriter));
-		Assert.assertFalse(_isAutoFlush(outputStreamWriter));
 
 		String encoding = "US-ASCII";
 
 		outputStreamWriter = new OutputStreamWriter(
 			dummyOutputStream, encoding);
 
-		Assert.assertSame(
-			dummyOutputStream, _getOutputStream(outputStreamWriter));
+		Assert.assertSame(dummyOutputStream, outputStream);
 		Assert.assertSame(encoding, outputStreamWriter.getEncoding());
-		Assert.assertEquals(
-			_getDefaultOutputBufferSize(),
-			_getOutputBufferSize(outputStreamWriter));
-		Assert.assertFalse(_isAutoFlush(outputStreamWriter));
-
-		outputStreamWriter = new OutputStreamWriter(
-			dummyOutputStream, encoding, true);
-
-		Assert.assertSame(
-			dummyOutputStream, _getOutputStream(outputStreamWriter));
-		Assert.assertSame(encoding, outputStreamWriter.getEncoding());
-		Assert.assertEquals(
-			_getDefaultOutputBufferSize(),
-			_getOutputBufferSize(outputStreamWriter));
-		Assert.assertTrue(_isAutoFlush(outputStreamWriter));
-
-		outputStreamWriter = new OutputStreamWriter(
-			dummyOutputStream, encoding, 32);
-
-		Assert.assertSame(
-			dummyOutputStream, _getOutputStream(outputStreamWriter));
-		Assert.assertSame(encoding, outputStreamWriter.getEncoding());
-		Assert.assertEquals(1, _getInputBufferSize(outputStreamWriter));
-		Assert.assertEquals(32, _getOutputBufferSize(outputStreamWriter));
-		Assert.assertFalse(_isAutoFlush(outputStreamWriter));
-
-		outputStreamWriter = new OutputStreamWriter(
-			dummyOutputStream, encoding, 32, true);
-
-		Assert.assertSame(
-			dummyOutputStream, _getOutputStream(outputStreamWriter));
-		Assert.assertSame(encoding, outputStreamWriter.getEncoding());
-		Assert.assertEquals(1, _getInputBufferSize(outputStreamWriter));
-		Assert.assertEquals(32, _getOutputBufferSize(outputStreamWriter));
-		Assert.assertTrue(_isAutoFlush(outputStreamWriter));
-
-		try {
-			new OutputStreamWriter(dummyOutputStream, encoding, 3, true);
-
-			Assert.fail();
-		}
-		catch (IllegalArgumentException iae) {
-			Assert.assertEquals(
-				"Output buffer size 3 is less than 4", iae.getMessage());
-		}
 	}
 
 	@Test
@@ -149,39 +90,21 @@ public class OutputStreamWriterTest {
 		outputStreamWriter.flush();
 
 		Assert.assertTrue(markerOutputStream._flushed);
-
-		outputStreamWriter.write('a');
-
-		outputStreamWriter.flush();
-
-		Assert.assertTrue(markerOutputStream._flushed);
 	}
 
 	@Test
 	public void testWriteCharArray() throws IOException {
-		_testWriteCharArray(false);
-		_testWriteCharArray(true);
-	}
+		MarkerOutputStream markerOutputStream = new MarkerOutputStream();
 
-	@Test
-	public void testWriteError() {
 		OutputStreamWriter outputStreamWriter = new OutputStreamWriter(
-			new DummyOutputStream(), "US-ASCII");
+			markerOutputStream);
 
-		CharsetEncoder charsetEncoder = ReflectionTestUtil.getFieldValue(
-			outputStreamWriter, "_charsetEncoder");
+		outputStreamWriter.write("abcdefg".toCharArray(), 3, 2);
 
-		charsetEncoder.onUnmappableCharacter(CodingErrorAction.REPORT);
-
-		try {
-			outputStreamWriter.write("测试");
-
-			Assert.fail();
-		}
-		catch (IOException ioe) {
-			Assert.assertEquals(
-				"Unexcepted coder result UNMAPPABLE[1]", ioe.getMessage());
-		}
+		Assert.assertArrayEquals(
+			new byte[] {'d', 'e'}, markerOutputStream._bytes);
+		Assert.assertEquals(2, markerOutputStream._length);
+		Assert.assertEquals(0, markerOutputStream._offset);
 	}
 
 	@Test
@@ -193,177 +116,33 @@ public class OutputStreamWriterTest {
 
 		outputStreamWriter.write('a');
 
-		outputStreamWriter.flush();
-
-		Assert.assertEquals((byte)'a', markerOutputStream._bytes[0]);
+		Assert.assertArrayEquals(new byte[] {'a'}, markerOutputStream._bytes);
 		Assert.assertEquals(1, markerOutputStream._length);
 		Assert.assertEquals(0, markerOutputStream._offset);
 	}
 
 	@Test
 	public void testWriteString() throws IOException {
-		_testWriteString(false);
-		_testWriteString(true);
-	}
-
-	private int _getDefaultOutputBufferSize() {
-		return ReflectionTestUtil.getFieldValue(
-			OutputStreamWriter.class, "_DEFAULT_OUTPUT_BUFFER_SIZE");
-	}
-
-	private int _getInputBufferSize(OutputStreamWriter outputStreamWriter) {
-		CharBuffer inputCharBuffer = ReflectionTestUtil.getFieldValue(
-			outputStreamWriter, "_inputCharBuffer");
-
-		return inputCharBuffer.capacity();
-	}
-
-	private int _getOutputBufferSize(OutputStreamWriter outputStreamWriter) {
-		ByteBuffer outputBuffer = ReflectionTestUtil.getFieldValue(
-			outputStreamWriter, "_outputByteBuffer");
-
-		return outputBuffer.capacity();
-	}
-
-	private OutputStream _getOutputStream(
-		OutputStreamWriter outputStreamWriter) {
-
-		return ReflectionTestUtil.getFieldValue(
-			outputStreamWriter, "_outputStream");
-	}
-
-	private boolean _isAutoFlush(OutputStreamWriter outputStreamWriter) {
-		return ReflectionTestUtil.getFieldValue(
-			outputStreamWriter, "_autoFlush");
-	}
-
-	private void _testWriteCharArray(boolean autoFlush) throws IOException {
-		final AtomicBoolean flushed = new AtomicBoolean();
-
-		UnsyncByteArrayOutputStream unsyncByteArrayOutputStream =
-			new UnsyncByteArrayOutputStream() {
-
-				@Override
-				public void flush() {
-					flushed.set(true);
-				}
-
-			};
+		MarkerOutputStream markerOutputStream = new MarkerOutputStream();
 
 		OutputStreamWriter outputStreamWriter = new OutputStreamWriter(
-			unsyncByteArrayOutputStream, "US-ASCII", 4, autoFlush);
+			markerOutputStream);
 
-		outputStreamWriter.write("abcdefg".toCharArray(), 1, 5);
-
-		Assert.assertFalse(flushed.get());
-
-		if (!autoFlush) {
-			outputStreamWriter.flush();
-
-			Assert.assertTrue(flushed.get());
-
-			flushed.set(false);
-		}
+		outputStreamWriter.write("abcdefg", 3, 2);
 
 		Assert.assertArrayEquals(
-			new byte[] {'b', 'c', 'd', 'e', 'f'},
-			unsyncByteArrayOutputStream.toByteArray());
-
-		unsyncByteArrayOutputStream.reset();
-
-		outputStreamWriter = new OutputStreamWriter(
-			unsyncByteArrayOutputStream, "US-ASCII", autoFlush);
-
-		outputStreamWriter.write("abc".toCharArray());
-
-		Assert.assertFalse(flushed.get());
-
-		if (!autoFlush) {
-			outputStreamWriter.flush();
-
-			Assert.assertTrue(flushed.get());
-
-			flushed.set(false);
-		}
-
-		Assert.assertArrayEquals(
-			new byte[] {'a', 'b', 'c'},
-			unsyncByteArrayOutputStream.toByteArray());
+			new byte[] {'d', 'e'}, markerOutputStream._bytes);
+		Assert.assertEquals(2, markerOutputStream._length);
+		Assert.assertEquals(0, markerOutputStream._offset);
 	}
 
-	private void _testWriteString(boolean autoFlush) throws IOException {
-		final AtomicBoolean flushed = new AtomicBoolean();
+	private OutputStream _getOutputStream(OutputStreamWriter outputStreamWriter)
+		throws Exception {
 
-		UnsyncByteArrayOutputStream unsyncByteArrayOutputStream =
-			new UnsyncByteArrayOutputStream() {
+		Field field = ReflectionUtil.getDeclaredField(
+			OutputStreamWriter.class, "_outputStream");
 
-				@Override
-				public void flush() {
-					flushed.set(true);
-				}
-
-			};
-
-		OutputStreamWriter outputStreamWriter = new OutputStreamWriter(
-			unsyncByteArrayOutputStream, "US-ASCII", 4, autoFlush);
-
-		outputStreamWriter.write("abcdefg", 1, 5);
-
-		Assert.assertFalse(flushed.get());
-
-		if (!autoFlush) {
-			outputStreamWriter.flush();
-
-			Assert.assertTrue(flushed.get());
-
-			flushed.set(false);
-		}
-
-		Assert.assertArrayEquals(
-			new byte[] {'b', 'c', 'd', 'e', 'f'},
-			unsyncByteArrayOutputStream.toByteArray());
-
-		unsyncByteArrayOutputStream.reset();
-
-		outputStreamWriter = new OutputStreamWriter(
-			unsyncByteArrayOutputStream, "US-ASCII", 4, autoFlush);
-
-		outputStreamWriter.write("abcdefg", 1, 5);
-
-		Assert.assertFalse(flushed.get());
-
-		if (!autoFlush) {
-			outputStreamWriter.flush();
-
-			Assert.assertTrue(flushed.get());
-
-			flushed.set(false);
-		}
-
-		Assert.assertArrayEquals(
-			new byte[] {'b', 'c', 'd', 'e', 'f'},
-			unsyncByteArrayOutputStream.toByteArray());
-
-		unsyncByteArrayOutputStream.reset();
-
-		outputStreamWriter = new OutputStreamWriter(
-			unsyncByteArrayOutputStream, "US-ASCII", autoFlush);
-
-		outputStreamWriter.write("abc");
-
-		Assert.assertFalse(flushed.get());
-
-		if (!autoFlush) {
-			outputStreamWriter.flush();
-
-			Assert.assertTrue(flushed.get());
-
-			flushed.set(false);
-		}
-
-		Assert.assertArrayEquals(
-			new byte[] {'a', 'b', 'c'},
-			unsyncByteArrayOutputStream.toByteArray());
+		return (OutputStream)field.get(outputStreamWriter);
 	}
 
 	private class MarkerOutputStream extends OutputStream {

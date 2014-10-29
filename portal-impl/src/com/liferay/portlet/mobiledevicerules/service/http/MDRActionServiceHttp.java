@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -13,8 +13,6 @@
  */
 
 package com.liferay.portlet.mobiledevicerules.service.http;
-
-import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -53,7 +51,6 @@ import com.liferay.portlet.mobiledevicerules.service.MDRActionServiceUtil;
  * @see com.liferay.portlet.mobiledevicerules.service.MDRActionServiceUtil
  * @generated
  */
-@ProviderType
 public class MDRActionServiceHttp {
 	public static com.liferay.portlet.mobiledevicerules.model.MDRAction addAction(
 		HttpPrincipal httpPrincipal, long ruleGroupInstanceId,
@@ -61,7 +58,8 @@ public class MDRActionServiceHttp {
 		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
 		java.lang.String type, java.lang.String typeSettings,
 		com.liferay.portal.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(MDRActionServiceUtil.class,
 					"addAction", _addActionParameterTypes0);
@@ -80,6 +78,10 @@ public class MDRActionServiceHttp {
 					throw (com.liferay.portal.kernel.exception.PortalException)e;
 				}
 
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
+				}
+
 				throw new com.liferay.portal.kernel.exception.SystemException(e);
 			}
 
@@ -99,7 +101,8 @@ public class MDRActionServiceHttp {
 		java.lang.String type,
 		com.liferay.portal.kernel.util.UnicodeProperties typeSettingsProperties,
 		com.liferay.portal.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(MDRActionServiceUtil.class,
 					"addAction", _addActionParameterTypes1);
@@ -118,6 +121,10 @@ public class MDRActionServiceHttp {
 					throw (com.liferay.portal.kernel.exception.PortalException)e;
 				}
 
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
+				}
+
 				throw new com.liferay.portal.kernel.exception.SystemException(e);
 			}
 
@@ -131,7 +138,8 @@ public class MDRActionServiceHttp {
 	}
 
 	public static void deleteAction(HttpPrincipal httpPrincipal, long actionId)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(MDRActionServiceUtil.class,
 					"deleteAction", _deleteActionParameterTypes2);
@@ -146,6 +154,10 @@ public class MDRActionServiceHttp {
 					throw (com.liferay.portal.kernel.exception.PortalException)e;
 				}
 
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
+				}
+
 				throw new com.liferay.portal.kernel.exception.SystemException(e);
 			}
 		}
@@ -158,7 +170,8 @@ public class MDRActionServiceHttp {
 
 	public static com.liferay.portlet.mobiledevicerules.model.MDRAction fetchAction(
 		HttpPrincipal httpPrincipal, long actionId)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(MDRActionServiceUtil.class,
 					"fetchAction", _fetchActionParameterTypes3);
@@ -175,6 +188,10 @@ public class MDRActionServiceHttp {
 					throw (com.liferay.portal.kernel.exception.PortalException)e;
 				}
 
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
+				}
+
 				throw new com.liferay.portal.kernel.exception.SystemException(e);
 			}
 
@@ -189,7 +206,8 @@ public class MDRActionServiceHttp {
 
 	public static com.liferay.portlet.mobiledevicerules.model.MDRAction getAction(
 		HttpPrincipal httpPrincipal, long actionId)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(MDRActionServiceUtil.class,
 					"getAction", _getActionParameterTypes4);
@@ -204,6 +222,10 @@ public class MDRActionServiceHttp {
 			catch (Exception e) {
 				if (e instanceof com.liferay.portal.kernel.exception.PortalException) {
 					throw (com.liferay.portal.kernel.exception.PortalException)e;
+				}
+
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
 				}
 
 				throw new com.liferay.portal.kernel.exception.SystemException(e);
@@ -224,7 +246,8 @@ public class MDRActionServiceHttp {
 		java.util.Map<java.util.Locale, java.lang.String> descriptionMap,
 		java.lang.String type, java.lang.String typeSettings,
 		com.liferay.portal.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(MDRActionServiceUtil.class,
 					"updateAction", _updateActionParameterTypes5);
@@ -241,6 +264,10 @@ public class MDRActionServiceHttp {
 			catch (Exception e) {
 				if (e instanceof com.liferay.portal.kernel.exception.PortalException) {
 					throw (com.liferay.portal.kernel.exception.PortalException)e;
+				}
+
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
 				}
 
 				throw new com.liferay.portal.kernel.exception.SystemException(e);
@@ -262,7 +289,8 @@ public class MDRActionServiceHttp {
 		java.lang.String type,
 		com.liferay.portal.kernel.util.UnicodeProperties typeSettingsProperties,
 		com.liferay.portal.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(MDRActionServiceUtil.class,
 					"updateAction", _updateActionParameterTypes6);
@@ -279,6 +307,10 @@ public class MDRActionServiceHttp {
 			catch (Exception e) {
 				if (e instanceof com.liferay.portal.kernel.exception.PortalException) {
 					throw (com.liferay.portal.kernel.exception.PortalException)e;
+				}
+
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
 				}
 
 				throw new com.liferay.portal.kernel.exception.SystemException(e);

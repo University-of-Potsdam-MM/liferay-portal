@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,8 +14,6 @@
 
 package com.liferay.portal.model;
 
-import aQute.bnd.annotation.ProviderType;
-
 import java.io.Serializable;
 
 import java.util.ArrayList;
@@ -27,12 +25,10 @@ import java.util.List;
  * @author Brian Wing Shun Chan
  * @generated
  */
-@ProviderType
 public class VirtualHostSoap implements Serializable {
 	public static VirtualHostSoap toSoapModel(VirtualHost model) {
 		VirtualHostSoap soapModel = new VirtualHostSoap();
 
-		soapModel.setMvccVersion(model.getMvccVersion());
 		soapModel.setVirtualHostId(model.getVirtualHostId());
 		soapModel.setCompanyId(model.getCompanyId());
 		soapModel.setLayoutSetId(model.getLayoutSetId());
@@ -89,14 +85,6 @@ public class VirtualHostSoap implements Serializable {
 		setVirtualHostId(pk);
 	}
 
-	public long getMvccVersion() {
-		return _mvccVersion;
-	}
-
-	public void setMvccVersion(long mvccVersion) {
-		_mvccVersion = mvccVersion;
-	}
-
 	public long getVirtualHostId() {
 		return _virtualHostId;
 	}
@@ -129,7 +117,6 @@ public class VirtualHostSoap implements Serializable {
 		_hostname = hostname;
 	}
 
-	private long _mvccVersion;
 	private long _virtualHostId;
 	private long _companyId;
 	private long _layoutSetId;

@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -42,41 +42,26 @@ portletURL.setWindowState(WindowState.MAXIMIZED);
 pageContext.setAttribute("portletURL", portletURL);
 %>
 
-<form action="<%= HtmlUtil.escapeAttribute(portletURL.toString()) %>" method="get" name="<%= randomNamespace %><%= namespace %>fm" onSubmit="<%= randomNamespace %><%= namespace %>search(); return false;">
-	<liferay-portlet:renderURLParams varImpl="portletURL" />
+<form action="<%= portletURL.toString() %>" method="get" name="<%= randomNamespace %><%= namespace %>fm" onSubmit="<%= randomNamespace %><%= namespace %>search(); return false;">
+<liferay-portlet:renderURLParams varImpl="portletURL" />
 
-	<aui:fieldset>
-		<aui:input inlineField="<%= true %>" label="" name='<%= namespace + "keywords" %>' size="30" title="search" type="text" useNamespace="<%= false %>" value="<%= HtmlUtil.escapeAttribute(keywords) %>" />
+<input name="<%= namespace %>keywords" size="30" title="<liferay-ui:message key="search" />" type="text" value="<%= HtmlUtil.escapeAttribute(keywords) %>" />
 
-		<%
-		String taglibOnClick = "Liferay.Util.focusFormField('#" + namespace + "keywords');";
-		%>
+<select name="<%= namespace %>groupId" title="<liferay-ui:message key="scope" /> ">
+	<option value="0" <%= (groupId == 0) ? "selected" : "" %>><liferay-ui:message key="everything" /></option>
+	<option value="<%= group.getGroupId() %>" <%= (groupId != 0) ? "selected" : "" %>><liferay-ui:message key='<%= "this-" + (group.isOrganization() ? "organization" : "site") %>' /></option>
+</select>
 
-		<liferay-ui:quick-access-entry label="skip-to-search" onClick="<%= taglibOnClick %>" />
+<input align="absmiddle" border="0" src="<%= themeDisplay.getPathThemeImages() %>/common/search.png" title="<liferay-ui:message key="search" />" type="image" />
 
-		<aui:select inlineField="<%= true %>" label="" name='<%= namespace + "groupId" %>' title="scope" useNamespace="<%= false %>">
-			<c:if test="<%= !group.isStagingGroup() %>">
-				<aui:option label="everything" selected="<%= (groupId == 0) %>" value="0" />
-			</c:if>
+<aui:script>
+	function <%= randomNamespace %><%= namespace %>search() {
+		var keywords = document.<%= randomNamespace %><%= namespace %>fm.<%= namespace %>keywords.value;
 
-			<aui:option label='<%= "this-" + (group.isOrganization() ? "organization" : "site") %>' selected="<%= (groupId != 0) %>" value="<%= group.getGroupId() %>" />
-		</aui:select>
+		keywords = keywords.replace(/^\s+|\s+$/, '');
 
-		<liferay-ui:icon
-			iconCssClass="icon-search"
-			onClick='<%= randomNamespace + namespace + "search();" %>'
-			url="javascript:;"
-		/>
-	</aui:fieldset>
-
-	<aui:script>
-		function <%= randomNamespace %><%= namespace %>search() {
-			var keywords = document.<%= randomNamespace %><%= namespace %>fm.<%= namespace %>keywords.value;
-
-			keywords = keywords.replace(/^\s+|\s+$/, '');
-
-			if (keywords != '') {
-				submitForm(document.<%= randomNamespace %><%= namespace %>fm);
-			}
+		if (keywords != '') {
+			submitForm(document.<%= randomNamespace %><%= namespace %>fm);
 		}
-	</aui:script>
+	}
+</aui:script>

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -37,47 +37,51 @@ public interface DLFileEntry extends DLFileEntryModel, PersistedModel, TreeModel
 	 */
 	@Override
 	public java.lang.String buildTreePath()
-		throws com.liferay.portal.kernel.exception.PortalException;
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	public java.io.InputStream getContentStream()
-		throws com.liferay.portal.kernel.exception.PortalException;
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	public java.io.InputStream getContentStream(java.lang.String version)
-		throws com.liferay.portal.kernel.exception.PortalException;
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	public long getDataRepositoryId();
-
-	public com.liferay.portlet.documentlibrary.model.DLFileEntryType getDLFileEntryType()
-		throws com.liferay.portal.kernel.exception.PortalException;
 
 	public com.liferay.portal.kernel.util.UnicodeProperties getExtraSettingsProperties();
 
 	public java.util.Map<java.lang.String, com.liferay.portlet.dynamicdatamapping.storage.Fields> getFieldsMap(
 		long fileVersionId)
-		throws com.liferay.portal.kernel.exception.PortalException;
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	public com.liferay.portlet.documentlibrary.model.DLFileVersion getFileVersion()
-		throws com.liferay.portal.kernel.exception.PortalException;
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	public com.liferay.portlet.documentlibrary.model.DLFileVersion getFileVersion(
 		java.lang.String version)
-		throws com.liferay.portal.kernel.exception.PortalException;
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	public java.util.List<com.liferay.portlet.documentlibrary.model.DLFileVersion> getFileVersions(
-		int status);
+		int status) throws com.liferay.portal.kernel.exception.SystemException;
 
-	public int getFileVersionsCount(int status);
+	public int getFileVersionsCount(int status)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	public com.liferay.portlet.documentlibrary.model.DLFolder getFolder()
-		throws com.liferay.portal.kernel.exception.PortalException;
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	public java.lang.String getIcon();
 
-	public java.lang.String getIconCssClass();
-
 	public com.liferay.portlet.documentlibrary.model.DLFileVersion getLatestFileVersion(
 		boolean trusted)
-		throws com.liferay.portal.kernel.exception.PortalException;
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	public com.liferay.portal.model.Lock getLock();
 
@@ -86,19 +90,16 @@ public interface DLFileEntry extends DLFileEntryModel, PersistedModel, TreeModel
 	/**
 	* @deprecated As of 6.2.0, replaced by {@link DLFileVersion#getUserId()}
 	*/
-	@java.lang.Deprecated()
 	public long getVersionUserId();
 
 	/**
 	* @deprecated As of 6.2.0, replaced by {@link DLFileVersion#getUserName()}
 	*/
-	@java.lang.Deprecated()
 	public java.lang.String getVersionUserName();
 
 	/**
 	* @deprecated As of 6.2.0, replaced by {@link DLFileVersion#getUserUuid()}
 	*/
-	@java.lang.Deprecated()
 	public java.lang.String getVersionUserUuid();
 
 	public boolean hasLock();

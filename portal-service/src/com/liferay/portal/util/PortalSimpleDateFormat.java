@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -34,9 +34,6 @@ public class PortalSimpleDateFormat extends SimpleDateFormat {
 		if (pattern.equals(DateUtil.ISO_8601_PATTERN)) {
 			_iso8601Pattern = true;
 		}
-		else {
-			_iso8601Pattern = false;
-		}
 	}
 
 	@Override
@@ -59,6 +56,6 @@ public class PortalSimpleDateFormat extends SimpleDateFormat {
 		return modifiedSB;
 	}
 
-	private final boolean _iso8601Pattern;
+	private boolean _iso8601Pattern;
 
 }

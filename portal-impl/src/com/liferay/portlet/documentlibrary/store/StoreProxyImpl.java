@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portlet.documentlibrary.store;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 
 import java.io.File;
 import java.io.InputStream;
@@ -27,9 +28,11 @@ public class StoreProxyImpl implements Store {
 
 	@Override
 	public void addDirectory(long companyId, long repositoryId, String dirName)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Store store = StoreFactory.getInstance();
+		
+		System.out.println("hello me");
 
 		store.addDirectory(companyId, repositoryId, dirName);
 	}
@@ -37,7 +40,7 @@ public class StoreProxyImpl implements Store {
 	@Override
 	public void addFile(
 			long companyId, long repositoryId, String fileName, byte[] bytes)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Store store = StoreFactory.getInstance();
 
@@ -47,7 +50,7 @@ public class StoreProxyImpl implements Store {
 	@Override
 	public void addFile(
 			long companyId, long repositoryId, String fileName, File file)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Store store = StoreFactory.getInstance();
 
@@ -57,7 +60,7 @@ public class StoreProxyImpl implements Store {
 	@Override
 	public void addFile(
 			long companyId, long repositoryId, String fileName, InputStream is)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Store store = StoreFactory.getInstance();
 
@@ -65,7 +68,7 @@ public class StoreProxyImpl implements Store {
 	}
 
 	@Override
-	public void checkRoot(long companyId) {
+	public void checkRoot(long companyId) throws SystemException {
 		Store store = StoreFactory.getInstance();
 
 		store.checkRoot(companyId);
@@ -75,7 +78,7 @@ public class StoreProxyImpl implements Store {
 	public void copyFileVersion(
 			long companyId, long repositoryId, String fileName,
 			String fromVersionLabel, String toVersionLabel)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Store store = StoreFactory.getInstance();
 
@@ -87,7 +90,7 @@ public class StoreProxyImpl implements Store {
 	@Override
 	public void deleteDirectory(
 			long companyId, long repositoryId, String dirName)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Store store = StoreFactory.getInstance();
 
@@ -96,7 +99,7 @@ public class StoreProxyImpl implements Store {
 
 	@Override
 	public void deleteFile(long companyId, long repositoryId, String fileName)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Store store = StoreFactory.getInstance();
 
@@ -107,7 +110,7 @@ public class StoreProxyImpl implements Store {
 	public void deleteFile(
 			long companyId, long repositoryId, String fileName,
 			String versionLabel)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Store store = StoreFactory.getInstance();
 
@@ -116,7 +119,7 @@ public class StoreProxyImpl implements Store {
 
 	@Override
 	public File getFile(long companyId, long repositoryId, String fileName)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Store store = StoreFactory.getInstance();
 
@@ -127,7 +130,7 @@ public class StoreProxyImpl implements Store {
 	public File getFile(
 			long companyId, long repositoryId, String fileName,
 			String versionLabel)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Store store = StoreFactory.getInstance();
 
@@ -137,7 +140,7 @@ public class StoreProxyImpl implements Store {
 	@Override
 	public byte[] getFileAsBytes(
 			long companyId, long repositoryId, String fileName)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Store store = StoreFactory.getInstance();
 
@@ -148,7 +151,7 @@ public class StoreProxyImpl implements Store {
 	public byte[] getFileAsBytes(
 			long companyId, long repositoryId, String fileName,
 			String versionLabel)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Store store = StoreFactory.getInstance();
 
@@ -159,7 +162,7 @@ public class StoreProxyImpl implements Store {
 	@Override
 	public InputStream getFileAsStream(
 			long companyId, long repositoryId, String fileName)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Store store = StoreFactory.getInstance();
 
@@ -170,7 +173,7 @@ public class StoreProxyImpl implements Store {
 	public InputStream getFileAsStream(
 			long companyId, long repositoryId, String fileName,
 			String versionLabel)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Store store = StoreFactory.getInstance();
 
@@ -179,7 +182,9 @@ public class StoreProxyImpl implements Store {
 	}
 
 	@Override
-	public String[] getFileNames(long companyId, long repositoryId) {
+	public String[] getFileNames(long companyId, long repositoryId)
+		throws SystemException {
+
 		Store store = StoreFactory.getInstance();
 
 		return store.getFileNames(companyId, repositoryId);
@@ -188,7 +193,7 @@ public class StoreProxyImpl implements Store {
 	@Override
 	public String[] getFileNames(
 			long companyId, long repositoryId, String dirName)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Store store = StoreFactory.getInstance();
 
@@ -197,7 +202,7 @@ public class StoreProxyImpl implements Store {
 
 	@Override
 	public long getFileSize(long companyId, long repositoryId, String fileName)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Store store = StoreFactory.getInstance();
 
@@ -207,7 +212,7 @@ public class StoreProxyImpl implements Store {
 	@Override
 	public boolean hasDirectory(
 			long companyId, long repositoryId, String dirName)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Store store = StoreFactory.getInstance();
 
@@ -216,7 +221,7 @@ public class StoreProxyImpl implements Store {
 
 	@Override
 	public boolean hasFile(long companyId, long repositoryId, String fileName)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Store store = StoreFactory.getInstance();
 
@@ -227,7 +232,7 @@ public class StoreProxyImpl implements Store {
 	public boolean hasFile(
 			long companyId, long repositoryId, String fileName,
 			String versionLabel)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Store store = StoreFactory.getInstance();
 
@@ -235,7 +240,7 @@ public class StoreProxyImpl implements Store {
 	}
 
 	@Override
-	public void move(String srcDir, String destDir) {
+	public void move(String srcDir, String destDir) throws SystemException {
 		Store store = StoreFactory.getInstance();
 
 		store.move(srcDir, destDir);
@@ -245,7 +250,7 @@ public class StoreProxyImpl implements Store {
 	public void updateFile(
 			long companyId, long repositoryId, long newRepositoryId,
 			String fileName)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Store store = StoreFactory.getInstance();
 
@@ -256,7 +261,7 @@ public class StoreProxyImpl implements Store {
 	public void updateFile(
 			long companyId, long repositoryId, String fileName,
 			String newFileName)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Store store = StoreFactory.getInstance();
 
@@ -267,7 +272,7 @@ public class StoreProxyImpl implements Store {
 	public void updateFile(
 			long companyId, long repositoryId, String fileName,
 			String versionLabel, byte[] bytes)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Store store = StoreFactory.getInstance();
 
@@ -279,7 +284,7 @@ public class StoreProxyImpl implements Store {
 	public void updateFile(
 			long companyId, long repositoryId, String fileName,
 			String versionLabel, File file)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Store store = StoreFactory.getInstance();
 
@@ -290,7 +295,7 @@ public class StoreProxyImpl implements Store {
 	public void updateFile(
 			long companyId, long repositoryId, String fileName,
 			String versionLabel, InputStream is)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Store store = StoreFactory.getInstance();
 
@@ -301,7 +306,7 @@ public class StoreProxyImpl implements Store {
 	public void updateFileVersion(
 			long companyId, long repositoryId, String fileName,
 			String fromVersionLabel, String toVersionLabel)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Store store = StoreFactory.getInstance();
 

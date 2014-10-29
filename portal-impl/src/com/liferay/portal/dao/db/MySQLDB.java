@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -148,58 +148,59 @@ public class MySQLDB extends BaseDB {
 
 	@Override
 	protected String reword(String data) throws IOException {
-		try (UnsyncBufferedReader unsyncBufferedReader =
-				new UnsyncBufferedReader(new UnsyncStringReader(data))) {
+		UnsyncBufferedReader unsyncBufferedReader = new UnsyncBufferedReader(
+			new UnsyncStringReader(data));
 
-			StringBundler sb = new StringBundler();
+		boolean createTable = false;
 
-			boolean createTable = false;
+		StringBundler sb = new StringBundler();
 
-			String line = null;
+		String line = null;
 
-			while ((line = unsyncBufferedReader.readLine()) != null) {
-				if (StringUtil.startsWith(line, "create table")) {
-					createTable = true;
-				}
-				else if (line.startsWith(ALTER_COLUMN_NAME)) {
-					String[] template = buildColumnNameTokens(line);
+		while ((line = unsyncBufferedReader.readLine()) != null) {
+			if (StringUtil.startsWith(line, "create table")) {
+				createTable = true;
+			}
+			else if (line.startsWith(ALTER_COLUMN_NAME)) {
+				String[] template = buildColumnNameTokens(line);
 
-					line = StringUtil.replace(
-						"alter table @table@ change column @old-column@ " +
-							"@new-column@ @type@;",
-						REWORD_TEMPLATE, template);
-				}
-				else if (line.startsWith(ALTER_COLUMN_TYPE)) {
-					String[] template = buildColumnTypeTokens(line);
+				line = StringUtil.replace(
+					"alter table @table@ change column @old-column@ " +
+						"@new-column@ @type@;",
+					REWORD_TEMPLATE, template);
+			}
+			else if (line.startsWith(ALTER_COLUMN_TYPE)) {
+				String[] template = buildColumnTypeTokens(line);
 
-					line = StringUtil.replace(
-						"alter table @table@ modify @old-column@ @type@;",
-						REWORD_TEMPLATE, template);
-				}
-				else if (line.startsWith(ALTER_TABLE_NAME)) {
-					String[] template = buildTableNameTokens(line);
+				line = StringUtil.replace(
+					"alter table @table@ modify @old-column@ @type@;",
+					REWORD_TEMPLATE, template);
+			}
+			else if (line.startsWith(ALTER_TABLE_NAME)) {
+				String[] template = buildTableNameTokens(line);
 
-					line = StringUtil.replace(
-						"rename table @old-table@ to @new-table@;",
-						RENAME_TABLE_TEMPLATE, template);
-				}
-
-				int pos = line.indexOf(";");
-
-				if (createTable && (pos != -1)) {
-					createTable = false;
-
-					line =
-						line.substring(0, pos) + " engine " +
-						PropsValues.DATABASE_MYSQL_ENGINE + line.substring(pos);
-				}
-
-				sb.append(line);
-				sb.append("\n");
+				line = StringUtil.replace(
+					"rename table @old-table@ to @new-table@;",
+					RENAME_TABLE_TEMPLATE, template);
 			}
 
-			return sb.toString();
+			int pos = line.indexOf(";");
+
+			if (createTable && (pos != -1)) {
+				createTable = false;
+
+				line =
+					line.substring(0, pos) + " engine " +
+						PropsValues.DATABASE_MYSQL_ENGINE + line.substring(pos);
+			}
+
+			sb.append(line);
+			sb.append("\n");
 		}
+
+		unsyncBufferedReader.close();
+
+		return sb.toString();
 	}
 
 	private static final String[] _MYSQL = {

@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -16,13 +16,6 @@
 
 <%@ include file="/html/taglib/aui/form/init.jsp" %>
 
-	<c:if test="<%= (checkboxNames != null) && !checkboxNames.isEmpty() %>">
-		<aui:input name="checkboxNames" type="hidden" value="<%= StringUtil.merge(checkboxNames) %>" />
-	</c:if>
-
-	<c:if test="<%= Validator.isNotNull(onSubmit) %>">
-		</fieldset>
-	</c:if>
 </form>
 
 <aui:script use="liferay-form">
@@ -47,8 +40,8 @@
 							{
 								body: <%= validatorTag.getBody() %>,
 								custom: <%= validatorTag.isCustom() %>,
-								errorMessage: '<%= UnicodeLanguageUtil.get(request, validatorTag.getErrorMessage()) %>',
-								fieldName: '<%= namespace + HtmlUtil.escapeJS(fieldName) %>',
+								errorMessage: '<%= UnicodeLanguageUtil.get(pageContext, validatorTag.getErrorMessage()) %>',
+								fieldName: '<%= namespace + fieldName %>',
 								validatorName: '<%= validatorTag.getName() %>'
 							}
 
@@ -68,8 +61,4 @@
 			</c:if>
 		}
 	);
-
-	<c:if test="<%= Validator.isNotNull(onSubmit) %>">
-		A.all('#<%= namespace + name %> .input-container').removeAttribute('disabled');
-	</c:if>
 </aui:script>

@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -17,8 +17,6 @@
 <%@ include file="/html/portlet/document_library/init.jsp" %>
 
 <%
-String backURL = ParamUtil.getString(request, "backURL");
-
 FileEntry fileEntry = (FileEntry)request.getAttribute(WebKeys.DOCUMENT_LIBRARY_FILE_ENTRY);
 
 long repositoryId = BeanParamUtil.getLong(fileEntry, request, "repositoryId");
@@ -46,7 +44,7 @@ if ((folder != null) && (folder.getModel() instanceof DLFolder)) {
 	inherited = !dlFolder.isOverrideFileEntryTypes();
 }
 
-List<DLFileEntryType> fileEntryTypes = DLFileEntryTypeServiceUtil.getFolderFileEntryTypes(PortalUtil.getCurrentAndAncestorSiteGroupIds(scopeGroupId), folderId, inherited);
+List<DLFileEntryType> fileEntryTypes = DLFileEntryTypeServiceUtil.getFolderFileEntryTypes(PortalUtil.getSiteAndCompanyGroupIds(themeDisplay), folderId, inherited);
 
 FileVersion fileVersion = null;
 
@@ -79,23 +77,13 @@ if (fileEntryTypeId > 0) {
 }
 
 long assetClassPK = 0;
-
-DLEditFileEntryDisplayContext dlEditFileEntryDisplayContext = null;
-
-if (fileEntry == null) {
-	dlEditFileEntryDisplayContext = DLEditFileEntryDisplayContextUtil.getDLEditFileEntryDisplayContext(request, response, fileEntryType);
-}
-else {
-	dlEditFileEntryDisplayContext = DLEditFileEntryDisplayContextUtil.getDLEditFileEntryDisplayContext(request, response, fileEntry);
-}
 %>
 
-<portlet:actionURL var="uploadMultipleFileEntriesURL">
-	<portlet:param name="struts_action" value="document_library/upload_multiple_file_entries" />
-	<portlet:param name="backURL" value="<%= backURL %>" />
+<portlet:actionURL var="editMultipleFileEntriesURL">
+	<portlet:param name="struts_action" value="document_library/edit_file_entry" />
 </portlet:actionURL>
 
-<aui:form action="<%= uploadMultipleFileEntriesURL %>" method="post" name="fm2" onSubmit='<%= "event.preventDefault(); " + liferayPortletResponse.getNamespace() + "updateMultipleFiles();" %>'>
+<aui:form action="<%= editMultipleFileEntriesURL %>" method="post" name="fm2" onSubmit='<%= "event.preventDefault(); " + liferayPortletResponse.getNamespace() + "updateMultipleFiles();" %>'>
 	<aui:input name="<%= Constants.CMD %>" type="hidden" value="<%= Constants.ADD_MULTIPLE %>" />
 	<aui:input name="repositoryId" type="hidden" value="<%= String.valueOf(repositoryId) %>" />
 	<aui:input name="folderId" type="hidden" value="<%= String.valueOf(folderId) %>" />
@@ -121,14 +109,14 @@ else {
 
 					<div class="document-type-selector">
 
-						<liferay-ui:icon-menu direction="down" icon="../aui/file-alt" id="groupSelector" message='<%= (fileEntryTypeId > 0) ? HtmlUtil.escape(fileEntryType.getName(locale)) : "basic-document" %>' showWhenSingleIcon="<%= true %>">
+						<liferay-ui:icon-menu direction="down" icon='<%= themeDisplay.getPathThemeImages() + "/common/copy.png" %>' id="groupSelector" message='<%= (fileEntryTypeId > 0) ? HtmlUtil.escape(fileEntryType.getName(locale)) : "basic-document" %>' showWhenSingleIcon="<%= true %>">
 
 							<%
 							for (DLFileEntryType curFileEntryType : fileEntryTypes) {
 							%>
 
 								<liferay-portlet:resourceURL copyCurrentRenderParameters="<%= false %>" var="viewFileEntryTypeURL">
-									<portlet:param name="struts_action" value="/document_library/upload_multiple_file_entries" />
+									<portlet:param name="struts_action" value="/document_library/edit_file_entry" />
 									<portlet:param name="repositoryId" value="<%= String.valueOf(repositoryId) %>" />
 									<portlet:param name="folderId" value="<%= String.valueOf(folderId) %>" />
 									<portlet:param name="fileEntryTypeId" value="<%= String.valueOf(curFileEntryType.getFileEntryTypeId()) %>" />
@@ -136,8 +124,8 @@ else {
 
 								<liferay-ui:icon
 									cssClass="upload-multiple-document-types"
-									iconCssClass="icon-file-alt"
 									id='<%= "fileEntryType_" + String.valueOf(curFileEntryType.getFileEntryTypeId()) %>'
+									image="copy"
 									message="<%= HtmlUtil.escape(curFileEntryType.getName(locale)) %>"
 									method="get"
 									url="<%= viewFileEntryTypeURL %>"
@@ -204,7 +192,7 @@ else {
 										function() {
 											var selectedFilesCountContainer = A.one('.selected-files-count');
 
-											var totalFiles = A.all('input[name=<portlet:namespace />selectUploadedFile]');
+											var totalFiles = A.all('input[name=<portlet:namespace />selectUploadedFileCheckbox]');
 
 											var totalFilesCount = totalFiles.size();
 
@@ -216,10 +204,10 @@ else {
 
 											if (selectedFilesCount > 1) {
 												if (selectedFilesCount == totalFilesCount) {
-													selectedFilesText = '<%= UnicodeLanguageUtil.get(request, "all-files-selected") %>';
+													selectedFilesText = '<%= UnicodeLanguageUtil.get(pageContext, "all-files-selected") %>';
 												}
 												else {
-													selectedFilesText = A.Lang.sub('<%= UnicodeLanguageUtil.get(request, "x-files-selected") %>', [selectedFilesCount]);
+													selectedFilesText = A.Lang.sub('<%= UnicodeLanguageUtil.get(pageContext, "x-files-selected") %>', [selectedFilesCount]);
 												}
 											}
 
@@ -249,7 +237,7 @@ else {
 		<c:if test="<%= (folder == null) || folder.isSupportsSocial() %>">
 			<liferay-ui:panel cssClass="categorization-panel" defaultState="closed" extended="<%= false %>" id="dlFileEntryCategorizationPanel" persistState="<%= true %>" title="categorization">
 				<aui:fieldset>
-					<aui:input classPK="<%= assetClassPK %>" classTypePK="<%= fileEntryTypeId %>" model="<%= DLFileEntry.class %>" name="categories" type="assetCategories" />
+					<aui:input classPK="<%= assetClassPK %>" model="<%= DLFileEntry.class %>" name="categories" type="assetCategories" />
 
 					<aui:input classPK="<%= assetClassPK %>" model="<%= DLFileEntry.class %>" name="tags" type="assetTags" />
 				</aui:fieldset>
@@ -265,7 +253,7 @@ else {
 
 	<span id="<portlet:namespace />selectedFileNameContainer"></span>
 
-	<aui:button type="submit" value="<%= dlEditFileEntryDisplayContext.getPublishButtonLabel() %>" />
+	<aui:button type="submit" />
 </aui:form>
 
 <aui:script>

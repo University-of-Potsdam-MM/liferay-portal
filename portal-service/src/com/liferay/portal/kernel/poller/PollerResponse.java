@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,20 +18,18 @@ import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.messaging.Message;
 
-import java.io.Serializable;
-
 /**
  * @author Brian Wing Shun Chan
  * @author Edward Han
  */
-public interface PollerResponse extends Serializable {
+public interface PollerResponse {
 
 	public static final String POLLER_HINT_HIGH_CONNECTIVITY =
 		"pollerHintHighConnectivity";
 
-	public void close(
-		Message message, PollerHeader pollerHeader, String portletId,
-		String chunkId);
+	public void close();
+
+	public void createResponseMessage(Message message);
 
 	public PollerHeader getPollerHeader();
 

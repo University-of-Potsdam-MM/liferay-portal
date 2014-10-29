@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -17,6 +17,8 @@ package com.liferay.portal.kernel.util;
 import com.liferay.portal.kernel.io.unsync.UnsyncByteArrayInputStream;
 import com.liferay.portal.kernel.io.unsync.UnsyncByteArrayOutputStream;
 import com.liferay.portal.kernel.io.unsync.UnsyncStringReader;
+import com.liferay.portal.kernel.nio.charset.CharsetDecoderUtil;
+import com.liferay.portal.kernel.nio.charset.CharsetEncoderUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,9 +27,15 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.Reader;
 
+import java.lang.reflect.Method;
+
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.CharsetDecoder;
+import java.nio.charset.CharsetEncoder;
+
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -49,18 +57,22 @@ public class PropertiesUtil {
 		}
 	}
 
-	public static Properties fromMap(Map<String, ?> map) {
+	public static Properties fromMap(Map<String, String> map) {
 		Properties properties = new Properties();
 
-		for (Map.Entry<String, ?> entry : map.entrySet()) {
+		for (Map.Entry<String, String> entry : map.entrySet()) {
 			String key = entry.getKey();
-			Object value = entry.getValue();
+			String value = entry.getValue();
 
-			if ((value != null) && (value instanceof String)) {
-				properties.setProperty(key, (String)value);
+			if (value != null) {
+				properties.setProperty(key, value);
 			}
 		}
 
+		return properties;
+	}
+
+	public static Properties fromMap(Properties properties) {
 		return properties;
 	}
 
@@ -131,7 +143,12 @@ public class PropertiesUtil {
 	public static Properties load(InputStream is, String charsetName)
 		throws IOException {
 
-		return load(new InputStreamReader(is, charsetName));
+		if (JavaDetector.isJDK6()) {
+			return loadJDK6(new InputStreamReader(is, charsetName));
+		}
+		else {
+			return loadJDK5(is, charsetName);
+		}
 	}
 
 	public static void load(Properties properties, String s)
@@ -172,16 +189,79 @@ public class PropertiesUtil {
 		}
 	}
 
-	public static Properties load(Reader reader) throws IOException {
+	public static Properties load(String s) throws IOException {
+		return load(s, StringPool.UTF8);
+	}
+
+	public static Properties load(String s, String charsetName)
+		throws IOException {
+
+		if (JavaDetector.isJDK6()) {
+			return loadJDK6(new UnsyncStringReader(s));
+		}
+
+		ByteBuffer byteBuffer = CharsetEncoderUtil.encode(charsetName, s);
+
+		InputStream is = new UnsyncByteArrayInputStream(
+			byteBuffer.array(), byteBuffer.arrayOffset(), byteBuffer.limit());
+
+		return loadJDK5(is, charsetName);
+	}
+
+	public static Properties loadJDK5(InputStream is, String charsetName)
+		throws IOException {
+
+		Properties iso8859_1Properties = new Properties();
+
+		iso8859_1Properties.load(is);
+
 		Properties properties = new Properties();
 
-		properties.load(reader);
+		CharsetEncoder charsetEncoder = CharsetEncoderUtil.getCharsetEncoder(
+			StringPool.ISO_8859_1);
+
+		CharsetDecoder charsetDecoder = CharsetDecoderUtil.getCharsetDecoder(
+			charsetName);
+
+		for (Map.Entry<Object, Object> entry : iso8859_1Properties.entrySet()) {
+			String key = (String)entry.getKey();
+			String value = (String)entry.getValue();
+
+			CharBuffer keyCharBuffer = charsetDecoder.decode(
+				charsetEncoder.encode(CharBuffer.wrap(key)));
+			CharBuffer valueCharBuffer = charsetDecoder.decode(
+				charsetEncoder.encode(CharBuffer.wrap(value)));
+
+			properties.put(
+				keyCharBuffer.toString(), valueCharBuffer.toString());
+		}
 
 		return properties;
 	}
 
-	public static Properties load(String s) throws IOException {
-		return load(new UnsyncStringReader(s));
+	public static Properties loadJDK6(Reader reader) throws IOException {
+		try {
+			Properties properties = new Properties();
+
+			if (_jdk6LoadMethod == null) {
+				_jdk6LoadMethod = ReflectionUtil.getDeclaredMethod(
+					Properties.class, "load", Reader.class);
+			}
+
+			_jdk6LoadMethod.invoke(properties, reader);
+
+			return properties;
+		}
+		catch (Exception e) {
+			Throwable cause = e.getCause();
+
+			if (cause instanceof IOException) {
+				throw (IOException)cause;
+			}
+
+			throw new IllegalStateException(
+				"Failed to invoke java.util.Properties.load(Reader reader)", e);
+		}
 	}
 
 	public static void merge(Properties properties1, Properties properties2) {
@@ -194,22 +274,6 @@ public class PropertiesUtil {
 
 			properties1.setProperty(key, value);
 		}
-	}
-
-	@SuppressWarnings("rawtypes")
-	public static Map toMap(Properties properties) {
-		Map<String, String> propertiesMap = new HashMap<String, String>();
-
-		Enumeration<?> enumeration = properties.propertyNames();
-
-		while (enumeration.hasMoreElements()) {
-			String key = (String)enumeration.nextElement();
-			String value = properties.getProperty(key);
-
-			propertiesMap.put(key, value);
-		}
-
-		return propertiesMap;
 	}
 
 	public static String toString(Properties properties) {
@@ -266,5 +330,7 @@ public class PropertiesUtil {
 			}
 		}
 	}
+
+	private static Method _jdk6LoadMethod;
 
 }

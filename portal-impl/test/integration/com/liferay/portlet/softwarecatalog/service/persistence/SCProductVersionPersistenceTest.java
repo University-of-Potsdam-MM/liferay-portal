@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,6 +14,7 @@
 
 package com.liferay.portlet.softwarecatalog.service.persistence;
 
+import com.liferay.portal.kernel.bean.PortalBeanLocatorUtil;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
@@ -22,77 +23,68 @@ import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.template.TemplateException;
-import com.liferay.portal.kernel.template.TemplateManagerUtil;
-import com.liferay.portal.kernel.transaction.Propagation;
+import com.liferay.portal.kernel.test.ExecutionTestListeners;
 import com.liferay.portal.kernel.util.IntegerWrapper;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.OrderByComparatorFactoryUtil;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.test.TransactionalTestRule;
-import com.liferay.portal.test.runners.PersistenceIntegrationJUnitTestRunner;
-import com.liferay.portal.tools.DBUpgrader;
+import com.liferay.portal.service.ServiceTestUtil;
+import com.liferay.portal.service.persistence.BasePersistence;
+import com.liferay.portal.service.persistence.PersistenceExecutionTestListener;
+import com.liferay.portal.test.LiferayPersistenceIntegrationJUnitTestRunner;
+import com.liferay.portal.test.persistence.TransactionalPersistenceAdvice;
 import com.liferay.portal.util.PropsValues;
-import com.liferay.portal.util.test.RandomTestUtil;
 
 import com.liferay.portlet.softwarecatalog.NoSuchProductVersionException;
 import com.liferay.portlet.softwarecatalog.model.SCProductVersion;
 import com.liferay.portlet.softwarecatalog.model.impl.SCProductVersionModelImpl;
-import com.liferay.portlet.softwarecatalog.service.SCProductVersionLocalServiceUtil;
 
 import org.junit.After;
 import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
 import org.junit.Test;
 
 import org.junit.runner.RunWith;
 
 import java.io.Serializable;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 /**
- * @generated
+ * @author Brian Wing Shun Chan
  */
-@RunWith(PersistenceIntegrationJUnitTestRunner.class)
+@ExecutionTestListeners(listeners =  {
+	PersistenceExecutionTestListener.class})
+@RunWith(LiferayPersistenceIntegrationJUnitTestRunner.class)
 public class SCProductVersionPersistenceTest {
-	@ClassRule
-	public static TransactionalTestRule transactionalTestRule = new TransactionalTestRule(Propagation.REQUIRED);
-
-	@BeforeClass
-	public static void setupClass() throws TemplateException {
-		try {
-			DBUpgrader.upgrade();
-		}
-		catch (Exception e) {
-			_log.error(e, e);
-		}
-
-		TemplateManagerUtil.init();
-	}
-
 	@After
 	public void tearDown() throws Exception {
-		Iterator<SCProductVersion> iterator = _scProductVersions.iterator();
+		Map<Serializable, BasePersistence<?>> basePersistences = _transactionalPersistenceAdvice.getBasePersistences();
 
-		while (iterator.hasNext()) {
-			_persistence.remove(iterator.next());
+		Set<Serializable> primaryKeys = basePersistences.keySet();
 
-			iterator.remove();
+		for (Serializable primaryKey : primaryKeys) {
+			BasePersistence<?> basePersistence = basePersistences.get(primaryKey);
+
+			try {
+				basePersistence.remove(primaryKey);
+			}
+			catch (Exception e) {
+				if (_log.isDebugEnabled()) {
+					_log.debug("The model with primary key " + primaryKey +
+						" was already deleted");
+				}
+			}
 		}
+
+		_transactionalPersistenceAdvice.reset();
 	}
 
 	@Test
 	public void testCreate() throws Exception {
-		long pk = RandomTestUtil.nextLong();
+		long pk = ServiceTestUtil.nextLong();
 
 		SCProductVersion scProductVersion = _persistence.create(pk);
 
@@ -119,33 +111,33 @@ public class SCProductVersionPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
+		long pk = ServiceTestUtil.nextLong();
 
 		SCProductVersion newSCProductVersion = _persistence.create(pk);
 
-		newSCProductVersion.setCompanyId(RandomTestUtil.nextLong());
+		newSCProductVersion.setCompanyId(ServiceTestUtil.nextLong());
 
-		newSCProductVersion.setUserId(RandomTestUtil.nextLong());
+		newSCProductVersion.setUserId(ServiceTestUtil.nextLong());
 
-		newSCProductVersion.setUserName(RandomTestUtil.randomString());
+		newSCProductVersion.setUserName(ServiceTestUtil.randomString());
 
-		newSCProductVersion.setCreateDate(RandomTestUtil.nextDate());
+		newSCProductVersion.setCreateDate(ServiceTestUtil.nextDate());
 
-		newSCProductVersion.setModifiedDate(RandomTestUtil.nextDate());
+		newSCProductVersion.setModifiedDate(ServiceTestUtil.nextDate());
 
-		newSCProductVersion.setProductEntryId(RandomTestUtil.nextLong());
+		newSCProductVersion.setProductEntryId(ServiceTestUtil.nextLong());
 
-		newSCProductVersion.setVersion(RandomTestUtil.randomString());
+		newSCProductVersion.setVersion(ServiceTestUtil.randomString());
 
-		newSCProductVersion.setChangeLog(RandomTestUtil.randomString());
+		newSCProductVersion.setChangeLog(ServiceTestUtil.randomString());
 
-		newSCProductVersion.setDownloadPageURL(RandomTestUtil.randomString());
+		newSCProductVersion.setDownloadPageURL(ServiceTestUtil.randomString());
 
-		newSCProductVersion.setDirectDownloadURL(RandomTestUtil.randomString());
+		newSCProductVersion.setDirectDownloadURL(ServiceTestUtil.randomString());
 
-		newSCProductVersion.setRepoStoreArtifact(RandomTestUtil.randomBoolean());
+		newSCProductVersion.setRepoStoreArtifact(ServiceTestUtil.randomBoolean());
 
-		_scProductVersions.add(_persistence.update(newSCProductVersion));
+		_persistence.update(newSCProductVersion);
 
 		SCProductVersion existingSCProductVersion = _persistence.findByPrimaryKey(newSCProductVersion.getPrimaryKey());
 
@@ -178,32 +170,6 @@ public class SCProductVersionPersistenceTest {
 	}
 
 	@Test
-	public void testCountByProductEntryId() {
-		try {
-			_persistence.countByProductEntryId(RandomTestUtil.nextLong());
-
-			_persistence.countByProductEntryId(0L);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByDirectDownloadURL() {
-		try {
-			_persistence.countByDirectDownloadURL(StringPool.BLANK);
-
-			_persistence.countByDirectDownloadURL(StringPool.NULL);
-
-			_persistence.countByDirectDownloadURL((String)null);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
 	public void testFindByPrimaryKeyExisting() throws Exception {
 		SCProductVersion newSCProductVersion = addSCProductVersion();
 
@@ -214,7 +180,7 @@ public class SCProductVersionPersistenceTest {
 
 	@Test
 	public void testFindByPrimaryKeyMissing() throws Exception {
-		long pk = RandomTestUtil.nextLong();
+		long pk = ServiceTestUtil.nextLong();
 
 		try {
 			_persistence.findByPrimaryKey(pk);
@@ -237,7 +203,7 @@ public class SCProductVersionPersistenceTest {
 		}
 	}
 
-	protected OrderByComparator<SCProductVersion> getOrderByComparator() {
+	protected OrderByComparator getOrderByComparator() {
 		return OrderByComparatorFactoryUtil.create("SCProductVersion",
 			"productVersionId", true, "companyId", true, "userId", true,
 			"userName", true, "createDate", true, "modifiedDate", true,
@@ -257,7 +223,7 @@ public class SCProductVersionPersistenceTest {
 
 	@Test
 	public void testFetchByPrimaryKeyMissing() throws Exception {
-		long pk = RandomTestUtil.nextLong();
+		long pk = ServiceTestUtil.nextLong();
 
 		SCProductVersion missingSCProductVersion = _persistence.fetchByPrimaryKey(pk);
 
@@ -265,103 +231,19 @@ public class SCProductVersionPersistenceTest {
 	}
 
 	@Test
-	public void testFetchByPrimaryKeysWithMultiplePrimaryKeysWhereAllPrimaryKeysExist()
-		throws Exception {
-		SCProductVersion newSCProductVersion1 = addSCProductVersion();
-		SCProductVersion newSCProductVersion2 = addSCProductVersion();
-
-		Set<Serializable> primaryKeys = new HashSet<Serializable>();
-
-		primaryKeys.add(newSCProductVersion1.getPrimaryKey());
-		primaryKeys.add(newSCProductVersion2.getPrimaryKey());
-
-		Map<Serializable, SCProductVersion> scProductVersions = _persistence.fetchByPrimaryKeys(primaryKeys);
-
-		Assert.assertEquals(2, scProductVersions.size());
-		Assert.assertEquals(newSCProductVersion1,
-			scProductVersions.get(newSCProductVersion1.getPrimaryKey()));
-		Assert.assertEquals(newSCProductVersion2,
-			scProductVersions.get(newSCProductVersion2.getPrimaryKey()));
-	}
-
-	@Test
-	public void testFetchByPrimaryKeysWithMultiplePrimaryKeysWhereNoPrimaryKeysExist()
-		throws Exception {
-		long pk1 = RandomTestUtil.nextLong();
-
-		long pk2 = RandomTestUtil.nextLong();
-
-		Set<Serializable> primaryKeys = new HashSet<Serializable>();
-
-		primaryKeys.add(pk1);
-		primaryKeys.add(pk2);
-
-		Map<Serializable, SCProductVersion> scProductVersions = _persistence.fetchByPrimaryKeys(primaryKeys);
-
-		Assert.assertTrue(scProductVersions.isEmpty());
-	}
-
-	@Test
-	public void testFetchByPrimaryKeysWithMultiplePrimaryKeysWhereSomePrimaryKeysExist()
-		throws Exception {
-		SCProductVersion newSCProductVersion = addSCProductVersion();
-
-		long pk = RandomTestUtil.nextLong();
-
-		Set<Serializable> primaryKeys = new HashSet<Serializable>();
-
-		primaryKeys.add(newSCProductVersion.getPrimaryKey());
-		primaryKeys.add(pk);
-
-		Map<Serializable, SCProductVersion> scProductVersions = _persistence.fetchByPrimaryKeys(primaryKeys);
-
-		Assert.assertEquals(1, scProductVersions.size());
-		Assert.assertEquals(newSCProductVersion,
-			scProductVersions.get(newSCProductVersion.getPrimaryKey()));
-	}
-
-	@Test
-	public void testFetchByPrimaryKeysWithNoPrimaryKeys()
-		throws Exception {
-		Set<Serializable> primaryKeys = new HashSet<Serializable>();
-
-		Map<Serializable, SCProductVersion> scProductVersions = _persistence.fetchByPrimaryKeys(primaryKeys);
-
-		Assert.assertTrue(scProductVersions.isEmpty());
-	}
-
-	@Test
-	public void testFetchByPrimaryKeysWithOnePrimaryKey()
-		throws Exception {
-		SCProductVersion newSCProductVersion = addSCProductVersion();
-
-		Set<Serializable> primaryKeys = new HashSet<Serializable>();
-
-		primaryKeys.add(newSCProductVersion.getPrimaryKey());
-
-		Map<Serializable, SCProductVersion> scProductVersions = _persistence.fetchByPrimaryKeys(primaryKeys);
-
-		Assert.assertEquals(1, scProductVersions.size());
-		Assert.assertEquals(newSCProductVersion,
-			scProductVersions.get(newSCProductVersion.getPrimaryKey()));
-	}
-
-	@Test
 	public void testActionableDynamicQuery() throws Exception {
 		final IntegerWrapper count = new IntegerWrapper();
 
-		ActionableDynamicQuery actionableDynamicQuery = SCProductVersionLocalServiceUtil.getActionableDynamicQuery();
-
-		actionableDynamicQuery.setPerformActionMethod(new ActionableDynamicQuery.PerformActionMethod() {
+		ActionableDynamicQuery actionableDynamicQuery = new SCProductVersionActionableDynamicQuery() {
 				@Override
-				public void performAction(Object object) {
+				protected void performAction(Object object) {
 					SCProductVersion scProductVersion = (SCProductVersion)object;
 
 					Assert.assertNotNull(scProductVersion);
 
 					count.increment();
 				}
-			});
+			};
 
 		actionableDynamicQuery.performActions();
 
@@ -394,7 +276,7 @@ public class SCProductVersionPersistenceTest {
 				SCProductVersion.class.getClassLoader());
 
 		dynamicQuery.add(RestrictionsFactoryUtil.eq("productVersionId",
-				RandomTestUtil.nextLong()));
+				ServiceTestUtil.nextLong()));
 
 		List<SCProductVersion> result = _persistence.findWithDynamicQuery(dynamicQuery);
 
@@ -435,7 +317,7 @@ public class SCProductVersionPersistenceTest {
 				"productVersionId"));
 
 		dynamicQuery.add(RestrictionsFactoryUtil.in("productVersionId",
-				new Object[] { RandomTestUtil.nextLong() }));
+				new Object[] { ServiceTestUtil.nextLong() }));
 
 		List<Object> result = _persistence.findWithDynamicQuery(dynamicQuery);
 
@@ -460,38 +342,38 @@ public class SCProductVersionPersistenceTest {
 	}
 
 	protected SCProductVersion addSCProductVersion() throws Exception {
-		long pk = RandomTestUtil.nextLong();
+		long pk = ServiceTestUtil.nextLong();
 
 		SCProductVersion scProductVersion = _persistence.create(pk);
 
-		scProductVersion.setCompanyId(RandomTestUtil.nextLong());
+		scProductVersion.setCompanyId(ServiceTestUtil.nextLong());
 
-		scProductVersion.setUserId(RandomTestUtil.nextLong());
+		scProductVersion.setUserId(ServiceTestUtil.nextLong());
 
-		scProductVersion.setUserName(RandomTestUtil.randomString());
+		scProductVersion.setUserName(ServiceTestUtil.randomString());
 
-		scProductVersion.setCreateDate(RandomTestUtil.nextDate());
+		scProductVersion.setCreateDate(ServiceTestUtil.nextDate());
 
-		scProductVersion.setModifiedDate(RandomTestUtil.nextDate());
+		scProductVersion.setModifiedDate(ServiceTestUtil.nextDate());
 
-		scProductVersion.setProductEntryId(RandomTestUtil.nextLong());
+		scProductVersion.setProductEntryId(ServiceTestUtil.nextLong());
 
-		scProductVersion.setVersion(RandomTestUtil.randomString());
+		scProductVersion.setVersion(ServiceTestUtil.randomString());
 
-		scProductVersion.setChangeLog(RandomTestUtil.randomString());
+		scProductVersion.setChangeLog(ServiceTestUtil.randomString());
 
-		scProductVersion.setDownloadPageURL(RandomTestUtil.randomString());
+		scProductVersion.setDownloadPageURL(ServiceTestUtil.randomString());
 
-		scProductVersion.setDirectDownloadURL(RandomTestUtil.randomString());
+		scProductVersion.setDirectDownloadURL(ServiceTestUtil.randomString());
 
-		scProductVersion.setRepoStoreArtifact(RandomTestUtil.randomBoolean());
+		scProductVersion.setRepoStoreArtifact(ServiceTestUtil.randomBoolean());
 
-		_scProductVersions.add(_persistence.update(scProductVersion));
+		_persistence.update(scProductVersion);
 
 		return scProductVersion;
 	}
 
 	private static Log _log = LogFactoryUtil.getLog(SCProductVersionPersistenceTest.class);
-	private List<SCProductVersion> _scProductVersions = new ArrayList<SCProductVersion>();
-	private SCProductVersionPersistence _persistence = SCProductVersionUtil.getPersistence();
+	private SCProductVersionPersistence _persistence = (SCProductVersionPersistence)PortalBeanLocatorUtil.locate(SCProductVersionPersistence.class.getName());
+	private TransactionalPersistenceAdvice _transactionalPersistenceAdvice = (TransactionalPersistenceAdvice)PortalBeanLocatorUtil.locate(TransactionalPersistenceAdvice.class.getName());
 }

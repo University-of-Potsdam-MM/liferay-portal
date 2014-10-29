@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -20,13 +20,12 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.StreamUtil;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 import java.net.URL;
 import java.net.URLClassLoader;
-
-import java.nio.file.Files;
 
 import java.security.ProtectionDomain;
 
@@ -46,7 +45,7 @@ public class WeavingClassLoader extends URLClassLoader {
 
 		_dumpDir = dumpDir;
 
-		_urlWeavingAdapter = new URLWeavingAdapter(urls, aspectClasses);
+		_urlWeavingAdaptor = new URLWeavingAdaptor(urls, aspectClasses);
 	}
 
 	@Override
@@ -62,13 +61,14 @@ public class WeavingClassLoader extends URLClassLoader {
 
 				// It may be a generated inner class
 
-				data = _urlWeavingAdapter.removeGeneratedClassDate(name);
+				data = _urlWeavingAdaptor.removeGeneratedClassDate(name);
 			}
 			else {
 				UnsyncByteArrayOutputStream unsyncByteArrayOutputStream =
 					new UnsyncByteArrayOutputStream();
 
-				StreamUtil.transfer(inputStream, unsyncByteArrayOutputStream);
+				StreamUtil.transfer(
+					inputStream, unsyncByteArrayOutputStream, true);
 
 				data = unsyncByteArrayOutputStream.toByteArray();
 			}
@@ -80,7 +80,7 @@ public class WeavingClassLoader extends URLClassLoader {
 			byte[] oldData = data;
 
 			try {
-				data = _urlWeavingAdapter.weaveClass(name, data, false);
+				data = _urlWeavingAdaptor.weaveClass(name, data, false);
 			}
 			catch (AbortException ae) {
 				if (_log.isWarnEnabled()) {
@@ -99,7 +99,12 @@ public class WeavingClassLoader extends URLClassLoader {
 
 				dumpDir.mkdirs();
 
-				Files.write(dumpFile.toPath(), data);
+				FileOutputStream fileOutputStream = new FileOutputStream(
+					dumpFile);
+
+				fileOutputStream.write(data);
+
+				fileOutputStream.close();
 
 				if (_log.isInfoEnabled()) {
 					_log.info(
@@ -147,6 +152,6 @@ public class WeavingClassLoader extends URLClassLoader {
 	private static Log _log = LogFactoryUtil.getLog(WeavingClassLoader.class);
 
 	private File _dumpDir;
-	private URLWeavingAdapter _urlWeavingAdapter;
+	private URLWeavingAdaptor _urlWeavingAdaptor;
 
 }

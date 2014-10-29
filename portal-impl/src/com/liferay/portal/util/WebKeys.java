@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -43,8 +43,6 @@ public class WebKeys implements com.liferay.portal.kernel.util.WebKeys {
 
 	public static final String ASSET_VOCABULARY = "ASSET_VOCABULARY";
 
-	public static final String AVAILABLE_LOCALES = "AVAILABLE_LOCALES";
-
 	public static final String BASIC_AUTH_ENABLED = "BASIC_AUTH_ENABLED";
 
 	public static final String BLOGS_CATEGORY = "BLOGS_CATEGORY";
@@ -87,8 +85,6 @@ public class WebKeys implements com.liferay.portal.kernel.util.WebKeys {
 
 	public static final String DIFF_RESULTS = "DIFF_RESULTS";
 
-	public static final String DIFF_VERSION = "DIFF_VERSION";
-
 	public static final String DOCUMENT_LIBRARY_FILE_ENTRIES = "DOCUMENT_LIBRARY_FILE_ENTRIES";
 
 	public static final String DOCUMENT_LIBRARY_FILE_ENTRY = "DOCUMENT_LIBRARY_FILE_ENTRY";
@@ -123,8 +119,6 @@ public class WebKeys implements com.liferay.portal.kernel.util.WebKeys {
 
 	public static final String EXPANDO_COLUMN = "EXPANDO_COLUMN";
 
-	public static final String EXPORT_IMPORT_CONFIGURATION_ID = "EXPORT_IMPORT_CONFIGURATION_ID";
-
 	public static final String FACEBOOK_ACCESS_TOKEN = "FACEBOOK_ACCESS_TOKEN";
 
 	public static final String FACEBOOK_CANVAS_PAGE_URL = "FACEBOOK_CANVAS_PAGE_URL";
@@ -147,11 +141,15 @@ public class WebKeys implements com.liferay.portal.kernel.util.WebKeys {
 
 	public static final String GOOGLE_GADGET = "GOOGLE_GADGET";
 
+	public static final String GROUP = "GROUP";
+
 	public static final String HTTPS_INITIAL = "HTTPS_INITIAL";
 
 	public static final String I18N_LANGUAGE_ID = "I18N_LANGUAGE_ID";
 
 	public static final String I18N_PATH = "I18N_PATH";
+
+	public static final String IFRAME_SRC = "IFRAME_SRC";
 
 	public static final String JOURNAL_ARTICLE_CONTENT = "JOURNAL_ARTICLE_CONTENT";
 
@@ -211,8 +209,6 @@ public class WebKeys implements com.liferay.portal.kernel.util.WebKeys {
 
 	public static final String JOURNAL_TEMPLATE_ID = "JOURNAL_TEMPLATE_ID";
 
-	public static final String LANGUAGE_ID = "LANGUAGE_ID";
-
 	@Distributed
 	public static final String LAYOUT_ASSET_ENTRY = "LIFERAY_SHARED_LAYOUT_ASSET_ENTRY";
 
@@ -220,7 +216,7 @@ public class WebKeys implements com.liferay.portal.kernel.util.WebKeys {
 
 	public static final String LAYOUT_DEFAULT = "LAYOUT_DEFAULT";
 
-	public static final String LAYOUT_DESCRIPTIONS = "LAYOUT_DESCRIPTIONS";
+	public static final String LAYOUT_LISTER_LIST = "LAYOUT_LISTER_LIST";
 
 	public static final String LAYOUT_PORTLETS = "LAYOUT_PORTLETS";
 
@@ -326,6 +322,8 @@ public class WebKeys implements com.liferay.portal.kernel.util.WebKeys {
 
 	public static final String PHONE = "PHONE";
 
+	public static final String POLLS_QUESTION = "POLLS_QUESTION";
+
 	public static final String PORTAL_PREFERENCES = "PORTAL_PREFERENCES";
 
 	public static final String PORTAL_REQUEST_DATA_SAMPLE = "PORTAL_REQUEST_DATA_SAMPLE";
@@ -333,6 +331,8 @@ public class WebKeys implements com.liferay.portal.kernel.util.WebKeys {
 	public static final String PORTAL_RESILIENCY_ACTION = "PORTAL_RESILIENCY_ACTION";
 
 	public static final String PORTLET_AJAX_RENDER = "PORTLET_AJAX_RENDER";
+
+	public static final String PORTLET_BREADCRUMBS = "LIFERAY_SHARED_PORTLET_BREADCRUMBS";
 
 	public static final String PORTLET_CATEGORY = "PORTLET_CATEGORY";
 

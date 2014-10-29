@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -24,15 +24,19 @@ import com.liferay.portal.kernel.transaction.Transactional;
 @Transactional(rollbackFor = {PortalException.class, SystemException.class})
 public interface CyrusService {
 
-	public void addUser(long userId, String emailAddress, String password);
+	public void addUser(long userId, String emailAddress, String password)
+		throws SystemException;
 
-	public void deleteEmailAddress(long companyId, long userId);
+	public void deleteEmailAddress(long companyId, long userId)
+		throws SystemException;
 
-	public void deleteUser(long userId);
+	public void deleteUser(long userId) throws SystemException;
 
 	public void updateEmailAddress(
-		long companyId, long userId, String emailAddress);
+			long companyId, long userId, String emailAddress)
+		throws SystemException;
 
-	public void updatePassword(long companyId, long userId, String password);
+	public void updatePassword(long companyId, long userId, String password)
+		throws SystemException;
 
 }

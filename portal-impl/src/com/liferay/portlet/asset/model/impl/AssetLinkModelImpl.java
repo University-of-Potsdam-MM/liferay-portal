@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,19 +14,16 @@
 
 package com.liferay.portlet.asset.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
-import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.CacheModel;
-import com.liferay.portal.model.User;
 import com.liferay.portal.model.impl.BaseModelImpl;
 import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.service.UserLocalServiceUtil;
+import com.liferay.portal.util.PortalUtil;
 
 import com.liferay.portlet.asset.model.AssetLink;
 import com.liferay.portlet.asset.model.AssetLinkModel;
@@ -54,7 +51,6 @@ import java.util.Map;
  * @see com.liferay.portlet.asset.model.AssetLinkModel
  * @generated
  */
-@ProviderType
 public class AssetLinkModelImpl extends BaseModelImpl<AssetLink>
 	implements AssetLinkModel {
 	/*
@@ -90,10 +86,10 @@ public class AssetLinkModelImpl extends BaseModelImpl<AssetLink>
 	public static final boolean COLUMN_BITMASK_ENABLED = GetterUtil.getBoolean(com.liferay.portal.util.PropsUtil.get(
 				"value.object.column.bitmask.enabled.com.liferay.portlet.asset.model.AssetLink"),
 			true);
-	public static final long ENTRYID1_COLUMN_BITMASK = 1L;
-	public static final long ENTRYID2_COLUMN_BITMASK = 2L;
-	public static final long TYPE_COLUMN_BITMASK = 4L;
-	public static final long WEIGHT_COLUMN_BITMASK = 8L;
+	public static long ENTRYID1_COLUMN_BITMASK = 1L;
+	public static long ENTRYID2_COLUMN_BITMASK = 2L;
+	public static long TYPE_COLUMN_BITMASK = 4L;
+	public static long WEIGHT_COLUMN_BITMASK = 8L;
 	public static final long LOCK_EXPIRATION_TIME = GetterUtil.getLong(com.liferay.portal.util.PropsUtil.get(
 				"lock.expiration.time.com.liferay.portlet.asset.model.AssetLink"));
 
@@ -143,9 +139,6 @@ public class AssetLinkModelImpl extends BaseModelImpl<AssetLink>
 		attributes.put("entryId2", getEntryId2());
 		attributes.put("type", getType());
 		attributes.put("weight", getWeight());
-
-		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
-		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
 
 		return attributes;
 	}
@@ -238,19 +231,13 @@ public class AssetLinkModelImpl extends BaseModelImpl<AssetLink>
 	}
 
 	@Override
-	public String getUserUuid() {
-		try {
-			User user = UserLocalServiceUtil.getUserById(getUserId());
-
-			return user.getUuid();
-		}
-		catch (PortalException pe) {
-			return StringPool.BLANK;
-		}
+	public String getUserUuid() throws SystemException {
+		return PortalUtil.getUserValue(getUserId(), "uuid", _userUuid);
 	}
 
 	@Override
 	public void setUserUuid(String userUuid) {
+		_userUuid = userUuid;
 	}
 
 	@Override
@@ -451,16 +438,6 @@ public class AssetLinkModelImpl extends BaseModelImpl<AssetLink>
 	}
 
 	@Override
-	public boolean isEntityCacheEnabled() {
-		return ENTITY_CACHE_ENABLED;
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return FINDER_CACHE_ENABLED;
-	}
-
-	@Override
 	public void resetOriginalValues() {
 		AssetLinkModelImpl assetLinkModelImpl = this;
 
@@ -594,13 +571,14 @@ public class AssetLinkModelImpl extends BaseModelImpl<AssetLink>
 		return sb.toString();
 	}
 
-	private static final ClassLoader _classLoader = AssetLink.class.getClassLoader();
-	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
+	private static ClassLoader _classLoader = AssetLink.class.getClassLoader();
+	private static Class<?>[] _escapedModelInterfaces = new Class[] {
 			AssetLink.class
 		};
 	private long _linkId;
 	private long _companyId;
 	private long _userId;
+	private String _userUuid;
 	private String _userName;
 	private Date _createDate;
 	private long _entryId1;

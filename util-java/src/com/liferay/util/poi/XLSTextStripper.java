@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -33,8 +33,6 @@ import org.apache.poi.ss.usermodel.Row;
 public class XLSTextStripper {
 
 	public XLSTextStripper(InputStream is) {
-		String text = null;
-
 		try {
 			StringBundler sb = new StringBundler();
 
@@ -82,13 +80,11 @@ public class XLSTextStripper {
 				}
 			}
 
-			text = sb.toString();
+			_text = sb.toString();
 		}
 		catch (Exception e) {
 			_log.error(e.getMessage());
 		}
-
-		_text = text;
 	}
 
 	public String getText() {
@@ -97,6 +93,6 @@ public class XLSTextStripper {
 
 	private static Log _log = LogFactoryUtil.getLog(XLSTextStripper.class);
 
-	private final String _text;
+	private String _text;
 
 }

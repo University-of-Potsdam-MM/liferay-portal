@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portlet.bookmarks.model.impl;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portlet.bookmarks.NoSuchFolderException;
 import com.liferay.portlet.bookmarks.model.BookmarksFolder;
 import com.liferay.portlet.bookmarks.model.BookmarksFolderConstants;
@@ -32,7 +33,9 @@ public class BookmarksFolderImpl extends BookmarksFolderBaseImpl {
 	}
 
 	@Override
-	public List<Long> getAncestorFolderIds() throws PortalException {
+	public List<Long> getAncestorFolderIds()
+		throws PortalException, SystemException {
+
 		List<Long> ancestorFolderIds = new ArrayList<Long>();
 
 		BookmarksFolder folder = this;
@@ -56,7 +59,9 @@ public class BookmarksFolderImpl extends BookmarksFolderBaseImpl {
 	}
 
 	@Override
-	public List<BookmarksFolder> getAncestors() throws PortalException {
+	public List<BookmarksFolder> getAncestors()
+		throws PortalException, SystemException {
+
 		List<BookmarksFolder> ancestors = new ArrayList<BookmarksFolder>();
 
 		BookmarksFolder folder = this;
@@ -80,7 +85,9 @@ public class BookmarksFolderImpl extends BookmarksFolderBaseImpl {
 	}
 
 	@Override
-	public BookmarksFolder getParentFolder() throws PortalException {
+	public BookmarksFolder getParentFolder()
+		throws PortalException, SystemException {
+
 		if (getParentFolderId() ==
 				BookmarksFolderConstants.DEFAULT_PARENT_FOLDER_ID) {
 

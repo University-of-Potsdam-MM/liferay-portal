@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,17 +15,14 @@
 package com.liferay.portal.util;
 
 import com.liferay.portal.kernel.util.LocaleUtil;
-import com.liferay.portal.kernel.util.Localization;
 import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.xml.Document;
 import com.liferay.portal.kernel.xml.DocumentException;
 import com.liferay.portal.kernel.xml.SAXReaderUtil;
-import com.liferay.portal.test.runners.LiferayIntegrationJUnitTestRunner;
+import com.liferay.portal.test.LiferayIntegrationJUnitTestRunner;
 import com.liferay.portlet.PortletPreferencesImpl;
-
-import java.lang.reflect.Field;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -34,11 +31,8 @@ import java.util.Map;
 
 import javax.portlet.PortletPreferences;
 
-import org.apache.commons.collections.map.ReferenceMap;
-
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -50,15 +44,6 @@ import org.springframework.mock.web.portlet.MockPortletRequest;
  */
 @RunWith(LiferayIntegrationJUnitTestRunner.class)
 public class LocalizationImplTest {
-
-	@BeforeClass
-	public static void setUpClass() throws Exception {
-		_cache = LocalizationImpl.class.getDeclaredField("_cache");
-
-		_cache.setAccessible(true);
-
-		_localization = LocalizationUtil.getLocalization();
-	}
 
 	@Before
 	public void setUp() throws Exception {
@@ -77,10 +62,6 @@ public class LocalizationImplTest {
 		sb.append("</root>");
 
 		_xml = sb.toString();
-
-		_cache.set(
-			_localization,
-			new ReferenceMap(ReferenceMap.SOFT, ReferenceMap.HARD));
 	}
 
 	@Test
@@ -150,45 +131,6 @@ public class LocalizationImplTest {
 		Assert.assertEquals(
 			_germanHello,
 			LocalizationUtil.getLocalization(xml, _germanLanguageId));
-	}
-
-	@Test
-	public void testLocalizationsXMLDefaultValue() {
-		String xml = StringPool.BLANK;
-
-		xml = LocalizationUtil.updateLocalization(
-			xml, "greeting", _englishHello, _englishLanguageId,
-			_englishLanguageId);
-		xml = LocalizationUtil.updateLocalization(
-			xml, "greeting", _germanHello, _germanLanguageId,
-			_englishLanguageId);
-
-		String defaultValue = "Default Value";
-
-		Assert.assertEquals(
-			defaultValue,
-			LocalizationUtil.getLocalization(
-				xml, _spanishLanguageId, false, defaultValue));
-		Assert.assertEquals(
-			_englishHello,
-			LocalizationUtil.getLocalization(
-				xml, _spanishLanguageId, true, defaultValue));
-	}
-
-	@Test
-	public void testLocalizationsXMLUseDefault() {
-		String xml = StringPool.BLANK;
-
-		xml = LocalizationUtil.updateLocalization(
-			xml, "greeting", _englishHello, _englishLanguageId,
-			_englishLanguageId);
-		xml = LocalizationUtil.updateLocalization(
-			xml, "greeting", _germanHello, _germanLanguageId,
-			_englishLanguageId);
-
-		Assert.assertEquals(
-			_englishHello,
-			LocalizationUtil.getLocalization(xml, _spanishLanguageId, true));
 	}
 
 	@Test
@@ -303,16 +245,11 @@ public class LocalizationImplTest {
 			LocalizationUtil.getLocalization(xml, _germanLanguageId, false));
 	}
 
-	private static Field _cache;
-	private static Localization _localization;
-
 	private String _englishHello = "Hello World";
 	private String _englishLanguageId = LocaleUtil.toLanguageId(LocaleUtil.US);
 	private String _germanHello = "Hallo Welt";
 	private String _germanLanguageId = LocaleUtil.toLanguageId(
 		LocaleUtil.GERMANY);
-	private String _spanishLanguageId = LocaleUtil.toLanguageId(
-		LocaleUtil.SPAIN);
 	private String _xml;
 
 }

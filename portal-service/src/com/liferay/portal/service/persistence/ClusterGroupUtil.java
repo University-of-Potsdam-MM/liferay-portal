@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,6 +18,7 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.bean.PortalBeanLocatorUtil;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ReferenceRegistry;
 import com.liferay.portal.model.ClusterGroup;
@@ -62,7 +63,8 @@ public class ClusterGroupUtil {
 	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#countWithDynamicQuery(DynamicQuery)
 	 */
-	public static long countWithDynamicQuery(DynamicQuery dynamicQuery) {
+	public static long countWithDynamicQuery(DynamicQuery dynamicQuery)
+		throws SystemException {
 		return getPersistence().countWithDynamicQuery(dynamicQuery);
 	}
 
@@ -70,7 +72,7 @@ public class ClusterGroupUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#findWithDynamicQuery(DynamicQuery)
 	 */
 	public static List<ClusterGroup> findWithDynamicQuery(
-		DynamicQuery dynamicQuery) {
+		DynamicQuery dynamicQuery) throws SystemException {
 		return getPersistence().findWithDynamicQuery(dynamicQuery);
 	}
 
@@ -78,7 +80,8 @@ public class ClusterGroupUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#findWithDynamicQuery(DynamicQuery, int, int)
 	 */
 	public static List<ClusterGroup> findWithDynamicQuery(
-		DynamicQuery dynamicQuery, int start, int end) {
+		DynamicQuery dynamicQuery, int start, int end)
+		throws SystemException {
 		return getPersistence().findWithDynamicQuery(dynamicQuery, start, end);
 	}
 
@@ -87,7 +90,7 @@ public class ClusterGroupUtil {
 	 */
 	public static List<ClusterGroup> findWithDynamicQuery(
 		DynamicQuery dynamicQuery, int start, int end,
-		OrderByComparator<ClusterGroup> orderByComparator) {
+		OrderByComparator orderByComparator) throws SystemException {
 		return getPersistence()
 				   .findWithDynamicQuery(dynamicQuery, start, end,
 			orderByComparator);
@@ -96,7 +99,8 @@ public class ClusterGroupUtil {
 	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel)
 	 */
-	public static ClusterGroup update(ClusterGroup clusterGroup) {
+	public static ClusterGroup update(ClusterGroup clusterGroup)
+		throws SystemException {
 		return getPersistence().update(clusterGroup);
 	}
 
@@ -104,7 +108,7 @@ public class ClusterGroupUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, ServiceContext)
 	 */
 	public static ClusterGroup update(ClusterGroup clusterGroup,
-		ServiceContext serviceContext) {
+		ServiceContext serviceContext) throws SystemException {
 		return getPersistence().update(clusterGroup, serviceContext);
 	}
 
@@ -145,15 +149,18 @@ public class ClusterGroupUtil {
 	* @param clusterGroupId the primary key of the cluster group
 	* @return the cluster group that was removed
 	* @throws com.liferay.portal.NoSuchClusterGroupException if a cluster group with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.ClusterGroup remove(
 		long clusterGroupId)
-		throws com.liferay.portal.NoSuchClusterGroupException {
+		throws com.liferay.portal.NoSuchClusterGroupException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().remove(clusterGroupId);
 	}
 
 	public static com.liferay.portal.model.ClusterGroup updateImpl(
-		com.liferay.portal.model.ClusterGroup clusterGroup) {
+		com.liferay.portal.model.ClusterGroup clusterGroup)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().updateImpl(clusterGroup);
 	}
 
@@ -163,10 +170,12 @@ public class ClusterGroupUtil {
 	* @param clusterGroupId the primary key of the cluster group
 	* @return the cluster group
 	* @throws com.liferay.portal.NoSuchClusterGroupException if a cluster group with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.ClusterGroup findByPrimaryKey(
 		long clusterGroupId)
-		throws com.liferay.portal.NoSuchClusterGroupException {
+		throws com.liferay.portal.NoSuchClusterGroupException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByPrimaryKey(clusterGroupId);
 	}
 
@@ -175,23 +184,22 @@ public class ClusterGroupUtil {
 	*
 	* @param clusterGroupId the primary key of the cluster group
 	* @return the cluster group, or <code>null</code> if a cluster group with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.ClusterGroup fetchByPrimaryKey(
-		long clusterGroupId) {
+		long clusterGroupId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByPrimaryKey(clusterGroupId);
-	}
-
-	public static java.util.Map<java.io.Serializable, com.liferay.portal.model.ClusterGroup> fetchByPrimaryKeys(
-		java.util.Set<java.io.Serializable> primaryKeys) {
-		return getPersistence().fetchByPrimaryKeys(primaryKeys);
 	}
 
 	/**
 	* Returns all the cluster groups.
 	*
 	* @return the cluster groups
+	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portal.model.ClusterGroup> findAll() {
+	public static java.util.List<com.liferay.portal.model.ClusterGroup> findAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll();
 	}
 
@@ -205,9 +213,11 @@ public class ClusterGroupUtil {
 	* @param start the lower bound of the range of cluster groups
 	* @param end the upper bound of the range of cluster groups (not inclusive)
 	* @return the range of cluster groups
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portal.model.ClusterGroup> findAll(
-		int start, int end) {
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll(start, end);
 	}
 
@@ -222,17 +232,22 @@ public class ClusterGroupUtil {
 	* @param end the upper bound of the range of cluster groups (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of cluster groups
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portal.model.ClusterGroup> findAll(
 		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.ClusterGroup> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll(start, end, orderByComparator);
 	}
 
 	/**
 	* Removes all the cluster groups from the database.
+	*
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeAll() {
+	public static void removeAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeAll();
 	}
 
@@ -240,8 +255,10 @@ public class ClusterGroupUtil {
 	* Returns the number of cluster groups.
 	*
 	* @return the number of cluster groups
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countAll() {
+	public static int countAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countAll();
 	}
 
@@ -259,7 +276,6 @@ public class ClusterGroupUtil {
 	/**
 	 * @deprecated As of 6.2.0
 	 */
-	@Deprecated
 	public void setPersistence(ClusterGroupPersistence persistence) {
 	}
 

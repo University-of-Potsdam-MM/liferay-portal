@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -79,7 +79,6 @@ public class ClassLoaderProxy {
 	/**
 	 * @deprecated As of 6.1.0
 	 */
-	@Deprecated
 	public Object invoke(String methodName, Object[] args) throws Throwable {
 		Thread currentThread = Thread.currentThread();
 
@@ -185,26 +184,27 @@ public class ClassLoaderProxy {
 		try {
 			UnsyncByteArrayOutputStream unsyncByteArrayOutputStream =
 				new UnsyncByteArrayOutputStream();
+			ObjectOutputStream objectOutputStream = new ObjectOutputStream(
+				unsyncByteArrayOutputStream);
 
-			try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(
-					unsyncByteArrayOutputStream)) {
+			objectOutputStream.writeObject(throwable);
 
-				objectOutputStream.writeObject(throwable);
-
-				objectOutputStream.flush();
-			}
+			objectOutputStream.flush();
+			objectOutputStream.close();
 
 			UnsyncByteArrayInputStream unsyncByteArrayInputStream =
 				new UnsyncByteArrayInputStream(
 					unsyncByteArrayOutputStream.unsafeGetByteArray(), 0,
 					unsyncByteArrayOutputStream.size());
+			ObjectInputStream objectInputStream =
+				new ClassLoaderObjectInputStream(
+					unsyncByteArrayInputStream, contextClassLoader);
 
-			try (ObjectInputStream objectInputStream =
-					new ClassLoaderObjectInputStream(
-						unsyncByteArrayInputStream, contextClassLoader)) {
+			throwable = (Throwable)objectInputStream.readObject();
 
-				return (Throwable)objectInputStream.readObject();
-			}
+			objectInputStream.close();
+
+			return throwable;
 		}
 		catch (Throwable throwable2) {
 			_log.error(throwable2, throwable2);

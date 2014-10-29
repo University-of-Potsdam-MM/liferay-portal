@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,7 +14,6 @@
 
 package com.liferay.portal.security.auth;
 
-import com.liferay.portal.kernel.spring.osgi.OSGiBeanProperties;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -25,6 +24,8 @@ import com.liferay.portal.security.pwd.PasswordEncryptorUtil;
 import com.liferay.portal.service.UserLocalServiceUtil;
 import com.liferay.portal.util.PortalUtil;
 
+import java.util.Properties;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -32,10 +33,37 @@ import javax.servlet.http.HttpServletResponse;
  * @author Minhchau Dang
  * @author Tomas Polesovsky
  */
-@OSGiBeanProperties(
-	portalPropertyPrefix = "auth.verifier.ParameterAutoLogin."
-)
-public class ParameterAutoLogin extends BaseAutoLogin {
+public class ParameterAutoLogin extends BaseAutoLogin implements AuthVerifier {
+
+	@Override
+	public String getAuthType() {
+		return ParameterAutoLogin.class.getSimpleName();
+	}
+
+	@Override
+	public AuthVerifierResult verify(
+			AccessControlContext accessControlContext, Properties properties)
+		throws AuthException {
+
+		try {
+			AuthVerifierResult authVerifierResult = new AuthVerifierResult();
+
+			String[] credentials = login(
+				accessControlContext.getRequest(),
+				accessControlContext.getResponse());
+
+			if (credentials != null) {
+				authVerifierResult.setPassword(credentials[1]);
+				authVerifierResult.setState(AuthVerifierResult.State.SUCCESS);
+				authVerifierResult.setUserId(Long.valueOf(credentials[0]));
+			}
+
+			return authVerifierResult;
+		}
+		catch (AutoLoginException ale) {
+			throw new AuthException(ale);
+		}
+	}
 
 	@Override
 	protected String[] doLogin(

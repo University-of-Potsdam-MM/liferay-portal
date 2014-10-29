@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,12 +14,9 @@
 
 package com.liferay.portal.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.CacheModel;
-import com.liferay.portal.model.MVCCModel;
 import com.liferay.portal.model.Shard;
 
 import java.io.Externalizable;
@@ -34,26 +31,12 @@ import java.io.ObjectOutput;
  * @see Shard
  * @generated
  */
-@ProviderType
-public class ShardCacheModel implements CacheModel<Shard>, Externalizable,
-	MVCCModel {
-	@Override
-	public long getMvccVersion() {
-		return mvccVersion;
-	}
-
-	@Override
-	public void setMvccVersion(long mvccVersion) {
-		this.mvccVersion = mvccVersion;
-	}
-
+public class ShardCacheModel implements CacheModel<Shard>, Externalizable {
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(11);
+		StringBundler sb = new StringBundler(9);
 
-		sb.append("{mvccVersion=");
-		sb.append(mvccVersion);
-		sb.append(", shardId=");
+		sb.append("{shardId=");
 		sb.append(shardId);
 		sb.append(", classNameId=");
 		sb.append(classNameId);
@@ -70,7 +53,6 @@ public class ShardCacheModel implements CacheModel<Shard>, Externalizable,
 	public Shard toEntityModel() {
 		ShardImpl shardImpl = new ShardImpl();
 
-		shardImpl.setMvccVersion(mvccVersion);
 		shardImpl.setShardId(shardId);
 		shardImpl.setClassNameId(classNameId);
 		shardImpl.setClassPK(classPK);
@@ -89,7 +71,6 @@ public class ShardCacheModel implements CacheModel<Shard>, Externalizable,
 
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
-		mvccVersion = objectInput.readLong();
 		shardId = objectInput.readLong();
 		classNameId = objectInput.readLong();
 		classPK = objectInput.readLong();
@@ -99,7 +80,6 @@ public class ShardCacheModel implements CacheModel<Shard>, Externalizable,
 	@Override
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
-		objectOutput.writeLong(mvccVersion);
 		objectOutput.writeLong(shardId);
 		objectOutput.writeLong(classNameId);
 		objectOutput.writeLong(classPK);
@@ -112,7 +92,6 @@ public class ShardCacheModel implements CacheModel<Shard>, Externalizable,
 		}
 	}
 
-	public long mvccVersion;
 	public long shardId;
 	public long classNameId;
 	public long classPK;

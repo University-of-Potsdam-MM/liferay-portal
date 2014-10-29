@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,13 +14,10 @@
 
 package com.liferay.portal.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.Account;
 import com.liferay.portal.model.CacheModel;
-import com.liferay.portal.model.MVCCModel;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -36,26 +33,12 @@ import java.util.Date;
  * @see Account
  * @generated
  */
-@ProviderType
-public class AccountCacheModel implements CacheModel<Account>, Externalizable,
-	MVCCModel {
-	@Override
-	public long getMvccVersion() {
-		return mvccVersion;
-	}
-
-	@Override
-	public void setMvccVersion(long mvccVersion) {
-		this.mvccVersion = mvccVersion;
-	}
-
+public class AccountCacheModel implements CacheModel<Account>, Externalizable {
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(35);
+		StringBundler sb = new StringBundler(33);
 
-		sb.append("{mvccVersion=");
-		sb.append(mvccVersion);
-		sb.append(", accountId=");
+		sb.append("{accountId=");
 		sb.append(accountId);
 		sb.append(", companyId=");
 		sb.append(companyId);
@@ -96,7 +79,6 @@ public class AccountCacheModel implements CacheModel<Account>, Externalizable,
 	public Account toEntityModel() {
 		AccountImpl accountImpl = new AccountImpl();
 
-		accountImpl.setMvccVersion(mvccVersion);
 		accountImpl.setAccountId(accountId);
 		accountImpl.setCompanyId(companyId);
 		accountImpl.setUserId(userId);
@@ -194,7 +176,6 @@ public class AccountCacheModel implements CacheModel<Account>, Externalizable,
 
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
-		mvccVersion = objectInput.readLong();
 		accountId = objectInput.readLong();
 		companyId = objectInput.readLong();
 		userId = objectInput.readLong();
@@ -216,7 +197,6 @@ public class AccountCacheModel implements CacheModel<Account>, Externalizable,
 	@Override
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
-		objectOutput.writeLong(mvccVersion);
 		objectOutput.writeLong(accountId);
 		objectOutput.writeLong(companyId);
 		objectOutput.writeLong(userId);
@@ -296,7 +276,6 @@ public class AccountCacheModel implements CacheModel<Account>, Externalizable,
 		}
 	}
 
-	public long mvccVersion;
 	public long accountId;
 	public long companyId;
 	public long userId;

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,24 +15,21 @@
 package com.liferay.portlet.blogs.trash;
 
 import com.liferay.portal.kernel.dao.orm.QueryDefinition;
-import com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector;
 import com.liferay.portal.kernel.test.ExecutionTestListeners;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.model.BaseModel;
 import com.liferay.portal.service.ServiceContext;
+import com.liferay.portal.test.LiferayIntegrationJUnitTestRunner;
+import com.liferay.portal.test.MainServletExecutionTestListener;
 import com.liferay.portal.test.Sync;
 import com.liferay.portal.test.SynchronousDestinationExecutionTestListener;
-import com.liferay.portal.test.listeners.MainServletExecutionTestListener;
-import com.liferay.portal.test.runners.LiferayIntegrationJUnitTestRunner;
-import com.liferay.portal.util.test.TestPropsValues;
+import com.liferay.portal.util.TestPropsValues;
 import com.liferay.portlet.blogs.model.BlogsEntry;
 import com.liferay.portlet.blogs.service.BlogsEntryLocalServiceUtil;
 import com.liferay.portlet.trash.BaseTrashHandlerTestCase;
 
-import java.io.Serializable;
-
-import java.util.HashMap;
+import java.io.InputStream;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -60,33 +57,7 @@ public class BlogsEntryTrashHandlerTest extends BaseTrashHandlerTestCase {
 	@Ignore()
 	@Override
 	@Test
-	public void testTrashBaseModelAndParentAndDeleteGroupTrashEntries()
-		throws Exception {
-	}
-
-	@Ignore()
-	@Override
-	@Test
-	public void testTrashBaseModelAndParentAndDeleteParent() throws Exception {
-	}
-
-	@Ignore()
-	@Override
-	@Test
-	public void testTrashBaseModelAndParentAndRestoreModel() throws Exception {
-	}
-
-	@Ignore()
-	@Override
-	@Test
 	public void testTrashDuplicate() throws Exception {
-	}
-
-	@Ignore()
-	@Override
-	@Test
-	public void testTrashGrandparentBaseModelAndRestoreParentModel()
-		throws Exception {
 	}
 
 	@Ignore()
@@ -134,13 +105,19 @@ public class BlogsEntryTrashHandlerTest extends BaseTrashHandlerTestCase {
 	@Ignore()
 	@Override
 	@Test
-	public void testTrashParentAndDeleteGroupTrashEntries() throws Exception {
+	public void testTrashParentAndDeleteParent() throws Exception {
 	}
 
 	@Ignore()
 	@Override
 	@Test
-	public void testTrashParentAndDeleteParent() throws Exception {
+	public void testTrashParentAndDeleteTrashEntries() throws Exception {
+	}
+
+	@Ignore()
+	@Override
+	@Test
+	public void testTrashParentAndRestoreModel() throws Exception {
 	}
 
 	@Ignore()
@@ -180,7 +157,6 @@ public class BlogsEntryTrashHandlerTest extends BaseTrashHandlerTestCase {
 		throws Exception {
 
 		String title = getSearchKeywords();
-		String subtitle = StringPool.BLANK;
 		String description = "Description";
 		String content = "Content";
 		int displayDateMonth = 1;
@@ -191,23 +167,26 @@ public class BlogsEntryTrashHandlerTest extends BaseTrashHandlerTestCase {
 		boolean allowPingbacks = true;
 		boolean allowTrackbacks = true;
 		String[] trackbacks = new String[0];
-		ImageSelector imageSelector = null;
+		boolean smallImage = false;
+		String smallImageURL = StringPool.BLANK;
+		String smallImageFileName = StringPool.BLANK;
+		InputStream smallImageInputStream = null;
 
 		serviceContext = (ServiceContext)serviceContext.clone();
 
 		serviceContext.setWorkflowAction(WorkflowConstants.ACTION_SAVE_DRAFT);
 
 		BlogsEntry entry = BlogsEntryLocalServiceUtil.addEntry(
-			TestPropsValues.getUserId(), title, subtitle, description, content,
+			TestPropsValues.getUserId(), title, description, content,
 			displayDateMonth, displayDateDay, displayDateYear, displayDateHour,
 			displayDateMinute, allowPingbacks, allowTrackbacks, trackbacks,
-			imageSelector, serviceContext);
+			smallImage, smallImageURL, smallImageFileName,
+			smallImageInputStream, serviceContext);
 
 		if (approved) {
 			entry = BlogsEntryLocalServiceUtil.updateStatus(
 				TestPropsValues.getUserId(), entry.getEntryId(),
-				WorkflowConstants.STATUS_APPROVED, serviceContext,
-				new HashMap<String, Serializable>());
+				WorkflowConstants.STATUS_APPROVED, serviceContext);
 		}
 
 		return entry;
@@ -227,8 +206,8 @@ public class BlogsEntryTrashHandlerTest extends BaseTrashHandlerTestCase {
 	protected int getNotInTrashBaseModelsCount(BaseModel<?> parentBaseModel)
 		throws Exception {
 
-		QueryDefinition<BlogsEntry> queryDefinition =
-			new QueryDefinition<BlogsEntry>(WorkflowConstants.STATUS_ANY);
+		QueryDefinition queryDefinition = new QueryDefinition(
+			WorkflowConstants.STATUS_ANY);
 
 		return BlogsEntryLocalServiceUtil.getGroupEntriesCount(
 			(Long)parentBaseModel.getPrimaryKeyObj(), queryDefinition);

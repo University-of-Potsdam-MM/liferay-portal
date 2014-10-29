@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -100,30 +100,24 @@ public class SCLicenseWrapper implements SCLicense, ModelWrapper<SCLicense> {
 		}
 	}
 
+	/**
+	* Returns the primary key of this s c license.
+	*
+	* @return the primary key of this s c license
+	*/
 	@Override
-	public java.lang.Object clone() {
-		return new SCLicenseWrapper((SCLicense)_scLicense.clone());
-	}
-
-	@Override
-	public int compareTo(
-		com.liferay.portlet.softwarecatalog.model.SCLicense scLicense) {
-		return _scLicense.compareTo(scLicense);
+	public long getPrimaryKey() {
+		return _scLicense.getPrimaryKey();
 	}
 
 	/**
-	* Returns the active of this s c license.
+	* Sets the primary key of this s c license.
 	*
-	* @return the active of this s c license
+	* @param primaryKey the primary key of this s c license
 	*/
 	@Override
-	public boolean getActive() {
-		return _scLicense.getActive();
-	}
-
-	@Override
-	public com.liferay.portlet.expando.model.ExpandoBridge getExpandoBridge() {
-		return _scLicense.getExpandoBridge();
+	public void setPrimaryKey(long primaryKey) {
+		_scLicense.setPrimaryKey(primaryKey);
 	}
 
 	/**
@@ -137,6 +131,16 @@ public class SCLicenseWrapper implements SCLicense, ModelWrapper<SCLicense> {
 	}
 
 	/**
+	* Sets the license ID of this s c license.
+	*
+	* @param licenseId the license ID of this s c license
+	*/
+	@Override
+	public void setLicenseId(long licenseId) {
+		_scLicense.setLicenseId(licenseId);
+	}
+
+	/**
 	* Returns the name of this s c license.
 	*
 	* @return the name of this s c license
@@ -144,6 +148,36 @@ public class SCLicenseWrapper implements SCLicense, ModelWrapper<SCLicense> {
 	@Override
 	public java.lang.String getName() {
 		return _scLicense.getName();
+	}
+
+	/**
+	* Sets the name of this s c license.
+	*
+	* @param name the name of this s c license
+	*/
+	@Override
+	public void setName(java.lang.String name) {
+		_scLicense.setName(name);
+	}
+
+	/**
+	* Returns the url of this s c license.
+	*
+	* @return the url of this s c license
+	*/
+	@Override
+	public java.lang.String getUrl() {
+		return _scLicense.getUrl();
+	}
+
+	/**
+	* Sets the url of this s c license.
+	*
+	* @param url the url of this s c license
+	*/
+	@Override
+	public void setUrl(java.lang.String url) {
+		_scLicense.setUrl(url);
 	}
 
 	/**
@@ -157,18 +191,53 @@ public class SCLicenseWrapper implements SCLicense, ModelWrapper<SCLicense> {
 	}
 
 	/**
-	* Returns the primary key of this s c license.
+	* Returns <code>true</code> if this s c license is open source.
 	*
-	* @return the primary key of this s c license
+	* @return <code>true</code> if this s c license is open source; <code>false</code> otherwise
 	*/
 	@Override
-	public long getPrimaryKey() {
-		return _scLicense.getPrimaryKey();
+	public boolean isOpenSource() {
+		return _scLicense.isOpenSource();
 	}
 
+	/**
+	* Sets whether this s c license is open source.
+	*
+	* @param openSource the open source of this s c license
+	*/
 	@Override
-	public java.io.Serializable getPrimaryKeyObj() {
-		return _scLicense.getPrimaryKeyObj();
+	public void setOpenSource(boolean openSource) {
+		_scLicense.setOpenSource(openSource);
+	}
+
+	/**
+	* Returns the active of this s c license.
+	*
+	* @return the active of this s c license
+	*/
+	@Override
+	public boolean getActive() {
+		return _scLicense.getActive();
+	}
+
+	/**
+	* Returns <code>true</code> if this s c license is active.
+	*
+	* @return <code>true</code> if this s c license is active; <code>false</code> otherwise
+	*/
+	@Override
+	public boolean isActive() {
+		return _scLicense.isActive();
+	}
+
+	/**
+	* Sets whether this s c license is active.
+	*
+	* @param active the active of this s c license
+	*/
+	@Override
+	public void setActive(boolean active) {
+		_scLicense.setActive(active);
 	}
 
 	/**
@@ -182,56 +251,6 @@ public class SCLicenseWrapper implements SCLicense, ModelWrapper<SCLicense> {
 	}
 
 	/**
-	* Returns the url of this s c license.
-	*
-	* @return the url of this s c license
-	*/
-	@Override
-	public java.lang.String getUrl() {
-		return _scLicense.getUrl();
-	}
-
-	@Override
-	public int hashCode() {
-		return _scLicense.hashCode();
-	}
-
-	/**
-	* Returns <code>true</code> if this s c license is active.
-	*
-	* @return <code>true</code> if this s c license is active; <code>false</code> otherwise
-	*/
-	@Override
-	public boolean isActive() {
-		return _scLicense.isActive();
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _scLicense.isCachedModel();
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _scLicense.isEscapedModel();
-	}
-
-	@Override
-	public boolean isNew() {
-		return _scLicense.isNew();
-	}
-
-	/**
-	* Returns <code>true</code> if this s c license is open source.
-	*
-	* @return <code>true</code> if this s c license is open source; <code>false</code> otherwise
-	*/
-	@Override
-	public boolean isOpenSource() {
-		return _scLicense.isOpenSource();
-	}
-
-	/**
 	* Returns <code>true</code> if this s c license is recommended.
 	*
 	* @return <code>true</code> if this s c license is recommended; <code>false</code> otherwise
@@ -241,24 +260,54 @@ public class SCLicenseWrapper implements SCLicense, ModelWrapper<SCLicense> {
 		return _scLicense.isRecommended();
 	}
 
-	@Override
-	public void persist() {
-		_scLicense.persist();
-	}
-
 	/**
-	* Sets whether this s c license is active.
+	* Sets whether this s c license is recommended.
 	*
-	* @param active the active of this s c license
+	* @param recommended the recommended of this s c license
 	*/
 	@Override
-	public void setActive(boolean active) {
-		_scLicense.setActive(active);
+	public void setRecommended(boolean recommended) {
+		_scLicense.setRecommended(recommended);
+	}
+
+	@Override
+	public boolean isNew() {
+		return _scLicense.isNew();
+	}
+
+	@Override
+	public void setNew(boolean n) {
+		_scLicense.setNew(n);
+	}
+
+	@Override
+	public boolean isCachedModel() {
+		return _scLicense.isCachedModel();
 	}
 
 	@Override
 	public void setCachedModel(boolean cachedModel) {
 		_scLicense.setCachedModel(cachedModel);
+	}
+
+	@Override
+	public boolean isEscapedModel() {
+		return _scLicense.isEscapedModel();
+	}
+
+	@Override
+	public java.io.Serializable getPrimaryKeyObj() {
+		return _scLicense.getPrimaryKeyObj();
+	}
+
+	@Override
+	public void setPrimaryKeyObj(java.io.Serializable primaryKeyObj) {
+		_scLicense.setPrimaryKeyObj(primaryKeyObj);
+	}
+
+	@Override
+	public com.liferay.portlet.expando.model.ExpandoBridge getExpandoBridge() {
+		return _scLicense.getExpandoBridge();
 	}
 
 	@Override
@@ -279,74 +328,20 @@ public class SCLicenseWrapper implements SCLicense, ModelWrapper<SCLicense> {
 		_scLicense.setExpandoBridgeAttributes(serviceContext);
 	}
 
-	/**
-	* Sets the license ID of this s c license.
-	*
-	* @param licenseId the license ID of this s c license
-	*/
 	@Override
-	public void setLicenseId(long licenseId) {
-		_scLicense.setLicenseId(licenseId);
-	}
-
-	/**
-	* Sets the name of this s c license.
-	*
-	* @param name the name of this s c license
-	*/
-	@Override
-	public void setName(java.lang.String name) {
-		_scLicense.setName(name);
+	public java.lang.Object clone() {
+		return new SCLicenseWrapper((SCLicense)_scLicense.clone());
 	}
 
 	@Override
-	public void setNew(boolean n) {
-		_scLicense.setNew(n);
-	}
-
-	/**
-	* Sets whether this s c license is open source.
-	*
-	* @param openSource the open source of this s c license
-	*/
-	@Override
-	public void setOpenSource(boolean openSource) {
-		_scLicense.setOpenSource(openSource);
-	}
-
-	/**
-	* Sets the primary key of this s c license.
-	*
-	* @param primaryKey the primary key of this s c license
-	*/
-	@Override
-	public void setPrimaryKey(long primaryKey) {
-		_scLicense.setPrimaryKey(primaryKey);
+	public int compareTo(
+		com.liferay.portlet.softwarecatalog.model.SCLicense scLicense) {
+		return _scLicense.compareTo(scLicense);
 	}
 
 	@Override
-	public void setPrimaryKeyObj(java.io.Serializable primaryKeyObj) {
-		_scLicense.setPrimaryKeyObj(primaryKeyObj);
-	}
-
-	/**
-	* Sets whether this s c license is recommended.
-	*
-	* @param recommended the recommended of this s c license
-	*/
-	@Override
-	public void setRecommended(boolean recommended) {
-		_scLicense.setRecommended(recommended);
-	}
-
-	/**
-	* Sets the url of this s c license.
-	*
-	* @param url the url of this s c license
-	*/
-	@Override
-	public void setUrl(java.lang.String url) {
-		_scLicense.setUrl(url);
+	public int hashCode() {
+		return _scLicense.hashCode();
 	}
 
 	@Override
@@ -360,18 +355,24 @@ public class SCLicenseWrapper implements SCLicense, ModelWrapper<SCLicense> {
 	}
 
 	@Override
-	public java.lang.String toString() {
-		return _scLicense.toString();
-	}
-
-	@Override
 	public com.liferay.portlet.softwarecatalog.model.SCLicense toUnescapedModel() {
 		return new SCLicenseWrapper(_scLicense.toUnescapedModel());
 	}
 
 	@Override
+	public java.lang.String toString() {
+		return _scLicense.toString();
+	}
+
+	@Override
 	public java.lang.String toXmlString() {
 		return _scLicense.toXmlString();
+	}
+
+	@Override
+	public void persist()
+		throws com.liferay.portal.kernel.exception.SystemException {
+		_scLicense.persist();
 	}
 
 	@Override
@@ -396,7 +397,6 @@ public class SCLicenseWrapper implements SCLicense, ModelWrapper<SCLicense> {
 	/**
 	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedModel}
 	 */
-	@Deprecated
 	public SCLicense getWrappedSCLicense() {
 		return _scLicense;
 	}
@@ -407,19 +407,9 @@ public class SCLicenseWrapper implements SCLicense, ModelWrapper<SCLicense> {
 	}
 
 	@Override
-	public boolean isEntityCacheEnabled() {
-		return _scLicense.isEntityCacheEnabled();
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return _scLicense.isFinderCacheEnabled();
-	}
-
-	@Override
 	public void resetOriginalValues() {
 		_scLicense.resetOriginalValues();
 	}
 
-	private final SCLicense _scLicense;
+	private SCLicense _scLicense;
 }

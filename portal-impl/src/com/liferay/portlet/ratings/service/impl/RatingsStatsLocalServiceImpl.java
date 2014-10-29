@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,6 +18,7 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.util.PortalUtil;
 import com.liferay.portlet.ratings.NoSuchStatsException;
 import com.liferay.portlet.ratings.model.RatingsStats;
 import com.liferay.portlet.ratings.service.base.RatingsStatsLocalServiceBaseImpl;
@@ -31,7 +32,9 @@ public class RatingsStatsLocalServiceImpl
 	extends RatingsStatsLocalServiceBaseImpl {
 
 	@Override
-	public RatingsStats addStats(long classNameId, long classPK) {
+	public RatingsStats addStats(long classNameId, long classPK)
+		throws SystemException {
+
 		long statsId = counterLocalService.increment();
 
 		RatingsStats stats = ratingsStatsPersistence.create(statsId);
@@ -64,8 +67,10 @@ public class RatingsStatsLocalServiceImpl
 	}
 
 	@Override
-	public void deleteStats(String className, long classPK) {
-		long classNameId = classNameLocalService.getClassNameId(className);
+	public void deleteStats(String className, long classPK)
+		throws SystemException {
+
+		long classNameId = PortalUtil.getClassNameId(className);
 
 		try {
 			ratingsStatsPersistence.removeByC_C(classNameId, classPK);
@@ -80,20 +85,26 @@ public class RatingsStatsLocalServiceImpl
 	}
 
 	@Override
-	public RatingsStats getStats(long statsId) throws PortalException {
+	public RatingsStats getStats(long statsId)
+		throws PortalException, SystemException {
+
 		return ratingsStatsPersistence.findByPrimaryKey(statsId);
 	}
 
 	@Override
-	public List<RatingsStats> getStats(String className, List<Long> classPKs) {
-		long classNameId = classNameLocalService.getClassNameId(className);
+	public List<RatingsStats> getStats(String className, List<Long> classPKs)
+		throws SystemException {
+
+		long classNameId = PortalUtil.getClassNameId(className);
 
 		return ratingsStatsFinder.findByC_C(classNameId, classPKs);
 	}
 
 	@Override
-	public RatingsStats getStats(String className, long classPK) {
-		long classNameId = classNameLocalService.getClassNameId(className);
+	public RatingsStats getStats(String className, long classPK)
+		throws SystemException {
+
+		long classNameId = PortalUtil.getClassNameId(className);
 
 		RatingsStats stats = ratingsStatsPersistence.fetchByC_C(
 			classNameId, classPK);

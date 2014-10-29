@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -16,15 +16,12 @@ package com.liferay.portal.kernel.dao.search;
 
 import com.liferay.portal.kernel.util.StringPool;
 
-import java.io.Writer;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.jsp.PageContext;
 
 /**
- * @author Raymond Augé
+ * @author Brian Wing Shun Chan
  */
-public interface SearchEntry {
+public abstract class SearchEntry implements Cloneable {
 
 	public static final String DEFAULT_ALIGN = "left";
 
@@ -34,29 +31,52 @@ public interface SearchEntry {
 
 	public static final String DEFAULT_VALIGN = "middle";
 
-	public String getAlign();
+	public String getAlign() {
+		return _align;
+	}
 
-	public int getColspan();
+	public int getColspan() {
+		return _colspan;
+	}
 
-	public String getCssClass();
+	public String getCssClass() {
+		return _cssClass;
+	}
 
-	public int getIndex();
+	public int getIndex() {
+		return _index;
+	}
 
-	public String getValign();
+	public String getValign() {
+		return _valign;
+	}
 
-	public void print(
-			Writer writer, HttpServletRequest request,
-			HttpServletResponse response)
-		throws Exception;
+	public abstract void print(PageContext pageContext) throws Exception;
 
-	public void setAlign(String align);
+	public void setAlign(String align) {
+		_align = align;
+	}
 
-	public void setColspan(int colspan);
+	public void setColspan(int colspan) {
+		_colspan = colspan;
+	}
 
-	public void setCssClass(String cssClass);
+	public void setCssClass(String cssClass) {
+		_cssClass = cssClass;
+	}
 
-	public void setIndex(int index);
+	public void setIndex(int index) {
+		_index = index;
+	}
 
-	public void setValign(String valign);
+	public void setValign(String valign) {
+		_valign = valign;
+	}
+
+	private String _align = DEFAULT_ALIGN;
+	private int _colspan = DEFAULT_COLSPAN;
+	private String _cssClass = DEFAULT_CSS_CLASS;
+	private int _index;
+	private String _valign = DEFAULT_VALIGN;
 
 }

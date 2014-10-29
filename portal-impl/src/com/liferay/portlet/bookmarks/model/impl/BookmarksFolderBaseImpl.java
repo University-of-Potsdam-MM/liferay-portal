@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,9 +14,8 @@
 
 package com.liferay.portlet.bookmarks.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 
@@ -38,7 +37,6 @@ import java.util.List;
  * @see com.liferay.portlet.bookmarks.model.BookmarksFolder
  * @generated
  */
-@ProviderType
 public abstract class BookmarksFolderBaseImpl extends BookmarksFolderModelImpl
 	implements BookmarksFolder {
 	/*
@@ -47,7 +45,7 @@ public abstract class BookmarksFolderBaseImpl extends BookmarksFolderModelImpl
 	 * Never modify or reference this class directly. All methods that expect a bookmarks folder model instance should use the {@link BookmarksFolder} interface instead.
 	 */
 	@Override
-	public void persist() {
+	public void persist() throws SystemException {
 		if (this.isNew()) {
 			BookmarksFolderLocalServiceUtil.addBookmarksFolder(this);
 		}
@@ -58,7 +56,7 @@ public abstract class BookmarksFolderBaseImpl extends BookmarksFolderModelImpl
 
 	@Override
 	@SuppressWarnings("unused")
-	public String buildTreePath() throws PortalException {
+	public String buildTreePath() throws PortalException, SystemException {
 		List<BookmarksFolder> bookmarksFolders = new ArrayList<BookmarksFolder>();
 
 		BookmarksFolder bookmarksFolder = this;
@@ -84,7 +82,7 @@ public abstract class BookmarksFolderBaseImpl extends BookmarksFolderModelImpl
 	}
 
 	@Override
-	public void updateTreePath(String treePath) {
+	public void updateTreePath(String treePath) throws SystemException {
 		BookmarksFolder bookmarksFolder = this;
 
 		bookmarksFolder.setTreePath(treePath);

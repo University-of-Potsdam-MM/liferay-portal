@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -37,17 +37,14 @@ public class RPCDatagramReceiveHandler extends BaseAsyncDatagramReceiveHandler {
 		Deserializer deserializer = new Deserializer(
 			datagram.getDataByteBuffer());
 
+		ProcessCallable<? extends Serializable> processCallable =
+			deserializer.readObject();
+
 		Serializer serializer = new Serializer();
 
-		try {
-			ProcessCallable<? extends Serializable> processCallable =
-				deserializer.readObject();
+		Serializable result = processCallable.call();
 
-			serializer.writeObject(new RPCResponse(processCallable.call()));
-		}
-		catch (Exception e) {
-			serializer.writeObject(new RPCResponse(e));
-		}
+		serializer.writeObject(result);
 
 		Intraband intraband = registrationReference.getIntraband();
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,25 +15,24 @@
 package com.liferay.portal.service;
 
 import com.liferay.portal.kernel.test.ExecutionTestListeners;
+import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.LocaleThreadLocal;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.Layout;
 import com.liferay.portal.model.LayoutFriendlyURL;
-import com.liferay.portal.test.DeleteAfterTestRun;
-import com.liferay.portal.test.listeners.MainServletExecutionTestListener;
-import com.liferay.portal.test.runners.LiferayIntegrationJUnitTestRunner;
-import com.liferay.portal.util.test.GroupTestUtil;
-import com.liferay.portal.util.test.LayoutTestUtil;
-import com.liferay.portal.util.test.RandomTestUtil;
+import com.liferay.portal.test.LiferayIntegrationJUnitTestRunner;
+import com.liferay.portal.test.MainServletExecutionTestListener;
+import com.liferay.portal.test.TransactionalCallbackAwareExecutionTestListener;
+import com.liferay.portal.util.GroupTestUtil;
+import com.liferay.portal.util.LayoutTestUtil;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -42,26 +41,28 @@ import org.testng.Assert;
 /**
  * @author Sergio González
  */
-@ExecutionTestListeners(listeners = {MainServletExecutionTestListener.class})
+@ExecutionTestListeners(
+	listeners = {
+		MainServletExecutionTestListener.class,
+		TransactionalCallbackAwareExecutionTestListener.class
+	})
 @RunWith(LiferayIntegrationJUnitTestRunner.class)
+@Transactional
 public class LayoutFriendlyURLServiceTest {
-
-	@Before
-	public void setUp() throws Exception {
-		_group = GroupTestUtil.addGroup();
-	}
 
 	@Test
 	public void testLocalizedSiteAddLayoutFriendlyURLs() throws Exception {
+		Group group = GroupTestUtil.addGroup();
+
 		Locale[] availableLocales =
 			new Locale[] {LocaleUtil.US, LocaleUtil.SPAIN};
 
-		_group = GroupTestUtil.updateDisplaySettings(
-			_group.getGroupId(), availableLocales, LocaleUtil.SPAIN);
+		group = GroupTestUtil.updateDisplaySettings(
+			group.getGroupId(), availableLocales, LocaleUtil.SPAIN);
 
 		Map<Locale, String> nameMap = new HashMap<Locale, String>();
 
-		String name = RandomTestUtil.randomString();
+		String name = ServiceTestUtil.randomString();
 
 		nameMap.put(LocaleUtil.GERMANY, name);
 		nameMap.put(LocaleUtil.US, name);
@@ -74,7 +75,7 @@ public class LayoutFriendlyURLServiceTest {
 		friendlyURLMap.put(LocaleUtil.US, "/englishurl");
 
 		Layout layout = LayoutTestUtil.addLayout(
-			_group.getGroupId(), false, nameMap, friendlyURLMap);
+			group.getGroupId(), false, nameMap, friendlyURLMap);
 
 		List<LayoutFriendlyURL> layoutFriendlyURLs =
 			LayoutFriendlyURLLocalServiceUtil.getLayoutFriendlyURLs(
@@ -96,17 +97,19 @@ public class LayoutFriendlyURLServiceTest {
 
 	@Test
 	public void testLocalizedSiteFetchLayoutFriendlyURL() throws Exception {
+		Group group = GroupTestUtil.addGroup();
+
 		Locale[] availableLocales =
 			new Locale[] {LocaleUtil.US, LocaleUtil.SPAIN};
 
 		Locale defaultLocale = LocaleUtil.SPAIN;
 
-		_group = GroupTestUtil.updateDisplaySettings(
-			_group.getGroupId(), availableLocales, defaultLocale);
+		group = GroupTestUtil.updateDisplaySettings(
+			group.getGroupId(), availableLocales, defaultLocale);
 
 		Map<Locale, String> nameMap = new HashMap<Locale, String>();
 
-		String name = RandomTestUtil.randomString();
+		String name = ServiceTestUtil.randomString();
 
 		nameMap.put(LocaleUtil.SPAIN, name);
 		nameMap.put(LocaleUtil.US, name);
@@ -117,7 +120,7 @@ public class LayoutFriendlyURLServiceTest {
 		friendlyURLMap.put(LocaleUtil.US, "/englishurl");
 
 		Layout layout = LayoutTestUtil.addLayout(
-			_group.getGroupId(), false, nameMap, friendlyURLMap);
+			group.getGroupId(), false, nameMap, friendlyURLMap);
 
 		Locale locale = LocaleThreadLocal.getSiteDefaultLocale();
 
@@ -139,8 +142,5 @@ public class LayoutFriendlyURLServiceTest {
 			LocaleThreadLocal.setSiteDefaultLocale(locale);
 		}
 	}
-
-	@DeleteAfterTestRun
-	private Group _group;
 
 }

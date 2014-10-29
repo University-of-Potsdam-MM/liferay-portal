@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,6 +14,7 @@
 
 package com.liferay.portal.security.auth;
 
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.PrefsPropsUtil;
@@ -93,7 +94,9 @@ public class DefaultScreenNameGenerator implements ScreenNameGenerator {
 		return getUnusedScreenName(companyId, screenName);
 	}
 
-	protected String getUnusedScreenName(long companyId, String screenName) {
+	protected String getUnusedScreenName(long companyId, String screenName)
+		throws SystemException {
+
 		for (int i = 1;; i++) {
 			String tempScreenName = screenName + StringPool.PERIOD + i;
 

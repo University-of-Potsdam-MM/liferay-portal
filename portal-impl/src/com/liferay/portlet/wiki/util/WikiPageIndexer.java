@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,7 +18,9 @@ import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Property;
 import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.search.BaseIndexer;
 import com.liferay.portal.kernel.search.BooleanClauseOccur;
 import com.liferay.portal.kernel.search.BooleanQuery;
@@ -26,6 +28,7 @@ import com.liferay.portal.kernel.search.BooleanQueryFactoryUtil;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.DocumentImpl;
 import com.liferay.portal.kernel.search.Field;
+import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.SearchEngineUtil;
 import com.liferay.portal.kernel.search.Summary;
@@ -35,20 +38,20 @@ import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.security.permission.ActionKeys;
 import com.liferay.portal.security.permission.PermissionChecker;
+import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.PortletKeys;
 import com.liferay.portlet.documentlibrary.model.DLFileEntry;
 import com.liferay.portlet.messageboards.model.MBMessage;
 import com.liferay.portlet.wiki.model.WikiNode;
 import com.liferay.portlet.wiki.model.WikiPage;
-import com.liferay.portlet.wiki.service.WikiNodeLocalServiceUtil;
 import com.liferay.portlet.wiki.service.WikiNodeServiceUtil;
 import com.liferay.portlet.wiki.service.WikiPageLocalServiceUtil;
 import com.liferay.portlet.wiki.service.permission.WikiPagePermission;
+import com.liferay.portlet.wiki.service.persistence.WikiNodeActionableDynamicQuery;
+import com.liferay.portlet.wiki.service.persistence.WikiPageActionableDynamicQuery;
 
 import java.util.Locale;
 
-import javax.portlet.PortletRequest;
-import javax.portlet.PortletResponse;
 import javax.portlet.PortletURL;
 
 /**
@@ -64,9 +67,6 @@ public class WikiPageIndexer extends BaseIndexer {
 	public static final String PORTLET_ID = PortletKeys.WIKI;
 
 	public WikiPageIndexer() {
-		setDefaultSelectedFieldNames(
-			Field.COMPANY_ID, Field.CONTENT, Field.ENTRY_CLASS_NAME,
-			Field.ENTRY_CLASS_PK, Field.TITLE, Field.UID);
 		setFilterSearch(true);
 		setPermissionAware(true);
 	}
@@ -75,29 +75,27 @@ public class WikiPageIndexer extends BaseIndexer {
 	public void addRelatedEntryFields(Document document, Object obj)
 		throws Exception {
 
-		long classPK = 0;
+		WikiPage page = null;
 
 		if (obj instanceof DLFileEntry) {
 			DLFileEntry dlFileEntry = (DLFileEntry)obj;
 
-			classPK = dlFileEntry.getClassPK();
+			page = WikiPageAttachmentsUtil.getPage(
+				dlFileEntry.getFileEntryId());
+
+			document.addKeyword(
+				Field.CLASS_NAME_ID,
+				PortalUtil.getClassNameId(WikiPage.class.getName()));
+			document.addKeyword(Field.CLASS_PK, page.getResourcePrimKey());
 		}
 		else if (obj instanceof MBMessage) {
 			MBMessage message = (MBMessage)obj;
 
-			classPK = message.getClassPK();
-		}
-
-		WikiPage page = null;
-
-		try {
-			page = WikiPageLocalServiceUtil.getPage(classPK);
-		}
-		catch (Exception e) {
-			return;
+			page = WikiPageLocalServiceUtil.getPage(message.getClassPK());
 		}
 
 		document.addKeyword(Field.NODE_ID, page.getNodeId());
+		document.addKeyword(Field.RELATED_ENTRY, true);
 	}
 
 	@Override
@@ -120,13 +118,6 @@ public class WikiPageIndexer extends BaseIndexer {
 
 		return WikiPagePermission.contains(
 			permissionChecker, page, ActionKeys.VIEW);
-	}
-
-	@Override
-	public boolean isVisible(long classPK, int status) throws Exception {
-		WikiPage page = WikiPageLocalServiceUtil.getPage(classPK);
-
-		return isVisible(page.getStatus(), status);
 	}
 
 	@Override
@@ -159,6 +150,10 @@ public class WikiPageIndexer extends BaseIndexer {
 
 	@Override
 	protected void doDelete(Object obj) throws Exception {
+		SearchContext searchContext = new SearchContext();
+
+		searchContext.setSearchEngineId(getSearchEngineId());
+
 		if (obj instanceof Object[]) {
 			Object[] array = (Object[])obj;
 
@@ -171,13 +166,40 @@ public class WikiPageIndexer extends BaseIndexer {
 			document.addUID(PORTLET_ID, nodeId, title);
 
 			SearchEngineUtil.deleteDocument(
-				getSearchEngineId(), companyId, document.get(Field.UID),
-				isCommitImmediately());
+				getSearchEngineId(), companyId, document.get(Field.UID));
+		}
+		else if (obj instanceof WikiNode) {
+			WikiNode node = (WikiNode)obj;
+
+			BooleanQuery booleanQuery = BooleanQueryFactoryUtil.create(
+				searchContext);
+
+			booleanQuery.addRequiredTerm(Field.PORTLET_ID, PORTLET_ID);
+
+			booleanQuery.addRequiredTerm("nodeId", node.getNodeId());
+
+			Hits hits = SearchEngineUtil.search(
+				getSearchEngineId(), node.getCompanyId(), booleanQuery,
+				QueryUtil.ALL_POS, QueryUtil.ALL_POS);
+
+			for (int i = 0; i < hits.getLength(); i++) {
+				Document document = hits.doc(i);
+
+				SearchEngineUtil.deleteDocument(
+					getSearchEngineId(), node.getCompanyId(),
+					document.get(Field.UID));
+			}
 		}
 		else if (obj instanceof WikiPage) {
 			WikiPage page = (WikiPage)obj;
 
-			deleteDocument(page.getCompanyId(), page.getPageId());
+			Document document = new DocumentImpl();
+
+			document.addUID(PORTLET_ID, page.getNodeId(), page.getTitle());
+
+			SearchEngineUtil.deleteDocument(
+				getSearchEngineId(), page.getCompanyId(),
+				document.get(Field.UID));
 		}
 	}
 
@@ -202,8 +224,8 @@ public class WikiPageIndexer extends BaseIndexer {
 
 	@Override
 	protected Summary doGetSummary(
-		Document document, Locale locale, String snippet, PortletURL portletURL,
-		PortletRequest portletRequest, PortletResponse portletResponse) {
+		Document document, Locale locale, String snippet,
+		PortletURL portletURL) {
 
 		Summary summary = createSummary(document, Field.TITLE, Field.CONTENT);
 
@@ -224,7 +246,7 @@ public class WikiPageIndexer extends BaseIndexer {
 	protected void doReindex(Object obj) throws Exception {
 		WikiPage page = (WikiPage)obj;
 
-		if (!page.isHead() || (!page.isApproved() && !page.isInTrash())) {
+		if (!page.isApproved() && !page.isInTrash()) {
 			return;
 		}
 
@@ -235,14 +257,12 @@ public class WikiPageIndexer extends BaseIndexer {
 		Document document = getDocument(page);
 
 		SearchEngineUtil.updateDocument(
-			getSearchEngineId(), page.getCompanyId(), document,
-			isCommitImmediately());
+			getSearchEngineId(), page.getCompanyId(), document);
 	}
 
 	@Override
 	protected void doReindex(String className, long classPK) throws Exception {
-		WikiPage page = WikiPageLocalServiceUtil.getPage(
-			classPK, (Boolean)null);
+		WikiPage page = WikiPageLocalServiceUtil.getPage(classPK);
 
 		doReindex(page);
 	}
@@ -259,68 +279,58 @@ public class WikiPageIndexer extends BaseIndexer {
 		return PORTLET_ID;
 	}
 
-	protected void reindexNodes(final long companyId) throws PortalException {
+	protected void reindexNodes(final long companyId)
+		throws PortalException, SystemException {
+
 		ActionableDynamicQuery actionableDynamicQuery =
-			WikiNodeLocalServiceUtil.getActionableDynamicQuery();
+			new WikiNodeActionableDynamicQuery() {
+
+			@Override
+			protected void performAction(Object object)
+				throws PortalException, SystemException {
+
+				WikiNode node = (WikiNode)object;
+
+				reindexPages(companyId, node.getGroupId(), node.getNodeId());
+			}
+
+		};
 
 		actionableDynamicQuery.setCompanyId(companyId);
-		actionableDynamicQuery.setPerformActionMethod(
-			new ActionableDynamicQuery.PerformActionMethod() {
-
-				@Override
-				public void performAction(Object object)
-					throws PortalException {
-
-					WikiNode node = (WikiNode)object;
-
-					reindexPages(
-						companyId, node.getGroupId(), node.getNodeId());
-				}
-
-			});
 
 		actionableDynamicQuery.performActions();
 	}
 
 	protected void reindexPages(long companyId, long groupId, final long nodeId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
-		final ActionableDynamicQuery actionableDynamicQuery =
-			WikiPageLocalServiceUtil.getActionableDynamicQuery();
+		ActionableDynamicQuery actionableDynamicQuery =
+			new WikiPageActionableDynamicQuery() {
 
-		actionableDynamicQuery.setAddCriteriaMethod(
-			new ActionableDynamicQuery.AddCriteriaMethod() {
+			@Override
+			protected void addCriteria(DynamicQuery dynamicQuery) {
+				Property nodeIdProperty = PropertyFactoryUtil.forName("nodeId");
 
-				@Override
-				public void addCriteria(DynamicQuery dynamicQuery) {
-					Property nodeIdProperty = PropertyFactoryUtil.forName(
-						"nodeId");
+				dynamicQuery.add(nodeIdProperty.eq(nodeId));
 
-					dynamicQuery.add(nodeIdProperty.eq(nodeId));
+				Property headProperty = PropertyFactoryUtil.forName("head");
 
-					Property headProperty = PropertyFactoryUtil.forName("head");
+				dynamicQuery.add(headProperty.eq(true));
+			}
 
-					dynamicQuery.add(headProperty.eq(true));
-				}
+			@Override
+			protected void performAction(Object object) throws PortalException {
+				WikiPage page = (WikiPage)object;
 
-			});
+				Document document = getDocument(page);
+
+				addDocument(document);
+			}
+
+		};
+
 		actionableDynamicQuery.setCompanyId(companyId);
 		actionableDynamicQuery.setGroupId(groupId);
-		actionableDynamicQuery.setPerformActionMethod(
-			new ActionableDynamicQuery.PerformActionMethod() {
-
-				@Override
-				public void performAction(Object object)
-					throws PortalException {
-
-					WikiPage page = (WikiPage)object;
-
-					Document document = getDocument(page);
-
-					actionableDynamicQuery.addDocument(document);
-				}
-
-			});
 		actionableDynamicQuery.setSearchEngineId(getSearchEngineId());
 
 		actionableDynamicQuery.performActions();

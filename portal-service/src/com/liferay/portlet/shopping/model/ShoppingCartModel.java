@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -17,6 +17,7 @@ package com.liferay.portlet.shopping.model;
 import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.bean.AutoEscape;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.model.BaseModel;
 import com.liferay.portal.model.CacheModel;
 import com.liferay.portal.model.GroupedModel;
@@ -129,9 +130,10 @@ public interface ShoppingCartModel extends BaseModel<ShoppingCart>, GroupedModel
 	 * Returns the user uuid of this shopping cart.
 	 *
 	 * @return the user uuid of this shopping cart
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public String getUserUuid();
+	public String getUserUuid() throws SystemException;
 
 	/**
 	 * Sets the user uuid of this shopping cart.

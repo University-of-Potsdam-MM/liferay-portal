@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,18 +15,15 @@
 package com.liferay.portal.repository.proxy;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.repository.LocalRepository;
-import com.liferay.portal.kernel.repository.capabilities.Capability;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.FileVersion;
 import com.liferay.portal.kernel.repository.model.Folder;
-import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.service.ServiceContext;
 
 import java.io.File;
 import java.io.InputStream;
-
-import java.util.List;
 
 /**
  * @author Mika Koivisto
@@ -47,7 +44,7 @@ public class LocalRepositoryProxyBean
 			long userId, long folderId, String sourceFileName, String mimeType,
 			String title, String description, String changeLog, File file,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		FileEntry fileEntry = _localRepository.addFileEntry(
 			userId, folderId, sourceFileName, mimeType, title, description,
@@ -61,7 +58,7 @@ public class LocalRepositoryProxyBean
 			long userId, long folderId, String sourceFileName, String mimeType,
 			String title, String description, String changeLog, InputStream is,
 			long size, ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		FileEntry fileEntry = _localRepository.addFileEntry(
 			userId, folderId, sourceFileName, mimeType, title, description,
@@ -72,38 +69,39 @@ public class LocalRepositoryProxyBean
 
 	@Override
 	public Folder addFolder(
-			long userId, long parentFolderId, String name, String description,
+			long userId, long parentFolderId, String title, String description,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Folder folder = _localRepository.addFolder(
-			userId, parentFolderId, name, description, serviceContext);
+			userId, parentFolderId, title, description, serviceContext);
 
 		return newFolderProxyBean(folder);
 	}
 
 	@Override
-	public void deleteAll() throws PortalException {
+	public void deleteAll() throws PortalException, SystemException {
 		_localRepository.deleteAll();
 	}
 
 	@Override
-	public void deleteFileEntry(long fileEntryId) throws PortalException {
+	public void deleteFileEntry(long fileEntryId)
+		throws PortalException, SystemException {
+
 		_localRepository.deleteFileEntry(fileEntryId);
 	}
 
 	@Override
-	public void deleteFolder(long folderId) throws PortalException {
+	public void deleteFolder(long folderId)
+		throws PortalException, SystemException {
+
 		_localRepository.deleteFolder(folderId);
 	}
 
 	@Override
-	public <T extends Capability> T getCapability(Class<T> capabilityClass) {
-		return _localRepository.getCapability(capabilityClass);
-	}
+	public FileEntry getFileEntry(long fileEntryId)
+		throws PortalException, SystemException {
 
-	@Override
-	public FileEntry getFileEntry(long fileEntryId) throws PortalException {
 		FileEntry fileEntry = _localRepository.getFileEntry(fileEntryId);
 
 		return newFileEntryProxyBean(fileEntry);
@@ -111,7 +109,7 @@ public class LocalRepositoryProxyBean
 
 	@Override
 	public FileEntry getFileEntry(long folderId, String title)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		FileEntry fileEntry = _localRepository.getFileEntry(folderId, title);
 
@@ -119,7 +117,9 @@ public class LocalRepositoryProxyBean
 	}
 
 	@Override
-	public FileEntry getFileEntryByUuid(String uuid) throws PortalException {
+	public FileEntry getFileEntryByUuid(String uuid)
+		throws PortalException, SystemException {
+
 		FileEntry fileEntry = _localRepository.getFileEntryByUuid(uuid);
 
 		return newFileEntryProxyBean(fileEntry);
@@ -127,7 +127,7 @@ public class LocalRepositoryProxyBean
 
 	@Override
 	public FileVersion getFileVersion(long fileVersionId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		FileVersion fileVersion = _localRepository.getFileVersion(
 			fileVersionId);
@@ -136,27 +136,19 @@ public class LocalRepositoryProxyBean
 	}
 
 	@Override
-	public Folder getFolder(long folderId) throws PortalException {
+	public Folder getFolder(long folderId)
+		throws PortalException, SystemException {
+
 		Folder folder = _localRepository.getFolder(folderId);
 
 		return newFolderProxyBean(folder);
 	}
 
 	@Override
-	public Folder getFolder(long parentFolderId, String name)
-		throws PortalException {
+	public Folder getFolder(long parentFolderId, String title)
+		throws PortalException, SystemException {
 
-		return _localRepository.getFolder(parentFolderId, name);
-	}
-
-	@Override
-	public List<FileEntry> getRepositoryFileEntries(
-			long rootFolderId, int start, int end,
-			OrderByComparator<FileEntry> obc)
-		throws PortalException {
-
-		return _localRepository.getRepositoryFileEntries(
-			rootFolderId, start, end, obc);
+		return _localRepository.getFolder(parentFolderId, title);
 	}
 
 	@Override
@@ -165,17 +157,10 @@ public class LocalRepositoryProxyBean
 	}
 
 	@Override
-	public <T extends Capability> boolean isCapabilityProvided(
-		Class<T> capabilityClass) {
-
-		return _localRepository.isCapabilityProvided(capabilityClass);
-	}
-
-	@Override
 	public FileEntry moveFileEntry(
 			long userId, long fileEntryId, long newFolderId,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		FileEntry fileEntry = _localRepository.moveFileEntry(
 			userId, fileEntryId, newFolderId, serviceContext);
@@ -187,7 +172,7 @@ public class LocalRepositoryProxyBean
 	public Folder moveFolder(
 			long userId, long folderId, long parentFolderId,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Folder folder = _localRepository.moveFolder(
 			userId, folderId, parentFolderId, serviceContext);
@@ -200,7 +185,7 @@ public class LocalRepositoryProxyBean
 			long userId, FileEntry fileEntry, FileVersion fileVersion,
 			long[] assetCategoryIds, String[] assetTagNames,
 			long[] assetLinkEntryIds)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		_localRepository.updateAsset(
 			userId, fileEntry, fileVersion, assetCategoryIds, assetTagNames,
@@ -212,7 +197,7 @@ public class LocalRepositoryProxyBean
 			long userId, long fileEntryId, String sourceFileName,
 			String mimeType, String title, String description, String changeLog,
 			boolean majorVersion, File file, ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		FileEntry fileEntry = _localRepository.updateFileEntry(
 			userId, fileEntryId, sourceFileName, mimeType, title, description,
@@ -227,7 +212,7 @@ public class LocalRepositoryProxyBean
 			String mimeType, String title, String description, String changeLog,
 			boolean majorVersion, InputStream is, long size,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		FileEntry fileEntry = _localRepository.updateFileEntry(
 			userId, fileEntryId, sourceFileName, mimeType, title, description,
@@ -238,12 +223,12 @@ public class LocalRepositoryProxyBean
 
 	@Override
 	public Folder updateFolder(
-			long folderId, long parentFolderId, String name, String description,
-			ServiceContext serviceContext)
-		throws PortalException {
+			long folderId, long parentFolderId, String title,
+			String description, ServiceContext serviceContext)
+		throws PortalException, SystemException {
 
 		return _localRepository.updateFolder(
-			folderId, parentFolderId, name, description, serviceContext);
+			folderId, parentFolderId, title, description, serviceContext);
 	}
 
 	private LocalRepository _localRepository;

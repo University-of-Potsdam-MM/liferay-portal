@@ -2,110 +2,36 @@
 @import "mixins";
 
 @include respond-to(phone, tablet) {
-	.dockbar {
-		.container, .container-fluid {
-			padding: 0 5px;
+	.aui {
+		.dockbar .navbar-inner .container {
+			#_145_navSiteNavigationNavbarBtn {
+				float: none;
+			}
 
-			.nav-add-controls-btn {
+			#_145_navAddControlsNavbarBtn {
 				display: none;
 			}
 
-			.nav-account-controls {
-				float: right;
-				text-align: top;
+			.brand {
+				font-size: 16px;
+				padding: 22px 0 0 0;
 			}
 
-			.navbar-brand {
-				@include display-flex();
-				@include flex-grow(1);
-				@include flex-shrink(500);
-
-				line-height: 16px;
-				min-width: 128px;
-				padding: 12px 0 0 0;
-				white-space: nowrap;
-				width: auto;
-
-				.control-panel-back-link {
-					float: left;
-					margin-top: 6px;
-					position: relative;
-					z-index: 2;
-
-					@include respond-to(phone) {
-						@include flex-shrink(0);
-
-						margin: 0;
-						padding: 6px 8px;
-						position: absolute;
-					}
-				}
-
-				h1 {
-					@include respond-to(phone) {
-						display: block;
-						height: 51px;
-						line-height: 16px;
-						margin-top: -5px;
-						max-width: 100%;
-						min-width: 55px;
-						padding: 0 16px 0 33px;
-						position: relative;
-
-						a {
-							display: inline-block;
-							overflow: hidden;
-							text-overflow: ellipsis;
-							white-space: nowrap;
-							width: 100%;
-
-							.lfr-icon-menu-text {
-								font-size: 18px;
-							}
-						}
-
-						.control-panel-site-selector, .site-administration-title {
-							display: block;
-
-							@include ellipsis;
-
-							font-size: 16px;
-						}
-
-						.control-panel-site-selector {
-							position: static;
-
-							i {
-								bottom: 4px;
-								position: absolute;
-								right: 0;
-							}
-						}
-
-						.divider {
-							display: none;
-						}
-					}
-
-					@include respond-to(tablet) {
-						line-height: 32px;
-					}
-				}
-			}
-
-			.navbar-btn {
+			.btn-navbar {
 				float: right;
 			}
 
-			.nav-account-controls > li:hover {
-				background-color: transparent;
+			.nav-navigation > li {
+				margin-left: 5px;
 			}
 		}
 	}
 }
 
 @include respond-to(phone) {
-	.control-panel-home-actions, .portlet-title .taglib-icon-help {
-		display: none;
+	.aui{
+		.control-panel-home-actions {
+			display: none;
+		}
 	}
 }

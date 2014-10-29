@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -25,7 +25,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,25 +35,20 @@ import org.apache.tools.ant.DirectoryScanner;
  */
 public class SeleniumBuilderContext {
 
-	public SeleniumBuilderContext(
-			SeleniumBuilderFileUtil seleniumBuilderFileUtil)
-		throws Exception {
-
-		this(
-			seleniumBuilderFileUtil,
-			"com/liferay/portalweb/portal/util/liferayselenium/");
+	public SeleniumBuilderContext(String baseDir) throws Exception {
+		this(baseDir, "com/liferay/portalweb/portal/util/liferayselenium/");
 	}
 
-	public SeleniumBuilderContext(
-			SeleniumBuilderFileUtil seleniumBuilderFileUtil,
-			String liferaySeleniumDirName)
+	public SeleniumBuilderContext(String baseDir, String liferaySeleniumDir)
 		throws Exception {
 
-		_seleniumBuilderFileUtil = seleniumBuilderFileUtil;
+		_baseDir = baseDir;
+
+		_seleniumBuilderFileUtil = new SeleniumBuilderFileUtil(_baseDir);
 
 		DirectoryScanner directoryScanner = new DirectoryScanner();
 
-		directoryScanner.setBasedir(seleniumBuilderFileUtil.getBaseDirName());
+		directoryScanner.setBasedir(_baseDir);
 		directoryScanner.setIncludes(
 			new String[] {
 				"**\\*.action", "**\\*.function", "**\\*.macro", "**\\*.path",
@@ -70,8 +64,8 @@ public class SeleniumBuilderContext {
 		}
 
 		String[] seleniumFileNames = {
-			liferaySeleniumDirName + "LiferaySelenium.java",
-			liferaySeleniumDirName + "SeleniumWrapper.java"
+			liferaySeleniumDir + "LiferaySelenium.java",
+			liferaySeleniumDir + "SeleniumWrapper.java"
 		};
 
 		for (String seleniumFileName : seleniumFileNames) {
@@ -277,6 +271,10 @@ public class SeleniumBuilderContext {
 		return _actionSimpleClassNames.get(actionName);
 	}
 
+	public String getBaseDir() {
+		return _baseDir;
+	}
+
 	public String getFunctionClassName(String functionName) {
 		return _functionClassNames.get(functionName);
 	}
@@ -315,91 +313,6 @@ public class SeleniumBuilderContext {
 
 	public String getMacroClassName(String macroName) {
 		return _macroClassNames.get(macroName);
-	}
-
-	public Set<Element> getMacroCommandElements(String macroName) {
-		Set<Element> commandElementsSet = new HashSet<Element>();
-
-		Element macroRootElement = getMacroRootElement(macroName);
-
-		List<Element> macroCommandElements = macroRootElement.elements(
-			"command");
-
-		String extendsName = macroRootElement.attributeValue("extends");
-
-		if (extendsName != null) {
-			Element extendsRootElement = getMacroRootElement(extendsName);
-
-			List<Element> extendsCommandElements = extendsRootElement.elements(
-				"command");
-
-			Set<String> commandNames = getMacroCommandNames(macroName);
-
-			for (String commandName : commandNames) {
-				boolean macroElementFound = false;
-
-				for (Element macroCommandElement : macroCommandElements) {
-					String macroCommandName =
-						macroCommandElement.attributeValue("name");
-
-					if (commandName.equals(macroCommandName)) {
-						commandElementsSet.add(macroCommandElement);
-
-						macroElementFound = true;
-
-						break;
-					}
-				}
-
-				if (macroElementFound) {
-					continue;
-				}
-
-				for (Element extendsCommandElement : extendsCommandElements) {
-					String extendsCommandName =
-						extendsCommandElement.attributeValue("name");
-
-					if (commandName.equals(extendsCommandName)) {
-						commandElementsSet.add(extendsCommandElement);
-
-						break;
-					}
-				}
-			}
-		}
-		else {
-			commandElementsSet.addAll(macroCommandElements);
-		}
-
-		return commandElementsSet;
-	}
-
-	public Set<String> getMacroCommandNames(String macroName) {
-		Set<String> commandNames = new TreeSet<String>();
-
-		Element macroRootElement = getMacroRootElement(macroName);
-
-		List<Element> macroCommandElements = macroRootElement.elements(
-			"command");
-
-		for (Element macroCommandElement : macroCommandElements) {
-			commandNames.add(macroCommandElement.attributeValue("name"));
-		}
-
-		String extendsName = macroRootElement.attributeValue("extends");
-
-		if (extendsName != null) {
-			Element extendsRootElement = getMacroRootElement(extendsName);
-
-			List<Element> extendsCommandElements = extendsRootElement.elements(
-				"command");
-
-			for (Element extendsCommandElement : extendsCommandElements) {
-				commandNames.add(extendsCommandElement.attributeValue("name"));
-			}
-		}
-
-		return commandNames;
 	}
 
 	public String getMacroFileName(String macroName) {
@@ -533,28 +446,6 @@ public class SeleniumBuilderContext {
 
 	public String getTestCaseClassName(String testCaseName) {
 		return _testCaseClassNames.get(testCaseName);
-	}
-
-	public Set<String> getTestCaseCommandNames(String testCaseName) {
-		Element testCaseRootElement = getTestCaseRootElement(testCaseName);
-
-		String extendedTestCaseName = testCaseRootElement.attributeValue(
-			"extends");
-
-		if (extendedTestCaseName != null) {
-			Set<String> extendedTestCaseCommandNames =
-				_testCaseCommandNames.get(extendedTestCaseName);
-
-			Set<String> currentTestCaseCommandNames = _testCaseCommandNames.get(
-				testCaseName);
-
-			currentTestCaseCommandNames.addAll(extendedTestCaseCommandNames);
-
-			return currentTestCaseCommandNames;
-		}
-		else {
-			return _testCaseCommandNames.get(testCaseName);
-		}
 	}
 
 	public String getTestCaseFileName(String testCaseName) {
@@ -715,27 +606,6 @@ public class SeleniumBuilderContext {
 
 		String macroFileName = getMacroFileName(macroName);
 
-		String extendsName = rootElement.attributeValue("extends");
-
-		if (extendsName != null) {
-			if (!_macroNames.contains(extendsName)) {
-				_seleniumBuilderFileUtil.throwValidationException(
-					1006, macroFileName, rootElement, "extends");
-			}
-
-			if (macroName.equals(extendsName)) {
-				_seleniumBuilderFileUtil.throwValidationException(
-					1006, macroFileName, rootElement, "extends");
-			}
-
-			Element extendsRootElement = getMacroRootElement(extendsName);
-
-			if (extendsRootElement.attributeValue("extends") != null) {
-				_seleniumBuilderFileUtil.throwValidationException(
-					1006, macroFileName, rootElement, "extends");
-			}
-		}
-
 		validateVarElements(rootElement, macroFileName);
 
 		List<Element> commandElements =
@@ -788,17 +658,6 @@ public class SeleniumBuilderContext {
 
 		String testCaseFileName = getTestCaseFileName(testCaseName);
 
-		String extendedTestCase = rootElement.attributeValue("extends");
-
-		if (extendedTestCase != null) {
-			if (!_testCaseNames.contains(extendedTestCase) ||
-				testCaseName.equals(extendedTestCase)) {
-
-				_seleniumBuilderFileUtil.throwValidationException(
-					1006, testCaseFileName, rootElement, "extends");
-			}
-		}
-
 		validateVarElements(rootElement, testCaseFileName);
 
 		List<Element> commandElements =
@@ -826,17 +685,12 @@ public class SeleniumBuilderContext {
 		for (Element executeElement : executeElements) {
 			String action = executeElement.attributeValue("action");
 			String macro = executeElement.attributeValue("macro");
-			String testCase = executeElement.attributeValue("test-case");
 
 			if (action != null) {
 				_validateActionElement(testCaseFileName, executeElement);
 			}
 			else if (macro != null) {
 				_validateMacroElement(testCaseFileName, executeElement);
-			}
-			else if (testCase != null) {
-				_validateTestCaseElement(
-					testCaseFileName, executeElement, rootElement);
 			}
 		}
 	}
@@ -919,7 +773,7 @@ public class SeleniumBuilderContext {
 			_seleniumBuilderFileUtil.getAllChildElements(
 				rootElement, "command");
 
-		Set<String> commandNames = new TreeSet<String>();
+		Set<String> commandNames = new HashSet<String>();
 
 		for (Element commandElement : commandElements) {
 			commandNames.add(commandElement.attributeValue("name"));
@@ -975,7 +829,11 @@ public class SeleniumBuilderContext {
 			return false;
 		}
 
-		Set<Element> commandElements = getMacroCommandElements(name);
+		Element rootElement = getMacroRootElement(name);
+
+		List<Element> commandElements =
+			_seleniumBuilderFileUtil.getAllChildElements(
+				rootElement, "command");
 
 		for (Element commandElement : commandElements) {
 			String commandName = commandElement.attributeValue("name");
@@ -1175,55 +1033,6 @@ public class SeleniumBuilderContext {
 		}
 	}
 
-	private void _validateTestCaseElement(
-		String fileName, Element element, Element rootElement) {
-
-		String testCase = element.attributeValue("test-case");
-
-		int x = testCase.indexOf(StringPool.POUND);
-
-		String testCaseCommand = testCase.substring(x + 1);
-
-		String extendedTestCase = rootElement.attributeValue("extends");
-
-		if (extendedTestCase != null) {
-			Element extendedTestCaseRootElement = getTestCaseRootElement(
-				extendedTestCase);
-
-			if (testCaseCommand.equals("set-up")) {
-				Element extendedTestCaseSetUpElement =
-					extendedTestCaseRootElement.element("set-up");
-
-				if (extendedTestCaseSetUpElement == null) {
-					_seleniumBuilderFileUtil.throwValidationException(
-						1006, fileName, element, "test-case");
-				}
-			}
-			else if (testCaseCommand.equals("tear-down")) {
-				Element extendedTestCaseTearDownElement =
-					extendedTestCaseRootElement.element("tear-down");
-
-				if (extendedTestCaseTearDownElement == null) {
-					_seleniumBuilderFileUtil.throwValidationException(
-						1006, fileName, element, "test-case");
-				}
-			}
-			else {
-				Set<String> extendedTestCaseCommandNames =
-					_testCaseCommandNames.get(extendedTestCase);
-
-				if (!extendedTestCaseCommandNames.contains(testCaseCommand)) {
-					_seleniumBuilderFileUtil.throwValidationException(
-						1006, fileName, element, "test-case");
-				}
-			}
-		}
-		else {
-			_seleniumBuilderFileUtil.throwValidationException(
-				1004, fileName, rootElement, new String[] {"extends"});
-		}
-	}
-
 	private static Pattern _pattern = Pattern.compile(
 		"public [a-z]* [A-Za-z0-9_]*\\(.*?\\)");
 
@@ -1240,6 +1049,7 @@ public class SeleniumBuilderContext {
 		new HashMap<String, Element>();
 	private Map<String, String> _actionSimpleClassNames =
 		new HashMap<String, String>();
+	private String _baseDir;
 	private Map<String, String> _functionClassNames =
 		new HashMap<String, String>();
 	private Map<String, String> _functionFileNames =

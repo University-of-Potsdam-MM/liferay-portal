@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,13 +15,12 @@
 package com.liferay.portal.increment;
 
 import com.liferay.portal.kernel.configuration.Filter;
-import com.liferay.portal.kernel.test.CaptureHandler;
 import com.liferay.portal.kernel.test.CodeCoverageAssertor;
 import com.liferay.portal.kernel.test.JDKLoggerTestUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.test.AdviseWith;
-import com.liferay.portal.test.runners.AspectJMockingNewClassLoaderJUnitTestRunner;
+import com.liferay.portal.test.AspectJMockingNewClassLoaderJUnitTestRunner;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -51,45 +50,31 @@ public class BufferedIncrementConfigurationTest {
 	@AdviseWith(adviceClasses = PropsUtilAdvice.class)
 	@Test
 	public void testInvalidSettingWithLog() {
-		CaptureHandler captureHandler = _doTestInvalidSetting(Level.WARNING);
+		List<LogRecord> logRecords = _doTestInvalidSetting(Level.WARNING);
 
-		try {
-			List<LogRecord> logRecords = captureHandler.getLogRecords();
+		Assert.assertEquals(2, logRecords.size());
 
-			Assert.assertEquals(2, logRecords.size());
+		LogRecord logRecord1 = logRecords.get(0);
 
-			LogRecord logRecord1 = logRecords.get(0);
+		Assert.assertEquals(
+			PropsKeys.BUFFERED_INCREMENT_THREADPOOL_KEEP_ALIVE_TIME +
+				"[]=-3. Auto reset to 0.",
+			logRecord1.getMessage());
 
-			Assert.assertEquals(
-				PropsKeys.BUFFERED_INCREMENT_THREADPOOL_KEEP_ALIVE_TIME +
-					"[]=-3. Auto reset to 0.",
-				logRecord1.getMessage());
+		LogRecord logRecord2 = logRecords.get(1);
 
-			LogRecord logRecord2 = logRecords.get(1);
-
-			Assert.assertEquals(
-				PropsKeys.BUFFERED_INCREMENT_THREADPOOL_MAX_SIZE +
-					"[]=-4. Auto reset to 1.",
-				logRecord2.getMessage());
-		}
-		finally {
-			captureHandler.close();
-		}
+		Assert.assertEquals(
+			PropsKeys.BUFFERED_INCREMENT_THREADPOOL_MAX_SIZE +
+				"[]=-4. Auto reset to 1.",
+			logRecord2.getMessage());
 	}
 
 	@AdviseWith(adviceClasses = PropsUtilAdvice.class)
 	@Test
 	public void testInvalidSettingWithoutLog() {
-		CaptureHandler captureHandler = _doTestInvalidSetting(Level.OFF);
+		List<LogRecord> logRecords = _doTestInvalidSetting(Level.OFF);
 
-		try {
-			List<LogRecord> logRecords = captureHandler.getLogRecords();
-
-			Assert.assertTrue(logRecords.isEmpty());
-		}
-		finally {
-			captureHandler.close();
-		}
+		Assert.assertTrue(logRecords.isEmpty());
 	}
 
 	@AdviseWith(adviceClasses = PropsUtilAdvice.class)
@@ -177,7 +162,7 @@ public class BufferedIncrementConfigurationTest {
 
 	}
 
-	private CaptureHandler _doTestInvalidSetting(Level level) {
+	private List<LogRecord> _doTestInvalidSetting(Level level) {
 		Map<String, String> props = new HashMap<String, String>();
 
 		props.put(PropsKeys.BUFFERED_INCREMENT_ENABLED, "false");
@@ -201,7 +186,7 @@ public class BufferedIncrementConfigurationTest {
 
 		PropsUtilAdvice.setProps(props);
 
-		CaptureHandler captureHandler = JDKLoggerTestUtil.configureJDKLogger(
+		List<LogRecord> logRecords = JDKLoggerTestUtil.configureJDKLogger(
 			BufferedIncrementConfiguration.class.getName(), level);
 
 		BufferedIncrementConfiguration bufferedIncrementConfiguration =
@@ -235,7 +220,7 @@ public class BufferedIncrementConfigurationTest {
 			Assert.assertEquals("Standby is disabled", ise.getMessage());
 		}
 
-		return captureHandler;
+		return logRecords;
 	}
 
 }

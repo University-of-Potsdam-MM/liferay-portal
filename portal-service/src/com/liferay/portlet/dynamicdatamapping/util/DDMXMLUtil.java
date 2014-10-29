@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portlet.dynamicdatamapping.util;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.security.pacl.permission.PortalRuntimePermission;
 import com.liferay.portal.kernel.xml.Document;
 import com.liferay.portal.kernel.xml.XPath;
@@ -30,11 +31,11 @@ import java.util.Locale;
  */
 public class DDMXMLUtil {
 
-	public static String formatXML(Document document) {
+	public static String formatXML(Document document) throws SystemException {
 		return getDDMXML().formatXML(document);
 	}
 
-	public static String formatXML(String xml) {
+	public static String formatXML(String xml) throws SystemException {
 		return getDDMXML().formatXML(xml);
 	}
 
@@ -45,7 +46,7 @@ public class DDMXMLUtil {
 	}
 
 	public static Fields getFields(DDMStructure structure, String xml)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return getDDMXML().getFields(structure, xml);
 	}
@@ -53,22 +54,25 @@ public class DDMXMLUtil {
 	public static Fields getFields(
 			DDMStructure structure, XPath xPath, String xml,
 			List<String> fieldNames)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return getDDMXML().getFields(structure, xPath, xml, fieldNames);
 	}
 
-	public static String getXML(Document document, Fields fields) {
+	public static String getXML(Document document, Fields fields)
+		throws SystemException {
+
 		return getDDMXML().getXML(document, fields);
 	}
 
-	public static String getXML(Fields fields) {
+	public static String getXML(Fields fields) throws SystemException {
 		return getDDMXML().getXML(fields);
 	}
 
 	public static String updateXMLDefaultLocale(
-		String xml, Locale contentDefaultLocale,
-		Locale contentNewDefaultLocale) {
+			String xml, Locale contentDefaultLocale,
+			Locale contentNewDefaultLocale)
+		throws SystemException {
 
 		return getDDMXML().updateXMLDefaultLocale(
 			xml, contentDefaultLocale, contentNewDefaultLocale);

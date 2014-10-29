@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,6 +18,7 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.bean.AutoEscape;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.trash.TrashHandler;
 import com.liferay.portal.model.AttachedModel;
 import com.liferay.portal.model.BaseModel;
@@ -152,9 +153,10 @@ public interface DLFileEntryModel extends AttachedModel, BaseModel<DLFileEntry>,
 	 * Returns the user uuid of this document library file entry.
 	 *
 	 * @return the user uuid of this document library file entry
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public String getUserUuid();
+	public String getUserUuid() throws SystemException;
 
 	/**
 	 * Sets the user uuid of this document library file entry.
@@ -312,21 +314,6 @@ public interface DLFileEntryModel extends AttachedModel, BaseModel<DLFileEntry>,
 	 * @param name the name of this document library file entry
 	 */
 	public void setName(String name);
-
-	/**
-	 * Returns the file name of this document library file entry.
-	 *
-	 * @return the file name of this document library file entry
-	 */
-	@AutoEscape
-	public String getFileName();
-
-	/**
-	 * Sets the file name of this document library file entry.
-	 *
-	 * @param fileName the file name of this document library file entry
-	 */
-	public void setFileName(String fileName);
 
 	/**
 	 * Returns the extension of this document library file entry.
@@ -549,9 +536,10 @@ public interface DLFileEntryModel extends AttachedModel, BaseModel<DLFileEntry>,
 	 * Returns the trash entry created when this document library file entry was moved to the Recycle Bin. The trash entry may belong to one of the ancestors of this document library file entry.
 	 *
 	 * @return the trash entry created when this document library file entry was moved to the Recycle Bin
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public TrashEntry getTrashEntry() throws PortalException;
+	public TrashEntry getTrashEntry() throws PortalException, SystemException;
 
 	/**
 	 * Returns the class primary key of the trash entry for this document library file entry.
@@ -581,15 +569,10 @@ public interface DLFileEntryModel extends AttachedModel, BaseModel<DLFileEntry>,
 	 * Returns <code>true</code> if the parent of this document library file entry is in the Recycle Bin.
 	 *
 	 * @return <code>true</code> if the parent of this document library file entry is in the Recycle Bin; <code>false</code> otherwise
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public boolean isInTrashContainer();
-
-	@Override
-	public boolean isInTrashExplicitly();
-
-	@Override
-	public boolean isInTrashImplicitly();
 
 	@Override
 	public boolean isNew();

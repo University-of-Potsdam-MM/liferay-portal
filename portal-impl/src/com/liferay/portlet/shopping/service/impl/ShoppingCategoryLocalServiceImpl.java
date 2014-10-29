@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portlet.shopping.service.impl;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.ResourceConstants;
 import com.liferay.portal.model.User;
@@ -40,7 +41,7 @@ public class ShoppingCategoryLocalServiceImpl
 	public ShoppingCategory addCategory(
 			long userId, long parentCategoryId, String name, String description,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		// Category
 
@@ -90,7 +91,7 @@ public class ShoppingCategoryLocalServiceImpl
 	public void addCategoryResources(
 			long categoryId, boolean addGroupPermissions,
 			boolean addGuestPermissions)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		ShoppingCategory category =
 			shoppingCategoryPersistence.findByPrimaryKey(categoryId);
@@ -103,7 +104,7 @@ public class ShoppingCategoryLocalServiceImpl
 	public void addCategoryResources(
 			long categoryId, String[] groupPermissions,
 			String[] guestPermissions)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		ShoppingCategory category =
 			shoppingCategoryPersistence.findByPrimaryKey(categoryId);
@@ -115,7 +116,7 @@ public class ShoppingCategoryLocalServiceImpl
 	public void addCategoryResources(
 			ShoppingCategory category, boolean addGroupPermissions,
 			boolean addGuestPermissions)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		resourceLocalService.addResources(
 			category.getCompanyId(), category.getGroupId(),
@@ -128,7 +129,7 @@ public class ShoppingCategoryLocalServiceImpl
 	public void addCategoryResources(
 			ShoppingCategory category, String[] groupPermissions,
 			String[] guestPermissions)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		resourceLocalService.addModelResources(
 			category.getCompanyId(), category.getGroupId(),
@@ -137,7 +138,9 @@ public class ShoppingCategoryLocalServiceImpl
 	}
 
 	@Override
-	public void deleteCategories(long groupId) throws PortalException {
+	public void deleteCategories(long groupId)
+		throws PortalException, SystemException {
+
 		List<ShoppingCategory> categories =
 			shoppingCategoryPersistence.findByGroupId(groupId);
 
@@ -147,7 +150,9 @@ public class ShoppingCategoryLocalServiceImpl
 	}
 
 	@Override
-	public void deleteCategory(long categoryId) throws PortalException {
+	public void deleteCategory(long categoryId)
+		throws PortalException, SystemException {
+
 		ShoppingCategory category =
 			shoppingCategoryPersistence.findByPrimaryKey(categoryId);
 
@@ -156,7 +161,7 @@ public class ShoppingCategoryLocalServiceImpl
 
 	@Override
 	public void deleteCategory(ShoppingCategory category)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		// Categories
 
@@ -185,39 +190,39 @@ public class ShoppingCategoryLocalServiceImpl
 	}
 
 	@Override
-	public List<ShoppingCategory> getCategories(long groupId) {
+	public List<ShoppingCategory> getCategories(long groupId)
+		throws SystemException {
+
 		return shoppingCategoryPersistence.findByGroupId(groupId);
 	}
 
 	@Override
 	public List<ShoppingCategory> getCategories(
-		long groupId, long parentCategoryId, int start, int end) {
+			long groupId, long parentCategoryId, int start, int end)
+		throws SystemException {
 
 		return shoppingCategoryPersistence.findByG_P(
 			groupId, parentCategoryId, start, end);
 	}
 
 	@Override
-	public int getCategoriesCount(long groupId, long parentCategoryId) {
+	public int getCategoriesCount(long groupId, long parentCategoryId)
+		throws SystemException {
+
 		return shoppingCategoryPersistence.countByG_P(
 			groupId, parentCategoryId);
 	}
 
 	@Override
 	public ShoppingCategory getCategory(long categoryId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return shoppingCategoryPersistence.findByPrimaryKey(categoryId);
 	}
 
 	@Override
-	public ShoppingCategory getCategory(long groupId, String categoryName) {
-		return shoppingCategoryPersistence.fetchByG_N(groupId, categoryName);
-	}
-
-	@Override
 	public List<ShoppingCategory> getParentCategories(long categoryId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return getParentCategories(
 			shoppingCategoryPersistence.findByPrimaryKey(categoryId));
@@ -225,7 +230,7 @@ public class ShoppingCategoryLocalServiceImpl
 
 	@Override
 	public List<ShoppingCategory> getParentCategories(ShoppingCategory category)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		List<ShoppingCategory> parentCategories =
 			new ArrayList<ShoppingCategory>();
@@ -252,7 +257,7 @@ public class ShoppingCategoryLocalServiceImpl
 
 	@Override
 	public ShoppingCategory getParentCategory(ShoppingCategory category)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		ShoppingCategory parentCategory =
 			shoppingCategoryPersistence.findByPrimaryKey(
@@ -263,7 +268,8 @@ public class ShoppingCategoryLocalServiceImpl
 
 	@Override
 	public void getSubcategoryIds(
-		List<Long> categoryIds, long groupId, long categoryId) {
+			List<Long> categoryIds, long groupId, long categoryId)
+		throws SystemException {
 
 		List<ShoppingCategory> categories =
 			shoppingCategoryPersistence.findByG_P(groupId, categoryId);
@@ -281,7 +287,7 @@ public class ShoppingCategoryLocalServiceImpl
 			long categoryId, long parentCategoryId, String name,
 			String description, boolean mergeWithParentCategory,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		// Merge categories
 
@@ -314,7 +320,9 @@ public class ShoppingCategoryLocalServiceImpl
 		return category;
 	}
 
-	protected long getParentCategoryId(long groupId, long parentCategoryId) {
+	protected long getParentCategoryId(long groupId, long parentCategoryId)
+		throws SystemException {
+
 		if (parentCategoryId !=
 				ShoppingCategoryConstants.DEFAULT_PARENT_CATEGORY_ID) {
 
@@ -333,7 +341,8 @@ public class ShoppingCategoryLocalServiceImpl
 	}
 
 	protected long getParentCategoryId(
-		ShoppingCategory category, long parentCategoryId) {
+			ShoppingCategory category, long parentCategoryId)
+		throws SystemException {
 
 		if (parentCategoryId ==
 				ShoppingCategoryConstants.DEFAULT_PARENT_CATEGORY_ID) {
@@ -368,7 +377,7 @@ public class ShoppingCategoryLocalServiceImpl
 
 	protected void mergeCategories(
 			ShoppingCategory fromCategory, long toCategoryId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		List<ShoppingCategory> categories =
 			shoppingCategoryPersistence.findByG_P(

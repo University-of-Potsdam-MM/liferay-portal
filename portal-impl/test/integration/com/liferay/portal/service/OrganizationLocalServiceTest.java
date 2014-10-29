@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,16 +15,17 @@
 package com.liferay.portal.service;
 
 import com.liferay.portal.kernel.test.ExecutionTestListeners;
+import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.GroupConstants;
 import com.liferay.portal.model.Organization;
 import com.liferay.portal.model.OrganizationConstants;
 import com.liferay.portal.model.User;
-import com.liferay.portal.test.listeners.MainServletExecutionTestListener;
-import com.liferay.portal.test.listeners.ResetDatabaseExecutionTestListener;
-import com.liferay.portal.test.runners.LiferayIntegrationJUnitTestRunner;
-import com.liferay.portal.util.test.OrganizationTestUtil;
-import com.liferay.portal.util.test.TestPropsValues;
+import com.liferay.portal.test.EnvironmentExecutionTestListener;
+import com.liferay.portal.test.LiferayIntegrationJUnitTestRunner;
+import com.liferay.portal.test.TransactionalExecutionTestListener;
+import com.liferay.portal.util.OrganizationTestUtil;
+import com.liferay.portal.util.TestPropsValues;
 
 import java.util.List;
 
@@ -38,10 +39,11 @@ import org.junit.runner.RunWith;
  */
 @ExecutionTestListeners(
 	listeners = {
-		MainServletExecutionTestListener.class,
-		ResetDatabaseExecutionTestListener.class
+		EnvironmentExecutionTestListener.class,
+		TransactionalExecutionTestListener.class
 	})
 @RunWith(LiferayIntegrationJUnitTestRunner.class)
+@Transactional
 public class OrganizationLocalServiceTest {
 
 	@Test
@@ -93,7 +95,7 @@ public class OrganizationLocalServiceTest {
 			"Organization A", true);
 
 		Organization organizationB = OrganizationTestUtil.addOrganization(
-			organizationA.getOrganizationId(), "Organization B", false);
+				organizationA.getOrganizationId(), "Organization B", false);
 
 		Assert.assertEquals(
 			organizationA.getOrganizationId(),
@@ -114,7 +116,7 @@ public class OrganizationLocalServiceTest {
 			"Organization A", false);
 
 		Organization organizationB = OrganizationTestUtil.addOrganization(
-			organizationA.getOrganizationId(), "Organization B", true);
+				organizationA.getOrganizationId(), "Organization B", true);
 
 		Assert.assertEquals(
 			organizationA.getOrganizationId(),
@@ -135,7 +137,7 @@ public class OrganizationLocalServiceTest {
 			"Organization A", true);
 
 		Organization organizationB = OrganizationTestUtil.addOrganization(
-			organizationA.getOrganizationId(), "Organization B", true);
+				organizationA.getOrganizationId(), "Organization B", true);
 
 		Assert.assertEquals(
 			organizationA.getOrganizationId(),
@@ -167,7 +169,7 @@ public class OrganizationLocalServiceTest {
 			organizationB.getOrganizationId(), organizationAA.getName(),
 			organizationAA.getType(), organizationAA.getRegionId(),
 			organizationAA.getCountryId(), organizationAA.getStatusId(),
-			organizationAA.getComments(), false, null, true, null);
+			organizationAA.getComments(), true, null);
 
 		Assert.assertEquals(
 			organizationB.getOrganizationId(),
@@ -188,7 +190,7 @@ public class OrganizationLocalServiceTest {
 			"Organization A", false);
 
 		Organization organizationAA = OrganizationTestUtil.addOrganization(
-			organizationA.getOrganizationId(), "Organization AA", true);
+				organizationA.getOrganizationId(), "Organization AA", true);
 
 		Organization organizationB = OrganizationTestUtil.addOrganization(
 			OrganizationConstants.DEFAULT_PARENT_ORGANIZATION_ID,
@@ -199,7 +201,7 @@ public class OrganizationLocalServiceTest {
 			organizationB.getOrganizationId(), organizationAA.getName(),
 			organizationAA.getType(), organizationAA.getRegionId(),
 			organizationAA.getCountryId(), organizationAA.getStatusId(),
-			organizationAA.getComments(), false, null, true, null);
+			organizationAA.getComments(), true, null);
 
 		Assert.assertEquals(
 			organizationB.getOrganizationId(),
@@ -220,7 +222,7 @@ public class OrganizationLocalServiceTest {
 			"Organization A", true);
 
 		Organization organizationAA = OrganizationTestUtil.addOrganization(
-			organizationA.getOrganizationId(), "Organization AA", true);
+				organizationA.getOrganizationId(), "Organization AA", true);
 
 		Organization organizationB = OrganizationTestUtil.addOrganization(
 			OrganizationConstants.DEFAULT_PARENT_ORGANIZATION_ID,
@@ -231,7 +233,7 @@ public class OrganizationLocalServiceTest {
 			organizationB.getOrganizationId(), organizationAA.getName(),
 			organizationAA.getType(), organizationAA.getRegionId(),
 			organizationAA.getCountryId(), organizationAA.getStatusId(),
-			organizationAA.getComments(), false, null, true, null);
+			organizationAA.getComments(), true, null);
 
 		Assert.assertEquals(
 			organizationB.getOrganizationId(),
@@ -263,7 +265,7 @@ public class OrganizationLocalServiceTest {
 			organizationB.getOrganizationId(), organizationAA.getName(),
 			organizationAA.getType(), organizationAA.getRegionId(),
 			organizationAA.getCountryId(), organizationAA.getStatusId(),
-			organizationAA.getComments(), false, null, true, null);
+			organizationAA.getComments(), true, null);
 
 		Assert.assertEquals(
 			organizationB.getOrganizationId(),

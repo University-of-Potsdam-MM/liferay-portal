@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,7 +15,6 @@
 package com.liferay.portal.tools.deploy;
 
 import com.liferay.portal.kernel.plugin.PluginPackage;
-import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
@@ -27,11 +26,13 @@ import com.liferay.portal.kernel.xml.Document;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.kernel.xml.SAXReaderUtil;
 import com.liferay.portal.model.Plugin;
-import com.liferay.portal.tools.ToolDependencies;
+import com.liferay.portal.util.InitUtil;
 import com.liferay.portal.util.Portal;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.PrefsPropsUtil;
 import com.liferay.portal.util.PropsValues;
+import com.liferay.util.bridges.alloy.AlloyPortlet;
+import com.liferay.util.bridges.mvc.MVCPortlet;
 
 import java.io.File;
 
@@ -48,7 +49,7 @@ public class PortletDeployer extends BaseDeployer {
 		"javax.portlet.faces.GenericFacesPortlet";
 
 	public static void main(String[] args) {
-		ToolDependencies.wireDeployers();
+		InitUtil.initWithSpring();
 
 		List<String> wars = new ArrayList<String>();
 		List<String> jars = new ArrayList<String>();
@@ -119,6 +120,8 @@ public class PortletDeployer extends BaseDeployer {
 		updatePortletXML(portletXML);
 
 		sb.append(getServletContent(portletXML, webXML));
+
+		setupAlloy(srcFile, portletXML);
 
 		String extraContent = super.getExtraContent(
 			webXmlVersion, srcFile, displayName);
@@ -206,6 +209,40 @@ public class PortletDeployer extends BaseDeployer {
 		}
 
 		return sb.toString();
+	}
+
+	public void setupAlloy(File srcFile, File portletXML) throws Exception {
+		Document document = SAXReaderUtil.read(portletXML);
+
+		Element rootElement = document.getRootElement();
+
+		List<Element> portletElements = rootElement.elements("portlet");
+
+		for (Element portletElement : portletElements) {
+			String portletClassName = portletElement.elementText(
+				"portlet-class");
+
+			if (!portletClassName.contains(
+					AlloyPortlet.class.getSimpleName())) {
+
+				continue;
+			}
+
+			String[] dirNames = FileUtil.listDirs(srcFile + "/WEB-INF/jsp");
+
+			for (String dirName : dirNames) {
+				File dir = new File(
+					srcFile + "/WEB-INF/jsp/" + dirName + "/views");
+
+				if (!dir.exists() || !dir.isDirectory()) {
+					continue;
+				}
+
+				copyDependencyXml("touch.jsp", dir.toString());
+			}
+
+			break;
+		}
 	}
 
 	@Override

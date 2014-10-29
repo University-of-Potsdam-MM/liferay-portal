@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,7 +14,6 @@
 
 package com.liferay.portal.tools.sourceformatter;
 
-import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -27,14 +26,7 @@ public class SourceFormatterTest {
 		SourceFormatter sourceFormatter = SourceFormatterUtil.create(
 			false, true, false, false);
 
-		try {
-			sourceFormatter.format();
-		}
-		catch (SourceMismatchException sme) {
-			Assert.assertEquals(
-				sme.getFileName(), sme.getFormattedSource(),
-				sme.getOriginalSource());
-		}
+		sourceFormatter.format();
 	}
 
 }

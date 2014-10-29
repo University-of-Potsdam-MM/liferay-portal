@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -29,6 +29,7 @@ import com.liferay.portal.kernel.util.ReleaseInfo;
 import com.liferay.portal.kernel.util.ServerDetector;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.UniqueList;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.spring.context.PortalContextLoaderListener;
 import com.liferay.portal.util.PropsUtil;
@@ -47,8 +48,7 @@ import java.security.Permissions;
 
 import java.util.Enumeration;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.List;
 
 import javax.servlet.ServletContext;
 
@@ -94,8 +94,8 @@ public class FileChecker extends BaseChecker {
 			"${com.sun.aas.instanceRoot}",
 			"${com.sun.aas.installRoot}",
 			"${file.separator}",
-			"${java.home}",
 			"${java.io.tmpdir}",
+			"${java.home}",
 			"${jboss.home.dir}",
 			"${jetty.home}",
 			"${jonas.base}",
@@ -133,8 +133,7 @@ public class FileChecker extends BaseChecker {
 			System.getProperty("com.sun.aas.instanceRoot"),
 			System.getProperty("com.sun.aas.installRoot"),
 			System.getProperty("file.separator"),
-			System.getProperty("java.home"),
-			System.getProperty("java.io.tmpdir"),
+			System.getProperty("java.io.tmpdir"), System.getenv("JAVA_HOME"),
 			System.getProperty("jboss.home.dir"),
 			System.getProperty("jetty.home"), System.getProperty("jonas.base"),
 			_portalDir, PropsValues.LIFERAY_HOME,
@@ -216,7 +215,7 @@ public class FileChecker extends BaseChecker {
 		return false;
 	}
 
-	protected void addCanonicalPath(Set<String> paths, String path) {
+	protected void addCanonicalPath(List<String> paths, String path) {
 		Iterator<String> itr = paths.iterator();
 
 		while (itr.hasNext()) {
@@ -242,7 +241,7 @@ public class FileChecker extends BaseChecker {
 		paths.add(path);
 	}
 
-	protected void addCanonicalPaths(Set<String> paths, File directory)
+	protected void addCanonicalPaths(List<String> paths, File directory)
 		throws IOException {
 
 		addCanonicalPath(
@@ -269,7 +268,7 @@ public class FileChecker extends BaseChecker {
 		}
 	}
 
-	protected void addDefaultReadPaths(Set<String> paths, String selector) {
+	protected void addDefaultReadPaths(List<String> paths, String selector) {
 		String[] pathsArray = PropsUtil.getArray(
 			PropsKeys.PORTAL_SECURITY_MANAGER_FILE_CHECKER_DEFAULT_READ_PATHS,
 			new Filter(selector));
@@ -349,7 +348,7 @@ public class FileChecker extends BaseChecker {
 		// Plugin can do anything, except execute, in its own work folder
 
 		ServletContext servletContext = ServletContextPool.get(
-			PortalContextLoaderListener.getPortalServletContextName());
+			PortalContextLoaderListener.getPortalServlerContextName());
 
 		if (!actions.equals(FILE_PERMISSION_ACTION_EXECUTE) &&
 			(_workDir != null)) {
@@ -383,7 +382,7 @@ public class FileChecker extends BaseChecker {
 			return;
 		}
 
-		Set<String> paths = new LinkedHashSet<String>();
+		List<String> paths = new UniqueList<String>();
 
 		// JDK
 

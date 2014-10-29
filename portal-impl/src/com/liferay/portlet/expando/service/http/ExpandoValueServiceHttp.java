@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -13,8 +13,6 @@
  */
 
 package com.liferay.portlet.expando.service.http;
-
-import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -53,13 +51,13 @@ import com.liferay.portlet.expando.service.ExpandoValueServiceUtil;
  * @see com.liferay.portlet.expando.service.ExpandoValueServiceUtil
  * @generated
  */
-@ProviderType
 public class ExpandoValueServiceHttp {
 	public static com.liferay.portlet.expando.model.ExpandoValue addValue(
 		HttpPrincipal httpPrincipal, long companyId,
 		java.lang.String className, java.lang.String tableName,
 		java.lang.String columnName, long classPK, java.lang.Object data)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(ExpandoValueServiceUtil.class,
 					"addValue", _addValueParameterTypes0);
@@ -75,6 +73,10 @@ public class ExpandoValueServiceHttp {
 			catch (Exception e) {
 				if (e instanceof com.liferay.portal.kernel.exception.PortalException) {
 					throw (com.liferay.portal.kernel.exception.PortalException)e;
+				}
+
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
 				}
 
 				throw new com.liferay.portal.kernel.exception.SystemException(e);
@@ -93,7 +95,8 @@ public class ExpandoValueServiceHttp {
 		HttpPrincipal httpPrincipal, long companyId,
 		java.lang.String className, java.lang.String tableName,
 		java.lang.String columnName, long classPK, java.lang.String data)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(ExpandoValueServiceUtil.class,
 					"addValue", _addValueParameterTypes1);
@@ -111,6 +114,10 @@ public class ExpandoValueServiceHttp {
 					throw (com.liferay.portal.kernel.exception.PortalException)e;
 				}
 
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
+				}
+
 				throw new com.liferay.portal.kernel.exception.SystemException(e);
 			}
 
@@ -126,7 +133,8 @@ public class ExpandoValueServiceHttp {
 	public static void addValues(HttpPrincipal httpPrincipal, long companyId,
 		java.lang.String className, java.lang.String tableName, long classPK,
 		java.util.Map<java.lang.String, java.io.Serializable> attributeValues)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(ExpandoValueServiceUtil.class,
 					"addValues", _addValuesParameterTypes2);
@@ -140,6 +148,10 @@ public class ExpandoValueServiceHttp {
 			catch (Exception e) {
 				if (e instanceof com.liferay.portal.kernel.exception.PortalException) {
 					throw (com.liferay.portal.kernel.exception.PortalException)e;
+				}
+
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
 				}
 
 				throw new com.liferay.portal.kernel.exception.SystemException(e);
@@ -156,7 +168,8 @@ public class ExpandoValueServiceHttp {
 		HttpPrincipal httpPrincipal, long companyId,
 		java.lang.String className, java.lang.String tableName,
 		java.util.Collection<java.lang.String> columnNames, long classPK)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(ExpandoValueServiceUtil.class,
 					"getData", _getDataParameterTypes3);
@@ -174,6 +187,10 @@ public class ExpandoValueServiceHttp {
 					throw (com.liferay.portal.kernel.exception.PortalException)e;
 				}
 
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
+				}
+
 				throw new com.liferay.portal.kernel.exception.SystemException(e);
 			}
 
@@ -189,7 +206,8 @@ public class ExpandoValueServiceHttp {
 	public static java.io.Serializable getData(HttpPrincipal httpPrincipal,
 		long companyId, java.lang.String className, java.lang.String tableName,
 		java.lang.String columnName, long classPK)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(ExpandoValueServiceUtil.class,
 					"getData", _getDataParameterTypes4);
@@ -205,6 +223,10 @@ public class ExpandoValueServiceHttp {
 			catch (Exception e) {
 				if (e instanceof com.liferay.portal.kernel.exception.PortalException) {
 					throw (com.liferay.portal.kernel.exception.PortalException)e;
+				}
+
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
 				}
 
 				throw new com.liferay.portal.kernel.exception.SystemException(e);
@@ -223,7 +245,8 @@ public class ExpandoValueServiceHttp {
 		HttpPrincipal httpPrincipal, long companyId,
 		java.lang.String className, java.lang.String tableName,
 		java.lang.String columnName, long classPK)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(ExpandoValueServiceUtil.class,
 					"getJSONData", _getJSONDataParameterTypes5);
@@ -239,6 +262,10 @@ public class ExpandoValueServiceHttp {
 			catch (Exception e) {
 				if (e instanceof com.liferay.portal.kernel.exception.PortalException) {
 					throw (com.liferay.portal.kernel.exception.PortalException)e;
+				}
+
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
 				}
 
 				throw new com.liferay.portal.kernel.exception.SystemException(e);

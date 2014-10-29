@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,6 +18,7 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.bean.PortalBeanLocatorUtil;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ReferenceRegistry;
 import com.liferay.portal.service.ServiceContext;
@@ -63,7 +64,8 @@ public class MBThreadFlagUtil {
 	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#countWithDynamicQuery(DynamicQuery)
 	 */
-	public static long countWithDynamicQuery(DynamicQuery dynamicQuery) {
+	public static long countWithDynamicQuery(DynamicQuery dynamicQuery)
+		throws SystemException {
 		return getPersistence().countWithDynamicQuery(dynamicQuery);
 	}
 
@@ -71,7 +73,7 @@ public class MBThreadFlagUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#findWithDynamicQuery(DynamicQuery)
 	 */
 	public static List<MBThreadFlag> findWithDynamicQuery(
-		DynamicQuery dynamicQuery) {
+		DynamicQuery dynamicQuery) throws SystemException {
 		return getPersistence().findWithDynamicQuery(dynamicQuery);
 	}
 
@@ -79,7 +81,8 @@ public class MBThreadFlagUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#findWithDynamicQuery(DynamicQuery, int, int)
 	 */
 	public static List<MBThreadFlag> findWithDynamicQuery(
-		DynamicQuery dynamicQuery, int start, int end) {
+		DynamicQuery dynamicQuery, int start, int end)
+		throws SystemException {
 		return getPersistence().findWithDynamicQuery(dynamicQuery, start, end);
 	}
 
@@ -88,7 +91,7 @@ public class MBThreadFlagUtil {
 	 */
 	public static List<MBThreadFlag> findWithDynamicQuery(
 		DynamicQuery dynamicQuery, int start, int end,
-		OrderByComparator<MBThreadFlag> orderByComparator) {
+		OrderByComparator orderByComparator) throws SystemException {
 		return getPersistence()
 				   .findWithDynamicQuery(dynamicQuery, start, end,
 			orderByComparator);
@@ -97,7 +100,8 @@ public class MBThreadFlagUtil {
 	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel)
 	 */
-	public static MBThreadFlag update(MBThreadFlag mbThreadFlag) {
+	public static MBThreadFlag update(MBThreadFlag mbThreadFlag)
+		throws SystemException {
 		return getPersistence().update(mbThreadFlag);
 	}
 
@@ -105,7 +109,7 @@ public class MBThreadFlagUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, ServiceContext)
 	 */
 	public static MBThreadFlag update(MBThreadFlag mbThreadFlag,
-		ServiceContext serviceContext) {
+		ServiceContext serviceContext) throws SystemException {
 		return getPersistence().update(mbThreadFlag, serviceContext);
 	}
 
@@ -114,9 +118,11 @@ public class MBThreadFlagUtil {
 	*
 	* @param uuid the uuid
 	* @return the matching message boards thread flags
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.messageboards.model.MBThreadFlag> findByUuid(
-		java.lang.String uuid) {
+		java.lang.String uuid)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByUuid(uuid);
 	}
 
@@ -131,9 +137,11 @@ public class MBThreadFlagUtil {
 	* @param start the lower bound of the range of message boards thread flags
 	* @param end the upper bound of the range of message boards thread flags (not inclusive)
 	* @return the range of matching message boards thread flags
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.messageboards.model.MBThreadFlag> findByUuid(
-		java.lang.String uuid, int start, int end) {
+		java.lang.String uuid, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByUuid(uuid, start, end);
 	}
 
@@ -149,10 +157,12 @@ public class MBThreadFlagUtil {
 	* @param end the upper bound of the range of message boards thread flags (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching message boards thread flags
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.messageboards.model.MBThreadFlag> findByUuid(
 		java.lang.String uuid, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.messageboards.model.MBThreadFlag> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByUuid(uuid, start, end, orderByComparator);
 	}
 
@@ -163,11 +173,13 @@ public class MBThreadFlagUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching message boards thread flag
 	* @throws com.liferay.portlet.messageboards.NoSuchThreadFlagException if a matching message boards thread flag could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.messageboards.model.MBThreadFlag findByUuid_First(
 		java.lang.String uuid,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.messageboards.model.MBThreadFlag> orderByComparator)
-		throws com.liferay.portlet.messageboards.NoSuchThreadFlagException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.messageboards.NoSuchThreadFlagException {
 		return getPersistence().findByUuid_First(uuid, orderByComparator);
 	}
 
@@ -177,10 +189,12 @@ public class MBThreadFlagUtil {
 	* @param uuid the uuid
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching message boards thread flag, or <code>null</code> if a matching message boards thread flag could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.messageboards.model.MBThreadFlag fetchByUuid_First(
 		java.lang.String uuid,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.messageboards.model.MBThreadFlag> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByUuid_First(uuid, orderByComparator);
 	}
 
@@ -191,11 +205,13 @@ public class MBThreadFlagUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching message boards thread flag
 	* @throws com.liferay.portlet.messageboards.NoSuchThreadFlagException if a matching message boards thread flag could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.messageboards.model.MBThreadFlag findByUuid_Last(
 		java.lang.String uuid,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.messageboards.model.MBThreadFlag> orderByComparator)
-		throws com.liferay.portlet.messageboards.NoSuchThreadFlagException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.messageboards.NoSuchThreadFlagException {
 		return getPersistence().findByUuid_Last(uuid, orderByComparator);
 	}
 
@@ -205,10 +221,12 @@ public class MBThreadFlagUtil {
 	* @param uuid the uuid
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching message boards thread flag, or <code>null</code> if a matching message boards thread flag could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.messageboards.model.MBThreadFlag fetchByUuid_Last(
 		java.lang.String uuid,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.messageboards.model.MBThreadFlag> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByUuid_Last(uuid, orderByComparator);
 	}
 
@@ -220,11 +238,13 @@ public class MBThreadFlagUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next message boards thread flag
 	* @throws com.liferay.portlet.messageboards.NoSuchThreadFlagException if a message boards thread flag with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.messageboards.model.MBThreadFlag[] findByUuid_PrevAndNext(
 		long threadFlagId, java.lang.String uuid,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.messageboards.model.MBThreadFlag> orderByComparator)
-		throws com.liferay.portlet.messageboards.NoSuchThreadFlagException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.messageboards.NoSuchThreadFlagException {
 		return getPersistence()
 				   .findByUuid_PrevAndNext(threadFlagId, uuid, orderByComparator);
 	}
@@ -233,8 +253,10 @@ public class MBThreadFlagUtil {
 	* Removes all the message boards thread flags where uuid = &#63; from the database.
 	*
 	* @param uuid the uuid
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByUuid(java.lang.String uuid) {
+	public static void removeByUuid(java.lang.String uuid)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeByUuid(uuid);
 	}
 
@@ -243,8 +265,10 @@ public class MBThreadFlagUtil {
 	*
 	* @param uuid the uuid
 	* @return the number of matching message boards thread flags
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByUuid(java.lang.String uuid) {
+	public static int countByUuid(java.lang.String uuid)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByUuid(uuid);
 	}
 
@@ -255,10 +279,12 @@ public class MBThreadFlagUtil {
 	* @param groupId the group ID
 	* @return the matching message boards thread flag
 	* @throws com.liferay.portlet.messageboards.NoSuchThreadFlagException if a matching message boards thread flag could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.messageboards.model.MBThreadFlag findByUUID_G(
 		java.lang.String uuid, long groupId)
-		throws com.liferay.portlet.messageboards.NoSuchThreadFlagException {
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.messageboards.NoSuchThreadFlagException {
 		return getPersistence().findByUUID_G(uuid, groupId);
 	}
 
@@ -268,9 +294,11 @@ public class MBThreadFlagUtil {
 	* @param uuid the uuid
 	* @param groupId the group ID
 	* @return the matching message boards thread flag, or <code>null</code> if a matching message boards thread flag could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.messageboards.model.MBThreadFlag fetchByUUID_G(
-		java.lang.String uuid, long groupId) {
+		java.lang.String uuid, long groupId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByUUID_G(uuid, groupId);
 	}
 
@@ -281,9 +309,11 @@ public class MBThreadFlagUtil {
 	* @param groupId the group ID
 	* @param retrieveFromCache whether to use the finder cache
 	* @return the matching message boards thread flag, or <code>null</code> if a matching message boards thread flag could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.messageboards.model.MBThreadFlag fetchByUUID_G(
-		java.lang.String uuid, long groupId, boolean retrieveFromCache) {
+		java.lang.String uuid, long groupId, boolean retrieveFromCache)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByUUID_G(uuid, groupId, retrieveFromCache);
 	}
 
@@ -293,10 +323,12 @@ public class MBThreadFlagUtil {
 	* @param uuid the uuid
 	* @param groupId the group ID
 	* @return the message boards thread flag that was removed
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.messageboards.model.MBThreadFlag removeByUUID_G(
 		java.lang.String uuid, long groupId)
-		throws com.liferay.portlet.messageboards.NoSuchThreadFlagException {
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.messageboards.NoSuchThreadFlagException {
 		return getPersistence().removeByUUID_G(uuid, groupId);
 	}
 
@@ -306,8 +338,10 @@ public class MBThreadFlagUtil {
 	* @param uuid the uuid
 	* @param groupId the group ID
 	* @return the number of matching message boards thread flags
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByUUID_G(java.lang.String uuid, long groupId) {
+	public static int countByUUID_G(java.lang.String uuid, long groupId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByUUID_G(uuid, groupId);
 	}
 
@@ -317,9 +351,11 @@ public class MBThreadFlagUtil {
 	* @param uuid the uuid
 	* @param companyId the company ID
 	* @return the matching message boards thread flags
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.messageboards.model.MBThreadFlag> findByUuid_C(
-		java.lang.String uuid, long companyId) {
+		java.lang.String uuid, long companyId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByUuid_C(uuid, companyId);
 	}
 
@@ -335,9 +371,11 @@ public class MBThreadFlagUtil {
 	* @param start the lower bound of the range of message boards thread flags
 	* @param end the upper bound of the range of message boards thread flags (not inclusive)
 	* @return the range of matching message boards thread flags
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.messageboards.model.MBThreadFlag> findByUuid_C(
-		java.lang.String uuid, long companyId, int start, int end) {
+		java.lang.String uuid, long companyId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByUuid_C(uuid, companyId, start, end);
 	}
 
@@ -354,10 +392,12 @@ public class MBThreadFlagUtil {
 	* @param end the upper bound of the range of message boards thread flags (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching message boards thread flags
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.messageboards.model.MBThreadFlag> findByUuid_C(
 		java.lang.String uuid, long companyId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.messageboards.model.MBThreadFlag> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByUuid_C(uuid, companyId, start, end, orderByComparator);
 	}
@@ -370,11 +410,13 @@ public class MBThreadFlagUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching message boards thread flag
 	* @throws com.liferay.portlet.messageboards.NoSuchThreadFlagException if a matching message boards thread flag could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.messageboards.model.MBThreadFlag findByUuid_C_First(
 		java.lang.String uuid, long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.messageboards.model.MBThreadFlag> orderByComparator)
-		throws com.liferay.portlet.messageboards.NoSuchThreadFlagException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.messageboards.NoSuchThreadFlagException {
 		return getPersistence()
 				   .findByUuid_C_First(uuid, companyId, orderByComparator);
 	}
@@ -386,10 +428,12 @@ public class MBThreadFlagUtil {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching message boards thread flag, or <code>null</code> if a matching message boards thread flag could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.messageboards.model.MBThreadFlag fetchByUuid_C_First(
 		java.lang.String uuid, long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.messageboards.model.MBThreadFlag> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByUuid_C_First(uuid, companyId, orderByComparator);
 	}
@@ -402,11 +446,13 @@ public class MBThreadFlagUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching message boards thread flag
 	* @throws com.liferay.portlet.messageboards.NoSuchThreadFlagException if a matching message boards thread flag could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.messageboards.model.MBThreadFlag findByUuid_C_Last(
 		java.lang.String uuid, long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.messageboards.model.MBThreadFlag> orderByComparator)
-		throws com.liferay.portlet.messageboards.NoSuchThreadFlagException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.messageboards.NoSuchThreadFlagException {
 		return getPersistence()
 				   .findByUuid_C_Last(uuid, companyId, orderByComparator);
 	}
@@ -418,10 +464,12 @@ public class MBThreadFlagUtil {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching message boards thread flag, or <code>null</code> if a matching message boards thread flag could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.messageboards.model.MBThreadFlag fetchByUuid_C_Last(
 		java.lang.String uuid, long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.messageboards.model.MBThreadFlag> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByUuid_C_Last(uuid, companyId, orderByComparator);
 	}
@@ -435,11 +483,13 @@ public class MBThreadFlagUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next message boards thread flag
 	* @throws com.liferay.portlet.messageboards.NoSuchThreadFlagException if a message boards thread flag with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.messageboards.model.MBThreadFlag[] findByUuid_C_PrevAndNext(
 		long threadFlagId, java.lang.String uuid, long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.messageboards.model.MBThreadFlag> orderByComparator)
-		throws com.liferay.portlet.messageboards.NoSuchThreadFlagException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.messageboards.NoSuchThreadFlagException {
 		return getPersistence()
 				   .findByUuid_C_PrevAndNext(threadFlagId, uuid, companyId,
 			orderByComparator);
@@ -450,8 +500,10 @@ public class MBThreadFlagUtil {
 	*
 	* @param uuid the uuid
 	* @param companyId the company ID
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByUuid_C(java.lang.String uuid, long companyId) {
+	public static void removeByUuid_C(java.lang.String uuid, long companyId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeByUuid_C(uuid, companyId);
 	}
 
@@ -461,8 +513,10 @@ public class MBThreadFlagUtil {
 	* @param uuid the uuid
 	* @param companyId the company ID
 	* @return the number of matching message boards thread flags
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByUuid_C(java.lang.String uuid, long companyId) {
+	public static int countByUuid_C(java.lang.String uuid, long companyId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByUuid_C(uuid, companyId);
 	}
 
@@ -471,9 +525,10 @@ public class MBThreadFlagUtil {
 	*
 	* @param userId the user ID
 	* @return the matching message boards thread flags
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.messageboards.model.MBThreadFlag> findByUserId(
-		long userId) {
+		long userId) throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByUserId(userId);
 	}
 
@@ -488,9 +543,11 @@ public class MBThreadFlagUtil {
 	* @param start the lower bound of the range of message boards thread flags
 	* @param end the upper bound of the range of message boards thread flags (not inclusive)
 	* @return the range of matching message boards thread flags
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.messageboards.model.MBThreadFlag> findByUserId(
-		long userId, int start, int end) {
+		long userId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByUserId(userId, start, end);
 	}
 
@@ -506,10 +563,12 @@ public class MBThreadFlagUtil {
 	* @param end the upper bound of the range of message boards thread flags (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching message boards thread flags
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.messageboards.model.MBThreadFlag> findByUserId(
 		long userId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.messageboards.model.MBThreadFlag> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByUserId(userId, start, end, orderByComparator);
 	}
@@ -521,11 +580,13 @@ public class MBThreadFlagUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching message boards thread flag
 	* @throws com.liferay.portlet.messageboards.NoSuchThreadFlagException if a matching message boards thread flag could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.messageboards.model.MBThreadFlag findByUserId_First(
 		long userId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.messageboards.model.MBThreadFlag> orderByComparator)
-		throws com.liferay.portlet.messageboards.NoSuchThreadFlagException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.messageboards.NoSuchThreadFlagException {
 		return getPersistence().findByUserId_First(userId, orderByComparator);
 	}
 
@@ -535,10 +596,12 @@ public class MBThreadFlagUtil {
 	* @param userId the user ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching message boards thread flag, or <code>null</code> if a matching message boards thread flag could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.messageboards.model.MBThreadFlag fetchByUserId_First(
 		long userId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.messageboards.model.MBThreadFlag> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByUserId_First(userId, orderByComparator);
 	}
 
@@ -549,11 +612,13 @@ public class MBThreadFlagUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching message boards thread flag
 	* @throws com.liferay.portlet.messageboards.NoSuchThreadFlagException if a matching message boards thread flag could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.messageboards.model.MBThreadFlag findByUserId_Last(
 		long userId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.messageboards.model.MBThreadFlag> orderByComparator)
-		throws com.liferay.portlet.messageboards.NoSuchThreadFlagException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.messageboards.NoSuchThreadFlagException {
 		return getPersistence().findByUserId_Last(userId, orderByComparator);
 	}
 
@@ -563,10 +628,12 @@ public class MBThreadFlagUtil {
 	* @param userId the user ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching message boards thread flag, or <code>null</code> if a matching message boards thread flag could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.messageboards.model.MBThreadFlag fetchByUserId_Last(
 		long userId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.messageboards.model.MBThreadFlag> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByUserId_Last(userId, orderByComparator);
 	}
 
@@ -578,11 +645,13 @@ public class MBThreadFlagUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next message boards thread flag
 	* @throws com.liferay.portlet.messageboards.NoSuchThreadFlagException if a message boards thread flag with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.messageboards.model.MBThreadFlag[] findByUserId_PrevAndNext(
 		long threadFlagId, long userId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.messageboards.model.MBThreadFlag> orderByComparator)
-		throws com.liferay.portlet.messageboards.NoSuchThreadFlagException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.messageboards.NoSuchThreadFlagException {
 		return getPersistence()
 				   .findByUserId_PrevAndNext(threadFlagId, userId,
 			orderByComparator);
@@ -592,8 +661,10 @@ public class MBThreadFlagUtil {
 	* Removes all the message boards thread flags where userId = &#63; from the database.
 	*
 	* @param userId the user ID
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByUserId(long userId) {
+	public static void removeByUserId(long userId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeByUserId(userId);
 	}
 
@@ -602,8 +673,10 @@ public class MBThreadFlagUtil {
 	*
 	* @param userId the user ID
 	* @return the number of matching message boards thread flags
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByUserId(long userId) {
+	public static int countByUserId(long userId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByUserId(userId);
 	}
 
@@ -612,9 +685,11 @@ public class MBThreadFlagUtil {
 	*
 	* @param threadId the thread ID
 	* @return the matching message boards thread flags
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.messageboards.model.MBThreadFlag> findByThreadId(
-		long threadId) {
+		long threadId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByThreadId(threadId);
 	}
 
@@ -629,9 +704,11 @@ public class MBThreadFlagUtil {
 	* @param start the lower bound of the range of message boards thread flags
 	* @param end the upper bound of the range of message boards thread flags (not inclusive)
 	* @return the range of matching message boards thread flags
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.messageboards.model.MBThreadFlag> findByThreadId(
-		long threadId, int start, int end) {
+		long threadId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByThreadId(threadId, start, end);
 	}
 
@@ -647,10 +724,12 @@ public class MBThreadFlagUtil {
 	* @param end the upper bound of the range of message boards thread flags (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching message boards thread flags
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.messageboards.model.MBThreadFlag> findByThreadId(
 		long threadId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.messageboards.model.MBThreadFlag> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByThreadId(threadId, start, end, orderByComparator);
 	}
@@ -662,11 +741,13 @@ public class MBThreadFlagUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching message boards thread flag
 	* @throws com.liferay.portlet.messageboards.NoSuchThreadFlagException if a matching message boards thread flag could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.messageboards.model.MBThreadFlag findByThreadId_First(
 		long threadId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.messageboards.model.MBThreadFlag> orderByComparator)
-		throws com.liferay.portlet.messageboards.NoSuchThreadFlagException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.messageboards.NoSuchThreadFlagException {
 		return getPersistence().findByThreadId_First(threadId, orderByComparator);
 	}
 
@@ -676,10 +757,12 @@ public class MBThreadFlagUtil {
 	* @param threadId the thread ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching message boards thread flag, or <code>null</code> if a matching message boards thread flag could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.messageboards.model.MBThreadFlag fetchByThreadId_First(
 		long threadId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.messageboards.model.MBThreadFlag> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByThreadId_First(threadId, orderByComparator);
 	}
@@ -691,11 +774,13 @@ public class MBThreadFlagUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching message boards thread flag
 	* @throws com.liferay.portlet.messageboards.NoSuchThreadFlagException if a matching message boards thread flag could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.messageboards.model.MBThreadFlag findByThreadId_Last(
 		long threadId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.messageboards.model.MBThreadFlag> orderByComparator)
-		throws com.liferay.portlet.messageboards.NoSuchThreadFlagException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.messageboards.NoSuchThreadFlagException {
 		return getPersistence().findByThreadId_Last(threadId, orderByComparator);
 	}
 
@@ -705,10 +790,12 @@ public class MBThreadFlagUtil {
 	* @param threadId the thread ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching message boards thread flag, or <code>null</code> if a matching message boards thread flag could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.messageboards.model.MBThreadFlag fetchByThreadId_Last(
 		long threadId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.messageboards.model.MBThreadFlag> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByThreadId_Last(threadId, orderByComparator);
 	}
 
@@ -720,11 +807,13 @@ public class MBThreadFlagUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next message boards thread flag
 	* @throws com.liferay.portlet.messageboards.NoSuchThreadFlagException if a message boards thread flag with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.messageboards.model.MBThreadFlag[] findByThreadId_PrevAndNext(
 		long threadFlagId, long threadId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.messageboards.model.MBThreadFlag> orderByComparator)
-		throws com.liferay.portlet.messageboards.NoSuchThreadFlagException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.messageboards.NoSuchThreadFlagException {
 		return getPersistence()
 				   .findByThreadId_PrevAndNext(threadFlagId, threadId,
 			orderByComparator);
@@ -734,8 +823,10 @@ public class MBThreadFlagUtil {
 	* Removes all the message boards thread flags where threadId = &#63; from the database.
 	*
 	* @param threadId the thread ID
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByThreadId(long threadId) {
+	public static void removeByThreadId(long threadId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeByThreadId(threadId);
 	}
 
@@ -744,8 +835,10 @@ public class MBThreadFlagUtil {
 	*
 	* @param threadId the thread ID
 	* @return the number of matching message boards thread flags
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByThreadId(long threadId) {
+	public static int countByThreadId(long threadId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByThreadId(threadId);
 	}
 
@@ -756,10 +849,12 @@ public class MBThreadFlagUtil {
 	* @param threadId the thread ID
 	* @return the matching message boards thread flag
 	* @throws com.liferay.portlet.messageboards.NoSuchThreadFlagException if a matching message boards thread flag could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.messageboards.model.MBThreadFlag findByU_T(
 		long userId, long threadId)
-		throws com.liferay.portlet.messageboards.NoSuchThreadFlagException {
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.messageboards.NoSuchThreadFlagException {
 		return getPersistence().findByU_T(userId, threadId);
 	}
 
@@ -769,9 +864,11 @@ public class MBThreadFlagUtil {
 	* @param userId the user ID
 	* @param threadId the thread ID
 	* @return the matching message boards thread flag, or <code>null</code> if a matching message boards thread flag could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.messageboards.model.MBThreadFlag fetchByU_T(
-		long userId, long threadId) {
+		long userId, long threadId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByU_T(userId, threadId);
 	}
 
@@ -782,9 +879,11 @@ public class MBThreadFlagUtil {
 	* @param threadId the thread ID
 	* @param retrieveFromCache whether to use the finder cache
 	* @return the matching message boards thread flag, or <code>null</code> if a matching message boards thread flag could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.messageboards.model.MBThreadFlag fetchByU_T(
-		long userId, long threadId, boolean retrieveFromCache) {
+		long userId, long threadId, boolean retrieveFromCache)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByU_T(userId, threadId, retrieveFromCache);
 	}
 
@@ -794,10 +893,12 @@ public class MBThreadFlagUtil {
 	* @param userId the user ID
 	* @param threadId the thread ID
 	* @return the message boards thread flag that was removed
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.messageboards.model.MBThreadFlag removeByU_T(
 		long userId, long threadId)
-		throws com.liferay.portlet.messageboards.NoSuchThreadFlagException {
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.messageboards.NoSuchThreadFlagException {
 		return getPersistence().removeByU_T(userId, threadId);
 	}
 
@@ -807,8 +908,10 @@ public class MBThreadFlagUtil {
 	* @param userId the user ID
 	* @param threadId the thread ID
 	* @return the number of matching message boards thread flags
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByU_T(long userId, long threadId) {
+	public static int countByU_T(long userId, long threadId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByU_T(userId, threadId);
 	}
 
@@ -849,15 +952,18 @@ public class MBThreadFlagUtil {
 	* @param threadFlagId the primary key of the message boards thread flag
 	* @return the message boards thread flag that was removed
 	* @throws com.liferay.portlet.messageboards.NoSuchThreadFlagException if a message boards thread flag with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.messageboards.model.MBThreadFlag remove(
 		long threadFlagId)
-		throws com.liferay.portlet.messageboards.NoSuchThreadFlagException {
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.messageboards.NoSuchThreadFlagException {
 		return getPersistence().remove(threadFlagId);
 	}
 
 	public static com.liferay.portlet.messageboards.model.MBThreadFlag updateImpl(
-		com.liferay.portlet.messageboards.model.MBThreadFlag mbThreadFlag) {
+		com.liferay.portlet.messageboards.model.MBThreadFlag mbThreadFlag)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().updateImpl(mbThreadFlag);
 	}
 
@@ -867,10 +973,12 @@ public class MBThreadFlagUtil {
 	* @param threadFlagId the primary key of the message boards thread flag
 	* @return the message boards thread flag
 	* @throws com.liferay.portlet.messageboards.NoSuchThreadFlagException if a message boards thread flag with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.messageboards.model.MBThreadFlag findByPrimaryKey(
 		long threadFlagId)
-		throws com.liferay.portlet.messageboards.NoSuchThreadFlagException {
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.messageboards.NoSuchThreadFlagException {
 		return getPersistence().findByPrimaryKey(threadFlagId);
 	}
 
@@ -879,23 +987,22 @@ public class MBThreadFlagUtil {
 	*
 	* @param threadFlagId the primary key of the message boards thread flag
 	* @return the message boards thread flag, or <code>null</code> if a message boards thread flag with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.messageboards.model.MBThreadFlag fetchByPrimaryKey(
-		long threadFlagId) {
+		long threadFlagId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByPrimaryKey(threadFlagId);
-	}
-
-	public static java.util.Map<java.io.Serializable, com.liferay.portlet.messageboards.model.MBThreadFlag> fetchByPrimaryKeys(
-		java.util.Set<java.io.Serializable> primaryKeys) {
-		return getPersistence().fetchByPrimaryKeys(primaryKeys);
 	}
 
 	/**
 	* Returns all the message boards thread flags.
 	*
 	* @return the message boards thread flags
+	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portlet.messageboards.model.MBThreadFlag> findAll() {
+	public static java.util.List<com.liferay.portlet.messageboards.model.MBThreadFlag> findAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll();
 	}
 
@@ -909,9 +1016,11 @@ public class MBThreadFlagUtil {
 	* @param start the lower bound of the range of message boards thread flags
 	* @param end the upper bound of the range of message boards thread flags (not inclusive)
 	* @return the range of message boards thread flags
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.messageboards.model.MBThreadFlag> findAll(
-		int start, int end) {
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll(start, end);
 	}
 
@@ -926,17 +1035,22 @@ public class MBThreadFlagUtil {
 	* @param end the upper bound of the range of message boards thread flags (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of message boards thread flags
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.messageboards.model.MBThreadFlag> findAll(
 		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.messageboards.model.MBThreadFlag> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll(start, end, orderByComparator);
 	}
 
 	/**
 	* Removes all the message boards thread flags from the database.
+	*
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeAll() {
+	public static void removeAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeAll();
 	}
 
@@ -944,8 +1058,10 @@ public class MBThreadFlagUtil {
 	* Returns the number of message boards thread flags.
 	*
 	* @return the number of message boards thread flags
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countAll() {
+	public static int countAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countAll();
 	}
 
@@ -963,7 +1079,6 @@ public class MBThreadFlagUtil {
 	/**
 	 * @deprecated As of 6.2.0
 	 */
-	@Deprecated
 	public void setPersistence(MBThreadFlagPersistence persistence) {
 	}
 

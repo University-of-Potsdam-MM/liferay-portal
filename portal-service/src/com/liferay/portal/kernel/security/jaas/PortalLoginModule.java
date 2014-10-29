@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,6 +14,8 @@
 
 package com.liferay.portal.kernel.security.jaas;
 
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.PortalClassLoaderUtil;
 
 import java.util.Map;
@@ -36,7 +38,7 @@ public class PortalLoginModule implements LoginModule {
 			_loginModule = (LoginModule)clazz.newInstance();
 		}
 		catch (Exception e) {
-			throw new AssertionError(e);
+			_log.error(e);
 		}
 	}
 
@@ -71,6 +73,8 @@ public class PortalLoginModule implements LoginModule {
 	private static final String _CLASS_NAME =
 		"com.liferay.portal.security.jaas.PortalLoginModule";
 
-	private final LoginModule _loginModule;
+	private static Log _log = LogFactoryUtil.getLog(PortalLoginModule.class);
+
+	private LoginModule _loginModule;
 
 }

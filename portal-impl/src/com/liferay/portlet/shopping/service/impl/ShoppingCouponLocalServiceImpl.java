@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portlet.shopping.service.impl;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -58,7 +59,7 @@ public class ShoppingCouponLocalServiceImpl
 			int endDateMinute, boolean neverExpire, boolean active,
 			String limitCategories, String limitSkus, double minOrder,
 			double discount, String discountType, ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		User user = userPersistence.findByPrimaryKey(userId);
 		long groupId = serviceContext.getScopeGroupId();
@@ -121,7 +122,9 @@ public class ShoppingCouponLocalServiceImpl
 	}
 
 	@Override
-	public void deleteCoupon(long couponId) throws PortalException {
+	public void deleteCoupon(long couponId)
+		throws PortalException, SystemException {
+
 		ShoppingCoupon coupon = shoppingCouponPersistence.findByPrimaryKey(
 			couponId);
 
@@ -129,12 +132,12 @@ public class ShoppingCouponLocalServiceImpl
 	}
 
 	@Override
-	public void deleteCoupon(ShoppingCoupon coupon) {
+	public void deleteCoupon(ShoppingCoupon coupon) throws SystemException {
 		shoppingCouponPersistence.remove(coupon);
 	}
 
 	@Override
-	public void deleteCoupons(long groupId) {
+	public void deleteCoupons(long groupId) throws SystemException {
 		List<ShoppingCoupon> coupons = shoppingCouponPersistence.findByGroupId(
 			groupId);
 
@@ -144,12 +147,16 @@ public class ShoppingCouponLocalServiceImpl
 	}
 
 	@Override
-	public ShoppingCoupon getCoupon(long couponId) throws PortalException {
+	public ShoppingCoupon getCoupon(long couponId)
+		throws PortalException, SystemException {
+
 		return shoppingCouponPersistence.findByPrimaryKey(couponId);
 	}
 
 	@Override
-	public ShoppingCoupon getCoupon(String code) throws PortalException {
+	public ShoppingCoupon getCoupon(String code)
+		throws PortalException, SystemException {
+
 		code = StringUtil.toUpperCase(code.trim());
 
 		return shoppingCouponPersistence.findByCode(code);
@@ -157,8 +164,9 @@ public class ShoppingCouponLocalServiceImpl
 
 	@Override
 	public List<ShoppingCoupon> search(
-		long groupId, long companyId, String code, boolean active,
-		String discountType, boolean andOperator, int start, int end) {
+			long groupId, long companyId, String code, boolean active,
+			String discountType, boolean andOperator, int start, int end)
+		throws SystemException {
 
 		return shoppingCouponFinder.findByG_C_C_A_DT(
 			groupId, companyId, code, active, discountType, andOperator, start,
@@ -167,8 +175,9 @@ public class ShoppingCouponLocalServiceImpl
 
 	@Override
 	public int searchCount(
-		long groupId, long companyId, String code, boolean active,
-		String discountType, boolean andOperator) {
+			long groupId, long companyId, String code, boolean active,
+			String discountType, boolean andOperator)
+		throws SystemException {
 
 		return shoppingCouponFinder.countByG_C_C_A_DT(
 			groupId, companyId, code, active, discountType, andOperator);
@@ -183,7 +192,7 @@ public class ShoppingCouponLocalServiceImpl
 			boolean neverExpire, boolean active, String limitCategories,
 			String limitSkus, double minOrder, double discount,
 			String discountType, ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		User user = userPersistence.findByPrimaryKey(userId);
 
@@ -229,7 +238,7 @@ public class ShoppingCouponLocalServiceImpl
 		return coupon;
 	}
 
-	protected String getCode() {
+	protected String getCode() throws SystemException {
 		String code = PwdGenerator.getPassword(
 			8, PwdGenerator.KEY1, PwdGenerator.KEY2);
 
@@ -246,7 +255,7 @@ public class ShoppingCouponLocalServiceImpl
 			long companyId, long groupId, String code, boolean autoCode,
 			String name, String description, String limitCategories,
 			String limitSkus, double minOrder, double discount)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		if (!autoCode) {
 			if (Validator.isNull(code) || Validator.isNumber(code) ||
@@ -257,7 +266,7 @@ public class ShoppingCouponLocalServiceImpl
 			}
 
 			if (shoppingCouponPersistence.fetchByCode(code) != null) {
-				throw new DuplicateCouponCodeException("{code=" + code + "}");
+				throw new DuplicateCouponCodeException();
 			}
 		}
 
@@ -270,7 +279,7 @@ public class ShoppingCouponLocalServiceImpl
 			long companyId, long groupId, String name, String description,
 			String limitCategories, String limitSkus, double minOrder,
 			double discount)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		if (Validator.isNull(name)) {
 			throw new CouponNameException();
@@ -281,16 +290,7 @@ public class ShoppingCouponLocalServiceImpl
 
 		// Category IDs
 
-		List<Long> categoryIds = new ArrayList<Long>();
-
-		String[] categoryNames = StringUtil.split(limitCategories);
-
-		for (String categoryName : categoryNames) {
-			ShoppingCategory category = shoppingCategoryPersistence.fetchByG_N(
-				groupId, categoryName);
-
-			categoryIds.add(category.getCategoryId());
-		}
+		long[] categoryIds = StringUtil.split(limitCategories, 0L);
 
 		List<Long> invalidCategoryIds = new ArrayList<Long>();
 
@@ -303,7 +303,7 @@ public class ShoppingCouponLocalServiceImpl
 			}
 		}
 
-		if (!invalidCategoryIds.isEmpty()) {
+		if (invalidCategoryIds.size() > 0) {
 			CouponLimitCategoriesException clce =
 				new CouponLimitCategoriesException();
 
@@ -334,7 +334,7 @@ public class ShoppingCouponLocalServiceImpl
 			}
 		}
 
-		if (!invalidSkus.isEmpty()) {
+		if (invalidSkus.size() > 0) {
 			CouponLimitSKUsException clskue = new CouponLimitSKUsException();
 
 			clskue.setSkus(invalidSkus);

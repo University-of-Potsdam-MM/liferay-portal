@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -21,6 +21,7 @@ import com.liferay.mail.service.CyrusService;
 import com.liferay.mail.service.persistence.CyrusUserUtil;
 import com.liferay.mail.service.persistence.CyrusVirtualUtil;
 import com.liferay.portal.kernel.bean.IdentifiableBean;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.security.pacl.DoPrivileged;
 
 /**
@@ -30,7 +31,9 @@ import com.liferay.portal.kernel.security.pacl.DoPrivileged;
 public class CyrusServiceImpl implements CyrusService, IdentifiableBean {
 
 	@Override
-	public void addUser(long userId, String emailAddress, String password) {
+	public void addUser(long userId, String emailAddress, String password)
+		throws SystemException {
+
 		CyrusUser cyrusUser = new CyrusUser(userId, password);
 
 		CyrusUserUtil.update(cyrusUser);
@@ -41,12 +44,14 @@ public class CyrusServiceImpl implements CyrusService, IdentifiableBean {
 	}
 
 	@Override
-	public void deleteEmailAddress(long companyId, long userId) {
+	public void deleteEmailAddress(long companyId, long userId)
+		throws SystemException {
+
 		CyrusVirtualUtil.removeByUserId(userId);
 	}
 
 	@Override
-	public void deleteUser(long userId) {
+	public void deleteUser(long userId) throws SystemException {
 		try {
 			CyrusUserUtil.remove(userId);
 		}
@@ -68,7 +73,8 @@ public class CyrusServiceImpl implements CyrusService, IdentifiableBean {
 
 	@Override
 	public void updateEmailAddress(
-		long companyId, long userId, String emailAddress) {
+			long companyId, long userId, String emailAddress)
+		throws SystemException {
 
 		CyrusVirtualUtil.removeByUserId(userId);
 
@@ -78,7 +84,9 @@ public class CyrusServiceImpl implements CyrusService, IdentifiableBean {
 	}
 
 	@Override
-	public void updatePassword(long companyId, long userId, String password) {
+	public void updatePassword(long companyId, long userId, String password)
+		throws SystemException {
+
 		CyrusUser cyrusUser = null;
 
 		try {

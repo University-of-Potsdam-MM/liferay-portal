@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -23,7 +23,6 @@ import java.io.Serializable;
 public class PortletInfo implements Serializable {
 
 	public PortletInfo() {
-		this(null, null, null, null);
 	}
 
 	public PortletInfo(
@@ -51,9 +50,9 @@ public class PortletInfo implements Serializable {
 		return _title;
 	}
 
-	private final String _description;
-	private final String _keywords;
-	private final String _shortTitle;
-	private final String _title;
+	private String _description;
+	private String _keywords;
+	private String _shortTitle;
+	private String _title;
 
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -30,28 +30,26 @@ import org.apache.catalina.comet.CometEvent;
 public class CatalinaCometRequest extends BaseCometRequest {
 
 	public CatalinaCometRequest(CometEvent cometEvent) {
-		super(cometEvent.getHttpServletRequest());
+		_request = cometEvent.getHttpServletRequest();
+
+		setRequest(_request);
 	}
 
 	@Override
 	public String getParameter(String name) {
-		HttpServletRequest request = getRequest();
-
-		return request.getParameter(name);
+		return _request.getParameter(name);
 	}
 
 	@Override
 	public Map<String, String[]> getParameterMap() {
-		HttpServletRequest request = getRequest();
-
-		return request.getParameterMap();
+		return _request.getParameterMap();
 	}
 
 	@Override
 	public Enumeration<String> getParameterNames() {
-		HttpServletRequest request = getRequest();
-
-		return request.getParameterNames();
+		return _request.getParameterNames();
 	}
+
+	private HttpServletRequest _request;
 
 }

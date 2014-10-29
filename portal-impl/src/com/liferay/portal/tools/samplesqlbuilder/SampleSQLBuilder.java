@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -29,7 +29,7 @@ import com.liferay.portal.kernel.util.SortedProperties;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.tools.ToolDependencies;
+import com.liferay.portal.util.InitUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -55,7 +55,7 @@ import java.util.Properties;
 public class SampleSQLBuilder {
 
 	public static void main(String[] args) {
-		ToolDependencies.wireBasic();
+		InitUtil.initWithSpring();
 
 		Reader reader = null;
 
@@ -204,7 +204,7 @@ public class SampleSQLBuilder {
 		}
 	}
 
-	protected void compressSQL(Reader reader, File dir) throws Exception {
+	protected void compressSQL(Reader reader, File dir) throws IOException {
 		DB db = DBFactoryUtil.getDB(_dbType);
 
 		if (db instanceof MySQLDB) {
@@ -216,33 +216,26 @@ public class SampleSQLBuilder {
 			new HashMap<String, StringBundler>();
 		List<String> miscSQLs = new ArrayList<String>();
 
-		try (UnsyncBufferedReader unsyncBufferedReader =
-				new UnsyncBufferedReader(reader)) {
+		UnsyncBufferedReader unsyncBufferedReader = new UnsyncBufferedReader(
+			reader);
 
-			String s = null;
+		String s = null;
 
-			while ((_freemarkerException == null) &&
-				   ((s = unsyncBufferedReader.readLine()) != null)) {
+		while ((s = unsyncBufferedReader.readLine()) != null) {
+			s = s.trim();
 
-				s = s.trim();
-
-				if (s.length() > 0) {
-					if (s.startsWith("insert into ")) {
-						compressSQL(
-							db, dir, insertSQLWriters, insertSQLs,
-							s.substring(12));
-					}
-					else {
-						miscSQLs.add(s);
-					}
+			if (s.length() > 0) {
+				if (s.startsWith("insert into ")) {
+					compressSQL(
+						db, dir, insertSQLWriters, insertSQLs, s.substring(12));
+				}
+				else {
+					miscSQLs.add(s);
 				}
 			}
 		}
 
-		if (_freemarkerException != null) {
-			throw new Exception(
-				"Unable to process freemarker template ", _freemarkerException);
-		}
+		unsyncBufferedReader.close();
 
 		for (Map.Entry<String, StringBundler> entry : insertSQLs.entrySet()) {
 			String tableName = entry.getKey();
@@ -256,19 +249,23 @@ public class SampleSQLBuilder {
 
 			writeToInsertSQLFile(dir, tableName, insertSQLWriters, insertSQL);
 
-			try (Writer insertSQLWriter = insertSQLWriters.remove(tableName)) {
-				insertSQLWriter.write(";\n");
-			}
+			Writer insertSQLWriter = insertSQLWriters.remove(tableName);
+
+			insertSQLWriter.write(";\n");
+
+			insertSQLWriter.close();
 		}
 
-		try (Writer miscSQLWriter = new FileWriter(new File(dir, "misc.sql"))) {
-			for (String miscSQL : miscSQLs) {
-				miscSQL = db.buildSQL(miscSQL);
+		Writer miscSQLWriter = new FileWriter(new File(dir, "misc.sql"));
 
-				miscSQLWriter.write(miscSQL);
-				miscSQLWriter.write(StringPool.NEW_LINE);
-			}
+		for (String miscSQL : miscSQLs) {
+			miscSQL = db.buildSQL(miscSQL);
+
+			miscSQLWriter.write(miscSQL);
+			miscSQLWriter.write(StringPool.NEW_LINE);
 		}
+
+		miscSQLWriter.close();
 	}
 
 	protected Writer createFileWriter(File file) throws IOException {
@@ -299,44 +296,28 @@ public class SampleSQLBuilder {
 
 			@Override
 			public void run() {
-				Writer sampleSQLWriter = null;
-				Map<String, Object> context = null;
-
 				try {
-					sampleSQLWriter = new UnsyncTeeWriter(
+					Writer sampleSQLWriter = new UnsyncTeeWriter(
 						createUnsyncBufferedWriter(charPipe.getWriter()),
 						createFileWriter(new File(_outputDir, "sample.sql")));
 
-					context = getContext();
+					Map<String, Object> context = getContext();
 
 					FreeMarkerUtil.process(_script, context, sampleSQLWriter);
-				}
-				catch (Exception e) {
-					_freemarkerException = e;
-				}
-				finally {
+
 					for (String csvFileName : _csvFileNames) {
 						Writer csvWriter = (Writer)context.get(
 							csvFileName + "CSVWriter");
 
-						try {
-							csvWriter.close();
-						}
-						catch (IOException ioe) {
-							ioe.printStackTrace();
-						}
+						csvWriter.close();
 					}
 
-					if (sampleSQLWriter != null) {
-						try {
-							sampleSQLWriter.close();
-						}
-						catch (IOException ioe) {
-							ioe.printStackTrace();
-						}
-					}
+					sampleSQLWriter.close();
 
 					charPipe.close();
+				}
+				catch (Exception e) {
+					e.printStackTrace();
 				}
 			}
 
@@ -392,27 +373,27 @@ public class SampleSQLBuilder {
 		FileOutputStream outputSQLFileOutputStream = new FileOutputStream(
 			outputSQLFile);
 
-		try (FileChannel outputFileChannel =
-				outputSQLFileOutputStream.getChannel()) {
+		FileChannel outputFileChannel = outputSQLFileOutputStream.getChannel();
 
-			File miscSQLFile = null;
+		File miscSQLFile = null;
 
-			for (File inputFile : inputDir.listFiles()) {
-				String inputFileName = inputFile.getName();
+		for (File inputFile : inputDir.listFiles()) {
+			String inputFileName = inputFile.getName();
 
-				if (inputFileName.equals("misc.sql")) {
-					miscSQLFile = inputFile;
+			if (inputFileName.equals("misc.sql")) {
+				miscSQLFile = inputFile;
 
-					continue;
-				}
-
-				mergeSQL(inputFile, outputFileChannel);
+				continue;
 			}
 
-			if (miscSQLFile != null) {
-				mergeSQL(miscSQLFile, outputFileChannel);
-			}
+			mergeSQL(inputFile, outputFileChannel);
 		}
+
+		if (miscSQLFile != null) {
+			mergeSQL(miscSQLFile, outputFileChannel);
+		}
+
+		outputFileChannel.close();
 	}
 
 	protected void mergeSQL(File inputFile, FileChannel outputFileChannel)
@@ -420,10 +401,12 @@ public class SampleSQLBuilder {
 
 		FileInputStream inputFileInputStream = new FileInputStream(inputFile);
 
-		try (FileChannel inputFileChannel = inputFileInputStream.getChannel()) {
-			inputFileChannel.transferTo(
-				0, inputFileChannel.size(), outputFileChannel);
-		}
+		FileChannel inputFileChannel = inputFileInputStream.getChannel();
+
+		inputFileChannel.transferTo(
+			0, inputFileChannel.size(), outputFileChannel);
+
+		inputFileChannel.close();
 
 		inputFile.delete();
 	}
@@ -453,7 +436,6 @@ public class SampleSQLBuilder {
 	private String[] _csvFileNames;
 	private DataFactory _dataFactory;
 	private String _dbType;
-	private volatile Exception _freemarkerException;
 	private int _optimizeBufferSize;
 	private String _outputDir;
 	private String _script;

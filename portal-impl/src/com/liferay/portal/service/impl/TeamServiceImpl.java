@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portal.service.impl;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.model.Team;
 import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.security.permission.ActionKeys;
@@ -33,7 +34,7 @@ public class TeamServiceImpl extends TeamServiceBaseImpl {
 
 	@Override
 	public Team addTeam(long groupId, String name, String description)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		GroupPermissionUtil.check(
 			getPermissionChecker(), groupId, ActionKeys.MANAGE_TEAMS);
@@ -43,7 +44,9 @@ public class TeamServiceImpl extends TeamServiceBaseImpl {
 	}
 
 	@Override
-	public void deleteTeam(long teamId) throws PortalException {
+	public void deleteTeam(long teamId)
+		throws PortalException, SystemException {
+
 		TeamPermissionUtil.check(
 			getPermissionChecker(), teamId, ActionKeys.DELETE);
 
@@ -51,7 +54,9 @@ public class TeamServiceImpl extends TeamServiceBaseImpl {
 	}
 
 	@Override
-	public List<Team> getGroupTeams(long groupId) throws PortalException {
+	public List<Team> getGroupTeams(long groupId)
+		throws PortalException, SystemException {
+
 		GroupPermissionUtil.check(
 			getPermissionChecker(), groupId, ActionKeys.MANAGE_TEAMS);
 
@@ -59,16 +64,17 @@ public class TeamServiceImpl extends TeamServiceBaseImpl {
 	}
 
 	@Override
-	public Team getTeam(long teamId) throws PortalException {
-		Team team = teamLocalService.getTeam(teamId);
+	public Team getTeam(long teamId) throws PortalException, SystemException {
+		TeamPermissionUtil.check(
+			getPermissionChecker(), teamId, ActionKeys.VIEW);
 
-		TeamPermissionUtil.check(getPermissionChecker(), team, ActionKeys.VIEW);
-
-		return team;
+		return teamLocalService.getTeam(teamId);
 	}
 
 	@Override
-	public Team getTeam(long groupId, String name) throws PortalException {
+	public Team getTeam(long groupId, String name)
+		throws PortalException, SystemException {
+
 		Team team = teamLocalService.getTeam(groupId, name);
 
 		TeamPermissionUtil.check(getPermissionChecker(), team, ActionKeys.VIEW);
@@ -77,7 +83,9 @@ public class TeamServiceImpl extends TeamServiceBaseImpl {
 	}
 
 	@Override
-	public List<Team> getUserTeams(long userId) throws PortalException {
+	public List<Team> getUserTeams(long userId)
+		throws PortalException, SystemException {
+
 		UserPermissionUtil.check(
 			getPermissionChecker(), userId, ActionKeys.UPDATE);
 
@@ -86,7 +94,7 @@ public class TeamServiceImpl extends TeamServiceBaseImpl {
 
 	@Override
 	public List<Team> getUserTeams(long userId, long groupId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		GroupPermissionUtil.check(
 			getPermissionChecker(), groupId, ActionKeys.MANAGE_TEAMS);
@@ -96,7 +104,7 @@ public class TeamServiceImpl extends TeamServiceBaseImpl {
 
 	@Override
 	public boolean hasUserTeam(long userId, long teamId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		PermissionChecker permissionChecker = getPermissionChecker();
 
@@ -116,7 +124,7 @@ public class TeamServiceImpl extends TeamServiceBaseImpl {
 
 	@Override
 	public Team updateTeam(long teamId, String name, String description)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		TeamPermissionUtil.check(
 			getPermissionChecker(), teamId, ActionKeys.UPDATE);

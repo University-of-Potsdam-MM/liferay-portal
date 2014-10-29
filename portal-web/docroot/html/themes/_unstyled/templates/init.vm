@@ -6,8 +6,8 @@
 #set ($theme_timestamp = $themeDisplay.getTheme().getTimestamp())
 #set ($theme_settings = $themeDisplay.getThemeSettings())
 
-#set ($root_css_class = $languageUtil.get($locale, "lang.dir"))
-#set ($css_class = $htmlUtil.escape($theme_display.getColorScheme().getCssClass()) + " yui3-skin-sam")
+#set ($root_css_class = "aui " + $languageUtil.get($locale, "lang.dir"))
+#set ($css_class = $theme_display.getColorScheme().getCssClass() + " yui3-skin-sam")
 
 #set ($liferay_toggle_controls = $sessionClicks.get($request, "liferay_toggle_controls", "visible"))
 
@@ -131,10 +131,7 @@
 
 #if ($show_page_settings)
 	#set ($page_settings_text = $languageUtil.get($locale, "manage-pages"))
-
-	#if ($theme_display.getURLPageSettings())
-		#set ($page_settings_url = $htmlUtil.escape($theme_display.getURLPageSettings().toString()))
-	#end
+	#set ($page_settings_url = $htmlUtil.escape($theme_display.getURLPageSettings().toString()))
 #end
 
 #set ($show_sign_in = $theme_display.isShowSignInIcon())
@@ -198,9 +195,7 @@
 
 	#set ($typeSettingsProperties = $layout.getTypeSettingsProperties())
 
-	#if ($typeSettingsProperties)
-		#set ($page_javascript = $typeSettingsProperties.getProperty("javascript"))
-	#end
+	#set ($page_javascript = $typeSettingsProperties.getProperty("javascript"))
 
 	#set ($site_name = $htmlUtil.escape($page_group.getDescriptiveName()))
 
@@ -295,15 +290,11 @@
 #end
 
 #if ($page_group.isLayoutPrototype())
-	#set ($the_title = $page_group.getDescriptiveName($locale))
+	#set ($the_title = $page_group.getDescriptiveName())
 #end
 
-#if ($tilesTitle == "")
+#if (($tilesTitle == "") && !$pageTitle)
 	#set ($the_title = $htmlUtil.escape($the_title))
-#end
-
-#if ($the_title != "" && $company_name != $site_name && !$page_group.isLayoutPrototype())
-	#set ($the_title = $the_title + " - " + $site_name)
 #end
 
 #if ($layouts)
@@ -323,19 +314,18 @@
 	#set($logo_css_class = "$logo_css_class custom-logo")
 #end
 
-#set ($show_site_name_supported = $getterUtil.getBoolean($theme_settings.getProperty("show-site-name-supported"), true))
+#if ($is_guest_group)
+	#set ($show_site_name = true)
+#else
+	#set ($show_site_name_supported = $getterUtil.getBoolean($theme_settings.getProperty("show-site-name-supported"), true))
 
-#set ($show_site_name_default = $getterUtil.getBoolean($theme_settings.getProperty("show-site-name-default"), $show_site_name_supported))
+	#set ($show_site_name_default = $getterUtil.getBoolean($theme_settings.getProperty("show-site-name-default"), $show_site_name_supported))
 
-#set ($show_site_name = $getterUtil.getBoolean($layout.layoutSet.getSettingsProperty("showSiteName"), $show_site_name_default))
+	#set ($show_site_name = $getterUtil.getBoolean($layout.layoutSet.getSettingsProperty("showSiteName"), $show_site_name_default))
+#end
 
 #set($site_logo = $company_logo)
-
-#set ($logo_description = "")
-
-#if (!$show_site_name)
-	#set ($logo_description = $htmlUtil.escape($site_name))
-#end
+#set ($logo_description = $htmlUtil.escape($site_name))
 
 ## ---------- Navigation ---------- ##
 

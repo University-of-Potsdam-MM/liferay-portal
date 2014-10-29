@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -27,6 +27,7 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.upgrade.util.UpgradeTable;
 import com.liferay.portal.kernel.upgrade.util.UpgradeTableFactoryUtil;
 import com.liferay.portal.kernel.upgrade.util.UpgradeTableListener;
+import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.InstanceFactory;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -37,9 +38,7 @@ import com.liferay.portal.kernel.xml.SAXReaderUtil;
 import com.liferay.portal.model.ModelHintsUtil;
 import com.liferay.portal.model.ServiceComponent;
 import com.liferay.portal.service.base.ServiceComponentLocalServiceBaseImpl;
-import com.liferay.portal.service.configuration.ServiceComponentConfiguration;
 import com.liferay.portal.tools.servicebuilder.Entity;
-import com.liferay.portal.util.PropsValues;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -51,6 +50,8 @@ import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.ServletContext;
+
 /**
  * @author Brian Wing Shun Chan
  */
@@ -59,11 +60,11 @@ public class ServiceComponentLocalServiceImpl
 
 	@Override
 	public void destroyServiceComponent(
-		ServiceComponentConfiguration serviceComponentConfiguration,
-		ClassLoader classLoader) {
+			ServletContext servletContext, ClassLoader classLoader)
+		throws SystemException {
 
 		try {
-			clearCacheRegistry(serviceComponentConfiguration);
+			clearCacheRegistry(servletContext);
 		}
 		catch (Exception e) {
 			throw new SystemException(e);
@@ -72,15 +73,14 @@ public class ServiceComponentLocalServiceImpl
 
 	@Override
 	public ServiceComponent initServiceComponent(
-			ServiceComponentConfiguration serviceComponentConfiguration,
-			ClassLoader classLoader, String buildNamespace, long buildNumber,
-			long buildDate, boolean buildAutoUpgrade)
-		throws PortalException {
+			ServletContext servletContext, ClassLoader classLoader,
+			String buildNamespace, long buildNumber, long buildDate,
+			boolean buildAutoUpgrade)
+		throws PortalException, SystemException {
 
 		try {
 			ModelHintsUtil.read(
-				classLoader,
-				serviceComponentConfiguration.getModelHintsInputStream());
+				classLoader, "META-INF/portlet-model-hints.xml");
 		}
 		catch (Exception e) {
 			throw new SystemException(e);
@@ -88,8 +88,7 @@ public class ServiceComponentLocalServiceImpl
 
 		try {
 			ModelHintsUtil.read(
-				classLoader,
-				serviceComponentConfiguration.getModelHintsExtInputStream());
+				classLoader, "META-INF/portlet-model-hints-ext.xml");
 		}
 		catch (Exception e) {
 			throw new SystemException(e);
@@ -145,23 +144,23 @@ public class ServiceComponentLocalServiceImpl
 
 			Element tablesSQLElement = dataElement.addElement("tables-sql");
 
-			String tablesSQL = StringUtil.read(
-				serviceComponentConfiguration.getSQLTablesInputStream());
+			String tablesSQL = HttpUtil.URLtoString(
+				servletContext.getResource("/WEB-INF/sql/tables.sql"));
 
 			tablesSQLElement.addCDATA(tablesSQL);
 
 			Element sequencesSQLElement = dataElement.addElement(
 				"sequences-sql");
 
-			String sequencesSQL = StringUtil.read(
-				serviceComponentConfiguration.getSQLSequencesInputStream());
+			String sequencesSQL = HttpUtil.URLtoString(
+				servletContext.getResource("/WEB-INF/sql/sequences.sql"));
 
 			sequencesSQLElement.addCDATA(sequencesSQL);
 
 			Element indexesSQLElement = dataElement.addElement("indexes-sql");
 
-			String indexesSQL = StringUtil.read(
-				serviceComponentConfiguration.getSQLIndexesInputStream());
+			String indexesSQL = HttpUtil.URLtoString(
+				servletContext.getResource("/WEB-INF/sql/indexes.sql"));
 
 			indexesSQLElement.addCDATA(indexesSQL);
 
@@ -200,7 +199,7 @@ public class ServiceComponentLocalServiceImpl
 	}
 
 	@Override
-	public void verifyDB() {
+	public void verifyDB() throws SystemException {
 		List<ServiceComponent> serviceComponents =
 			serviceComponentPersistence.findAll();
 
@@ -219,6 +218,15 @@ public class ServiceComponentLocalServiceImpl
 				_log.error(e, e);
 			}
 		}
+	}
+
+	public static interface PACL {
+
+		public void doUpgradeDB(
+				DoUpgradeDBPrivilegedExceptionAction
+					doUpgradeDBPrivilegedExceptionAction)
+			throws Exception;
+
 	}
 
 	public class DoUpgradeDBPrivilegedExceptionAction
@@ -264,21 +272,11 @@ public class ServiceComponentLocalServiceImpl
 
 	}
 
-	public interface PACL {
-
-		public void doUpgradeDB(
-				DoUpgradeDBPrivilegedExceptionAction
-					doUpgradeDBPrivilegedExceptionAction)
-			throws Exception;
-
-	}
-
-	protected void clearCacheRegistry(
-			ServiceComponentConfiguration serviceComponentConfiguration)
+	protected void clearCacheRegistry(ServletContext servletContext)
 		throws DocumentException {
 
-		InputStream inputStream =
-			serviceComponentConfiguration.getHibernateInputStream();
+		InputStream inputStream = servletContext.getResourceAsStream(
+			"/WEB-INF/classes/META-INF/portlet-hbm.xml");
 
 		if (inputStream == null) {
 			return;
@@ -298,10 +296,8 @@ public class ServiceComponentLocalServiceImpl
 
 		CacheRegistryUtil.clear();
 
-		if (PropsValues.CACHE_CLEAR_ON_PLUGIN_UNDEPLOY) {
-			EntityCacheUtil.clearCache();
-			FinderCacheUtil.clearCache();
-		}
+		EntityCacheUtil.clearCache();
+		FinderCacheUtil.clearCache();
 	}
 
 	protected void doUpgradeDB(
@@ -438,7 +434,9 @@ public class ServiceComponentLocalServiceImpl
 		}
 	}
 
-	protected void removeOldServiceComponents(String buildNamespace) {
+	protected void removeOldServiceComponents(String buildNamespace)
+		throws SystemException {
+
 		int serviceComponentsCount =
 			serviceComponentPersistence.countByBuildNamespace(buildNamespace);
 

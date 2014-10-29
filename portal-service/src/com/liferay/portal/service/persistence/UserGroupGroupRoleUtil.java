@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,6 +18,7 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.bean.PortalBeanLocatorUtil;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ReferenceRegistry;
 import com.liferay.portal.model.UserGroupGroupRole;
@@ -62,7 +63,8 @@ public class UserGroupGroupRoleUtil {
 	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#countWithDynamicQuery(DynamicQuery)
 	 */
-	public static long countWithDynamicQuery(DynamicQuery dynamicQuery) {
+	public static long countWithDynamicQuery(DynamicQuery dynamicQuery)
+		throws SystemException {
 		return getPersistence().countWithDynamicQuery(dynamicQuery);
 	}
 
@@ -70,7 +72,7 @@ public class UserGroupGroupRoleUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#findWithDynamicQuery(DynamicQuery)
 	 */
 	public static List<UserGroupGroupRole> findWithDynamicQuery(
-		DynamicQuery dynamicQuery) {
+		DynamicQuery dynamicQuery) throws SystemException {
 		return getPersistence().findWithDynamicQuery(dynamicQuery);
 	}
 
@@ -78,7 +80,8 @@ public class UserGroupGroupRoleUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#findWithDynamicQuery(DynamicQuery, int, int)
 	 */
 	public static List<UserGroupGroupRole> findWithDynamicQuery(
-		DynamicQuery dynamicQuery, int start, int end) {
+		DynamicQuery dynamicQuery, int start, int end)
+		throws SystemException {
 		return getPersistence().findWithDynamicQuery(dynamicQuery, start, end);
 	}
 
@@ -87,7 +90,7 @@ public class UserGroupGroupRoleUtil {
 	 */
 	public static List<UserGroupGroupRole> findWithDynamicQuery(
 		DynamicQuery dynamicQuery, int start, int end,
-		OrderByComparator<UserGroupGroupRole> orderByComparator) {
+		OrderByComparator orderByComparator) throws SystemException {
 		return getPersistence()
 				   .findWithDynamicQuery(dynamicQuery, start, end,
 			orderByComparator);
@@ -97,7 +100,7 @@ public class UserGroupGroupRoleUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel)
 	 */
 	public static UserGroupGroupRole update(
-		UserGroupGroupRole userGroupGroupRole) {
+		UserGroupGroupRole userGroupGroupRole) throws SystemException {
 		return getPersistence().update(userGroupGroupRole);
 	}
 
@@ -105,7 +108,8 @@ public class UserGroupGroupRoleUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, ServiceContext)
 	 */
 	public static UserGroupGroupRole update(
-		UserGroupGroupRole userGroupGroupRole, ServiceContext serviceContext) {
+		UserGroupGroupRole userGroupGroupRole, ServiceContext serviceContext)
+		throws SystemException {
 		return getPersistence().update(userGroupGroupRole, serviceContext);
 	}
 
@@ -114,9 +118,11 @@ public class UserGroupGroupRoleUtil {
 	*
 	* @param userGroupId the user group ID
 	* @return the matching user group group roles
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portal.model.UserGroupGroupRole> findByUserGroupId(
-		long userGroupId) {
+		long userGroupId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByUserGroupId(userGroupId);
 	}
 
@@ -131,9 +137,11 @@ public class UserGroupGroupRoleUtil {
 	* @param start the lower bound of the range of user group group roles
 	* @param end the upper bound of the range of user group group roles (not inclusive)
 	* @return the range of matching user group group roles
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portal.model.UserGroupGroupRole> findByUserGroupId(
-		long userGroupId, int start, int end) {
+		long userGroupId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByUserGroupId(userGroupId, start, end);
 	}
 
@@ -149,10 +157,12 @@ public class UserGroupGroupRoleUtil {
 	* @param end the upper bound of the range of user group group roles (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching user group group roles
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portal.model.UserGroupGroupRole> findByUserGroupId(
 		long userGroupId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.UserGroupGroupRole> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByUserGroupId(userGroupId, start, end, orderByComparator);
 	}
@@ -164,11 +174,13 @@ public class UserGroupGroupRoleUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching user group group role
 	* @throws com.liferay.portal.NoSuchUserGroupGroupRoleException if a matching user group group role could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserGroupGroupRole findByUserGroupId_First(
 		long userGroupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.UserGroupGroupRole> orderByComparator)
-		throws com.liferay.portal.NoSuchUserGroupGroupRoleException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchUserGroupGroupRoleException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByUserGroupId_First(userGroupId, orderByComparator);
 	}
@@ -179,10 +191,12 @@ public class UserGroupGroupRoleUtil {
 	* @param userGroupId the user group ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching user group group role, or <code>null</code> if a matching user group group role could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserGroupGroupRole fetchByUserGroupId_First(
 		long userGroupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.UserGroupGroupRole> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByUserGroupId_First(userGroupId, orderByComparator);
 	}
@@ -194,11 +208,13 @@ public class UserGroupGroupRoleUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching user group group role
 	* @throws com.liferay.portal.NoSuchUserGroupGroupRoleException if a matching user group group role could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserGroupGroupRole findByUserGroupId_Last(
 		long userGroupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.UserGroupGroupRole> orderByComparator)
-		throws com.liferay.portal.NoSuchUserGroupGroupRoleException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchUserGroupGroupRoleException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByUserGroupId_Last(userGroupId, orderByComparator);
 	}
@@ -209,10 +225,12 @@ public class UserGroupGroupRoleUtil {
 	* @param userGroupId the user group ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching user group group role, or <code>null</code> if a matching user group group role could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserGroupGroupRole fetchByUserGroupId_Last(
 		long userGroupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.UserGroupGroupRole> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByUserGroupId_Last(userGroupId, orderByComparator);
 	}
@@ -225,12 +243,14 @@ public class UserGroupGroupRoleUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next user group group role
 	* @throws com.liferay.portal.NoSuchUserGroupGroupRoleException if a user group group role with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserGroupGroupRole[] findByUserGroupId_PrevAndNext(
 		com.liferay.portal.service.persistence.UserGroupGroupRolePK userGroupGroupRolePK,
 		long userGroupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.UserGroupGroupRole> orderByComparator)
-		throws com.liferay.portal.NoSuchUserGroupGroupRoleException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchUserGroupGroupRoleException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByUserGroupId_PrevAndNext(userGroupGroupRolePK,
 			userGroupId, orderByComparator);
@@ -240,8 +260,10 @@ public class UserGroupGroupRoleUtil {
 	* Removes all the user group group roles where userGroupId = &#63; from the database.
 	*
 	* @param userGroupId the user group ID
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByUserGroupId(long userGroupId) {
+	public static void removeByUserGroupId(long userGroupId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeByUserGroupId(userGroupId);
 	}
 
@@ -250,8 +272,10 @@ public class UserGroupGroupRoleUtil {
 	*
 	* @param userGroupId the user group ID
 	* @return the number of matching user group group roles
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByUserGroupId(long userGroupId) {
+	public static int countByUserGroupId(long userGroupId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByUserGroupId(userGroupId);
 	}
 
@@ -260,9 +284,11 @@ public class UserGroupGroupRoleUtil {
 	*
 	* @param groupId the group ID
 	* @return the matching user group group roles
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portal.model.UserGroupGroupRole> findByGroupId(
-		long groupId) {
+		long groupId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByGroupId(groupId);
 	}
 
@@ -277,9 +303,11 @@ public class UserGroupGroupRoleUtil {
 	* @param start the lower bound of the range of user group group roles
 	* @param end the upper bound of the range of user group group roles (not inclusive)
 	* @return the range of matching user group group roles
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portal.model.UserGroupGroupRole> findByGroupId(
-		long groupId, int start, int end) {
+		long groupId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByGroupId(groupId, start, end);
 	}
 
@@ -295,10 +323,12 @@ public class UserGroupGroupRoleUtil {
 	* @param end the upper bound of the range of user group group roles (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching user group group roles
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portal.model.UserGroupGroupRole> findByGroupId(
 		long groupId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.UserGroupGroupRole> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByGroupId(groupId, start, end, orderByComparator);
 	}
@@ -310,11 +340,13 @@ public class UserGroupGroupRoleUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching user group group role
 	* @throws com.liferay.portal.NoSuchUserGroupGroupRoleException if a matching user group group role could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserGroupGroupRole findByGroupId_First(
 		long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.UserGroupGroupRole> orderByComparator)
-		throws com.liferay.portal.NoSuchUserGroupGroupRoleException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchUserGroupGroupRoleException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByGroupId_First(groupId, orderByComparator);
 	}
 
@@ -324,10 +356,12 @@ public class UserGroupGroupRoleUtil {
 	* @param groupId the group ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching user group group role, or <code>null</code> if a matching user group group role could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserGroupGroupRole fetchByGroupId_First(
 		long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.UserGroupGroupRole> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByGroupId_First(groupId, orderByComparator);
 	}
 
@@ -338,11 +372,13 @@ public class UserGroupGroupRoleUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching user group group role
 	* @throws com.liferay.portal.NoSuchUserGroupGroupRoleException if a matching user group group role could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserGroupGroupRole findByGroupId_Last(
 		long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.UserGroupGroupRole> orderByComparator)
-		throws com.liferay.portal.NoSuchUserGroupGroupRoleException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchUserGroupGroupRoleException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByGroupId_Last(groupId, orderByComparator);
 	}
 
@@ -352,10 +388,12 @@ public class UserGroupGroupRoleUtil {
 	* @param groupId the group ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching user group group role, or <code>null</code> if a matching user group group role could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserGroupGroupRole fetchByGroupId_Last(
 		long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.UserGroupGroupRole> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByGroupId_Last(groupId, orderByComparator);
 	}
 
@@ -367,12 +405,14 @@ public class UserGroupGroupRoleUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next user group group role
 	* @throws com.liferay.portal.NoSuchUserGroupGroupRoleException if a user group group role with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserGroupGroupRole[] findByGroupId_PrevAndNext(
 		com.liferay.portal.service.persistence.UserGroupGroupRolePK userGroupGroupRolePK,
 		long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.UserGroupGroupRole> orderByComparator)
-		throws com.liferay.portal.NoSuchUserGroupGroupRoleException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchUserGroupGroupRoleException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByGroupId_PrevAndNext(userGroupGroupRolePK, groupId,
 			orderByComparator);
@@ -382,8 +422,10 @@ public class UserGroupGroupRoleUtil {
 	* Removes all the user group group roles where groupId = &#63; from the database.
 	*
 	* @param groupId the group ID
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByGroupId(long groupId) {
+	public static void removeByGroupId(long groupId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeByGroupId(groupId);
 	}
 
@@ -392,8 +434,10 @@ public class UserGroupGroupRoleUtil {
 	*
 	* @param groupId the group ID
 	* @return the number of matching user group group roles
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByGroupId(long groupId) {
+	public static int countByGroupId(long groupId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByGroupId(groupId);
 	}
 
@@ -402,9 +446,10 @@ public class UserGroupGroupRoleUtil {
 	*
 	* @param roleId the role ID
 	* @return the matching user group group roles
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portal.model.UserGroupGroupRole> findByRoleId(
-		long roleId) {
+		long roleId) throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByRoleId(roleId);
 	}
 
@@ -419,9 +464,11 @@ public class UserGroupGroupRoleUtil {
 	* @param start the lower bound of the range of user group group roles
 	* @param end the upper bound of the range of user group group roles (not inclusive)
 	* @return the range of matching user group group roles
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portal.model.UserGroupGroupRole> findByRoleId(
-		long roleId, int start, int end) {
+		long roleId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByRoleId(roleId, start, end);
 	}
 
@@ -437,10 +484,12 @@ public class UserGroupGroupRoleUtil {
 	* @param end the upper bound of the range of user group group roles (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching user group group roles
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portal.model.UserGroupGroupRole> findByRoleId(
 		long roleId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.UserGroupGroupRole> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByRoleId(roleId, start, end, orderByComparator);
 	}
@@ -452,11 +501,13 @@ public class UserGroupGroupRoleUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching user group group role
 	* @throws com.liferay.portal.NoSuchUserGroupGroupRoleException if a matching user group group role could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserGroupGroupRole findByRoleId_First(
 		long roleId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.UserGroupGroupRole> orderByComparator)
-		throws com.liferay.portal.NoSuchUserGroupGroupRoleException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchUserGroupGroupRoleException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByRoleId_First(roleId, orderByComparator);
 	}
 
@@ -466,10 +517,12 @@ public class UserGroupGroupRoleUtil {
 	* @param roleId the role ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching user group group role, or <code>null</code> if a matching user group group role could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserGroupGroupRole fetchByRoleId_First(
 		long roleId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.UserGroupGroupRole> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByRoleId_First(roleId, orderByComparator);
 	}
 
@@ -480,11 +533,13 @@ public class UserGroupGroupRoleUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching user group group role
 	* @throws com.liferay.portal.NoSuchUserGroupGroupRoleException if a matching user group group role could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserGroupGroupRole findByRoleId_Last(
 		long roleId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.UserGroupGroupRole> orderByComparator)
-		throws com.liferay.portal.NoSuchUserGroupGroupRoleException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchUserGroupGroupRoleException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByRoleId_Last(roleId, orderByComparator);
 	}
 
@@ -494,10 +549,12 @@ public class UserGroupGroupRoleUtil {
 	* @param roleId the role ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching user group group role, or <code>null</code> if a matching user group group role could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserGroupGroupRole fetchByRoleId_Last(
 		long roleId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.UserGroupGroupRole> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByRoleId_Last(roleId, orderByComparator);
 	}
 
@@ -509,12 +566,14 @@ public class UserGroupGroupRoleUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next user group group role
 	* @throws com.liferay.portal.NoSuchUserGroupGroupRoleException if a user group group role with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserGroupGroupRole[] findByRoleId_PrevAndNext(
 		com.liferay.portal.service.persistence.UserGroupGroupRolePK userGroupGroupRolePK,
 		long roleId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.UserGroupGroupRole> orderByComparator)
-		throws com.liferay.portal.NoSuchUserGroupGroupRoleException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchUserGroupGroupRoleException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByRoleId_PrevAndNext(userGroupGroupRolePK, roleId,
 			orderByComparator);
@@ -524,8 +583,10 @@ public class UserGroupGroupRoleUtil {
 	* Removes all the user group group roles where roleId = &#63; from the database.
 	*
 	* @param roleId the role ID
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByRoleId(long roleId) {
+	public static void removeByRoleId(long roleId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeByRoleId(roleId);
 	}
 
@@ -534,8 +595,10 @@ public class UserGroupGroupRoleUtil {
 	*
 	* @param roleId the role ID
 	* @return the number of matching user group group roles
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByRoleId(long roleId) {
+	public static int countByRoleId(long roleId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByRoleId(roleId);
 	}
 
@@ -545,9 +608,11 @@ public class UserGroupGroupRoleUtil {
 	* @param userGroupId the user group ID
 	* @param groupId the group ID
 	* @return the matching user group group roles
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portal.model.UserGroupGroupRole> findByU_G(
-		long userGroupId, long groupId) {
+		long userGroupId, long groupId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByU_G(userGroupId, groupId);
 	}
 
@@ -563,9 +628,11 @@ public class UserGroupGroupRoleUtil {
 	* @param start the lower bound of the range of user group group roles
 	* @param end the upper bound of the range of user group group roles (not inclusive)
 	* @return the range of matching user group group roles
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portal.model.UserGroupGroupRole> findByU_G(
-		long userGroupId, long groupId, int start, int end) {
+		long userGroupId, long groupId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByU_G(userGroupId, groupId, start, end);
 	}
 
@@ -582,10 +649,12 @@ public class UserGroupGroupRoleUtil {
 	* @param end the upper bound of the range of user group group roles (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching user group group roles
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portal.model.UserGroupGroupRole> findByU_G(
 		long userGroupId, long groupId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.UserGroupGroupRole> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByU_G(userGroupId, groupId, start, end,
 			orderByComparator);
@@ -599,11 +668,13 @@ public class UserGroupGroupRoleUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching user group group role
 	* @throws com.liferay.portal.NoSuchUserGroupGroupRoleException if a matching user group group role could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserGroupGroupRole findByU_G_First(
 		long userGroupId, long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.UserGroupGroupRole> orderByComparator)
-		throws com.liferay.portal.NoSuchUserGroupGroupRoleException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchUserGroupGroupRoleException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByU_G_First(userGroupId, groupId, orderByComparator);
 	}
@@ -615,10 +686,12 @@ public class UserGroupGroupRoleUtil {
 	* @param groupId the group ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching user group group role, or <code>null</code> if a matching user group group role could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserGroupGroupRole fetchByU_G_First(
 		long userGroupId, long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.UserGroupGroupRole> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByU_G_First(userGroupId, groupId, orderByComparator);
 	}
@@ -631,11 +704,13 @@ public class UserGroupGroupRoleUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching user group group role
 	* @throws com.liferay.portal.NoSuchUserGroupGroupRoleException if a matching user group group role could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserGroupGroupRole findByU_G_Last(
 		long userGroupId, long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.UserGroupGroupRole> orderByComparator)
-		throws com.liferay.portal.NoSuchUserGroupGroupRoleException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchUserGroupGroupRoleException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByU_G_Last(userGroupId, groupId, orderByComparator);
 	}
@@ -647,10 +722,12 @@ public class UserGroupGroupRoleUtil {
 	* @param groupId the group ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching user group group role, or <code>null</code> if a matching user group group role could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserGroupGroupRole fetchByU_G_Last(
 		long userGroupId, long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.UserGroupGroupRole> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByU_G_Last(userGroupId, groupId, orderByComparator);
 	}
@@ -664,12 +741,14 @@ public class UserGroupGroupRoleUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next user group group role
 	* @throws com.liferay.portal.NoSuchUserGroupGroupRoleException if a user group group role with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserGroupGroupRole[] findByU_G_PrevAndNext(
 		com.liferay.portal.service.persistence.UserGroupGroupRolePK userGroupGroupRolePK,
 		long userGroupId, long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.UserGroupGroupRole> orderByComparator)
-		throws com.liferay.portal.NoSuchUserGroupGroupRoleException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchUserGroupGroupRoleException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByU_G_PrevAndNext(userGroupGroupRolePK, userGroupId,
 			groupId, orderByComparator);
@@ -680,8 +759,10 @@ public class UserGroupGroupRoleUtil {
 	*
 	* @param userGroupId the user group ID
 	* @param groupId the group ID
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByU_G(long userGroupId, long groupId) {
+	public static void removeByU_G(long userGroupId, long groupId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeByU_G(userGroupId, groupId);
 	}
 
@@ -691,8 +772,10 @@ public class UserGroupGroupRoleUtil {
 	* @param userGroupId the user group ID
 	* @param groupId the group ID
 	* @return the number of matching user group group roles
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByU_G(long userGroupId, long groupId) {
+	public static int countByU_G(long userGroupId, long groupId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByU_G(userGroupId, groupId);
 	}
 
@@ -702,9 +785,11 @@ public class UserGroupGroupRoleUtil {
 	* @param groupId the group ID
 	* @param roleId the role ID
 	* @return the matching user group group roles
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portal.model.UserGroupGroupRole> findByG_R(
-		long groupId, long roleId) {
+		long groupId, long roleId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByG_R(groupId, roleId);
 	}
 
@@ -720,9 +805,11 @@ public class UserGroupGroupRoleUtil {
 	* @param start the lower bound of the range of user group group roles
 	* @param end the upper bound of the range of user group group roles (not inclusive)
 	* @return the range of matching user group group roles
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portal.model.UserGroupGroupRole> findByG_R(
-		long groupId, long roleId, int start, int end) {
+		long groupId, long roleId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByG_R(groupId, roleId, start, end);
 	}
 
@@ -739,10 +826,12 @@ public class UserGroupGroupRoleUtil {
 	* @param end the upper bound of the range of user group group roles (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching user group group roles
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portal.model.UserGroupGroupRole> findByG_R(
 		long groupId, long roleId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.UserGroupGroupRole> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByG_R(groupId, roleId, start, end, orderByComparator);
 	}
@@ -755,11 +844,13 @@ public class UserGroupGroupRoleUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching user group group role
 	* @throws com.liferay.portal.NoSuchUserGroupGroupRoleException if a matching user group group role could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserGroupGroupRole findByG_R_First(
 		long groupId, long roleId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.UserGroupGroupRole> orderByComparator)
-		throws com.liferay.portal.NoSuchUserGroupGroupRoleException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchUserGroupGroupRoleException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByG_R_First(groupId, roleId, orderByComparator);
 	}
@@ -771,10 +862,12 @@ public class UserGroupGroupRoleUtil {
 	* @param roleId the role ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching user group group role, or <code>null</code> if a matching user group group role could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserGroupGroupRole fetchByG_R_First(
 		long groupId, long roleId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.UserGroupGroupRole> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByG_R_First(groupId, roleId, orderByComparator);
 	}
@@ -787,11 +880,13 @@ public class UserGroupGroupRoleUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching user group group role
 	* @throws com.liferay.portal.NoSuchUserGroupGroupRoleException if a matching user group group role could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserGroupGroupRole findByG_R_Last(
 		long groupId, long roleId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.UserGroupGroupRole> orderByComparator)
-		throws com.liferay.portal.NoSuchUserGroupGroupRoleException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchUserGroupGroupRoleException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByG_R_Last(groupId, roleId, orderByComparator);
 	}
@@ -803,10 +898,12 @@ public class UserGroupGroupRoleUtil {
 	* @param roleId the role ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching user group group role, or <code>null</code> if a matching user group group role could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserGroupGroupRole fetchByG_R_Last(
 		long groupId, long roleId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.UserGroupGroupRole> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByG_R_Last(groupId, roleId, orderByComparator);
 	}
@@ -820,12 +917,14 @@ public class UserGroupGroupRoleUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next user group group role
 	* @throws com.liferay.portal.NoSuchUserGroupGroupRoleException if a user group group role with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserGroupGroupRole[] findByG_R_PrevAndNext(
 		com.liferay.portal.service.persistence.UserGroupGroupRolePK userGroupGroupRolePK,
 		long groupId, long roleId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.UserGroupGroupRole> orderByComparator)
-		throws com.liferay.portal.NoSuchUserGroupGroupRoleException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchUserGroupGroupRoleException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByG_R_PrevAndNext(userGroupGroupRolePK, groupId,
 			roleId, orderByComparator);
@@ -836,8 +935,10 @@ public class UserGroupGroupRoleUtil {
 	*
 	* @param groupId the group ID
 	* @param roleId the role ID
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByG_R(long groupId, long roleId) {
+	public static void removeByG_R(long groupId, long roleId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeByG_R(groupId, roleId);
 	}
 
@@ -847,8 +948,10 @@ public class UserGroupGroupRoleUtil {
 	* @param groupId the group ID
 	* @param roleId the role ID
 	* @return the number of matching user group group roles
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByG_R(long groupId, long roleId) {
+	public static int countByG_R(long groupId, long roleId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByG_R(groupId, roleId);
 	}
 
@@ -889,15 +992,18 @@ public class UserGroupGroupRoleUtil {
 	* @param userGroupGroupRolePK the primary key of the user group group role
 	* @return the user group group role that was removed
 	* @throws com.liferay.portal.NoSuchUserGroupGroupRoleException if a user group group role with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserGroupGroupRole remove(
 		com.liferay.portal.service.persistence.UserGroupGroupRolePK userGroupGroupRolePK)
-		throws com.liferay.portal.NoSuchUserGroupGroupRoleException {
+		throws com.liferay.portal.NoSuchUserGroupGroupRoleException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().remove(userGroupGroupRolePK);
 	}
 
 	public static com.liferay.portal.model.UserGroupGroupRole updateImpl(
-		com.liferay.portal.model.UserGroupGroupRole userGroupGroupRole) {
+		com.liferay.portal.model.UserGroupGroupRole userGroupGroupRole)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().updateImpl(userGroupGroupRole);
 	}
 
@@ -907,10 +1013,12 @@ public class UserGroupGroupRoleUtil {
 	* @param userGroupGroupRolePK the primary key of the user group group role
 	* @return the user group group role
 	* @throws com.liferay.portal.NoSuchUserGroupGroupRoleException if a user group group role with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserGroupGroupRole findByPrimaryKey(
 		com.liferay.portal.service.persistence.UserGroupGroupRolePK userGroupGroupRolePK)
-		throws com.liferay.portal.NoSuchUserGroupGroupRoleException {
+		throws com.liferay.portal.NoSuchUserGroupGroupRoleException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByPrimaryKey(userGroupGroupRolePK);
 	}
 
@@ -919,23 +1027,22 @@ public class UserGroupGroupRoleUtil {
 	*
 	* @param userGroupGroupRolePK the primary key of the user group group role
 	* @return the user group group role, or <code>null</code> if a user group group role with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserGroupGroupRole fetchByPrimaryKey(
-		com.liferay.portal.service.persistence.UserGroupGroupRolePK userGroupGroupRolePK) {
+		com.liferay.portal.service.persistence.UserGroupGroupRolePK userGroupGroupRolePK)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByPrimaryKey(userGroupGroupRolePK);
-	}
-
-	public static java.util.Map<java.io.Serializable, com.liferay.portal.model.UserGroupGroupRole> fetchByPrimaryKeys(
-		java.util.Set<java.io.Serializable> primaryKeys) {
-		return getPersistence().fetchByPrimaryKeys(primaryKeys);
 	}
 
 	/**
 	* Returns all the user group group roles.
 	*
 	* @return the user group group roles
+	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portal.model.UserGroupGroupRole> findAll() {
+	public static java.util.List<com.liferay.portal.model.UserGroupGroupRole> findAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll();
 	}
 
@@ -949,9 +1056,11 @@ public class UserGroupGroupRoleUtil {
 	* @param start the lower bound of the range of user group group roles
 	* @param end the upper bound of the range of user group group roles (not inclusive)
 	* @return the range of user group group roles
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portal.model.UserGroupGroupRole> findAll(
-		int start, int end) {
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll(start, end);
 	}
 
@@ -966,17 +1075,22 @@ public class UserGroupGroupRoleUtil {
 	* @param end the upper bound of the range of user group group roles (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of user group group roles
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portal.model.UserGroupGroupRole> findAll(
 		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.UserGroupGroupRole> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll(start, end, orderByComparator);
 	}
 
 	/**
 	* Removes all the user group group roles from the database.
+	*
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeAll() {
+	public static void removeAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeAll();
 	}
 
@@ -984,8 +1098,10 @@ public class UserGroupGroupRoleUtil {
 	* Returns the number of user group group roles.
 	*
 	* @return the number of user group group roles
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countAll() {
+	public static int countAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countAll();
 	}
 
@@ -1003,7 +1119,6 @@ public class UserGroupGroupRoleUtil {
 	/**
 	 * @deprecated As of 6.2.0
 	 */
-	@Deprecated
 	public void setPersistence(UserGroupGroupRolePersistence persistence) {
 	}
 

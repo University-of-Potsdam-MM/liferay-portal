@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -25,17 +25,14 @@ Locale[] availableLocales = (Locale[])request.getAttribute("liferay-ui:input-loc
 String cssClass = GetterUtil.getString((String)request.getAttribute("liferay-ui:input-localized:cssClass"));
 String defaultLanguageId = (String)request.getAttribute("liferay-ui:input-localized:defaultLanguageId");
 boolean disabled = GetterUtil.getBoolean((String)request.getAttribute("liferay-ui:input-localized:disabled"));
+String id = (String)request.getAttribute("liferay-ui:input-localized:id");
 Map<String, Object> dynamicAttributes = (Map<String, Object>)request.getAttribute("liferay-ui:input-localized:dynamicAttributes");
-String fieldPrefix = GetterUtil.getString((String)request.getAttribute("liferay-ui:input-localized:fieldPrefix"));
-String fieldPrefixSeparator = GetterUtil.getString((String)request.getAttribute("liferay-ui:input-localized:fieldPrefixSeparator"));
-String id = HtmlUtil.getAUICompatibleId((String)request.getAttribute("liferay-ui:input-localized:id"));
 boolean ignoreRequestValue = GetterUtil.getBoolean((String)request.getAttribute("liferay-ui:input-localized:ignoreRequestValue"));
 String languageId = (String)request.getAttribute("liferay-ui:input-localized:languageId");
 String maxLength = GetterUtil.getString((String)request.getAttribute("liferay-ui:input-localized:maxLength"));
 String name = (String)request.getAttribute("liferay-ui:input-localized:name");
-String toolbarSet = (String)request.getAttribute("liferay-ui:input-localized:toolbarSet");
-String type = (String)request.getAttribute("liferay-ui:input-localized:type");
 String xml = (String)request.getAttribute("liferay-ui:input-localized:xml");
+String type = (String)request.getAttribute("liferay-ui:input-localized:type");
 
 Locale defaultLocale = null;
 
@@ -67,14 +64,6 @@ if (Validator.isNull(mainLanguageValue)) {
 	mainLanguageValue = LocalizationUtil.getLocalization(xml, defaultLanguageId, true);
 }
 
-String fieldNamePrefix = StringPool.BLANK;
-String fieldNameSuffix = StringPool.BLANK;
-
-if (Validator.isNotNull(fieldPrefix)) {
-	fieldNamePrefix = fieldPrefix + fieldPrefixSeparator;
-	fieldNameSuffix = fieldPrefixSeparator;
-}
-
 String fieldSuffix = StringPool.BLANK;
 
 if (!Validator.isNull(languageId)) {
@@ -84,39 +73,27 @@ if (!Validator.isNull(languageId)) {
 List<String> languageIds = new ArrayList<String>();
 
 String fieldName = HtmlUtil.escapeAttribute(name + fieldSuffix);
-
-Exception exception = (Exception)request.getAttribute("liferay-ui:error:exception");
-String focusField = (String)request.getAttribute("liferay-ui:error:focusField");
-
-Set<Locale> errorLocales = new HashSet<Locale>();
-
-if ((exception != null) && fieldName.equals(focusField)) {
-	if (exception instanceof LocalizedException) {
-		LocalizedException le = (LocalizedException)exception;
-
-		Map<Locale, Exception> localizedExceptionsMap = le.getLocalizedExceptionsMap();
-
-		errorLocales = localizedExceptionsMap.keySet();
-	}
-}
 %>
 
 <span class="input-localized input-localized-<%= type %>" id="<portlet:namespace /><%= id %>BoundingBox">
 	<c:choose>
 		<c:when test='<%= type.equals("editor") %>'>
 			<liferay-ui:input-editor
-				contents="<%= mainLanguageValue %>"
-				contentsLanguageId="<%= languageId %>"
 				cssClass='<%= \"language-value \" + cssClass %>'
 				editorImpl="ckeditor"
+				initMethod='<%= randomNamespace + \"InitEditor\" %>'
 				name="<%= fieldName %>"
 				onBlurMethod='<%= randomNamespace + \"OnBlurEditor\" %>'
 				onChangeMethod='<%= randomNamespace + \"OnChangeEditor\" %>'
 				onFocusMethod='<%= randomNamespace + \"OnFocusEditor\" %>'
-				toolbarSet="<%= toolbarSet %>"
+				toolbarSet="simple"
 			/>
 
 			<aui:script>
+				function <portlet:namespace /><%= randomNamespace %>InitEditor() {
+					return "<%= UnicodeFormatter.toString(mainLanguageValue) %>";
+				}
+
 				function <portlet:namespace /><%= randomNamespace %>OnBlurEditor() {
 					Liferay.component('<portlet:namespace /><%= fieldName %>').blur();
 				}
@@ -144,41 +121,37 @@ if ((exception != null) && fieldName.equals(focusField)) {
 			</aui:script>
 		</c:when>
 		<c:when test='<%= type.equals("input") %>'>
-			<input aria-labeledby="<portlet:namespace /><%= id + HtmlUtil.getAUICompatibleId(fieldSuffix) %>_desc" class="language-value <%= cssClass %>" dir="<%= mainLanguageDir %>" <%= disabled ? "disabled=\"disabled\"" : "" %> id="<portlet:namespace /><%= id + HtmlUtil.getAUICompatibleId(fieldSuffix) %>" name="<portlet:namespace /><%= HtmlUtil.escapeAttribute(name + fieldSuffix) %>" type="text" value="<%= HtmlUtil.escapeAttribute(mainLanguageValue) %>" <%= InlineUtil.buildDynamicAttributes(dynamicAttributes) %> />
+			<input class="language-value <%= cssClass %>" dir="<%= mainLanguageDir %>" <%= disabled ? "disabled=\"disabled\"" : "" %> id="<portlet:namespace /><%= HtmlUtil.escapeAttribute(id + fieldSuffix) %>" name="<portlet:namespace /><%= HtmlUtil.escapeAttribute(name + fieldSuffix) %>" type="text" value="<%= HtmlUtil.escapeAttribute(mainLanguageValue) %>" <%= InlineUtil.buildDynamicAttributes(dynamicAttributes) %> />
 		</c:when>
 		<c:when test='<%= type.equals("textarea") %>'>
-			<textarea aria-labeledby="<portlet:namespace /><%= HtmlUtil.escapeAttribute(id + fieldSuffix) %>_desc" class="language-value <%= cssClass %>" dir="<%= mainLanguageDir %>" <%= disabled ? "disabled=\"disabled\"" : "" %> id="<portlet:namespace /><%= id + HtmlUtil.getAUICompatibleId(fieldSuffix) %>" name="<portlet:namespace /><%= HtmlUtil.escapeAttribute(name + fieldSuffix) %>" <%= InlineUtil.buildDynamicAttributes(dynamicAttributes) %>><%= HtmlUtil.escape(mainLanguageValue) %></textarea>
+			<textarea class="language-value <%= cssClass %>" dir="<%= mainLanguageDir %>" <%= disabled ? "disabled=\"disabled\"" : "" %> id="<portlet:namespace /><%= HtmlUtil.escapeAttribute(id + fieldSuffix) %>" name="<portlet:namespace /><%= HtmlUtil.escapeAttribute(name + fieldSuffix) %>" <%= InlineUtil.buildDynamicAttributes(dynamicAttributes) %>><%= HtmlUtil.escape(mainLanguageValue) %></textarea>
 
 			<c:if test="<%= autoSize %>">
 				<aui:script use="aui-autosize-deprecated">
-					A.one('#<portlet:namespace /><%= id + HtmlUtil.getAUICompatibleId(fieldSuffix) %>').plug(A.Plugin.Autosize);
+					A.one('#<portlet:namespace /><%= HtmlUtil.escapeJS(id + fieldSuffix) %>').plug(A.Plugin.Autosize);
 				</aui:script>
 			</c:if>
 		</c:when>
 	</c:choose>
-
-	<div class="hide-accessible" id="<portlet:namespace /><%= HtmlUtil.escapeAttribute(id + fieldSuffix) %>_desc"><%= defaultLocale.getDisplayName(LocaleUtil.fromLanguageId(LanguageUtil.getLanguageId(request))) %> <liferay-ui:message key="translation" /></div>
 
 	<c:if test="<%= (availableLocales.length > 0) && Validator.isNull(languageId) %>">
 
 		<%
 		languageIds.add(defaultLanguageId);
 
-		for (int i = 0; i < availableLocales.length; i++) {
-			String curLanguageId = LocaleUtil.toLanguageId(availableLocales[i]);
+		if (Validator.isNotNull(xml)) {
+			for (int i = 0; i < availableLocales.length; i++) {
+				String curLanguageId = LocaleUtil.toLanguageId(availableLocales[i]);
 
-			if (curLanguageId.equals(defaultLanguageId)) {
-				continue;
-			}
+				if (curLanguageId.equals(defaultLanguageId)) {
+					continue;
+				}
 
-			String languageValue = null;
+				String languageValue = LocalizationUtil.getLocalization(xml, curLanguageId, false);
 
-			if (Validator.isNotNull(xml)) {
-				languageValue = LocalizationUtil.getLocalization(xml, curLanguageId, false);
-			}
-
-			if (Validator.isNotNull(languageValue) || (!ignoreRequestValue && (request.getParameter(name + StringPool.UNDERLINE + curLanguageId) != null))) {
-				languageIds.add(curLanguageId);
+				if (Validator.isNotNull(languageValue) || (!ignoreRequestValue && (request.getParameter(name + StringPool.UNDERLINE + curLanguageId) != null))) {
+					languageIds.add(curLanguageId);
+				}
 			}
 		}
 
@@ -200,15 +173,15 @@ if ((exception != null) && fieldName.equals(focusField)) {
 			}
 		%>
 
-			<aui:input dir="<%= curLanguageDir %>" disabled="<%= disabled %>" id="<%= HtmlUtil.escapeAttribute(id + StringPool.UNDERLINE + curLanguageId) %>" name="<%= HtmlUtil.escapeAttribute(fieldNamePrefix + name + StringPool.UNDERLINE + curLanguageId + fieldNameSuffix) %>" type="hidden" value="<%= languageValue %>" />
+			<aui:input dir="<%= curLanguageDir %>" disabled="<%= disabled %>" id="<%= HtmlUtil.escapeAttribute(id + StringPool.UNDERLINE + curLanguageId) %>" name="<%= HtmlUtil.escapeAttribute(name + StringPool.UNDERLINE + curLanguageId) %>" type="hidden" value="<%= languageValue %>" />
 
 		<%
 		}
 		%>
 
-		<div class="input-localized-content" id="<portlet:namespace /><%= id %>ContentBox" role="menu">
-			<div class="palette-container">
-				<ul class="palette-items-container">
+		<div class="input-localized-content" id="<portlet:namespace /><%= id %>ContentBox">
+			<table class="palette-container">
+				<tr class="palette-items-container">
 
 					<%
 					LinkedHashSet<String> uniqueLanguageIds = new LinkedHashSet<String>();
@@ -226,9 +199,7 @@ if ((exception != null) && fieldName.equals(focusField)) {
 					for (String curLanguageId : uniqueLanguageIds) {
 						String itemCssClass = "palette-item";
 
-						Locale curLocale = LocaleUtil.fromLanguageId(curLanguageId);
-
-						if (errorLocales.contains(curLocale) || ((index == 0) && errorLocales.isEmpty())) {
+						if (index == 0) {
 							itemCssClass += " palette-item-selected";
 						}
 
@@ -241,19 +212,19 @@ if ((exception != null) && fieldName.equals(focusField)) {
 						}
 					%>
 
-						<li class="palette-item <%= itemCssClass %>" data-index="<%= index++ %>" data-value="<%= curLanguageId %>" role="menuitem" style="display: inline-block;">
+						<td class="palette-item <%= itemCssClass %>" data-index="<%= index++ %>" data-value="<%= curLanguageId %>">
 							<a class="palette-item-inner" href="javascript:void(0);">
-								<img alt="<%= HtmlUtil.escapeAttribute(curLocale.getDisplayName(LocaleUtil.fromLanguageId(LanguageUtil.getLanguageId(request)))) %> <liferay-ui:message key="translation" />" class="lfr-input-localized-flag" data-languageid="<%= curLanguageId %>" src="<%= themeDisplay.getPathThemeImages() %>/language/<%= curLanguageId %>.png" />
-								<div class='<%= errorLocales.contains(curLocale) ? "lfr-input-localized-state lfr-input-localized-state-error" : "lfr-input-localized-state" %>'></div>
+								<img class="lfr-input-localized-flag" data-languageid="<%= curLanguageId %>" src="<%= themeDisplay.getPathThemeImages() %>/language/<%= curLanguageId %>.png" />
+								<div class="lfr-input-localized-state"></div>
 							</a>
-						</li>
+						</td>
 
 					<%
 					}
 					%>
 
-				</ul>
-			</div>
+				</tr>
+			</table>
 		</div>
 	</c:if>
 </span>
@@ -262,7 +233,7 @@ if ((exception != null) && fieldName.equals(focusField)) {
 	<aui:script use="aui-char-counter">
 		new A.CharCounter(
 			{
-				input: '#<portlet:namespace /><%= id + HtmlUtil.getAUICompatibleId(fieldSuffix) %>',
+				input: '#<portlet:namespace /><%= HtmlUtil.escapeJS(id + fieldSuffix) %>',
 				maxLength: <%= maxLength %>
 			}
 		);
@@ -275,8 +246,6 @@ if ((exception != null) && fieldName.equals(focusField)) {
 			var defaultLanguageId = '<%= defaultLanguageId %>';
 
 			var available = {};
-
-			var errors = {};
 
 			<%
 			for (Locale availableLocale : availableLocales) {
@@ -293,21 +262,8 @@ if ((exception != null) && fieldName.equals(focusField)) {
 				[defaultLanguageId].concat(A.Object.keys(available))
 			);
 
-			<%
-			for (Locale errorLocale : errorLocales) {
-				String errorLocaleId = LocaleUtil.toLanguageId(errorLocale);
-			%>
-
-				errors['<%= errorLocaleId %>'] = '<%= errorLocale.getDisplayName(locale) %>';
-
-			<%
-			}
-			%>
-
-			var errorLanguageIds = A.Array.dedupe(A.Object.keys(errors));
-
 			Liferay.InputLocalized.register(
-				'<portlet:namespace /><%= id + HtmlUtil.getAUICompatibleId(fieldSuffix) %>',
+				'<portlet:namespace /><%= HtmlUtil.escapeJS(id + fieldSuffix) %>',
 				{
 					boundingBox: '#<portlet:namespace /><%= id %>BoundingBox',
 					columns: 20,
@@ -317,30 +273,24 @@ if ((exception != null) && fieldName.equals(focusField)) {
 						editor: window['<portlet:namespace /><%= fieldName %>'],
 					</c:if>
 
-					fieldPrefix: '<%= fieldPrefix %>',
-					fieldPrefixSeparator: '<%= fieldPrefixSeparator %>',
-					id: '<%= id %>',
-					inputPlaceholder: '#<portlet:namespace /><%= id + HtmlUtil.getAUICompatibleId(fieldSuffix) %>',
+					inputPlaceholder: '#<portlet:namespace /><%= HtmlUtil.escapeJS(id + fieldSuffix) %>',
 					items: availableLanguageIds,
-					itemsError: errorLanguageIds,
 					lazy: <%= !type.equals("editor") %>,
-					name: '<%= name %>',
-					namespace: '<portlet:namespace />',
+					name: '<portlet:namespace /><%= name + StringPool.UNDERLINE %>',
+					namespace: '<portlet:namespace /><%= id + StringPool.UNDERLINE %>',
 					toggleSelection: false,
 					translatedLanguages: '<%= StringUtil.merge(languageIds) %>'
 				}
 			);
 
 			<c:if test="<%= autoFocus %>">
-				Liferay.Util.focusFormField('#<portlet:namespace /><%= HtmlUtil.escapeJS(id + HtmlUtil.getAUICompatibleId(fieldSuffix)) %>');
+				Liferay.Util.focusFormField('#<portlet:namespace /><%= HtmlUtil.escapeAttribute(id + fieldSuffix) %>');
 			</c:if>
 		</aui:script>
 	</c:when>
 	<c:otherwise>
 		<c:if test="<%= autoFocus %>">
-			<aui:script>
-				Liferay.Util.focusFormField('#<portlet:namespace /><%= HtmlUtil.escapeJS(id + HtmlUtil.getAUICompatibleId(fieldSuffix)) %>');
-			</aui:script>
+			Liferay.Util.focusFormField('#<portlet:namespace /><%= HtmlUtil.escapeAttribute(id + fieldSuffix) %>');
 		</c:if>
 	</c:otherwise>
 </c:choose>

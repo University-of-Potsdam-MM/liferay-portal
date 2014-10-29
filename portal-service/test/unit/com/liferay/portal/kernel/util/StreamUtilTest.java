@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,19 +14,16 @@
 
 package com.liferay.portal.kernel.util;
 
-import java.io.IOException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.RandomAccessFile;
 
-import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 
 import java.util.Random;
 
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -34,52 +31,63 @@ import org.junit.Test;
  */
 public class StreamUtilTest {
 
-	@Before
-	public void setUp() throws IOException {
-		_fromFilePath = Files.createTempFile(null, null);
-		_toFilePath = Files.createTempFile(null, null);
+	@Test
+	public void testTransferFileChannel() throws Exception {
+		File fromFile = new File("from-file");
+
+		fromFile.deleteOnExit();
+
+		FileOutputStream fromFileOutputStream = new FileOutputStream(fromFile);
 
 		Random random = new Random();
 
-		random.nextBytes(_data);
+		byte[] fromBytes = new byte[1024 * 1024];
 
-		Files.write(_fromFilePath, _data);
+		random.nextBytes(fromBytes);
+
+		fromFileOutputStream.write(fromBytes);
+
+		fromFileOutputStream.close();
+
+		File toFile = new File("to-file");
+
+		toFile.deleteOnExit();
+
+		FileInputStream fromFileInputStream = new FileInputStream(fromFile);
+
+		byte[] buffer = new byte[fromBytes.length / 2];
+
+		int length = 0;
+
+		while (
+			(length += fromFileInputStream.read(
+				buffer, length, buffer.length - length)) < buffer.length);
+
+		FileOutputStream toFileOutputStream = new FileOutputStream(toFile);
+
+		toFileOutputStream.write(buffer);
+
+		FileChannel fromFileChannel = fromFileInputStream.getChannel();
+
+		StreamUtil.transferFileChannel(
+			fromFileChannel, toFileOutputStream.getChannel(),
+			fromBytes.length - buffer.length);
+
+		fromFileChannel.close();
+
+		toFileOutputStream.close();
+
+		RandomAccessFile toRandomAccessFile = new RandomAccessFile(toFile, "r");
+
+		Assert.assertEquals(fromBytes.length, toRandomAccessFile.length());
+
+		byte[] toBytes = new byte[fromBytes.length];
+
+		toRandomAccessFile.readFully(toBytes);
+
+		toRandomAccessFile.close();
+
+		Assert.assertArrayEquals(fromBytes, toBytes);
 	}
-
-	@After
-	public void tearDown() throws IOException {
-		Files.delete(_fromFilePath);
-		Files.delete(_toFilePath);
-	}
-
-	@Test
-	public void testTransferFileChannel() throws Exception {
-		try (FileChannel fromFileChannel = FileChannel.open(
-				_fromFilePath, StandardOpenOption.READ);
-			FileChannel toFileChannel = FileChannel.open(
-				_toFilePath, StandardOpenOption.CREATE,
-				StandardOpenOption.WRITE)) {
-
-			ByteBuffer byteBuffer = ByteBuffer.allocate(_data.length / 2);
-
-			while (byteBuffer.hasRemaining()) {
-				fromFileChannel.read(byteBuffer);
-			}
-
-			byteBuffer.flip();
-
-			toFileChannel.write(byteBuffer);
-
-			StreamUtil.transferFileChannel(
-				fromFileChannel, toFileChannel,
-				_data.length - byteBuffer.capacity());
-		}
-
-		Assert.assertArrayEquals(_data, Files.readAllBytes(_toFilePath));
-	}
-
-	private final byte[] _data = new byte[1024 * 1024];
-	private Path _fromFilePath;
-	private Path _toFilePath;
 
 }

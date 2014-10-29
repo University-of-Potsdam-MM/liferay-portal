@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -34,7 +34,7 @@ if (name.equals(RoleConstants.GUEST) || name.equals(RoleConstants.OWNER) || name
 }
 %>
 
-<liferay-ui:icon-menu icon="<%= StringPool.BLANK %>" message="<%= StringPool.BLANK %>">
+<liferay-ui:icon-menu>
 	<c:if test="<%= RolePermissionUtil.contains(permissionChecker, role.getRoleId(), ActionKeys.UPDATE) %>">
 		<portlet:renderURL var="editURL">
 			<portlet:param name="struts_action" value="/roles_admin/edit_role" />
@@ -43,8 +43,7 @@ if (name.equals(RoleConstants.GUEST) || name.equals(RoleConstants.OWNER) || name
 		</portlet:renderURL>
 
 		<liferay-ui:icon
-			iconCssClass="icon-edit"
-			message="edit"
+			image="edit"
 			url="<%= editURL %>"
 		/>
 	</c:if>
@@ -69,8 +68,7 @@ if (name.equals(RoleConstants.GUEST) || name.equals(RoleConstants.OWNER) || name
 		/>
 
 		<liferay-ui:icon
-			iconCssClass="icon-lock"
-			message="permissions"
+			image="permissions"
 			method="get"
 			url="<%= permissionsURL %>"
 			useDialog="<%= true %>"
@@ -85,7 +83,7 @@ if (name.equals(RoleConstants.GUEST) || name.equals(RoleConstants.OWNER) || name
 			<portlet:param name="roleId" value="<%= String.valueOf(role.getRoleId()) %>" />
 		</portlet:renderURL>
 
-		<liferay-ui:icon iconCssClass="icon-lock" message="define-permissions" url="<%= editRolePermissionsURL %>" />
+		<liferay-ui:icon image="define_permissions" url="<%= editRolePermissionsURL %>" />
 	</c:if>
 
 	<c:if test="<%= !unassignableRole && (role.getType() == RoleConstants.TYPE_REGULAR) && RolePermissionUtil.contains(permissionChecker, role.getRoleId(), ActionKeys.ASSIGN_MEMBERS) %>">
@@ -95,7 +93,7 @@ if (name.equals(RoleConstants.GUEST) || name.equals(RoleConstants.OWNER) || name
 			<portlet:param name="roleId" value="<%= String.valueOf(role.getRoleId()) %>" />
 		</portlet:renderURL>
 
-		<liferay-ui:icon iconCssClass="icon-signin" message="assign-members" url="<%= assignMembersURL %>" />
+		<liferay-ui:icon image="assign" message="assign-members" url="<%= assignMembersURL %>" />
 	</c:if>
 
 	<c:if test="<%= !unassignableRole && (role.getType() == RoleConstants.TYPE_REGULAR) && RolePermissionUtil.contains(permissionChecker, role.getRoleId(), ActionKeys.VIEW) %>">
@@ -107,7 +105,7 @@ if (name.equals(RoleConstants.GUEST) || name.equals(RoleConstants.OWNER) || name
 			<portlet:param name="saveUsersListView" value="<%= Boolean.FALSE.toString() %>" />
 		</portlet:renderURL>
 
-		<liferay-ui:icon iconCssClass="icon-search" message="view-users" method="get" url="<%= viewUsersURL %>" />
+		<liferay-ui:icon image="view_users" message="view-users" method="get" url="<%= viewUsersURL %>" />
 	</c:if>
 
 	<c:if test="<%= !PortalUtil.isSystemRole(name) && RolePermissionUtil.contains(permissionChecker, role.getRoleId(), ActionKeys.DELETE) %>">

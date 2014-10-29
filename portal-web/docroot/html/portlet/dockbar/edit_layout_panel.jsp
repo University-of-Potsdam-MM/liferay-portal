@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -16,22 +16,20 @@
 
 <%@ include file="/html/portlet/layouts_admin/init.jsp" %>
 
-<%
-String closeRedirect = ParamUtil.getString(request, "closeRedirect");
-%>
+<%@ include file="/html/portlet/layouts_admin/init_attributes.jspf" %>
 
 <div id="<portlet:namespace />editLayoutContainer">
 	<c:choose>
-		<c:when test='<%= MultiSessionMessages.contains(renderRequest, "requestProcessed") || ((layoutsAdminDisplayContext.getSelPlid() == 0) && Validator.isNotNull(closeRedirect)) %>'>
+		<c:when test='<%= SessionMessages.contains(renderRequest, "requestProcessed") || ((selPlid == 0) && Validator.isNotNull(closeRedirect)) %>'>
 
 			<%
 			String refreshURL = null;
 
-			if ((layoutsAdminDisplayContext.getSelPlid() == 0) && Validator.isNotNull(closeRedirect)) {
+			if ((selPlid == 0) && Validator.isNotNull(closeRedirect)) {
 				refreshURL = closeRedirect;
 			}
 			else {
-				refreshURL = (String)MultiSessionMessages.get(renderRequest, portletDisplay.getId() + SessionMessages.KEY_SUFFIX_CLOSE_REDIRECT);
+				refreshURL = (String)SessionMessages.get(renderRequest, portletDisplay.getId() + SessionMessages.KEY_SUFFIX_CLOSE_REDIRECT);
 			}
 
 			if (Validator.isNull(refreshURL)) {
@@ -44,11 +42,11 @@ String closeRedirect = ParamUtil.getString(request, "closeRedirect");
 			</aui:script>
 		</c:when>
 		<c:otherwise>
-			<aui:button cssClass="close" name="closePanelEdit" value="&times;" />
+			<aui:button cssClass="close pull-right" name="closePanelEdit" value="&times;" />
 
 			<h1><liferay-ui:message key="edit-page" /></h1>
 
-			<c:if test="<%= layoutsAdminDisplayContext.getSelPlid() > 0 %>">
+			<c:if test="<%= selPlid > 0 %>">
 				<liferay-util:include page="/html/portlet/layouts_admin/edit_layout.jsp">
 					<liferay-util:param name="displayStyle" value="panel" />
 					<liferay-util:param name="showAddAction" value="<%= Boolean.FALSE.toString() %>" />
@@ -58,8 +56,8 @@ String closeRedirect = ParamUtil.getString(request, "closeRedirect");
 					<liferay-portlet:renderURL plid="<%= PortalUtil.getControlPanelPlid(company.getCompanyId()) %>" portletName="<%= PortletKeys.GROUP_PAGES %>" varImpl="siteAdministrationURL" windowState="<%= WindowState.NORMAL.toString() %>">
 						<portlet:param name="struts_action" value="/group_pages/edit_layouts" />
 						<portlet:param name="tabs1" value="public-pages" />
-						<portlet:param name="groupId" value="<%= String.valueOf(layoutsAdminDisplayContext.getLiveGroupId()) %>" />
-						<portlet:param name="selPlid" value="<%= String.valueOf(layoutsAdminDisplayContext.getSelPlid()) %>" />
+						<portlet:param name="groupId" value="<%= String.valueOf(liveGroupId) %>" />
+						<portlet:param name="selPlid" value="<%= String.valueOf(selPlid) %>" />
 						<portlet:param name="treeId" value="layoutsTree" />
 						<portlet:param name="viewLayout" value="true" />
 					</liferay-portlet:renderURL>
@@ -67,8 +65,8 @@ String closeRedirect = ParamUtil.getString(request, "closeRedirect");
 					<%
 					String siteAdministrationURLString = HttpUtil.setParameter(siteAdministrationURL.toString(), "controlPanelCategory", "current_site");
 
-					siteAdministrationURLString = HttpUtil.setParameter(siteAdministrationURLString, "doAsGroupId", String.valueOf(layoutsAdminDisplayContext.getLiveGroupId()));
-					siteAdministrationURLString = HttpUtil.setParameter(siteAdministrationURLString, "refererPlid", String.valueOf(layoutsAdminDisplayContext.getSelPlid()));
+					siteAdministrationURLString = HttpUtil.setParameter(siteAdministrationURLString, "doAsGroupId", String.valueOf(liveGroupId));
+					siteAdministrationURLString = HttpUtil.setParameter(siteAdministrationURLString, "refererPlid", String.valueOf(selPlid));
 					%>
 
 					<aui:a cssClass="site-admin-link" href="<%= siteAdministrationURLString %>" label="site-administration" />
@@ -96,20 +94,21 @@ String closeRedirect = ParamUtil.getString(request, "closeRedirect");
 
 							<liferay-portlet:renderURL varImpl="redirectURL">
 								<portlet:param name="struts_action" value="/layouts_admin/update_layout" />
-								<portlet:param name="groupId" value="<%= String.valueOf(layoutsAdminDisplayContext.getLiveGroupId()) %>" />
+								<portlet:param name="groupId" value="<%= String.valueOf(liveGroupId) %>" />
 							</liferay-portlet:renderURL>
 
-							form.get('<portlet:namespace />redirect').val('<%= HttpUtil.addParameter(redirectURL.toString(), liferayPortletResponse.getNamespace() + "selPlid", layoutsAdminDisplayContext.getSelPlid()) %>');
+							form.get('<portlet:namespace />redirect').val('<%= HttpUtil.addParameter(redirectURL.toString(), liferayPortletResponse.getNamespace() + "selPlid", selPlid) %>');
 
 							loadingMask.show();
 
 							A.io.request(
 								form.attr('action'),
 								{
+									dataType: 'json',
+									form: {
+										id: form.attr('id')
+									},
 									after: {
-										failure: function(event) {
-											loadingMask.hide();
-										},
 										success: function(event, id, obj) {
 											var response = this.get('responseData');
 
@@ -122,11 +121,10 @@ String closeRedirect = ParamUtil.getString(request, "closeRedirect");
 											panel.setContent(response);
 
 											loadingMask.hide();
+										},
+										failure: function(event) {
+											loadingMask.hide();
 										}
-									},
-									dataType: 'JSON',
-									form: {
-										id: form.attr('id')
 									}
 								}
 							);

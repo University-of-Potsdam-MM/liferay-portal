@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -97,7 +97,9 @@ public class TableMapperImpl<L extends BaseModel<L>, R extends BaseModel<R>>
 	}
 
 	@Override
-	public boolean addTableMapping(long leftPrimaryKey, long rightPrimaryKey) {
+	public boolean addTableMapping(long leftPrimaryKey, long rightPrimaryKey)
+		throws SystemException {
+
 		if (containsTableMapping(leftPrimaryKey, rightPrimaryKey, false)) {
 			return false;
 		}
@@ -147,13 +149,16 @@ public class TableMapperImpl<L extends BaseModel<L>, R extends BaseModel<R>>
 
 	@Override
 	public boolean containsTableMapping(
-		long leftPrimaryKey, long rightPrimaryKey) {
+			long leftPrimaryKey, long rightPrimaryKey)
+		throws SystemException {
 
 		return containsTableMapping(leftPrimaryKey, rightPrimaryKey, true);
 	}
 
 	@Override
-	public int deleteLeftPrimaryKeyTableMappings(long leftPrimaryKey) {
+	public int deleteLeftPrimaryKeyTableMappings(long leftPrimaryKey)
+		throws SystemException {
+
 		return deleteTableMappings(
 			leftBasePersistence, rightBasePersistence, leftToRightPortalCache,
 			rightToLeftPortalCache, getRightPrimaryKeysSqlQuery,
@@ -161,7 +166,9 @@ public class TableMapperImpl<L extends BaseModel<L>, R extends BaseModel<R>>
 	}
 
 	@Override
-	public int deleteRightPrimaryKeyTableMappings(long rightPrimaryKey) {
+	public int deleteRightPrimaryKeyTableMappings(long rightPrimaryKey)
+		throws SystemException {
+
 		return deleteTableMappings(
 			rightBasePersistence, leftBasePersistence, rightToLeftPortalCache,
 			leftToRightPortalCache, getLeftPrimaryKeysSqlQuery,
@@ -169,8 +176,8 @@ public class TableMapperImpl<L extends BaseModel<L>, R extends BaseModel<R>>
 	}
 
 	@Override
-	public boolean deleteTableMapping(
-		long leftPrimaryKey, long rightPrimaryKey) {
+	public boolean deleteTableMapping(long leftPrimaryKey, long rightPrimaryKey)
+		throws SystemException {
 
 		if (!containsTableMapping(leftPrimaryKey, rightPrimaryKey, false)) {
 			return false;
@@ -227,14 +234,9 @@ public class TableMapperImpl<L extends BaseModel<L>, R extends BaseModel<R>>
 	}
 
 	@Override
-	public void destroy() {
-		MultiVMPoolUtil.removeCache(leftToRightPortalCache.getName());
-		MultiVMPoolUtil.removeCache(rightToLeftPortalCache.getName());
-	}
-
-	@Override
 	public List<L> getLeftBaseModels(
-		long rightPrimaryKey, int start, int end, OrderByComparator<L> obc) {
+			long rightPrimaryKey, int start, int end, OrderByComparator obc)
+		throws SystemException {
 
 		return getBaseModels(
 			rightToLeftPortalCache, getLeftPrimaryKeysSqlQuery, rightPrimaryKey,
@@ -242,7 +244,9 @@ public class TableMapperImpl<L extends BaseModel<L>, R extends BaseModel<R>>
 	}
 
 	@Override
-	public long[] getLeftPrimaryKeys(long rightPrimaryKey) {
+	public long[] getLeftPrimaryKeys(long rightPrimaryKey)
+		throws SystemException {
+
 		return getPrimaryKeys(
 			rightToLeftPortalCache, getLeftPrimaryKeysSqlQuery, rightPrimaryKey,
 			true);
@@ -255,7 +259,8 @@ public class TableMapperImpl<L extends BaseModel<L>, R extends BaseModel<R>>
 
 	@Override
 	public List<R> getRightBaseModels(
-		long leftPrimaryKey, int start, int end, OrderByComparator<R> obc) {
+			long leftPrimaryKey, int start, int end, OrderByComparator obc)
+		throws SystemException {
 
 		return getBaseModels(
 			leftToRightPortalCache, getRightPrimaryKeysSqlQuery, leftPrimaryKey,
@@ -263,7 +268,9 @@ public class TableMapperImpl<L extends BaseModel<L>, R extends BaseModel<R>>
 	}
 
 	@Override
-	public long[] getRightPrimaryKeys(long leftPrimaryKey) {
+	public long[] getRightPrimaryKeys(long leftPrimaryKey)
+		throws SystemException {
+
 		return getPrimaryKeys(
 			leftToRightPortalCache, getRightPrimaryKeysSqlQuery, leftPrimaryKey,
 			true);
@@ -291,7 +298,8 @@ public class TableMapperImpl<L extends BaseModel<L>, R extends BaseModel<R>>
 			PortalCache<Long, long[]> masterToSlavePortalCache,
 			PortalCache<Long, long[]> slaveToMasterPortalCache,
 			MappingSqlQuery<Long> mappingSqlQuery, SqlUpdate deleteSqlUpdate,
-			long masterPrimaryKey) {
+			long masterPrimaryKey)
+		throws SystemException {
 
 		ModelListener<M>[] masterModelListeners =
 			masterBasePersistence.getListeners();
@@ -374,7 +382,8 @@ public class TableMapperImpl<L extends BaseModel<L>, R extends BaseModel<R>>
 			PortalCache<Long, long[]> portalCache,
 			MappingSqlQuery<Long> mappingSqlQuery, long masterPrimaryKey,
 			BasePersistence<T> slaveBasePersistence, int start, int end,
-			OrderByComparator<T> obc) {
+			OrderByComparator obc)
+		throws SystemException {
 
 		long[] slavePrimaryKeys = getPrimaryKeys(
 			portalCache, mappingSqlQuery, masterPrimaryKey, true);
@@ -403,9 +412,10 @@ public class TableMapperImpl<L extends BaseModel<L>, R extends BaseModel<R>>
 	}
 
 	protected static long[] getPrimaryKeys(
-		PortalCache<Long, long[]> portalCache,
-		MappingSqlQuery<Long> mappingSqlQuery, long masterPrimaryKey,
-		boolean updateCache) {
+			PortalCache<Long, long[]> portalCache,
+			MappingSqlQuery<Long> mappingSqlQuery, long masterPrimaryKey,
+			boolean updateCache)
+		throws SystemException {
 
 		long[] primaryKeys = portalCache.get(masterPrimaryKey);
 
@@ -428,7 +438,7 @@ public class TableMapperImpl<L extends BaseModel<L>, R extends BaseModel<R>>
 			Arrays.sort(primaryKeys);
 
 			if (updateCache) {
-				portalCache.putQuiet(masterPrimaryKey, primaryKeys);
+				portalCache.put(masterPrimaryKey, primaryKeys);
 			}
 		}
 
@@ -436,7 +446,8 @@ public class TableMapperImpl<L extends BaseModel<L>, R extends BaseModel<R>>
 	}
 
 	protected boolean containsTableMapping(
-		long leftPrimaryKey, long rightPrimaryKey, boolean updateCache) {
+			long leftPrimaryKey, long rightPrimaryKey, boolean updateCache)
+		throws SystemException {
 
 		long[] rightPrimaryKeys = getPrimaryKeys(
 			leftToRightPortalCache, getRightPrimaryKeysSqlQuery, leftPrimaryKey,

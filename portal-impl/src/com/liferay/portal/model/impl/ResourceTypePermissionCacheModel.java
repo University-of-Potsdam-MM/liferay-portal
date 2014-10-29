@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,12 +14,9 @@
 
 package com.liferay.portal.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.CacheModel;
-import com.liferay.portal.model.MVCCModel;
 import com.liferay.portal.model.ResourceTypePermission;
 
 import java.io.Externalizable;
@@ -34,26 +31,13 @@ import java.io.ObjectOutput;
  * @see ResourceTypePermission
  * @generated
  */
-@ProviderType
 public class ResourceTypePermissionCacheModel implements CacheModel<ResourceTypePermission>,
-	Externalizable, MVCCModel {
-	@Override
-	public long getMvccVersion() {
-		return mvccVersion;
-	}
-
-	@Override
-	public void setMvccVersion(long mvccVersion) {
-		this.mvccVersion = mvccVersion;
-	}
-
+	Externalizable {
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(15);
+		StringBundler sb = new StringBundler(13);
 
-		sb.append("{mvccVersion=");
-		sb.append(mvccVersion);
-		sb.append(", resourceTypePermissionId=");
+		sb.append("{resourceTypePermissionId=");
 		sb.append(resourceTypePermissionId);
 		sb.append(", companyId=");
 		sb.append(companyId);
@@ -74,7 +58,6 @@ public class ResourceTypePermissionCacheModel implements CacheModel<ResourceType
 	public ResourceTypePermission toEntityModel() {
 		ResourceTypePermissionImpl resourceTypePermissionImpl = new ResourceTypePermissionImpl();
 
-		resourceTypePermissionImpl.setMvccVersion(mvccVersion);
 		resourceTypePermissionImpl.setResourceTypePermissionId(resourceTypePermissionId);
 		resourceTypePermissionImpl.setCompanyId(companyId);
 		resourceTypePermissionImpl.setGroupId(groupId);
@@ -96,7 +79,6 @@ public class ResourceTypePermissionCacheModel implements CacheModel<ResourceType
 
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
-		mvccVersion = objectInput.readLong();
 		resourceTypePermissionId = objectInput.readLong();
 		companyId = objectInput.readLong();
 		groupId = objectInput.readLong();
@@ -108,7 +90,6 @@ public class ResourceTypePermissionCacheModel implements CacheModel<ResourceType
 	@Override
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
-		objectOutput.writeLong(mvccVersion);
 		objectOutput.writeLong(resourceTypePermissionId);
 		objectOutput.writeLong(companyId);
 		objectOutput.writeLong(groupId);
@@ -124,7 +105,6 @@ public class ResourceTypePermissionCacheModel implements CacheModel<ResourceType
 		objectOutput.writeLong(actionIds);
 	}
 
-	public long mvccVersion;
 	public long resourceTypePermissionId;
 	public long companyId;
 	public long groupId;

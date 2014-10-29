@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -16,17 +16,18 @@ package com.liferay.portal.security.pwd;
 
 import com.liferay.portal.UserPasswordException;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.security.RandomUtil;
 import com.liferay.portal.kernel.security.SecureRandom;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.kernel.words.WordsUtil;
 import com.liferay.portal.model.PasswordPolicy;
 import com.liferay.portal.model.User;
 import com.liferay.portal.service.PasswordTrackerLocalServiceUtil;
 import com.liferay.portal.service.UserLocalServiceUtil;
 import com.liferay.portal.util.PropsValues;
+import com.liferay.portal.words.WordsUtil;
 import com.liferay.util.PwdGenerator;
 
 import java.util.Arrays;
@@ -83,7 +84,7 @@ public class PasswordPolicyToolkit extends BasicToolkit {
 	public void validate(
 			long userId, String password1, String password2,
 			PasswordPolicy passwordPolicy)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		if (passwordPolicy.isCheckSyntax()) {
 			if (!passwordPolicy.isAllowDictionaryWords() &&
@@ -135,15 +136,21 @@ public class PasswordPolicyToolkit extends BasicToolkit {
 		Date passwordModfiedDate = user.getPasswordModifiedDate();
 
 		if (passwordModfiedDate != null) {
+
+			// LEP-2961
+
 			Date now = new Date();
 
 			long passwordModificationElapsedTime =
 				now.getTime() - passwordModfiedDate.getTime();
 
+			long userCreationElapsedTime =
+				now.getTime() - user.getCreateDate().getTime();
+
 			long minAge = passwordPolicy.getMinAge() * 1000;
 
 			if ((passwordModificationElapsedTime < minAge) &&
-				!user.getPasswordReset()) {
+				(userCreationElapsedTime > minAge)) {
 
 				throw new UserPasswordException(
 					UserPasswordException.PASSWORD_TOO_YOUNG);

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -50,9 +50,6 @@ import javax.net.ssl.SSLSession;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.codec.DecoderException;
-import org.apache.commons.codec.binary.Hex;
-
 /**
  * @author Brian Wing Shun Chan
  */
@@ -60,8 +57,6 @@ public class TunnelUtil {
 
 	public static Key getSharedSecretKey() throws AuthException {
 		String sharedSecret = PropsValues.TUNNELING_SERVLET_SHARED_SECRET;
-		boolean sharedSecretHex =
-			PropsValues.TUNNELING_SERVLET_SHARED_SECRET_HEX;
 
 		if (Validator.isNull(sharedSecret)) {
 			AuthException authException = new AuthException();
@@ -71,29 +66,9 @@ public class TunnelUtil {
 			throw authException;
 		}
 
-		byte[] key = null;
+		if ((sharedSecret.length() != 16) && (sharedSecret.length() != 32) &&
+			(sharedSecret.length() != 64)) {
 
-		if (sharedSecretHex) {
-			try {
-				key = Hex.decodeHex(sharedSecret.toCharArray());
-			}
-			catch (DecoderException e) {
-				if (_log.isWarnEnabled()) {
-					_log.warn(e, e);
-				}
-
-				AuthException authException = new AuthException();
-
-				authException.setType(AuthException.INVALID_SHARED_SECRET);
-
-				throw authException;
-			}
-		}
-		else {
-			key = sharedSecret.getBytes();
-		}
-
-		if (key.length < 8) {
 			AuthException authException = new AuthException();
 
 			authException.setType(AuthException.INVALID_SHARED_SECRET);
@@ -102,7 +77,7 @@ public class TunnelUtil {
 		}
 
 		return new SecretKeySpec(
-			key, PropsValues.TUNNELING_SERVLET_ENCRYPTION_ALGORITHM);
+			sharedSecret.getBytes(), _TUNNEL_ENCRYPTION_ALGORITHM);
 	}
 
 	public static Object invoke(
@@ -116,20 +91,26 @@ public class TunnelUtil {
 
 		HttpURLConnection httpURLConnection = _getConnection(httpPrincipal);
 
-		try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(
-				httpURLConnection.getOutputStream())) {
+		ObjectOutputStream objectOutputStream = new ObjectOutputStream(
+			httpURLConnection.getOutputStream());
 
-			objectOutputStream.writeObject(
-				new ObjectValuePair<HttpPrincipal, MethodHandler>(
-					httpPrincipal, methodHandler));
-		}
+		objectOutputStream.writeObject(
+			new ObjectValuePair<HttpPrincipal, MethodHandler>(
+				httpPrincipal, methodHandler));
+
+		objectOutputStream.flush();
+
+		objectOutputStream.close();
 
 		Object returnObject = null;
 
-		try (ObjectInputStream objectInputStream = new ObjectInputStream(
-				httpURLConnection.getInputStream())) {
+		try {
+			ObjectInputStream objectInputStream = new ObjectInputStream(
+				httpURLConnection.getInputStream());
 
 			returnObject = objectInputStream.readObject();
+
+			objectInputStream.close();
 		}
 		catch (EOFException eofe) {
 			if (_log.isDebugEnabled()) {
@@ -211,6 +192,8 @@ public class TunnelUtil {
 
 		return httpURLConnection;
 	}
+
+	private static final String _TUNNEL_ENCRYPTION_ALGORITHM = "AES";
 
 	private static final boolean _VERIFY_SSL_HOSTNAME = GetterUtil.getBoolean(
 		PropsUtil.get(TunnelUtil.class.getName() + ".verify.ssl.hostname"));

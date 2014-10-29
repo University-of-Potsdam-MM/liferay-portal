@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -21,13 +21,13 @@ import com.liferay.portal.model.Layout;
 import com.liferay.portal.model.ResourceConstants;
 import com.liferay.portal.model.User;
 import com.liferay.portal.security.permission.DoAsUserThread;
-import com.liferay.portal.test.DeleteAfterTestRun;
-import com.liferay.portal.test.listeners.MainServletExecutionTestListener;
-import com.liferay.portal.test.runners.LiferayIntegrationJUnitTestRunner;
-import com.liferay.portal.util.test.GroupTestUtil;
-import com.liferay.portal.util.test.TestPropsValues;
-import com.liferay.portal.util.test.UserTestUtil;
+import com.liferay.portal.test.EnvironmentExecutionTestListener;
+import com.liferay.portal.test.LiferayIntegrationJUnitTestRunner;
+import com.liferay.portal.util.GroupTestUtil;
+import com.liferay.portal.util.TestPropsValues;
+import com.liferay.portal.util.UserTestUtil;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,7 +36,7 @@ import org.junit.runner.RunWith;
 /**
  * @author Brian Wing Shun Chan
  */
-@ExecutionTestListeners(listeners = {MainServletExecutionTestListener.class})
+@ExecutionTestListeners(listeners = {EnvironmentExecutionTestListener.class})
 @RunWith(LiferayIntegrationJUnitTestRunner.class)
 public class ResourceLocalServiceTest {
 
@@ -44,13 +44,22 @@ public class ResourceLocalServiceTest {
 	public void setUp() throws Exception {
 		_group = GroupTestUtil.addGroup();
 
-		_users = new User[ServiceTestUtil.THREAD_COUNT];
+		_userIds = new long[ServiceTestUtil.THREAD_COUNT];
 
 		for (int i = 0; i < ServiceTestUtil.THREAD_COUNT; i++) {
 			User user = UserTestUtil.addUser(
 				"ResourceLocalServiceTest" + (i + 1), _group.getGroupId());
 
-			_users[i] = user;
+			_userIds[i] = user.getUserId();
+		}
+	}
+
+	@After
+	public void tearDown() throws Exception {
+		GroupLocalServiceUtil.deleteGroup(_group);
+
+		for (int i = 0; i < ServiceTestUtil.THREAD_COUNT; i++) {
+			UserLocalServiceUtil.deleteUser(_userIds[i]);
 		}
 	}
 
@@ -60,7 +69,7 @@ public class ResourceLocalServiceTest {
 			new DoAsUserThread[ServiceTestUtil.THREAD_COUNT];
 
 		for (int i = 0; i < doAsUserThreads.length; i++) {
-			doAsUserThreads[i] = new AddResources(_users[i].getUserId());
+			doAsUserThreads[i] = new AddResources(_userIds[i]);
 		}
 
 		for (DoAsUserThread doAsUserThread : doAsUserThreads) {
@@ -85,11 +94,8 @@ public class ResourceLocalServiceTest {
 			successCount == ServiceTestUtil.THREAD_COUNT);
 	}
 
-	@DeleteAfterTestRun
 	private Group _group;
-
-	@DeleteAfterTestRun
-	private User[] _users;
+	private long[] _userIds;
 
 	private class AddResources extends DoAsUserThread {
 

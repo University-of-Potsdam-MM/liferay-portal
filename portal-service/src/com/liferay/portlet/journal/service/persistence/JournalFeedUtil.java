@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,6 +18,7 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.bean.PortalBeanLocatorUtil;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ReferenceRegistry;
 import com.liferay.portal.service.ServiceContext;
@@ -63,7 +64,8 @@ public class JournalFeedUtil {
 	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#countWithDynamicQuery(DynamicQuery)
 	 */
-	public static long countWithDynamicQuery(DynamicQuery dynamicQuery) {
+	public static long countWithDynamicQuery(DynamicQuery dynamicQuery)
+		throws SystemException {
 		return getPersistence().countWithDynamicQuery(dynamicQuery);
 	}
 
@@ -71,7 +73,7 @@ public class JournalFeedUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#findWithDynamicQuery(DynamicQuery)
 	 */
 	public static List<JournalFeed> findWithDynamicQuery(
-		DynamicQuery dynamicQuery) {
+		DynamicQuery dynamicQuery) throws SystemException {
 		return getPersistence().findWithDynamicQuery(dynamicQuery);
 	}
 
@@ -79,7 +81,8 @@ public class JournalFeedUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#findWithDynamicQuery(DynamicQuery, int, int)
 	 */
 	public static List<JournalFeed> findWithDynamicQuery(
-		DynamicQuery dynamicQuery, int start, int end) {
+		DynamicQuery dynamicQuery, int start, int end)
+		throws SystemException {
 		return getPersistence().findWithDynamicQuery(dynamicQuery, start, end);
 	}
 
@@ -88,7 +91,7 @@ public class JournalFeedUtil {
 	 */
 	public static List<JournalFeed> findWithDynamicQuery(
 		DynamicQuery dynamicQuery, int start, int end,
-		OrderByComparator<JournalFeed> orderByComparator) {
+		OrderByComparator orderByComparator) throws SystemException {
 		return getPersistence()
 				   .findWithDynamicQuery(dynamicQuery, start, end,
 			orderByComparator);
@@ -97,7 +100,8 @@ public class JournalFeedUtil {
 	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel)
 	 */
-	public static JournalFeed update(JournalFeed journalFeed) {
+	public static JournalFeed update(JournalFeed journalFeed)
+		throws SystemException {
 		return getPersistence().update(journalFeed);
 	}
 
@@ -105,7 +109,7 @@ public class JournalFeedUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, ServiceContext)
 	 */
 	public static JournalFeed update(JournalFeed journalFeed,
-		ServiceContext serviceContext) {
+		ServiceContext serviceContext) throws SystemException {
 		return getPersistence().update(journalFeed, serviceContext);
 	}
 
@@ -114,9 +118,11 @@ public class JournalFeedUtil {
 	*
 	* @param uuid the uuid
 	* @return the matching journal feeds
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.journal.model.JournalFeed> findByUuid(
-		java.lang.String uuid) {
+		java.lang.String uuid)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByUuid(uuid);
 	}
 
@@ -131,9 +137,11 @@ public class JournalFeedUtil {
 	* @param start the lower bound of the range of journal feeds
 	* @param end the upper bound of the range of journal feeds (not inclusive)
 	* @return the range of matching journal feeds
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.journal.model.JournalFeed> findByUuid(
-		java.lang.String uuid, int start, int end) {
+		java.lang.String uuid, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByUuid(uuid, start, end);
 	}
 
@@ -149,10 +157,12 @@ public class JournalFeedUtil {
 	* @param end the upper bound of the range of journal feeds (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching journal feeds
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.journal.model.JournalFeed> findByUuid(
 		java.lang.String uuid, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.journal.model.JournalFeed> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByUuid(uuid, start, end, orderByComparator);
 	}
 
@@ -163,11 +173,13 @@ public class JournalFeedUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching journal feed
 	* @throws com.liferay.portlet.journal.NoSuchFeedException if a matching journal feed could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.journal.model.JournalFeed findByUuid_First(
 		java.lang.String uuid,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.journal.model.JournalFeed> orderByComparator)
-		throws com.liferay.portlet.journal.NoSuchFeedException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.journal.NoSuchFeedException {
 		return getPersistence().findByUuid_First(uuid, orderByComparator);
 	}
 
@@ -177,10 +189,12 @@ public class JournalFeedUtil {
 	* @param uuid the uuid
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching journal feed, or <code>null</code> if a matching journal feed could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.journal.model.JournalFeed fetchByUuid_First(
 		java.lang.String uuid,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.journal.model.JournalFeed> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByUuid_First(uuid, orderByComparator);
 	}
 
@@ -191,11 +205,13 @@ public class JournalFeedUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching journal feed
 	* @throws com.liferay.portlet.journal.NoSuchFeedException if a matching journal feed could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.journal.model.JournalFeed findByUuid_Last(
 		java.lang.String uuid,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.journal.model.JournalFeed> orderByComparator)
-		throws com.liferay.portlet.journal.NoSuchFeedException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.journal.NoSuchFeedException {
 		return getPersistence().findByUuid_Last(uuid, orderByComparator);
 	}
 
@@ -205,10 +221,12 @@ public class JournalFeedUtil {
 	* @param uuid the uuid
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching journal feed, or <code>null</code> if a matching journal feed could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.journal.model.JournalFeed fetchByUuid_Last(
 		java.lang.String uuid,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.journal.model.JournalFeed> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByUuid_Last(uuid, orderByComparator);
 	}
 
@@ -220,11 +238,13 @@ public class JournalFeedUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next journal feed
 	* @throws com.liferay.portlet.journal.NoSuchFeedException if a journal feed with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.journal.model.JournalFeed[] findByUuid_PrevAndNext(
 		long id, java.lang.String uuid,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.journal.model.JournalFeed> orderByComparator)
-		throws com.liferay.portlet.journal.NoSuchFeedException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.journal.NoSuchFeedException {
 		return getPersistence()
 				   .findByUuid_PrevAndNext(id, uuid, orderByComparator);
 	}
@@ -233,8 +253,10 @@ public class JournalFeedUtil {
 	* Removes all the journal feeds where uuid = &#63; from the database.
 	*
 	* @param uuid the uuid
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByUuid(java.lang.String uuid) {
+	public static void removeByUuid(java.lang.String uuid)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeByUuid(uuid);
 	}
 
@@ -243,8 +265,10 @@ public class JournalFeedUtil {
 	*
 	* @param uuid the uuid
 	* @return the number of matching journal feeds
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByUuid(java.lang.String uuid) {
+	public static int countByUuid(java.lang.String uuid)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByUuid(uuid);
 	}
 
@@ -255,10 +279,12 @@ public class JournalFeedUtil {
 	* @param groupId the group ID
 	* @return the matching journal feed
 	* @throws com.liferay.portlet.journal.NoSuchFeedException if a matching journal feed could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.journal.model.JournalFeed findByUUID_G(
 		java.lang.String uuid, long groupId)
-		throws com.liferay.portlet.journal.NoSuchFeedException {
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.journal.NoSuchFeedException {
 		return getPersistence().findByUUID_G(uuid, groupId);
 	}
 
@@ -268,9 +294,11 @@ public class JournalFeedUtil {
 	* @param uuid the uuid
 	* @param groupId the group ID
 	* @return the matching journal feed, or <code>null</code> if a matching journal feed could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.journal.model.JournalFeed fetchByUUID_G(
-		java.lang.String uuid, long groupId) {
+		java.lang.String uuid, long groupId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByUUID_G(uuid, groupId);
 	}
 
@@ -281,9 +309,11 @@ public class JournalFeedUtil {
 	* @param groupId the group ID
 	* @param retrieveFromCache whether to use the finder cache
 	* @return the matching journal feed, or <code>null</code> if a matching journal feed could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.journal.model.JournalFeed fetchByUUID_G(
-		java.lang.String uuid, long groupId, boolean retrieveFromCache) {
+		java.lang.String uuid, long groupId, boolean retrieveFromCache)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByUUID_G(uuid, groupId, retrieveFromCache);
 	}
 
@@ -293,10 +323,12 @@ public class JournalFeedUtil {
 	* @param uuid the uuid
 	* @param groupId the group ID
 	* @return the journal feed that was removed
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.journal.model.JournalFeed removeByUUID_G(
 		java.lang.String uuid, long groupId)
-		throws com.liferay.portlet.journal.NoSuchFeedException {
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.journal.NoSuchFeedException {
 		return getPersistence().removeByUUID_G(uuid, groupId);
 	}
 
@@ -306,8 +338,10 @@ public class JournalFeedUtil {
 	* @param uuid the uuid
 	* @param groupId the group ID
 	* @return the number of matching journal feeds
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByUUID_G(java.lang.String uuid, long groupId) {
+	public static int countByUUID_G(java.lang.String uuid, long groupId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByUUID_G(uuid, groupId);
 	}
 
@@ -317,9 +351,11 @@ public class JournalFeedUtil {
 	* @param uuid the uuid
 	* @param companyId the company ID
 	* @return the matching journal feeds
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.journal.model.JournalFeed> findByUuid_C(
-		java.lang.String uuid, long companyId) {
+		java.lang.String uuid, long companyId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByUuid_C(uuid, companyId);
 	}
 
@@ -335,9 +371,11 @@ public class JournalFeedUtil {
 	* @param start the lower bound of the range of journal feeds
 	* @param end the upper bound of the range of journal feeds (not inclusive)
 	* @return the range of matching journal feeds
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.journal.model.JournalFeed> findByUuid_C(
-		java.lang.String uuid, long companyId, int start, int end) {
+		java.lang.String uuid, long companyId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByUuid_C(uuid, companyId, start, end);
 	}
 
@@ -354,10 +392,12 @@ public class JournalFeedUtil {
 	* @param end the upper bound of the range of journal feeds (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching journal feeds
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.journal.model.JournalFeed> findByUuid_C(
 		java.lang.String uuid, long companyId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.journal.model.JournalFeed> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByUuid_C(uuid, companyId, start, end, orderByComparator);
 	}
@@ -370,11 +410,13 @@ public class JournalFeedUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching journal feed
 	* @throws com.liferay.portlet.journal.NoSuchFeedException if a matching journal feed could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.journal.model.JournalFeed findByUuid_C_First(
 		java.lang.String uuid, long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.journal.model.JournalFeed> orderByComparator)
-		throws com.liferay.portlet.journal.NoSuchFeedException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.journal.NoSuchFeedException {
 		return getPersistence()
 				   .findByUuid_C_First(uuid, companyId, orderByComparator);
 	}
@@ -386,10 +428,12 @@ public class JournalFeedUtil {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching journal feed, or <code>null</code> if a matching journal feed could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.journal.model.JournalFeed fetchByUuid_C_First(
 		java.lang.String uuid, long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.journal.model.JournalFeed> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByUuid_C_First(uuid, companyId, orderByComparator);
 	}
@@ -402,11 +446,13 @@ public class JournalFeedUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching journal feed
 	* @throws com.liferay.portlet.journal.NoSuchFeedException if a matching journal feed could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.journal.model.JournalFeed findByUuid_C_Last(
 		java.lang.String uuid, long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.journal.model.JournalFeed> orderByComparator)
-		throws com.liferay.portlet.journal.NoSuchFeedException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.journal.NoSuchFeedException {
 		return getPersistence()
 				   .findByUuid_C_Last(uuid, companyId, orderByComparator);
 	}
@@ -418,10 +464,12 @@ public class JournalFeedUtil {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching journal feed, or <code>null</code> if a matching journal feed could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.journal.model.JournalFeed fetchByUuid_C_Last(
 		java.lang.String uuid, long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.journal.model.JournalFeed> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByUuid_C_Last(uuid, companyId, orderByComparator);
 	}
@@ -435,11 +483,13 @@ public class JournalFeedUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next journal feed
 	* @throws com.liferay.portlet.journal.NoSuchFeedException if a journal feed with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.journal.model.JournalFeed[] findByUuid_C_PrevAndNext(
 		long id, java.lang.String uuid, long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.journal.model.JournalFeed> orderByComparator)
-		throws com.liferay.portlet.journal.NoSuchFeedException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.journal.NoSuchFeedException {
 		return getPersistence()
 				   .findByUuid_C_PrevAndNext(id, uuid, companyId,
 			orderByComparator);
@@ -450,8 +500,10 @@ public class JournalFeedUtil {
 	*
 	* @param uuid the uuid
 	* @param companyId the company ID
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByUuid_C(java.lang.String uuid, long companyId) {
+	public static void removeByUuid_C(java.lang.String uuid, long companyId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeByUuid_C(uuid, companyId);
 	}
 
@@ -461,8 +513,10 @@ public class JournalFeedUtil {
 	* @param uuid the uuid
 	* @param companyId the company ID
 	* @return the number of matching journal feeds
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByUuid_C(java.lang.String uuid, long companyId) {
+	public static int countByUuid_C(java.lang.String uuid, long companyId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByUuid_C(uuid, companyId);
 	}
 
@@ -471,9 +525,11 @@ public class JournalFeedUtil {
 	*
 	* @param groupId the group ID
 	* @return the matching journal feeds
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.journal.model.JournalFeed> findByGroupId(
-		long groupId) {
+		long groupId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByGroupId(groupId);
 	}
 
@@ -488,9 +544,11 @@ public class JournalFeedUtil {
 	* @param start the lower bound of the range of journal feeds
 	* @param end the upper bound of the range of journal feeds (not inclusive)
 	* @return the range of matching journal feeds
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.journal.model.JournalFeed> findByGroupId(
-		long groupId, int start, int end) {
+		long groupId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByGroupId(groupId, start, end);
 	}
 
@@ -506,10 +564,12 @@ public class JournalFeedUtil {
 	* @param end the upper bound of the range of journal feeds (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching journal feeds
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.journal.model.JournalFeed> findByGroupId(
 		long groupId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.journal.model.JournalFeed> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByGroupId(groupId, start, end, orderByComparator);
 	}
@@ -521,11 +581,13 @@ public class JournalFeedUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching journal feed
 	* @throws com.liferay.portlet.journal.NoSuchFeedException if a matching journal feed could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.journal.model.JournalFeed findByGroupId_First(
 		long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.journal.model.JournalFeed> orderByComparator)
-		throws com.liferay.portlet.journal.NoSuchFeedException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.journal.NoSuchFeedException {
 		return getPersistence().findByGroupId_First(groupId, orderByComparator);
 	}
 
@@ -535,10 +597,12 @@ public class JournalFeedUtil {
 	* @param groupId the group ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching journal feed, or <code>null</code> if a matching journal feed could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.journal.model.JournalFeed fetchByGroupId_First(
 		long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.journal.model.JournalFeed> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByGroupId_First(groupId, orderByComparator);
 	}
 
@@ -549,11 +613,13 @@ public class JournalFeedUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching journal feed
 	* @throws com.liferay.portlet.journal.NoSuchFeedException if a matching journal feed could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.journal.model.JournalFeed findByGroupId_Last(
 		long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.journal.model.JournalFeed> orderByComparator)
-		throws com.liferay.portlet.journal.NoSuchFeedException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.journal.NoSuchFeedException {
 		return getPersistence().findByGroupId_Last(groupId, orderByComparator);
 	}
 
@@ -563,10 +629,12 @@ public class JournalFeedUtil {
 	* @param groupId the group ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching journal feed, or <code>null</code> if a matching journal feed could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.journal.model.JournalFeed fetchByGroupId_Last(
 		long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.journal.model.JournalFeed> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByGroupId_Last(groupId, orderByComparator);
 	}
 
@@ -578,11 +646,13 @@ public class JournalFeedUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next journal feed
 	* @throws com.liferay.portlet.journal.NoSuchFeedException if a journal feed with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.journal.model.JournalFeed[] findByGroupId_PrevAndNext(
 		long id, long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.journal.model.JournalFeed> orderByComparator)
-		throws com.liferay.portlet.journal.NoSuchFeedException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.journal.NoSuchFeedException {
 		return getPersistence()
 				   .findByGroupId_PrevAndNext(id, groupId, orderByComparator);
 	}
@@ -592,9 +662,11 @@ public class JournalFeedUtil {
 	*
 	* @param groupId the group ID
 	* @return the matching journal feeds that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.journal.model.JournalFeed> filterFindByGroupId(
-		long groupId) {
+		long groupId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().filterFindByGroupId(groupId);
 	}
 
@@ -609,9 +681,11 @@ public class JournalFeedUtil {
 	* @param start the lower bound of the range of journal feeds
 	* @param end the upper bound of the range of journal feeds (not inclusive)
 	* @return the range of matching journal feeds that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.journal.model.JournalFeed> filterFindByGroupId(
-		long groupId, int start, int end) {
+		long groupId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().filterFindByGroupId(groupId, start, end);
 	}
 
@@ -627,10 +701,12 @@ public class JournalFeedUtil {
 	* @param end the upper bound of the range of journal feeds (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching journal feeds that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.journal.model.JournalFeed> filterFindByGroupId(
 		long groupId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.journal.model.JournalFeed> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .filterFindByGroupId(groupId, start, end, orderByComparator);
 	}
@@ -643,11 +719,13 @@ public class JournalFeedUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next journal feed
 	* @throws com.liferay.portlet.journal.NoSuchFeedException if a journal feed with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.journal.model.JournalFeed[] filterFindByGroupId_PrevAndNext(
 		long id, long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.journal.model.JournalFeed> orderByComparator)
-		throws com.liferay.portlet.journal.NoSuchFeedException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.journal.NoSuchFeedException {
 		return getPersistence()
 				   .filterFindByGroupId_PrevAndNext(id, groupId,
 			orderByComparator);
@@ -657,8 +735,10 @@ public class JournalFeedUtil {
 	* Removes all the journal feeds where groupId = &#63; from the database.
 	*
 	* @param groupId the group ID
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByGroupId(long groupId) {
+	public static void removeByGroupId(long groupId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeByGroupId(groupId);
 	}
 
@@ -667,8 +747,10 @@ public class JournalFeedUtil {
 	*
 	* @param groupId the group ID
 	* @return the number of matching journal feeds
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByGroupId(long groupId) {
+	public static int countByGroupId(long groupId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByGroupId(groupId);
 	}
 
@@ -677,8 +759,10 @@ public class JournalFeedUtil {
 	*
 	* @param groupId the group ID
 	* @return the number of matching journal feeds that the user has permission to view
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int filterCountByGroupId(long groupId) {
+	public static int filterCountByGroupId(long groupId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().filterCountByGroupId(groupId);
 	}
 
@@ -689,10 +773,12 @@ public class JournalFeedUtil {
 	* @param feedId the feed ID
 	* @return the matching journal feed
 	* @throws com.liferay.portlet.journal.NoSuchFeedException if a matching journal feed could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.journal.model.JournalFeed findByG_F(
 		long groupId, java.lang.String feedId)
-		throws com.liferay.portlet.journal.NoSuchFeedException {
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.journal.NoSuchFeedException {
 		return getPersistence().findByG_F(groupId, feedId);
 	}
 
@@ -702,9 +788,11 @@ public class JournalFeedUtil {
 	* @param groupId the group ID
 	* @param feedId the feed ID
 	* @return the matching journal feed, or <code>null</code> if a matching journal feed could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.journal.model.JournalFeed fetchByG_F(
-		long groupId, java.lang.String feedId) {
+		long groupId, java.lang.String feedId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByG_F(groupId, feedId);
 	}
 
@@ -715,9 +803,11 @@ public class JournalFeedUtil {
 	* @param feedId the feed ID
 	* @param retrieveFromCache whether to use the finder cache
 	* @return the matching journal feed, or <code>null</code> if a matching journal feed could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.journal.model.JournalFeed fetchByG_F(
-		long groupId, java.lang.String feedId, boolean retrieveFromCache) {
+		long groupId, java.lang.String feedId, boolean retrieveFromCache)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByG_F(groupId, feedId, retrieveFromCache);
 	}
 
@@ -727,10 +817,12 @@ public class JournalFeedUtil {
 	* @param groupId the group ID
 	* @param feedId the feed ID
 	* @return the journal feed that was removed
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.journal.model.JournalFeed removeByG_F(
 		long groupId, java.lang.String feedId)
-		throws com.liferay.portlet.journal.NoSuchFeedException {
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.journal.NoSuchFeedException {
 		return getPersistence().removeByG_F(groupId, feedId);
 	}
 
@@ -740,8 +832,10 @@ public class JournalFeedUtil {
 	* @param groupId the group ID
 	* @param feedId the feed ID
 	* @return the number of matching journal feeds
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByG_F(long groupId, java.lang.String feedId) {
+	public static int countByG_F(long groupId, java.lang.String feedId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByG_F(groupId, feedId);
 	}
 
@@ -781,14 +875,17 @@ public class JournalFeedUtil {
 	* @param id the primary key of the journal feed
 	* @return the journal feed that was removed
 	* @throws com.liferay.portlet.journal.NoSuchFeedException if a journal feed with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.journal.model.JournalFeed remove(long id)
-		throws com.liferay.portlet.journal.NoSuchFeedException {
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.journal.NoSuchFeedException {
 		return getPersistence().remove(id);
 	}
 
 	public static com.liferay.portlet.journal.model.JournalFeed updateImpl(
-		com.liferay.portlet.journal.model.JournalFeed journalFeed) {
+		com.liferay.portlet.journal.model.JournalFeed journalFeed)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().updateImpl(journalFeed);
 	}
 
@@ -798,9 +895,12 @@ public class JournalFeedUtil {
 	* @param id the primary key of the journal feed
 	* @return the journal feed
 	* @throws com.liferay.portlet.journal.NoSuchFeedException if a journal feed with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.journal.model.JournalFeed findByPrimaryKey(
-		long id) throws com.liferay.portlet.journal.NoSuchFeedException {
+		long id)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.journal.NoSuchFeedException {
 		return getPersistence().findByPrimaryKey(id);
 	}
 
@@ -809,23 +909,21 @@ public class JournalFeedUtil {
 	*
 	* @param id the primary key of the journal feed
 	* @return the journal feed, or <code>null</code> if a journal feed with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.journal.model.JournalFeed fetchByPrimaryKey(
-		long id) {
+		long id) throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByPrimaryKey(id);
-	}
-
-	public static java.util.Map<java.io.Serializable, com.liferay.portlet.journal.model.JournalFeed> fetchByPrimaryKeys(
-		java.util.Set<java.io.Serializable> primaryKeys) {
-		return getPersistence().fetchByPrimaryKeys(primaryKeys);
 	}
 
 	/**
 	* Returns all the journal feeds.
 	*
 	* @return the journal feeds
+	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portlet.journal.model.JournalFeed> findAll() {
+	public static java.util.List<com.liferay.portlet.journal.model.JournalFeed> findAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll();
 	}
 
@@ -839,9 +937,11 @@ public class JournalFeedUtil {
 	* @param start the lower bound of the range of journal feeds
 	* @param end the upper bound of the range of journal feeds (not inclusive)
 	* @return the range of journal feeds
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.journal.model.JournalFeed> findAll(
-		int start, int end) {
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll(start, end);
 	}
 
@@ -856,17 +956,22 @@ public class JournalFeedUtil {
 	* @param end the upper bound of the range of journal feeds (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of journal feeds
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.journal.model.JournalFeed> findAll(
 		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.journal.model.JournalFeed> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll(start, end, orderByComparator);
 	}
 
 	/**
 	* Removes all the journal feeds from the database.
+	*
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeAll() {
+	public static void removeAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeAll();
 	}
 
@@ -874,8 +979,10 @@ public class JournalFeedUtil {
 	* Returns the number of journal feeds.
 	*
 	* @return the number of journal feeds
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countAll() {
+	public static int countAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countAll();
 	}
 
@@ -893,7 +1000,6 @@ public class JournalFeedUtil {
 	/**
 	 * @deprecated As of 6.2.0
 	 */
-	@Deprecated
 	public void setPersistence(JournalFeedPersistence persistence) {
 	}
 

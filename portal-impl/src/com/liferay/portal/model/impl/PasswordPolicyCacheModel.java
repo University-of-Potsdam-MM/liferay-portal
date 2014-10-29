@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,12 +14,9 @@
 
 package com.liferay.portal.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.CacheModel;
-import com.liferay.portal.model.MVCCModel;
 import com.liferay.portal.model.PasswordPolicy;
 
 import java.io.Externalizable;
@@ -36,26 +33,13 @@ import java.util.Date;
  * @see PasswordPolicy
  * @generated
  */
-@ProviderType
 public class PasswordPolicyCacheModel implements CacheModel<PasswordPolicy>,
-	Externalizable, MVCCModel {
-	@Override
-	public long getMvccVersion() {
-		return mvccVersion;
-	}
-
-	@Override
-	public void setMvccVersion(long mvccVersion) {
-		this.mvccVersion = mvccVersion;
-	}
-
+	Externalizable {
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(71);
+		StringBundler sb = new StringBundler(69);
 
-		sb.append("{mvccVersion=");
-		sb.append(mvccVersion);
-		sb.append(", uuid=");
+		sb.append("{uuid=");
 		sb.append(uuid);
 		sb.append(", passwordPolicyId=");
 		sb.append(passwordPolicyId);
@@ -131,8 +115,6 @@ public class PasswordPolicyCacheModel implements CacheModel<PasswordPolicy>,
 	@Override
 	public PasswordPolicy toEntityModel() {
 		PasswordPolicyImpl passwordPolicyImpl = new PasswordPolicyImpl();
-
-		passwordPolicyImpl.setMvccVersion(mvccVersion);
 
 		if (uuid == null) {
 			passwordPolicyImpl.setUuid(StringPool.BLANK);
@@ -221,7 +203,6 @@ public class PasswordPolicyCacheModel implements CacheModel<PasswordPolicy>,
 
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
-		mvccVersion = objectInput.readLong();
 		uuid = objectInput.readUTF();
 		passwordPolicyId = objectInput.readLong();
 		companyId = objectInput.readLong();
@@ -261,8 +242,6 @@ public class PasswordPolicyCacheModel implements CacheModel<PasswordPolicy>,
 	@Override
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
-		objectOutput.writeLong(mvccVersion);
-
 		if (uuid == null) {
 			objectOutput.writeUTF(StringPool.BLANK);
 		}
@@ -332,7 +311,6 @@ public class PasswordPolicyCacheModel implements CacheModel<PasswordPolicy>,
 		objectOutput.writeLong(resetTicketMaxAge);
 	}
 
-	public long mvccVersion;
 	public String uuid;
 	public long passwordPolicyId;
 	public long companyId;

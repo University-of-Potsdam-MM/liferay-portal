@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portal.servlet.taglib.ui;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.JavaConstants;
 import com.liferay.portal.kernel.util.StringBundler;
@@ -44,7 +45,6 @@ import javax.servlet.jsp.PageContext;
  * @deprecated As of 6.2.0, replaced by {@link
  *             com.liferay.taglib.ui.InputPermissionsParamsTag}
  */
-@Deprecated
 public class InputPermissionsParamsTagUtil {
 
 	public static void doEndTag(String modelName, PageContext pageContext)
@@ -142,7 +142,7 @@ public class InputPermissionsParamsTagUtil {
 
 	public static String getDefaultViewRole(
 			String modelName, ThemeDisplay themeDisplay)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Layout layout = themeDisplay.getLayout();
 

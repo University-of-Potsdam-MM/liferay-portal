@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,10 +18,12 @@ import com.liferay.portal.kernel.io.unsync.UnsyncByteArrayInputStream;
 import com.liferay.portal.kernel.io.unsync.UnsyncByteArrayOutputStream;
 import com.liferay.portal.kernel.messaging.Message;
 import com.liferay.portal.kernel.test.CodeCoverageAssertor;
-import com.liferay.portal.kernel.test.ReflectionTestUtil;
+import com.liferay.portal.kernel.util.ReflectionUtil;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+
+import java.lang.reflect.Field;
 
 import java.util.List;
 
@@ -66,11 +68,12 @@ public class MessageRoutingBagTest {
 		UnsyncByteArrayOutputStream unsyncByteArrayOutputStream =
 			new UnsyncByteArrayOutputStream();
 
-		try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(
-				unsyncByteArrayOutputStream)) {
+		ObjectOutputStream objectOutputStream = new ObjectOutputStream(
+			unsyncByteArrayOutputStream);
 
-			objectOutputStream.writeObject(messageRoutingBag);
-		}
+		objectOutputStream.writeObject(messageRoutingBag);
+
+		objectOutputStream.close();
 
 		byte[] bytes = unsyncByteArrayOutputStream.toByteArray();
 
@@ -82,14 +85,20 @@ public class MessageRoutingBagTest {
 
 		Assert.assertEquals(
 			destinationName, newMessageRoutingBag.getDestinationName());
-		Assert.assertNull(
-			ReflectionTestUtil.getFieldValue(newMessageRoutingBag, "_message"));
+
+		Field messageField = ReflectionUtil.getDeclaredField(
+			MessageRoutingBag.class, "_message");
+
+		Assert.assertNull(messageField.get(newMessageRoutingBag));
 		Assert.assertNotNull(newMessageRoutingBag.getMessageData());
 		Assert.assertEquals(
 			routingDowncast, newMessageRoutingBag.isRoutingDowncast());
 
-		List<String> routingTrace = ReflectionTestUtil.getFieldValue(
-			newMessageRoutingBag, "_routingTrace");
+		Field routingTraceField = ReflectionUtil.getDeclaredField(
+			MessageRoutingBag.class, "_routingTrace");
+
+		List<String> routingTrace = (List<String>)routingTraceField.get(
+			newMessageRoutingBag);
 
 		Assert.assertEquals(2, routingTrace.size());
 		Assert.assertEquals(routingId1, routingTrace.get(0));
@@ -104,14 +113,16 @@ public class MessageRoutingBagTest {
 		Message newMessage = newMessageRoutingBag.getMessage();
 
 		Assert.assertNotNull(newMessage);
-		Assert.assertNull(
-			ReflectionTestUtil.getFieldValue(
-				newMessageRoutingBag, "_messageData"));
+
+		Field messageDataField = ReflectionUtil.getDeclaredField(
+			MessageRoutingBag.class, "_messageData");
+
+		Assert.assertNull(messageDataField.get(newMessageRoutingBag));
 		Assert.assertSame(newMessage, newMessageRoutingBag.getMessage());
 	}
 
 	@Test
-	public void testManualSerialization() throws ClassNotFoundException {
+	public void testManualSerialization() throws Exception {
 		Message message = new Message();
 
 		String destinationName = "destinationName";
@@ -142,14 +153,20 @@ public class MessageRoutingBagTest {
 
 		Assert.assertEquals(
 			destinationName, newMessageRoutingBag.getDestinationName());
-		Assert.assertNull(
-			ReflectionTestUtil.getFieldValue(newMessageRoutingBag, "_message"));
+
+		Field messageField = ReflectionUtil.getDeclaredField(
+			MessageRoutingBag.class, "_message");
+
+		Assert.assertNull(messageField.get(newMessageRoutingBag));
 		Assert.assertNotNull(newMessageRoutingBag.getMessageData());
 		Assert.assertEquals(
 			routingDowncast, newMessageRoutingBag.isRoutingDowncast());
 
-		List<String> routingTrace = ReflectionTestUtil.getFieldValue(
-			newMessageRoutingBag, "_routingTrace");
+		Field routingTraceField = ReflectionUtil.getDeclaredField(
+			MessageRoutingBag.class, "_routingTrace");
+
+		List<String> routingTrace = (List<String>)routingTraceField.get(
+			newMessageRoutingBag);
 
 		Assert.assertEquals(2, routingTrace.size());
 		Assert.assertEquals(routingId1, routingTrace.get(0));
@@ -164,14 +181,16 @@ public class MessageRoutingBagTest {
 		Message newMessage = newMessageRoutingBag.getMessage();
 
 		Assert.assertNotNull(newMessage);
-		Assert.assertNull(
-			ReflectionTestUtil.getFieldValue(
-				newMessageRoutingBag, "_messageData"));
+
+		Field messageDataField = ReflectionUtil.getDeclaredField(
+			MessageRoutingBag.class, "_messageData");
+
+		Assert.assertNull(messageDataField.get(newMessageRoutingBag));
 		Assert.assertSame(newMessage, newMessageRoutingBag.getMessage());
 	}
 
 	@Test
-	public void testMessageAssociation() {
+	public void testMessageAssociation() throws Exception {
 		Message message = new Message();
 
 		MessageRoutingBag messageRoutingBag = new MessageRoutingBag(
@@ -181,9 +200,10 @@ public class MessageRoutingBagTest {
 
 		messageRoutingBag.setMessage(newMessage);
 
-		Assert.assertSame(
-			newMessage,
-			ReflectionTestUtil.getFieldValue(messageRoutingBag, "_message"));
+		Field messageField = ReflectionUtil.getDeclaredField(
+			MessageRoutingBag.class, "_message");
+
+		Assert.assertSame(newMessage, messageField.get(messageRoutingBag));
 		Assert.assertSame(
 			messageRoutingBag,
 			newMessage.get(MessageRoutingBag.MESSAGE_ROUTING_BAG));

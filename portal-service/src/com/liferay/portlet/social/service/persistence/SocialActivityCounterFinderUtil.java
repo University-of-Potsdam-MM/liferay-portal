@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -24,13 +24,15 @@ import com.liferay.portal.kernel.util.ReferenceRegistry;
  */
 @ProviderType
 public class SocialActivityCounterFinderUtil {
-	public static int countU_ByG_N(long groupId, java.lang.String[] names) {
+	public static int countU_ByG_N(long groupId, java.lang.String[] names)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getFinder().countU_ByG_N(groupId, names);
 	}
 
 	public static java.util.List<com.liferay.portlet.social.model.SocialActivityCounter> findAC_ByG_N_S_E_1(
 		long groupId, java.lang.String name, int startPeriod, int endPeriod,
-		int periodLength) {
+		int periodLength)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getFinder()
 				   .findAC_ByG_N_S_E_1(groupId, name, startPeriod, endPeriod,
 			periodLength);
@@ -38,7 +40,8 @@ public class SocialActivityCounterFinderUtil {
 
 	public static java.util.List<com.liferay.portlet.social.model.SocialActivityCounter> findAC_ByG_N_S_E_2(
 		long groupId, java.lang.String counterName, int startPeriod,
-		int endPeriod, int periodLength) {
+		int endPeriod, int periodLength)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getFinder()
 				   .findAC_ByG_N_S_E_2(groupId, counterName, startPeriod,
 			endPeriod, periodLength);
@@ -46,13 +49,15 @@ public class SocialActivityCounterFinderUtil {
 
 	public static java.util.List<com.liferay.portlet.social.model.SocialActivityCounter> findAC_By_G_C_C_N_S_E(
 		long groupId, java.util.List<java.lang.Long> userIds,
-		java.lang.String[] names, int start, int end) {
+		java.lang.String[] names, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getFinder()
 				   .findAC_By_G_C_C_N_S_E(groupId, userIds, names, start, end);
 	}
 
 	public static java.util.List<java.lang.Long> findU_ByG_N(long groupId,
-		java.lang.String[] names, int start, int end) {
+		java.lang.String[] names, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getFinder().findU_ByG_N(groupId, names, start, end);
 	}
 

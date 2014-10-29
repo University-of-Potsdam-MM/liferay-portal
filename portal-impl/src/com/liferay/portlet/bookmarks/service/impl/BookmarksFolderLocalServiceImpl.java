@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -17,6 +17,7 @@ package com.liferay.portlet.bookmarks.service.impl;
 import com.liferay.portal.kernel.dao.orm.QueryDefinition;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.search.Indexable;
@@ -25,14 +26,12 @@ import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.util.ContentTypes;
-import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.kernel.util.TreeModelTasksAdapter;
+import com.liferay.portal.kernel.util.TreeModelFinder;
 import com.liferay.portal.kernel.util.TreePathUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.model.ResourceConstants;
 import com.liferay.portal.model.SystemEventConstants;
-import com.liferay.portal.model.TreeModel;
 import com.liferay.portal.model.User;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portlet.asset.model.AssetEntry;
@@ -62,7 +61,7 @@ public class BookmarksFolderLocalServiceImpl
 	public BookmarksFolder addFolder(
 			long userId, long parentFolderId, String name, String description,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		// Folder
 
@@ -109,29 +108,29 @@ public class BookmarksFolderLocalServiceImpl
 	@Indexable(type = IndexableType.DELETE)
 	@Override
 	@SystemEvent(
-		action = SystemEventConstants.ACTION_SKIP,
+		action = SystemEventConstants.ACTION_SKIP, send = false,
 		type = SystemEventConstants.TYPE_DELETE)
 	public BookmarksFolder deleteFolder(BookmarksFolder folder)
-		throws PortalException {
+		throws PortalException, SystemException {
 
-		return bookmarksFolderLocalService.deleteFolder(folder, true);
+		return deleteFolder(folder, true);
 	}
 
 	@Indexable(type = IndexableType.DELETE)
 	@Override
 	@SystemEvent(
-		action = SystemEventConstants.ACTION_SKIP,
+		action = SystemEventConstants.ACTION_SKIP, send = false,
 		type = SystemEventConstants.TYPE_DELETE)
 	public BookmarksFolder deleteFolder(
 			BookmarksFolder folder, boolean includeTrashedEntries)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		List<BookmarksFolder> folders = bookmarksFolderPersistence.findByG_P(
 			folder.getGroupId(), folder.getFolderId());
 
 		for (BookmarksFolder curFolder : folders) {
-			if (includeTrashedEntries || !curFolder.isInTrashExplicitly()) {
-				bookmarksFolderLocalService.deleteFolder(curFolder);
+			if (includeTrashedEntries || !curFolder.isInTrash()) {
+				deleteFolder(curFolder);
 			}
 		}
 
@@ -166,21 +165,17 @@ public class BookmarksFolderLocalServiceImpl
 
 		// Trash
 
-		if (folder.isInTrashExplicitly()) {
-			trashEntryLocalService.deleteEntry(
-				BookmarksFolder.class.getName(), folder.getFolderId());
-		}
-		else {
-			trashVersionLocalService.deleteTrashVersion(
-				BookmarksFolder.class.getName(), folder.getFolderId());
-		}
+		trashEntryLocalService.deleteEntry(
+			BookmarksFolder.class.getName(), folder.getFolderId());
 
 		return folder;
 	}
 
 	@Indexable(type = IndexableType.DELETE)
 	@Override
-	public BookmarksFolder deleteFolder(long folderId) throws PortalException {
+	public BookmarksFolder deleteFolder(long folderId)
+		throws PortalException, SystemException {
+
 		BookmarksFolder folder = bookmarksFolderPersistence.findByPrimaryKey(
 			folderId);
 
@@ -191,7 +186,7 @@ public class BookmarksFolderLocalServiceImpl
 	@Override
 	public BookmarksFolder deleteFolder(
 			long folderId, boolean includeTrashedEntries)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		BookmarksFolder folder = bookmarksFolderLocalService.getFolder(
 			folderId);
@@ -201,7 +196,9 @@ public class BookmarksFolderLocalServiceImpl
 	}
 
 	@Override
-	public void deleteFolders(long groupId) throws PortalException {
+	public void deleteFolders(long groupId)
+		throws PortalException, SystemException {
+
 		List<BookmarksFolder> folders =
 			bookmarksFolderPersistence.findByGroupId(groupId);
 
@@ -212,35 +209,43 @@ public class BookmarksFolderLocalServiceImpl
 
 	@Override
 	public List<BookmarksFolder> getCompanyFolders(
-		long companyId, int start, int end) {
+			long companyId, int start, int end)
+		throws SystemException {
 
 		return bookmarksFolderPersistence.findByCompanyId(
 			companyId, start, end);
 	}
 
 	@Override
-	public int getCompanyFoldersCount(long companyId) {
+	public int getCompanyFoldersCount(long companyId) throws SystemException {
 		return bookmarksFolderPersistence.countByCompanyId(companyId);
 	}
 
 	@Override
-	public BookmarksFolder getFolder(long folderId) throws PortalException {
+	public BookmarksFolder getFolder(long folderId)
+		throws PortalException, SystemException {
+
 		return bookmarksFolderPersistence.findByPrimaryKey(folderId);
 	}
 
 	@Override
-	public List<BookmarksFolder> getFolders(long groupId) {
+	public List<BookmarksFolder> getFolders(long groupId)
+		throws SystemException {
+
 		return bookmarksFolderPersistence.findByGroupId(groupId);
 	}
 
 	@Override
-	public List<BookmarksFolder> getFolders(long groupId, long parentFolderId) {
+	public List<BookmarksFolder> getFolders(long groupId, long parentFolderId)
+		throws SystemException {
+
 		return bookmarksFolderPersistence.findByG_P(groupId, parentFolderId);
 	}
 
 	@Override
 	public List<BookmarksFolder> getFolders(
-		long groupId, long parentFolderId, int start, int end) {
+			long groupId, long parentFolderId, int start, int end)
+		throws SystemException {
 
 		return getFolders(
 			groupId, parentFolderId, WorkflowConstants.STATUS_APPROVED, start,
@@ -249,24 +254,27 @@ public class BookmarksFolderLocalServiceImpl
 
 	@Override
 	public List<BookmarksFolder> getFolders(
-		long groupId, long parentFolderId, int status, int start, int end) {
+			long groupId, long parentFolderId, int status, int start, int end)
+		throws SystemException {
 
 		return bookmarksFolderPersistence.findByG_P_S(
 			groupId, parentFolderId, status, start, end);
 	}
 
 	@Override
-	public List<Object> getFoldersAndEntries(long groupId, long folderId) {
+	public List<Object> getFoldersAndEntries(long groupId, long folderId)
+		throws SystemException {
+
 		return getFoldersAndEntries(
 			groupId, folderId, WorkflowConstants.STATUS_ANY);
 	}
 
 	@Override
 	public List<Object> getFoldersAndEntries(
-		long groupId, long folderId, int status) {
+			long groupId, long folderId, int status)
+		throws SystemException {
 
-		QueryDefinition<?> queryDefinition = new QueryDefinition<Object>(
-			status);
+		QueryDefinition queryDefinition = new QueryDefinition(status);
 
 		return bookmarksFolderFinder.findF_E_ByG_F(
 			groupId, folderId, queryDefinition);
@@ -274,9 +282,10 @@ public class BookmarksFolderLocalServiceImpl
 
 	@Override
 	public List<Object> getFoldersAndEntries(
-		long groupId, long folderId, int status, int start, int end) {
+			long groupId, long folderId, int status, int start, int end)
+		throws SystemException {
 
-		QueryDefinition<?> queryDefinition = new QueryDefinition<Object>(
+		QueryDefinition queryDefinition = new QueryDefinition(
 			status, start, end, null);
 
 		return bookmarksFolderFinder.findF_E_ByG_F(
@@ -285,35 +294,40 @@ public class BookmarksFolderLocalServiceImpl
 
 	@Override
 	public int getFoldersAndEntriesCount(
-		long groupId, long folderId, int status) {
+			long groupId, long folderId, int status)
+		throws SystemException {
 
-		QueryDefinition<?> queryDefinition = new QueryDefinition<Object>(
-			status);
+		QueryDefinition queryDefinition = new QueryDefinition(status);
 
 		return bookmarksFolderFinder.countF_E_ByG_F(
 			groupId, folderId, queryDefinition);
 	}
 
 	@Override
-	public int getFoldersCount(long groupId, long parentFolderId) {
+	public int getFoldersCount(long groupId, long parentFolderId)
+		throws SystemException {
+
 		return getFoldersCount(
 			groupId, parentFolderId, WorkflowConstants.STATUS_APPROVED);
 	}
 
 	@Override
-	public int getFoldersCount(long groupId, long parentFolderId, int status) {
+	public int getFoldersCount(long groupId, long parentFolderId, int status)
+		throws SystemException {
+
 		return bookmarksFolderPersistence.countByG_P_S(
 			groupId, parentFolderId, status);
 	}
 
 	@Override
-	public List<BookmarksFolder> getNoAssetFolders() {
+	public List<BookmarksFolder> getNoAssetFolders() throws SystemException {
 		return bookmarksFolderFinder.findByNoAssets();
 	}
 
 	@Override
 	public void getSubfolderIds(
-		List<Long> folderIds, long groupId, long folderId) {
+			List<Long> folderIds, long groupId, long folderId)
+		throws SystemException {
 
 		List<BookmarksFolder> folders = bookmarksFolderPersistence.findByG_P(
 			groupId, folderId);
@@ -329,7 +343,7 @@ public class BookmarksFolderLocalServiceImpl
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
 	public BookmarksFolder moveFolder(long folderId, long parentFolderId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		BookmarksFolder folder = bookmarksFolderPersistence.findByPrimaryKey(
 			folderId);
@@ -339,29 +353,30 @@ public class BookmarksFolderLocalServiceImpl
 
 		bookmarksFolderPersistence.update(folder);
 
-		rebuildTree(
-			folder.getCompanyId(), folderId, folder.getTreePath(), true);
-
 		return folder;
 	}
 
 	@Override
 	public BookmarksFolder moveFolderFromTrash(
 			long userId, long folderId, long parentFolderId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		BookmarksFolder folder = bookmarksFolderPersistence.findByPrimaryKey(
 			folderId);
 
-		if (folder.isInTrashExplicitly()) {
+		TrashEntry trashEntry = folder.getTrashEntry();
+
+		if (trashEntry.isTrashEntry(BookmarksFolder.class, folderId)) {
 			restoreFolderFromTrash(userId, folderId);
 		}
 		else {
 
 			// Folder
 
-			TrashVersion trashVersion = trashVersionLocalService.fetchVersion(
-				BookmarksFolder.class.getName(), folderId);
+			TrashVersion trashVersion =
+				trashVersionLocalService.fetchVersion(
+					trashEntry.getEntryId(), BookmarksFolder.class.getName(),
+					folderId);
 
 			int status = WorkflowConstants.STATUS_APPROVED;
 
@@ -384,7 +399,8 @@ public class BookmarksFolderLocalServiceImpl
 					folder.getGroupId(), folder.getFolderId(),
 					WorkflowConstants.STATUS_IN_TRASH);
 
-			restoreDependentsFromTrash(foldersAndEntries);
+			restoreDependentsFromTrash(
+				foldersAndEntries, trashEntry.getEntryId());
 		}
 
 		return bookmarksFolderLocalService.moveFolder(folderId, parentFolderId);
@@ -393,7 +409,7 @@ public class BookmarksFolderLocalServiceImpl
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
 	public BookmarksFolder moveFolderToTrash(long userId, long folderId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		// Folder
 
@@ -435,56 +451,21 @@ public class BookmarksFolderLocalServiceImpl
 	}
 
 	@Override
-	public void rebuildTree(long companyId) throws PortalException {
-		rebuildTree(
-			companyId, BookmarksFolderConstants.DEFAULT_PARENT_FOLDER_ID,
-			StringPool.SLASH, false);
-	}
-
-	@Override
-	public void rebuildTree(
-			long companyId, long parentFolderId, String parentTreePath,
-			final boolean reindex)
-		throws PortalException {
-
+	public void rebuildTree(long companyId) throws SystemException {
 		TreePathUtil.rebuildTree(
-			companyId, parentFolderId, parentTreePath,
-			new TreeModelTasksAdapter<BookmarksFolder>() {
+			companyId, BookmarksFolderConstants.DEFAULT_PARENT_FOLDER_ID,
+			new TreeModelFinder<BookmarksFolder>() {
 
 				@Override
 				public List<BookmarksFolder> findTreeModels(
-					long previousId, long companyId, long parentPrimaryKey,
-					int size) {
+						long previousId, long companyId, long parentPrimaryKey,
+						int size)
+					throws SystemException {
 
 					return bookmarksFolderPersistence.findByF_C_P_NotS(
 						previousId, companyId, parentPrimaryKey,
 						WorkflowConstants.STATUS_IN_TRASH, QueryUtil.ALL_POS,
-						size, new FolderIdComparator(true));
-				}
-
-				@Override
-				public void rebuildDependentModelsTreePaths(
-						long parentPrimaryKey, String treePath)
-					throws PortalException {
-
-					bookmarksEntryLocalService.setTreePaths(
-						parentPrimaryKey, treePath, false);
-				}
-
-				@Override
-				public void reindexTreeModels(List<TreeModel> treeModels)
-					throws PortalException {
-
-					if (!reindex) {
-						return;
-					}
-
-					Indexer indexer = IndexerRegistryUtil.nullSafeGetIndexer(
-						BookmarksFolder.class);
-
-					for (TreeModel treeModel : treeModels) {
-						indexer.reindex(treeModel);
-					}
+						size, new FolderIdComparator());
 				}
 
 			}
@@ -494,7 +475,7 @@ public class BookmarksFolderLocalServiceImpl
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
 	public void restoreFolderFromTrash(long userId, long folderId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		// Folder
 
@@ -513,7 +494,7 @@ public class BookmarksFolderLocalServiceImpl
 				folder.getGroupId(), folder.getFolderId(),
 				WorkflowConstants.STATUS_IN_TRASH);
 
-		restoreDependentsFromTrash(foldersAndEntries);
+		restoreDependentsFromTrash(foldersAndEntries, trashEntry.getEntryId());
 
 		// Trash
 
@@ -534,7 +515,7 @@ public class BookmarksFolderLocalServiceImpl
 
 	@Override
 	public void subscribeFolder(long userId, long groupId, long folderId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		if (folderId == BookmarksFolderConstants.DEFAULT_PARENT_FOLDER_ID) {
 			folderId = groupId;
@@ -546,7 +527,7 @@ public class BookmarksFolderLocalServiceImpl
 
 	@Override
 	public void unsubscribeFolder(long userId, long groupId, long folderId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		if (folderId == BookmarksFolderConstants.DEFAULT_PARENT_FOLDER_ID) {
 			folderId = groupId;
@@ -560,7 +541,7 @@ public class BookmarksFolderLocalServiceImpl
 	public void updateAsset(
 			long userId, BookmarksFolder folder, long[] assetCategoryIds,
 			String[] assetTagNames, long[] assetLinkEntryIds)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		AssetEntry assetEntry = assetEntryLocalService.updateEntry(
 			userId, folder.getGroupId(), folder.getCreateDate(),
@@ -581,7 +562,7 @@ public class BookmarksFolderLocalServiceImpl
 			long userId, long folderId, long parentFolderId, String name,
 			String description, boolean mergeWithParentFolder,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		// Merge folders
 
@@ -622,7 +603,7 @@ public class BookmarksFolderLocalServiceImpl
 	@Override
 	public BookmarksFolder updateStatus(
 			long userId, BookmarksFolder folder, int status)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		// Folder
 
@@ -657,7 +638,8 @@ public class BookmarksFolderLocalServiceImpl
 	}
 
 	protected long getParentFolderId(
-		BookmarksFolder folder, long parentFolderId) {
+			BookmarksFolder folder, long parentFolderId)
+		throws SystemException {
 
 		if (parentFolderId ==
 				BookmarksFolderConstants.DEFAULT_PARENT_FOLDER_ID) {
@@ -690,7 +672,9 @@ public class BookmarksFolderLocalServiceImpl
 		return parentFolderId;
 	}
 
-	protected long getParentFolderId(long groupId, long parentFolderId) {
+	protected long getParentFolderId(long groupId, long parentFolderId)
+		throws SystemException {
+
 		if (parentFolderId !=
 				BookmarksFolderConstants.DEFAULT_PARENT_FOLDER_ID) {
 
@@ -709,7 +693,7 @@ public class BookmarksFolderLocalServiceImpl
 	}
 
 	protected void mergeFolders(BookmarksFolder fromFolder, long toFolderId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		List<BookmarksFolder> folders = bookmarksFolderPersistence.findByG_P(
 			fromFolder.getGroupId(), fromFolder.getFolderId());
@@ -737,7 +721,7 @@ public class BookmarksFolderLocalServiceImpl
 
 	protected void moveDependentsToTrash(
 			List<Object> foldersAndEntries, long trashEntryId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		for (Object object : foldersAndEntries) {
 			if (object instanceof BookmarksEntry) {
@@ -802,7 +786,7 @@ public class BookmarksFolderLocalServiceImpl
 
 				if (oldStatus != WorkflowConstants.STATUS_APPROVED) {
 					trashVersionLocalService.addTrashVersion(
-						trashEntryId, BookmarksFolder.class.getName(),
+						trashEntryId, BookmarksEntry.class.getName(),
 						folder.getFolderId(), oldStatus, null);
 				}
 
@@ -829,8 +813,9 @@ public class BookmarksFolderLocalServiceImpl
 		}
 	}
 
-	protected void restoreDependentsFromTrash(List<Object> foldersAndEntries)
-		throws PortalException {
+	protected void restoreDependentsFromTrash(
+			List<Object> foldersAndEntries, long trashEntryId)
+		throws PortalException, SystemException {
 
 		for (Object object : foldersAndEntries) {
 			if (object instanceof BookmarksEntry) {
@@ -839,13 +824,17 @@ public class BookmarksFolderLocalServiceImpl
 
 				BookmarksEntry entry = (BookmarksEntry)object;
 
-				if (!entry.isInTrashImplicitly()) {
+				TrashEntry trashEntry = trashEntryLocalService.fetchEntry(
+					BookmarksEntry.class.getName(), entry.getEntryId());
+
+				if (trashEntry != null) {
 					continue;
 				}
 
 				TrashVersion trashVersion =
 					trashVersionLocalService.fetchVersion(
-						BookmarksEntry.class.getName(), entry.getEntryId());
+						trashEntryId, BookmarksEntry.class.getName(),
+						entry.getEntryId());
 
 				int oldStatus = WorkflowConstants.STATUS_APPROVED;
 
@@ -884,13 +873,17 @@ public class BookmarksFolderLocalServiceImpl
 
 				BookmarksFolder folder = (BookmarksFolder)object;
 
-				if (!folder.isInTrashImplicitly()) {
+				TrashEntry trashEntry = trashEntryLocalService.fetchEntry(
+					BookmarksFolder.class.getName(), folder.getFolderId());
+
+				if (trashEntry != null) {
 					continue;
 				}
 
 				TrashVersion trashVersion =
 					trashVersionLocalService.fetchVersion(
-						BookmarksFolder.class.getName(), folder.getFolderId());
+						trashEntryId, BookmarksFolder.class.getName(),
+						folder.getFolderId());
 
 				int oldStatus = WorkflowConstants.STATUS_APPROVED;
 
@@ -905,10 +898,9 @@ public class BookmarksFolderLocalServiceImpl
 				// Folders and entries
 
 				List<Object> curFoldersAndEntries = getFoldersAndEntries(
-					folder.getGroupId(), folder.getFolderId(),
-					WorkflowConstants.STATUS_IN_TRASH);
+					folder.getGroupId(), folder.getFolderId());
 
-				restoreDependentsFromTrash(curFoldersAndEntries);
+				restoreDependentsFromTrash(curFoldersAndEntries, trashEntryId);
 
 				// Trash
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portal.service.permission;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.model.Team;
 import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.security.permission.ActionKeys;
@@ -29,7 +30,7 @@ public class TeamPermissionImpl implements TeamPermission {
 	@Override
 	public void check(
 			PermissionChecker permissionChecker, long teamId, String actionId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		if (!contains(permissionChecker, teamId, actionId)) {
 			throw new PrincipalException();
@@ -39,7 +40,7 @@ public class TeamPermissionImpl implements TeamPermission {
 	@Override
 	public void check(
 			PermissionChecker permissionChecker, Team team, String actionId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		if (!contains(permissionChecker, team, actionId)) {
 			throw new PrincipalException();
@@ -49,7 +50,7 @@ public class TeamPermissionImpl implements TeamPermission {
 	@Override
 	public boolean contains(
 			PermissionChecker permissionChecker, long teamId, String actionId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Team team = TeamLocalServiceUtil.getTeam(teamId);
 
@@ -59,7 +60,7 @@ public class TeamPermissionImpl implements TeamPermission {
 	@Override
 	public boolean contains(
 			PermissionChecker permissionChecker, Team team, String actionId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		if (GroupPermissionUtil.contains(
 				permissionChecker, team.getGroupId(),

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -160,57 +160,57 @@ public class SQLServerDB extends BaseDB {
 
 	@Override
 	protected String reword(String data) throws IOException {
-		try (UnsyncBufferedReader unsyncBufferedReader =
-				new UnsyncBufferedReader(new UnsyncStringReader(data))) {
+		UnsyncBufferedReader unsyncBufferedReader = new UnsyncBufferedReader(
+			new UnsyncStringReader(data));
 
-			StringBundler sb = new StringBundler();
+		StringBundler sb = new StringBundler();
 
-			String line = null;
+		String line = null;
 
-			while ((line = unsyncBufferedReader.readLine()) != null) {
-				if (line.startsWith(ALTER_COLUMN_NAME)) {
-					String[] template = buildColumnNameTokens(line);
+		while ((line = unsyncBufferedReader.readLine()) != null) {
+			if (line.startsWith(ALTER_COLUMN_NAME)) {
+				String[] template = buildColumnNameTokens(line);
 
-					line = StringUtil.replace(
-						"exec sp_rename '@table@.@old-column@', " +
-							"'@new-column@', 'column';",
-						REWORD_TEMPLATE, template);
-				}
-				else if (line.startsWith(ALTER_COLUMN_TYPE)) {
-					String[] template = buildColumnTypeTokens(line);
+				line = StringUtil.replace(
+					"exec sp_rename '@table@.@old-column@', '@new-column@', " +
+						"'column';",
+					REWORD_TEMPLATE, template);
+			}
+			else if (line.startsWith(ALTER_COLUMN_TYPE)) {
+				String[] template = buildColumnTypeTokens(line);
 
-					line = StringUtil.replace(
-						"alter table @table@ alter column @old-column@ @type@;",
-						REWORD_TEMPLATE, template);
-				}
-				else if (line.startsWith(ALTER_TABLE_NAME)) {
-					String[] template = buildTableNameTokens(line);
+				line = StringUtil.replace(
+					"alter table @table@ alter column @old-column@ @type@;",
+					REWORD_TEMPLATE, template);
+			}
+			else if (line.startsWith(ALTER_TABLE_NAME)) {
+				String[] template = buildTableNameTokens(line);
 
-					line = StringUtil.replace(
-						"exec sp_rename '@old-table@', '@new-table@';",
-						RENAME_TABLE_TEMPLATE, template);
-				}
-				else if (line.contains(DROP_INDEX)) {
-					String[] tokens = StringUtil.split(line, ' ');
+				line = StringUtil.replace(
+					"exec sp_rename '@old-table@', '@new-table@';",
+					RENAME_TABLE_TEMPLATE, template);
+			}
+			else if (line.contains(DROP_INDEX)) {
+				String[] tokens = StringUtil.split(line, ' ');
 
-					String tableName = tokens[4];
+				String tableName = tokens[4];
 
-					if (tableName.endsWith(StringPool.SEMICOLON)) {
-						tableName = tableName.substring(
-							0, tableName.length() - 1);
-					}
-
-					line = StringUtil.replace(
-						"drop index @table@.@index@;", "@table@", tableName);
-					line = StringUtil.replace(line, "@index@", tokens[2]);
+				if (tableName.endsWith(StringPool.SEMICOLON)) {
+					tableName = tableName.substring(0, tableName.length() - 1);
 				}
 
-				sb.append(line);
-				sb.append("\n");
+				line = StringUtil.replace(
+					"drop index @table@.@index@;", "@table@", tableName);
+				line = StringUtil.replace(line, "@index@", tokens[2]);
 			}
 
-			return sb.toString();
+			sb.append(line);
+			sb.append("\n");
 		}
+
+		unsyncBufferedReader.close();
+
+		return sb.toString();
 	}
 
 	private static final String[] _SQL_SERVER = {

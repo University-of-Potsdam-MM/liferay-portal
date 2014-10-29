@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,6 +14,7 @@
 
 package com.liferay.portlet.trash.service.persistence;
 
+import com.liferay.portal.kernel.bean.PortalBeanLocatorUtil;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
@@ -22,74 +23,66 @@ import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.template.TemplateException;
-import com.liferay.portal.kernel.template.TemplateManagerUtil;
-import com.liferay.portal.kernel.transaction.Propagation;
+import com.liferay.portal.kernel.test.ExecutionTestListeners;
 import com.liferay.portal.kernel.util.IntegerWrapper;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.OrderByComparatorFactoryUtil;
-import com.liferay.portal.test.TransactionalTestRule;
-import com.liferay.portal.test.runners.PersistenceIntegrationJUnitTestRunner;
-import com.liferay.portal.tools.DBUpgrader;
+import com.liferay.portal.service.ServiceTestUtil;
+import com.liferay.portal.service.persistence.BasePersistence;
+import com.liferay.portal.service.persistence.PersistenceExecutionTestListener;
+import com.liferay.portal.test.LiferayPersistenceIntegrationJUnitTestRunner;
+import com.liferay.portal.test.persistence.TransactionalPersistenceAdvice;
 import com.liferay.portal.util.PropsValues;
-import com.liferay.portal.util.test.RandomTestUtil;
 
 import com.liferay.portlet.trash.NoSuchVersionException;
 import com.liferay.portlet.trash.model.TrashVersion;
 import com.liferay.portlet.trash.model.impl.TrashVersionModelImpl;
-import com.liferay.portlet.trash.service.TrashVersionLocalServiceUtil;
 
 import org.junit.After;
 import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
 import org.junit.Test;
 
 import org.junit.runner.RunWith;
 
 import java.io.Serializable;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 /**
- * @generated
+ * @author Brian Wing Shun Chan
  */
-@RunWith(PersistenceIntegrationJUnitTestRunner.class)
+@ExecutionTestListeners(listeners =  {
+	PersistenceExecutionTestListener.class})
+@RunWith(LiferayPersistenceIntegrationJUnitTestRunner.class)
 public class TrashVersionPersistenceTest {
-	@ClassRule
-	public static TransactionalTestRule transactionalTestRule = new TransactionalTestRule(Propagation.REQUIRED);
-
-	@BeforeClass
-	public static void setupClass() throws TemplateException {
-		try {
-			DBUpgrader.upgrade();
-		}
-		catch (Exception e) {
-			_log.error(e, e);
-		}
-
-		TemplateManagerUtil.init();
-	}
-
 	@After
 	public void tearDown() throws Exception {
-		Iterator<TrashVersion> iterator = _trashVersions.iterator();
+		Map<Serializable, BasePersistence<?>> basePersistences = _transactionalPersistenceAdvice.getBasePersistences();
 
-		while (iterator.hasNext()) {
-			_persistence.remove(iterator.next());
+		Set<Serializable> primaryKeys = basePersistences.keySet();
 
-			iterator.remove();
+		for (Serializable primaryKey : primaryKeys) {
+			BasePersistence<?> basePersistence = basePersistences.get(primaryKey);
+
+			try {
+				basePersistence.remove(primaryKey);
+			}
+			catch (Exception e) {
+				if (_log.isDebugEnabled()) {
+					_log.debug("The model with primary key " + primaryKey +
+						" was already deleted");
+				}
+			}
 		}
+
+		_transactionalPersistenceAdvice.reset();
 	}
 
 	@Test
 	public void testCreate() throws Exception {
-		long pk = RandomTestUtil.nextLong();
+		long pk = ServiceTestUtil.nextLong();
 
 		TrashVersion trashVersion = _persistence.create(pk);
 
@@ -116,21 +109,21 @@ public class TrashVersionPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
+		long pk = ServiceTestUtil.nextLong();
 
 		TrashVersion newTrashVersion = _persistence.create(pk);
 
-		newTrashVersion.setEntryId(RandomTestUtil.nextLong());
+		newTrashVersion.setEntryId(ServiceTestUtil.nextLong());
 
-		newTrashVersion.setClassNameId(RandomTestUtil.nextLong());
+		newTrashVersion.setClassNameId(ServiceTestUtil.nextLong());
 
-		newTrashVersion.setClassPK(RandomTestUtil.nextLong());
+		newTrashVersion.setClassPK(ServiceTestUtil.nextLong());
 
-		newTrashVersion.setTypeSettings(RandomTestUtil.randomString());
+		newTrashVersion.setTypeSettings(ServiceTestUtil.randomString());
 
-		newTrashVersion.setStatus(RandomTestUtil.nextInt());
+		newTrashVersion.setStatus(ServiceTestUtil.nextInt());
 
-		_trashVersions.add(_persistence.update(newTrashVersion));
+		_persistence.update(newTrashVersion);
 
 		TrashVersion existingTrashVersion = _persistence.findByPrimaryKey(newTrashVersion.getPrimaryKey());
 
@@ -149,44 +142,6 @@ public class TrashVersionPersistenceTest {
 	}
 
 	@Test
-	public void testCountByEntryId() {
-		try {
-			_persistence.countByEntryId(RandomTestUtil.nextLong());
-
-			_persistence.countByEntryId(0L);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByE_C() {
-		try {
-			_persistence.countByE_C(RandomTestUtil.nextLong(),
-				RandomTestUtil.nextLong());
-
-			_persistence.countByE_C(0L, 0L);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByC_C() {
-		try {
-			_persistence.countByC_C(RandomTestUtil.nextLong(),
-				RandomTestUtil.nextLong());
-
-			_persistence.countByC_C(0L, 0L);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
 	public void testFindByPrimaryKeyExisting() throws Exception {
 		TrashVersion newTrashVersion = addTrashVersion();
 
@@ -197,7 +152,7 @@ public class TrashVersionPersistenceTest {
 
 	@Test
 	public void testFindByPrimaryKeyMissing() throws Exception {
-		long pk = RandomTestUtil.nextLong();
+		long pk = ServiceTestUtil.nextLong();
 
 		try {
 			_persistence.findByPrimaryKey(pk);
@@ -219,7 +174,7 @@ public class TrashVersionPersistenceTest {
 		}
 	}
 
-	protected OrderByComparator<TrashVersion> getOrderByComparator() {
+	protected OrderByComparator getOrderByComparator() {
 		return OrderByComparatorFactoryUtil.create("TrashVersion", "versionId",
 			true, "entryId", true, "classNameId", true, "classPK", true,
 			"typeSettings", true, "status", true);
@@ -236,7 +191,7 @@ public class TrashVersionPersistenceTest {
 
 	@Test
 	public void testFetchByPrimaryKeyMissing() throws Exception {
-		long pk = RandomTestUtil.nextLong();
+		long pk = ServiceTestUtil.nextLong();
 
 		TrashVersion missingTrashVersion = _persistence.fetchByPrimaryKey(pk);
 
@@ -244,103 +199,19 @@ public class TrashVersionPersistenceTest {
 	}
 
 	@Test
-	public void testFetchByPrimaryKeysWithMultiplePrimaryKeysWhereAllPrimaryKeysExist()
-		throws Exception {
-		TrashVersion newTrashVersion1 = addTrashVersion();
-		TrashVersion newTrashVersion2 = addTrashVersion();
-
-		Set<Serializable> primaryKeys = new HashSet<Serializable>();
-
-		primaryKeys.add(newTrashVersion1.getPrimaryKey());
-		primaryKeys.add(newTrashVersion2.getPrimaryKey());
-
-		Map<Serializable, TrashVersion> trashVersions = _persistence.fetchByPrimaryKeys(primaryKeys);
-
-		Assert.assertEquals(2, trashVersions.size());
-		Assert.assertEquals(newTrashVersion1,
-			trashVersions.get(newTrashVersion1.getPrimaryKey()));
-		Assert.assertEquals(newTrashVersion2,
-			trashVersions.get(newTrashVersion2.getPrimaryKey()));
-	}
-
-	@Test
-	public void testFetchByPrimaryKeysWithMultiplePrimaryKeysWhereNoPrimaryKeysExist()
-		throws Exception {
-		long pk1 = RandomTestUtil.nextLong();
-
-		long pk2 = RandomTestUtil.nextLong();
-
-		Set<Serializable> primaryKeys = new HashSet<Serializable>();
-
-		primaryKeys.add(pk1);
-		primaryKeys.add(pk2);
-
-		Map<Serializable, TrashVersion> trashVersions = _persistence.fetchByPrimaryKeys(primaryKeys);
-
-		Assert.assertTrue(trashVersions.isEmpty());
-	}
-
-	@Test
-	public void testFetchByPrimaryKeysWithMultiplePrimaryKeysWhereSomePrimaryKeysExist()
-		throws Exception {
-		TrashVersion newTrashVersion = addTrashVersion();
-
-		long pk = RandomTestUtil.nextLong();
-
-		Set<Serializable> primaryKeys = new HashSet<Serializable>();
-
-		primaryKeys.add(newTrashVersion.getPrimaryKey());
-		primaryKeys.add(pk);
-
-		Map<Serializable, TrashVersion> trashVersions = _persistence.fetchByPrimaryKeys(primaryKeys);
-
-		Assert.assertEquals(1, trashVersions.size());
-		Assert.assertEquals(newTrashVersion,
-			trashVersions.get(newTrashVersion.getPrimaryKey()));
-	}
-
-	@Test
-	public void testFetchByPrimaryKeysWithNoPrimaryKeys()
-		throws Exception {
-		Set<Serializable> primaryKeys = new HashSet<Serializable>();
-
-		Map<Serializable, TrashVersion> trashVersions = _persistence.fetchByPrimaryKeys(primaryKeys);
-
-		Assert.assertTrue(trashVersions.isEmpty());
-	}
-
-	@Test
-	public void testFetchByPrimaryKeysWithOnePrimaryKey()
-		throws Exception {
-		TrashVersion newTrashVersion = addTrashVersion();
-
-		Set<Serializable> primaryKeys = new HashSet<Serializable>();
-
-		primaryKeys.add(newTrashVersion.getPrimaryKey());
-
-		Map<Serializable, TrashVersion> trashVersions = _persistence.fetchByPrimaryKeys(primaryKeys);
-
-		Assert.assertEquals(1, trashVersions.size());
-		Assert.assertEquals(newTrashVersion,
-			trashVersions.get(newTrashVersion.getPrimaryKey()));
-	}
-
-	@Test
 	public void testActionableDynamicQuery() throws Exception {
 		final IntegerWrapper count = new IntegerWrapper();
 
-		ActionableDynamicQuery actionableDynamicQuery = TrashVersionLocalServiceUtil.getActionableDynamicQuery();
-
-		actionableDynamicQuery.setPerformActionMethod(new ActionableDynamicQuery.PerformActionMethod() {
+		ActionableDynamicQuery actionableDynamicQuery = new TrashVersionActionableDynamicQuery() {
 				@Override
-				public void performAction(Object object) {
+				protected void performAction(Object object) {
 					TrashVersion trashVersion = (TrashVersion)object;
 
 					Assert.assertNotNull(trashVersion);
 
 					count.increment();
 				}
-			});
+			};
 
 		actionableDynamicQuery.performActions();
 
@@ -373,7 +244,7 @@ public class TrashVersionPersistenceTest {
 				TrashVersion.class.getClassLoader());
 
 		dynamicQuery.add(RestrictionsFactoryUtil.eq("versionId",
-				RandomTestUtil.nextLong()));
+				ServiceTestUtil.nextLong()));
 
 		List<TrashVersion> result = _persistence.findWithDynamicQuery(dynamicQuery);
 
@@ -412,7 +283,7 @@ public class TrashVersionPersistenceTest {
 		dynamicQuery.setProjection(ProjectionFactoryUtil.property("versionId"));
 
 		dynamicQuery.add(RestrictionsFactoryUtil.in("versionId",
-				new Object[] { RandomTestUtil.nextLong() }));
+				new Object[] { ServiceTestUtil.nextLong() }));
 
 		List<Object> result = _persistence.findWithDynamicQuery(dynamicQuery);
 
@@ -431,6 +302,8 @@ public class TrashVersionPersistenceTest {
 
 		TrashVersionModelImpl existingTrashVersionModelImpl = (TrashVersionModelImpl)_persistence.findByPrimaryKey(newTrashVersion.getPrimaryKey());
 
+		Assert.assertEquals(existingTrashVersionModelImpl.getEntryId(),
+			existingTrashVersionModelImpl.getOriginalEntryId());
 		Assert.assertEquals(existingTrashVersionModelImpl.getClassNameId(),
 			existingTrashVersionModelImpl.getOriginalClassNameId());
 		Assert.assertEquals(existingTrashVersionModelImpl.getClassPK(),
@@ -438,26 +311,26 @@ public class TrashVersionPersistenceTest {
 	}
 
 	protected TrashVersion addTrashVersion() throws Exception {
-		long pk = RandomTestUtil.nextLong();
+		long pk = ServiceTestUtil.nextLong();
 
 		TrashVersion trashVersion = _persistence.create(pk);
 
-		trashVersion.setEntryId(RandomTestUtil.nextLong());
+		trashVersion.setEntryId(ServiceTestUtil.nextLong());
 
-		trashVersion.setClassNameId(RandomTestUtil.nextLong());
+		trashVersion.setClassNameId(ServiceTestUtil.nextLong());
 
-		trashVersion.setClassPK(RandomTestUtil.nextLong());
+		trashVersion.setClassPK(ServiceTestUtil.nextLong());
 
-		trashVersion.setTypeSettings(RandomTestUtil.randomString());
+		trashVersion.setTypeSettings(ServiceTestUtil.randomString());
 
-		trashVersion.setStatus(RandomTestUtil.nextInt());
+		trashVersion.setStatus(ServiceTestUtil.nextInt());
 
-		_trashVersions.add(_persistence.update(trashVersion));
+		_persistence.update(trashVersion);
 
 		return trashVersion;
 	}
 
 	private static Log _log = LogFactoryUtil.getLog(TrashVersionPersistenceTest.class);
-	private List<TrashVersion> _trashVersions = new ArrayList<TrashVersion>();
-	private TrashVersionPersistence _persistence = TrashVersionUtil.getPersistence();
+	private TrashVersionPersistence _persistence = (TrashVersionPersistence)PortalBeanLocatorUtil.locate(TrashVersionPersistence.class.getName());
+	private TransactionalPersistenceAdvice _transactionalPersistenceAdvice = (TransactionalPersistenceAdvice)PortalBeanLocatorUtil.locate(TransactionalPersistenceAdvice.class.getName());
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,8 +14,6 @@
 
 package com.liferay.portlet.softwarecatalog.model;
 
-import aQute.bnd.annotation.ProviderType;
-
 import java.io.Serializable;
 
 import java.util.ArrayList;
@@ -28,7 +26,6 @@ import java.util.List;
  * @see com.liferay.portlet.softwarecatalog.service.http.SCLicenseServiceSoap
  * @generated
  */
-@ProviderType
 public class SCLicenseSoap implements Serializable {
 	public static SCLicenseSoap toSoapModel(SCLicense model) {
 		SCLicenseSoap soapModel = new SCLicenseSoap();

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,7 +14,7 @@
 
 package com.liferay.portlet.documentlibrary.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
+import com.liferay.portal.kernel.exception.SystemException;
 
 import com.liferay.portlet.documentlibrary.model.DLFileShortcut;
 import com.liferay.portlet.documentlibrary.service.DLFileShortcutLocalServiceUtil;
@@ -31,7 +31,6 @@ import com.liferay.portlet.documentlibrary.service.DLFileShortcutLocalServiceUti
  * @see com.liferay.portlet.documentlibrary.model.DLFileShortcut
  * @generated
  */
-@ProviderType
 public abstract class DLFileShortcutBaseImpl extends DLFileShortcutModelImpl
 	implements DLFileShortcut {
 	/*
@@ -40,7 +39,7 @@ public abstract class DLFileShortcutBaseImpl extends DLFileShortcutModelImpl
 	 * Never modify or reference this class directly. All methods that expect a document library file shortcut model instance should use the {@link DLFileShortcut} interface instead.
 	 */
 	@Override
-	public void persist() {
+	public void persist() throws SystemException {
 		if (this.isNew()) {
 			DLFileShortcutLocalServiceUtil.addDLFileShortcut(this);
 		}
@@ -50,7 +49,7 @@ public abstract class DLFileShortcutBaseImpl extends DLFileShortcutModelImpl
 	}
 
 	@Override
-	public void updateTreePath(String treePath) {
+	public void updateTreePath(String treePath) throws SystemException {
 		DLFileShortcut dlFileShortcut = this;
 
 		dlFileShortcut.setTreePath(treePath);

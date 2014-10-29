@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,41 +14,28 @@
 
 package com.liferay.portlet.blogs.lar;
 
-import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.lar.BaseStagedModelDataHandler;
 import com.liferay.portal.kernel.lar.ExportImportHelperUtil;
 import com.liferay.portal.kernel.lar.ExportImportPathUtil;
 import com.liferay.portal.kernel.lar.PortletDataContext;
-import com.liferay.portal.kernel.lar.StagedModelDataHandlerUtil;
-import com.liferay.portal.kernel.lar.StagedModelModifiedDateComparator;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.repository.model.FileEntry;
-import com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector;
 import com.liferay.portal.kernel.trash.TrashHandler;
 import com.liferay.portal.kernel.util.CalendarFactoryUtil;
-import com.liferay.portal.kernel.util.ListUtil;
-import com.liferay.portal.kernel.util.MimeTypesUtil;
 import com.liferay.portal.kernel.util.StreamUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.kernel.util.TempFileEntryUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.model.Image;
-import com.liferay.portal.portletfilerepository.PortletFileRepositoryUtil;
 import com.liferay.portal.service.ImageLocalServiceUtil;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portlet.blogs.model.BlogsEntry;
 import com.liferay.portlet.blogs.service.BlogsEntryLocalServiceUtil;
-import com.liferay.portlet.documentlibrary.lar.FileEntryUtil;
-import com.liferay.portlet.documentlibrary.model.DLFileEntry;
 
 import java.io.InputStream;
 
 import java.util.Calendar;
-import java.util.List;
 
 /**
  * @author Zsolt Berentey
@@ -61,37 +48,15 @@ public class BlogsEntryStagedModelDataHandler
 	@Override
 	public void deleteStagedModel(
 			String uuid, long groupId, String className, String extraData)
-		throws PortalException {
+		throws PortalException, SystemException {
 
-		BlogsEntry entry = fetchStagedModelByUuidAndGroupId(uuid, groupId);
+		BlogsEntry entry =
+			BlogsEntryLocalServiceUtil.fetchBlogsEntryByUuidAndGroupId(
+				uuid, groupId);
 
 		if (entry != null) {
 			BlogsEntryLocalServiceUtil.deleteEntry(entry);
 		}
-	}
-
-	@Override
-	public BlogsEntry fetchStagedModelByUuidAndCompanyId(
-		String uuid, long companyId) {
-
-		List<BlogsEntry> entries =
-			BlogsEntryLocalServiceUtil.getBlogsEntriesByUuidAndCompanyId(
-				uuid, companyId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-				new StagedModelModifiedDateComparator<BlogsEntry>());
-
-		if (ListUtil.isEmpty(entries)) {
-			return null;
-		}
-
-		return entries.get(0);
-	}
-
-	@Override
-	public BlogsEntry fetchStagedModelByUuidAndGroupId(
-		String uuid, long groupId) {
-
-		return BlogsEntryLocalServiceUtil.fetchBlogsEntryByUuidAndGroupId(
-			uuid, groupId);
 	}
 
 	@Override
@@ -118,8 +83,9 @@ public class BlogsEntryStagedModelDataHandler
 			if (Validator.isNotNull(entry.getSmallImageURL())) {
 				String smallImageURL =
 					ExportImportHelperUtil.replaceExportContentReferences(
-						portletDataContext, entry,
-						entry.getSmallImageURL() + StringPool.SPACE, true);
+						portletDataContext, entry, entryElement,
+						entry.getSmallImageURL().concat(StringPool.SPACE),
+						true);
 
 				entry.setSmallImageURL(smallImageURL);
 			}
@@ -138,17 +104,8 @@ public class BlogsEntryStagedModelDataHandler
 			}
 		}
 
-		if (entry.getSmallImageFileEntryId() != 0) {
-			FileEntry fileEntry = PortletFileRepositoryUtil.getPortletFileEntry(
-				entry.getSmallImageFileEntryId());
-
-			StagedModelDataHandlerUtil.exportReferenceStagedModel(
-				portletDataContext, entry, fileEntry,
-				PortletDataContext.REFERENCE_TYPE_WEAK);
-		}
-
 		String content = ExportImportHelperUtil.replaceExportContentReferences(
-			portletDataContext, entry, entry.getContent(),
+			portletDataContext, entry, entryElement, entry.getContent(),
 			portletDataContext.getBooleanParameter(
 				BlogsPortletDataHandler.NAMESPACE, "referenced-content"));
 
@@ -169,7 +126,9 @@ public class BlogsEntryStagedModelDataHandler
 			portletDataContext.getImportDataStagedModelElement(entry);
 
 		String content = ExportImportHelperUtil.replaceImportContentReferences(
-			portletDataContext, entry, entry.getContent());
+			portletDataContext, entryElement, entry.getContent(),
+			portletDataContext.getBooleanParameter(
+				BlogsPortletDataHandler.NAMESPACE, "referenced-content"));
 
 		entry.setContent(content);
 
@@ -191,126 +150,84 @@ public class BlogsEntryStagedModelDataHandler
 		boolean allowTrackbacks = entry.isAllowTrackbacks();
 		String[] trackbacks = StringUtil.split(entry.getTrackbacks());
 
-		long smallImageFileEntryId = 0;
+		String smallImageFileName = null;
+		InputStream smallImageInputStream = null;
 
-		ServiceContext serviceContext = portletDataContext.createServiceContext(
-			entry);
+		try {
+			if (entry.isSmallImage()) {
+				String smallImagePath = entryElement.attributeValue(
+					"small-image-path");
 
-		if (entry.isSmallImage()) {
-			String smallImagePath = entryElement.attributeValue(
-				"small-image-path");
+				if (Validator.isNotNull(entry.getSmallImageURL())) {
+					String smallImageURL =
+						ExportImportHelperUtil.replaceImportContentReferences(
+							portletDataContext, entryElement,
+							entry.getSmallImageURL(), true);
 
-			if (Validator.isNotNull(entry.getSmallImageURL())) {
-				String smallImageURL =
-					ExportImportHelperUtil.replaceImportContentReferences(
-						portletDataContext, entry, entry.getSmallImageURL());
-
-				entry.setSmallImageURL(smallImageURL);
-			}
-			else if (Validator.isNotNull(smallImagePath)) {
-				String smallImageFileName =
-					entry.getSmallImageId() + StringPool.PERIOD +
-						entry.getSmallImageType();
-
-				InputStream inputStream = null;
-
-				try {
-					inputStream = portletDataContext.getZipEntryAsInputStream(
-						smallImagePath);
-
-					FileEntry fileEntry = TempFileEntryUtil.addTempFileEntry(
-						serviceContext.getScopeGroupId(), userId,
-						BlogsEntry.class.getName(), smallImageFileName,
-						inputStream,
-						MimeTypesUtil.getContentType(smallImageFileName));
-
-					smallImageFileEntryId = fileEntry.getFileEntryId();
+					entry.setSmallImageURL(smallImageURL);
 				}
-				finally {
-					StreamUtil.cleanUp(inputStream);
+				else if (Validator.isNotNull(smallImagePath)) {
+					smallImageFileName = String.valueOf(
+						entry.getSmallImageId()).concat(
+							StringPool.PERIOD).concat(
+								entry.getSmallImageType());
+
+					smallImageInputStream =
+						portletDataContext.getZipEntryAsInputStream(
+							smallImagePath);
 				}
 			}
-		}
 
-		if (smallImageFileEntryId == 0) {
-			List<Element> attachmentElements =
-				portletDataContext.getReferenceDataElements(
-					entry, DLFileEntry.class,
-					PortletDataContext.REFERENCE_TYPE_WEAK);
+			ServiceContext serviceContext =
+				portletDataContext.createServiceContext(entry);
 
-			for (Element attachmentElement : attachmentElements) {
-				InputStream inputStream = getSmallImageInputStream(
-					portletDataContext, attachmentElement);
+			BlogsEntry importedEntry = null;
 
-				if (inputStream != null) {
-					String path = attachmentElement.attributeValue("path");
+			if (portletDataContext.isDataStrategyMirror()) {
+				serviceContext.setAttribute("urlTitle", entry.getUrlTitle());
 
-					FileEntry fileEntry =
-						(FileEntry)portletDataContext.getZipEntryAsObject(path);
+				BlogsEntry existingEntry =
+					BlogsEntryLocalServiceUtil.fetchBlogsEntryByUuidAndGroupId(
+						entry.getUuid(), portletDataContext.getScopeGroupId());
 
-					FileEntry smallImageFileEntry =
-						TempFileEntryUtil.addTempFileEntry(
-							serviceContext.getScopeGroupId(), userId,
-							BlogsEntry.class.getName(), fileEntry.getTitle(),
-							inputStream, fileEntry.getMimeType());
+				if (existingEntry == null) {
+					serviceContext.setUuid(entry.getUuid());
 
-					if (fileEntry != null) {
-						smallImageFileEntryId =
-							smallImageFileEntry.getFileEntryId();
-					}
+					importedEntry = BlogsEntryLocalServiceUtil.addEntry(
+						userId, entry.getTitle(), entry.getDescription(),
+						entry.getContent(), displayDateMonth, displayDateDay,
+						displayDateYear, displayDateHour, displayDateMinute,
+						allowPingbacks, allowTrackbacks, trackbacks,
+						entry.isSmallImage(), entry.getSmallImageURL(),
+						smallImageFileName, smallImageInputStream,
+						serviceContext);
 				}
-			}
-		}
-
-		ImageSelector imageSelector = null;
-
-		if (!entry.isSmallImage()) {
-			imageSelector = new ImageSelector(0);
-		}
-		else {
-			imageSelector = new ImageSelector(
-				smallImageFileEntryId, entry.getSmallImageURL());
-		}
-
-		BlogsEntry importedEntry = null;
-
-		if (portletDataContext.isDataStrategyMirror()) {
-			serviceContext.setAttribute("urlTitle", entry.getUrlTitle());
-
-			BlogsEntry existingEntry =
-				fetchStagedModelByUuidAndGroupId(
-					entry.getUuid(), portletDataContext.getScopeGroupId());
-
-			if (existingEntry == null) {
-				serviceContext.setUuid(entry.getUuid());
-
-				importedEntry = BlogsEntryLocalServiceUtil.addEntry(
-					userId, entry.getTitle(), entry.getSubtitle(),
-					entry.getDescription(), entry.getContent(),
-					displayDateMonth, displayDateDay, displayDateYear,
-					displayDateHour, displayDateMinute, allowPingbacks,
-					allowTrackbacks, trackbacks, imageSelector, serviceContext);
+				else {
+					importedEntry = BlogsEntryLocalServiceUtil.updateEntry(
+						userId, existingEntry.getEntryId(), entry.getTitle(),
+						entry.getDescription(), entry.getContent(),
+						displayDateMonth, displayDateDay, displayDateYear,
+						displayDateHour, displayDateMinute, allowPingbacks,
+						allowTrackbacks, trackbacks, entry.getSmallImage(),
+						entry.getSmallImageURL(), smallImageFileName,
+						smallImageInputStream, serviceContext);
+				}
 			}
 			else {
-				importedEntry = BlogsEntryLocalServiceUtil.updateEntry(
-					userId, existingEntry.getEntryId(), entry.getTitle(),
-					entry.getSubtitle(), entry.getDescription(),
+				importedEntry = BlogsEntryLocalServiceUtil.addEntry(
+					userId, entry.getTitle(), entry.getDescription(),
 					entry.getContent(), displayDateMonth, displayDateDay,
 					displayDateYear, displayDateHour, displayDateMinute,
-					allowPingbacks, allowTrackbacks, trackbacks, imageSelector,
-					serviceContext);
+					allowPingbacks, allowTrackbacks, trackbacks,
+					entry.getSmallImage(), entry.getSmallImageURL(),
+					smallImageFileName, smallImageInputStream, serviceContext);
 			}
-		}
-		else {
-			importedEntry = BlogsEntryLocalServiceUtil.addEntry(
-				userId, entry.getTitle(), entry.getSubtitle(),
-				entry.getDescription(), entry.getContent(), displayDateMonth,
-				displayDateDay, displayDateYear, displayDateHour,
-				displayDateMinute, allowPingbacks, allowTrackbacks, trackbacks,
-				imageSelector, serviceContext);
-		}
 
-		portletDataContext.importClassedModel(entry, importedEntry);
+			portletDataContext.importClassedModel(entry, importedEntry);
+		}
+		finally {
+			StreamUtil.cleanUp(smallImageInputStream);
+		}
 	}
 
 	@Override
@@ -320,8 +237,9 @@ public class BlogsEntryStagedModelDataHandler
 
 		long userId = portletDataContext.getUserId(entry.getUserUuid());
 
-		BlogsEntry existingEntry = fetchStagedModelByUuidAndGroupId(
-			entry.getUuid(), portletDataContext.getScopeGroupId());
+		BlogsEntry existingEntry =
+			BlogsEntryLocalServiceUtil.fetchBlogsEntryByUuidAndGroupId(
+				entry.getUuid(), portletDataContext.getScopeGroupId());
 
 		if ((existingEntry == null) || !existingEntry.isInTrash()) {
 			return;
@@ -333,44 +251,5 @@ public class BlogsEntryStagedModelDataHandler
 			trashHandler.restoreTrashEntry(userId, existingEntry.getEntryId());
 		}
 	}
-
-	protected InputStream getSmallImageInputStream(
-		PortletDataContext portletDataContext, Element attachmentElement) {
-
-		InputStream inputStream = null;
-
-		String path = attachmentElement.attributeValue("path");
-
-		FileEntry fileEntry = (FileEntry)portletDataContext.getZipEntryAsObject(
-			path);
-
-		String binPath = attachmentElement.attributeValue("bin-path");
-
-		if (Validator.isNull(binPath) &&
-			portletDataContext.isPerformDirectBinaryImport()) {
-
-			try {
-				inputStream = FileEntryUtil.getContentStream(fileEntry);
-			}
-			catch (Exception e) {
-			}
-		}
-		else {
-			inputStream = portletDataContext.getZipEntryAsInputStream(binPath);
-		}
-
-		if (inputStream == null) {
-			if (_log.isWarnEnabled()) {
-				_log.warn(
-					"Unable to import small image file entry " +
-						fileEntry.getFileEntryId());
-			}
-		}
-
-		return inputStream;
-	}
-
-	private static Log _log = LogFactoryUtil.getLog(
-		BlogsEntryStagedModelDataHandler.class);
 
 }

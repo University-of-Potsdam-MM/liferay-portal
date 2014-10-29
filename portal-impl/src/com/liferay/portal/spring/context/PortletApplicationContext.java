@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -21,15 +21,12 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.PortletClassLoaderUtil;
 import com.liferay.portal.kernel.util.AggregateClassLoader;
 import com.liferay.portal.kernel.util.ArrayUtil;
-import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.security.lang.DoPrivilegedFactory;
 import com.liferay.portal.spring.util.FilterClassLoader;
 import com.liferay.portal.util.ClassLoaderUtil;
 
 import java.io.FileNotFoundException;
-
-import java.util.List;
 
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.RootBeanDefinition;
@@ -53,7 +50,7 @@ public class PortletApplicationContext extends XmlWebApplicationContext {
 		return _pacl.getBeanClassLoader();
 	}
 
-	public interface PACL {
+	public static interface PACL {
 
 		public ClassLoader getBeanClassLoader();
 
@@ -84,28 +81,10 @@ public class PortletApplicationContext extends XmlWebApplicationContext {
 			return configLocations;
 		}
 
-		// Remove old spring XMLs to ensure they are not read
-
-		List<String> serviceBuilderPropertiesConfigLocations =
-			ListUtil.fromArray(
-				serviceBuilderPropertiesConfiguration.getArray(
-					PropsKeys.SPRING_CONFIGS));
-
-		serviceBuilderPropertiesConfigLocations.remove(
-			"WEB-INF/classes/META-INF/base-spring.xml");
-		serviceBuilderPropertiesConfigLocations.remove(
-			"WEB-INF/classes/META-INF/cluster-spring.xml");
-		serviceBuilderPropertiesConfigLocations.remove(
-			"WEB-INF/classes/META-INF/hibernate-spring.xml");
-		serviceBuilderPropertiesConfigLocations.remove(
-			"WEB-INF/classes/META-INF/infrastructure-spring.xml");
-		serviceBuilderPropertiesConfigLocations.remove(
-			"WEB-INF/classes/META-INF/shard-data-source-spring.xml");
-
 		return ArrayUtil.append(
 			configLocations,
-			serviceBuilderPropertiesConfigLocations.toArray(
-				new String[serviceBuilderPropertiesConfigLocations.size()]));
+			serviceBuilderPropertiesConfiguration.getArray(
+				PropsKeys.SPRING_CONFIGS));
 	}
 
 	@Override

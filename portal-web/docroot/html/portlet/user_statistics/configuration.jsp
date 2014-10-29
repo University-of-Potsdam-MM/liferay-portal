@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -16,13 +16,19 @@
 
 <%@ include file="/html/portlet/user_statistics/init.jsp" %>
 
-<liferay-portlet:actionURL portletConfiguration="true" var="configurationActionURL" />
+<%
+String tabs2 = ParamUtil.getString(request, "tabs2");
 
-<liferay-portlet:renderURL portletConfiguration="true" var="configurationRenderURL" />
+String redirect = ParamUtil.getString(request, "redirect");
+%>
+
+<liferay-portlet:actionURL portletConfiguration="true" var="configurationActionURL" />
+<liferay-portlet:renderURL portletConfiguration="true" varImpl="configurationRenderURL" />
 
 <aui:form action="<%= configurationActionURL %>" method="post" name="fm">
 	<aui:input name="<%= Constants.CMD %>" type="hidden" value="<%= Constants.UPDATE %>" />
-	<aui:input name="redirect" type="hidden" value="<%= configurationRenderURL %>" />
+	<aui:input name="tabs2" type="hidden" value="<%= tabs2 %>" />
+	<aui:input name="redirect" type="hidden" value="<%= configurationRenderURL.toString() %>" />
 
 	<liferay-ui:panel collapsible="<%= true %>" extended="<%= true %>" id="userStatisticsRankingsPanel" persistState="<%= true %>" title="ranking">
 		<aui:input label="rank-by-contribution" name="preferences--rankByContribution--" type="checkbox" value="<%= rankByContribution %>" />

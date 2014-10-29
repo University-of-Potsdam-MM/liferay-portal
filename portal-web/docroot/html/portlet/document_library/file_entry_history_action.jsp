@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -21,28 +21,37 @@ String redirect = ParamUtil.getString(request, "redirect");
 
 ResultRow row = (ResultRow)request.getAttribute(WebKeys.SEARCH_CONTAINER_RESULT_ROW);
 
-FileVersion fileVersion = (FileVersion)row.getObject();
+Object[] objArray = (Object[])row.getObject();
 
-FileEntry fileEntry = fileVersion.getFileEntry();
+FileEntry fileEntry = (FileEntry)objArray[0];
+FileVersion fileVersion = (FileVersion)objArray[1];
 %>
 
-<liferay-ui:icon-menu direction='<%= "down" %>' icon="<%= StringPool.BLANK %>" message="<%= StringPool.BLANK %>">
+<liferay-ui:icon-menu direction='<%= "down" %>' extended="<%= false %>" icon="<%= StringPool.BLANK %>" message="<%= StringPool.BLANK %>">
 	<liferay-ui:icon
-		iconCssClass="icon-download"
-		message="download"
+		image="download"
 		url="<%= DLUtil.getPreviewURL(fileEntry, fileVersion, themeDisplay, StringPool.BLANK) %>"
 	/>
 
 	<portlet:renderURL var="viewFileVersionURL">
-		<portlet:param name="struts_action" value="/document_library/view_file_entry" />
+		<c:choose>
+			<c:when test="<%= portletName.equals(PortletKeys.TRASH) %>">
+				<portlet:param name="struts_action" value="/trash/view_content" />
+				<portlet:param name="className" value="<%= DLFileEntryConstants.getClassName() %>" />
+				<portlet:param name="classPK" value="<%= String.valueOf(fileEntry.getFileEntryId()) %>" />
+			</c:when>
+			<c:otherwise>
+				<portlet:param name="struts_action" value="/document_library/view_file_entry" />
+			</c:otherwise>
+		</c:choose>
+
 		<portlet:param name="redirect" value="<%= redirect %>" />
 		<portlet:param name="fileEntryId" value="<%= String.valueOf(fileEntry.getFileEntryId()) %>" />
 		<portlet:param name="version" value="<%= fileVersion.getVersion() %>" />
 	</portlet:renderURL>
 
 	<liferay-ui:icon
-		iconCssClass="icon-search"
-		message="view[action]"
+		image="view"
 		url="<%= viewFileVersionURL %>"
 	/>
 
@@ -62,7 +71,7 @@ FileEntry fileEntry = fileVersion.getFileEntry();
 		</portlet:actionURL>
 
 		<liferay-ui:icon
-			iconCssClass="icon-undo"
+			image="undo"
 			message="revert"
 			url="<%= revertURL %>"
 		/>

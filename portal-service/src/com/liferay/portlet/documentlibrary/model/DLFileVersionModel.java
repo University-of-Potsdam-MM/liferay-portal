@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -17,6 +17,7 @@ package com.liferay.portlet.documentlibrary.model;
 import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.bean.AutoEscape;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.model.BaseModel;
 import com.liferay.portal.model.CacheModel;
 import com.liferay.portal.model.StagedGroupedModel;
@@ -148,9 +149,10 @@ public interface DLFileVersionModel extends BaseModel<DLFileVersion>,
 	 * Returns the user uuid of this document library file version.
 	 *
 	 * @return the user uuid of this document library file version
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public String getUserUuid();
+	public String getUserUuid() throws SystemException;
 
 	/**
 	 * Sets the user uuid of this document library file version.
@@ -265,21 +267,6 @@ public interface DLFileVersionModel extends BaseModel<DLFileVersion>,
 	 * @param treePath the tree path of this document library file version
 	 */
 	public void setTreePath(String treePath);
-
-	/**
-	 * Returns the file name of this document library file version.
-	 *
-	 * @return the file name of this document library file version
-	 */
-	@AutoEscape
-	public String getFileName();
-
-	/**
-	 * Sets the file name of this document library file version.
-	 *
-	 * @param fileName the file name of this document library file version
-	 */
-	public void setFileName(String fileName);
 
 	/**
 	 * Returns the extension of this document library file version.
@@ -465,9 +452,10 @@ public interface DLFileVersionModel extends BaseModel<DLFileVersion>,
 	 * Returns the status by user uuid of this document library file version.
 	 *
 	 * @return the status by user uuid of this document library file version
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public String getStatusByUserUuid();
+	public String getStatusByUserUuid() throws SystemException;
 
 	/**
 	 * Sets the status by user uuid of this document library file version.
@@ -513,7 +501,6 @@ public interface DLFileVersionModel extends BaseModel<DLFileVersion>,
 	/**
 	 * @deprecated As of 6.1.0, replaced by {@link #isApproved()}
 	 */
-	@Deprecated
 	@Override
 	public boolean getApproved();
 

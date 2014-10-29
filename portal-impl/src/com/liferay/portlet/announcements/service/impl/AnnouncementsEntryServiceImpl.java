@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portlet.announcements.service.impl;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.Organization;
 import com.liferay.portal.model.Role;
@@ -49,7 +50,7 @@ public class AnnouncementsEntryServiceImpl
 			int expirationDateMonth, int expirationDateDay,
 			int expirationDateYear, int expirationDateHour,
 			int expirationDateMinute, int priority, boolean alert)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		PermissionChecker permissionChecker = getPermissionChecker();
 
@@ -136,7 +137,6 @@ public class AnnouncementsEntryServiceImpl
 	 *             String, String, String, String, int, int, int, int, int,
 	 *             boolean, int, int, int, int, int, int, boolean)}
 	 */
-	@Deprecated
 	@Override
 	public AnnouncementsEntry addEntry(
 			long plid, long classNameId, long classPK, String title,
@@ -146,7 +146,7 @@ public class AnnouncementsEntryServiceImpl
 			int expirationDateDay, int expirationDateYear,
 			int expirationDateHour, int expirationDateMinute, int priority,
 			boolean alert)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return addEntry(
 			plid, classNameId, classPK, title, content, url, type,
@@ -157,7 +157,9 @@ public class AnnouncementsEntryServiceImpl
 	}
 
 	@Override
-	public void deleteEntry(long entryId) throws PortalException {
+	public void deleteEntry(long entryId)
+		throws PortalException, SystemException {
+
 		AnnouncementsEntryPermission.check(
 			getPermissionChecker(), entryId, ActionKeys.DELETE);
 
@@ -165,7 +167,9 @@ public class AnnouncementsEntryServiceImpl
 	}
 
 	@Override
-	public AnnouncementsEntry getEntry(long entryId) throws PortalException {
+	public AnnouncementsEntry getEntry(long entryId)
+		throws PortalException, SystemException {
+
 		AnnouncementsEntry entry = announcementsEntryLocalService.getEntry(
 			entryId);
 
@@ -183,7 +187,7 @@ public class AnnouncementsEntryServiceImpl
 			boolean displayImmediately, int expirationDateMonth,
 			int expirationDateDay, int expirationDateYear,
 			int expirationDateHour, int expirationDateMinute, int priority)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		AnnouncementsEntryPermission.check(
 			getPermissionChecker(), entryId, ActionKeys.UPDATE);

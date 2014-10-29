@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,7 +15,6 @@
 package com.liferay.portal.setup;
 
 import com.liferay.portal.dao.jdbc.util.DataSourceSwapper;
-import com.liferay.portal.events.EventsProcessorUtil;
 import com.liferay.portal.events.StartupAction;
 import com.liferay.portal.kernel.bean.PortalBeanLocatorUtil;
 import com.liferay.portal.kernel.cache.CacheRegistryUtil;
@@ -222,7 +221,7 @@ public class SetupWizardUtil {
 		}
 
 		_updateCompany(request);
-		_updateAdminUser(request, response, unicodeProperties);
+		_updateAdminUser(request, unicodeProperties);
 
 		_initPlugins();
 
@@ -249,7 +248,7 @@ public class SetupWizardUtil {
 	}
 
 	/**
-	 * @see com.liferay.portal.servlet.MainServlet#initPlugins
+	 * @see {@link com.liferay.portal.servlet.MainServlet#initPlugins}
 	 */
 	private static void _initPlugins() {
 		HotDeployUtil.setCapturePrematureEvents(false);
@@ -367,8 +366,7 @@ public class SetupWizardUtil {
 	}
 
 	private static void _updateAdminUser(
-			HttpServletRequest request, HttpServletResponse response,
-			UnicodeProperties unicodeProperties)
+			HttpServletRequest request, UnicodeProperties unicodeProperties)
 		throws Exception {
 
 		ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
@@ -418,7 +416,8 @@ public class SetupWizardUtil {
 
 		if (user != null) {
 			String greeting = LanguageUtil.format(
-				themeDisplay.getLocale(), "welcome-x", fullName, false);
+				themeDisplay.getLocale(), "welcome-x",
+				StringPool.SPACE + fullName, false);
 
 			Contact contact = user.getContact();
 
@@ -434,7 +433,7 @@ public class SetupWizardUtil {
 				user.getUserId(), StringPool.BLANK, StringPool.BLANK,
 				StringPool.BLANK, false, user.getReminderQueryQuestion(),
 				user.getReminderQueryAnswer(), screenName, emailAddress,
-				user.getFacebookId(), user.getOpenId(), false, null,
+				user.getFacebookId(), user.getOpenId(),
 				themeDisplay.getLanguageId(), user.getTimeZoneId(), greeting,
 				user.getComments(), firstName, user.getMiddleName(), lastName,
 				contact.getPrefixId(), contact.getSuffixId(), contact.isMale(),
@@ -465,8 +464,8 @@ public class SetupWizardUtil {
 
 				if (testUser != null) {
 					UserLocalServiceUtil.updateStatus(
-						testUser.getUserId(), WorkflowConstants.STATUS_INACTIVE,
-						new ServiceContext());
+						testUser.getUserId(),
+						WorkflowConstants.STATUS_INACTIVE);
 				}
 			}
 		}
@@ -477,12 +476,7 @@ public class SetupWizardUtil {
 
 		session.setAttribute(WebKeys.EMAIL_ADDRESS, emailAddress);
 		session.setAttribute(WebKeys.SETUP_WIZARD_PASSWORD_UPDATED, true);
-		session.setAttribute(WebKeys.USER, user);
 		session.setAttribute(WebKeys.USER_ID, user.getUserId());
-
-		EventsProcessorUtil.process(
-			PropsKeys.LOGIN_EVENTS_POST, PropsValues.LOGIN_EVENTS_POST, request,
-			response);
 	}
 
 	private static void _updateCompany(HttpServletRequest request)

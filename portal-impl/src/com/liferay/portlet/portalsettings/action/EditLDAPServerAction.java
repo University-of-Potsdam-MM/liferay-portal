@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -186,7 +186,7 @@ public class EditLDAPServerAction extends PortletAction {
 		String ldapServerIds = portletPreferences.getValue(
 			"ldap.server.ids", StringPool.BLANK);
 
-		ldapServerIds = StringUtil.removeFromList(
+		ldapServerIds = StringUtil.remove(
 			ldapServerIds, String.valueOf(ldapServerId));
 
 		properties.put("ldap.server.ids", ldapServerIds);
@@ -209,7 +209,10 @@ public class EditLDAPServerAction extends PortletAction {
 		validateLDAPServerName(
 			ldapServerId, themeDisplay.getCompanyId(), properties);
 
-		validateSearchFilters(actionRequest);
+		String filter = ParamUtil.getString(
+			actionRequest, "importUserSearchFilter");
+
+		LDAPUtil.validateFilter(filter);
 
 		if (ldapServerId <= 0) {
 			properties = addLDAPServer(themeDisplay.getCompanyId(), properties);
@@ -245,20 +248,6 @@ public class EditLDAPServerAction extends PortletAction {
 				throw new DuplicateLDAPServerNameException();
 			}
 		}
-	}
-
-	protected void validateSearchFilters(ActionRequest actionRequest)
-		throws Exception {
-
-		String userFilter = ParamUtil.getString(
-			actionRequest, "importUserSearchFilter");
-
-		LDAPUtil.validateFilter(userFilter, "importUserSearchFilter");
-
-		String groupFilter = ParamUtil.getString(
-			actionRequest, "importGroupSearchFilter");
-
-		LDAPUtil.validateFilter(groupFilter, "importGroupSearchFilter");
 	}
 
 	private static final String[] _KEYS = {

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -25,7 +25,8 @@ public class IncrementFactory {
 
 	@SuppressWarnings("rawtypes")
 	public static Increment createIncrement(
-		Class<? extends Increment<?>> counterClass, Object value) {
+			Class<? extends Increment<?>> counterClass, Object value)
+		throws SystemException {
 
 		if ((counterClass == NumberIncrement.class) &&
 			(value instanceof Number)) {

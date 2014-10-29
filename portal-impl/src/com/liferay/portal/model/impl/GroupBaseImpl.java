@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,9 +14,8 @@
 
 package com.liferay.portal.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.Group;
@@ -37,7 +36,6 @@ import java.util.List;
  * @see com.liferay.portal.model.Group
  * @generated
  */
-@ProviderType
 public abstract class GroupBaseImpl extends GroupModelImpl implements Group {
 	/*
 	 * NOTE FOR DEVELOPERS:
@@ -45,7 +43,7 @@ public abstract class GroupBaseImpl extends GroupModelImpl implements Group {
 	 * Never modify or reference this class directly. All methods that expect a group model instance should use the {@link Group} interface instead.
 	 */
 	@Override
-	public void persist() {
+	public void persist() throws SystemException {
 		if (this.isNew()) {
 			GroupLocalServiceUtil.addGroup(this);
 		}
@@ -56,7 +54,7 @@ public abstract class GroupBaseImpl extends GroupModelImpl implements Group {
 
 	@Override
 	@SuppressWarnings("unused")
-	public String buildTreePath() throws PortalException {
+	public String buildTreePath() throws PortalException, SystemException {
 		List<Group> groups = new ArrayList<Group>();
 
 		Group group = this;
@@ -82,7 +80,7 @@ public abstract class GroupBaseImpl extends GroupModelImpl implements Group {
 	}
 
 	@Override
-	public void updateTreePath(String treePath) {
+	public void updateTreePath(String treePath) throws SystemException {
 		Group group = this;
 
 		group.setTreePath(treePath);

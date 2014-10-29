@@ -10,7 +10,4 @@
 	};
 
 	ALLOY.mix(AUI, YUI);
-
-	AUI.$ = window.jQuery;
-	AUI._ = window._;
 })();

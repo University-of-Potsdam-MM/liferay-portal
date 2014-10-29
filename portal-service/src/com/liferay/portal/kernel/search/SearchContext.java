@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -24,11 +24,9 @@ import com.liferay.portal.model.Layout;
 import java.io.Serializable;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import java.util.TimeZone;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -44,18 +42,6 @@ public class SearchContext implements Serializable {
 		}
 
 		_facets.put(facet.getFieldName(), facet);
-	}
-
-	public void addFullQueryEntryClassName(String entryClassName) {
-		if (_fullQueryEntryClassNames == null) {
-			_fullQueryEntryClassNames = new HashSet<String>();
-		}
-
-		_fullQueryEntryClassNames.add(entryClassName);
-	}
-
-	public void clearFullQueryEntryClassNames() {
-		_fullQueryEntryClassNames = null;
 	}
 
 	public long[] getAssetCategoryIds() {
@@ -120,15 +106,6 @@ public class SearchContext implements Serializable {
 
 	public long[] getFolderIds() {
 		return _folderIds;
-	}
-
-	public String[] getFullQueryEntryClassNames() {
-		if (_fullQueryEntryClassNames == null) {
-			return new String[0];
-		}
-
-		return _fullQueryEntryClassNames.toArray(
-			new String[_fullQueryEntryClassNames.size()]);
 	}
 
 	public long[] getGroupIds() {
@@ -207,20 +184,12 @@ public class SearchContext implements Serializable {
 		return _andSearch;
 	}
 
-	public boolean isCommitImmediately() {
-		return _commitImmediately;
-	}
-
 	public boolean isIncludeAttachments() {
 		return _includeAttachments;
 	}
 
 	public boolean isIncludeDiscussions() {
 		return _includeDiscussions;
-	}
-
-	public boolean isIncludeFolders() {
-		return _includeFolders;
 	}
 
 	public boolean isIncludeLiveGroups() {
@@ -281,10 +250,6 @@ public class SearchContext implements Serializable {
 		_classTypeIds = classTypeIds;
 	}
 
-	public void setCommitImmediately(boolean commitImmediately) {
-		_commitImmediately = commitImmediately;
-	}
-
 	public void setCompanyId(long companyId) {
 		_companyId = companyId;
 	}
@@ -322,10 +287,6 @@ public class SearchContext implements Serializable {
 
 	public void setIncludeDiscussions(boolean includeDiscussions) {
 		_includeDiscussions = includeDiscussions;
-	}
-
-	public void setIncludeFolders(boolean includeFolders) {
-		_includeFolders = includeFolders;
 	}
 
 	public void setIncludeLiveGroups(boolean includeLiveGroups) {
@@ -407,17 +368,14 @@ public class SearchContext implements Serializable {
 	private BooleanClause[] _booleanClauses;
 	private long[] _categoryIds;
 	private long[] _classTypeIds;
-	private boolean _commitImmediately;
 	private long _companyId;
 	private int _end = QueryUtil.ALL_POS;
 	private String[] _entryClassNames;
 	private Map<String, Facet> _facets = new ConcurrentHashMap<String, Facet>();
 	private long[] _folderIds;
-	private Set<String> _fullQueryEntryClassNames;
 	private long[] _groupIds;
 	private boolean _includeAttachments;
 	private boolean _includeDiscussions;
-	private boolean _includeFolders = true;
 	private boolean _includeLiveGroups = true;
 	private boolean _includeStagingGroups = true;
 	private String _keywords;

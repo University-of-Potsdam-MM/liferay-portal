@@ -1,11 +1,11 @@
 @import "compass";
 
 .input-localized {
-	.palette-item-inner img {
+	.palette-container {
 		@include opacity(0.5);
 	}
 
-	&.input-localized-focused .palette-item-inner img {
+	&.input-localized-focused .palette-container {
 		@include opacity(1);
 	}
 
@@ -13,30 +13,12 @@
 		margin-left: 6px;
 	}
 
-	&.input-localized-editor {
-		.form-control {
-			border-width: 0;
-			height: 100%;
-			padding: 0;
-		}
-
-		.input-localized-content {
-			margin-top: 0;
-		}
-
-		.language-value {
-			margin-bottom: 7px;
-		}
+	&.input-localized-editor .input-localized-content {
+		margin-top: 0;
 	}
 
 	.lfr-input-localized-default a {
 		margin-right: 14px;
-	}
-
-	.palette-items-container {
-		font-size: 0;
-		margin: 0;
-		white-space: normal;
 	}
 
 	.palette-item {
@@ -62,25 +44,17 @@
 		height: 4px;
 		margin: 3px 5px;
 		width: 4px;
+		@include border-radius(3px);
 	}
 
 	.lfr-input-localized .lfr-input-localized-state {
-		background: #DDD;
-
-		&.lfr-input-localized-state-error {
-			background: #FF0047;
-		}
+		background: #ddd;
+		@include box-shadow(0 0 3px #ddd);
 	}
 
 	.palette-item-selected .lfr-input-localized-state {
-		background: #27C1F2;
-	}
-
-	&.input-localized-focused {
-		.palette-item-selected .lfr-input-localized-state {
-			height: 6px;
-			width: 6px;
-		}
+		background: #27c1f2;
+		@include box-shadow(0 0 3px #27c1f2);
 	}
 
 	.palette-item-inner {
@@ -90,7 +64,7 @@
 	}
 }
 
-.input-group {
+.input-prepend, .input-append {
 	.input-localized .input-localized-content {
 		margin-top: 3px;
 	}

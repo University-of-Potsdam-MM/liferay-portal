@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,8 +14,12 @@
 
 package com.liferay.portal.spring.transaction;
 
+import com.liferay.portal.cache.transactional.TransactionalPortalCacheHelper;
+import com.liferay.portal.kernel.dao.orm.EntityCacheUtil;
+import com.liferay.portal.kernel.dao.orm.FinderCacheUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.spring.hibernate.LastSessionRecorderUtil;
 
 import org.aopalliance.intercept.MethodInvocation;
 
@@ -43,13 +47,18 @@ public class DefaultTransactionExecutor extends BaseTransactionExecutor {
 		boolean newTransaction = transactionStatus.isNewTransaction();
 
 		if (newTransaction) {
-			fireTransactionCreatedEvent(
-				transactionAttribute, transactionStatus);
+			TransactionalPortalCacheHelper.begin();
+
+			TransactionCommitCallbackUtil.pushCallbackList();
 		}
 
 		Object returnValue = null;
 
 		try {
+			if (newTransaction) {
+				LastSessionRecorderUtil.syncLastSessionState();
+			}
+
 			returnValue = methodInvocation.proceed();
 		}
 		catch (Throwable throwable) {
@@ -58,19 +67,16 @@ public class DefaultTransactionExecutor extends BaseTransactionExecutor {
 				transactionStatus);
 		}
 
-		processCommit(
-			platformTransactionManager, transactionAttribute,
-			transactionStatus);
+		processCommit(platformTransactionManager, transactionStatus);
 
 		return returnValue;
 	}
 
 	protected void processCommit(
 		PlatformTransactionManager platformTransactionManager,
-		TransactionAttribute transactionAttribute,
 		TransactionStatus transactionStatus) {
 
-		Throwable throwable = null;
+		boolean hasError = false;
 
 		try {
 			platformTransactionManager.commit(transactionStatus);
@@ -79,7 +85,7 @@ public class DefaultTransactionExecutor extends BaseTransactionExecutor {
 			_log.error(
 				"Application exception overridden by commit exception", tse);
 
-			throwable = tse;
+			hasError = true;
 
 			throw tse;
 		}
@@ -87,26 +93,31 @@ public class DefaultTransactionExecutor extends BaseTransactionExecutor {
 			_log.error(
 				"Application exception overridden by commit exception", re);
 
-			throwable = re;
+			hasError = true;
 
 			throw re;
 		}
 		catch (Error e) {
 			_log.error("Application exception overridden by commit error", e);
 
-			throwable = e;
+			hasError = true;
 
 			throw e;
 		}
 		finally {
 			if (transactionStatus.isNewTransaction()) {
-				if (throwable != null) {
-					fireTransactionRollbackedEvent(
-						transactionAttribute, transactionStatus, throwable);
+				if (hasError) {
+					TransactionalPortalCacheHelper.rollback();
+
+					TransactionCommitCallbackUtil.popCallbackList();
+
+					EntityCacheUtil.clearLocalCache();
+					FinderCacheUtil.clearLocalCache();
 				}
 				else {
-					fireTransactionCommittedEvent(
-						transactionAttribute, transactionStatus);
+					TransactionalPortalCacheHelper.commit();
+
+					invokeCallbacks();
 				}
 			}
 		}
@@ -144,15 +155,17 @@ public class DefaultTransactionExecutor extends BaseTransactionExecutor {
 			}
 			finally {
 				if (transactionStatus.isNewTransaction()) {
-					fireTransactionRollbackedEvent(
-						transactionAttribute, transactionStatus, throwable);
+					TransactionalPortalCacheHelper.rollback();
+
+					TransactionCommitCallbackUtil.popCallbackList();
+
+					EntityCacheUtil.clearLocalCache();
+					FinderCacheUtil.clearLocalCache();
 				}
 			}
 		}
 		else {
-			processCommit(
-				platformTransactionManager, transactionAttribute,
-				transactionStatus);
+			processCommit(platformTransactionManager, transactionStatus);
 		}
 
 		throw throwable;

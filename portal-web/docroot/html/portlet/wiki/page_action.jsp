@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -22,7 +22,7 @@ ResultRow row = (ResultRow)request.getAttribute(WebKeys.SEARCH_CONTAINER_RESULT_
 WikiPage wikiPage = (WikiPage)row.getObject();
 %>
 
-<liferay-ui:icon-menu icon="<%= StringPool.BLANK %>" message="<%= StringPool.BLANK %>">
+<liferay-ui:icon-menu>
 	<c:if test="<%= WikiPagePermission.contains(permissionChecker, wikiPage, ActionKeys.UPDATE) %>">
 		<portlet:renderURL var="editURL">
 			<portlet:param name="struts_action" value="/wiki/edit_page" />
@@ -31,8 +31,7 @@ WikiPage wikiPage = (WikiPage)row.getObject();
 		</portlet:renderURL>
 
 		<liferay-ui:icon
-			iconCssClass="icon-edit"
-			message="edit"
+			image="edit"
 			url="<%= editURL %>"
 		/>
 	</c:if>
@@ -47,8 +46,7 @@ WikiPage wikiPage = (WikiPage)row.getObject();
 		/>
 
 		<liferay-ui:icon
-			iconCssClass="icon-lock"
-			message="permissions"
+			image="permissions"
 			method="get"
 			url="<%= permissionsURL %>"
 			useDialog="<%= true %>"
@@ -67,8 +65,7 @@ WikiPage wikiPage = (WikiPage)row.getObject();
 		</liferay-portlet:renderURL>
 
 		<liferay-ui:icon
-			iconCssClass="icon-copy"
-			message="copy"
+			image="copy"
 			url="<%= copyPageURL.toString() %>"
 		/>
 
@@ -80,13 +77,13 @@ WikiPage wikiPage = (WikiPage)row.getObject();
 		</portlet:renderURL>
 
 		<liferay-ui:icon
-			iconCssClass="icon-move"
+			image="forward"
 			message="move"
 			url="<%= movePageURL.toString() %>"
 		/>
 	</c:if>
 
-	<c:if test="<%= WikiPagePermission.contains(permissionChecker, wikiPage, ActionKeys.SUBSCRIBE) && (wikiSettings.isEmailPageAddedEnabled() || wikiSettings.isEmailPageUpdatedEnabled()) %>">
+	<c:if test="<%= WikiPagePermission.contains(permissionChecker, wikiPage, ActionKeys.SUBSCRIBE) && (WikiUtil.getEmailPageAddedEnabled(portletPreferences) || WikiUtil.getEmailPageUpdatedEnabled(portletPreferences)) %>">
 		<c:choose>
 			<c:when test="<%= SubscriptionLocalServiceUtil.isSubscribed(user.getCompanyId(), user.getUserId(), WikiPage.class.getName(), wikiPage.getResourcePrimKey()) %>">
 				<portlet:actionURL var="unsubscribeURL">
@@ -98,8 +95,7 @@ WikiPage wikiPage = (WikiPage)row.getObject();
 				</portlet:actionURL>
 
 				<liferay-ui:icon
-					iconCssClass="icon-remove-sign"
-					message="unsubscribe"
+					image="unsubscribe"
 					url="<%= unsubscribeURL %>"
 				/>
 			</c:when>
@@ -113,8 +109,7 @@ WikiPage wikiPage = (WikiPage)row.getObject();
 				</portlet:actionURL>
 
 				<liferay-ui:icon
-					iconCssClass="icon-ok-sign"
-					message="subscribe"
+					image="subscribe"
 					url="<%= subscribeURL %>"
 				/>
 			</c:otherwise>
@@ -146,6 +141,6 @@ WikiPage wikiPage = (WikiPage)row.getObject();
 			<portlet:param name="version" value="<%= String.valueOf(wikiPage.getVersion()) %>" />
 		</portlet:actionURL>
 
-		<liferay-ui:icon iconCssClass="icon-remove" message="discard-draft" url="<%= deleteURL %>" />
+		<liferay-ui:icon image="delete" message="discard-draft" url="<%= deleteURL %>" />
 	</c:if>
 </liferay-ui:icon-menu>

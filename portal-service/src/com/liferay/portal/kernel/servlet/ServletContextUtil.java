@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,6 +14,8 @@
 
 package com.liferay.portal.kernel.servlet;
 
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -24,6 +26,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLConnection;
 
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -41,7 +44,7 @@ import javax.servlet.ServletContext;
  */
 public class ServletContextUtil {
 
-	public static final String PATH_WEB_INF = "/WEB-INF";
+	public static final String PATH_WEB_XML = "/WEB-INF/web.xml";
 
 	public static final String URI_ATTRIBUTE =
 		ServletContextUtil.class.getName().concat(".rootURI");
@@ -102,11 +105,22 @@ public class ServletContextUtil {
 				}
 			}
 			else {
-				long curLastModified = FileTimestampUtil.getTimestamp(
-					servletContext, curPath);
+				try {
+					URL url = servletContext.getResource(curPath);
 
-				if (curLastModified > lastModified) {
-					lastModified = curLastModified;
+					if (url == null) {
+						_log.error("Resource URL for " + curPath + " is null");
+					}
+					else {
+						URLConnection urlConnection = url.openConnection();
+
+						if (urlConnection.getLastModified() > lastModified) {
+							lastModified = urlConnection.getLastModified();
+						}
+					}
+				}
+				catch (IOException ioe) {
+					_log.error(ioe, ioe);
 				}
 			}
 		}
@@ -147,11 +161,11 @@ public class ServletContextUtil {
 		}
 
 		try {
-			URL rootURL = servletContext.getResource(PATH_WEB_INF);
+			URL rootURL = servletContext.getResource(PATH_WEB_XML);
 
 			String path = rootURL.getPath();
 
-			int index = path.indexOf(PATH_WEB_INF);
+			int index = path.indexOf(PATH_WEB_XML);
 
 			if (index < 0) {
 				throw new MalformedURLException("Invalid URL " + rootURL);
@@ -219,25 +233,26 @@ public class ServletContextUtil {
 				classNames.add(className);
 			}
 			else if (path.endsWith(_EXT_JAR)) {
-				try (JarInputStream jarFile = new JarInputStream(
-						servletContext.getResourceAsStream(path))) {
+				JarInputStream jarFile = new JarInputStream(
+					servletContext.getResourceAsStream(path));
 
-					while (true) {
-						JarEntry jarEntry = jarFile.getNextJarEntry();
+				while (true) {
+					JarEntry jarEntry = jarFile.getNextJarEntry();
 
-						if (jarEntry == null) {
-							break;
-						}
+					if (jarEntry == null) {
+						break;
+					}
 
-						String jarEntryName = jarEntry.getName();
+					String jarEntryName = jarEntry.getName();
 
-						if (jarEntryName.endsWith(_EXT_CLASS)) {
-							String className = _getClassName(jarEntryName);
+					if (jarEntryName.endsWith(_EXT_CLASS)) {
+						String className = _getClassName(jarEntryName);
 
-							classNames.add(className);
-						}
+						classNames.add(className);
 					}
 				}
+
+				jarFile.close();
 			}
 			else if (path.endsWith(StringPool.SLASH)) {
 				_getClassNames(
@@ -256,5 +271,7 @@ public class ServletContextUtil {
 	private static final String _EXT_CLASS = ".class";
 
 	private static final String _EXT_JAR = ".jar";
+
+	private static Log _log = LogFactoryUtil.getLog(ServletContextUtil.class);
 
 }

@@ -12,7 +12,7 @@ AUI.add(
 
 		var STR_LAYOUT_ID = 'layoutId';
 
-		var TPL_EDITOR = '<div class="add-page-editor"><div class="input-group"></div></div>';
+		var TPL_EDITOR = '<div class="add-page-editor"><div class="input-append"></div></div>';
 
 		var TPL_FIELD_INPUT = '<input class="add-page-editor-input" type="text" value="{0}" />';
 
@@ -109,8 +109,6 @@ AUI.add(
 
 							var navItemSelector = Liferay.Data.NAV_ITEM_SELECTOR || navListSelector + '> li';
 
-							var navItemChildToggleSelector = Liferay.Data.NAV_ITEM_CHILD_TOGGLE_SELECTOR || '> span';
-
 							var navList = navBlock.one(navListSelector);
 
 							var items = navBlock.all(navItemSelector);
@@ -120,7 +118,7 @@ AUI.add(
 							var cssClassBuffer = [];
 
 							items.each(
-								function(item, index) {
+								function(item, index, collection) {
 									var layoutConfig = layoutIds[index];
 
 									if (layoutConfig) {
@@ -147,7 +145,6 @@ AUI.add(
 								}
 							);
 
-							instance._navItemChildToggleSelector = navItemChildToggleSelector;
 							instance._navItemSelector = navItemSelector;
 							instance._navListSelector = navListSelector;
 
@@ -168,12 +165,6 @@ AUI.add(
 
 							navBlock.delegate('keypress', A.bind('_onKeypress', instance), 'input');
 						}
-					},
-
-					_afterMakeSortable: function(sortable) {
-						var instance = this;
-
-						sortable.delegate.dd.removeInvalid('a');
 					},
 
 					_cancelPage: function(event) {
@@ -222,8 +213,8 @@ AUI.add(
 						var tempLink = Lang.sub(
 							tpl,
 							{
-								pageTitle: STR_EMPTY,
-								url: '#'
+								url: '#',
+								pageTitle: STR_EMPTY
 							}
 						);
 
@@ -242,7 +233,7 @@ AUI.add(
 						}
 
 						obj.each(
-							function(item, index) {
+							function(item, index, collection) {
 								if (item.hasClass('lfr-nav-deletable')) {
 									instance._createDeleteButton(item);
 								}
@@ -287,7 +278,7 @@ AUI.add(
 							var navItemSelector = instance._navItemSelector;
 
 							var navItems = navBlock.all(navItemSelector).filter(
-								function(item, index) {
+								function(item, index, collection) {
 									return !item.hasClass('selected');
 								}
 							);
@@ -335,7 +326,7 @@ AUI.add(
 										currentSpan.on(
 											'click',
 											function(event) {
-												if ((themeDisplay.isStateMaximized() && !event.shiftKey) || event.target.ancestor('.lfr-nav-child-toggle', true, '.lfr-nav-updateable')) {
+												if (themeDisplay.isStateMaximized() && !event.shiftKey) {
 													return;
 												}
 
@@ -378,7 +369,7 @@ AUI.add(
 						var tabHtml = Lang.sub(
 							tabTPL,
 							{
-								pageTitle: data.title,
+								pageTitle: Lang.String.escapeHTML(data.title),
 								url: data.url
 							}
 						);
@@ -403,7 +394,7 @@ AUI.add(
 							}
 						}
 						else {
-							listItem.addClass('lfr-nav-deletable lfr-nav-sortable lfr-nav-updateable sortable-item');
+							listItem.addClass('lfr-nav-sortable lfr-nav-updateable sortable-item');
 
 							instance._createDeleteButton(listItem);
 
@@ -541,7 +532,7 @@ AUI.add(
 					}
 				);
 
-				var toolbarBoundingBox = editorContainer.one('.input-group');
+				var toolbarBoundingBox = editorContainer.one('.input-append');
 
 				var toolbar = new A.Toolbar(
 					{
@@ -572,10 +563,10 @@ AUI.add(
 
 				var optionsPopover = new A.Popover(
 					{
+						bodyContent: prototypeTemplate,
 						align: {
 							points: ['tc', 'bc']
 						},
-						bodyContent: prototypeTemplate,
 						on: {
 							visibleChange: function(event) {
 								var instance = this;
@@ -647,6 +638,8 @@ AUI.add(
 				var instance = this;
 
 				if (instance.get('isSortable')) {
+					var navBlock = instance.get('navBlock');
+
 					var sortable = new A.Sortable(
 						{
 							container: instance._navList,
@@ -679,7 +672,7 @@ AUI.add(
 						}
 					);
 
-					instance._afterMakeSortable(sortable);
+					sortable.delegate.dd.removeInvalid('a');
 				}
 			},
 			['dd-constrain', 'sortable'],
@@ -731,7 +724,7 @@ AUI.add(
 						instance._updateURL,
 						{
 							data: data,
-							dataType: 'JSON',
+							dataType: 'json',
 							on: {
 								failure: function() {
 									processRemovePageFailure(
@@ -799,11 +792,7 @@ AUI.add(
 							onSuccess = function(event, id, obj) {
 								var doc = A.getDoc();
 
-								var navChildToggle = textNode.all(instance._navItemChildToggleSelector);
-
 								textNode.text(pageTitle);
-
-								textNode.append(navChildToggle);
 
 								actionNode.show();
 
@@ -813,9 +802,9 @@ AUI.add(
 
 								var regex = new RegExp(prevVal, 'g');
 
-								var newTitle = oldTitle.replace(regex, pageTitle);
+								newTitle = oldTitle.replace(regex, pageTitle);
 
-								doc.attr('title', newTitle);
+								doc.set('title', newTitle);
 							};
 						}
 						else {
@@ -830,7 +819,7 @@ AUI.add(
 							instance._updateURL,
 							{
 								data: data,
-								dataType: 'JSON',
+								dataType: 'json',
 								on: {
 									success: onSuccess
 								}
@@ -896,7 +885,7 @@ AUI.add(
 					instance._updateURL,
 					{
 						data: data,
-						dataType: 'JSON',
+						dataType: 'json',
 						on: {
 							failure: function() {
 								processMovePageFailure(
@@ -929,6 +918,6 @@ AUI.add(
 	},
 	'',
 	{
-		requires: ['aui-component', 'event-mouseenter']
+		requires: ['aui-component']
 	}
 );

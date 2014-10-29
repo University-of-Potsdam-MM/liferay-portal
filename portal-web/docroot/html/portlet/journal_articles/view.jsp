@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -31,6 +31,8 @@ double version = ParamUtil.getDouble(request, "version");
 			type = null;
 		}
 
+		String status = "approved";
+
 		PortletURL portletURL = renderResponse.createRenderURL();
 
 		portletURL.setParameter("struts_action", "/journal_articles/view");
@@ -48,7 +50,6 @@ double version = ParamUtil.getDouble(request, "version");
 
 		searchContainer.setDelta(pageDelta);
 		searchContainer.setDeltaConfigurable(false);
-		searchContainer.setEmptyResultsMessage("no-web-content-was-found-that-matched-the-specified-filters");
 		searchContainer.setOrderByCol(orderByCol);
 		searchContainer.setOrderByType(orderByType);
 		searchContainer.setOrderByComparator(orderByComparator);
@@ -73,7 +74,7 @@ double version = ParamUtil.getDouble(request, "version");
 		}
 
 		searchTerms.setDisplayDateLT(new Date());
-		searchTerms.setStatus(WorkflowConstants.STATUS_APPROVED);
+		searchTerms.setStatus(status);
 		searchTerms.setVersion(version);
 		searchTerms.setAdvancedSearch(true);
 
@@ -81,7 +82,14 @@ double version = ParamUtil.getDouble(request, "version");
 		int total = 0;
 		%>
 
-		<%@ include file="/html/portlet/journal/article_search_results.jspf" %>
+		<c:choose>
+			<c:when test="<%= PropsValues.JOURNAL_ARTICLES_SEARCH_WITH_INDEX %>">
+				<%@ include file="/html/portlet/journal/article_search_results_index.jspf" %>
+			</c:when>
+			<c:otherwise>
+				<%@ include file="/html/portlet/journal/article_search_results_database.jspf" %>
+			</c:otherwise>
+		</c:choose>
 
 		<%
 		List resultRows = searchContainer.getResultRows();
@@ -197,8 +205,9 @@ double version = ParamUtil.getDouble(request, "version");
 		<%
 		String languageId = LanguageUtil.getLanguageId(request);
 		int articlePage = ParamUtil.getInteger(renderRequest, "page", 1);
+		String xmlRequest = PortletRequestUtil.toXML(renderRequest, renderResponse);
 
-		JournalArticleDisplay articleDisplay = JournalContentUtil.getDisplay(groupId, articleId, null, null, languageId, articlePage, new PortletRequestModel(renderRequest, renderResponse), themeDisplay);
+		JournalArticleDisplay articleDisplay = JournalContentUtil.getDisplay(groupId, articleId, null, null, languageId, themeDisplay, articlePage, xmlRequest);
 
 		JournalArticle article = null;
 
@@ -265,7 +274,7 @@ double version = ParamUtil.getDouble(request, "version");
 					</c:if>
 				</c:when>
 				<c:otherwise>
-					<div class="alert alert-danger">
+					<div class="alert alert-error">
 						<liferay-ui:message key="this-content-has-expired-or-you-do-not-have-the-required-permissions-to-access-it" />
 					</div>
 				</c:otherwise>
@@ -275,8 +284,8 @@ double version = ParamUtil.getDouble(request, "version");
 		} catch (NoSuchArticleException nsae) {
 		%>
 
-			<div class="alert alert-danger">
-				<%= LanguageUtil.get(request, "the-selected-web-content-no-longer-exists") %>
+			<div class="alert alert-error">
+				<%= LanguageUtil.get(pageContext, "the-selected-web-content-no-longer-exists") %>
 			</div>
 
 		<%

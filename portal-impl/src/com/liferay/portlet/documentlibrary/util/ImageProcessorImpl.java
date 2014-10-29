@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portlet.documentlibrary.util;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.image.ImageBag;
 import com.liferay.portal.kernel.image.ImageToolUtil;
 import com.liferay.portal.kernel.lar.PortletDataContext;
@@ -136,10 +137,6 @@ public class ImageProcessorImpl
 		if (!PropsValues.DL_FILE_ENTRY_PREVIEW_ENABLED &&
 			!PropsValues.DL_FILE_ENTRY_THUMBNAIL_ENABLED) {
 
-			return false;
-		}
-
-		if (fileVersion.getSize() == 0) {
 			return false;
 		}
 
@@ -348,7 +345,7 @@ public class ImageProcessorImpl
 	}
 
 	private boolean _hasPreview(FileVersion fileVersion)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		if (PropsValues.DL_FILE_ENTRY_PREVIEW_ENABLED &&
 			_previewGenerationRequired(fileVersion)) {
@@ -407,8 +404,13 @@ public class ImageProcessorImpl
 		try {
 			file = FileUtil.createTempFile(type);
 
-			try (FileOutputStream fos = new FileOutputStream(file)) {
+			FileOutputStream fos = new FileOutputStream(file);
+
+			try {
 				ImageToolUtil.write(renderedImage, type, fos);
+			}
+			finally {
+				fos.close();
 			}
 
 			addFileToStore(
@@ -439,10 +441,8 @@ public class ImageProcessorImpl
 			sb.append(2);
 		}
 
-		if (Validator.isNotNull(type)) {
-			sb.append(StringPool.PERIOD);
-			sb.append(type);
-		}
+		sb.append(StringPool.PERIOD);
+		sb.append(type);
 
 		String filePath = sb.toString();
 

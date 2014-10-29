@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -16,6 +16,7 @@ package com.liferay.portal.util;
 
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.test.ExecutionTestListeners;
+import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
@@ -27,16 +28,11 @@ import com.liferay.portal.model.UserGroup;
 import com.liferay.portal.model.VirtualLayoutConstants;
 import com.liferay.portal.service.GroupLocalServiceUtil;
 import com.liferay.portal.service.ServiceContext;
+import com.liferay.portal.service.ServiceTestUtil;
 import com.liferay.portal.service.UserGroupLocalServiceUtil;
-import com.liferay.portal.test.DeleteAfterTestRun;
-import com.liferay.portal.test.listeners.MainServletExecutionTestListener;
-import com.liferay.portal.test.runners.LiferayIntegrationJUnitTestRunner;
-import com.liferay.portal.util.test.CompanyTestUtil;
-import com.liferay.portal.util.test.GroupTestUtil;
-import com.liferay.portal.util.test.LayoutTestUtil;
-import com.liferay.portal.util.test.ServiceContextTestUtil;
-import com.liferay.portal.util.test.TestPropsValues;
-import com.liferay.portal.util.test.UserGroupTestUtil;
+import com.liferay.portal.test.LiferayIntegrationJUnitTestRunner;
+import com.liferay.portal.test.MainServletExecutionTestListener;
+import com.liferay.portal.test.TransactionalExecutionTestListener;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -44,7 +40,6 @@ import java.util.Map;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -54,22 +49,23 @@ import org.springframework.mock.web.MockHttpServletRequest;
 /**
  * @author Sergio González
  */
-@ExecutionTestListeners(listeners = {MainServletExecutionTestListener.class})
+@ExecutionTestListeners(
+	listeners = {
+		MainServletExecutionTestListener.class,
+		TransactionalExecutionTestListener.class
+	})
 @RunWith(LiferayIntegrationJUnitTestRunner.class)
+@Transactional
 public class PortalImplLocalizedFriendlyURLTest {
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
 		_availableLocales = LanguageUtil.getAvailableLocales();
-		_defaultLocale = LocaleUtil.getDefault();
 
 		CompanyTestUtil.resetCompanyLocales(
 			PortalUtil.getDefaultCompanyId(),
 			new Locale[] {
-				LocaleUtil.CANADA_FRENCH, LocaleUtil.SPAIN, LocaleUtil.US
-			},
-			LocaleUtil.US
-		);
+				LocaleUtil.CANADA_FRENCH, LocaleUtil.SPAIN, LocaleUtil.US});
 
 		_nameMap = new HashMap<Locale, String>();
 
@@ -87,139 +83,7 @@ public class PortalImplLocalizedFriendlyURLTest {
 	@AfterClass
 	public static void tearDownClass() throws Exception {
 		CompanyTestUtil.resetCompanyLocales(
-			PortalUtil.getDefaultCompanyId(), _availableLocales,
-			_defaultLocale);
-	}
-
-	@Before
-	public void setUp() throws Exception {
-		_group = GroupTestUtil.addGroup();
-	}
-
-	@Test
-	public void testIncludeI18nPathCustomLocaleAlgorithm0() throws Exception {
-		int originalLocalePrependFriendlyURLStyle =
-			PropsValues.LOCALE_PREPEND_FRIENDLY_URL_STYLE;
-
-		try {
-			Layout layout = LayoutTestUtil.addLayout(
-				_group.getGroupId(), false, _nameMap, _friendlyURLMap);
-
-			PropsValues.LOCALE_PREPEND_FRIENDLY_URL_STYLE = 0;
-
-			assertLocalizedSiteLayoutFriendlyURL(
-				_group.getGroupId(), layout, "/inicio", LocaleUtil.SPAIN,
-				LocaleUtil.SPAIN, "/inicio", false);
-		}
-		finally {
-			PropsValues.LOCALE_PREPEND_FRIENDLY_URL_STYLE =
-				originalLocalePrependFriendlyURLStyle;
-		}
-	}
-
-	@Test
-	public void testIncludeI18nPathCustomLocaleAlgorithm1() throws Exception {
-		int originalLocalePrependFriendlyURLStyle =
-			PropsValues.LOCALE_PREPEND_FRIENDLY_URL_STYLE;
-
-		try {
-			Layout layout = LayoutTestUtil.addLayout(
-				_group.getGroupId(), false, _nameMap, _friendlyURLMap);
-
-			PropsValues.LOCALE_PREPEND_FRIENDLY_URL_STYLE = 1;
-
-			assertLocalizedSiteLayoutFriendlyURL(
-				_group.getGroupId(), layout, "/inicio", LocaleUtil.SPAIN,
-				LocaleUtil.SPAIN, "/inicio", true);
-		}
-		finally {
-			PropsValues.LOCALE_PREPEND_FRIENDLY_URL_STYLE =
-				originalLocalePrependFriendlyURLStyle;
-		}
-	}
-
-	@Test
-	public void testIncludeI18nPathCustomLocaleAlgorithm2() throws Exception {
-		int originalLocalePrependFriendlyURLStyle =
-			PropsValues.LOCALE_PREPEND_FRIENDLY_URL_STYLE;
-
-		try {
-			Layout layout = LayoutTestUtil.addLayout(
-				_group.getGroupId(), false, _nameMap, _friendlyURLMap);
-
-			PropsValues.LOCALE_PREPEND_FRIENDLY_URL_STYLE = 2;
-
-			assertLocalizedSiteLayoutFriendlyURL(
-				_group.getGroupId(), layout, "/inicio", LocaleUtil.SPAIN,
-				LocaleUtil.SPAIN, "/inicio", true);
-		}
-		finally {
-			PropsValues.LOCALE_PREPEND_FRIENDLY_URL_STYLE =
-				originalLocalePrependFriendlyURLStyle;
-		}
-	}
-
-	@Test
-	public void testIncludeI18nPathDefaultLocaleAlgorithm0() throws Exception {
-		int originalLocalePrependFriendlyURLStyle =
-			PropsValues.LOCALE_PREPEND_FRIENDLY_URL_STYLE;
-
-		try {
-			Layout layout = LayoutTestUtil.addLayout(
-				_group.getGroupId(), false, _nameMap, _friendlyURLMap);
-
-			PropsValues.LOCALE_PREPEND_FRIENDLY_URL_STYLE = 0;
-
-			assertLocalizedSiteLayoutFriendlyURL(
-				_group.getGroupId(), layout, "/home", LocaleUtil.US,
-				LocaleUtil.US, "/home", false);
-		}
-		finally {
-			PropsValues.LOCALE_PREPEND_FRIENDLY_URL_STYLE =
-				originalLocalePrependFriendlyURLStyle;
-		}
-	}
-
-	@Test
-	public void testIncludeI18nPathDefaultLocaleAlgorithm1() throws Exception {
-		int originalLocalePrependFriendlyURLStyle =
-			PropsValues.LOCALE_PREPEND_FRIENDLY_URL_STYLE;
-
-		try {
-			Layout layout = LayoutTestUtil.addLayout(
-				_group.getGroupId(), false, _nameMap, _friendlyURLMap);
-
-			PropsValues.LOCALE_PREPEND_FRIENDLY_URL_STYLE = 1;
-
-			assertLocalizedSiteLayoutFriendlyURL(
-				_group.getGroupId(), layout, "/home", LocaleUtil.US,
-				LocaleUtil.US, "/home", false);
-		}
-		finally {
-			PropsValues.LOCALE_PREPEND_FRIENDLY_URL_STYLE =
-				originalLocalePrependFriendlyURLStyle;
-		}
-	}
-
-	@Test
-	public void testIncludeI18nPathDefaultLocaleAlgorithm2() throws Exception {
-		int originalLocalePrependFriendlyURLStyle =
-			PropsValues.LOCALE_PREPEND_FRIENDLY_URL_STYLE;
-
-		try {
-			Layout layout = LayoutTestUtil.addLayout(
-				_group.getGroupId(), false, _nameMap, _friendlyURLMap);
-
-			PropsValues.LOCALE_PREPEND_FRIENDLY_URL_STYLE = 2;
-
-			assertLocalizedSiteLayoutFriendlyURL(
-				_group.getGroupId(), layout, "/home", LocaleUtil.US,
-				LocaleUtil.US, "/home", true);
-		}
-		finally {
-			PropsValues.LOCALE_PREPEND_FRIENDLY_URL_STYLE =
-				originalLocalePrependFriendlyURLStyle;
-		}
+			PortalUtil.getDefaultCompanyId(), _availableLocales);
 	}
 
 	@Test
@@ -559,7 +423,7 @@ public class PortalImplLocalizedFriendlyURLTest {
 	protected void assertLocalizedSiteLayoutFriendlyURL(
 			long groupId, Layout layout, String layoutFriendlyURL,
 			Locale locale, Locale originalLocale,
-			String expectedLayoutFriendlyURL, boolean includeI18nPath)
+			String expectedLayoutFriendlyURL)
 		throws Exception {
 
 		MockHttpServletRequest mockHttpServletRequest =
@@ -579,14 +443,10 @@ public class PortalImplLocalizedFriendlyURLTest {
 		mockHttpServletRequest.setRequestURI(
 			groupServletMapping + group.getFriendlyURL() + layoutFriendlyURL);
 
-		StringBundler sb = new StringBundler(includeI18nPath ? 5 : 3);
+		StringBundler sb = new StringBundler();
 
-		if (includeI18nPath) {
-			sb.append(StringPool.SLASH);
-			sb.append(
-				PortalUtil.getI18nPathLanguageId(locale, StringPool.BLANK));
-		}
-
+		sb.append(StringPool.SLASH);
+		sb.append(PortalUtil.getI18nPathLanguageId(locale, StringPool.BLANK));
 		sb.append(groupServletMapping);
 		sb.append(group.getFriendlyURL());
 		sb.append(expectedLayoutFriendlyURL);
@@ -600,7 +460,7 @@ public class PortalImplLocalizedFriendlyURLTest {
 	protected void assertLocalizedVirtualLayoutFriendlyURL(
 			long userGroupGroupId, Layout layout, String layoutFriendlyURL,
 			Locale locale, Locale originalLocale,
-			String expectedLayoutFriendlyURL, boolean includeI18nPath)
+			String expectedLayoutFriendlyURL)
 		throws Exception {
 
 		MockHttpServletRequest mockHttpServletRequest =
@@ -641,14 +501,10 @@ public class PortalImplLocalizedFriendlyURLTest {
 
 		mockHttpServletRequest.setRequestURI(sb.toString());
 
-		sb = new StringBundler(includeI18nPath ? 7 : 5);
+		sb = new StringBundler(7);
 
-		if (includeI18nPath) {
-			sb.append(StringPool.SLASH);
-			sb.append(
-				PortalUtil.getI18nPathLanguageId(locale, StringPool.BLANK));
-		}
-
+		sb.append(StringPool.SLASH);
+		sb.append(PortalUtil.getI18nPathLanguageId(locale, StringPool.BLANK));
 		sb.append(groupServletMapping);
 		sb.append(groupUser.getFriendlyURL());
 		sb.append(VirtualLayoutConstants.CANONICAL_URL_SEPARATOR);
@@ -664,22 +520,26 @@ public class PortalImplLocalizedFriendlyURLTest {
 	protected void testLocalizedSiteLayoutFriendlyURL(boolean privateLayout)
 		throws Exception {
 
+		Group group = GroupTestUtil.addGroup();
+
 		Layout layout = LayoutTestUtil.addLayout(
-			_group.getGroupId(), privateLayout, _nameMap, _friendlyURLMap);
+			group.getGroupId(), privateLayout, _nameMap, _friendlyURLMap);
 
 		assertLocalizedSiteLayoutFriendlyURL(
-			_group.getGroupId(), layout, "/inicio", LocaleUtil.SPAIN,
-			LocaleUtil.SPAIN, "/inicio", true);
+			group.getGroupId(), layout, "/inicio", LocaleUtil.SPAIN,
+			LocaleUtil.SPAIN, "/inicio");
 	}
 
 	protected void testLocalizedVirtualLayoutFriendlyURL(boolean privateLayout)
 		throws Exception {
 
-		ServiceContext serviceContext =
-			ServiceContextTestUtil.getServiceContext(_group.getGroupId());
+		Group group = GroupTestUtil.addGroup();
+
+		ServiceContext serviceContext = ServiceTestUtil.getServiceContext(
+			group.getGroupId());
 
 		UserGroup userGroup = UserGroupTestUtil.addUserGroup(
-			_group.getGroupId());
+			group.getGroupId());
 
 		Group userGroupGroup = userGroup.getGroup();
 
@@ -692,30 +552,34 @@ public class PortalImplLocalizedFriendlyURLTest {
 
 		assertLocalizedVirtualLayoutFriendlyURL(
 			userGroupGroup.getGroupId(), layout, "/inicio", LocaleUtil.SPAIN,
-			LocaleUtil.SPAIN, "/inicio", true);
+			LocaleUtil.SPAIN, "/inicio");
 	}
 
 	protected void testNonexistentLocalizedSiteLayoutFriendlyURL(
 			boolean privateLayout)
 		throws Exception {
 
+		Group group = GroupTestUtil.addGroup();
+
 		Layout layout = LayoutTestUtil.addLayout(
-			_group.getGroupId(), privateLayout, _nameMap, _friendlyURLMap);
+			group.getGroupId(), privateLayout, _nameMap, _friendlyURLMap);
 
 		assertLocalizedSiteLayoutFriendlyURL(
-			_group.getGroupId(), layout, "/home", LocaleUtil.GERMANY,
-			LocaleUtil.US, "/home", true);
+			group.getGroupId(), layout, "/home", LocaleUtil.GERMANY,
+			LocaleUtil.US, "/home");
 	}
 
 	protected void testNonexistentLocalizedVirtualLayoutFriendlyURL(
 			boolean privateLayout)
 		throws Exception {
 
-		ServiceContext serviceContext =
-			ServiceContextTestUtil.getServiceContext(_group.getGroupId());
+		Group group = GroupTestUtil.addGroup();
+
+		ServiceContext serviceContext = ServiceTestUtil.getServiceContext(
+			group.getGroupId());
 
 		UserGroup userGroup = UserGroupTestUtil.addUserGroup(
-			_group.getGroupId());
+			group.getGroupId());
 
 		Group userGroupGroup = userGroup.getGroup();
 
@@ -728,30 +592,34 @@ public class PortalImplLocalizedFriendlyURLTest {
 
 		assertLocalizedVirtualLayoutFriendlyURL(
 			userGroupGroup.getGroupId(), layout, "/home", LocaleUtil.GERMANY,
-			LocaleUtil.US, "/home", true);
+			LocaleUtil.US, "/home");
 	}
 
 	protected void testNonexistentWronglyLocalizedSiteLayoutFriendlyURL(
 			boolean privateLayout)
 		throws Exception {
 
+		Group group = GroupTestUtil.addGroup();
+
 		Layout layout = LayoutTestUtil.addLayout(
-			_group.getGroupId(), privateLayout, _nameMap, _friendlyURLMap);
+			group.getGroupId(), privateLayout, _nameMap, _friendlyURLMap);
 
 		assertLocalizedSiteLayoutFriendlyURL(
-			_group.getGroupId(), layout, "/inicio", LocaleUtil.GERMANY,
-			LocaleUtil.SPAIN, "/home", true);
+			group.getGroupId(), layout, "/inicio", LocaleUtil.GERMANY,
+			LocaleUtil.SPAIN, "/home");
 	}
 
 	protected void testNonexistentWronglyLocalizedVirtualLayoutFriendlyURL(
 			boolean privateLayout)
 		throws Exception {
 
-		ServiceContext serviceContext =
-			ServiceContextTestUtil.getServiceContext(_group.getGroupId());
+		Group group = GroupTestUtil.addGroup();
+
+		ServiceContext serviceContext = ServiceTestUtil.getServiceContext(
+			group.getGroupId());
 
 		UserGroup userGroup = UserGroupTestUtil.addUserGroup(
-			_group.getGroupId());
+			group.getGroupId());
 
 		Group userGroupGroup = userGroup.getGroup();
 
@@ -764,7 +632,7 @@ public class PortalImplLocalizedFriendlyURLTest {
 
 		assertLocalizedVirtualLayoutFriendlyURL(
 			userGroupGroup.getGroupId(), layout, "/inicio", LocaleUtil.US,
-			LocaleUtil.SPAIN, "/home", true);
+			LocaleUtil.SPAIN, "/home");
 	}
 
 	protected void testWronglyLocalizedSiteLayoutFriendlyURL(
@@ -772,8 +640,10 @@ public class PortalImplLocalizedFriendlyURLTest {
 			String expectedLayoutFriendlyURL)
 		throws Exception {
 
+		Group group = GroupTestUtil.addGroup();
+
 		Layout layout = LayoutTestUtil.addLayout(
-			_group.getGroupId(), privateLayout, _nameMap, _friendlyURLMap);
+			group.getGroupId(), privateLayout, _nameMap, _friendlyURLMap);
 
 		String requestedFriendlyURL = "/inicio";
 
@@ -784,8 +654,8 @@ public class PortalImplLocalizedFriendlyURLTest {
 		}
 
 		assertLocalizedSiteLayoutFriendlyURL(
-			_group.getGroupId(), layout, requestedFriendlyURL, locale,
-			LocaleUtil.SPAIN, expectedLayoutFriendlyURL, true);
+			group.getGroupId(), layout, requestedFriendlyURL, locale,
+			LocaleUtil.SPAIN, expectedLayoutFriendlyURL);
 	}
 
 	protected void testWronglyLocalizedVirtualLayoutFriendlyURL(
@@ -793,11 +663,13 @@ public class PortalImplLocalizedFriendlyURLTest {
 			String expectedLayoutFriendlyURL)
 		throws Exception {
 
-		ServiceContext serviceContext =
-			ServiceContextTestUtil.getServiceContext(_group.getGroupId());
+		Group group = GroupTestUtil.addGroup();
+
+		ServiceContext serviceContext = ServiceTestUtil.getServiceContext(
+			group.getGroupId());
 
 		UserGroup userGroup = UserGroupTestUtil.addUserGroup(
-			_group.getGroupId());
+			group.getGroupId());
 
 		Group userGroupGroup = userGroup.getGroup();
 
@@ -818,7 +690,7 @@ public class PortalImplLocalizedFriendlyURLTest {
 
 		assertLocalizedVirtualLayoutFriendlyURL(
 			userGroupGroup.getGroupId(), layout, requestedFriendlyURL, locale,
-			LocaleUtil.SPAIN, expectedLayoutFriendlyURL, true);
+			LocaleUtil.SPAIN, expectedLayoutFriendlyURL);
 	}
 
 	private static final String _PRIVATE_GROUP_SERVLET_MAPPING =
@@ -828,11 +700,7 @@ public class PortalImplLocalizedFriendlyURLTest {
 		PropsValues.LAYOUT_FRIENDLY_URL_PUBLIC_SERVLET_MAPPING;
 
 	private static Locale[] _availableLocales;
-	private static Locale _defaultLocale;
 	private static Map<Locale, String> _friendlyURLMap;
 	private static Map<Locale, String> _nameMap;
-
-	@DeleteAfterTestRun
-	private Group _group;
 
 }

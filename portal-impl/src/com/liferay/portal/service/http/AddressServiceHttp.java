@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -13,8 +13,6 @@
  */
 
 package com.liferay.portal.service.http;
-
-import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -51,7 +49,6 @@ import com.liferay.portal.service.AddressServiceUtil;
  * @see com.liferay.portal.service.AddressServiceUtil
  * @generated
  */
-@ProviderType
 public class AddressServiceHttp {
 	public static com.liferay.portal.model.Address addAddress(
 		HttpPrincipal httpPrincipal, java.lang.String className, long classPK,
@@ -59,7 +56,8 @@ public class AddressServiceHttp {
 		java.lang.String street3, java.lang.String city, java.lang.String zip,
 		long regionId, long countryId, int typeId, boolean mailing,
 		boolean primary)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(AddressServiceUtil.class,
 					"addAddress", _addAddressParameterTypes0);
@@ -76,6 +74,10 @@ public class AddressServiceHttp {
 			catch (Exception e) {
 				if (e instanceof com.liferay.portal.kernel.exception.PortalException) {
 					throw (com.liferay.portal.kernel.exception.PortalException)e;
+				}
+
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
 				}
 
 				throw new com.liferay.portal.kernel.exception.SystemException(e);
@@ -97,7 +99,8 @@ public class AddressServiceHttp {
 		long regionId, long countryId, int typeId, boolean mailing,
 		boolean primary,
 		com.liferay.portal.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(AddressServiceUtil.class,
 					"addAddress", _addAddressParameterTypes1);
@@ -117,6 +120,10 @@ public class AddressServiceHttp {
 					throw (com.liferay.portal.kernel.exception.PortalException)e;
 				}
 
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
+				}
+
 				throw new com.liferay.portal.kernel.exception.SystemException(e);
 			}
 
@@ -130,7 +137,8 @@ public class AddressServiceHttp {
 	}
 
 	public static void deleteAddress(HttpPrincipal httpPrincipal, long addressId)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(AddressServiceUtil.class,
 					"deleteAddress", _deleteAddressParameterTypes2);
@@ -145,6 +153,10 @@ public class AddressServiceHttp {
 					throw (com.liferay.portal.kernel.exception.PortalException)e;
 				}
 
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
+				}
+
 				throw new com.liferay.portal.kernel.exception.SystemException(e);
 			}
 		}
@@ -157,7 +169,8 @@ public class AddressServiceHttp {
 
 	public static com.liferay.portal.model.Address getAddress(
 		HttpPrincipal httpPrincipal, long addressId)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(AddressServiceUtil.class,
 					"getAddress", _getAddressParameterTypes3);
@@ -174,6 +187,10 @@ public class AddressServiceHttp {
 					throw (com.liferay.portal.kernel.exception.PortalException)e;
 				}
 
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
+				}
+
 				throw new com.liferay.portal.kernel.exception.SystemException(e);
 			}
 
@@ -188,7 +205,8 @@ public class AddressServiceHttp {
 
 	public static java.util.List<com.liferay.portal.model.Address> getAddresses(
 		HttpPrincipal httpPrincipal, java.lang.String className, long classPK)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(AddressServiceUtil.class,
 					"getAddresses", _getAddressesParameterTypes4);
@@ -204,6 +222,10 @@ public class AddressServiceHttp {
 			catch (Exception e) {
 				if (e instanceof com.liferay.portal.kernel.exception.PortalException) {
 					throw (com.liferay.portal.kernel.exception.PortalException)e;
+				}
+
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
 				}
 
 				throw new com.liferay.portal.kernel.exception.SystemException(e);
@@ -223,7 +245,8 @@ public class AddressServiceHttp {
 		java.lang.String street2, java.lang.String street3,
 		java.lang.String city, java.lang.String zip, long regionId,
 		long countryId, int typeId, boolean mailing, boolean primary)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(AddressServiceUtil.class,
 					"updateAddress", _updateAddressParameterTypes5);
@@ -240,6 +263,10 @@ public class AddressServiceHttp {
 			catch (Exception e) {
 				if (e instanceof com.liferay.portal.kernel.exception.PortalException) {
 					throw (com.liferay.portal.kernel.exception.PortalException)e;
+				}
+
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
 				}
 
 				throw new com.liferay.portal.kernel.exception.SystemException(e);

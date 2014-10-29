@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -70,7 +70,6 @@ public class PasswordPolicyServiceSoap {
 	int, int, int, int, String, boolean, int, boolean, long,
 	long, int, boolean, int, long, long, long, ServiceContext)}
 	*/
-	@Deprecated
 	public static com.liferay.portal.model.PasswordPolicySoap addPasswordPolicy(
 		java.lang.String name, java.lang.String description,
 		boolean changeable, boolean changeRequired, long minAge,
@@ -148,7 +147,6 @@ public class PasswordPolicyServiceSoap {
 	long, long, int, boolean, int, long, long, long,
 	ServiceContext)}
 	*/
-	@Deprecated
 	public static com.liferay.portal.model.PasswordPolicySoap updatePasswordPolicy(
 		long passwordPolicyId, java.lang.String name,
 		java.lang.String description, boolean changeable,

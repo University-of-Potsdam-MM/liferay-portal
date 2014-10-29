@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -35,9 +35,9 @@ import com.liferay.portal.security.ac.AccessControlled;
  * @see com.liferay.portal.service.impl.PortalServiceImpl
  * @generated
  */
+@ProviderType
 @AccessControlled
 @JSONWebService
-@ProviderType
 @Transactional(isolation = Isolation.PORTAL, rollbackFor =  {
 	PortalException.class, SystemException.class})
 public interface PortalService extends BaseService {
@@ -46,8 +46,6 @@ public interface PortalService extends BaseService {
 	 *
 	 * Never modify or reference this interface directly. Always use {@link PortalServiceUtil} to access the portal remote service. Add custom service methods to {@link com.liferay.portal.service.impl.PortalServiceImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public java.lang.String getAutoDeployDirectory();
 
 	/**
 	* Returns the Spring bean ID for this bean.
@@ -56,10 +54,6 @@ public interface PortalService extends BaseService {
 	*/
 	public java.lang.String getBeanIdentifier();
 
-	@com.liferay.portal.kernel.jsonwebservice.JSONWebService
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public int getBuildNumber();
-
 	/**
 	* Sets the Spring bean ID for this bean.
 	*
@@ -67,28 +61,42 @@ public interface PortalService extends BaseService {
 	*/
 	public void setBeanIdentifier(java.lang.String beanIdentifier);
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public java.lang.String getAutoDeployDirectory()
+		throws com.liferay.portal.kernel.exception.SystemException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getBuildNumber();
+
+	public void testAddClassName_Rollback(java.lang.String classNameValue)
+		throws com.liferay.portal.kernel.exception.SystemException;
+
+	public void testAddClassName_Success(java.lang.String classNameValue)
+		throws com.liferay.portal.kernel.exception.SystemException;
+
 	public void testAddClassNameAndTestTransactionPortletBar_PortalRollback(
-		java.lang.String transactionPortletBarText);
+		java.lang.String transactionPortletBarText)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	public void testAddClassNameAndTestTransactionPortletBar_PortletRollback(
-		java.lang.String transactionPortletBarText);
+		java.lang.String transactionPortletBarText)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	public void testAddClassNameAndTestTransactionPortletBar_Success(
-		java.lang.String transactionPortletBarText);
+		java.lang.String transactionPortletBarText)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
-	public void testAddClassName_Rollback(java.lang.String classNameValue);
-
-	public void testAddClassName_Success(java.lang.String classNameValue);
-
-	@com.liferay.portal.kernel.transaction.Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public void testAutoSyncHibernateSessionStateOnTxCreation();
+	public void testAutoSyncHibernateSessionStateOnTxCreation()
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	public void testDeleteClassName()
-		throws com.liferay.portal.kernel.exception.PortalException;
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	public int testGetBuildNumber();
 
 	public void testGetUserId();
 
-	public boolean testHasClassName();
+	public boolean testHasClassName()
+		throws com.liferay.portal.kernel.exception.SystemException;
 }

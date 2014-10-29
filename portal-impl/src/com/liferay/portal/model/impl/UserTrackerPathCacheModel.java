@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,12 +14,9 @@
 
 package com.liferay.portal.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.CacheModel;
-import com.liferay.portal.model.MVCCModel;
 import com.liferay.portal.model.UserTrackerPath;
 
 import java.io.Externalizable;
@@ -36,26 +33,13 @@ import java.util.Date;
  * @see UserTrackerPath
  * @generated
  */
-@ProviderType
 public class UserTrackerPathCacheModel implements CacheModel<UserTrackerPath>,
-	Externalizable, MVCCModel {
-	@Override
-	public long getMvccVersion() {
-		return mvccVersion;
-	}
-
-	@Override
-	public void setMvccVersion(long mvccVersion) {
-		this.mvccVersion = mvccVersion;
-	}
-
+	Externalizable {
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(11);
+		StringBundler sb = new StringBundler(9);
 
-		sb.append("{mvccVersion=");
-		sb.append(mvccVersion);
-		sb.append(", userTrackerPathId=");
+		sb.append("{userTrackerPathId=");
 		sb.append(userTrackerPathId);
 		sb.append(", userTrackerId=");
 		sb.append(userTrackerId);
@@ -72,7 +56,6 @@ public class UserTrackerPathCacheModel implements CacheModel<UserTrackerPath>,
 	public UserTrackerPath toEntityModel() {
 		UserTrackerPathImpl userTrackerPathImpl = new UserTrackerPathImpl();
 
-		userTrackerPathImpl.setMvccVersion(mvccVersion);
 		userTrackerPathImpl.setUserTrackerPathId(userTrackerPathId);
 		userTrackerPathImpl.setUserTrackerId(userTrackerId);
 
@@ -97,7 +80,6 @@ public class UserTrackerPathCacheModel implements CacheModel<UserTrackerPath>,
 
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
-		mvccVersion = objectInput.readLong();
 		userTrackerPathId = objectInput.readLong();
 		userTrackerId = objectInput.readLong();
 		path = objectInput.readUTF();
@@ -107,7 +89,6 @@ public class UserTrackerPathCacheModel implements CacheModel<UserTrackerPath>,
 	@Override
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
-		objectOutput.writeLong(mvccVersion);
 		objectOutput.writeLong(userTrackerPathId);
 		objectOutput.writeLong(userTrackerId);
 
@@ -121,7 +102,6 @@ public class UserTrackerPathCacheModel implements CacheModel<UserTrackerPath>,
 		objectOutput.writeLong(pathDate);
 	}
 
-	public long mvccVersion;
 	public long userTrackerPathId;
 	public long userTrackerId;
 	public String path;

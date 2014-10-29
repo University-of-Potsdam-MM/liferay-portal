@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portal.security.membershippolicy;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.model.UserGroup;
 
 import java.io.Serializable;
@@ -29,7 +30,7 @@ public class UserGroupMembershipPolicyUtil {
 
 	public static void checkMembership(
 			long[] userIds, long[] addUserGroupIds, long[] removeUserGroupIds)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		UserGroupMembershipPolicy userGroupMembershipPolicy =
 			UserGroupMembershipPolicyFactoryUtil.getUserGroupMembershipPolicy();
@@ -39,7 +40,7 @@ public class UserGroupMembershipPolicyUtil {
 	}
 
 	public static boolean isMembershipAllowed(long userId, long userGroupId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		UserGroupMembershipPolicy userGroupMembershipPolicy =
 			UserGroupMembershipPolicyFactoryUtil.getUserGroupMembershipPolicy();
@@ -49,7 +50,7 @@ public class UserGroupMembershipPolicyUtil {
 	}
 
 	public static boolean isMembershipRequired(long userId, long userGroupId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		UserGroupMembershipPolicy userGroupMembershipPolicy =
 			UserGroupMembershipPolicyFactoryUtil.getUserGroupMembershipPolicy();
@@ -60,7 +61,7 @@ public class UserGroupMembershipPolicyUtil {
 
 	public static void propagateMembership(
 			long[] userIds, long[] addUserGroupIds, long[] removeUserGroupIds)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		UserGroupMembershipPolicy userGroupMembershipPolicy =
 			UserGroupMembershipPolicyFactoryUtil.getUserGroupMembershipPolicy();
@@ -69,7 +70,7 @@ public class UserGroupMembershipPolicyUtil {
 			userIds, addUserGroupIds, removeUserGroupIds);
 	}
 
-	public static void verifyPolicy() throws PortalException {
+	public static void verifyPolicy() throws PortalException, SystemException {
 		UserGroupMembershipPolicy userGroupMembershipPolicy =
 			UserGroupMembershipPolicyFactoryUtil.getUserGroupMembershipPolicy();
 
@@ -77,7 +78,7 @@ public class UserGroupMembershipPolicyUtil {
 	}
 
 	public static void verifyPolicy(UserGroup userGroup)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		UserGroupMembershipPolicy userGroupMembershipPolicy =
 			UserGroupMembershipPolicyFactoryUtil.getUserGroupMembershipPolicy();
@@ -88,7 +89,7 @@ public class UserGroupMembershipPolicyUtil {
 	public static void verifyPolicy(
 			UserGroup userGroup, UserGroup oldUserGroup,
 			Map<String, Serializable> oldExpandoAttributes)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		UserGroupMembershipPolicy userGroupMembershipPolicy =
 			UserGroupMembershipPolicyFactoryUtil.getUserGroupMembershipPolicy();

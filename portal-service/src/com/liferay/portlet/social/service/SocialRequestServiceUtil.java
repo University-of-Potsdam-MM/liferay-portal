@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -62,7 +62,8 @@ public class SocialRequestServiceUtil {
 	public static com.liferay.portlet.social.model.SocialRequest updateRequest(
 		long requestId, int status,
 		com.liferay.portal.theme.ThemeDisplay themeDisplay)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getService().updateRequest(requestId, status, themeDisplay);
 	}
 
@@ -80,7 +81,6 @@ public class SocialRequestServiceUtil {
 	/**
 	 * @deprecated As of 6.2.0
 	 */
-	@Deprecated
 	public void setService(SocialRequestService service) {
 	}
 

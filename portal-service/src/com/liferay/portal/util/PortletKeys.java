@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -19,6 +19,8 @@ package com.liferay.portal.util;
  */
 public class PortletKeys {
 
+	public static final String ACTIVITIES = "116";
+
 	public static final String ADMIN = "9";
 
 	public static final String ADMIN_INSTANCE = "135";
@@ -32,8 +34,6 @@ public class PortletKeys {
 	public static final String ANNOUNCEMENTS = "84";
 
 	public static final String ASSET_BROWSER = "172";
-
-	public static final String ASSET_CATEGORIES_ADMIN = "147";
 
 	public static final String ASSET_CATEGORIES_NAVIGATION = "122";
 
@@ -51,19 +51,19 @@ public class PortletKeys {
 
 	public static final String BOOKMARKS = "28";
 
-	public static final String BOOKMARKS_ADMIN = "198";
-
 	public static final String BREADCRUMB = "73";
 
 	public static final String CALENDAR = "8";
 
 	public static final String CHAT = "1_WAR_chatportlet";
 
-	public static final String COMMENTS = "196";
-
 	public static final String CONTROL_PANEL_HOME = "190";
 
 	public static final String CONTROL_PANEL_MENU = "160";
+
+	public static final String CURRENCY_CONVERTER = "16";
+
+	public static final String DICTIONARY = "23";
 
 	public static final String DIRECTORY = "11";
 
@@ -71,11 +71,7 @@ public class PortletKeys {
 
 	public static final String DOCUMENT_LIBRARY = "20";
 
-	public static final String DOCUMENT_LIBRARY_ADMIN = "199";
-
 	public static final String DOCUMENT_LIBRARY_DISPLAY = "110";
-
-	public static final String DOCUMENT_SELECTOR = "200";
 
 	public static final String DYNAMIC_DATA_LIST_DISPLAY = "169";
 
@@ -97,7 +93,9 @@ public class PortletKeys {
 
 	public static final String HIGHEST_RATED_ASSETS = "194";
 
-	public static final String IMAGE_UPLOADER = "195";
+	public static final String IFRAME = "48";
+
+	public static final String INVITATION = "100";
 
 	public static final String JOURNAL = "15";
 
@@ -162,6 +160,10 @@ public class PortletKeys {
 
 	public static final String PLUGINS_ADMIN = "132";
 
+	public static final String POLLS = "25";
+
+	public static final String POLLS_DISPLAY = "59";
+
 	public static final String PORTAL = "90";
 
 	public static final String PORTAL_SETTINGS = "130";
@@ -220,8 +222,6 @@ public class PortletKeys {
 
 	public static final String SITE_SETTINGS = "165";
 
-	public static final String SITE_TEAMS_ADMIN = "191";
-
 	public static final String SITE_TEMPLATE_SETTINGS = "192";
 
 	public static final String SITES_ADMIN = "134";
@@ -241,7 +241,6 @@ public class PortletKeys {
 	/**
 	 * @deprecated As of 6.2.0, replaced by {@link #ASSET_CATEGORIES_NAVIGATION}
 	 */
-	@Deprecated
 	public static final String TAGS_CATEGORIES_NAVIGATION =
 		ASSET_CATEGORIES_NAVIGATION;
 
@@ -252,7 +251,6 @@ public class PortletKeys {
 	/**
 	 * @deprecated As of 6.2.0, replaced by {@link #ASSET_TAGS_NAVIGATION}
 	 */
-	@Deprecated
 	public static final String TAGS_ENTRIES_NAVIGATION = ASSET_TAGS_NAVIGATION;
 
 	public static final String TRANSLATOR = "26";

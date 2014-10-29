@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -26,6 +26,7 @@ import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Time;
+import com.liferay.portal.kernel.util.UniqueList;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.xml.Namespace;
 import com.liferay.portal.kernel.xml.SAXReaderUtil;
@@ -36,23 +37,14 @@ import com.liferay.portal.service.GroupLocalServiceUtil;
 import com.liferay.portal.service.UserLocalServiceUtil;
 import com.liferay.portal.util.comparator.GroupFriendlyURLComparator;
 import com.liferay.portlet.documentlibrary.util.DL;
-import com.liferay.registry.Registry;
-import com.liferay.registry.RegistryUtil;
-import com.liferay.registry.ServiceReference;
-import com.liferay.registry.ServiceRegistration;
-import com.liferay.registry.ServiceTracker;
-import com.liferay.registry.ServiceTrackerCustomizer;
-import com.liferay.registry.collections.ServiceRegistrationMap;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -192,15 +184,15 @@ public class WebDAVUtil {
 
 		// Communities
 
-		Set<Group> groups = new HashSet<Group>();
+		List<Group> groups = new UniqueList<Group>();
 
 		LinkedHashMap<String, Object> params =
 			new LinkedHashMap<String, Object>();
 
 		params.put("usersGroups", user.getUserId());
 
-		OrderByComparator<Group> orderByComparator =
-			new GroupFriendlyURLComparator(true);
+		OrderByComparator orderByComparator = new GroupFriendlyURLComparator(
+			true);
 
 		groups.addAll(
 			GroupLocalServiceUtil.search(
@@ -219,11 +211,9 @@ public class WebDAVUtil {
 			groups.add(user.getGroup());
 		}
 
-		List<Group> groupsList = new ArrayList<Group>(groups);
+		Collections.sort(groups, orderByComparator);
 
-		Collections.sort(groupsList, orderByComparator);
-
-		return groupsList;
+		return groups;
 	}
 
 	public static WebDAVUtil getInstance() {
@@ -351,29 +341,16 @@ public class WebDAVUtil {
 	}
 
 	private WebDAVUtil() {
-		Registry registry = RegistryUtil.getRegistry();
-
-		_serviceTracker = registry.trackServices(
-			WebDAVStorage.class, new WebDAVStorageServiceTrackerCustomizer());
-
-		_serviceTracker.open();
+		_storageMap = new TreeMap<String, WebDAVStorage>();
 	}
 
 	private void _addStorage(WebDAVStorage storage) {
-		Registry registry = RegistryUtil.getRegistry();
-
-		ServiceRegistration<WebDAVStorage> serviceRegistration =
-			registry.registerService(WebDAVStorage.class, storage);
-
-		_serviceRegistrations.put(storage, serviceRegistration);
+		_storageMap.put(storage.getToken(), storage);
 	}
 
 	private void _deleteStorage(WebDAVStorage storage) {
-		ServiceRegistration<WebDAVStorage> serviceRegistration =
-			_serviceRegistrations.remove(storage);
-
-		if (serviceRegistration != null) {
-			serviceRegistration.unregister();
+		if (storage != null) {
+			_storageMap.remove(storage.getToken());
 		}
 	}
 
@@ -402,50 +379,6 @@ public class WebDAVUtil {
 
 	private static WebDAVUtil _instance = new WebDAVUtil();
 
-	private ServiceRegistrationMap<WebDAVStorage> _serviceRegistrations =
-		new ServiceRegistrationMap<WebDAVStorage>();
-	private ServiceTracker<WebDAVStorage, WebDAVStorage> _serviceTracker;
-	private Map<String, WebDAVStorage> _storageMap =
-		new ConcurrentSkipListMap<String, WebDAVStorage>();
-
-	private class WebDAVStorageServiceTrackerCustomizer
-		implements ServiceTrackerCustomizer<WebDAVStorage, WebDAVStorage> {
-
-		@Override
-		public WebDAVStorage addingService(
-			ServiceReference<WebDAVStorage> serviceReference) {
-
-			Registry registry = RegistryUtil.getRegistry();
-
-			WebDAVStorage webDAVStorage = registry.getService(serviceReference);
-
-			if (webDAVStorage.getToken() == null) {
-				return null;
-			}
-
-			_storageMap.put(webDAVStorage.getToken(), webDAVStorage);
-
-			return webDAVStorage;
-		}
-
-		@Override
-		public void modifiedService(
-			ServiceReference<WebDAVStorage> serviceReference,
-			WebDAVStorage webDAVStorage) {
-		}
-
-		@Override
-		public void removedService(
-			ServiceReference<WebDAVStorage> serviceReference,
-			WebDAVStorage webDAVStorage) {
-
-			Registry registry = RegistryUtil.getRegistry();
-
-			registry.ungetService(serviceReference);
-
-			_storageMap.remove(webDAVStorage.getToken());
-		}
-
-	}
+	private Map<String, WebDAVStorage> _storageMap;
 
 }

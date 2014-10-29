@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -49,24 +49,21 @@ import javax.xml.namespace.QName;
 public class PortletConfigImpl implements LiferayPortletConfig {
 
 	public PortletConfigImpl(Portlet portlet, PortletContext portletContext) {
+		_portletApp = portlet.getPortletApp();
 		_portlet = portlet;
+		_portletName = portlet.getRootPortletId();
+
+		int pos = _portletName.indexOf(PortletConstants.WAR_SEPARATOR);
+
+		if (pos != -1) {
+			_portletName = _portletName.substring(0, pos);
+		}
+
 		_portletContext = portletContext;
+		_resourceBundles = new ConcurrentHashMap<String, ResourceBundle>();
 
 		_copyRequestParameters = GetterUtil.getBoolean(
 			getInitParameter("copy-request-parameters"));
-		_portletApp = portlet.getPortletApp();
-
-		String portletName = portlet.getRootPortletId();
-
-		int pos = portletName.indexOf(PortletConstants.WAR_SEPARATOR);
-
-		if (pos != -1) {
-			portletName = portletName.substring(0, pos);
-		}
-
-		_portletName = portletName;
-
-		_resourceBundles = new ConcurrentHashMap<String, ResourceBundle>();
 	}
 
 	@Override
@@ -231,11 +228,11 @@ public class PortletConfigImpl implements LiferayPortletConfig {
 		return javaxQNames;
 	}
 
-	private final boolean _copyRequestParameters;
-	private final Portlet _portlet;
-	private final PortletApp _portletApp;
-	private final PortletContext _portletContext;
-	private final String _portletName;
-	private final Map<String, ResourceBundle> _resourceBundles;
+	private boolean _copyRequestParameters;
+	private Portlet _portlet;
+	private PortletApp _portletApp;
+	private PortletContext _portletContext;
+	private String _portletName;
+	private Map<String, ResourceBundle> _resourceBundles;
 
 }

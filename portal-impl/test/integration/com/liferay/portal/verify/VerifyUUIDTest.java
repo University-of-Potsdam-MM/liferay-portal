@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,10 +15,8 @@
 package com.liferay.portal.verify;
 
 import com.liferay.portal.kernel.test.ExecutionTestListeners;
-import com.liferay.portal.test.listeners.MainServletExecutionTestListener;
-import com.liferay.portal.test.runners.LiferayIntegrationJUnitTestRunner;
-import com.liferay.portal.verify.model.LayoutVerifiableModel;
-import com.liferay.portal.verify.model.VerifiableUUIDModel;
+import com.liferay.portal.test.LiferayIntegrationJUnitTestRunner;
+import com.liferay.portal.test.MainServletExecutionTestListener;
 
 import java.sql.SQLException;
 
@@ -34,50 +32,30 @@ public class VerifyUUIDTest extends BaseVerifyTestCase {
 
 	@Test
 	public void testVerifyModel() throws Exception {
-		VerifyUUID.verifyUUID(new LayoutVerifiableModel());
+		testVerifyModel("Layout", "plid");
 	}
 
 	@Test(expected = SQLException.class)
 	public void testVerifyModelWithUnknownPKColumnName() throws Exception {
-		VerifyUUID.verifyUUID(
-			new VerifiableUUIDModel() {
-
-				@Override
-				public String getPrimaryKeyColumnName() {
-					return _UNKNOWN;
-				}
-
-				@Override
-				public String getTableName() {
-					return "Layout";
-				}
-
-			});
+		testVerifyModel("Layout", _UNKNOWN);
 	}
 
 	@Test(expected = SQLException.class)
 	public void testVerifyUnknownModelWithUnknownPKColumnName()
 		throws Exception {
 
-		VerifyUUID.verifyUUID(
-			new VerifiableUUIDModel() {
-
-				@Override
-				public String getPrimaryKeyColumnName() {
-					return _UNKNOWN;
-				}
-
-				@Override
-				public String getTableName() {
-					return _UNKNOWN;
-				}
-
-			});
+		testVerifyModel(_UNKNOWN, _UNKNOWN);
 	}
 
 	@Override
 	protected VerifyProcess getVerifyProcess() {
 		return new VerifyUUID();
+	}
+
+	protected void testVerifyModel(String model, String pkColumnName)
+		throws Exception {
+
+		VerifyUUID.verifyModel(model, pkColumnName);
 	}
 
 	private static final String _UNKNOWN = "Unknown";

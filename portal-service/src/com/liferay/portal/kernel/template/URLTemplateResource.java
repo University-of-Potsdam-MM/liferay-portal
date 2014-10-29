@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -20,7 +20,6 @@ import com.liferay.portal.kernel.util.Validator;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
@@ -112,9 +111,7 @@ public class URLTemplateResource implements TemplateResource {
 		finally {
 			if (urlConnection != null) {
 				try {
-					InputStream inputStream = urlConnection.getInputStream();
-
-					inputStream.close();
+					urlConnection.getInputStream().close();
 				}
 				catch (IOException ioe) {
 				}

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,13 +15,9 @@
 package com.liferay.portal.kernel.search;
 
 import com.liferay.portal.kernel.util.ArrayUtil;
-import com.liferay.portal.kernel.util.StringPool;
 
 import java.io.Serializable;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -33,35 +29,18 @@ import java.util.Map;
  */
 public class Field implements Serializable {
 
-	public static final String ANY = StringPool.STAR;
-
-	public static final String ARTICLE_ID = "articleId";
-
-	public static final String ASSET_CATEGORY_ID = "assetCategoryId";
-
 	public static final String ASSET_CATEGORY_IDS = "assetCategoryIds";
 
 	/**
 	 * @deprecated As of 6.2.0, replaced by {@link #ASSET_CATEGORY_TITLES}
 	 */
-	@Deprecated
 	public static final String ASSET_CATEGORY_NAMES = "assetCategoryNames";
 
-	public static final String ASSET_CATEGORY_TITLE = "assetCategoryTitle";
-
 	public static final String ASSET_CATEGORY_TITLES = "assetCategoryTitles";
-
-	public static final String ASSET_PARENT_CATEGORY_ID = "parentCategoryId";
-
-	public static final String ASSET_PARENT_CATEGORY_IDS = "parentCategoryIds";
 
 	public static final String ASSET_TAG_IDS = "assetTagIds";
 
 	public static final String ASSET_TAG_NAMES = "assetTagNames";
-
-	public static final String ASSET_VOCABULARY_ID = "assetVocabularyId";
-
-	public static final String ASSET_VOCABULARY_IDS = "assetVocabularyIds";
 
 	public static final String CATEGORY_ID = "categoryId";
 
@@ -78,8 +57,6 @@ public class Field implements Serializable {
 	public static final String CONTENT = "content";
 
 	public static final String CREATE_DATE = "createDate";
-
-	public static final String DEFAULT_LANGUAGE_ID = "defaultLanguageId";
 
 	public static final String DESCRIPTION = "description";
 
@@ -112,7 +89,6 @@ public class Field implements Serializable {
 	/**
 	 * @deprecated As of 6.1.0, replaced by {@link #MODIFIED_DATE}
 	 */
-	@Deprecated
 	public static final String MODIFIED = "modified";
 
 	public static final String MODIFIED_DATE = "modified";
@@ -155,8 +131,6 @@ public class Field implements Serializable {
 
 	public static final String STATUS = "status";
 
-	public static final String SUBTITLE = "subtitle";
-
 	public static final String TITLE = "title";
 
 	public static final String TREE_PATH = "treePath";
@@ -184,10 +158,6 @@ public class Field implements Serializable {
 
 	public static final String VIEW_COUNT = "viewCount";
 
-	public Field(String name) {
-		_name = name;
-	}
-
 	public Field(String name, Map<Locale, String> localizedValues) {
 		_name = name;
 		_localizedValues = localizedValues;
@@ -200,7 +170,6 @@ public class Field implements Serializable {
 	/**
 	 * @deprecated As of 6.1.0
 	 */
-	@Deprecated
 	public Field(String name, String value, boolean tokenized) {
 		this(name, value);
 
@@ -215,7 +184,6 @@ public class Field implements Serializable {
 	/**
 	 * @deprecated As of 6.1.0
 	 */
-	@Deprecated
 	public Field(String name, String[] values, boolean tokenized) {
 		this(name, values);
 
@@ -225,7 +193,6 @@ public class Field implements Serializable {
 	/**
 	 * @deprecated As of 6.1.0
 	 */
-	@Deprecated
 	public Field(String name, String[] values, boolean tokenized, float boost) {
 		this(name, values);
 
@@ -233,16 +200,8 @@ public class Field implements Serializable {
 		setTokenized(tokenized);
 	}
 
-	public void addField(Field field) {
-		_fields.add(field);
-	}
-
 	public float getBoost() {
 		return _boost;
-	}
-
-	public List<Field> getFields() {
-		return _fields;
 	}
 
 	public Map<Locale, String> getLocalizedValues() {
@@ -255,10 +214,6 @@ public class Field implements Serializable {
 
 	public Class<? extends Number> getNumericClass() {
 		return _numericClass;
-	}
-
-	public Field getParentField() {
-		return _parentField;
 	}
 
 	public String getValue() {
@@ -274,14 +229,6 @@ public class Field implements Serializable {
 		return _values;
 	}
 
-	public boolean hasChildren() {
-		return !getFields().isEmpty();
-	}
-
-	public boolean isArray() {
-		return false;
-	}
-
 	public boolean isLocalized() {
 		if (_localizedValues != null) {
 			return true;
@@ -291,20 +238,8 @@ public class Field implements Serializable {
 		}
 	}
 
-	public boolean isNested() {
-		if (getParentField() != null) {
-			return true;
-		}
-
-		return false;
-	}
-
 	public boolean isNumeric() {
 		return _numeric;
-	}
-
-	public boolean isSortable() {
-		return _sortable;
 	}
 
 	public boolean isTokenized() {
@@ -313,10 +248,6 @@ public class Field implements Serializable {
 
 	public void setBoost(float boost) {
 		_boost = boost;
-	}
-
-	public void setLocalizedValues(Map<Locale, String> localizedValues) {
-		_localizedValues = localizedValues;
 	}
 
 	public void setName(String name) {
@@ -331,14 +262,6 @@ public class Field implements Serializable {
 		_numericClass = numericClass;
 	}
 
-	public void setParentField(Field parentField) {
-		_parentField = parentField;
-	}
-
-	public void setSortable(boolean sortable) {
-		_sortable = sortable;
-	}
-
 	public void setTokenized(boolean tokenized) {
 		_tokenized = tokenized;
 	}
@@ -351,85 +274,11 @@ public class Field implements Serializable {
 		_values = values;
 	}
 
-	public static class NestedFieldBuilder {
-
-		public NestedFieldBuilder addNestedField(
-			String name, String... values) {
-
-			Field field = new Field(name);
-
-			field.addField(new Field("value", values));
-
-			_addField(field);
-
-			return this;
-		}
-
-		public NestedFieldBuilder endArray() {
-			return endField();
-		}
-
-		public NestedFieldBuilder endField() {
-			if (_nestedFieldsBuilderFields.size() > 1) {
-				_nestedFieldsBuilderFields.removeLast();
-			}
-
-			return this;
-		}
-
-		public Field getField() {
-			if (!_nestedFieldsBuilderFields.isEmpty()) {
-				return _nestedFieldsBuilderFields.getLast();
-			}
-
-			return null;
-		}
-
-		public NestedFieldBuilder startArray(String name) {
-			FieldArray fieldArray = new FieldArray(name);
-
-			return _startField(fieldArray);
-		}
-
-		public NestedFieldBuilder startField() {
-			return startField(null);
-		}
-
-		public NestedFieldBuilder startField(String name) {
-			Field field = new Field(name);
-
-			return _startField(field);
-		}
-
-		private void _addField(Field field) {
-			Field lastField = _nestedFieldsBuilderFields.getLast();
-
-			lastField.addField(field);
-		}
-
-		private NestedFieldBuilder _startField(Field field) {
-			if (!_nestedFieldsBuilderFields.isEmpty()) {
-				_addField(field);
-			}
-
-			_nestedFieldsBuilderFields.add(field);
-
-			return this;
-		}
-
-		private LinkedList<Field> _nestedFieldsBuilderFields =
-			new LinkedList<Field>();
-
-	}
-
 	private float _boost = 1;
-	private List<Field> _fields = new ArrayList<Field>();
 	private Map<Locale, String> _localizedValues;
 	private String _name;
 	private boolean _numeric;
 	private Class<? extends Number> _numericClass;
-	private Field _parentField;
-	private boolean _sortable;
 	private boolean _tokenized;
 	private String[] _values;
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,6 +14,8 @@
 
 package com.liferay.portal.kernel.cluster;
 
+import com.liferay.portal.kernel.exception.SystemException;
+
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -27,16 +29,19 @@ public interface ClusterExecutor {
 
 	public void destroy();
 
-	public FutureClusterResponses execute(ClusterRequest clusterRequest);
+	public FutureClusterResponses execute(ClusterRequest clusterRequest)
+		throws SystemException;
 
 	public void execute(
-		ClusterRequest clusterRequest,
-		ClusterResponseCallback clusterResponseCallback);
+			ClusterRequest clusterRequest,
+			ClusterResponseCallback clusterResponseCallback)
+		throws SystemException;
 
 	public void execute(
-		ClusterRequest clusterRequest,
-		ClusterResponseCallback clusterResponseCallback, long timeout,
-		TimeUnit timeUnit);
+			ClusterRequest clusterRequest,
+			ClusterResponseCallback clusterResponseCallback, long timeout,
+			TimeUnit timeUnit)
+		throws SystemException;
 
 	public List<ClusterEventListener> getClusterEventListeners();
 
@@ -44,7 +49,7 @@ public interface ClusterExecutor {
 
 	public List<ClusterNode> getClusterNodes();
 
-	public ClusterNode getLocalClusterNode();
+	public ClusterNode getLocalClusterNode() throws SystemException;
 
 	public Address getLocalClusterNodeAddress();
 

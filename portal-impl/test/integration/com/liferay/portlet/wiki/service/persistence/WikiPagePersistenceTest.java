@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,6 +14,7 @@
 
 package com.liferay.portlet.wiki.service.persistence;
 
+import com.liferay.portal.kernel.bean.PortalBeanLocatorUtil;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
@@ -22,78 +23,69 @@ import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.template.TemplateException;
-import com.liferay.portal.kernel.template.TemplateManagerUtil;
 import com.liferay.portal.kernel.test.AssertUtils;
-import com.liferay.portal.kernel.transaction.Propagation;
+import com.liferay.portal.kernel.test.ExecutionTestListeners;
 import com.liferay.portal.kernel.util.IntegerWrapper;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.OrderByComparatorFactoryUtil;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.test.TransactionalTestRule;
-import com.liferay.portal.test.runners.PersistenceIntegrationJUnitTestRunner;
-import com.liferay.portal.tools.DBUpgrader;
+import com.liferay.portal.service.ServiceTestUtil;
+import com.liferay.portal.service.persistence.BasePersistence;
+import com.liferay.portal.service.persistence.PersistenceExecutionTestListener;
+import com.liferay.portal.test.LiferayPersistenceIntegrationJUnitTestRunner;
+import com.liferay.portal.test.persistence.TransactionalPersistenceAdvice;
 import com.liferay.portal.util.PropsValues;
-import com.liferay.portal.util.test.RandomTestUtil;
 
 import com.liferay.portlet.wiki.NoSuchPageException;
 import com.liferay.portlet.wiki.model.WikiPage;
 import com.liferay.portlet.wiki.model.impl.WikiPageModelImpl;
-import com.liferay.portlet.wiki.service.WikiPageLocalServiceUtil;
 
 import org.junit.After;
 import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
 import org.junit.Test;
 
 import org.junit.runner.RunWith;
 
 import java.io.Serializable;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 /**
- * @generated
+ * @author Brian Wing Shun Chan
  */
-@RunWith(PersistenceIntegrationJUnitTestRunner.class)
+@ExecutionTestListeners(listeners =  {
+	PersistenceExecutionTestListener.class})
+@RunWith(LiferayPersistenceIntegrationJUnitTestRunner.class)
 public class WikiPagePersistenceTest {
-	@ClassRule
-	public static TransactionalTestRule transactionalTestRule = new TransactionalTestRule(Propagation.REQUIRED);
-
-	@BeforeClass
-	public static void setupClass() throws TemplateException {
-		try {
-			DBUpgrader.upgrade();
-		}
-		catch (Exception e) {
-			_log.error(e, e);
-		}
-
-		TemplateManagerUtil.init();
-	}
-
 	@After
 	public void tearDown() throws Exception {
-		Iterator<WikiPage> iterator = _wikiPages.iterator();
+		Map<Serializable, BasePersistence<?>> basePersistences = _transactionalPersistenceAdvice.getBasePersistences();
 
-		while (iterator.hasNext()) {
-			_persistence.remove(iterator.next());
+		Set<Serializable> primaryKeys = basePersistences.keySet();
 
-			iterator.remove();
+		for (Serializable primaryKey : primaryKeys) {
+			BasePersistence<?> basePersistence = basePersistences.get(primaryKey);
+
+			try {
+				basePersistence.remove(primaryKey);
+			}
+			catch (Exception e) {
+				if (_log.isDebugEnabled()) {
+					_log.debug("The model with primary key " + primaryKey +
+						" was already deleted");
+				}
+			}
 		}
+
+		_transactionalPersistenceAdvice.reset();
 	}
 
 	@Test
 	public void testCreate() throws Exception {
-		long pk = RandomTestUtil.nextLong();
+		long pk = ServiceTestUtil.nextLong();
 
 		WikiPage wikiPage = _persistence.create(pk);
 
@@ -120,55 +112,55 @@ public class WikiPagePersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
+		long pk = ServiceTestUtil.nextLong();
 
 		WikiPage newWikiPage = _persistence.create(pk);
 
-		newWikiPage.setUuid(RandomTestUtil.randomString());
+		newWikiPage.setUuid(ServiceTestUtil.randomString());
 
-		newWikiPage.setResourcePrimKey(RandomTestUtil.nextLong());
+		newWikiPage.setResourcePrimKey(ServiceTestUtil.nextLong());
 
-		newWikiPage.setGroupId(RandomTestUtil.nextLong());
+		newWikiPage.setGroupId(ServiceTestUtil.nextLong());
 
-		newWikiPage.setCompanyId(RandomTestUtil.nextLong());
+		newWikiPage.setCompanyId(ServiceTestUtil.nextLong());
 
-		newWikiPage.setUserId(RandomTestUtil.nextLong());
+		newWikiPage.setUserId(ServiceTestUtil.nextLong());
 
-		newWikiPage.setUserName(RandomTestUtil.randomString());
+		newWikiPage.setUserName(ServiceTestUtil.randomString());
 
-		newWikiPage.setCreateDate(RandomTestUtil.nextDate());
+		newWikiPage.setCreateDate(ServiceTestUtil.nextDate());
 
-		newWikiPage.setModifiedDate(RandomTestUtil.nextDate());
+		newWikiPage.setModifiedDate(ServiceTestUtil.nextDate());
 
-		newWikiPage.setNodeId(RandomTestUtil.nextLong());
+		newWikiPage.setNodeId(ServiceTestUtil.nextLong());
 
-		newWikiPage.setTitle(RandomTestUtil.randomString());
+		newWikiPage.setTitle(ServiceTestUtil.randomString());
 
-		newWikiPage.setVersion(RandomTestUtil.nextDouble());
+		newWikiPage.setVersion(ServiceTestUtil.nextDouble());
 
-		newWikiPage.setMinorEdit(RandomTestUtil.randomBoolean());
+		newWikiPage.setMinorEdit(ServiceTestUtil.randomBoolean());
 
-		newWikiPage.setContent(RandomTestUtil.randomString());
+		newWikiPage.setContent(ServiceTestUtil.randomString());
 
-		newWikiPage.setSummary(RandomTestUtil.randomString());
+		newWikiPage.setSummary(ServiceTestUtil.randomString());
 
-		newWikiPage.setFormat(RandomTestUtil.randomString());
+		newWikiPage.setFormat(ServiceTestUtil.randomString());
 
-		newWikiPage.setHead(RandomTestUtil.randomBoolean());
+		newWikiPage.setHead(ServiceTestUtil.randomBoolean());
 
-		newWikiPage.setParentTitle(RandomTestUtil.randomString());
+		newWikiPage.setParentTitle(ServiceTestUtil.randomString());
 
-		newWikiPage.setRedirectTitle(RandomTestUtil.randomString());
+		newWikiPage.setRedirectTitle(ServiceTestUtil.randomString());
 
-		newWikiPage.setStatus(RandomTestUtil.nextInt());
+		newWikiPage.setStatus(ServiceTestUtil.nextInt());
 
-		newWikiPage.setStatusByUserId(RandomTestUtil.nextLong());
+		newWikiPage.setStatusByUserId(ServiceTestUtil.nextLong());
 
-		newWikiPage.setStatusByUserName(RandomTestUtil.randomString());
+		newWikiPage.setStatusByUserName(ServiceTestUtil.randomString());
 
-		newWikiPage.setStatusDate(RandomTestUtil.nextDate());
+		newWikiPage.setStatusDate(ServiceTestUtil.nextDate());
 
-		_wikiPages.add(_persistence.update(newWikiPage));
+		_persistence.update(newWikiPage);
 
 		WikiPage existingWikiPage = _persistence.findByPrimaryKey(newWikiPage.getPrimaryKey());
 
@@ -221,504 +213,6 @@ public class WikiPagePersistenceTest {
 	}
 
 	@Test
-	public void testCountByUuid() {
-		try {
-			_persistence.countByUuid(StringPool.BLANK);
-
-			_persistence.countByUuid(StringPool.NULL);
-
-			_persistence.countByUuid((String)null);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByUUID_G() {
-		try {
-			_persistence.countByUUID_G(StringPool.BLANK,
-				RandomTestUtil.nextLong());
-
-			_persistence.countByUUID_G(StringPool.NULL, 0L);
-
-			_persistence.countByUUID_G((String)null, 0L);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByUuid_C() {
-		try {
-			_persistence.countByUuid_C(StringPool.BLANK,
-				RandomTestUtil.nextLong());
-
-			_persistence.countByUuid_C(StringPool.NULL, 0L);
-
-			_persistence.countByUuid_C((String)null, 0L);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByResourcePrimKey() {
-		try {
-			_persistence.countByResourcePrimKey(RandomTestUtil.nextLong());
-
-			_persistence.countByResourcePrimKey(0L);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByNodeId() {
-		try {
-			_persistence.countByNodeId(RandomTestUtil.nextLong());
-
-			_persistence.countByNodeId(0L);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByFormat() {
-		try {
-			_persistence.countByFormat(StringPool.BLANK);
-
-			_persistence.countByFormat(StringPool.NULL);
-
-			_persistence.countByFormat((String)null);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByR_N() {
-		try {
-			_persistence.countByR_N(RandomTestUtil.nextLong(),
-				RandomTestUtil.nextLong());
-
-			_persistence.countByR_N(0L, 0L);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByR_S() {
-		try {
-			_persistence.countByR_S(RandomTestUtil.nextLong(),
-				RandomTestUtil.nextInt());
-
-			_persistence.countByR_S(0L, 0);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByN_T() {
-		try {
-			_persistence.countByN_T(RandomTestUtil.nextLong(), StringPool.BLANK);
-
-			_persistence.countByN_T(0L, StringPool.NULL);
-
-			_persistence.countByN_T(0L, (String)null);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByN_H() {
-		try {
-			_persistence.countByN_H(RandomTestUtil.nextLong(),
-				RandomTestUtil.randomBoolean());
-
-			_persistence.countByN_H(0L, RandomTestUtil.randomBoolean());
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByN_P() {
-		try {
-			_persistence.countByN_P(RandomTestUtil.nextLong(), StringPool.BLANK);
-
-			_persistence.countByN_P(0L, StringPool.NULL);
-
-			_persistence.countByN_P(0L, (String)null);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByN_R() {
-		try {
-			_persistence.countByN_R(RandomTestUtil.nextLong(), StringPool.BLANK);
-
-			_persistence.countByN_R(0L, StringPool.NULL);
-
-			_persistence.countByN_R(0L, (String)null);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByN_S() {
-		try {
-			_persistence.countByN_S(RandomTestUtil.nextLong(),
-				RandomTestUtil.nextInt());
-
-			_persistence.countByN_S(0L, 0);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByR_N_V() {
-		try {
-			_persistence.countByR_N_V(RandomTestUtil.nextLong(),
-				RandomTestUtil.nextLong(), RandomTestUtil.nextDouble());
-
-			_persistence.countByR_N_V(0L, 0L, 0D);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByR_N_H() {
-		try {
-			_persistence.countByR_N_H(RandomTestUtil.nextLong(),
-				RandomTestUtil.nextLong(), RandomTestUtil.randomBoolean());
-
-			_persistence.countByR_N_H(0L, 0L, RandomTestUtil.randomBoolean());
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByR_N_S() {
-		try {
-			_persistence.countByR_N_S(RandomTestUtil.nextLong(),
-				RandomTestUtil.nextLong(), RandomTestUtil.nextInt());
-
-			_persistence.countByR_N_S(0L, 0L, 0);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByG_N_H() {
-		try {
-			_persistence.countByG_N_H(RandomTestUtil.nextLong(),
-				RandomTestUtil.nextLong(), RandomTestUtil.randomBoolean());
-
-			_persistence.countByG_N_H(0L, 0L, RandomTestUtil.randomBoolean());
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByG_N_S() {
-		try {
-			_persistence.countByG_N_S(RandomTestUtil.nextLong(),
-				RandomTestUtil.nextLong(), RandomTestUtil.nextInt());
-
-			_persistence.countByG_N_S(0L, 0L, 0);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByU_N_S() {
-		try {
-			_persistence.countByU_N_S(RandomTestUtil.nextLong(),
-				RandomTestUtil.nextLong(), RandomTestUtil.nextInt());
-
-			_persistence.countByU_N_S(0L, 0L, 0);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByN_T_V() {
-		try {
-			_persistence.countByN_T_V(RandomTestUtil.nextLong(),
-				StringPool.BLANK, RandomTestUtil.nextDouble());
-
-			_persistence.countByN_T_V(0L, StringPool.NULL, 0D);
-
-			_persistence.countByN_T_V(0L, (String)null, 0D);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByN_T_H() {
-		try {
-			_persistence.countByN_T_H(RandomTestUtil.nextLong(),
-				StringPool.BLANK, RandomTestUtil.randomBoolean());
-
-			_persistence.countByN_T_H(0L, StringPool.NULL,
-				RandomTestUtil.randomBoolean());
-
-			_persistence.countByN_T_H(0L, (String)null,
-				RandomTestUtil.randomBoolean());
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByN_T_S() {
-		try {
-			_persistence.countByN_T_S(RandomTestUtil.nextLong(),
-				StringPool.BLANK, RandomTestUtil.nextInt());
-
-			_persistence.countByN_T_S(0L, StringPool.NULL, 0);
-
-			_persistence.countByN_T_S(0L, (String)null, 0);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByN_H_P() {
-		try {
-			_persistence.countByN_H_P(RandomTestUtil.nextLong(),
-				RandomTestUtil.randomBoolean(), StringPool.BLANK);
-
-			_persistence.countByN_H_P(0L, RandomTestUtil.randomBoolean(),
-				StringPool.NULL);
-
-			_persistence.countByN_H_P(0L, RandomTestUtil.randomBoolean(),
-				(String)null);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByN_H_R() {
-		try {
-			_persistence.countByN_H_R(RandomTestUtil.nextLong(),
-				RandomTestUtil.randomBoolean(), StringPool.BLANK);
-
-			_persistence.countByN_H_R(0L, RandomTestUtil.randomBoolean(),
-				StringPool.NULL);
-
-			_persistence.countByN_H_R(0L, RandomTestUtil.randomBoolean(),
-				(String)null);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByN_H_S() {
-		try {
-			_persistence.countByN_H_S(RandomTestUtil.nextLong(),
-				RandomTestUtil.randomBoolean(), RandomTestUtil.nextInt());
-
-			_persistence.countByN_H_S(0L, RandomTestUtil.randomBoolean(), 0);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByN_H_NotS() {
-		try {
-			_persistence.countByN_H_NotS(RandomTestUtil.nextLong(),
-				RandomTestUtil.randomBoolean(), RandomTestUtil.nextInt());
-
-			_persistence.countByN_H_NotS(0L, RandomTestUtil.randomBoolean(), 0);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByG_U_N_S() {
-		try {
-			_persistence.countByG_U_N_S(RandomTestUtil.nextLong(),
-				RandomTestUtil.nextLong(), RandomTestUtil.nextLong(),
-				RandomTestUtil.nextInt());
-
-			_persistence.countByG_U_N_S(0L, 0L, 0L, 0);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByG_N_T_H() {
-		try {
-			_persistence.countByG_N_T_H(RandomTestUtil.nextLong(),
-				RandomTestUtil.nextLong(), StringPool.BLANK,
-				RandomTestUtil.randomBoolean());
-
-			_persistence.countByG_N_T_H(0L, 0L, StringPool.NULL,
-				RandomTestUtil.randomBoolean());
-
-			_persistence.countByG_N_T_H(0L, 0L, (String)null,
-				RandomTestUtil.randomBoolean());
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByG_N_H_S() {
-		try {
-			_persistence.countByG_N_H_S(RandomTestUtil.nextLong(),
-				RandomTestUtil.nextLong(), RandomTestUtil.randomBoolean(),
-				RandomTestUtil.nextInt());
-
-			_persistence.countByG_N_H_S(0L, 0L, RandomTestUtil.randomBoolean(),
-				0);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByN_H_P_S() {
-		try {
-			_persistence.countByN_H_P_S(RandomTestUtil.nextLong(),
-				RandomTestUtil.randomBoolean(), StringPool.BLANK,
-				RandomTestUtil.nextInt());
-
-			_persistence.countByN_H_P_S(0L, RandomTestUtil.randomBoolean(),
-				StringPool.NULL, 0);
-
-			_persistence.countByN_H_P_S(0L, RandomTestUtil.randomBoolean(),
-				(String)null, 0);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByN_H_P_NotS() {
-		try {
-			_persistence.countByN_H_P_NotS(RandomTestUtil.nextLong(),
-				RandomTestUtil.randomBoolean(), StringPool.BLANK,
-				RandomTestUtil.nextInt());
-
-			_persistence.countByN_H_P_NotS(0L, RandomTestUtil.randomBoolean(),
-				StringPool.NULL, 0);
-
-			_persistence.countByN_H_P_NotS(0L, RandomTestUtil.randomBoolean(),
-				(String)null, 0);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByN_H_R_S() {
-		try {
-			_persistence.countByN_H_R_S(RandomTestUtil.nextLong(),
-				RandomTestUtil.randomBoolean(), StringPool.BLANK,
-				RandomTestUtil.nextInt());
-
-			_persistence.countByN_H_R_S(0L, RandomTestUtil.randomBoolean(),
-				StringPool.NULL, 0);
-
-			_persistence.countByN_H_R_S(0L, RandomTestUtil.randomBoolean(),
-				(String)null, 0);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByN_H_R_NotS() {
-		try {
-			_persistence.countByN_H_R_NotS(RandomTestUtil.nextLong(),
-				RandomTestUtil.randomBoolean(), StringPool.BLANK,
-				RandomTestUtil.nextInt());
-
-			_persistence.countByN_H_R_NotS(0L, RandomTestUtil.randomBoolean(),
-				StringPool.NULL, 0);
-
-			_persistence.countByN_H_R_NotS(0L, RandomTestUtil.randomBoolean(),
-				(String)null, 0);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByG_N_H_P_S() {
-		try {
-			_persistence.countByG_N_H_P_S(RandomTestUtil.nextLong(),
-				RandomTestUtil.nextLong(), RandomTestUtil.randomBoolean(),
-				StringPool.BLANK, RandomTestUtil.nextInt());
-
-			_persistence.countByG_N_H_P_S(0L, 0L,
-				RandomTestUtil.randomBoolean(), StringPool.NULL, 0);
-
-			_persistence.countByG_N_H_P_S(0L, 0L,
-				RandomTestUtil.randomBoolean(), (String)null, 0);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
 	public void testFindByPrimaryKeyExisting() throws Exception {
 		WikiPage newWikiPage = addWikiPage();
 
@@ -729,7 +223,7 @@ public class WikiPagePersistenceTest {
 
 	@Test
 	public void testFindByPrimaryKeyMissing() throws Exception {
-		long pk = RandomTestUtil.nextLong();
+		long pk = ServiceTestUtil.nextLong();
 
 		try {
 			_persistence.findByPrimaryKey(pk);
@@ -751,7 +245,7 @@ public class WikiPagePersistenceTest {
 		}
 	}
 
-	protected OrderByComparator<WikiPage> getOrderByComparator() {
+	protected OrderByComparator getOrderByComparator() {
 		return OrderByComparatorFactoryUtil.create("WikiPage", "uuid", true,
 			"pageId", true, "resourcePrimKey", true, "groupId", true,
 			"companyId", true, "userId", true, "userName", true, "createDate",
@@ -773,7 +267,7 @@ public class WikiPagePersistenceTest {
 
 	@Test
 	public void testFetchByPrimaryKeyMissing() throws Exception {
-		long pk = RandomTestUtil.nextLong();
+		long pk = ServiceTestUtil.nextLong();
 
 		WikiPage missingWikiPage = _persistence.fetchByPrimaryKey(pk);
 
@@ -781,103 +275,19 @@ public class WikiPagePersistenceTest {
 	}
 
 	@Test
-	public void testFetchByPrimaryKeysWithMultiplePrimaryKeysWhereAllPrimaryKeysExist()
-		throws Exception {
-		WikiPage newWikiPage1 = addWikiPage();
-		WikiPage newWikiPage2 = addWikiPage();
-
-		Set<Serializable> primaryKeys = new HashSet<Serializable>();
-
-		primaryKeys.add(newWikiPage1.getPrimaryKey());
-		primaryKeys.add(newWikiPage2.getPrimaryKey());
-
-		Map<Serializable, WikiPage> wikiPages = _persistence.fetchByPrimaryKeys(primaryKeys);
-
-		Assert.assertEquals(2, wikiPages.size());
-		Assert.assertEquals(newWikiPage1,
-			wikiPages.get(newWikiPage1.getPrimaryKey()));
-		Assert.assertEquals(newWikiPage2,
-			wikiPages.get(newWikiPage2.getPrimaryKey()));
-	}
-
-	@Test
-	public void testFetchByPrimaryKeysWithMultiplePrimaryKeysWhereNoPrimaryKeysExist()
-		throws Exception {
-		long pk1 = RandomTestUtil.nextLong();
-
-		long pk2 = RandomTestUtil.nextLong();
-
-		Set<Serializable> primaryKeys = new HashSet<Serializable>();
-
-		primaryKeys.add(pk1);
-		primaryKeys.add(pk2);
-
-		Map<Serializable, WikiPage> wikiPages = _persistence.fetchByPrimaryKeys(primaryKeys);
-
-		Assert.assertTrue(wikiPages.isEmpty());
-	}
-
-	@Test
-	public void testFetchByPrimaryKeysWithMultiplePrimaryKeysWhereSomePrimaryKeysExist()
-		throws Exception {
-		WikiPage newWikiPage = addWikiPage();
-
-		long pk = RandomTestUtil.nextLong();
-
-		Set<Serializable> primaryKeys = new HashSet<Serializable>();
-
-		primaryKeys.add(newWikiPage.getPrimaryKey());
-		primaryKeys.add(pk);
-
-		Map<Serializable, WikiPage> wikiPages = _persistence.fetchByPrimaryKeys(primaryKeys);
-
-		Assert.assertEquals(1, wikiPages.size());
-		Assert.assertEquals(newWikiPage,
-			wikiPages.get(newWikiPage.getPrimaryKey()));
-	}
-
-	@Test
-	public void testFetchByPrimaryKeysWithNoPrimaryKeys()
-		throws Exception {
-		Set<Serializable> primaryKeys = new HashSet<Serializable>();
-
-		Map<Serializable, WikiPage> wikiPages = _persistence.fetchByPrimaryKeys(primaryKeys);
-
-		Assert.assertTrue(wikiPages.isEmpty());
-	}
-
-	@Test
-	public void testFetchByPrimaryKeysWithOnePrimaryKey()
-		throws Exception {
-		WikiPage newWikiPage = addWikiPage();
-
-		Set<Serializable> primaryKeys = new HashSet<Serializable>();
-
-		primaryKeys.add(newWikiPage.getPrimaryKey());
-
-		Map<Serializable, WikiPage> wikiPages = _persistence.fetchByPrimaryKeys(primaryKeys);
-
-		Assert.assertEquals(1, wikiPages.size());
-		Assert.assertEquals(newWikiPage,
-			wikiPages.get(newWikiPage.getPrimaryKey()));
-	}
-
-	@Test
 	public void testActionableDynamicQuery() throws Exception {
 		final IntegerWrapper count = new IntegerWrapper();
 
-		ActionableDynamicQuery actionableDynamicQuery = WikiPageLocalServiceUtil.getActionableDynamicQuery();
-
-		actionableDynamicQuery.setPerformActionMethod(new ActionableDynamicQuery.PerformActionMethod() {
+		ActionableDynamicQuery actionableDynamicQuery = new WikiPageActionableDynamicQuery() {
 				@Override
-				public void performAction(Object object) {
+				protected void performAction(Object object) {
 					WikiPage wikiPage = (WikiPage)object;
 
 					Assert.assertNotNull(wikiPage);
 
 					count.increment();
 				}
-			});
+			};
 
 		actionableDynamicQuery.performActions();
 
@@ -910,7 +320,7 @@ public class WikiPagePersistenceTest {
 				WikiPage.class.getClassLoader());
 
 		dynamicQuery.add(RestrictionsFactoryUtil.eq("pageId",
-				RandomTestUtil.nextLong()));
+				ServiceTestUtil.nextLong()));
 
 		List<WikiPage> result = _persistence.findWithDynamicQuery(dynamicQuery);
 
@@ -949,7 +359,7 @@ public class WikiPagePersistenceTest {
 		dynamicQuery.setProjection(ProjectionFactoryUtil.property("pageId"));
 
 		dynamicQuery.add(RestrictionsFactoryUtil.in("pageId",
-				new Object[] { RandomTestUtil.nextLong() }));
+				new Object[] { ServiceTestUtil.nextLong() }));
 
 		List<Object> result = _persistence.findWithDynamicQuery(dynamicQuery);
 
@@ -991,60 +401,60 @@ public class WikiPagePersistenceTest {
 	}
 
 	protected WikiPage addWikiPage() throws Exception {
-		long pk = RandomTestUtil.nextLong();
+		long pk = ServiceTestUtil.nextLong();
 
 		WikiPage wikiPage = _persistence.create(pk);
 
-		wikiPage.setUuid(RandomTestUtil.randomString());
+		wikiPage.setUuid(ServiceTestUtil.randomString());
 
-		wikiPage.setResourcePrimKey(RandomTestUtil.nextLong());
+		wikiPage.setResourcePrimKey(ServiceTestUtil.nextLong());
 
-		wikiPage.setGroupId(RandomTestUtil.nextLong());
+		wikiPage.setGroupId(ServiceTestUtil.nextLong());
 
-		wikiPage.setCompanyId(RandomTestUtil.nextLong());
+		wikiPage.setCompanyId(ServiceTestUtil.nextLong());
 
-		wikiPage.setUserId(RandomTestUtil.nextLong());
+		wikiPage.setUserId(ServiceTestUtil.nextLong());
 
-		wikiPage.setUserName(RandomTestUtil.randomString());
+		wikiPage.setUserName(ServiceTestUtil.randomString());
 
-		wikiPage.setCreateDate(RandomTestUtil.nextDate());
+		wikiPage.setCreateDate(ServiceTestUtil.nextDate());
 
-		wikiPage.setModifiedDate(RandomTestUtil.nextDate());
+		wikiPage.setModifiedDate(ServiceTestUtil.nextDate());
 
-		wikiPage.setNodeId(RandomTestUtil.nextLong());
+		wikiPage.setNodeId(ServiceTestUtil.nextLong());
 
-		wikiPage.setTitle(RandomTestUtil.randomString());
+		wikiPage.setTitle(ServiceTestUtil.randomString());
 
-		wikiPage.setVersion(RandomTestUtil.nextDouble());
+		wikiPage.setVersion(ServiceTestUtil.nextDouble());
 
-		wikiPage.setMinorEdit(RandomTestUtil.randomBoolean());
+		wikiPage.setMinorEdit(ServiceTestUtil.randomBoolean());
 
-		wikiPage.setContent(RandomTestUtil.randomString());
+		wikiPage.setContent(ServiceTestUtil.randomString());
 
-		wikiPage.setSummary(RandomTestUtil.randomString());
+		wikiPage.setSummary(ServiceTestUtil.randomString());
 
-		wikiPage.setFormat(RandomTestUtil.randomString());
+		wikiPage.setFormat(ServiceTestUtil.randomString());
 
-		wikiPage.setHead(RandomTestUtil.randomBoolean());
+		wikiPage.setHead(ServiceTestUtil.randomBoolean());
 
-		wikiPage.setParentTitle(RandomTestUtil.randomString());
+		wikiPage.setParentTitle(ServiceTestUtil.randomString());
 
-		wikiPage.setRedirectTitle(RandomTestUtil.randomString());
+		wikiPage.setRedirectTitle(ServiceTestUtil.randomString());
 
-		wikiPage.setStatus(RandomTestUtil.nextInt());
+		wikiPage.setStatus(ServiceTestUtil.nextInt());
 
-		wikiPage.setStatusByUserId(RandomTestUtil.nextLong());
+		wikiPage.setStatusByUserId(ServiceTestUtil.nextLong());
 
-		wikiPage.setStatusByUserName(RandomTestUtil.randomString());
+		wikiPage.setStatusByUserName(ServiceTestUtil.randomString());
 
-		wikiPage.setStatusDate(RandomTestUtil.nextDate());
+		wikiPage.setStatusDate(ServiceTestUtil.nextDate());
 
-		_wikiPages.add(_persistence.update(wikiPage));
+		_persistence.update(wikiPage);
 
 		return wikiPage;
 	}
 
 	private static Log _log = LogFactoryUtil.getLog(WikiPagePersistenceTest.class);
-	private List<WikiPage> _wikiPages = new ArrayList<WikiPage>();
-	private WikiPagePersistence _persistence = WikiPageUtil.getPersistence();
+	private WikiPagePersistence _persistence = (WikiPagePersistence)PortalBeanLocatorUtil.locate(WikiPagePersistence.class.getName());
+	private TransactionalPersistenceAdvice _transactionalPersistenceAdvice = (TransactionalPersistenceAdvice)PortalBeanLocatorUtil.locate(TransactionalPersistenceAdvice.class.getName());
 }

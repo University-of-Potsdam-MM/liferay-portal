@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -94,42 +94,6 @@ public class DLSyncEventWrapper implements DLSyncEvent,
 		}
 	}
 
-	@Override
-	public java.lang.Object clone() {
-		return new DLSyncEventWrapper((DLSyncEvent)_dlSyncEvent.clone());
-	}
-
-	@Override
-	public int compareTo(
-		com.liferay.portlet.documentlibrary.model.DLSyncEvent dlSyncEvent) {
-		return _dlSyncEvent.compareTo(dlSyncEvent);
-	}
-
-	/**
-	* Returns the event of this d l sync event.
-	*
-	* @return the event of this d l sync event
-	*/
-	@Override
-	public java.lang.String getEvent() {
-		return _dlSyncEvent.getEvent();
-	}
-
-	@Override
-	public com.liferay.portlet.expando.model.ExpandoBridge getExpandoBridge() {
-		return _dlSyncEvent.getExpandoBridge();
-	}
-
-	/**
-	* Returns the modified time of this d l sync event.
-	*
-	* @return the modified time of this d l sync event
-	*/
-	@Override
-	public long getModifiedTime() {
-		return _dlSyncEvent.getModifiedTime();
-	}
-
 	/**
 	* Returns the primary key of this d l sync event.
 	*
@@ -140,9 +104,14 @@ public class DLSyncEventWrapper implements DLSyncEvent,
 		return _dlSyncEvent.getPrimaryKey();
 	}
 
+	/**
+	* Sets the primary key of this d l sync event.
+	*
+	* @param primaryKey the primary key of this d l sync event
+	*/
 	@Override
-	public java.io.Serializable getPrimaryKeyObj() {
-		return _dlSyncEvent.getPrimaryKeyObj();
+	public void setPrimaryKey(long primaryKey) {
+		_dlSyncEvent.setPrimaryKey(primaryKey);
 	}
 
 	/**
@@ -156,6 +125,56 @@ public class DLSyncEventWrapper implements DLSyncEvent,
 	}
 
 	/**
+	* Sets the sync event ID of this d l sync event.
+	*
+	* @param syncEventId the sync event ID of this d l sync event
+	*/
+	@Override
+	public void setSyncEventId(long syncEventId) {
+		_dlSyncEvent.setSyncEventId(syncEventId);
+	}
+
+	/**
+	* Returns the modified time of this d l sync event.
+	*
+	* @return the modified time of this d l sync event
+	*/
+	@Override
+	public long getModifiedTime() {
+		return _dlSyncEvent.getModifiedTime();
+	}
+
+	/**
+	* Sets the modified time of this d l sync event.
+	*
+	* @param modifiedTime the modified time of this d l sync event
+	*/
+	@Override
+	public void setModifiedTime(long modifiedTime) {
+		_dlSyncEvent.setModifiedTime(modifiedTime);
+	}
+
+	/**
+	* Returns the event of this d l sync event.
+	*
+	* @return the event of this d l sync event
+	*/
+	@Override
+	public java.lang.String getEvent() {
+		return _dlSyncEvent.getEvent();
+	}
+
+	/**
+	* Sets the event of this d l sync event.
+	*
+	* @param event the event of this d l sync event
+	*/
+	@Override
+	public void setEvent(java.lang.String event) {
+		_dlSyncEvent.setEvent(event);
+	}
+
+	/**
 	* Returns the type of this d l sync event.
 	*
 	* @return the type of this d l sync event
@@ -163,6 +182,16 @@ public class DLSyncEventWrapper implements DLSyncEvent,
 	@Override
 	public java.lang.String getType() {
 		return _dlSyncEvent.getType();
+	}
+
+	/**
+	* Sets the type of this d l sync event.
+	*
+	* @param type the type of this d l sync event
+	*/
+	@Override
+	public void setType(java.lang.String type) {
+		_dlSyncEvent.setType(type);
 	}
 
 	/**
@@ -175,19 +204,14 @@ public class DLSyncEventWrapper implements DLSyncEvent,
 		return _dlSyncEvent.getTypePK();
 	}
 
+	/**
+	* Sets the type p k of this d l sync event.
+	*
+	* @param typePK the type p k of this d l sync event
+	*/
 	@Override
-	public int hashCode() {
-		return _dlSyncEvent.hashCode();
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _dlSyncEvent.isCachedModel();
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _dlSyncEvent.isEscapedModel();
+	public void setTypePK(long typePK) {
+		_dlSyncEvent.setTypePK(typePK);
 	}
 
 	@Override
@@ -196,8 +220,13 @@ public class DLSyncEventWrapper implements DLSyncEvent,
 	}
 
 	@Override
-	public void persist() {
-		_dlSyncEvent.persist();
+	public void setNew(boolean n) {
+		_dlSyncEvent.setNew(n);
+	}
+
+	@Override
+	public boolean isCachedModel() {
+		return _dlSyncEvent.isCachedModel();
 	}
 
 	@Override
@@ -205,14 +234,24 @@ public class DLSyncEventWrapper implements DLSyncEvent,
 		_dlSyncEvent.setCachedModel(cachedModel);
 	}
 
-	/**
-	* Sets the event of this d l sync event.
-	*
-	* @param event the event of this d l sync event
-	*/
 	@Override
-	public void setEvent(java.lang.String event) {
-		_dlSyncEvent.setEvent(event);
+	public boolean isEscapedModel() {
+		return _dlSyncEvent.isEscapedModel();
+	}
+
+	@Override
+	public java.io.Serializable getPrimaryKeyObj() {
+		return _dlSyncEvent.getPrimaryKeyObj();
+	}
+
+	@Override
+	public void setPrimaryKeyObj(java.io.Serializable primaryKeyObj) {
+		_dlSyncEvent.setPrimaryKeyObj(primaryKeyObj);
+	}
+
+	@Override
+	public com.liferay.portlet.expando.model.ExpandoBridge getExpandoBridge() {
+		return _dlSyncEvent.getExpandoBridge();
 	}
 
 	@Override
@@ -233,64 +272,20 @@ public class DLSyncEventWrapper implements DLSyncEvent,
 		_dlSyncEvent.setExpandoBridgeAttributes(serviceContext);
 	}
 
-	/**
-	* Sets the modified time of this d l sync event.
-	*
-	* @param modifiedTime the modified time of this d l sync event
-	*/
 	@Override
-	public void setModifiedTime(long modifiedTime) {
-		_dlSyncEvent.setModifiedTime(modifiedTime);
+	public java.lang.Object clone() {
+		return new DLSyncEventWrapper((DLSyncEvent)_dlSyncEvent.clone());
 	}
 
 	@Override
-	public void setNew(boolean n) {
-		_dlSyncEvent.setNew(n);
-	}
-
-	/**
-	* Sets the primary key of this d l sync event.
-	*
-	* @param primaryKey the primary key of this d l sync event
-	*/
-	@Override
-	public void setPrimaryKey(long primaryKey) {
-		_dlSyncEvent.setPrimaryKey(primaryKey);
+	public int compareTo(
+		com.liferay.portlet.documentlibrary.model.DLSyncEvent dlSyncEvent) {
+		return _dlSyncEvent.compareTo(dlSyncEvent);
 	}
 
 	@Override
-	public void setPrimaryKeyObj(java.io.Serializable primaryKeyObj) {
-		_dlSyncEvent.setPrimaryKeyObj(primaryKeyObj);
-	}
-
-	/**
-	* Sets the sync event ID of this d l sync event.
-	*
-	* @param syncEventId the sync event ID of this d l sync event
-	*/
-	@Override
-	public void setSyncEventId(long syncEventId) {
-		_dlSyncEvent.setSyncEventId(syncEventId);
-	}
-
-	/**
-	* Sets the type of this d l sync event.
-	*
-	* @param type the type of this d l sync event
-	*/
-	@Override
-	public void setType(java.lang.String type) {
-		_dlSyncEvent.setType(type);
-	}
-
-	/**
-	* Sets the type p k of this d l sync event.
-	*
-	* @param typePK the type p k of this d l sync event
-	*/
-	@Override
-	public void setTypePK(long typePK) {
-		_dlSyncEvent.setTypePK(typePK);
+	public int hashCode() {
+		return _dlSyncEvent.hashCode();
 	}
 
 	@Override
@@ -304,18 +299,24 @@ public class DLSyncEventWrapper implements DLSyncEvent,
 	}
 
 	@Override
-	public java.lang.String toString() {
-		return _dlSyncEvent.toString();
-	}
-
-	@Override
 	public com.liferay.portlet.documentlibrary.model.DLSyncEvent toUnescapedModel() {
 		return new DLSyncEventWrapper(_dlSyncEvent.toUnescapedModel());
 	}
 
 	@Override
+	public java.lang.String toString() {
+		return _dlSyncEvent.toString();
+	}
+
+	@Override
 	public java.lang.String toXmlString() {
 		return _dlSyncEvent.toXmlString();
+	}
+
+	@Override
+	public void persist()
+		throws com.liferay.portal.kernel.exception.SystemException {
+		_dlSyncEvent.persist();
 	}
 
 	@Override
@@ -340,7 +341,6 @@ public class DLSyncEventWrapper implements DLSyncEvent,
 	/**
 	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedModel}
 	 */
-	@Deprecated
 	public DLSyncEvent getWrappedDLSyncEvent() {
 		return _dlSyncEvent;
 	}
@@ -351,19 +351,9 @@ public class DLSyncEventWrapper implements DLSyncEvent,
 	}
 
 	@Override
-	public boolean isEntityCacheEnabled() {
-		return _dlSyncEvent.isEntityCacheEnabled();
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return _dlSyncEvent.isFinderCacheEnabled();
-	}
-
-	@Override
 	public void resetOriginalValues() {
 		_dlSyncEvent.resetOriginalValues();
 	}
 
-	private final DLSyncEvent _dlSyncEvent;
+	private DLSyncEvent _dlSyncEvent;
 }

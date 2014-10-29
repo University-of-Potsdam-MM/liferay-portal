@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portlet.flags.messaging;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -23,6 +24,7 @@ import com.liferay.portal.kernel.messaging.Message;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.UniqueList;
 import com.liferay.portal.model.Company;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.Layout;
@@ -46,10 +48,8 @@ import java.io.IOException;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 
 /**
  * @author Julio Camarero
@@ -116,7 +116,7 @@ public class FlagsRequestMessageListener extends BaseMessageListener {
 			reportedUserName = reportedUser.getFullName();
 			reportedEmailAddress = reportedUser.getEmailAddress();
 			reportedURL = reportedUser.getDisplayURL(
-				serviceContext.getThemeDisplay());
+				serviceContext.getPortalURL(), serviceContext.getPathMain());
 		}
 
 		// Content
@@ -144,7 +144,7 @@ public class FlagsRequestMessageListener extends BaseMessageListener {
 
 		// Recipients
 
-		Set<User> recipients = getRecipients(
+		List<User> recipients = getRecipients(
 			companyId, serviceContext.getScopeGroupId());
 
 		for (User recipient : recipients) {
@@ -165,10 +165,10 @@ public class FlagsRequestMessageListener extends BaseMessageListener {
 		}
 	}
 
-	protected Set<User> getRecipients(long companyId, long groupId)
-		throws PortalException {
+	protected List<User> getRecipients(long companyId, long groupId)
+		throws PortalException, SystemException {
 
-		Set<User> recipients = new LinkedHashSet<User>();
+		List<User> recipients = new UniqueList<User>();
 
 		List<String> roleNames = new ArrayList<String>();
 

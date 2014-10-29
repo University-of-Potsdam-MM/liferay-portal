@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -17,6 +17,8 @@ package com.liferay.portal.model.impl;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTaskConstants;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
@@ -26,8 +28,11 @@ import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.util.PortletKeys;
 import com.liferay.portlet.documentlibrary.model.DLFolderConstants;
 
+import java.io.Serializable;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Brian Wing Shun Chan
@@ -38,7 +43,9 @@ public class BackgroundTaskImpl extends BackgroundTaskBaseImpl {
 	}
 
 	@Override
-	public Folder addAttachmentsFolder() throws PortalException {
+	public Folder addAttachmentsFolder()
+		throws PortalException, SystemException {
+
 		if (_attachmentsFolderId !=
 				DLFolderConstants.DEFAULT_PARENT_FOLDER_ID) {
 
@@ -65,12 +72,14 @@ public class BackgroundTaskImpl extends BackgroundTaskBaseImpl {
 	}
 
 	@Override
-	public List<FileEntry> getAttachmentsFileEntries() {
+	public List<FileEntry> getAttachmentsFileEntries() throws SystemException {
 		return getAttachmentsFileEntries(QueryUtil.ALL_POS, QueryUtil.ALL_POS);
 	}
 
 	@Override
-	public List<FileEntry> getAttachmentsFileEntries(int start, int end) {
+	public List<FileEntry> getAttachmentsFileEntries(int start, int end)
+		throws SystemException {
+
 		List<FileEntry> fileEntries = new ArrayList<FileEntry>();
 
 		long attachmentsFolderId = getAttachmentsFolderId();
@@ -85,7 +94,7 @@ public class BackgroundTaskImpl extends BackgroundTaskBaseImpl {
 	}
 
 	@Override
-	public int getAttachmentsFileEntriesCount() {
+	public int getAttachmentsFileEntriesCount() throws SystemException {
 		int attachmentsFileEntriesCount = 0;
 
 		long attachmentsFolderId = getAttachmentsFolderId();
@@ -101,7 +110,7 @@ public class BackgroundTaskImpl extends BackgroundTaskBaseImpl {
 	}
 
 	@Override
-	public long getAttachmentsFolderId() {
+	public long getAttachmentsFolderId() throws SystemException {
 		if (_attachmentsFolderId !=
 				DLFolderConstants.DEFAULT_PARENT_FOLDER_ID) {
 
@@ -141,6 +150,20 @@ public class BackgroundTaskImpl extends BackgroundTaskBaseImpl {
 	}
 
 	@Override
+	public Map<String, Serializable> getTaskContextMap() {
+		if (_taskContextMap != null) {
+			return _taskContextMap;
+		}
+
+		String taskContext = getTaskContext();
+
+		_taskContextMap =
+			(Map<String, Serializable>)JSONFactoryUtil.deserialize(taskContext);
+
+		return _taskContextMap;
+	}
+
+	@Override
 	public boolean isInProgress() {
 		if (getStatus() == BackgroundTaskConstants.STATUS_IN_PROGRESS) {
 			return true;
@@ -150,5 +173,6 @@ public class BackgroundTaskImpl extends BackgroundTaskBaseImpl {
 	}
 
 	private long _attachmentsFolderId;
+	private Map<String, Serializable> _taskContextMap;
 
 }

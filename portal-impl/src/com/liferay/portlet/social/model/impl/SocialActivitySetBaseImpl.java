@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,7 +14,7 @@
 
 package com.liferay.portlet.social.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
+import com.liferay.portal.kernel.exception.SystemException;
 
 import com.liferay.portlet.social.model.SocialActivitySet;
 import com.liferay.portlet.social.service.SocialActivitySetLocalServiceUtil;
@@ -31,7 +31,6 @@ import com.liferay.portlet.social.service.SocialActivitySetLocalServiceUtil;
  * @see com.liferay.portlet.social.model.SocialActivitySet
  * @generated
  */
-@ProviderType
 public abstract class SocialActivitySetBaseImpl
 	extends SocialActivitySetModelImpl implements SocialActivitySet {
 	/*
@@ -40,7 +39,7 @@ public abstract class SocialActivitySetBaseImpl
 	 * Never modify or reference this class directly. All methods that expect a social activity set model instance should use the {@link SocialActivitySet} interface instead.
 	 */
 	@Override
-	public void persist() {
+	public void persist() throws SystemException {
 		if (this.isNew()) {
 			SocialActivitySetLocalServiceUtil.addSocialActivitySet(this);
 		}

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -43,18 +43,15 @@ public class LiferayStrutsRequestImpl extends HttpServletRequestWrapper {
 	public LiferayStrutsRequestImpl(HttpServletRequest request) {
 		super(request);
 
-		Map<String, Object> strutsAttributes =
-			(Map<String, Object>)request.getAttribute(
-				WebKeys.STRUTS_BRIDGES_ATTRIBUTES);
+		_strutsAttributes = (Map<String, Object>)request.getAttribute(
+			WebKeys.STRUTS_BRIDGES_ATTRIBUTES);
 
-		if (strutsAttributes == null) {
-			strutsAttributes = new HashMap<String, Object>();
+		if (_strutsAttributes == null) {
+			_strutsAttributes = new HashMap<String, Object>();
 
 			request.setAttribute(
-				WebKeys.STRUTS_BRIDGES_ATTRIBUTES, strutsAttributes);
+				WebKeys.STRUTS_BRIDGES_ATTRIBUTES, _strutsAttributes);
 		}
-
-		_strutsAttributes = strutsAttributes;
 	}
 
 	@Override
@@ -127,6 +124,6 @@ public class LiferayStrutsRequestImpl extends HttpServletRequestWrapper {
 	}
 
 	private byte[] _bytes;
-	private final Map<String, Object> _strutsAttributes;
+	private Map<String, Object> _strutsAttributes;
 
 }

@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -17,7 +17,6 @@
 <%@ include file="/html/taglib/init.jsp" %>
 
 <%
-String contents = (String)request.getAttribute("liferay-ui:input-editor:contents");
 String cssClass = GetterUtil.getString((String)request.getAttribute("liferay-ui:input-editor:cssClass"));
 String editorImpl = (String)request.getAttribute("liferay-ui:input-editor:editorImpl");
 String initMethod = (String)request.getAttribute("liferay-ui:input-editor:initMethod");
@@ -49,10 +48,10 @@ boolean skipEditorLoading = GetterUtil.getBoolean((String)request.getAttribute("
 </c:if>
 
 <div class="<%= cssClass %>">
-	<textarea id="<%= name %>" name="<%= name %>" style="height: 100%; visibility: hidden; width: 100%;"><%= (contents != null) ? contents : StringPool.BLANK %></textarea>
+	<textarea id="<%= name %>" name="<%= name %>" style="height: 100%; width: 100%;"></textarea>
 </div>
 
-<aui:script use="aui-node-base">
+<aui:script>
 	window['<%= name %>'] = {
 		onChangeCallbackCounter: 0,
 
@@ -70,16 +69,7 @@ boolean skipEditorLoading = GetterUtil.getBoolean((String)request.getAttribute("
 		},
 
 		getHTML: function() {
-			var data;
-
-			if ((contents == null) && !window['<%= name %>'].instanceReady && window['<%= HtmlUtil.escape(namespace + initMethod) %>']) {
-				data = <%= HtmlUtil.escape(namespace + initMethod) %>();
-			}
-			else {
-				data = tinyMCE.editors['<%= name %>'].getContent();
-			}
-
-			return data;
+			return tinyMCE.editors['<%= name %>'].getContent();
 		},
 
 		init: function(value) {
@@ -91,26 +81,10 @@ boolean skipEditorLoading = GetterUtil.getBoolean((String)request.getAttribute("
 		},
 
 		initInstanceCallback: function() {
-			<c:if test="<%= (contents == null) && Validator.isNotNull(initMethod) %>">
+			<c:if test="<%= Validator.isNotNull(initMethod) %>">
 				window['<%= name %>'].init(<%= HtmlUtil.escape(namespace + initMethod) %>());
 			</c:if>
-
-			var iframe = A.one('#<%= name %>_ifr');
-
-			if (iframe) {
-				var iframeWin = iframe.getDOM().contentWindow;
-
-				if (iframeWin) {
-					var iframeDoc = iframeWin.document.documentElement;
-
-					A.one(iframeDoc).addClass('aui');
-				}
-			}
-
-			window['<%= name %>'].instanceReady = true;
 		},
-
-		instanceReady: false,
 
 		<%
 		if (Validator.isNotNull(onChangeMethod)) {
@@ -136,7 +110,7 @@ boolean skipEditorLoading = GetterUtil.getBoolean((String)request.getAttribute("
 
 				}
 
-				window['<%= name %>'].onChangeCallbackCounter++;
+				onChangeCallbackCounter++;
 			},
 
 		<%
@@ -150,7 +124,6 @@ boolean skipEditorLoading = GetterUtil.getBoolean((String)request.getAttribute("
 
 	tinyMCE.init(
 		{
-			content_css: '<%= HtmlUtil.escapeJS(themeDisplay.getPathThemeCss()) %>/aui.css,<%= HtmlUtil.escapeJS(themeDisplay.getPathThemeCss()) %>/main.css',
 			convert_urls: false,
 			elements: '<%= name %>',
 			extended_valid_elements: 'a[name|href|target|title|onclick],img[class|src|border=0|alt|title|hspace|vspace|width|height|align|onmouseover|onmouseout|name|usemap],hr[class|width|size|noshade],font[face|size|color|style],span[class|align|style]',

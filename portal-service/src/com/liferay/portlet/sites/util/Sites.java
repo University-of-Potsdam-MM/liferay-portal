@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portlet.sites.util;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.Layout;
 import com.liferay.portal.model.LayoutPrototype;
@@ -71,7 +72,7 @@ public interface Sites {
 		"merge-fail-friendly-url-layouts";
 
 	public void addMergeFailFriendlyURLLayout(Layout layout)
-		throws PortalException;
+		throws PortalException, SystemException;
 
 	public void addPortletBreadcrumbEntries(
 			Group group, HttpServletRequest request,
@@ -120,7 +121,7 @@ public interface Sites {
 	public File exportLayoutSetPrototype(
 			LayoutSetPrototype layoutSetPrototype,
 			ServiceContext serviceContext)
-		throws PortalException;
+		throws PortalException, SystemException;
 
 	public Long[] filterGroups(List<Group> groups, String[] names);
 
@@ -130,37 +131,33 @@ public interface Sites {
 		ServiceContext serviceContext);
 
 	public int getMergeFailCount(LayoutPrototype layoutPrototype)
-		throws PortalException;
+		throws PortalException, SystemException;
 
 	public int getMergeFailCount(LayoutSetPrototype layoutSetPrototype)
-		throws PortalException;
+		throws PortalException, SystemException;
 
 	public List<Layout> getMergeFailFriendlyURLLayouts(LayoutSet layoutSet)
-		throws PortalException;
-
-	public List<String> getOrganizationNames(Group group, User user)
-		throws Exception;
-
-	public List<String> getUserGroupNames(Group group, User user)
-		throws Exception;
+		throws PortalException, SystemException;
 
 	public void importLayoutSetPrototype(
 			LayoutSetPrototype layoutSetPrototype, InputStream inputStream,
 			ServiceContext serviceContext)
-		throws PortalException;
+		throws PortalException, SystemException;
 
-	public boolean isContentSharingWithChildrenEnabled(Group group);
+	public boolean isContentSharingWithChildrenEnabled(Group group)
+		throws SystemException;
 
 	public boolean isFirstLayout(
-		long groupId, boolean privateLayout, long layoutId);
+			long groupId, boolean privateLayout, long layoutId)
+		throws SystemException;
 
 	public boolean isLayoutDeleteable(Layout layout);
 
 	public boolean isLayoutModifiedSinceLastMerge(Layout layout)
-		throws PortalException;
+		throws PortalException, SystemException;
 
 	public boolean isLayoutSetMergeable(Group group, LayoutSet layoutSet)
-		throws PortalException;
+		throws PortalException, SystemException;
 
 	public boolean isLayoutSetPrototypeUpdateable(LayoutSet layoutSet);
 
@@ -168,9 +165,18 @@ public interface Sites {
 
 	public boolean isLayoutUpdateable(Layout layout);
 
+	public boolean isOrganizationUser(
+			long companyId, Group group, User user,
+			List<String> organizationNames)
+		throws Exception;
+
 	public boolean isUserGroupLayoutSetViewable(
 			PermissionChecker permissionChecker, Group userGroupGroup)
-		throws PortalException;
+		throws PortalException, SystemException;
+
+	public boolean isUserGroupUser(
+			long companyId, Group group, User user, List<String> userGroupNames)
+		throws Exception;
 
 	public void mergeLayoutPrototypeLayout(Group group, Layout layout)
 		throws Exception;
@@ -179,7 +185,6 @@ public interface Sites {
 	 * @deprecated As of 6.2.0, replaced by {@link
 	 *             #mergeLayoutPrototypeLayout(Group, Layout)}
 	 */
-	@Deprecated
 	public void mergeLayoutProtypeLayout(Group group, Layout layout)
 		throws Exception;
 
@@ -190,23 +195,25 @@ public interface Sites {
 	 * @deprecated As of 6.2.0, replaced by {@link
 	 *             #mergeLayoutSetPrototypeLayouts(Group, LayoutSet)}
 	 */
-	@Deprecated
 	public void mergeLayoutSetProtypeLayouts(Group group, LayoutSet layoutSet)
 		throws Exception;
 
-	public void removeMergeFailFriendlyURLLayouts(LayoutSet layoutSet);
+	public void removeMergeFailFriendlyURLLayouts(LayoutSet layoutSet)
+		throws SystemException;
 
-	public void resetPrototype(Layout layout) throws PortalException;
+	public void resetPrototype(Layout layout)
+		throws PortalException, SystemException;
 
-	public void resetPrototype(LayoutSet layoutSet) throws PortalException;
+	public void resetPrototype(LayoutSet layoutSet)
+		throws PortalException, SystemException;
 
 	public void setMergeFailCount(
 			LayoutPrototype layoutPrototype, int newMergeFailCount)
-		throws PortalException;
+		throws PortalException, SystemException;
 
 	public void setMergeFailCount(
 			LayoutSetPrototype layoutSetPrototype, int newMergeFailCount)
-		throws PortalException;
+		throws PortalException, SystemException;
 
 	public void updateLayoutScopes(
 			long userId, Layout sourceLayout, Layout targetLayout,

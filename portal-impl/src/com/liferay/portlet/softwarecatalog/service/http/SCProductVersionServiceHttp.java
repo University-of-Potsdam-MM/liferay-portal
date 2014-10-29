@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -13,8 +13,6 @@
  */
 
 package com.liferay.portlet.softwarecatalog.service.http;
-
-import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -53,7 +51,6 @@ import com.liferay.portlet.softwarecatalog.service.SCProductVersionServiceUtil;
  * @see com.liferay.portlet.softwarecatalog.service.SCProductVersionServiceUtil
  * @generated
  */
-@ProviderType
 public class SCProductVersionServiceHttp {
 	public static com.liferay.portlet.softwarecatalog.model.SCProductVersion addProductVersion(
 		HttpPrincipal httpPrincipal, long productEntryId,
@@ -62,7 +59,8 @@ public class SCProductVersionServiceHttp {
 		boolean testDirectDownloadURL, boolean repoStoreArtifact,
 		long[] frameworkVersionIds,
 		com.liferay.portal.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(SCProductVersionServiceUtil.class,
 					"addProductVersion", _addProductVersionParameterTypes0);
@@ -82,6 +80,10 @@ public class SCProductVersionServiceHttp {
 					throw (com.liferay.portal.kernel.exception.PortalException)e;
 				}
 
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
+				}
+
 				throw new com.liferay.portal.kernel.exception.SystemException(e);
 			}
 
@@ -96,7 +98,8 @@ public class SCProductVersionServiceHttp {
 
 	public static void deleteProductVersion(HttpPrincipal httpPrincipal,
 		long productVersionId)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(SCProductVersionServiceUtil.class,
 					"deleteProductVersion", _deleteProductVersionParameterTypes1);
@@ -112,6 +115,10 @@ public class SCProductVersionServiceHttp {
 					throw (com.liferay.portal.kernel.exception.PortalException)e;
 				}
 
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
+				}
+
 				throw new com.liferay.portal.kernel.exception.SystemException(e);
 			}
 		}
@@ -124,7 +131,8 @@ public class SCProductVersionServiceHttp {
 
 	public static com.liferay.portlet.softwarecatalog.model.SCProductVersion getProductVersion(
 		HttpPrincipal httpPrincipal, long productVersionId)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(SCProductVersionServiceUtil.class,
 					"getProductVersion", _getProductVersionParameterTypes2);
@@ -142,6 +150,10 @@ public class SCProductVersionServiceHttp {
 					throw (com.liferay.portal.kernel.exception.PortalException)e;
 				}
 
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
+				}
+
 				throw new com.liferay.portal.kernel.exception.SystemException(e);
 			}
 
@@ -156,7 +168,8 @@ public class SCProductVersionServiceHttp {
 
 	public static java.util.List<com.liferay.portlet.softwarecatalog.model.SCProductVersion> getProductVersions(
 		HttpPrincipal httpPrincipal, long productEntryId, int start, int end)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(SCProductVersionServiceUtil.class,
 					"getProductVersions", _getProductVersionsParameterTypes3);
@@ -174,6 +187,10 @@ public class SCProductVersionServiceHttp {
 					throw (com.liferay.portal.kernel.exception.PortalException)e;
 				}
 
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
+				}
+
 				throw new com.liferay.portal.kernel.exception.SystemException(e);
 			}
 
@@ -188,7 +205,8 @@ public class SCProductVersionServiceHttp {
 
 	public static int getProductVersionsCount(HttpPrincipal httpPrincipal,
 		long productEntryId)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(SCProductVersionServiceUtil.class,
 					"getProductVersionsCount",
@@ -205,6 +223,10 @@ public class SCProductVersionServiceHttp {
 			catch (Exception e) {
 				if (e instanceof com.liferay.portal.kernel.exception.PortalException) {
 					throw (com.liferay.portal.kernel.exception.PortalException)e;
+				}
+
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
 				}
 
 				throw new com.liferay.portal.kernel.exception.SystemException(e);
@@ -225,7 +247,8 @@ public class SCProductVersionServiceHttp {
 		java.lang.String downloadPageURL, java.lang.String directDownloadURL,
 		boolean testDirectDownloadURL, boolean repoStoreArtifact,
 		long[] frameworkVersionIds)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(SCProductVersionServiceUtil.class,
 					"updateProductVersion", _updateProductVersionParameterTypes5);
@@ -243,6 +266,10 @@ public class SCProductVersionServiceHttp {
 			catch (Exception e) {
 				if (e instanceof com.liferay.portal.kernel.exception.PortalException) {
 					throw (com.liferay.portal.kernel.exception.PortalException)e;
+				}
+
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
 				}
 
 				throw new com.liferay.portal.kernel.exception.SystemException(e);

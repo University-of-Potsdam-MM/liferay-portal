@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,20 +14,17 @@
 
 package com.liferay.portlet.softwarecatalog.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
-import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSON;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.CacheModel;
-import com.liferay.portal.model.User;
 import com.liferay.portal.model.impl.BaseModelImpl;
 import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.service.UserLocalServiceUtil;
+import com.liferay.portal.util.PortalUtil;
 
 import com.liferay.portlet.expando.model.ExpandoBridge;
 import com.liferay.portlet.expando.util.ExpandoBridgeFactoryUtil;
@@ -59,7 +56,6 @@ import java.util.Map;
  * @generated
  */
 @JSON(strict = true)
-@ProviderType
 public class SCFrameworkVersionModelImpl extends BaseModelImpl<SCFrameworkVersion>
 	implements SCFrameworkVersionModel {
 	/*
@@ -97,10 +93,10 @@ public class SCFrameworkVersionModelImpl extends BaseModelImpl<SCFrameworkVersio
 	public static final boolean COLUMN_BITMASK_ENABLED = GetterUtil.getBoolean(com.liferay.portal.util.PropsUtil.get(
 				"value.object.column.bitmask.enabled.com.liferay.portlet.softwarecatalog.model.SCFrameworkVersion"),
 			true);
-	public static final long ACTIVE_COLUMN_BITMASK = 1L;
-	public static final long COMPANYID_COLUMN_BITMASK = 2L;
-	public static final long GROUPID_COLUMN_BITMASK = 4L;
-	public static final long NAME_COLUMN_BITMASK = 8L;
+	public static long ACTIVE_COLUMN_BITMASK = 1L;
+	public static long COMPANYID_COLUMN_BITMASK = 2L;
+	public static long GROUPID_COLUMN_BITMASK = 4L;
+	public static long NAME_COLUMN_BITMASK = 8L;
 
 	/**
 	 * Converts the soap model instance into a normal model instance.
@@ -215,9 +211,6 @@ public class SCFrameworkVersionModelImpl extends BaseModelImpl<SCFrameworkVersio
 		attributes.put("url", getUrl());
 		attributes.put("active", getActive());
 		attributes.put("priority", getPriority());
-
-		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
-		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
 
 		return attributes;
 	}
@@ -360,19 +353,13 @@ public class SCFrameworkVersionModelImpl extends BaseModelImpl<SCFrameworkVersio
 	}
 
 	@Override
-	public String getUserUuid() {
-		try {
-			User user = UserLocalServiceUtil.getUserById(getUserId());
-
-			return user.getUuid();
-		}
-		catch (PortalException pe) {
-			return StringPool.BLANK;
-		}
+	public String getUserUuid() throws SystemException {
+		return PortalUtil.getUserValue(getUserId(), "uuid", _userUuid);
 	}
 
 	@Override
 	public void setUserUuid(String userUuid) {
+		_userUuid = userUuid;
 	}
 
 	@JSON
@@ -577,16 +564,6 @@ public class SCFrameworkVersionModelImpl extends BaseModelImpl<SCFrameworkVersio
 	}
 
 	@Override
-	public boolean isEntityCacheEnabled() {
-		return ENTITY_CACHE_ENABLED;
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return FINDER_CACHE_ENABLED;
-	}
-
-	@Override
 	public void resetOriginalValues() {
 		SCFrameworkVersionModelImpl scFrameworkVersionModelImpl = this;
 
@@ -756,8 +733,8 @@ public class SCFrameworkVersionModelImpl extends BaseModelImpl<SCFrameworkVersio
 		return sb.toString();
 	}
 
-	private static final ClassLoader _classLoader = SCFrameworkVersion.class.getClassLoader();
-	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
+	private static ClassLoader _classLoader = SCFrameworkVersion.class.getClassLoader();
+	private static Class<?>[] _escapedModelInterfaces = new Class[] {
 			SCFrameworkVersion.class
 		};
 	private long _frameworkVersionId;
@@ -768,6 +745,7 @@ public class SCFrameworkVersionModelImpl extends BaseModelImpl<SCFrameworkVersio
 	private long _originalCompanyId;
 	private boolean _setOriginalCompanyId;
 	private long _userId;
+	private String _userUuid;
 	private String _userName;
 	private Date _createDate;
 	private Date _modifiedDate;

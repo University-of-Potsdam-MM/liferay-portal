@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -73,7 +73,6 @@ public class AssetVocabularyServiceSoap {
 	* @deprecated As of 6.1.0 {@link #addVocabulary(String, Map, Map, String,
 	ServiceContext)}
 	*/
-	@Deprecated
 	public static com.liferay.portlet.asset.model.AssetVocabularySoap addVocabulary(
 		java.lang.String[] titleMapLanguageIds,
 		java.lang.String[] titleMapValues,
@@ -145,7 +144,6 @@ public class AssetVocabularyServiceSoap {
 	* @deprecated As of 6.2.0, Replaced by {@link #deleteVocabularies(long[],
 	ServiceContext)}
 	*/
-	@Deprecated
 	public static void deleteVocabularies(long[] vocabularyIds)
 		throws RemoteException {
 		try {
@@ -188,10 +186,6 @@ public class AssetVocabularyServiceSoap {
 		}
 	}
 
-	/**
-	* @deprecated As of 7.0.0, with no direct replacement
-	*/
-	@Deprecated
 	public static com.liferay.portlet.asset.model.AssetVocabularySoap[] getCompanyVocabularies(
 		long companyId) throws RemoteException {
 		try {
@@ -238,23 +232,6 @@ public class AssetVocabularyServiceSoap {
 		}
 	}
 
-	public static com.liferay.portlet.asset.model.AssetVocabularySoap[] getGroupsVocabularies(
-		long[] groupIds, java.lang.String className, long classTypePK)
-		throws RemoteException {
-		try {
-			java.util.List<com.liferay.portlet.asset.model.AssetVocabulary> returnValue =
-				AssetVocabularyServiceUtil.getGroupsVocabularies(groupIds,
-					className, classTypePK);
-
-			return com.liferay.portlet.asset.model.AssetVocabularySoap.toSoapModels(returnValue);
-		}
-		catch (Exception e) {
-			_log.error(e, e);
-
-			throw new RemoteException(e.getMessage());
-		}
-	}
-
 	public static com.liferay.portlet.asset.model.AssetVocabularySoap[] getGroupVocabularies(
 		long groupId) throws RemoteException {
 		try {
@@ -288,26 +265,8 @@ public class AssetVocabularyServiceSoap {
 	}
 
 	public static com.liferay.portlet.asset.model.AssetVocabularySoap[] getGroupVocabularies(
-		long groupId, boolean createDefaultVocabulary, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.asset.model.AssetVocabulary> obc)
-		throws RemoteException {
-		try {
-			java.util.List<com.liferay.portlet.asset.model.AssetVocabulary> returnValue =
-				AssetVocabularyServiceUtil.getGroupVocabularies(groupId,
-					createDefaultVocabulary, start, end, obc);
-
-			return com.liferay.portlet.asset.model.AssetVocabularySoap.toSoapModels(returnValue);
-		}
-		catch (Exception e) {
-			_log.error(e, e);
-
-			throw new RemoteException(e.getMessage());
-		}
-	}
-
-	public static com.liferay.portlet.asset.model.AssetVocabularySoap[] getGroupVocabularies(
 		long groupId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.asset.model.AssetVocabulary> obc)
+		com.liferay.portal.kernel.util.OrderByComparator obc)
 		throws RemoteException {
 		try {
 			java.util.List<com.liferay.portlet.asset.model.AssetVocabulary> returnValue =
@@ -325,27 +284,12 @@ public class AssetVocabularyServiceSoap {
 
 	public static com.liferay.portlet.asset.model.AssetVocabularySoap[] getGroupVocabularies(
 		long groupId, java.lang.String name, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.asset.model.AssetVocabulary> obc)
+		com.liferay.portal.kernel.util.OrderByComparator obc)
 		throws RemoteException {
 		try {
 			java.util.List<com.liferay.portlet.asset.model.AssetVocabulary> returnValue =
 				AssetVocabularyServiceUtil.getGroupVocabularies(groupId, name,
 					start, end, obc);
-
-			return com.liferay.portlet.asset.model.AssetVocabularySoap.toSoapModels(returnValue);
-		}
-		catch (Exception e) {
-			_log.error(e, e);
-
-			throw new RemoteException(e.getMessage());
-		}
-	}
-
-	public static com.liferay.portlet.asset.model.AssetVocabularySoap[] getGroupVocabularies(
-		long[] groupIds) throws RemoteException {
-		try {
-			java.util.List<com.liferay.portlet.asset.model.AssetVocabulary> returnValue =
-				AssetVocabularyServiceUtil.getGroupVocabularies(groupIds);
 
 			return com.liferay.portlet.asset.model.AssetVocabularySoap.toSoapModels(returnValue);
 		}
@@ -385,24 +329,10 @@ public class AssetVocabularyServiceSoap {
 		}
 	}
 
-	public static int getGroupVocabulariesCount(long[] groupIds)
-		throws RemoteException {
-		try {
-			int returnValue = AssetVocabularyServiceUtil.getGroupVocabulariesCount(groupIds);
-
-			return returnValue;
-		}
-		catch (Exception e) {
-			_log.error(e, e);
-
-			throw new RemoteException(e.getMessage());
-		}
-	}
-
 	public static com.liferay.portlet.asset.model.AssetVocabularyDisplay getGroupVocabulariesDisplay(
 		long groupId, java.lang.String name, int start, int end,
 		boolean addDefaultVocabulary,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.asset.model.AssetVocabulary> obc)
+		com.liferay.portal.kernel.util.OrderByComparator obc)
 		throws RemoteException {
 		try {
 			com.liferay.portlet.asset.model.AssetVocabularyDisplay returnValue = AssetVocabularyServiceUtil.getGroupVocabulariesDisplay(groupId,
@@ -419,7 +349,7 @@ public class AssetVocabularyServiceSoap {
 
 	public static com.liferay.portlet.asset.model.AssetVocabularyDisplay getGroupVocabulariesDisplay(
 		long groupId, java.lang.String name, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.asset.model.AssetVocabulary> obc)
+		com.liferay.portal.kernel.util.OrderByComparator obc)
 		throws RemoteException {
 		try {
 			com.liferay.portlet.asset.model.AssetVocabularyDisplay returnValue = AssetVocabularyServiceUtil.getGroupVocabulariesDisplay(groupId,
@@ -437,10 +367,9 @@ public class AssetVocabularyServiceSoap {
 	/**
 	* @deprecated As of 6.2.0, with no direct replacement
 	*/
-	@Deprecated
 	public static java.lang.String getJSONGroupVocabularies(long groupId,
 		java.lang.String name, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.asset.model.AssetVocabulary> obc)
+		com.liferay.portal.kernel.util.OrderByComparator obc)
 		throws RemoteException {
 		try {
 			com.liferay.portal.kernel.json.JSONObject returnValue = AssetVocabularyServiceUtil.getJSONGroupVocabularies(groupId,
@@ -455,11 +384,6 @@ public class AssetVocabularyServiceSoap {
 		}
 	}
 
-	/**
-	* @deprecated As of 7.0.0, replaced by {@link
-	#AssetUtil.filterVocabularyIds(PermissionChecker, long[])}
-	*/
-	@Deprecated
 	public static com.liferay.portlet.asset.model.AssetVocabularySoap[] getVocabularies(
 		long[] vocabularyIds) throws RemoteException {
 		try {
@@ -489,27 +413,10 @@ public class AssetVocabularyServiceSoap {
 		}
 	}
 
-	public static com.liferay.portlet.asset.model.AssetVocabularyDisplay searchVocabulariesDisplay(
-		long groupId, java.lang.String title, int start, int end,
-		boolean addDefaultVocabulary) throws RemoteException {
-		try {
-			com.liferay.portlet.asset.model.AssetVocabularyDisplay returnValue = AssetVocabularyServiceUtil.searchVocabulariesDisplay(groupId,
-					title, start, end, addDefaultVocabulary);
-
-			return returnValue;
-		}
-		catch (Exception e) {
-			_log.error(e, e);
-
-			throw new RemoteException(e.getMessage());
-		}
-	}
-
 	/**
 	* @deprecated As of 6.1.0, {@link #updateVocabulary(long, String, Map, Map,
 	String, ServiceContext)}
 	*/
-	@Deprecated
 	public static com.liferay.portlet.asset.model.AssetVocabularySoap updateVocabulary(
 		long vocabularyId, java.lang.String[] titleMapLanguageIds,
 		java.lang.String[] titleMapValues,

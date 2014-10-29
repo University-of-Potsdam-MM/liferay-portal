@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -25,45 +25,29 @@ import com.liferay.portal.model.StagedModel;
 import com.liferay.portal.service.LayoutFriendlyURLLocalServiceUtil;
 import com.liferay.portal.service.LayoutLocalServiceUtil;
 import com.liferay.portal.service.LayoutPrototypeLocalServiceUtil;
-import com.liferay.portal.test.TransactionalTestRule;
-import com.liferay.portal.test.listeners.MainServletExecutionTestListener;
-import com.liferay.portal.test.runners.LiferayIntegrationJUnitTestRunner;
-import com.liferay.portal.util.test.LayoutTestUtil;
-import com.liferay.portal.util.test.RandomTestUtil;
+import com.liferay.portal.service.ServiceTestUtil;
+import com.liferay.portal.test.LiferayIntegrationJUnitTestRunner;
+import com.liferay.portal.test.MainServletExecutionTestListener;
+import com.liferay.portal.test.TransactionalExecutionTestListener;
+import com.liferay.portal.util.LayoutTestUtil;
 
 import java.util.List;
 import java.util.Map;
 
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.ClassRule;
 import org.junit.runner.RunWith;
 
 /**
  * @author Daniela Zapata Riesco
  */
-@ExecutionTestListeners(listeners = {MainServletExecutionTestListener.class})
+@ExecutionTestListeners(
+	listeners = {
+		MainServletExecutionTestListener.class,
+		TransactionalExecutionTestListener.class
+	})
 @RunWith(LiferayIntegrationJUnitTestRunner.class)
 public class LayoutPrototypeStagedModelDataHandlerTest
 	extends BaseStagedModelDataHandlerTestCase {
-
-	@ClassRule
-	public static TransactionalTestRule transactionalTestRule =
-		new TransactionalTestRule();
-
-	@After
-	@Override
-	public void tearDown() throws Exception {
-		super.tearDown();
-
-		_layoutPrototype =
-			LayoutPrototypeLocalServiceUtil.
-				fetchLayoutPrototypeByUuidAndCompanyId(
-					_layoutPrototype.getUuid(),
-					_layoutPrototype.getCompanyId());
-
-		LayoutPrototypeLocalServiceUtil.deleteLayoutPrototype(_layoutPrototype);
-	}
 
 	@Override
 	protected StagedModel addStagedModel(
@@ -71,10 +55,10 @@ public class LayoutPrototypeStagedModelDataHandlerTest
 			Map<String, List<StagedModel>> dependentStagedModelsMap)
 		throws Exception {
 
-		_layoutPrototype = LayoutTestUtil.addLayoutPrototype(
-			RandomTestUtil.randomString());
+		LayoutPrototype layoutPrototype = LayoutTestUtil.addLayoutPrototype(
+			ServiceTestUtil.randomString());
 
-		Layout layout = _layoutPrototype.getLayout();
+		Layout layout = layoutPrototype.getLayout();
 
 		UnicodeProperties typeSettings = layout.getTypeSettingsProperties();
 
@@ -96,7 +80,7 @@ public class LayoutPrototypeStagedModelDataHandlerTest
 			dependentStagedModelsMap, LayoutFriendlyURL.class,
 			layoutFriendlyURLs.get(0));
 
-		return _layoutPrototype;
+		return layoutPrototype;
 	}
 
 	@Override
@@ -175,7 +159,5 @@ public class LayoutPrototypeStagedModelDataHandlerTest
 			layoutFriendlyURL.getFriendlyURL(),
 			importedLayoutFriendlyURL.getFriendlyURL());
 	}
-
-	private LayoutPrototype _layoutPrototype;
 
 }

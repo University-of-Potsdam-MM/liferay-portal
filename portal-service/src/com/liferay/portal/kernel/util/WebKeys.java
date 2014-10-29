@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -45,8 +45,6 @@ public interface WebKeys {
 
 	public static final String CURRENT_COMPLETE_URL = "CURRENT_COMPLETE_URL";
 
-	public static final String CURRENT_PORTLET_URL = "CURRENT_PORTLET_URL";
-
 	@Distributed(direction = Direction.REQUEST)
 	public static final String CURRENT_URL = "CURRENT_URL";
 
@@ -59,8 +57,6 @@ public interface WebKeys {
 	public static final String FORGOT_PASSWORD_REMINDER_USER = "FORGOT_PASSWORD_REMINDER_USER";
 
 	public static final String FORGOT_PASSWORD_REMINDER_USER_EMAIL_ADDRESS = "FORGOT_PASSWORD_REMINDER_USER_EMAIL_ADDRESS";
-
-	public static final String GROUP = "GROUP";
 
 	public static final String INVOKER_FILTER_URI = "INVOKER_FILTER_URI";
 
@@ -79,13 +75,11 @@ public interface WebKeys {
 	/**
 	 * @deprecated As of 6.1.0, replaced by {@link #VISITED_GROUP_ID_PREVIOUS}
 	 */
-	@Deprecated
 	public static final String LIFERAY_SHARED_VISITED_GROUP_ID_PREVIOUS = "LIFERAY_SHARED_VISITED_GROUP_ID_PREVIOUS";
 
 	/**
 	 * @deprecated As of 6.1.0, replaced by {@link #VISITED_GROUP_ID_RECENT}
 	 */
-	@Deprecated
 	public static final String LIFERAY_SHARED_VISITED_GROUP_ID_RECENT = "LIFERAY_SHARED_VISITED_GROUP_ID_RECENT";
 
 	public static final String OSGI_BUNDLE = "OSGI_BUNDLE";
@@ -127,8 +121,6 @@ public interface WebKeys {
 
 	public static final String PORTAL_MESSAGES = "LIFERAY_SHARED_PORTAL_MESSAGES";
 
-	public static final String PORTLET_BREADCRUMBS = "LIFERAY_SHARED_PORTLET_BREADCRUMBS";
-
 	public static final String PORTLET_CONFIGURATOR_VISIBILITY = "PORTLET_CONFIGURATOR_VISIBILITY";
 
 	public static final String PORTLET_DECORATE = "PORTLET_DECORATE";
@@ -136,8 +128,6 @@ public interface WebKeys {
 	public static final String PORTLET_ID = "PORTLET_ID";
 
 	public static final String PORTLET_PREFERENCES_MAP = "PORTLET_PREFERENCES_MAP";
-
-	public static final String PORTLET_QUICK_ACCESS_ENTRIES = "LIFERAY_SHARED_PORTLET_QUICK_ACCESS_ENTRIES";
 
 	public static final String PORTLET_RESOURCE_STATIC_URLS = "PORTLET_RESOURCE_STATIC_URLS";
 
@@ -180,8 +170,6 @@ public interface WebKeys {
 	public static final String SERVLET_CONTEXT_INCLUDE_FILTER_THEME = "SERVLET_CONTEXT_INCLUDE_FILTER_THEME";
 
 	public static final String SERVLET_PATH = "SERVLET_PATH";
-
-	public static final String SINGLE_PAGE_APPLICATION_LAST_PORTLET_ID = "SINGLE_PAGE_APPLICATION_LAST_PORTLET_ID";
 
 	@Distributed(direction = Direction.RESPONSE)
 	public static final String SPI_AGENT_ACTION_RESULT = "SPI_AGENT_ACTION_RESULT";

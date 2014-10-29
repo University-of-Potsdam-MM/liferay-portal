@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,7 +14,7 @@
 
 package com.liferay.portlet.bookmarks.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
+import com.liferay.portal.kernel.exception.SystemException;
 
 import com.liferay.portlet.bookmarks.model.BookmarksEntry;
 import com.liferay.portlet.bookmarks.service.BookmarksEntryLocalServiceUtil;
@@ -31,7 +31,6 @@ import com.liferay.portlet.bookmarks.service.BookmarksEntryLocalServiceUtil;
  * @see com.liferay.portlet.bookmarks.model.BookmarksEntry
  * @generated
  */
-@ProviderType
 public abstract class BookmarksEntryBaseImpl extends BookmarksEntryModelImpl
 	implements BookmarksEntry {
 	/*
@@ -40,7 +39,7 @@ public abstract class BookmarksEntryBaseImpl extends BookmarksEntryModelImpl
 	 * Never modify or reference this class directly. All methods that expect a bookmarks entry model instance should use the {@link BookmarksEntry} interface instead.
 	 */
 	@Override
-	public void persist() {
+	public void persist() throws SystemException {
 		if (this.isNew()) {
 			BookmarksEntryLocalServiceUtil.addBookmarksEntry(this);
 		}
@@ -50,7 +49,7 @@ public abstract class BookmarksEntryBaseImpl extends BookmarksEntryModelImpl
 	}
 
 	@Override
-	public void updateTreePath(String treePath) {
+	public void updateTreePath(String treePath) throws SystemException {
 		BookmarksEntry bookmarksEntry = this;
 
 		bookmarksEntry.setTreePath(treePath);

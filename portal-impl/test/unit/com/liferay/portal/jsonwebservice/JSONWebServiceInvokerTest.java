@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -130,119 +130,6 @@ public class JSONWebServiceInvokerTest extends BaseJSONWebServiceTestCase {
 	}
 
 	@Test
-	public void testCreateArgumentInstances() throws Exception {
-
-		// Style 1
-
-		Map<String, Object> map = new LinkedHashMap<>();
-
-		Map<String, Object> params = new LinkedHashMap<>();
-
-		params.put("+fooData", null);
-
-		map.put("/foo/use1", params);
-
-		String json = toJSON(map);
-
-		JSONWebServiceAction jsonWebServiceAction = prepareInvokerAction(json);
-
-		Object result = jsonWebServiceAction.invoke();
-
-		JSONWebServiceInvokerAction.InvokerResult invokerResult =
-			(JSONWebServiceInvokerAction.InvokerResult)result;
-
-		Assert.assertEquals(
-			"using #1: h=177/id=-1/n=John Doe/v=foo!",
-			invokerResult.getResult());
-
-		// Style 2
-
-		map.clear();
-
-		map.put("/foo/use2", params);
-
-		json = toJSON(map);
-
-		jsonWebServiceAction = prepareInvokerAction(json);
-
-		try {
-			jsonWebServiceAction.invoke();
-
-			Assert.fail();
-		}
-		catch (Exception ignore) {
-		}
-
-		map.clear();
-
-		params.clear();
-
-		params.put("+fooData:" + FooDataImpl.class.getName(), null);
-
-		map.put("/foo/use2", params);
-
-		json = toJSON(map);
-
-		jsonWebServiceAction = prepareInvokerAction(json);
-
-		result = jsonWebServiceAction.invoke();
-
-		invokerResult = (JSONWebServiceInvokerAction.InvokerResult)result;
-
-		Assert.assertEquals(
-			"using #2: h=177/id=-1/n=John Doe/v=foo!",
-			invokerResult.getResult());
-
-		// Style 3
-
-		map.clear();
-
-		params.clear();
-
-		params.put("+fooData", FooDataImpl.class.getName());
-
-		map.put("/foo/use2", params);
-
-		json = toJSON(map);
-
-		jsonWebServiceAction = prepareInvokerAction(json);
-
-		result = jsonWebServiceAction.invoke();
-
-		invokerResult = (JSONWebServiceInvokerAction.InvokerResult)result;
-
-		Assert.assertEquals(
-			"using #2: h=177/id=-1/n=John Doe/v=foo!",
-			invokerResult.getResult());
-
-		// Style 4
-
-		map.clear();
-
-		params.clear();
-
-		Map<String, Object> fooObj = new HashMap<>();
-
-		fooObj.put("name", "Jane Doe");
-
-		params.put("fooData", fooObj);
-
-		map.put("/foo/use1", params);
-
-		json = toJSON(map);
-
-		jsonWebServiceAction = prepareInvokerAction(json);
-
-		result = jsonWebServiceAction.invoke();
-
-		invokerResult = (JSONWebServiceInvokerAction.InvokerResult)result;
-
-		Assert.assertEquals(
-			"using #1: h=177/id=-1/n=Jane Doe/v=foo!",
-			invokerResult.getResult());
-	}
-
-	@Test
 	public void testFiltering() throws Exception {
 		Map<String, Object> map1 = new LinkedHashMap<String, Object>();
 
@@ -268,10 +155,12 @@ public class JSONWebServiceInvokerTest extends BaseJSONWebServiceTestCase {
 		JSONWebServiceInvokerAction.InvokerResult invokerResult =
 			(JSONWebServiceInvokerAction.InvokerResult)result;
 
-		Assert.assertTrue(invokerResult.getResult() instanceof Map);
+		result = invokerResult.getResult();
+
+		Assert.assertTrue(result instanceof Map);
 		Assert.assertEquals(
-			toMap("{\"id\":173,\"world\":\"Welcome 173 to Jupiter\"}"),
-			toMap(toJSON(result)));
+			"{\"id\":173,\"world\":\"Welcome 173 to Jupiter\"}",
+			toJSON(invokerResult));
 	}
 
 	@Test
@@ -395,7 +284,9 @@ public class JSONWebServiceInvokerTest extends BaseJSONWebServiceTestCase {
 		JSONWebServiceInvokerAction.InvokerResult invokerResult =
 			(JSONWebServiceInvokerAction.InvokerResult)result;
 
-		Assert.assertTrue(invokerResult.getResult() instanceof Map);
+		result = invokerResult.getResult();
+
+		Assert.assertTrue(result instanceof Map);
 
 		StringBundler sb = new StringBundler(5);
 
@@ -405,7 +296,7 @@ public class JSONWebServiceInvokerTest extends BaseJSONWebServiceTestCase {
 		sb.append("\"value\":\"fun\",\"world\":\"Welcome -13 to Jupiter\"},");
 		sb.append("\"value\":\"licensed\"},\"value\":\"foo!\"}");
 
-		Assert.assertEquals(toMap(sb.toString()), toMap(toJSON(result)));
+		Assert.assertEquals(sb.toString(), toJSON(invokerResult));
 	}
 
 	@Test
@@ -455,14 +346,14 @@ public class JSONWebServiceInvokerTest extends BaseJSONWebServiceTestCase {
 		JSONWebServiceInvokerAction.InvokerResult invokerResult =
 			(JSONWebServiceInvokerAction.InvokerResult)result;
 
-		Assert.assertTrue(invokerResult.getResult() instanceof List);
+		result = invokerResult.getResult();
 
-		List<Object> expectedList = toList(
-			"[{\"id\":1,\"resource\":{\"id\":1,\"value\":\"foo!\"}}," +
-				"{\"id\":2,\"resource\":{\"id\":2,\"value\":\"foo!\"}}," +
-					"{\"id\":3,\"resource\":{\"id\":3,\"value\":\"foo!\"}}]");
-
-		Assert.assertEquals(expectedList, toList(toJSON(result)));
+		Assert.assertTrue(result instanceof List);
+		Assert.assertEquals(
+			"[{\"id\":1,\"resource\":{\"id\":1,\"value\":\"foo!\"}},{\"id\":" +
+				"2,\"resource\":{\"id\":2,\"value\":\"foo!\"}},{\"id\":3," +
+					"\"resource\":{\"id\":3,\"value\":\"foo!\"}}]",
+			toJSON(invokerResult));
 	}
 
 	@Test
@@ -593,7 +484,7 @@ public class JSONWebServiceInvokerTest extends BaseJSONWebServiceTestCase {
 
 		params.put("longs", "1,2,3");
 		params.put("ints", "1,2");
-		params.put("map", "{\"key\" : 122}");
+		params.put("map", "{'key' : 122}");
 
 		String json = toJSON(map);
 
@@ -700,8 +591,13 @@ public class JSONWebServiceInvokerTest extends BaseJSONWebServiceTestCase {
 
 		invokerResult = (JSONWebServiceInvokerAction.InvokerResult)result;
 
-		Assert.assertEquals(
-			"{\"array\":[1,2,3],\"value\":\"value\"}", toJSON(invokerResult));
+		try {
+			toJSON(invokerResult);
+
+			Assert.fail();
+		}
+		catch (IllegalArgumentException iae) {
+		}
 
 		// Hack 2
 
@@ -729,7 +625,7 @@ public class JSONWebServiceInvokerTest extends BaseJSONWebServiceTestCase {
 
 		map.put("/foo/srvcctx2", params);
 
-		params.put("serviceContext", "{\"failOnPortalException\": false}");
+		params.put("serviceContext", "{'failOnPortalException': false}");
 
 		String json = toJSON(map);
 
@@ -864,7 +760,7 @@ public class JSONWebServiceInvokerTest extends BaseJSONWebServiceTestCase {
 
 		params.put("calendar", "1330419334285");
 		params.put("userIds", "1,2,3");
-		params.put("locales", "\"en\",\"fr\"");
+		params.put("locales", "en,fr");
 		params.put("ids", "173,-7,007");
 
 		String json = toJSON(map);
@@ -906,43 +802,6 @@ public class JSONWebServiceInvokerTest extends BaseJSONWebServiceTestCase {
 		result = invokerResult.getResult();
 
 		Assert.assertEquals("2012, 1/3, en/2, 173/3", result);
-	}
-
-	@Test
-	public void testVariableAsList() throws Exception {
-		Map<String, Object> map = new LinkedHashMap<String, Object>();
-
-		Map<String, Object> params = new LinkedHashMap<String, Object>();
-
-		map.put("/foo/bar", params);
-
-		params.put(
-			"$fds[name,value] = /foo/get-foo-datas",
-			new HashMap<String, Object>());
-
-		String json = toJSON(map);
-
-		JSONWebServiceAction jsonWebServiceAction = prepareInvokerAction(json);
-
-		Object result = jsonWebServiceAction.invoke();
-
-		JSONWebServiceInvokerAction.InvokerResult invokerResult =
-			(JSONWebServiceInvokerAction.InvokerResult)result;
-
-		result = invokerResult.getResult();
-
-		Assert.assertTrue(result instanceof Map);
-
-		map = (Map<String, Object>)result;
-
-		Assert.assertTrue(map.containsKey("array"));
-		Assert.assertTrue(map.containsKey("fds"));
-		Assert.assertFalse(map.containsKey("secret"));
-		Assert.assertTrue(map.containsKey("value"));
-
-		String jsonResult = toJSON(invokerResult);
-
-		Assert.assertFalse(jsonResult.contains("secret"));
 	}
 
 	protected JSONWebServiceAction prepareInvokerAction(String content)

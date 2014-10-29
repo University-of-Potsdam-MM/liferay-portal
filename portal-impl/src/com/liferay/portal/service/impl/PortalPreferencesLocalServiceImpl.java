@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -43,7 +43,8 @@ public class PortalPreferencesLocalServiceImpl
 
 	@Override
 	public PortalPreferences addPortalPreferences(
-		long ownerId, int ownerType, String defaultPreferences) {
+			long ownerId, int ownerType, String defaultPreferences)
+		throws SystemException {
 
 		PortalPreferencesWrapperCacheUtil.remove(ownerId, ownerType);
 
@@ -86,23 +87,26 @@ public class PortalPreferencesLocalServiceImpl
 	 * @deprecated As of 6.2.0, replaced by {@link #addPortalPreferences(long,
 	 *             int, String)}
 	 */
-	@Deprecated
 	@Override
 	public PortalPreferences addPortalPreferences(
-		long companyId, long ownerId, int ownerType,
-		String defaultPreferences) {
+			long companyId, long ownerId, int ownerType,
+			String defaultPreferences)
+		throws SystemException {
 
 		return addPortalPreferences(ownerId, ownerType, defaultPreferences);
 	}
 
 	@Override
-	public PortletPreferences getPreferences(long ownerId, int ownerType) {
+	public PortletPreferences getPreferences(long ownerId, int ownerType)
+		throws SystemException {
+
 		return getPreferences(ownerId, ownerType, null);
 	}
 
 	@Override
 	public PortletPreferences getPreferences(
-		long ownerId, int ownerType, String defaultPreferences) {
+			long ownerId, int ownerType, String defaultPreferences)
+		throws SystemException {
 
 		DB db = DBFactoryUtil.getDB();
 
@@ -139,10 +143,10 @@ public class PortalPreferencesLocalServiceImpl
 	/**
 	 * @deprecated As of 6.2.0, replaced by {@link #getPreferences(long, int)}
 	 */
-	@Deprecated
 	@Override
 	public PortletPreferences getPreferences(
-		long companyId, long ownerId, int ownerType) {
+			long companyId, long ownerId, int ownerType)
+		throws SystemException {
 
 		return getPreferences(ownerId, ownerType);
 	}
@@ -151,19 +155,20 @@ public class PortalPreferencesLocalServiceImpl
 	 * @deprecated As of 6.2.0, replaced by {@link #getPreferences(long, int,
 	 *             String)}
 	 */
-	@Deprecated
 	@Override
 	public PortletPreferences getPreferences(
-		long companyId, long ownerId, int ownerType,
-		String defaultPreferences) {
+			long companyId, long ownerId, int ownerType,
+			String defaultPreferences)
+		throws SystemException {
 
 		return getPreferences(ownerId, ownerType, defaultPreferences);
 	}
 
 	@Override
 	public PortalPreferences updatePreferences(
-		long ownerId, int ownerType,
-		com.liferay.portlet.PortalPreferences portalPreferences) {
+			long ownerId, int ownerType,
+			com.liferay.portlet.PortalPreferences portalPreferences)
+		throws SystemException {
 
 		String xml = PortletPreferencesFactoryUtil.toXML(portalPreferences);
 
@@ -172,7 +177,8 @@ public class PortalPreferencesLocalServiceImpl
 
 	@Override
 	public PortalPreferences updatePreferences(
-		long ownerId, int ownerType, String xml) {
+			long ownerId, int ownerType, String xml)
+		throws SystemException {
 
 		PortalPreferencesWrapperCacheUtil.remove(ownerId, ownerType);
 
@@ -197,7 +203,8 @@ public class PortalPreferencesLocalServiceImpl
 	}
 
 	protected PortletPreferences doGetPreferences(
-		long ownerId, int ownerType, String defaultPreferences) {
+			long ownerId, int ownerType, String defaultPreferences)
+		throws SystemException {
 
 		PortalPreferencesWrapper portalPreferencesWrapper =
 			PortalPreferencesWrapperCacheUtil.get(ownerId, ownerType);

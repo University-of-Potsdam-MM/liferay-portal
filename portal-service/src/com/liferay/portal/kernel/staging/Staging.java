@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,9 +14,8 @@
 
 package com.liferay.portal.kernel.staging;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.lar.MissingReference;
@@ -24,7 +23,6 @@ import com.liferay.portal.kernel.lar.PortletDataContext;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.workflow.WorkflowTask;
 import com.liferay.portal.kernel.xml.Element;
-import com.liferay.portal.model.ExportImportConfiguration;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.Layout;
 import com.liferay.portal.model.LayoutRevision;
@@ -47,7 +45,6 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * @author Raymond Augé
  */
-@ProviderType
 public interface Staging {
 
 	public String buildRemoteURL(
@@ -56,37 +53,22 @@ public interface Staging {
 
 	public String buildRemoteURL(UnicodeProperties typeSettingsProperties);
 
-	/**
-	 * @deprecated As of 7.0.0, replaced by {@link
-	 *             com.liferay.portal.service.StagingLocalServiceUtil#
-	 *             checkDefaultLayoutSetBranches(long, Group, boolean, boolean,
-	 *             boolean, ServiceContext))}
-	 */
-	@Deprecated
 	public void checkDefaultLayoutSetBranches(
 			long userId, Group liveGroup, boolean branchingPublic,
 			boolean branchingPrivate, boolean remote,
 			ServiceContext serviceContext)
-		throws PortalException;
+		throws PortalException, SystemException;
 
-	public void copyFromLive(PortletRequest PortletRequest)
-		throws PortalException;
+	public void copyFromLive(PortletRequest PortletRequest) throws Exception;
 
 	public void copyFromLive(PortletRequest PortletRequest, Portlet portlet)
-		throws PortalException;
+		throws Exception;
 
 	public void copyPortlet(
 			PortletRequest PortletRequest, long sourceGroupId,
 			long targetGroupId, long sourcePlid, long targetPlid,
 			String portletId)
-		throws PortalException;
-
-	public void copyRemoteLayouts(
-			ExportImportConfiguration exportImportConfiguration)
-		throws PortalException;
-
-	public void copyRemoteLayouts(long exportImportConfigurationId)
-		throws PortalException;
+		throws Exception;
 
 	public void copyRemoteLayouts(
 			long sourceGroupId, boolean privateLayout,
@@ -94,23 +76,24 @@ public interface Staging {
 			String remoteAddress, int remotePort, String remotePathContext,
 			boolean secureConnection, long remoteGroupId,
 			boolean remotePrivateLayout, Date startDate, Date endDate)
-		throws PortalException;
+		throws Exception;
 
 	public void deleteLastImportSettings(Group liveGroup, boolean privateLayout)
-		throws PortalException;
+		throws PortalException, SystemException;
 
 	public void deleteRecentLayoutRevisionId(
-		HttpServletRequest request, long layoutSetBranchId, long plid);
+			HttpServletRequest request, long layoutSetBranchId, long plid)
+		throws SystemException;
 
 	public void deleteRecentLayoutRevisionId(
-		User user, long layoutSetBranchId, long plid);
+			User user, long layoutSetBranchId, long plid)
+		throws SystemException;
 
 	/**
 	 * @deprecated As of 6.2.0, replaced by {@link
 	 *             com.liferay.portal.service.StagingLocalService#disableStaging(
 	 *             Group, ServiceContext)}
 	 */
-	@Deprecated
 	public void disableStaging(
 			Group scopeGroup, Group liveGroup, ServiceContext serviceContext)
 		throws Exception;
@@ -120,7 +103,6 @@ public interface Staging {
 	 *             com.liferay.portal.service.StagingLocalService#disableStaging(
 	 *             Group, ServiceContext)}
 	 */
-	@Deprecated
 	public void disableStaging(Group liveGroup, ServiceContext serviceContext)
 		throws Exception;
 
@@ -129,7 +111,6 @@ public interface Staging {
 	 *             com.liferay.portal.service.StagingLocalService#disableStaging(
 	 *             PortletRequest, Group, ServiceContext)}
 	 */
-	@Deprecated
 	public void disableStaging(
 			PortletRequest portletRequest, Group scopeGroup, Group liveGroup,
 			ServiceContext serviceContext)
@@ -140,7 +121,6 @@ public interface Staging {
 	 *             com.liferay.portal.service.StagingLocalService#disableStaging(
 	 *             PortletRequest, Group, ServiceContext)}
 	 */
-	@Deprecated
 	public void disableStaging(
 			PortletRequest portletRequest, Group liveGroup,
 			ServiceContext serviceContext)
@@ -151,7 +131,6 @@ public interface Staging {
 	 *             com.liferay.portal.service.StagingLocalService#enableLocalStaging(
 	 *             long, Group, boolean, boolean, ServiceContext)}
 	 */
-	@Deprecated
 	public void enableLocalStaging(
 			long userId, Group scopeGroup, Group liveGroup,
 			boolean branchingPublic, boolean branchingPrivate,
@@ -164,7 +143,6 @@ public interface Staging {
 	 *             long, Group, boolean, boolean, String, int, String, boolean,
 	 *             long, ServiceContext)}
 	 */
-	@Deprecated
 	public void enableRemoteStaging(
 			long userId, Group scopeGroup, Group liveGroup,
 			boolean branchingPublic, boolean branchingPrivate,
@@ -180,37 +158,32 @@ public interface Staging {
 	public JSONObject getExceptionMessagesJSONObject(
 		Locale locale, Exception e, Map<String, Serializable> contextMap);
 
-	public Group getLiveGroup(long groupId);
+	public Group getLiveGroup(long groupId)
+		throws PortalException, SystemException;
 
-	public long getLiveGroupId(long groupId);
+	public long getLiveGroupId(long groupId)
+		throws PortalException, SystemException;
 
-	/**
-	 * @deprecated As of 7.0.0, moved to {@link
-	 *             com.liferay.portal.kernel.lar.ExportImportHelperUtil#getMissingParentLayouts(
-	 *             Layout, long)}
-	 */
-	@Deprecated
 	public List<Layout> getMissingParentLayouts(Layout layout, long liveGroupId)
-		throws PortalException;
+		throws Exception;
 
 	public long getRecentLayoutRevisionId(
 			HttpServletRequest request, long layoutSetBranchId, long plid)
-		throws PortalException;
+		throws PortalException, SystemException;
 
 	public long getRecentLayoutRevisionId(
 			User user, long layoutSetBranchId, long plid)
-		throws PortalException;
+		throws PortalException, SystemException;
 
 	public long getRecentLayoutSetBranchId(
 		HttpServletRequest request, long layoutSetId);
 
-	public long getRecentLayoutSetBranchId(User user, long layoutSetId);
+	public long getRecentLayoutSetBranchId(User user, long layoutSetId)
+		throws SystemException;
 
 	public String getSchedulerGroupName(String destinationName, long groupId);
 
 	public String getStagedPortletId(String portletId);
-
-	public Group getStagingGroup(long groupId);
 
 	public Map<String, String[]> getStagingParameters();
 
@@ -223,128 +196,106 @@ public interface Staging {
 
 	public WorkflowTask getWorkflowTask(
 			long userId, LayoutRevision layoutRevision)
-		throws PortalException;
+		throws PortalException, SystemException;
 
 	public boolean hasWorkflowTask(long userId, LayoutRevision layoutRevision)
-		throws PortalException;
+		throws PortalException, SystemException;
 
 	public boolean isIncomplete(Layout layout, long layoutSetBranchId);
 
-	public void lockGroup(long userId, long groupId) throws PortalException;
+	public void lockGroup(long userId, long groupId) throws Exception;
 
 	public void publishLayout(
 			long userId, long plid, long liveGroupId, boolean includeChildren)
-		throws PortalException;
-
-	public void publishLayouts(
-			long userId, ExportImportConfiguration exportImportConfiguration)
-		throws PortalException;
-
-	public void publishLayouts(long userId, long exportImportConfigurationId)
-		throws PortalException;
+		throws Exception;
 
 	public void publishLayouts(
 			long userId, long sourceGroupId, long targetGroupId,
 			boolean privateLayout, long[] layoutIds,
 			Map<String, String[]> parameterMap, Date startDate, Date endDate)
-		throws PortalException;
+		throws PortalException, SystemException;
 
-	/**
-	 * @deprecated As of 7.0.0, replaced by {@link #publishLayouts(long, long,
-	 *             long, boolean, long[], Map, Date, Date)}
-	 */
-	@Deprecated
 	public void publishLayouts(
 			long userId, long sourceGroupId, long targetGroupId,
 			boolean privateLayout, Map<Long, Boolean> layoutIdMap,
 			Map<String, String[]> parameterMap, Date startDate, Date endDate)
-		throws PortalException;
+		throws PortalException, SystemException;
 
 	public void publishLayouts(
 			long userId, long sourceGroupId, long targetGroupId,
 			boolean privateLayout, Map<String, String[]> parameterMap,
 			Date startDate, Date endDate)
-		throws PortalException;
+		throws PortalException, SystemException;
 
-	public void publishToLive(PortletRequest PortletRequest)
-		throws PortalException;
+	public void publishToLive(PortletRequest PortletRequest) throws Exception;
 
 	public void publishToLive(PortletRequest PortletRequest, Portlet portlet)
-		throws PortalException;
+		throws Exception;
 
-	public void publishToRemote(PortletRequest PortletRequest)
-		throws PortalException;
+	public void publishToRemote(PortletRequest PortletRequest) throws Exception;
 
 	public void scheduleCopyFromLive(PortletRequest PortletRequest)
-		throws PortalException;
+		throws Exception;
 
 	public void schedulePublishToLive(PortletRequest PortletRequest)
-		throws PortalException;
+		throws Exception;
 
 	public void schedulePublishToRemote(PortletRequest PortletRequest)
-		throws PortalException;
+		throws Exception;
 
 	public void setRecentLayoutBranchId(
-		HttpServletRequest request, long layoutSetBranchId, long plid,
-		long layoutBranchId);
+			HttpServletRequest request, long layoutSetBranchId, long plid,
+			long layoutBranchId)
+		throws SystemException;
 
 	public void setRecentLayoutBranchId(
-		User user, long layoutSetBranchId, long plid, long layoutBranchId);
+			User user, long layoutSetBranchId, long plid, long layoutBranchId)
+		throws SystemException;
 
 	public void setRecentLayoutRevisionId(
-		HttpServletRequest request, long layoutSetBranchId, long plid,
-		long layoutRevisionId);
+			HttpServletRequest request, long layoutSetBranchId, long plid,
+			long layoutRevisionId)
+		throws SystemException;
 
 	public void setRecentLayoutRevisionId(
-		User user, long layoutSetBranchId, long plid, long layoutRevisionId);
+			User user, long layoutSetBranchId, long plid, long layoutRevisionId)
+		throws SystemException;
 
 	public void setRecentLayoutSetBranchId(
 		HttpServletRequest request, long layoutSetId, long layoutSetBranchId);
 
 	public void setRecentLayoutSetBranchId(
-		User user, long layoutSetId, long layoutSetBranchId);
+			User user, long layoutSetId, long layoutSetBranchId)
+		throws SystemException;
 
-	public String stripProtocolFromRemoteAddress(String remoteAddress);
-
-	public void unlockGroup(long groupId);
+	public void unlockGroup(long groupId) throws SystemException;
 
 	public void unscheduleCopyFromLive(PortletRequest PortletRequest)
-		throws PortalException;
+		throws Exception;
 
 	public void unschedulePublishToLive(PortletRequest PortletRequest)
-		throws PortalException;
+		throws Exception;
 
 	public void unschedulePublishToRemote(PortletRequest PortletRequest)
-		throws PortalException;
+		throws Exception;
 
 	public void updateLastImportSettings(
 			Element layoutElement, Layout layout,
 			PortletDataContext portletDataContext)
-		throws PortalException;
+		throws Exception;
 
 	public void updateLastPublishDate(
 			long sourceGroupId, boolean privateLayout, Date lastPublishDate)
-		throws PortalException;
+		throws Exception;
 
 	public void updateLastPublishDate(
 			String portletId, PortletPreferences portletPreferences,
 			Date lastPublishDate)
-		throws PortalException;
+		throws Exception;
 
 	public void updateStaging(PortletRequest PortletRequest, Group liveGroup)
-		throws PortalException;
+		throws Exception;
 
-	public void validateRemote(
-			long groupId, String remoteAddress, int remotePort,
-			String remotePathContext, boolean secureConnection,
-			long remoteGroupId)
-		throws PortalException;
-
-	/**
-	 * @deprecated As of 7.0.0, replaced by {@link #validateRemote(long, String,
-	 *             int, String, boolean, long)}
-	 */
-	@Deprecated
 	public void validateRemote(
 			String remoteAddress, int remotePort, String remotePathContext,
 			boolean secureConnection, long remoteGroupId)

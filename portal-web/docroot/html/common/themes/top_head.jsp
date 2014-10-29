@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -44,7 +44,7 @@ if (!themeDisplay.isSignedIn() && layout.isPublicLayout()) {
 	%>
 
 			<c:if test="<%= availableLocale.equals(LocaleUtil.getDefault()) %>">
-				<link href="<%= HtmlUtil.escapeAttribute(canonicalURL) %>" hreflang="x-default" rel="alternate" />
+				<link href="<%= canonicalURL %>" hreflang="x-default" rel="alternate" />
 			</c:if>
 
 			<link href="<%= HtmlUtil.escapeAttribute(PortalUtil.getAlternateURL(canonicalURL, themeDisplay, availableLocale, layout)) %>" hreflang="<%= LocaleUtil.toW3cLanguageId(availableLocale) %>" rel="alternate" />
@@ -71,12 +71,7 @@ if (layout != null) {
 	String ppid = ParamUtil.getString(request, "p_p_id");
 
 	if (ppid.equals(PortletKeys.PORTLET_CONFIGURATION)) {
-		if (themeDisplay.isStatePopUp()) {
-			portlets = new ArrayList<Portlet>();
-		}
-		else {
-			portlets = layoutTypePortlet.getAllPortlets();
-		}
+		portlets = new ArrayList<Portlet>();
 
 		portlets.add(PortletLocalServiceUtil.getPortletById(company.getCompanyId(), PortletKeys.PORTLET_CONFIGURATION));
 
@@ -85,12 +80,12 @@ if (layout != null) {
 		if (Validator.isNotNull(ppid)) {
 			Portlet portlet = PortletLocalServiceUtil.getPortletById(company.getCompanyId(), ppid);
 
-			if ((portlet != null) && !portlets.contains(portlet)) {
+			if (portlet != null) {
 				portlets.add(portlet);
 			}
 		}
 	}
-	else if (layout.isTypeEmbedded() || layout.isTypePortlet()) {
+	else if (layout.isTypePortlet()) {
 		portlets = layoutTypePortlet.getAllPortlets();
 
 		if (themeDisplay.isStateMaximized() || themeDisplay.isStatePopUp()) {
@@ -164,7 +159,7 @@ StringBundler pageTopSB = OutputTag.getData(request, WebKeys.PAGE_TOP);
 
 <c:if test="<%= (layout != null) && Validator.isNotNull(layout.getCssText()) %>">
 	<style type="text/css">
-		<%= _escapeCssBlock(layout.getCssText()) %>
+		<%= layout.getCssText() %>
 	</style>
 </c:if>
 
@@ -207,13 +202,5 @@ StringBundler pageTopSB = OutputTag.getData(request, WebKeys.PAGE_TOP);
 </c:if>
 
 <%!
-private String _escapeCssBlock(String css) {
-	return StringUtil.replace(
-		css,
-		new String[] {"<", "expression("},
-		new String[] {"\\3c", ""}
-	);
-}
-
 private static Log _log = LogFactoryUtil.getLog("portal-web.docroot.html.common.themes.top_head_jsp");
 %>

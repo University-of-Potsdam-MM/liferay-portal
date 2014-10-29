@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,15 +14,17 @@
 
 package com.liferay.portal.kernel.util;
 
-import com.liferay.portal.kernel.concurrent.ConcurrentReferenceKeyHashMap;
-import com.liferay.portal.kernel.concurrent.ConcurrentReferenceValueHashMap;
-import com.liferay.portal.kernel.memory.FinalizeManager;
+import com.liferay.portal.kernel.memory.EqualityWeakReference;
 
+import java.lang.ref.Reference;
+import java.lang.ref.ReferenceQueue;
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
@@ -46,34 +48,49 @@ public class ProxyUtil {
 	public static Class<?> getProxyClass(
 		ClassLoader classLoader, Class<?>... interfaceClasses) {
 
-		ConcurrentMap<LookupKey, Class<?>> classReferences =
-			_classReferences.get(classLoader);
+		EqualityWeakReference<ClassLoader> classLoaderReference =
+			new EqualityWeakReference<ClassLoader>(classLoader);
+
+		ConcurrentMap<LookupKey, Reference<Class<?>>> classReferences =
+			_classReferences.get(classLoaderReference);
 
 		if (classReferences == null) {
 			classReferences =
-				new ConcurrentReferenceValueHashMap<LookupKey, Class<?>>(
-					FinalizeManager.WEAK_REFERENCE_FACTORY);
+				new ConcurrentHashMap<LookupKey, Reference<Class<?>>>();
 
-			ConcurrentMap<LookupKey, Class<?>> oldClassReferences =
-				_classReferences.putIfAbsent(classLoader, classReferences);
+			classLoaderReference = new EqualityWeakReference<ClassLoader>(
+				classLoader, _classLoaderReferenceQueue);
+
+			ConcurrentMap<LookupKey, Reference<Class<?>>> oldClassReferences =
+				_classReferences.putIfAbsent(
+					classLoaderReference, classReferences);
 
 			if (oldClassReferences != null) {
 				classReferences = oldClassReferences;
+
+				classLoaderReference.enqueue();
 			}
 		}
 
 		LookupKey lookupKey = new LookupKey(interfaceClasses);
 
-		Class<?> clazz = classReferences.get(lookupKey);
+		Reference<Class<?>> classReference = classReferences.get(lookupKey);
 
-		if (clazz == null) {
+		Class<?> clazz = null;
+
+		if ((classReference == null) ||
+			((clazz = classReference.get()) == null)) {
+
 			synchronized(classReferences) {
-				clazz = classReferences.get(lookupKey);
+				classReference = classReferences.get(lookupKey);
 
-				if (clazz == null) {
+				if ((classReference == null) ||
+					((clazz = classReference.get()) == null)) {
+
 					clazz = Proxy.getProxyClass(classLoader, interfaceClasses);
 
-					classReferences.put(lookupKey, clazz);
+					classReferences.put(
+						lookupKey, new WeakReference<Class<?>>(clazz));
 				}
 			}
 		}
@@ -82,14 +99,40 @@ public class ProxyUtil {
 
 		try {
 			constructor = clazz.getConstructor(_argumentsClazz);
-
-			constructor.setAccessible(true);
 		}
 		catch (Exception e) {
 			throw new InternalError(e.toString());
 		}
 
-		_constructors.putIfAbsent(clazz, constructor);
+		EqualityWeakReference<Class<?>> proxyClassReference =
+			new EqualityWeakReference<Class<?>>(
+				clazz, _proxyClassReferenceQueue);
+
+		_constructors.putIfAbsent(proxyClassReference, constructor);
+
+		while (true) {
+			EqualityWeakReference<ClassLoader> staleClassLoaderReference =
+				(EqualityWeakReference<ClassLoader>)
+					_classLoaderReferenceQueue.poll();
+
+			if (staleClassLoaderReference == null) {
+				break;
+			}
+
+			_classReferences.remove(staleClassLoaderReference);
+		}
+
+		while (true) {
+			EqualityWeakReference<Class<?>> staleProxyClassReference =
+				(EqualityWeakReference<Class<?>>)
+					_proxyClassReferenceQueue.poll();
+
+			if (staleProxyClassReference == null) {
+				break;
+			}
+
+			_constructors.remove(staleProxyClassReference);
+		}
 
 		return clazz;
 	}
@@ -99,15 +142,22 @@ public class ProxyUtil {
 			throw new NullPointerException();
 		}
 
-		return _constructors.containsKey(clazz);
+		EqualityWeakReference<Class<?>> equalityWeakReference =
+			new EqualityWeakReference<Class<?>>(clazz);
+
+		return _constructors.containsKey(equalityWeakReference);
 	}
 
 	public static Object newProxyInstance(
 		ClassLoader classLoader, Class<?>[] interfaces,
 		InvocationHandler invocationHandler) {
 
-		Constructor<?> constructor = _constructors.get(
-			getProxyClass(classLoader, interfaces));
+		Class<?> clazz = getProxyClass(classLoader, interfaces);
+
+		EqualityWeakReference<Class<?>> proxyClassReference =
+			new EqualityWeakReference<Class<?>>(clazz);
+
+		Constructor<?> constructor = _constructors.get(proxyClassReference);
 
 		try {
 			return constructor.newInstance(new Object[] {invocationHandler});
@@ -118,25 +168,20 @@ public class ProxyUtil {
 	}
 
 	private static Class<?>[] _argumentsClazz = {InvocationHandler.class};
+	private static ReferenceQueue<ClassLoader> _classLoaderReferenceQueue =
+		new ReferenceQueue<ClassLoader>();
 	private static ConcurrentMap
-		<ClassLoader, ConcurrentMap<LookupKey, Class<?>>> _classReferences =
-			new ConcurrentReferenceKeyHashMap
-				<ClassLoader, ConcurrentMap<LookupKey, Class<?>>>(
-					FinalizeManager.WEAK_REFERENCE_FACTORY);
-	private static ConcurrentMap<Class<?>, Constructor<?>> _constructors =
-		new ConcurrentReferenceKeyHashMap<Class<?>, Constructor<?>>(
-			FinalizeManager.WEAK_REFERENCE_FACTORY);
+		<EqualityWeakReference<ClassLoader>,
+			ConcurrentMap<LookupKey, Reference<Class<?>>>> _classReferences =
+				new ConcurrentHashMap<EqualityWeakReference<ClassLoader>,
+					ConcurrentMap<LookupKey, Reference<Class<?>>>>();
+	private static ConcurrentMap
+		<EqualityWeakReference<Class<?>>, Constructor<?>> _constructors =
+			new ConcurrentHashMap
+				<EqualityWeakReference<Class<?>>, Constructor<?>>();
 	private static Field _invocationHandlerField;
-
-	static {
-		try {
-			_invocationHandlerField = ReflectionUtil.getDeclaredField(
-				Proxy.class, "h");
-		}
-		catch (Exception e) {
-			throw new ExceptionInInitializerError(e);
-		}
-	}
+	private static ReferenceQueue<Class<?>> _proxyClassReferenceQueue =
+		new ReferenceQueue<Class<?>>();
 
 	private static class LookupKey {
 
@@ -177,6 +222,16 @@ public class ProxyUtil {
 		private int _hashCode;
 		private final Class<?>[] _interfaces;
 
+	}
+
+	static {
+		try {
+			_invocationHandlerField = ReflectionUtil.getDeclaredField(
+				Proxy.class, "h");
+		}
+		catch (Exception e) {
+			throw new ExceptionInInitializerError(e);
+		}
 	}
 
 }

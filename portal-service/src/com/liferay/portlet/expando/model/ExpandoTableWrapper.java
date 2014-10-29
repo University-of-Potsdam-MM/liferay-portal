@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -87,15 +87,64 @@ public class ExpandoTableWrapper implements ExpandoTable,
 		}
 	}
 
+	/**
+	* Returns the primary key of this expando table.
+	*
+	* @return the primary key of this expando table
+	*/
 	@Override
-	public java.lang.Object clone() {
-		return new ExpandoTableWrapper((ExpandoTable)_expandoTable.clone());
+	public long getPrimaryKey() {
+		return _expandoTable.getPrimaryKey();
 	}
 
+	/**
+	* Sets the primary key of this expando table.
+	*
+	* @param primaryKey the primary key of this expando table
+	*/
 	@Override
-	public int compareTo(
-		com.liferay.portlet.expando.model.ExpandoTable expandoTable) {
-		return _expandoTable.compareTo(expandoTable);
+	public void setPrimaryKey(long primaryKey) {
+		_expandoTable.setPrimaryKey(primaryKey);
+	}
+
+	/**
+	* Returns the table ID of this expando table.
+	*
+	* @return the table ID of this expando table
+	*/
+	@Override
+	public long getTableId() {
+		return _expandoTable.getTableId();
+	}
+
+	/**
+	* Sets the table ID of this expando table.
+	*
+	* @param tableId the table ID of this expando table
+	*/
+	@Override
+	public void setTableId(long tableId) {
+		_expandoTable.setTableId(tableId);
+	}
+
+	/**
+	* Returns the company ID of this expando table.
+	*
+	* @return the company ID of this expando table
+	*/
+	@Override
+	public long getCompanyId() {
+		return _expandoTable.getCompanyId();
+	}
+
+	/**
+	* Sets the company ID of this expando table.
+	*
+	* @param companyId the company ID of this expando table
+	*/
+	@Override
+	public void setCompanyId(long companyId) {
+		_expandoTable.setCompanyId(companyId);
 	}
 
 	/**
@@ -106,6 +155,11 @@ public class ExpandoTableWrapper implements ExpandoTable,
 	@Override
 	public java.lang.String getClassName() {
 		return _expandoTable.getClassName();
+	}
+
+	@Override
+	public void setClassName(java.lang.String className) {
+		_expandoTable.setClassName(className);
 	}
 
 	/**
@@ -119,18 +173,13 @@ public class ExpandoTableWrapper implements ExpandoTable,
 	}
 
 	/**
-	* Returns the company ID of this expando table.
+	* Sets the class name ID of this expando table.
 	*
-	* @return the company ID of this expando table
+	* @param classNameId the class name ID of this expando table
 	*/
 	@Override
-	public long getCompanyId() {
-		return _expandoTable.getCompanyId();
-	}
-
-	@Override
-	public com.liferay.portlet.expando.model.ExpandoBridge getExpandoBridge() {
-		return _expandoTable.getExpandoBridge();
+	public void setClassNameId(long classNameId) {
+		_expandoTable.setClassNameId(classNameId);
 	}
 
 	/**
@@ -144,48 +193,13 @@ public class ExpandoTableWrapper implements ExpandoTable,
 	}
 
 	/**
-	* Returns the primary key of this expando table.
+	* Sets the name of this expando table.
 	*
-	* @return the primary key of this expando table
+	* @param name the name of this expando table
 	*/
 	@Override
-	public long getPrimaryKey() {
-		return _expandoTable.getPrimaryKey();
-	}
-
-	@Override
-	public java.io.Serializable getPrimaryKeyObj() {
-		return _expandoTable.getPrimaryKeyObj();
-	}
-
-	/**
-	* Returns the table ID of this expando table.
-	*
-	* @return the table ID of this expando table
-	*/
-	@Override
-	public long getTableId() {
-		return _expandoTable.getTableId();
-	}
-
-	@Override
-	public int hashCode() {
-		return _expandoTable.hashCode();
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _expandoTable.isCachedModel();
-	}
-
-	@Override
-	public boolean isDefaultTable() {
-		return _expandoTable.isDefaultTable();
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _expandoTable.isEscapedModel();
+	public void setName(java.lang.String name) {
+		_expandoTable.setName(name);
 	}
 
 	@Override
@@ -194,8 +208,13 @@ public class ExpandoTableWrapper implements ExpandoTable,
 	}
 
 	@Override
-	public void persist() {
-		_expandoTable.persist();
+	public void setNew(boolean n) {
+		_expandoTable.setNew(n);
+	}
+
+	@Override
+	public boolean isCachedModel() {
+		return _expandoTable.isCachedModel();
 	}
 
 	@Override
@@ -204,28 +223,23 @@ public class ExpandoTableWrapper implements ExpandoTable,
 	}
 
 	@Override
-	public void setClassName(java.lang.String className) {
-		_expandoTable.setClassName(className);
+	public boolean isEscapedModel() {
+		return _expandoTable.isEscapedModel();
 	}
 
-	/**
-	* Sets the class name ID of this expando table.
-	*
-	* @param classNameId the class name ID of this expando table
-	*/
 	@Override
-	public void setClassNameId(long classNameId) {
-		_expandoTable.setClassNameId(classNameId);
+	public java.io.Serializable getPrimaryKeyObj() {
+		return _expandoTable.getPrimaryKeyObj();
 	}
 
-	/**
-	* Sets the company ID of this expando table.
-	*
-	* @param companyId the company ID of this expando table
-	*/
 	@Override
-	public void setCompanyId(long companyId) {
-		_expandoTable.setCompanyId(companyId);
+	public void setPrimaryKeyObj(java.io.Serializable primaryKeyObj) {
+		_expandoTable.setPrimaryKeyObj(primaryKeyObj);
+	}
+
+	@Override
+	public com.liferay.portlet.expando.model.ExpandoBridge getExpandoBridge() {
+		return _expandoTable.getExpandoBridge();
 	}
 
 	@Override
@@ -246,44 +260,20 @@ public class ExpandoTableWrapper implements ExpandoTable,
 		_expandoTable.setExpandoBridgeAttributes(serviceContext);
 	}
 
-	/**
-	* Sets the name of this expando table.
-	*
-	* @param name the name of this expando table
-	*/
 	@Override
-	public void setName(java.lang.String name) {
-		_expandoTable.setName(name);
+	public java.lang.Object clone() {
+		return new ExpandoTableWrapper((ExpandoTable)_expandoTable.clone());
 	}
 
 	@Override
-	public void setNew(boolean n) {
-		_expandoTable.setNew(n);
-	}
-
-	/**
-	* Sets the primary key of this expando table.
-	*
-	* @param primaryKey the primary key of this expando table
-	*/
-	@Override
-	public void setPrimaryKey(long primaryKey) {
-		_expandoTable.setPrimaryKey(primaryKey);
+	public int compareTo(
+		com.liferay.portlet.expando.model.ExpandoTable expandoTable) {
+		return _expandoTable.compareTo(expandoTable);
 	}
 
 	@Override
-	public void setPrimaryKeyObj(java.io.Serializable primaryKeyObj) {
-		_expandoTable.setPrimaryKeyObj(primaryKeyObj);
-	}
-
-	/**
-	* Sets the table ID of this expando table.
-	*
-	* @param tableId the table ID of this expando table
-	*/
-	@Override
-	public void setTableId(long tableId) {
-		_expandoTable.setTableId(tableId);
+	public int hashCode() {
+		return _expandoTable.hashCode();
 	}
 
 	@Override
@@ -297,18 +287,29 @@ public class ExpandoTableWrapper implements ExpandoTable,
 	}
 
 	@Override
-	public java.lang.String toString() {
-		return _expandoTable.toString();
-	}
-
-	@Override
 	public com.liferay.portlet.expando.model.ExpandoTable toUnescapedModel() {
 		return new ExpandoTableWrapper(_expandoTable.toUnescapedModel());
 	}
 
 	@Override
+	public java.lang.String toString() {
+		return _expandoTable.toString();
+	}
+
+	@Override
 	public java.lang.String toXmlString() {
 		return _expandoTable.toXmlString();
+	}
+
+	@Override
+	public void persist()
+		throws com.liferay.portal.kernel.exception.SystemException {
+		_expandoTable.persist();
+	}
+
+	@Override
+	public boolean isDefaultTable() {
+		return _expandoTable.isDefaultTable();
 	}
 
 	@Override
@@ -333,7 +334,6 @@ public class ExpandoTableWrapper implements ExpandoTable,
 	/**
 	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedModel}
 	 */
-	@Deprecated
 	public ExpandoTable getWrappedExpandoTable() {
 		return _expandoTable;
 	}
@@ -344,19 +344,9 @@ public class ExpandoTableWrapper implements ExpandoTable,
 	}
 
 	@Override
-	public boolean isEntityCacheEnabled() {
-		return _expandoTable.isEntityCacheEnabled();
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return _expandoTable.isFinderCacheEnabled();
-	}
-
-	@Override
 	public void resetOriginalValues() {
 		_expandoTable.resetOriginalValues();
 	}
 
-	private final ExpandoTable _expandoTable;
+	private ExpandoTable _expandoTable;
 }

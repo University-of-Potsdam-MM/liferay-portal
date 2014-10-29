@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portlet.documentlibrary.util;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.FileVersion;
 import com.liferay.portlet.documentlibrary.model.DLProcessorConstants;
@@ -58,9 +59,10 @@ public class RawMetadataProcessorUtil {
 	 * @param  fileVersion the file version from which the raw metatada is to be
 	 *         generated
 	 * @throws PortalException if an error occurred in the metadata extraction
+	 * @throws SystemException if a system exception occurred
 	 */
 	public static void generateMetadata(FileVersion fileVersion)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		RawMetadataProcessor rawMetadataProcessor = getRawMetadataProcessor();
 
@@ -105,9 +107,10 @@ public class RawMetadataProcessorUtil {
 	 * @param  fileVersion the file version from which the raw metatada is to be
 	 *         extracted and persisted
 	 * @throws PortalException if an error occurred in the metadata extraction
+	 * @throws SystemException if a system exception occurred
 	 */
 	public static void saveMetadata(FileVersion fileVersion)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		RawMetadataProcessor rawMetadataProcessor = getRawMetadataProcessor();
 
@@ -137,7 +140,6 @@ public class RawMetadataProcessorUtil {
 	/**
 	 * @deprecated As of 6.2.0
 	 */
-	@Deprecated
 	public void setRawMetadataProcessor(
 		RawMetadataProcessor rawMetadataProcessor) {
 	}

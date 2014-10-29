@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,16 +14,20 @@
 
 package com.liferay.portal.cache.transactional;
 
-import com.liferay.portal.cache.MockPortalCacheManager;
-import com.liferay.portal.cache.TestCacheListener;
 import com.liferay.portal.cache.memory.MemoryPortalCache;
+import com.liferay.portal.kernel.cache.CacheListener;
+import com.liferay.portal.kernel.cache.CacheListenerScope;
 import com.liferay.portal.kernel.cache.PortalCache;
 import com.liferay.portal.kernel.test.CodeCoverageAssertor;
+import com.liferay.portal.kernel.util.ReflectionUtil;
 import com.liferay.portal.test.AdviseWith;
-import com.liferay.portal.test.runners.AspectJMockingNewClassLoaderJUnitTestRunner;
+import com.liferay.portal.test.AspectJMockingNewClassLoaderJUnitTestRunner;
+
+import java.lang.reflect.Field;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -58,23 +62,58 @@ public class TransactionalPortalCacheTest {
 
 	@Before
 	public void setUp() {
-		_portalCache = new MemoryPortalCache<String, String>(
-			new MockPortalCacheManager<String, String>(
-				_PORTAL_CACHE_MANAGER_NAME),
-			_PORTAL_CACHE_NAME, 16);
+		_portalCache = new MemoryPortalCache<String, String>(_CACHE_NAME, 16);
 		_transactionalPortalCache =
 			new TransactionalPortalCache<String, String>(_portalCache);
 
 		_portalCache.put(_KEY_1, _VALUE_1);
-
-		_testCacheListener = new TestCacheListener<String, String>();
-
-		_portalCache.registerCacheListener(_testCacheListener);
 	}
 
 	@Test
-	public void testConstructor() {
-		new TransactionalPortalCacheHelper();
+	public void testMisc() throws Exception {
+		Assert.assertEquals(_CACHE_NAME, _transactionalPortalCache.getName());
+
+		Field cacheListenersField = ReflectionUtil.getDeclaredField(
+			MemoryPortalCache.class, "_cacheListeners");
+
+		Set<MockCacheListener> cacheListeners =
+			(Set<MockCacheListener>)cacheListenersField.get(_portalCache);
+
+		Assert.assertTrue(cacheListeners.isEmpty());
+
+		MockCacheListener mockCacheListener1 = new MockCacheListener();
+
+		_transactionalPortalCache.registerCacheListener(mockCacheListener1);
+
+		Assert.assertEquals(1, cacheListeners.size());
+		Assert.assertTrue(cacheListeners.contains(mockCacheListener1));
+
+		MockCacheListener mockCacheListener2 = new MockCacheListener();
+
+		_transactionalPortalCache.registerCacheListener(
+			mockCacheListener2, CacheListenerScope.ALL);
+
+		Assert.assertEquals(2, cacheListeners.size());
+		Assert.assertTrue(cacheListeners.contains(mockCacheListener1));
+		Assert.assertTrue(cacheListeners.contains(mockCacheListener2));
+
+		_transactionalPortalCache.unregisterCacheListener(mockCacheListener1);
+
+		Assert.assertEquals(1, cacheListeners.size());
+		Assert.assertTrue(cacheListeners.contains(mockCacheListener2));
+
+		_transactionalPortalCache.unregisterCacheListeners();
+
+		Assert.assertTrue(cacheListeners.isEmpty());
+
+		List<String> values = (List<String>)_transactionalPortalCache.get(
+			Arrays.asList(_KEY_1, _KEY_2));
+
+		Assert.assertEquals(2, values.size());
+		Assert.assertEquals(_VALUE_1, values.get(0));
+		Assert.assertNull(values.get(1));
+
+		_transactionalPortalCache.destroy();
 	}
 
 	@AdviseWith(adviceClasses = {DisableTransactionalCacheAdvice.class})
@@ -99,11 +138,6 @@ public class TransactionalPortalCacheTest {
 
 		_transactionalPortalCache.put(_KEY_2, _VALUE_2);
 
-		_testCacheListener.assertActionsCount(1);
-		_testCacheListener.assertPut(_KEY_2, _VALUE_2);
-
-		_testCacheListener.reset();
-
 		Assert.assertEquals(_VALUE_1, _transactionalPortalCache.get(_KEY_1));
 		Assert.assertEquals(_VALUE_2, _transactionalPortalCache.get(_KEY_2));
 		Assert.assertEquals(_VALUE_1, _portalCache.get(_KEY_1));
@@ -111,31 +145,12 @@ public class TransactionalPortalCacheTest {
 
 		_transactionalPortalCache.put(_KEY_1, _VALUE_2, 10);
 
-		_testCacheListener.assertActionsCount(1);
-		_testCacheListener.assertUpdated(_KEY_1, _VALUE_2, 10);
-
-		_testCacheListener.reset();
-
 		Assert.assertEquals(_VALUE_2, _transactionalPortalCache.get(_KEY_1));
 		Assert.assertEquals(_VALUE_2, _transactionalPortalCache.get(_KEY_2));
 		Assert.assertEquals(_VALUE_2, _portalCache.get(_KEY_1));
 		Assert.assertEquals(_VALUE_2, _portalCache.get(_KEY_2));
 
-		try {
-			_transactionalPortalCache.put(_KEY_1, _VALUE_2, -1);
-
-			Assert.fail();
-		}
-		catch (IllegalArgumentException iae) {
-			Assert.assertEquals("Time to live is negative", iae.getMessage());
-		}
-
 		_transactionalPortalCache.remove(_KEY_1);
-
-		_testCacheListener.assertActionsCount(1);
-		_testCacheListener.assertRemoved(_KEY_1, _VALUE_2);
-
-		_testCacheListener.reset();
 
 		Assert.assertNull(_transactionalPortalCache.get(_KEY_1));
 		Assert.assertEquals(_VALUE_2, _transactionalPortalCache.get(_KEY_2));
@@ -144,109 +159,16 @@ public class TransactionalPortalCacheTest {
 
 		_transactionalPortalCache.removeAll();
 
-		_testCacheListener.assertActionsCount(1);
-		_testCacheListener.assertRemoveAll();
-
-		_testCacheListener.reset();
-
 		Assert.assertNull(_transactionalPortalCache.get(_KEY_1));
 		Assert.assertNull(_transactionalPortalCache.get(_KEY_2));
 		Assert.assertNull(_portalCache.get(_KEY_1));
 		Assert.assertNull(_portalCache.get(_KEY_2));
-
-		_transactionalPortalCache.putQuiet(_KEY_1, _VALUE_1);
-
-		_testCacheListener.assertActionsCount(0);
-
-		Assert.assertEquals(_VALUE_1, _transactionalPortalCache.get(_KEY_1));
-		Assert.assertNull(_transactionalPortalCache.get(_KEY_2));
-		Assert.assertEquals(_VALUE_1, _portalCache.get(_KEY_1));
-		Assert.assertNull(_portalCache.get(_KEY_2));
-
-		_transactionalPortalCache.putQuiet(_KEY_1, _VALUE_2, 10);
-
-		_testCacheListener.assertActionsCount(0);
-
-		Assert.assertEquals(_VALUE_2, _transactionalPortalCache.get(_KEY_1));
-		Assert.assertNull(_transactionalPortalCache.get(_KEY_2));
-		Assert.assertEquals(_VALUE_2, _portalCache.get(_KEY_1));
-		Assert.assertNull(_portalCache.get(_KEY_2));
-
-		try {
-			_transactionalPortalCache.putQuiet(_KEY_1, _VALUE_2, -1);
-
-			Assert.fail();
-		}
-		catch (IllegalArgumentException iae) {
-			Assert.assertEquals("Time to live is negative", iae.getMessage());
-		}
 	}
 
 	@AdviseWith(adviceClasses = {EnableTransactionalCacheAdvice.class})
 	@Test
 	public void testTransactionalCacheWithoutTTL() {
 		doTestTransactionalCache(false);
-	}
-
-	@AdviseWith(adviceClasses = {EnableTransactionalCacheAdvice.class})
-	@Test
-	public void testTransactionalCacheWithParameterValidation() {
-		TransactionalPortalCacheHelper.begin();
-
-		// Get with null key
-
-		try {
-			_transactionalPortalCache.get(null);
-
-			Assert.fail();
-		}
-		catch (NullPointerException npe) {
-			Assert.assertEquals("Key is null", npe.getMessage());
-		}
-
-		// Put with null key
-
-		try {
-			_transactionalPortalCache.put(null, _VALUE_1);
-
-			Assert.fail();
-		}
-		catch (NullPointerException npe) {
-			Assert.assertEquals("Key is null", npe.getMessage());
-		}
-
-		// Put with null value
-
-		try {
-			_transactionalPortalCache.put(_KEY_1, null);
-
-			Assert.fail();
-		}
-		catch (NullPointerException npe) {
-			Assert.assertEquals("Value is null", npe.getMessage());
-		}
-
-		// Put with negative ttl
-
-		try {
-			_transactionalPortalCache.put(_KEY_1, _VALUE_1, -1);
-
-			Assert.fail();
-		}
-		catch (IllegalArgumentException iae) {
-			Assert.assertEquals("Time to live is negative", iae.getMessage());
-		}
-
-		// Remove with null key
-
-		try {
-			_transactionalPortalCache.remove(null);
-
-			Assert.fail();
-		}
-		catch (NullPointerException npe) {
-			Assert.assertEquals("Key is null", npe.getMessage());
-		}
 	}
 
 	@AdviseWith(adviceClasses = {EnableTransactionalCacheAdvice.class})
@@ -299,6 +221,18 @@ public class TransactionalPortalCacheTest {
 		Assert.assertNull(_portalCache.get(_KEY_2));
 
 		if (ttl) {
+			_transactionalPortalCache.put(_KEY_1, null, 10);
+		}
+		else {
+			_transactionalPortalCache.put(_KEY_1, null);
+		}
+
+		Assert.assertNull(_transactionalPortalCache.get(_KEY_1));
+		Assert.assertNull(_transactionalPortalCache.get(_KEY_2));
+		Assert.assertEquals(_VALUE_1, _portalCache.get(_KEY_1));
+		Assert.assertNull(_portalCache.get(_KEY_2));
+
+		if (ttl) {
 			_transactionalPortalCache.put(_KEY_2, _VALUE_2, 10);
 		}
 		else {
@@ -336,30 +270,12 @@ public class TransactionalPortalCacheTest {
 		Assert.assertEquals(_VALUE_1, _portalCache.get(_KEY_1));
 		Assert.assertNull(_portalCache.get(_KEY_2));
 
-		_transactionalPortalCache.putQuiet(_KEY_1, _VALUE_1);
-
-		Assert.assertEquals(_VALUE_1, _transactionalPortalCache.get(_KEY_1));
-		Assert.assertNull(_transactionalPortalCache.get(_KEY_2));
-		Assert.assertEquals(_VALUE_1, _portalCache.get(_KEY_1));
-		Assert.assertNull(_portalCache.get(_KEY_2));
-
-		_transactionalPortalCache.putQuiet(_KEY_1, _VALUE_2, 10);
-
-		Assert.assertEquals(_VALUE_2, _transactionalPortalCache.get(_KEY_1));
-		Assert.assertNull(_transactionalPortalCache.get(_KEY_2));
-		Assert.assertEquals(_VALUE_1, _portalCache.get(_KEY_1));
-		Assert.assertNull(_portalCache.get(_KEY_2));
-
-		_testCacheListener.assertActionsCount(0);
-
 		TransactionalPortalCacheHelper.rollback();
 
 		Assert.assertEquals(_VALUE_1, _transactionalPortalCache.get(_KEY_1));
 		Assert.assertNull(_transactionalPortalCache.get(_KEY_2));
 		Assert.assertEquals(_VALUE_1, _portalCache.get(_KEY_1));
 		Assert.assertNull(_portalCache.get(_KEY_2));
-
-		_testCacheListener.assertActionsCount(0);
 
 		// Commit 1
 
@@ -371,38 +287,38 @@ public class TransactionalPortalCacheTest {
 		Assert.assertNull(_portalCache.get(_KEY_2));
 
 		if (ttl) {
+			_transactionalPortalCache.put(_KEY_1, null, 10);
+		}
+		else {
+			_transactionalPortalCache.put(_KEY_1, null);
+		}
+
+		Assert.assertNull(_transactionalPortalCache.get(_KEY_1));
+		Assert.assertNull(_transactionalPortalCache.get(_KEY_2));
+		Assert.assertEquals(_VALUE_1, _portalCache.get(_KEY_1));
+		Assert.assertNull(_portalCache.get(_KEY_2));
+
+		if (ttl) {
 			_transactionalPortalCache.put(_KEY_2, _VALUE_2, 10);
 		}
 		else {
 			_transactionalPortalCache.put(_KEY_2, _VALUE_2);
 		}
 
+		Assert.assertNull(_transactionalPortalCache.get(_KEY_1));
+		Assert.assertEquals(_VALUE_2, _transactionalPortalCache.get(_KEY_2));
+		Assert.assertEquals(_VALUE_1, _portalCache.get(_KEY_1));
+		Assert.assertNull(_portalCache.get(_KEY_2));
+
+		if (ttl) {
+			_transactionalPortalCache.put(_KEY_1, _VALUE_1, 10);
+		}
+		else {
+			_transactionalPortalCache.put(_KEY_1, _VALUE_1);
+		}
+
 		Assert.assertEquals(_VALUE_1, _transactionalPortalCache.get(_KEY_1));
 		Assert.assertEquals(_VALUE_2, _transactionalPortalCache.get(_KEY_2));
-		Assert.assertEquals(_VALUE_1, _portalCache.get(_KEY_1));
-		Assert.assertNull(_portalCache.get(_KEY_2));
-
-		if (ttl) {
-			_transactionalPortalCache.putQuiet(_KEY_1, _VALUE_2, 10);
-		}
-		else {
-			_transactionalPortalCache.putQuiet(_KEY_1, _VALUE_2);
-		}
-
-		Assert.assertEquals(_VALUE_2, _transactionalPortalCache.get(_KEY_1));
-		Assert.assertEquals(_VALUE_2, _transactionalPortalCache.get(_KEY_2));
-		Assert.assertEquals(_VALUE_1, _portalCache.get(_KEY_1));
-		Assert.assertNull(_portalCache.get(_KEY_2));
-
-		if (ttl) {
-			_transactionalPortalCache.putQuiet(_KEY_2, _VALUE_1, 10);
-		}
-		else {
-			_transactionalPortalCache.putQuiet(_KEY_2, _VALUE_1);
-		}
-
-		Assert.assertEquals(_VALUE_2, _transactionalPortalCache.get(_KEY_1));
-		Assert.assertEquals(_VALUE_1, _transactionalPortalCache.get(_KEY_2));
 		Assert.assertEquals(_VALUE_1, _portalCache.get(_KEY_1));
 		Assert.assertNull(_portalCache.get(_KEY_2));
 
@@ -413,14 +329,7 @@ public class TransactionalPortalCacheTest {
 		Assert.assertEquals(_VALUE_1, _portalCache.get(_KEY_1));
 		Assert.assertNull(_portalCache.get(_KEY_2));
 
-		_testCacheListener.assertActionsCount(0);
-
 		TransactionalPortalCacheHelper.commit();
-
-		_testCacheListener.assertActionsCount(1);
-		_testCacheListener.assertRemoveAll();
-
-		_testCacheListener.reset();
 
 		Assert.assertNull(_transactionalPortalCache.get(_KEY_1));
 		Assert.assertNull(_transactionalPortalCache.get(_KEY_2));
@@ -430,11 +339,6 @@ public class TransactionalPortalCacheTest {
 		// Commit 2
 
 		_portalCache.put(_KEY_1, _VALUE_1);
-
-		_testCacheListener.assertActionsCount(1);
-		_testCacheListener.assertPut(_KEY_1, _VALUE_1);
-
-		_testCacheListener.reset();
 
 		TransactionalPortalCacheHelper.begin();
 
@@ -452,97 +356,59 @@ public class TransactionalPortalCacheTest {
 		Assert.assertEquals(_VALUE_1, _portalCache.get(_KEY_1));
 		Assert.assertNull(_portalCache.get(_KEY_2));
 
-		if (ttl) {
-			_transactionalPortalCache.putQuiet(_KEY_2, _VALUE_1, 10);
-		}
-		else {
-			_transactionalPortalCache.putQuiet(_KEY_2, _VALUE_1);
-		}
-
-		Assert.assertNull(_transactionalPortalCache.get(_KEY_1));
-		Assert.assertEquals(_VALUE_1, _transactionalPortalCache.get(_KEY_2));
-		Assert.assertEquals(_VALUE_1, _portalCache.get(_KEY_1));
-		Assert.assertNull(_portalCache.get(_KEY_2));
-
-		_testCacheListener.assertActionsCount(0);
-
 		TransactionalPortalCacheHelper.commit();
 
-		_testCacheListener.assertActionsCount(2);
-
-		if (ttl) {
-			_testCacheListener.assertPut(_KEY_2, _VALUE_1, 10);
-		}
-		else {
-			_testCacheListener.assertPut(_KEY_2, _VALUE_1);
-		}
-
-		_testCacheListener.assertRemoved(_KEY_1, _VALUE_1);
-
-		_testCacheListener.reset();
-
 		Assert.assertNull(_transactionalPortalCache.get(_KEY_1));
-		Assert.assertEquals(_VALUE_1, _transactionalPortalCache.get(_KEY_2));
+		Assert.assertEquals(_VALUE_2, _transactionalPortalCache.get(_KEY_2));
 		Assert.assertNull(_portalCache.get(_KEY_1));
-		Assert.assertEquals(_VALUE_1, _portalCache.get(_KEY_2));
-
-		// Commit 3
-
-		_portalCache.removeAll();
-
-		_testCacheListener.assertActionsCount(1);
-		_testCacheListener.assertRemoveAll();
-
-		_testCacheListener.reset();
-
-		TransactionalPortalCacheHelper.begin();
-
-		if (ttl) {
-			_transactionalPortalCache.putQuiet(_KEY_1, _VALUE_2, 10);
-		}
-		else {
-			_transactionalPortalCache.putQuiet(_KEY_1, _VALUE_2);
-		}
-
-		Assert.assertEquals(_VALUE_2, _transactionalPortalCache.get(_KEY_1));
-		Assert.assertNull(_transactionalPortalCache.get(_KEY_2));
-		Assert.assertNull(_portalCache.get(_KEY_1));
-		Assert.assertNull(_portalCache.get(_KEY_2));
-
-		if (ttl) {
-			_transactionalPortalCache.putQuiet(_KEY_2, _VALUE_1, 10);
-		}
-		else {
-			_transactionalPortalCache.putQuiet(_KEY_2, _VALUE_1);
-		}
-
-		Assert.assertEquals(_VALUE_2, _transactionalPortalCache.get(_KEY_1));
-		Assert.assertEquals(_VALUE_1, _transactionalPortalCache.get(_KEY_2));
-		Assert.assertNull(_portalCache.get(_KEY_1));
-		Assert.assertNull(_portalCache.get(_KEY_2));
-
-		_testCacheListener.assertActionsCount(0);
-
-		TransactionalPortalCacheHelper.commit();
-
-		_testCacheListener.assertActionsCount(0);
+		Assert.assertEquals(_VALUE_2, _portalCache.get(_KEY_2));
 	}
+
+	private static final String _CACHE_NAME = "CACHE_NAME";
 
 	private static final String _KEY_1 = "KEY_1";
 
 	private static final String _KEY_2 = "KEY_2";
-
-	private static final String _PORTAL_CACHE_MANAGER_NAME =
-		"PORTAL_CACHE_MANAGER_NAME";
-
-	private static final String _PORTAL_CACHE_NAME = "PORTAL_CACHE_NAME";
 
 	private static final String _VALUE_1 = "VALUE_1";
 
 	private static final String _VALUE_2 = "VALUE_2";
 
 	private PortalCache<String, String> _portalCache;
-	private TestCacheListener<String, String> _testCacheListener;
 	private TransactionalPortalCache<String, String> _transactionalPortalCache;
+
+	private static class MockCacheListener
+		implements CacheListener<String, String> {
+
+		@Override
+		public void notifyEntryEvicted(
+			PortalCache<String, String> portalCache, String key, String value) {
+		}
+
+		@Override
+		public void notifyEntryExpired(
+			PortalCache<String, String> portalCache, String key, String value) {
+		}
+
+		@Override
+		public void notifyEntryPut(
+			PortalCache<String, String> portalCache, String key, String value) {
+		}
+
+		@Override
+		public void notifyEntryRemoved(
+			PortalCache<String, String> portalCache, String key, String value) {
+		}
+
+		@Override
+		public void notifyEntryUpdated(
+			PortalCache<String, String> portalCache, String key, String value) {
+		}
+
+		@Override
+		public void notifyRemoveAll(PortalCache<String, String> portalCache) {
+		}
+
+	}
 
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -81,14 +81,9 @@ public interface File {
 
 	public String extractText(InputStream is, String fileName);
 
-	public String extractText(
-		InputStream is, String fileName, int maxStringLength);
-
 	public String[] find(String directory, String includes, String excludes);
 
 	public String getAbsolutePath(java.io.File file);
-
-	public byte[] getBytes(Class<?> clazz, String fileName) throws IOException;
 
 	public byte[] getBytes(InputStream is) throws IOException;
 

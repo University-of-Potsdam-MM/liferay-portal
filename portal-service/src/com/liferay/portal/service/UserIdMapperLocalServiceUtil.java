@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -46,9 +46,11 @@ public class UserIdMapperLocalServiceUtil {
 	*
 	* @param userIdMapper the user ID mapper
 	* @return the user ID mapper that was added
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserIdMapper addUserIdMapper(
-		com.liferay.portal.model.UserIdMapper userIdMapper) {
+		com.liferay.portal.model.UserIdMapper userIdMapper)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().addUserIdMapper(userIdMapper);
 	}
 
@@ -64,12 +66,18 @@ public class UserIdMapperLocalServiceUtil {
 	}
 
 	/**
-	* @throws PortalException
+	* Deletes the user ID mapper with the primary key from the database. Also notifies the appropriate model listeners.
+	*
+	* @param userIdMapperId the primary key of the user ID mapper
+	* @return the user ID mapper that was removed
+	* @throws PortalException if a user ID mapper with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
-	public static com.liferay.portal.model.PersistedModel deletePersistedModel(
-		com.liferay.portal.model.PersistedModel persistedModel)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().deletePersistedModel(persistedModel);
+	public static com.liferay.portal.model.UserIdMapper deleteUserIdMapper(
+		long userIdMapperId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getService().deleteUserIdMapper(userIdMapperId);
 	}
 
 	/**
@@ -77,27 +85,12 @@ public class UserIdMapperLocalServiceUtil {
 	*
 	* @param userIdMapper the user ID mapper
 	* @return the user ID mapper that was removed
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserIdMapper deleteUserIdMapper(
-		com.liferay.portal.model.UserIdMapper userIdMapper) {
+		com.liferay.portal.model.UserIdMapper userIdMapper)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().deleteUserIdMapper(userIdMapper);
-	}
-
-	/**
-	* Deletes the user ID mapper with the primary key from the database. Also notifies the appropriate model listeners.
-	*
-	* @param userIdMapperId the primary key of the user ID mapper
-	* @return the user ID mapper that was removed
-	* @throws PortalException if a user ID mapper with the primary key could not be found
-	*/
-	public static com.liferay.portal.model.UserIdMapper deleteUserIdMapper(
-		long userIdMapperId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().deleteUserIdMapper(userIdMapperId);
-	}
-
-	public static void deleteUserIdMappers(long userId) {
-		getService().deleteUserIdMappers(userId);
 	}
 
 	public static com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery() {
@@ -109,9 +102,12 @@ public class UserIdMapperLocalServiceUtil {
 	*
 	* @param dynamicQuery the dynamic query
 	* @return the matching rows
+	* @throws SystemException if a system exception occurred
 	*/
-	public static <T> java.util.List<T> dynamicQuery(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery) {
+	@SuppressWarnings("rawtypes")
+	public static java.util.List dynamicQuery(
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().dynamicQuery(dynamicQuery);
 	}
 
@@ -126,10 +122,12 @@ public class UserIdMapperLocalServiceUtil {
 	* @param start the lower bound of the range of model instances
 	* @param end the upper bound of the range of model instances (not inclusive)
 	* @return the range of matching rows
+	* @throws SystemException if a system exception occurred
 	*/
-	public static <T> java.util.List<T> dynamicQuery(
+	@SuppressWarnings("rawtypes")
+	public static java.util.List dynamicQuery(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
-		int end) {
+		int end) throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().dynamicQuery(dynamicQuery, start, end);
 	}
 
@@ -145,11 +143,14 @@ public class UserIdMapperLocalServiceUtil {
 	* @param end the upper bound of the range of model instances (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching rows
+	* @throws SystemException if a system exception occurred
 	*/
-	public static <T> java.util.List<T> dynamicQuery(
+	@SuppressWarnings("rawtypes")
+	public static java.util.List dynamicQuery(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
 		int end,
-		com.liferay.portal.kernel.util.OrderByComparator<T> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService()
 				   .dynamicQuery(dynamicQuery, start, end, orderByComparator);
 	}
@@ -159,9 +160,11 @@ public class UserIdMapperLocalServiceUtil {
 	*
 	* @param dynamicQuery the dynamic query
 	* @return the number of rows that match the dynamic query
+	* @throws SystemException if a system exception occurred
 	*/
 	public static long dynamicQueryCount(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery) {
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().dynamicQueryCount(dynamicQuery);
 	}
 
@@ -171,41 +174,19 @@ public class UserIdMapperLocalServiceUtil {
 	* @param dynamicQuery the dynamic query
 	* @param projection the projection to apply to the query
 	* @return the number of rows that match the dynamic query
+	* @throws SystemException if a system exception occurred
 	*/
 	public static long dynamicQueryCount(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery,
-		com.liferay.portal.kernel.dao.orm.Projection projection) {
+		com.liferay.portal.kernel.dao.orm.Projection projection)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().dynamicQueryCount(dynamicQuery, projection);
 	}
 
 	public static com.liferay.portal.model.UserIdMapper fetchUserIdMapper(
-		long userIdMapperId) {
+		long userIdMapperId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().fetchUserIdMapper(userIdMapperId);
-	}
-
-	public static com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery getActionableDynamicQuery() {
-		return getService().getActionableDynamicQuery();
-	}
-
-	/**
-	* Returns the Spring bean ID for this bean.
-	*
-	* @return the Spring bean ID for this bean
-	*/
-	public static java.lang.String getBeanIdentifier() {
-		return getService().getBeanIdentifier();
-	}
-
-	public static com.liferay.portal.model.PersistedModel getPersistedModel(
-		java.io.Serializable primaryKeyObj)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().getPersistedModel(primaryKeyObj);
-	}
-
-	public static com.liferay.portal.model.UserIdMapper getUserIdMapper(
-		long userId, java.lang.String type)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().getUserIdMapper(userId, type);
 	}
 
 	/**
@@ -214,17 +195,20 @@ public class UserIdMapperLocalServiceUtil {
 	* @param userIdMapperId the primary key of the user ID mapper
 	* @return the user ID mapper
 	* @throws PortalException if a user ID mapper with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.UserIdMapper getUserIdMapper(
 		long userIdMapperId)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getService().getUserIdMapper(userIdMapperId);
 	}
 
-	public static com.liferay.portal.model.UserIdMapper getUserIdMapperByExternalUserId(
-		java.lang.String type, java.lang.String externalUserId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().getUserIdMapperByExternalUserId(type, externalUserId);
+	public static com.liferay.portal.model.PersistedModel getPersistedModel(
+		java.io.Serializable primaryKeyObj)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getService().getPersistedModel(primaryKeyObj);
 	}
 
 	/**
@@ -237,24 +221,45 @@ public class UserIdMapperLocalServiceUtil {
 	* @param start the lower bound of the range of user ID mappers
 	* @param end the upper bound of the range of user ID mappers (not inclusive)
 	* @return the range of user ID mappers
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portal.model.UserIdMapper> getUserIdMappers(
-		int start, int end) {
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().getUserIdMappers(start, end);
-	}
-
-	public static java.util.List<com.liferay.portal.model.UserIdMapper> getUserIdMappers(
-		long userId) {
-		return getService().getUserIdMappers(userId);
 	}
 
 	/**
 	* Returns the number of user ID mappers.
 	*
 	* @return the number of user ID mappers
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int getUserIdMappersCount() {
+	public static int getUserIdMappersCount()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().getUserIdMappersCount();
+	}
+
+	/**
+	* Updates the user ID mapper in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
+	*
+	* @param userIdMapper the user ID mapper
+	* @return the user ID mapper that was updated
+	* @throws SystemException if a system exception occurred
+	*/
+	public static com.liferay.portal.model.UserIdMapper updateUserIdMapper(
+		com.liferay.portal.model.UserIdMapper userIdMapper)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().updateUserIdMapper(userIdMapper);
+	}
+
+	/**
+	* Returns the Spring bean ID for this bean.
+	*
+	* @return the Spring bean ID for this bean
+	*/
+	public static java.lang.String getBeanIdentifier() {
+		return getService().getBeanIdentifier();
 	}
 
 	/**
@@ -266,22 +271,36 @@ public class UserIdMapperLocalServiceUtil {
 		getService().setBeanIdentifier(beanIdentifier);
 	}
 
-	public static com.liferay.portal.model.UserIdMapper updateUserIdMapper(
-		long userId, java.lang.String type, java.lang.String description,
-		java.lang.String externalUserId) {
-		return getService()
-				   .updateUserIdMapper(userId, type, description, externalUserId);
+	public static void deleteUserIdMappers(long userId)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		getService().deleteUserIdMappers(userId);
 	}
 
-	/**
-	* Updates the user ID mapper in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
-	*
-	* @param userIdMapper the user ID mapper
-	* @return the user ID mapper that was updated
-	*/
+	public static com.liferay.portal.model.UserIdMapper getUserIdMapper(
+		long userId, java.lang.String type)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getService().getUserIdMapper(userId, type);
+	}
+
+	public static com.liferay.portal.model.UserIdMapper getUserIdMapperByExternalUserId(
+		java.lang.String type, java.lang.String externalUserId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getService().getUserIdMapperByExternalUserId(type, externalUserId);
+	}
+
+	public static java.util.List<com.liferay.portal.model.UserIdMapper> getUserIdMappers(
+		long userId) throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().getUserIdMappers(userId);
+	}
+
 	public static com.liferay.portal.model.UserIdMapper updateUserIdMapper(
-		com.liferay.portal.model.UserIdMapper userIdMapper) {
-		return getService().updateUserIdMapper(userIdMapper);
+		long userId, java.lang.String type, java.lang.String description,
+		java.lang.String externalUserId)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService()
+				   .updateUserIdMapper(userId, type, description, externalUserId);
 	}
 
 	public static UserIdMapperLocalService getService() {
@@ -298,7 +317,6 @@ public class UserIdMapperLocalServiceUtil {
 	/**
 	 * @deprecated As of 6.2.0
 	 */
-	@Deprecated
 	public void setService(UserIdMapperLocalService service) {
 	}
 

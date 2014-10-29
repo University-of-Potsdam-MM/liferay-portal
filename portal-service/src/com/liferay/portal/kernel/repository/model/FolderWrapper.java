@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portal.kernel.repository.model;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.lar.StagedModelType;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.ModelWrapper;
@@ -44,7 +45,7 @@ public class FolderWrapper implements Folder, ModelWrapper<Folder> {
 	@Override
 	public boolean containsPermission(
 			PermissionChecker permissionChecker, String actionId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return _folder.containsPermission(permissionChecker, actionId);
 	}
@@ -69,19 +70,14 @@ public class FolderWrapper implements Folder, ModelWrapper<Folder> {
 	}
 
 	@Override
-	public void execute(RepositoryModelOperation repositoryModelOperation)
-		throws PortalException {
+	public List<Long> getAncestorFolderIds()
+		throws PortalException, SystemException {
 
-		repositoryModelOperation.execute(this);
-	}
-
-	@Override
-	public List<Long> getAncestorFolderIds() throws PortalException {
 		return _folder.getAncestorFolderIds();
 	}
 
 	@Override
-	public List<Folder> getAncestors() throws PortalException {
+	public List<Folder> getAncestors() throws PortalException, SystemException {
 		return _folder.getAncestors();
 	}
 
@@ -151,7 +147,7 @@ public class FolderWrapper implements Folder, ModelWrapper<Folder> {
 	}
 
 	@Override
-	public Folder getParentFolder() throws PortalException {
+	public Folder getParentFolder() throws PortalException, SystemException {
 		return _folder.getParentFolder();
 	}
 
@@ -191,7 +187,7 @@ public class FolderWrapper implements Folder, ModelWrapper<Folder> {
 	}
 
 	@Override
-	public String getUserUuid() {
+	public String getUserUuid() throws SystemException {
 		return _folder.getUserUuid();
 	}
 

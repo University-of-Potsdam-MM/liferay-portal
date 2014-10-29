@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -63,7 +63,7 @@ public class TextFormatter {
 
 	public static final int J = 9;
 
-	// formatId --> format-id, formatID --> format-i-d
+	// formatId --> format-id
 
 	public static final int K = 10;
 
@@ -83,13 +83,9 @@ public class TextFormatter {
 
 	public static final int O = 14;
 
-	// FormatID --> format-id
+	// formatID --> format-id
 
 	public static final int P = 15;
-
-	// FORMATId --> format-id
-
-	public static final int Q = 16;
 
 	public static String format(String s, int style) {
 		if (Validator.isNull(s)) {
@@ -146,9 +142,6 @@ public class TextFormatter {
 		else if (style == P) {
 			return _formatP(s);
 		}
-		else if (style == Q) {
-			return _formatQ(s);
-		}
 		else {
 			return s;
 		}
@@ -158,7 +151,6 @@ public class TextFormatter {
 	 * @deprecated As of 6.2.0, replaced by {@link #formatStorageSize(double,
 	 *             Locale)}
 	 */
-	@Deprecated
 	public static String formatKB(double size, Locale locale) {
 		NumberFormat numberFormat = NumberFormat.getInstance(locale);
 
@@ -172,7 +164,6 @@ public class TextFormatter {
 	 * @deprecated As of 6.2.0, replaced by {@link #formatStorageSize(int,
 	 *             Locale)}
 	 */
-	@Deprecated
 	public static String formatKB(int size, Locale locale) {
 		return formatKB((double)size, locale);
 	}
@@ -220,13 +211,13 @@ public class TextFormatter {
 
 		size = size / _STORAGE_SIZE_DENOMINATOR;
 
-		if (size >= _STORAGE_SIZE_DENOMINATOR) {
+		if (size > _STORAGE_SIZE_DENOMINATOR) {
 			suffix = _STORAGE_SIZE_SUFFIX_MB;
 
 			size = size / _STORAGE_SIZE_DENOMINATOR;
 		}
 
-		if (size >= _STORAGE_SIZE_DENOMINATOR) {
+		if (size > _STORAGE_SIZE_DENOMINATOR) {
 			suffix = _STORAGE_SIZE_SUFFIX_GB;
 
 			size = size / _STORAGE_SIZE_DENOMINATOR;
@@ -410,29 +401,6 @@ public class TextFormatter {
 	}
 
 	private static String _formatP(String s) {
-		StringBuilder sb = new StringBuilder(s.length() + s.length() / 2);
-
-		for (int i = 0; i < s.length() - 1; i++) {
-			char c = s.charAt(i);
-
-			if (Character.isUpperCase(c)) {
-				sb.append(Character.toLowerCase(c));
-			}
-			else {
-				sb.append(c);
-
-				if (Character.isUpperCase(s.charAt(i + 1))) {
-					sb.append(CharPool.DASH);
-				}
-			}
-		}
-
-		sb.append(Character.toLowerCase(s.charAt(s.length() - 1)));
-
-		return sb.toString();
-	}
-
-	private static String _formatQ(String s) {
 		StringBuilder sb = new StringBuilder(StringUtil.toLowerCase(s));
 
 		for (int i = 0; i < s.length(); i++) {
@@ -457,7 +425,7 @@ public class TextFormatter {
 
 	private static final String _STORAGE_SIZE_SUFFIX_GB = "GB";
 
-	private static final String _STORAGE_SIZE_SUFFIX_KB = "KB";
+	private static final String _STORAGE_SIZE_SUFFIX_KB = "k";
 
 	private static final String _STORAGE_SIZE_SUFFIX_MB = "MB";
 

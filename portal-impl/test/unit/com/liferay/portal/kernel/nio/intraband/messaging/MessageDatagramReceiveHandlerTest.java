@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -23,15 +23,17 @@ import com.liferay.portal.kernel.messaging.MessageListener;
 import com.liferay.portal.kernel.messaging.MessageListenerException;
 import com.liferay.portal.kernel.messaging.SynchronousDestination;
 import com.liferay.portal.kernel.nio.intraband.Datagram;
+import com.liferay.portal.kernel.nio.intraband.MockIntraband;
+import com.liferay.portal.kernel.nio.intraband.MockRegistrationReference;
 import com.liferay.portal.kernel.nio.intraband.PortalExecutorManagerUtilAdvice;
 import com.liferay.portal.kernel.nio.intraband.SystemDataType;
-import com.liferay.portal.kernel.nio.intraband.test.MockIntraband;
-import com.liferay.portal.kernel.nio.intraband.test.MockRegistrationReference;
 import com.liferay.portal.kernel.test.CodeCoverageAssertor;
-import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.util.PortalClassLoaderUtil;
+import com.liferay.portal.kernel.util.ReflectionUtil;
 import com.liferay.portal.test.AdviseWith;
-import com.liferay.portal.test.runners.AspectJMockingNewClassLoaderJUnitTestRunner;
+import com.liferay.portal.test.AspectJMockingNewClassLoaderJUnitTestRunner;
+
+import java.lang.reflect.Field;
 
 import java.nio.ByteBuffer;
 
@@ -253,8 +255,9 @@ public class MessageDatagramReceiveHandlerTest {
 	}
 
 	protected void assertMessageRoutingBagEquals(
-		MessageRoutingBag expectedMessageRoutingBag,
-		MessageRoutingBag actualMessageRoutingBag) {
+			MessageRoutingBag expectedMessageRoutingBag,
+			MessageRoutingBag actualMessageRoutingBag)
+		throws Exception {
 
 		Assert.assertEquals(
 			expectedMessageRoutingBag.getDestinationName(),
@@ -262,11 +265,13 @@ public class MessageDatagramReceiveHandlerTest {
 		Assert.assertEquals(
 			expectedMessageRoutingBag.isRoutingDowncast(),
 			actualMessageRoutingBag.isRoutingDowncast());
+
+		Field routingTraceField = ReflectionUtil.getDeclaredField(
+			MessageRoutingBag.class, "_routingTrace");
+
 		Assert.assertEquals(
-			ReflectionTestUtil.getFieldValue(
-				expectedMessageRoutingBag, "_routingTrace"),
-			ReflectionTestUtil.getFieldValue(
-				actualMessageRoutingBag, "_routingTrace"));
+			routingTraceField.get(expectedMessageRoutingBag),
+			routingTraceField.get(actualMessageRoutingBag));
 	}
 
 	private MockIntraband _mockIntraband = new MockIntraband();

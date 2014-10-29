@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portal.service.persistence;
 
 import com.liferay.portal.NoSuchLayoutPrototypeException;
+import com.liferay.portal.kernel.bean.PortalBeanLocatorUtil;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
@@ -23,72 +24,63 @@ import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.template.TemplateException;
-import com.liferay.portal.kernel.template.TemplateManagerUtil;
-import com.liferay.portal.kernel.transaction.Propagation;
+import com.liferay.portal.kernel.test.ExecutionTestListeners;
 import com.liferay.portal.kernel.util.IntegerWrapper;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.OrderByComparatorFactoryUtil;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.model.LayoutPrototype;
-import com.liferay.portal.service.LayoutPrototypeLocalServiceUtil;
-import com.liferay.portal.test.TransactionalTestRule;
-import com.liferay.portal.test.runners.PersistenceIntegrationJUnitTestRunner;
-import com.liferay.portal.tools.DBUpgrader;
-import com.liferay.portal.util.test.RandomTestUtil;
+import com.liferay.portal.service.ServiceTestUtil;
+import com.liferay.portal.service.persistence.BasePersistence;
+import com.liferay.portal.service.persistence.PersistenceExecutionTestListener;
+import com.liferay.portal.test.LiferayPersistenceIntegrationJUnitTestRunner;
+import com.liferay.portal.test.persistence.TransactionalPersistenceAdvice;
 
 import org.junit.After;
 import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
 import org.junit.Test;
 
 import org.junit.runner.RunWith;
 
 import java.io.Serializable;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 /**
- * @generated
+ * @author Brian Wing Shun Chan
  */
-@RunWith(PersistenceIntegrationJUnitTestRunner.class)
+@ExecutionTestListeners(listeners =  {
+	PersistenceExecutionTestListener.class})
+@RunWith(LiferayPersistenceIntegrationJUnitTestRunner.class)
 public class LayoutPrototypePersistenceTest {
-	@ClassRule
-	public static TransactionalTestRule transactionalTestRule = new TransactionalTestRule(Propagation.REQUIRED);
-
-	@BeforeClass
-	public static void setupClass() throws TemplateException {
-		try {
-			DBUpgrader.upgrade();
-		}
-		catch (Exception e) {
-			_log.error(e, e);
-		}
-
-		TemplateManagerUtil.init();
-	}
-
 	@After
 	public void tearDown() throws Exception {
-		Iterator<LayoutPrototype> iterator = _layoutPrototypes.iterator();
+		Map<Serializable, BasePersistence<?>> basePersistences = _transactionalPersistenceAdvice.getBasePersistences();
 
-		while (iterator.hasNext()) {
-			_persistence.remove(iterator.next());
+		Set<Serializable> primaryKeys = basePersistences.keySet();
 
-			iterator.remove();
+		for (Serializable primaryKey : primaryKeys) {
+			BasePersistence<?> basePersistence = basePersistences.get(primaryKey);
+
+			try {
+				basePersistence.remove(primaryKey);
+			}
+			catch (Exception e) {
+				if (_log.isDebugEnabled()) {
+					_log.debug("The model with primary key " + primaryKey +
+						" was already deleted");
+				}
+			}
 		}
+
+		_transactionalPersistenceAdvice.reset();
 	}
 
 	@Test
 	public void testCreate() throws Exception {
-		long pk = RandomTestUtil.nextLong();
+		long pk = ServiceTestUtil.nextLong();
 
 		LayoutPrototype layoutPrototype = _persistence.create(pk);
 
@@ -115,38 +107,34 @@ public class LayoutPrototypePersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
+		long pk = ServiceTestUtil.nextLong();
 
 		LayoutPrototype newLayoutPrototype = _persistence.create(pk);
 
-		newLayoutPrototype.setMvccVersion(RandomTestUtil.nextLong());
+		newLayoutPrototype.setUuid(ServiceTestUtil.randomString());
 
-		newLayoutPrototype.setUuid(RandomTestUtil.randomString());
+		newLayoutPrototype.setCompanyId(ServiceTestUtil.nextLong());
 
-		newLayoutPrototype.setCompanyId(RandomTestUtil.nextLong());
+		newLayoutPrototype.setUserId(ServiceTestUtil.nextLong());
 
-		newLayoutPrototype.setUserId(RandomTestUtil.nextLong());
+		newLayoutPrototype.setUserName(ServiceTestUtil.randomString());
 
-		newLayoutPrototype.setUserName(RandomTestUtil.randomString());
+		newLayoutPrototype.setCreateDate(ServiceTestUtil.nextDate());
 
-		newLayoutPrototype.setCreateDate(RandomTestUtil.nextDate());
+		newLayoutPrototype.setModifiedDate(ServiceTestUtil.nextDate());
 
-		newLayoutPrototype.setModifiedDate(RandomTestUtil.nextDate());
+		newLayoutPrototype.setName(ServiceTestUtil.randomString());
 
-		newLayoutPrototype.setName(RandomTestUtil.randomString());
+		newLayoutPrototype.setDescription(ServiceTestUtil.randomString());
 
-		newLayoutPrototype.setDescription(RandomTestUtil.randomString());
+		newLayoutPrototype.setSettings(ServiceTestUtil.randomString());
 
-		newLayoutPrototype.setSettings(RandomTestUtil.randomString());
+		newLayoutPrototype.setActive(ServiceTestUtil.randomBoolean());
 
-		newLayoutPrototype.setActive(RandomTestUtil.randomBoolean());
-
-		_layoutPrototypes.add(_persistence.update(newLayoutPrototype));
+		_persistence.update(newLayoutPrototype);
 
 		LayoutPrototype existingLayoutPrototype = _persistence.findByPrimaryKey(newLayoutPrototype.getPrimaryKey());
 
-		Assert.assertEquals(existingLayoutPrototype.getMvccVersion(),
-			newLayoutPrototype.getMvccVersion());
 		Assert.assertEquals(existingLayoutPrototype.getUuid(),
 			newLayoutPrototype.getUuid());
 		Assert.assertEquals(existingLayoutPrototype.getLayoutPrototypeId(),
@@ -174,60 +162,6 @@ public class LayoutPrototypePersistenceTest {
 	}
 
 	@Test
-	public void testCountByUuid() {
-		try {
-			_persistence.countByUuid(StringPool.BLANK);
-
-			_persistence.countByUuid(StringPool.NULL);
-
-			_persistence.countByUuid((String)null);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByUuid_C() {
-		try {
-			_persistence.countByUuid_C(StringPool.BLANK,
-				RandomTestUtil.nextLong());
-
-			_persistence.countByUuid_C(StringPool.NULL, 0L);
-
-			_persistence.countByUuid_C((String)null, 0L);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByCompanyId() {
-		try {
-			_persistence.countByCompanyId(RandomTestUtil.nextLong());
-
-			_persistence.countByCompanyId(0L);
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testCountByC_A() {
-		try {
-			_persistence.countByC_A(RandomTestUtil.nextLong(),
-				RandomTestUtil.randomBoolean());
-
-			_persistence.countByC_A(0L, RandomTestUtil.randomBoolean());
-		}
-		catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
-
-	@Test
 	public void testFindByPrimaryKeyExisting() throws Exception {
 		LayoutPrototype newLayoutPrototype = addLayoutPrototype();
 
@@ -238,7 +172,7 @@ public class LayoutPrototypePersistenceTest {
 
 	@Test
 	public void testFindByPrimaryKeyMissing() throws Exception {
-		long pk = RandomTestUtil.nextLong();
+		long pk = ServiceTestUtil.nextLong();
 
 		try {
 			_persistence.findByPrimaryKey(pk);
@@ -261,12 +195,11 @@ public class LayoutPrototypePersistenceTest {
 		}
 	}
 
-	protected OrderByComparator<LayoutPrototype> getOrderByComparator() {
-		return OrderByComparatorFactoryUtil.create("LayoutPrototype",
-			"mvccVersion", true, "uuid", true, "layoutPrototypeId", true,
-			"companyId", true, "userId", true, "userName", true, "createDate",
-			true, "modifiedDate", true, "name", true, "description", true,
-			"settings", true, "active", true);
+	protected OrderByComparator getOrderByComparator() {
+		return OrderByComparatorFactoryUtil.create("LayoutPrototype", "uuid",
+			true, "layoutPrototypeId", true, "companyId", true, "userId", true,
+			"userName", true, "createDate", true, "modifiedDate", true, "name",
+			true, "description", true, "settings", true, "active", true);
 	}
 
 	@Test
@@ -280,7 +213,7 @@ public class LayoutPrototypePersistenceTest {
 
 	@Test
 	public void testFetchByPrimaryKeyMissing() throws Exception {
-		long pk = RandomTestUtil.nextLong();
+		long pk = ServiceTestUtil.nextLong();
 
 		LayoutPrototype missingLayoutPrototype = _persistence.fetchByPrimaryKey(pk);
 
@@ -288,103 +221,19 @@ public class LayoutPrototypePersistenceTest {
 	}
 
 	@Test
-	public void testFetchByPrimaryKeysWithMultiplePrimaryKeysWhereAllPrimaryKeysExist()
-		throws Exception {
-		LayoutPrototype newLayoutPrototype1 = addLayoutPrototype();
-		LayoutPrototype newLayoutPrototype2 = addLayoutPrototype();
-
-		Set<Serializable> primaryKeys = new HashSet<Serializable>();
-
-		primaryKeys.add(newLayoutPrototype1.getPrimaryKey());
-		primaryKeys.add(newLayoutPrototype2.getPrimaryKey());
-
-		Map<Serializable, LayoutPrototype> layoutPrototypes = _persistence.fetchByPrimaryKeys(primaryKeys);
-
-		Assert.assertEquals(2, layoutPrototypes.size());
-		Assert.assertEquals(newLayoutPrototype1,
-			layoutPrototypes.get(newLayoutPrototype1.getPrimaryKey()));
-		Assert.assertEquals(newLayoutPrototype2,
-			layoutPrototypes.get(newLayoutPrototype2.getPrimaryKey()));
-	}
-
-	@Test
-	public void testFetchByPrimaryKeysWithMultiplePrimaryKeysWhereNoPrimaryKeysExist()
-		throws Exception {
-		long pk1 = RandomTestUtil.nextLong();
-
-		long pk2 = RandomTestUtil.nextLong();
-
-		Set<Serializable> primaryKeys = new HashSet<Serializable>();
-
-		primaryKeys.add(pk1);
-		primaryKeys.add(pk2);
-
-		Map<Serializable, LayoutPrototype> layoutPrototypes = _persistence.fetchByPrimaryKeys(primaryKeys);
-
-		Assert.assertTrue(layoutPrototypes.isEmpty());
-	}
-
-	@Test
-	public void testFetchByPrimaryKeysWithMultiplePrimaryKeysWhereSomePrimaryKeysExist()
-		throws Exception {
-		LayoutPrototype newLayoutPrototype = addLayoutPrototype();
-
-		long pk = RandomTestUtil.nextLong();
-
-		Set<Serializable> primaryKeys = new HashSet<Serializable>();
-
-		primaryKeys.add(newLayoutPrototype.getPrimaryKey());
-		primaryKeys.add(pk);
-
-		Map<Serializable, LayoutPrototype> layoutPrototypes = _persistence.fetchByPrimaryKeys(primaryKeys);
-
-		Assert.assertEquals(1, layoutPrototypes.size());
-		Assert.assertEquals(newLayoutPrototype,
-			layoutPrototypes.get(newLayoutPrototype.getPrimaryKey()));
-	}
-
-	@Test
-	public void testFetchByPrimaryKeysWithNoPrimaryKeys()
-		throws Exception {
-		Set<Serializable> primaryKeys = new HashSet<Serializable>();
-
-		Map<Serializable, LayoutPrototype> layoutPrototypes = _persistence.fetchByPrimaryKeys(primaryKeys);
-
-		Assert.assertTrue(layoutPrototypes.isEmpty());
-	}
-
-	@Test
-	public void testFetchByPrimaryKeysWithOnePrimaryKey()
-		throws Exception {
-		LayoutPrototype newLayoutPrototype = addLayoutPrototype();
-
-		Set<Serializable> primaryKeys = new HashSet<Serializable>();
-
-		primaryKeys.add(newLayoutPrototype.getPrimaryKey());
-
-		Map<Serializable, LayoutPrototype> layoutPrototypes = _persistence.fetchByPrimaryKeys(primaryKeys);
-
-		Assert.assertEquals(1, layoutPrototypes.size());
-		Assert.assertEquals(newLayoutPrototype,
-			layoutPrototypes.get(newLayoutPrototype.getPrimaryKey()));
-	}
-
-	@Test
 	public void testActionableDynamicQuery() throws Exception {
 		final IntegerWrapper count = new IntegerWrapper();
 
-		ActionableDynamicQuery actionableDynamicQuery = LayoutPrototypeLocalServiceUtil.getActionableDynamicQuery();
-
-		actionableDynamicQuery.setPerformActionMethod(new ActionableDynamicQuery.PerformActionMethod() {
+		ActionableDynamicQuery actionableDynamicQuery = new LayoutPrototypeActionableDynamicQuery() {
 				@Override
-				public void performAction(Object object) {
+				protected void performAction(Object object) {
 					LayoutPrototype layoutPrototype = (LayoutPrototype)object;
 
 					Assert.assertNotNull(layoutPrototype);
 
 					count.increment();
 				}
-			});
+			};
 
 		actionableDynamicQuery.performActions();
 
@@ -417,7 +266,7 @@ public class LayoutPrototypePersistenceTest {
 				LayoutPrototype.class.getClassLoader());
 
 		dynamicQuery.add(RestrictionsFactoryUtil.eq("layoutPrototypeId",
-				RandomTestUtil.nextLong()));
+				ServiceTestUtil.nextLong()));
 
 		List<LayoutPrototype> result = _persistence.findWithDynamicQuery(dynamicQuery);
 
@@ -458,7 +307,7 @@ public class LayoutPrototypePersistenceTest {
 				"layoutPrototypeId"));
 
 		dynamicQuery.add(RestrictionsFactoryUtil.in("layoutPrototypeId",
-				new Object[] { RandomTestUtil.nextLong() }));
+				new Object[] { ServiceTestUtil.nextLong() }));
 
 		List<Object> result = _persistence.findWithDynamicQuery(dynamicQuery);
 
@@ -466,38 +315,36 @@ public class LayoutPrototypePersistenceTest {
 	}
 
 	protected LayoutPrototype addLayoutPrototype() throws Exception {
-		long pk = RandomTestUtil.nextLong();
+		long pk = ServiceTestUtil.nextLong();
 
 		LayoutPrototype layoutPrototype = _persistence.create(pk);
 
-		layoutPrototype.setMvccVersion(RandomTestUtil.nextLong());
+		layoutPrototype.setUuid(ServiceTestUtil.randomString());
 
-		layoutPrototype.setUuid(RandomTestUtil.randomString());
+		layoutPrototype.setCompanyId(ServiceTestUtil.nextLong());
 
-		layoutPrototype.setCompanyId(RandomTestUtil.nextLong());
+		layoutPrototype.setUserId(ServiceTestUtil.nextLong());
 
-		layoutPrototype.setUserId(RandomTestUtil.nextLong());
+		layoutPrototype.setUserName(ServiceTestUtil.randomString());
 
-		layoutPrototype.setUserName(RandomTestUtil.randomString());
+		layoutPrototype.setCreateDate(ServiceTestUtil.nextDate());
 
-		layoutPrototype.setCreateDate(RandomTestUtil.nextDate());
+		layoutPrototype.setModifiedDate(ServiceTestUtil.nextDate());
 
-		layoutPrototype.setModifiedDate(RandomTestUtil.nextDate());
+		layoutPrototype.setName(ServiceTestUtil.randomString());
 
-		layoutPrototype.setName(RandomTestUtil.randomString());
+		layoutPrototype.setDescription(ServiceTestUtil.randomString());
 
-		layoutPrototype.setDescription(RandomTestUtil.randomString());
+		layoutPrototype.setSettings(ServiceTestUtil.randomString());
 
-		layoutPrototype.setSettings(RandomTestUtil.randomString());
+		layoutPrototype.setActive(ServiceTestUtil.randomBoolean());
 
-		layoutPrototype.setActive(RandomTestUtil.randomBoolean());
-
-		_layoutPrototypes.add(_persistence.update(layoutPrototype));
+		_persistence.update(layoutPrototype);
 
 		return layoutPrototype;
 	}
 
 	private static Log _log = LogFactoryUtil.getLog(LayoutPrototypePersistenceTest.class);
-	private List<LayoutPrototype> _layoutPrototypes = new ArrayList<LayoutPrototype>();
-	private LayoutPrototypePersistence _persistence = LayoutPrototypeUtil.getPersistence();
+	private LayoutPrototypePersistence _persistence = (LayoutPrototypePersistence)PortalBeanLocatorUtil.locate(LayoutPrototypePersistence.class.getName());
+	private TransactionalPersistenceAdvice _transactionalPersistenceAdvice = (TransactionalPersistenceAdvice)PortalBeanLocatorUtil.locate(TransactionalPersistenceAdvice.class.getName());
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -21,17 +21,16 @@ import com.liferay.portal.model.BaseModel;
 import com.liferay.portal.model.ClassedModel;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.service.ServiceContext;
+import com.liferay.portal.service.ServiceTestUtil;
+import com.liferay.portal.test.LiferayIntegrationJUnitTestRunner;
+import com.liferay.portal.test.MainServletExecutionTestListener;
 import com.liferay.portal.test.Sync;
 import com.liferay.portal.test.SynchronousDestinationExecutionTestListener;
-import com.liferay.portal.test.listeners.MainServletExecutionTestListener;
-import com.liferay.portal.test.runners.LiferayIntegrationJUnitTestRunner;
-import com.liferay.portal.util.test.RandomTestUtil;
-import com.liferay.portal.util.test.TestPropsValues;
 import com.liferay.portlet.documentlibrary.model.DLFolder;
 import com.liferay.portlet.documentlibrary.model.DLFolderConstants;
 import com.liferay.portlet.documentlibrary.service.DLAppServiceUtil;
 import com.liferay.portlet.documentlibrary.service.DLFolderLocalServiceUtil;
-import com.liferay.portlet.documentlibrary.util.test.DLAppTestUtil;
+import com.liferay.portlet.documentlibrary.util.DLAppTestUtil;
 import com.liferay.portlet.trash.BaseTrashHandlerTestCase;
 import com.liferay.portlet.trash.util.TrashUtil;
 
@@ -51,6 +50,12 @@ import org.junit.runner.RunWith;
 @RunWith(LiferayIntegrationJUnitTestRunner.class)
 @Sync
 public class DLFolderTrashHandlerTest extends BaseTrashHandlerTestCase {
+
+	@Ignore()
+	@Override
+	@Test
+	public void testDeleteTrashVersions() throws Exception {
+	}
 
 	@Ignore()
 	@Override
@@ -125,8 +130,12 @@ public class DLFolderTrashHandlerTest extends BaseTrashHandlerTestCase {
 	protected BaseModel<?> addBaseModelWithWorkflow(long groupId, long folderId)
 		throws Exception {
 
-		Folder folder = DLAppTestUtil.addFolder(
-			groupId, folderId, getSearchKeywords());
+		String name = getSearchKeywords();
+
+		name += ServiceTestUtil.randomString(
+			_FOLDER_NAME_MAX_LENGTH - name.length());
+
+		Folder folder = DLAppTestUtil.addFolder(groupId, folderId, name);
 
 		return (DLFolder)folder.getModel();
 	}
@@ -171,28 +180,19 @@ public class DLFolderTrashHandlerTest extends BaseTrashHandlerTestCase {
 
 	@Override
 	protected BaseModel<?> getParentBaseModel(
-			Group group, long parentBaseModelId, ServiceContext serviceContext)
+			Group group, ServiceContext serviceContext)
 		throws Exception {
 
 		Folder folder = DLAppTestUtil.addFolder(
-			group.getGroupId(), parentBaseModelId,
-			RandomTestUtil.randomString(_FOLDER_NAME_MAX_LENGTH));
+			group.getGroupId(), DLFolderConstants.DEFAULT_PARENT_FOLDER_ID,
+			ServiceTestUtil.randomString(_FOLDER_NAME_MAX_LENGTH));
 
 		return (DLFolder)folder.getModel();
 	}
 
 	@Override
-	protected BaseModel<?> getParentBaseModel(
-			Group group, ServiceContext serviceContext)
-		throws Exception {
-
-		return getParentBaseModel(
-			group, DLFolderConstants.DEFAULT_PARENT_FOLDER_ID, serviceContext);
-	}
-
-	@Override
 	protected String getSearchKeywords() {
-		return _FOLDER_NAME;
+		return "Title";
 	}
 
 	@Override
@@ -231,26 +231,6 @@ public class DLFolderTrashHandlerTest extends BaseTrashHandlerTestCase {
 
 		DLAppServiceUtil.moveFolderToTrash(primaryKey);
 	}
-
-	@Override
-	protected BaseModel<?> updateBaseModel(
-			long primaryKey, ServiceContext serviceContext)
-		throws Exception {
-
-		DLFolder dlFolder = DLFolderLocalServiceUtil.getFolder(primaryKey);
-
-		if (serviceContext.getWorkflowAction() ==
-				WorkflowConstants.ACTION_SAVE_DRAFT) {
-
-			dlFolder = DLFolderLocalServiceUtil.updateStatus(
-				TestPropsValues.getUserId(), primaryKey,
-				WorkflowConstants.STATUS_DRAFT, null, serviceContext);
-		}
-
-		return dlFolder;
-	}
-
-	private static final String _FOLDER_NAME = RandomTestUtil.randomString(100);
 
 	private static final int _FOLDER_NAME_MAX_LENGTH = 100;
 

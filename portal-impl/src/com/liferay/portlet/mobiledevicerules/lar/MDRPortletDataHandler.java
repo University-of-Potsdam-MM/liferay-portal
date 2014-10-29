@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,13 +15,11 @@
 package com.liferay.portlet.mobiledevicerules.lar;
 
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
-import com.liferay.portal.kernel.dao.orm.ExportActionableDynamicQuery;
 import com.liferay.portal.kernel.lar.BasePortletDataHandler;
 import com.liferay.portal.kernel.lar.PortletDataContext;
 import com.liferay.portal.kernel.lar.PortletDataHandlerBoolean;
 import com.liferay.portal.kernel.lar.StagedModelDataHandlerUtil;
 import com.liferay.portal.kernel.lar.StagedModelType;
-import com.liferay.portal.kernel.lar.xstream.XStreamAliasRegistryUtil;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.model.Layout;
 import com.liferay.portal.util.PortalUtil;
@@ -30,15 +28,12 @@ import com.liferay.portlet.mobiledevicerules.model.MDRAction;
 import com.liferay.portlet.mobiledevicerules.model.MDRRule;
 import com.liferay.portlet.mobiledevicerules.model.MDRRuleGroup;
 import com.liferay.portlet.mobiledevicerules.model.MDRRuleGroupInstance;
-import com.liferay.portlet.mobiledevicerules.model.impl.MDRActionImpl;
-import com.liferay.portlet.mobiledevicerules.model.impl.MDRRuleGroupImpl;
-import com.liferay.portlet.mobiledevicerules.model.impl.MDRRuleGroupInstanceImpl;
-import com.liferay.portlet.mobiledevicerules.model.impl.MDRRuleImpl;
-import com.liferay.portlet.mobiledevicerules.service.MDRActionLocalServiceUtil;
-import com.liferay.portlet.mobiledevicerules.service.MDRRuleGroupInstanceLocalServiceUtil;
 import com.liferay.portlet.mobiledevicerules.service.MDRRuleGroupLocalServiceUtil;
-import com.liferay.portlet.mobiledevicerules.service.MDRRuleLocalServiceUtil;
 import com.liferay.portlet.mobiledevicerules.service.permission.MDRPermission;
+import com.liferay.portlet.mobiledevicerules.service.persistence.MDRActionExportActionableDynamicQuery;
+import com.liferay.portlet.mobiledevicerules.service.persistence.MDRRuleExportActionableDynamicQuery;
+import com.liferay.portlet.mobiledevicerules.service.persistence.MDRRuleGroupExportActionableDynamicQuery;
+import com.liferay.portlet.mobiledevicerules.service.persistence.MDRRuleGroupInstanceExportActionableDynamicQuery;
 
 import java.util.List;
 
@@ -68,13 +63,6 @@ public class MDRPortletDataHandler extends BasePortletDataHandler {
 		setImportControls(getExportControls());
 		setPublishToLiveByDefault(
 			PropsValues.MOBILE_DEVICE_RULES_PUBLISH_TO_LIVE_BY_DEFAULT);
-
-		XStreamAliasRegistryUtil.register(MDRActionImpl.class, "MDRAction");
-		XStreamAliasRegistryUtil.register(MDRRuleImpl.class, "MDRRule");
-		XStreamAliasRegistryUtil.register(
-			MDRRuleGroupImpl.class, "MDRRuleGroup");
-		XStreamAliasRegistryUtil.register(
-			MDRRuleGroupInstanceImpl.class, "MDRRuleGroupInstance");
 	}
 
 	@Override
@@ -107,23 +95,25 @@ public class MDRPortletDataHandler extends BasePortletDataHandler {
 
 		if (portletDataContext.getBooleanParameter(NAMESPACE, "rules")) {
 			ActionableDynamicQuery rulesActionableDynamicQuery =
-				MDRRuleLocalServiceUtil.getExportActionableDynamicQuery(
-					portletDataContext);
+				new MDRRuleExportActionableDynamicQuery(portletDataContext);
 
 			rulesActionableDynamicQuery.performActions();
 		}
 
 		if (portletDataContext.getBooleanParameter(NAMESPACE, "actions")) {
-			ExportActionableDynamicQuery actionsExportActionableDynamicQuery =
-				MDRActionLocalServiceUtil.getExportActionableDynamicQuery(
-					portletDataContext);
+			ActionableDynamicQuery actionsActionableDynamicQuery =
+				new MDRActionExportActionableDynamicQuery(portletDataContext) {
 
-			actionsExportActionableDynamicQuery.setStagedModelType(
-				new StagedModelType(
-					PortalUtil.getClassNameId(MDRAction.class),
-					StagedModelType.REFERRER_CLASS_NAME_ID_ALL));
+				@Override
+				protected StagedModelType getStagedModelType() {
+					return new StagedModelType(
+						PortalUtil.getClassNameId(MDRAction.class),
+						StagedModelType.REFERRER_CLASS_NAME_ID_ALL);
+				}
 
-			actionsExportActionableDynamicQuery.performActions();
+			};
+
+			actionsActionableDynamicQuery.performActions();
 		}
 
 		return getExportDataRootElementString(rootElement);
@@ -171,38 +161,42 @@ public class MDRPortletDataHandler extends BasePortletDataHandler {
 			PortletPreferences portletPreferences)
 		throws Exception {
 
-		ExportActionableDynamicQuery actionsExportActionableDynamicQuery =
-			MDRActionLocalServiceUtil.getExportActionableDynamicQuery(
-				portletDataContext);
+		ActionableDynamicQuery actionsActionableDynamicQuery =
+			new MDRActionExportActionableDynamicQuery(portletDataContext) {
 
-		actionsExportActionableDynamicQuery.setStagedModelType(
-			new StagedModelType(
-				MDRAction.class.getName(), Layout.class.getName()));
+			@Override
+			protected StagedModelType getStagedModelType() {
+				return new StagedModelType(
+					MDRAction.class.getName(), Layout.class.getName());
+			}
 
-		actionsExportActionableDynamicQuery.performCount();
+		};
+
+		actionsActionableDynamicQuery.performCount();
 
 		ActionableDynamicQuery rulesActionableDynamicQuery =
-			MDRRuleLocalServiceUtil.getExportActionableDynamicQuery(
-				portletDataContext);
+			new MDRRuleExportActionableDynamicQuery(portletDataContext);
 
 		rulesActionableDynamicQuery.performCount();
 
 		ActionableDynamicQuery ruleGroupsActionableDynamicQuery =
-			MDRRuleGroupLocalServiceUtil.getExportActionableDynamicQuery(
-				portletDataContext);
+			new MDRRuleGroupExportActionableDynamicQuery(portletDataContext);
 
 		ruleGroupsActionableDynamicQuery.performCount();
 
-		ExportActionableDynamicQuery
-			ruleGroupInstancesExportActionableDynamicQuery =
-				MDRRuleGroupInstanceLocalServiceUtil.
-					getExportActionableDynamicQuery(portletDataContext);
+		ActionableDynamicQuery ruleGroupInstancesActionableDynamicQuery =
+			new MDRRuleGroupInstanceExportActionableDynamicQuery(
+				portletDataContext) {
 
-		ruleGroupInstancesExportActionableDynamicQuery.setStagedModelType(
-			new StagedModelType(
-				MDRRuleGroupInstance.class.getName(), Layout.class.getName()));
+				@Override
+				protected StagedModelType getStagedModelType() {
+					return new StagedModelType(
+						MDRRuleGroupInstance.class.getName(),
+						Layout.class.getName());
+				}
+			};
 
-		ruleGroupInstancesExportActionableDynamicQuery.performCount();
+		ruleGroupInstancesActionableDynamicQuery.performCount();
 	}
 
 }

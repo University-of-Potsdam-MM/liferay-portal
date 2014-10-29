@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -68,11 +68,17 @@ public class GetterUtil {
 	public static final String[] DEFAULT_STRING_VALUES = new String[0];
 
 	public static boolean get(Object value, boolean defaultValue) {
+		if (value == null) {
+			return defaultValue;
+		}
+
 		if (value instanceof String) {
 			return get((String)value, defaultValue);
 		}
 
-		if (value instanceof Boolean) {
+		Class<?> clazz = value.getClass();
+
+		if (Boolean.class.isAssignableFrom(clazz)) {
 			return (Boolean)value;
 		}
 
@@ -82,11 +88,17 @@ public class GetterUtil {
 	public static Date get(
 		Object value, DateFormat dateFormat, Date defaultValue) {
 
+		if (value == null) {
+			return defaultValue;
+		}
+
 		if (value instanceof String) {
 			return get((String)value, dateFormat, defaultValue);
 		}
 
-		if (value instanceof Date) {
+		Class<?> clazz = value.getClass();
+
+		if (Date.class.isAssignableFrom(clazz)) {
 			return (Date)value;
 		}
 
@@ -94,11 +106,17 @@ public class GetterUtil {
 	}
 
 	public static double get(Object value, double defaultValue) {
+		if (value == null) {
+			return defaultValue;
+		}
+
 		if (value instanceof String) {
 			return get((String)value, defaultValue);
 		}
 
-		if (value instanceof Double) {
+		Class<?> clazz = value.getClass();
+
+		if (Double.class.isAssignableFrom(clazz)) {
 			return (Double)value;
 		}
 
@@ -112,11 +130,17 @@ public class GetterUtil {
 	}
 
 	public static float get(Object value, float defaultValue) {
+		if (value == null) {
+			return defaultValue;
+		}
+
 		if (value instanceof String) {
 			return get((String)value, defaultValue);
 		}
 
-		if (value instanceof Float) {
+		Class<?> clazz = value.getClass();
+
+		if (Float.class.isAssignableFrom(clazz)) {
 			return (Float)value;
 		}
 
@@ -130,11 +154,17 @@ public class GetterUtil {
 	}
 
 	public static int get(Object value, int defaultValue) {
+		if (value == null) {
+			return defaultValue;
+		}
+
 		if (value instanceof String) {
 			return get((String)value, defaultValue);
 		}
 
-		if (value instanceof Integer) {
+		Class<?> clazz = value.getClass();
+
+		if (Integer.class.isAssignableFrom(clazz)) {
 			return (Integer)value;
 		}
 
@@ -148,11 +178,17 @@ public class GetterUtil {
 	}
 
 	public static long get(Object value, long defaultValue) {
+		if (value == null) {
+			return defaultValue;
+		}
+
 		if (value instanceof String) {
 			return get((String)value, defaultValue);
 		}
 
-		if (value instanceof Long) {
+		Class<?> clazz = value.getClass();
+
+		if (Long.class.isAssignableFrom(clazz)) {
 			return (Long)value;
 		}
 
@@ -166,14 +202,18 @@ public class GetterUtil {
 	}
 
 	public static Number get(Object value, Number defaultValue) {
-		if (value instanceof String) {
-			String valueString = (String)value;
+		if (value == null) {
+			return defaultValue;
+		}
 
-			if (Validator.isNull(valueString)) {
+		if (value instanceof String) {
+			if (Validator.isNull(value)) {
 				return defaultValue;
 			}
 
 			try {
+				String valueString = (String)value;
+
 				return new BigDecimal(valueString.trim());
 			}
 			catch (NumberFormatException nfe) {
@@ -181,27 +221,24 @@ public class GetterUtil {
 			}
 		}
 
-		if (value instanceof Byte) {
+		Class<?> clazz = value.getClass();
+
+		if (Byte.class.isAssignableFrom(clazz)) {
 			return (Byte)value;
 		}
-
-		if (value instanceof Double) {
+		else if (Double.class.isAssignableFrom(clazz)) {
 			return (Double)value;
 		}
-
-		if (value instanceof Float) {
+		else if (Float.class.isAssignableFrom(clazz)) {
 			return (Float)value;
 		}
-
-		if (value instanceof Integer) {
+		else if (Integer.class.isAssignableFrom(clazz)) {
 			return (Integer)value;
 		}
-
-		if (value instanceof Long) {
+		else if (Long.class.isAssignableFrom(clazz)) {
 			return (Long)value;
 		}
-
-		if (value instanceof Short) {
+		else if (Short.class.isAssignableFrom(clazz)) {
 			return (Short)value;
 		}
 
@@ -213,11 +250,17 @@ public class GetterUtil {
 	}
 
 	public static short get(Object value, short defaultValue) {
+		if (value == null) {
+			return defaultValue;
+		}
+
 		if (value instanceof String) {
 			return get((String)value, defaultValue);
 		}
 
-		if (value instanceof Short) {
+		Class<?> clazz = value.getClass();
+
+		if (Short.class.isAssignableFrom(clazz)) {
 			return (Short)value;
 		}
 
@@ -231,6 +274,10 @@ public class GetterUtil {
 	}
 
 	public static String get(Object value, String defaultValue) {
+		if (value == null) {
+			return defaultValue;
+		}
+
 		if (value instanceof String) {
 			return get((String)value, defaultValue);
 		}
@@ -366,12 +413,21 @@ public class GetterUtil {
 	public static boolean[] getBooleanValues(
 		Object value, boolean[] defaultValue) {
 
-		if (value instanceof String[]) {
-			return getBooleanValues((String[])value, defaultValue);
+		if (value == null) {
+			return defaultValue;
 		}
 
-		if (value instanceof boolean[]) {
-			return (boolean[])value;
+		Class<?> clazz = value.getClass();
+
+		if (clazz.isArray()) {
+			Class<?> componentType = clazz.getComponentType();
+
+			if (String.class.isAssignableFrom(componentType)) {
+				return getBooleanValues((String[])value, defaultValue);
+			}
+			else if (Boolean.class.isAssignableFrom(componentType)) {
+				return (boolean[])value;
+			}
 		}
 
 		return defaultValue;
@@ -424,12 +480,21 @@ public class GetterUtil {
 	public static Date[] getDateValues(
 		Object value, DateFormat dateFormat, Date[] defaultValue) {
 
-		if (value instanceof String[]) {
-			return getDateValues((String[])value, dateFormat, defaultValue);
+		if (value == null) {
+			return defaultValue;
 		}
 
-		if (value instanceof Date[]) {
-			return (Date[])value;
+		Class<?> clazz = value.getClass();
+
+		if (clazz.isArray()) {
+			Class<?> componentType = clazz.getComponentType();
+
+			if (String.class.isAssignableFrom(componentType)) {
+				return getDateValues((String[])value, dateFormat, defaultValue);
+			}
+			else if (Date.class.isAssignableFrom(componentType)) {
+				return (Date[])value;
+			}
 		}
 
 		return defaultValue;
@@ -478,12 +543,21 @@ public class GetterUtil {
 	public static double[] getDoubleValues(
 		Object value, double[] defaultValue) {
 
-		if (value instanceof String[]) {
-			return getDoubleValues((String[])value, defaultValue);
+		if (value == null) {
+			return defaultValue;
 		}
 
-		if (value instanceof double[]) {
-			return (double[])value;
+		Class<?> clazz = value.getClass();
+
+		if (clazz.isArray()) {
+			Class<?> componentType = clazz.getComponentType();
+
+			if (String.class.isAssignableFrom(componentType)) {
+				return getDoubleValues((String[])value, defaultValue);
+			}
+			else if (Double.class.isAssignableFrom(componentType)) {
+				return (double[])value;
+			}
 		}
 
 		return defaultValue;
@@ -530,12 +604,21 @@ public class GetterUtil {
 	}
 
 	public static float[] getFloatValues(Object value, float[] defaultValue) {
-		if (value instanceof String[]) {
-			return getFloatValues((String[])value, defaultValue);
+		if (value == null) {
+			return defaultValue;
 		}
 
-		if (value instanceof float[]) {
-			return (float[])value;
+		Class<?> clazz = value.getClass();
+
+		if (clazz.isArray()) {
+			Class<?> componentType = clazz.getComponentType();
+
+			if (String.class.isAssignableFrom(componentType)) {
+				return getFloatValues((String[])value, defaultValue);
+			}
+			else if (Float.class.isAssignableFrom(componentType)) {
+				return (float[])value;
+			}
 		}
 
 		return defaultValue;
@@ -645,12 +728,21 @@ public class GetterUtil {
 	}
 
 	public static int[] getIntegerValues(Object value, int[] defaultValue) {
-		if (value instanceof String[]) {
-			return getIntegerValues((String[])value, defaultValue);
+		if (value == null) {
+			return defaultValue;
 		}
 
-		if (value instanceof int[]) {
-			return (int[])value;
+		Class<?> clazz = value.getClass();
+
+		if (clazz.isArray()) {
+			Class<?> componentType = clazz.getComponentType();
+
+			if (String.class.isAssignableFrom(componentType)) {
+				return getIntegerValues((String[])value, defaultValue);
+			}
+			else if (Integer.class.isAssignableFrom(componentType)) {
+				return (int[])value;
+			}
 		}
 
 		return defaultValue;
@@ -758,15 +850,25 @@ public class GetterUtil {
 	}
 
 	public static long[] getLongValues(Object value, long[] defaultValue) {
-		if (value instanceof String[]) {
+		if (value == null) {
+			return defaultValue;
+		}
+
+		Class<?> clazz = value.getClass();
+
+		if (!clazz.isArray()) {
+			return defaultValue;
+		}
+
+		Class<?> componentType = clazz.getComponentType();
+
+		if (String.class.isAssignableFrom(componentType)) {
 			return getLongValues((String[])value, defaultValue);
 		}
-
-		if (value instanceof long[]) {
+		else if (Long.class.isAssignableFrom(componentType)) {
 			return (long[])value;
 		}
-
-		if (value instanceof Number[]) {
+		else if (Number.class.isAssignableFrom(componentType)) {
 			Number[] numbers = (Number[])value;
 
 			long[] values = new long[numbers.length];
@@ -822,12 +924,21 @@ public class GetterUtil {
 	public static Number[] getNumberValues(
 		Object value, Number[] defaultValue) {
 
-		if (value instanceof String[]) {
-			return getNumberValues((String[])value, defaultValue);
+		if (value == null) {
+			return defaultValue;
 		}
 
-		if (value instanceof Number[]) {
-			return (Number[])value;
+		Class<?> clazz = value.getClass();
+
+		if (clazz.isArray()) {
+			Class<?> componentType = clazz.getComponentType();
+
+			if (String.class.isAssignableFrom(componentType)) {
+				return getNumberValues((String[])value, defaultValue);
+			}
+			else if (Number.class.isAssignableFrom(componentType)) {
+				return (Number[])value;
+			}
 		}
 
 		return defaultValue;
@@ -896,12 +1007,21 @@ public class GetterUtil {
 	}
 
 	public static short[] getShortValues(Object value, short[] defaultValue) {
-		if (value instanceof String[]) {
-			return getShortValues((String[])value, defaultValue);
+		if (value == null) {
+			return defaultValue;
 		}
 
-		if (value instanceof short[]) {
-			return (short[])value;
+		Class<?> clazz = value.getClass();
+
+		if (clazz.isArray()) {
+			Class<?> componentType = clazz.getComponentType();
+
+			if (String.class.isAssignableFrom(componentType)) {
+				return getShortValues((String[])value, defaultValue);
+			}
+			else if (Short.class.isAssignableFrom(componentType)) {
+				return (short[])value;
+			}
 		}
 
 		return defaultValue;
@@ -950,8 +1070,18 @@ public class GetterUtil {
 	public static String[] getStringValues(
 		Object value, String[] defaultValue) {
 
-		if (value instanceof String[]) {
-			return getStringValues((String[])value, defaultValue);
+		if (value == null) {
+			return defaultValue;
+		}
+
+		Class<?> clazz = value.getClass();
+
+		if (clazz.isArray()) {
+			Class<?> componentType = clazz.getComponentType();
+
+			if (String.class.isAssignableFrom(componentType)) {
+				return getStringValues((String[])value, defaultValue);
+			}
 		}
 
 		return defaultValue;

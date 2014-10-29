@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -29,16 +29,12 @@ DDMStructure ddmStructure = (DDMStructure)request.getAttribute(WebKeys.DYNAMIC_D
 
 long ddmStructureId = BeanParamUtil.getLong(ddmStructure, request, "structureId");
 
-String script = BeanParamUtil.getString(ddmStructure, request, "definition");
+String script = BeanParamUtil.getString(ddmStructure, request, "xsd");
 
-JSONArray fieldsJSONArray = null;
+JSONArray scriptJSONArray = null;
 
 if (Validator.isNotNull(script)) {
-	try {
-		fieldsJSONArray = DDMXSDUtil.getJSONArray(script);
-	}
-	catch (Exception e) {
-	}
+	scriptJSONArray = DDMXSDUtil.getJSONArray(script);
 }
 
 List<DDMStructure> ddmStructures = null;
@@ -58,7 +54,7 @@ String scopeAvailableFields = ParamUtil.getString(request, "scopeAvailableFields
 
 <liferay-util:buffer var="removeStructureIcon">
 	<liferay-ui:icon
-		iconCssClass="icon-remove"
+		image="unlink"
 		label="<%= true %>"
 		message="remove"
 	/>
@@ -73,7 +69,7 @@ String scopeAvailableFields = ParamUtil.getString(request, "scopeAvailableFields
 	<aui:input name="redirect" type="hidden" value="<%= redirect %>" />
 	<aui:input name="fileEntryTypeId" type="hidden" value="<%= fileEntryTypeId %>" />
 	<aui:input name="ddmStructureId" type="hidden" value="<%= ddmStructureId %>" />
-	<aui:input name="definition" type="hidden" />
+	<aui:input name="xsd" type="hidden" />
 
 	<liferay-ui:header
 		backURL="<%= redirect %>"
@@ -84,7 +80,6 @@ String scopeAvailableFields = ParamUtil.getString(request, "scopeAvailableFields
 	<liferay-ui:error exception="<%= DuplicateFileEntryTypeException.class %>" message="please-enter-a-unique-document-type-name" />
 	<liferay-ui:error exception="<%= NoSuchMetadataSetException.class %>" message="please-enter-a-valid-metadata-set-or-enter-a-metadata-field" />
 	<liferay-ui:error exception="<%= StorageFieldRequiredException.class %>" message="please-fill-out-all-required-fields" />
-	<liferay-ui:error exception="<%= StructureDefinitionException.class %>" message="please-enter-a-valid-definition" />
 	<liferay-ui:error exception="<%= StructureDuplicateElementException.class %>" message="please-enter-unique-metadata-field-names-(including-field-names-inherited-from-the-parent)" />
 	<liferay-ui:error exception="<%= StructureNameException.class %>" message="please-enter-a-valid-name" />
 
@@ -97,7 +92,7 @@ String scopeAvailableFields = ParamUtil.getString(request, "scopeAvailableFields
 			</div>
 		</c:if>
 
-		<aui:input autoFocus="<%= windowState.equals(LiferayWindowState.POP_UP) %>" name="name" />
+		<aui:input name="name" />
 
 		<liferay-ui:panel collapsible="<%= true %>" extended="<%= false %>" id="detailsMetadataFields" persistState="<%= true %>" title="details">
 			<aui:input name="description" />
@@ -109,7 +104,7 @@ String scopeAvailableFields = ParamUtil.getString(request, "scopeAvailableFields
 
 		<liferay-ui:panel collapsible="<%= true %>" extended="<%= false %>" id="additionalMetadataFields" persistState="<%= true %>" title="additional-metadata-fields">
 			<liferay-ui:search-container
-				headerNames="name,null"
+				headerNames='<%= (fileEntryType == null) ? "name,null" : "name" %>'
 				total="<%= (ddmStructures != null) ? ddmStructures.size() : 0 %>"
 			>
 				<liferay-ui:search-container-results
@@ -139,7 +134,7 @@ String scopeAvailableFields = ParamUtil.getString(request, "scopeAvailableFields
 				cssClass="modify-link select-metadata"
 				iconCssClass="icon-search"
 				label="<%= true %>"
-				linkCssClass="btn btn-default"
+				linkCssClass="btn"
 				message="select-metadata-set"
 				url='<%= "javascript:" + renderResponse.getNamespace() + "openDDMStructureSelector();" %>'
 			/>
@@ -172,11 +167,11 @@ String scopeAvailableFields = ParamUtil.getString(request, "scopeAvailableFields
 				},
 				eventName: '<portlet:namespace />selectDDMStructure',
 				refererPortletName: '<%= PortletKeys.DOCUMENT_LIBRARY %>',
-				showAncestorScopes: true,
+				showGlobalScope: true,
 				showManageTemplates: false,
 				showToolbar: true,
 				struts_action: '/dynamic_data_mapping/select_structure',
-				title: '<%= UnicodeLanguageUtil.get(request, "metadata-sets") %>'
+				title: '<%= UnicodeLanguageUtil.get(pageContext, "metadata-sets") %>'
 			},
 			function(event) {
 				var A = AUI();
@@ -196,7 +191,7 @@ String scopeAvailableFields = ParamUtil.getString(request, "scopeAvailableFields
 		window,
 		'<portlet:namespace />saveStructure',
 		function() {
-			document.<portlet:namespace />fm.<portlet:namespace />definition.value = window.<portlet:namespace />formBuilder.getContentValue();
+			document.<portlet:namespace />fm.<portlet:namespace />xsd.value = window.<portlet:namespace />formBuilder.getContentXSD();
 
 			submitForm(document.<portlet:namespace />fm);
 		},
@@ -222,9 +217,9 @@ String scopeAvailableFields = ParamUtil.getString(request, "scopeAvailableFields
 
 <%
 if (fileEntryType == null) {
-	PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.get(request, "add-document-type"), currentURL);
+	PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.get(pageContext, "add-document-type"), currentURL);
 }
 else {
-	PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.get(request, "edit-document-type"), currentURL);
+	PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.get(pageContext, "edit-document-type"), currentURL);
 }
 %>

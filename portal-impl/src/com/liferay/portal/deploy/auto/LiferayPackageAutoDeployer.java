@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -45,18 +45,14 @@ import java.util.zip.ZipFile;
 public class LiferayPackageAutoDeployer implements AutoDeployer {
 
 	public LiferayPackageAutoDeployer() {
-		String baseDir = null;
-
 		try {
-			baseDir = PrefsPropsUtil.getString(
+			_baseDir = PrefsPropsUtil.getString(
 				PropsKeys.AUTO_DEPLOY_DEPLOY_DIR,
 				PropsValues.AUTO_DEPLOY_DEPLOY_DIR);
 		}
 		catch (Exception e) {
 			_log.error(e, e);
 		}
-
-		_baseDir = baseDir;
 	}
 
 	@Override
@@ -79,6 +75,15 @@ public class LiferayPackageAutoDeployer implements AutoDeployer {
 				ZipEntry zipEntry = enu.nextElement();
 
 				String zipEntryFileName = zipEntry.getName();
+
+				if (!zipEntryFileName.endsWith(".war") &&
+					!zipEntryFileName.endsWith(".xml") &&
+					!zipEntryFileName.endsWith(".zip") &&
+					!zipEntryFileName.equals(
+						"liferay-marketplace.properties")) {
+
+					continue;
+				}
 
 				if (_log.isInfoEnabled()) {
 					_log.info(
@@ -137,6 +142,6 @@ public class LiferayPackageAutoDeployer implements AutoDeployer {
 	private static Log _log = LogFactoryUtil.getLog(
 		LiferayPackageAutoDeployer.class);
 
-	private final String _baseDir;
+	private String _baseDir;
 
 }

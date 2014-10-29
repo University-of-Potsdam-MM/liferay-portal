@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,8 +14,6 @@
 
 package com.liferay.portal.model;
 
-import aQute.bnd.annotation.ProviderType;
-
 import java.io.Serializable;
 
 import java.util.ArrayList;
@@ -28,13 +26,11 @@ import java.util.List;
  * @author Brian Wing Shun Chan
  * @generated
  */
-@ProviderType
 public class WorkflowInstanceLinkSoap implements Serializable {
 	public static WorkflowInstanceLinkSoap toSoapModel(
 		WorkflowInstanceLink model) {
 		WorkflowInstanceLinkSoap soapModel = new WorkflowInstanceLinkSoap();
 
-		soapModel.setMvccVersion(model.getMvccVersion());
 		soapModel.setWorkflowInstanceLinkId(model.getWorkflowInstanceLinkId());
 		soapModel.setGroupId(model.getGroupId());
 		soapModel.setCompanyId(model.getCompanyId());
@@ -98,14 +94,6 @@ public class WorkflowInstanceLinkSoap implements Serializable {
 
 	public void setPrimaryKey(long pk) {
 		setWorkflowInstanceLinkId(pk);
-	}
-
-	public long getMvccVersion() {
-		return _mvccVersion;
-	}
-
-	public void setMvccVersion(long mvccVersion) {
-		_mvccVersion = mvccVersion;
 	}
 
 	public long getWorkflowInstanceLinkId() {
@@ -188,7 +176,6 @@ public class WorkflowInstanceLinkSoap implements Serializable {
 		_workflowInstanceId = workflowInstanceId;
 	}
 
-	private long _mvccVersion;
 	private long _workflowInstanceLinkId;
 	private long _groupId;
 	private long _companyId;

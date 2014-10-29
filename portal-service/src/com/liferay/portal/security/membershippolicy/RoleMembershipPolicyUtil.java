@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portal.security.membershippolicy;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.model.Role;
 
 import java.io.Serializable;
@@ -29,7 +30,7 @@ public class RoleMembershipPolicyUtil {
 
 	public static void checkRoles(
 			long[] userIds, long[] addRoleIds, long[] removeRoleIds)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		RoleMembershipPolicy roleMembershipPolicy =
 			RoleMembershipPolicyFactoryUtil.getRoleMembershipPolicy();
@@ -38,7 +39,7 @@ public class RoleMembershipPolicyUtil {
 	}
 
 	public static boolean isRoleAllowed(long userId, long roleId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		RoleMembershipPolicy roleMembershipPolicy =
 			RoleMembershipPolicyFactoryUtil.getRoleMembershipPolicy();
@@ -47,7 +48,7 @@ public class RoleMembershipPolicyUtil {
 	}
 
 	public static boolean isRoleRequired(long userId, long roleId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		RoleMembershipPolicy roleMembershipPolicy =
 			RoleMembershipPolicyFactoryUtil.getRoleMembershipPolicy();
@@ -57,7 +58,7 @@ public class RoleMembershipPolicyUtil {
 
 	public static void propagateRoles(
 			long[] userIds, long[] addRoleIds, long[] removeRoleIds)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		RoleMembershipPolicy roleMembershipPolicy =
 			RoleMembershipPolicyFactoryUtil.getRoleMembershipPolicy();
@@ -65,14 +66,16 @@ public class RoleMembershipPolicyUtil {
 		roleMembershipPolicy.propagateRoles(userIds, addRoleIds, removeRoleIds);
 	}
 
-	public static void verifyPolicy() throws PortalException {
+	public static void verifyPolicy() throws PortalException, SystemException {
 		RoleMembershipPolicy roleMembershipPolicy =
 			RoleMembershipPolicyFactoryUtil.getRoleMembershipPolicy();
 
 		roleMembershipPolicy.verifyPolicy();
 	}
 
-	public static void verifyPolicy(Role role) throws PortalException {
+	public static void verifyPolicy(Role role)
+		throws PortalException, SystemException {
+
 		RoleMembershipPolicy roleMembershipPolicy =
 			RoleMembershipPolicyFactoryUtil.getRoleMembershipPolicy();
 
@@ -82,7 +85,7 @@ public class RoleMembershipPolicyUtil {
 	public static void verifyPolicy(
 			Role role, Role oldRole,
 			Map<String, Serializable> oldExpandoAttributes)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		RoleMembershipPolicy roleMembershipPolicy =
 			RoleMembershipPolicyFactoryUtil.getRoleMembershipPolicy();

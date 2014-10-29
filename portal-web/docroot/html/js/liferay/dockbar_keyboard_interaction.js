@@ -1,7 +1,6 @@
 AUI.add(
 	'liferay-dockbar-keyboard-interaction',
 	function(A) {
-		var AArray = A.Array;
 		var AObject = A.Object;
 
 		var ACTIVE_DESCENDANT = 'activeDescendant';
@@ -10,21 +9,15 @@ AUI.add(
 
 		var CSS_OPEN = 'open';
 
-		var CSS_SITE_NAVIGATION = 'site-navigation';
-
 		var EVENT_KEY = 'key';
 
 		var NAME = 'liferaydockbarkeyboardinteraction';
 
-		var MENU_ITEM_CSS_CLASSES = [CSS_DROPDOWN, CSS_SITE_NAVIGATION];
+		var SELECTOR_DOCKBAR_ITEM = '.dockbar-item';
 
-		var SELECTOR_DOCKBAR_ITEM = '.dockbar-item:visible, a.nav-navigation-btn:visible';
+		var SELECTOR_DOCKBAR_ITEM_FIRST_LINK = '.dockbar-item > a';
 
-		var SELECTOR_DOCKBAR_ITEM_FIRST_LINK = '.dockbar-item:visible > a, a.nav-navigation-btn:visible';
-
-		var SELECTOR_DOCKBAR_ITEM_LINK = '.dockbar-item:visible a, a.nav-navigation-btn:visible';
-
-		var STR_MENU_ITEM = 'menuItem';
+		var SELECTOR_DOCKBAR_ITEM_LINK = '.dockbar-item a';
 
 		var DockbarKeyboardInteraction = A.Component.create(
 			{
@@ -41,7 +34,6 @@ AUI.add(
 						instance._host = instance.get('host');
 
 						instance._initHostFocusManager();
-						instance._initMenuItems();
 						instance._initMenuItemHandlers();
 					},
 
@@ -50,63 +42,21 @@ AUI.add(
 
 						event.preventDefault();
 
-						instance._menuItems.removeClass(CSS_OPEN);
+						instance._host.all(SELECTOR_DOCKBAR_ITEM).removeClass(CSS_OPEN);
 
-						var target = event.currentTarget;
+						var menuItem = event.currentTarget.ancestor(SELECTOR_DOCKBAR_ITEM);
 
-						var menuItem = target.ancestor(SELECTOR_DOCKBAR_ITEM) || target.getData(STR_MENU_ITEM);
-
-						AArray.some(
-							MENU_ITEM_CSS_CLASSES,
-							function(item, index) {
-								if (menuItem.hasClass(item)) {
-									menuItem.addClass(CSS_OPEN);
-
-									return true;
-								}
-							}
-						);
-
-						if (menuItem.hasClass('site-navigation')) {
-							A.soon(
-								function() {
-									menuItem.one('li a').focus();
-								}
-							);
+						if (menuItem.hasClass(CSS_DROPDOWN)) {
+							menuItem.addClass(CSS_OPEN);
 						}
-					},
-
-					_handleExitNavigation: function(event) {
-						var instance = this;
-
-						var focusItem;
-
-						var focusManager = instance._host.focusManager;
-
-						var direction = event.direction;
-
-						if (direction === 'down' || direction === 'right') {
-							var active = focusManager.get(ACTIVE_DESCENDANT);
-
-							focusItem = focusManager.get('descendants').item(active + 1);
-						}
-						else if (direction === 'up' || direction === 'left') {
-							focusItem = instance._menuItems.last();
-						}
-
-						if (focusItem) {
-							focusManager.focus(focusItem);
-						}
-
-						event.navigation.removeClass(CSS_OPEN);
 					},
 
 					_handleLeftRightKeyPress: function(event) {
 						var instance = this;
 
-						instance._menuItems.removeClass(CSS_OPEN);
-
 						var menuItems = instance._host.all(SELECTOR_DOCKBAR_ITEM);
+
+						menuItems.removeClass(CSS_OPEN);
 
 						var lastItemIndex = menuItems.size() - 1;
 
@@ -116,9 +66,7 @@ AUI.add(
 							increment = -1;
 						}
 
-						var currentTarget = event.currentTarget;
-
-						var currentMenuItem = currentTarget.ancestor(SELECTOR_DOCKBAR_ITEM) || currentTarget;
+						var currentMenuItem = event.currentTarget.ancestor(SELECTOR_DOCKBAR_ITEM);
 
 						var nextMenuItemPos = menuItems.indexOf(currentMenuItem) + increment;
 
@@ -129,13 +77,44 @@ AUI.add(
 							nextMenuItemPos = 0;
 						}
 
-						var focusTarget = menuItems.item(nextMenuItemPos).one('a') || menuItems.item(nextMenuItemPos);
+						var focusTarget = menuItems.item(nextMenuItemPos).one('a');
 
 						instance.hostFocusManager.focus(focusTarget);
 					},
 
 					_handleTabKeyPress: function(event) {
 						event.currentTarget.all(SELECTOR_DOCKBAR_ITEM).removeClass(CSS_OPEN);
+					},
+
+					_handleUpKeyPress: function(event) {
+						var instance = this;
+
+						event.preventDefault();
+
+						instance._host.all(SELECTOR_DOCKBAR_ITEM).removeClass(CSS_OPEN);
+
+						var hostFocusManager = instance.hostFocusManager;
+
+						var focusedCurrent = hostFocusManager.get(ACTIVE_DESCENDANT) - 1;
+
+						if (focusedCurrent < 0) {
+							focusedCurrent = hostFocusManager._lastNodeIndex;
+						}
+
+						AObject.some(
+							hostFocusManager._descendantsMap,
+							function(item, index, collection) {
+								if (item === focusedCurrent) {
+									var menuItem = A.one('#' + index).ancestor(SELECTOR_DOCKBAR_ITEM);
+
+									if (menuItem.hasClass(CSS_DROPDOWN)) {
+										menuItem.addClass(CSS_OPEN);
+									}
+
+									return true;
+								}
+							}
+						);
 					},
 
 					_handleUpDownKeyPress: function(event) {
@@ -148,58 +127,6 @@ AUI.add(
 						}
 
 						instance[method](event);
-					},
-
-					_handleUpKeyPress: function(event) {
-						var instance = this;
-
-						event.preventDefault();
-
-						instance._menuItems.removeClass(CSS_OPEN);
-
-						var hostFocusManager = instance.hostFocusManager;
-
-						var focusedCurrent = hostFocusManager.get(ACTIVE_DESCENDANT) - 1;
-
-						if (focusedCurrent < 0) {
-							focusedCurrent = hostFocusManager._lastNodeIndex;
-						}
-
-						AObject.some(
-							hostFocusManager._descendantsMap,
-							function(item, index) {
-								if (item === focusedCurrent) {
-									var menuItemLink = A.one('#' + index);
-
-									var menuItem = menuItemLink.ancestor(SELECTOR_DOCKBAR_ITEM) || menuItemLink.getData(STR_MENU_ITEM);
-
-									AArray.some(
-										MENU_ITEM_CSS_CLASSES,
-										function(item, index) {
-											if (menuItem.hasClass(item)) {
-												menuItem.addClass(CSS_OPEN);
-
-												return true;
-											}
-										}
-									);
-
-									if (menuItem.hasClass('site-navigation')) {
-										A.soon(
-											function() {
-												var descendants = menuItem.focusManager.get('descendants');
-
-												menuItem.focusManager.set('activeDescendant', descendants.last());
-
-												menuItem.all('li a').last().focus();
-											}
-										);
-									}
-
-									return true;
-								}
-							}
-						);
 					},
 
 					_initHostFocusManager: function() {
@@ -223,8 +150,6 @@ AUI.add(
 							function(event) {
 								var instance = this;
 
-								instance.refresh();
-
 								if (!event.newVal) {
 									instance.set(ACTIVE_DESCENDANT, 0);
 								}
@@ -243,24 +168,6 @@ AUI.add(
 						host.delegate(EVENT_KEY, instance._handleLeftRightKeyPress, 'down:37,39', SELECTOR_DOCKBAR_ITEM_LINK, instance);
 
 						host.delegate(EVENT_KEY, instance._handleTabKeyPress, 'down:9');
-
-						Liferay.after('exitNavigation', instance._handleExitNavigation, instance);
-					},
-
-					_initMenuItems: function() {
-						var instance = this;
-
-						var menuItems = [];
-
-						instance._host.all(SELECTOR_DOCKBAR_ITEM).each(
-							function(item, index) {
-								item = item.getData('menuItem') || item;
-
-								menuItems.push(item);
-							}
-						);
-
-						instance._menuItems = new A.NodeList(menuItems);
 					}
 				}
 			}

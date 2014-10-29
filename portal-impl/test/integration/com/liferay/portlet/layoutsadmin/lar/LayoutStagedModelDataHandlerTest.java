@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -16,6 +16,7 @@ package com.liferay.portlet.layoutsadmin.lar;
 
 import com.liferay.portal.kernel.lar.StagedModelDataHandlerUtil;
 import com.liferay.portal.kernel.test.ExecutionTestListeners;
+import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.lar.BaseStagedModelDataHandlerTestCase;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.Layout;
@@ -25,38 +26,39 @@ import com.liferay.portal.service.LayoutFriendlyURLLocalServiceUtil;
 import com.liferay.portal.service.LayoutLocalServiceUtil;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextThreadLocal;
-import com.liferay.portal.test.TransactionalTestRule;
-import com.liferay.portal.test.listeners.MainServletExecutionTestListener;
-import com.liferay.portal.test.runners.LiferayIntegrationJUnitTestRunner;
-import com.liferay.portal.util.test.LayoutTestUtil;
-import com.liferay.portal.util.test.RandomTestUtil;
-import com.liferay.portal.util.test.ServiceContextTestUtil;
+import com.liferay.portal.service.ServiceTestUtil;
+import com.liferay.portal.service.persistence.PersistenceExecutionTestListener;
+import com.liferay.portal.test.LiferayIntegrationJUnitTestRunner;
+import com.liferay.portal.test.MainServletExecutionTestListener;
+import com.liferay.portal.test.TransactionalExecutionTestListener;
+import com.liferay.portal.util.LayoutTestUtil;
 import com.liferay.portlet.journal.model.JournalArticle;
 import com.liferay.portlet.journal.model.JournalFolderConstants;
-import com.liferay.portlet.journal.util.test.JournalTestUtil;
+import com.liferay.portlet.journal.util.JournalTestUtil;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.junit.Assert;
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
  * @author Mate Thurzo
  */
-@ExecutionTestListeners(listeners = {MainServletExecutionTestListener.class})
+@ExecutionTestListeners(
+	listeners = {
+		MainServletExecutionTestListener.class,
+		PersistenceExecutionTestListener.class,
+		TransactionalExecutionTestListener.class
+	})
 @RunWith(LiferayIntegrationJUnitTestRunner.class)
 public class LayoutStagedModelDataHandlerTest
 	extends BaseStagedModelDataHandlerTestCase {
 
-	@ClassRule
-	public static TransactionalTestRule transactionalTestRule =
-		new TransactionalTestRule();
-
 	@Test
+	@Transactional
 	public void testTypeArticle() throws Exception {
 		initExport();
 
@@ -66,13 +68,13 @@ public class LayoutStagedModelDataHandlerTest
 		JournalArticle journalArticle = JournalTestUtil.addArticle(
 			stagingGroup.getGroupId(),
 			JournalFolderConstants.DEFAULT_PARENT_FOLDER_ID,
-			RandomTestUtil.randomString(), RandomTestUtil.randomString());
+			ServiceTestUtil.randomString(), ServiceTestUtil.randomString());
 
 		addDependentStagedModel(
 			dependentStagedModelsMap, JournalArticle.class, journalArticle);
 
 		Layout layout = LayoutTestUtil.addTypeArticleLayout(
-			stagingGroup.getGroupId(), RandomTestUtil.randomString(),
+			stagingGroup.getGroupId(), ServiceTestUtil.randomString(),
 			journalArticle.getArticleId());
 
 		addDependentLayoutFriendlyURLs(dependentStagedModelsMap, layout);
@@ -91,6 +93,7 @@ public class LayoutStagedModelDataHandlerTest
 	}
 
 	@Test
+	@Transactional
 	public void testTypeLinkToLayout() throws Exception {
 		initExport();
 
@@ -98,7 +101,7 @@ public class LayoutStagedModelDataHandlerTest
 			new HashMap<String, List<StagedModel>>();
 
 		Layout linkedLayout = LayoutTestUtil.addLayout(
-			stagingGroup.getGroupId(), RandomTestUtil.randomString());
+			stagingGroup.getGroupId(), ServiceTestUtil.randomString());
 
 		List<LayoutFriendlyURL> linkedLayoutFriendlyURLs =
 			LayoutFriendlyURLLocalServiceUtil.getLayoutFriendlyURLs(
@@ -110,7 +113,7 @@ public class LayoutStagedModelDataHandlerTest
 		addDependentLayoutFriendlyURLs(dependentStagedModelsMap, linkedLayout);
 
 		Layout layout = LayoutTestUtil.addTypeLinkToLayoutLayout(
-			stagingGroup.getGroupId(), RandomTestUtil.randomString(),
+			stagingGroup.getGroupId(), ServiceTestUtil.randomString(),
 			linkedLayout.getLayoutId());
 
 		List<LayoutFriendlyURL> layoutFriendlyURLs =
@@ -174,7 +177,7 @@ public class LayoutStagedModelDataHandlerTest
 			new HashMap<String, List<StagedModel>>();
 
 		Layout parentLayout = LayoutTestUtil.addLayout(
-			group.getGroupId(), RandomTestUtil.randomString());
+			group.getGroupId(), ServiceTestUtil.randomString());
 
 		addDependentStagedModel(
 			dependentStagedModelsMap, Layout.class, parentLayout);
@@ -196,7 +199,7 @@ public class LayoutStagedModelDataHandlerTest
 		Layout parentLayout = (Layout)dependentStagedModels.get(0);
 
 		Layout layout = LayoutTestUtil.addLayout(
-			group.getGroupId(), RandomTestUtil.randomString(),
+			group.getGroupId(), ServiceTestUtil.randomString(),
 			parentLayout.getPlid());
 
 		addDependentLayoutFriendlyURLs(dependentStagedModelsMap, layout);
@@ -224,17 +227,11 @@ public class LayoutStagedModelDataHandlerTest
 	protected void initExport() throws Exception {
 		super.initExport();
 
-		ServiceContext serviceContext =
-			ServiceContextTestUtil.getServiceContext();
+		ServiceContext serviceContext = ServiceTestUtil.getServiceContext();
 
 		serviceContext.setAttribute("exportLAR", Boolean.TRUE);
 
 		ServiceContextThreadLocal.pushServiceContext(serviceContext);
-	}
-
-	@Override
-	protected boolean isCommentableStagedModel() {
-		return true;
 	}
 
 	@Override

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portlet.usersadmin.lar;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.lar.BaseStagedModelDataHandler;
 import com.liferay.portal.kernel.lar.ExportImportPathUtil;
 import com.liferay.portal.kernel.lar.PortletDataContext;
@@ -36,24 +37,16 @@ public class PhoneStagedModelDataHandler
 	@Override
 	public void deleteStagedModel(
 			String uuid, long groupId, String className, String extraData)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Group group = GroupLocalServiceUtil.getGroup(groupId);
 
-		Phone phone = fetchStagedModelByUuidAndCompanyId(
+		Phone phone = PhoneLocalServiceUtil.fetchPhoneByUuidAndCompanyId(
 			uuid, group.getCompanyId());
 
 		if (phone != null) {
 			PhoneLocalServiceUtil.deletePhone(phone);
 		}
-	}
-
-	@Override
-	public Phone fetchStagedModelByUuidAndCompanyId(
-		String uuid, long companyId) {
-
-		return PhoneLocalServiceUtil.fetchPhoneByUuidAndCompanyId(
-			uuid, companyId);
 	}
 
 	@Override
@@ -82,8 +75,9 @@ public class PhoneStagedModelDataHandler
 		ServiceContext serviceContext = portletDataContext.createServiceContext(
 			phone);
 
-		Phone existingPhone = fetchStagedModelByUuidAndCompanyId(
-			phone.getUuid(), portletDataContext.getCompanyId());
+		Phone existingPhone =
+			PhoneLocalServiceUtil.fetchPhoneByUuidAndCompanyId(
+				phone.getUuid(), portletDataContext.getCompanyId());
 
 		Phone importedPhone = null;
 

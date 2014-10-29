@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -129,9 +129,8 @@ if (wikiPage != null) {
 	<c:when test="<%= print %>">
 		<div class="popup-print">
 			<liferay-ui:icon
-				iconCssClass="icon-print"
+				image="print"
 				label="<%= true %>"
-				message="print"
 				url="javascript:print();"
 			/>
 		</div>
@@ -143,7 +142,7 @@ if (wikiPage != null) {
 	<c:otherwise>
 		<aui:script>
 			function <portlet:namespace />printPage() {
-				window.open('<%= printPageURL %>', '', 'directories=0,height=480,left=80,location=1,menubar=1,resizable=1,scrollbars=yes,status=0,toolbar=0,top=180,width=640');
+				window.open('<%= printPageURL %>', '', "directories=0,height=480,left=80,location=1,menubar=1,resizable=1,scrollbars=yes,status=0,toolbar=0,top=180,width=640");
 			}
 		</aui:script>
 	</c:otherwise>
@@ -152,7 +151,7 @@ if (wikiPage != null) {
 <liferay-util:include page="/html/portlet/wiki/top_links.jsp" />
 
 <%
-long portletDisplayDDMTemplateId = PortletDisplayTemplateUtil.getPortletDisplayTemplateDDMTemplateId(wikiPortletInstanceSettings.getDisplayStyleGroupId(themeDisplay.getScopeGroupId()), wikiPortletInstanceSettings.getDisplayStyle());
+long portletDisplayDDMTemplateId = PortletDisplayTemplateUtil.getPortletDisplayTemplateDDMTemplateId(displayStyleGroupId, displayStyle);
 %>
 
 <c:choose>
@@ -178,7 +177,7 @@ long portletDisplayDDMTemplateId = PortletDisplayTemplateUtil.getPortletDisplayT
 		contextObjects.put("formattedContent", formattedContent);
 		%>
 
-		<%= PortletDisplayTemplateUtil.renderDDMTemplate(request, response, portletDisplayDDMTemplateId, entries, contextObjects) %>
+		<%= PortletDisplayTemplateUtil.renderDDMTemplate(pageContext, portletDisplayDDMTemplateId, entries, contextObjects) %>
 	</c:when>
 	<c:otherwise>
 
@@ -194,9 +193,8 @@ long portletDisplayDDMTemplateId = PortletDisplayTemplateUtil.getPortletDisplayT
 				<c:if test="<%= WikiPagePermission.contains(permissionChecker, wikiPage, ActionKeys.UPDATE) %>">
 					<c:if test="<%= followRedirect || (redirectPage == null) %>">
 						<liferay-ui:icon
-							iconCssClass="icon-edit"
+							image="edit"
 							label="<%= true %>"
-							message="edit"
 							url="<%= editPageURL.toString() %>"
 						/>
 					</c:if>
@@ -210,7 +208,7 @@ long portletDisplayDDMTemplateId = PortletDisplayTemplateUtil.getPortletDisplayT
 				%>
 
 				<liferay-ui:icon
-					iconCssClass="icon-file-alt"
+					image="history"
 					label="<%= true %>"
 					message="details"
 					method="get"
@@ -218,9 +216,8 @@ long portletDisplayDDMTemplateId = PortletDisplayTemplateUtil.getPortletDisplayT
 				/>
 
 				<liferay-ui:icon
-					iconCssClass="icon-print"
+					image="print"
 					label="<%= true %>"
-					message="print"
 					url='<%= "javascript:" + renderResponse.getNamespace() + "printPage();" %>'
 				/>
 			</div>
@@ -238,7 +235,7 @@ long portletDisplayDDMTemplateId = PortletDisplayTemplateUtil.getPortletDisplayT
 			%>
 
 			<div class="page-redirect" onClick="location.href = '<%= originalViewPageURL.toString() %>';">
-				(<%= LanguageUtil.format(request, "redirected-from-x", originalPage.getTitle(), false) %>)
+				(<%= LanguageUtil.format(pageContext, "redirected-from-x", originalPage.getTitle()) %>)
 			</div>
 		</c:if>
 
@@ -314,7 +311,7 @@ long portletDisplayDDMTemplateId = PortletDisplayTemplateUtil.getPortletDisplayT
 				<div class="article-actions">
 					<c:if test="<%= WikiNodePermission.contains(permissionChecker, node, ActionKeys.ADD_PAGE) %>">
 						<liferay-ui:icon
-							iconCssClass="icon-plus"
+							image="add_article"
 							label="<%= true %>"
 							message="add-child-page"
 							method="get"
@@ -323,9 +320,9 @@ long portletDisplayDDMTemplateId = PortletDisplayTemplateUtil.getPortletDisplayT
 					</c:if>
 
 					<liferay-ui:icon
-						iconCssClass="icon-paperclip"
+						image="clip"
 						label="<%= true %>"
-						message='<%= attachmentsFileEntriesCount + " " + LanguageUtil.get(request, (attachmentsFileEntriesCount == 1) ? "attachment" : "attachments") %>' method="get" url="<%= viewAttachmentsURL.toString() %>"
+						message='<%= attachmentsFileEntriesCount + " " + LanguageUtil.get(pageContext, (attachmentsFileEntriesCount == 1) ? "attachment" : "attachments") %>' method="get" url="<%= viewAttachmentsURL.toString() %>"
 					/>
 				</div>
 
@@ -346,7 +343,7 @@ long portletDisplayDDMTemplateId = PortletDisplayTemplateUtil.getPortletDisplayT
 				</div>
 			</div>
 
-			<c:if test="<%= wikiPortletInstanceSettings.isEnableRelatedAssets() %>">
+			<c:if test="<%= enableRelatedAssets %>">
 				<div class="entry-links">
 					<liferay-ui:asset-links
 						assetEntryId="<%= assetEntry.getEntryId() %>"
@@ -354,7 +351,7 @@ long portletDisplayDDMTemplateId = PortletDisplayTemplateUtil.getPortletDisplayT
 				</div>
 			</c:if>
 
-			<c:if test="<%= wikiPortletInstanceSettings.isEnablePageRatings() %>">
+			<c:if test="<%= enablePageRatings %>">
 				<div class="page-ratings">
 					<liferay-ui:ratings
 						className="<%= WikiPage.class.getName() %>"
@@ -363,7 +360,7 @@ long portletDisplayDDMTemplateId = PortletDisplayTemplateUtil.getPortletDisplayT
 				</div>
 			</c:if>
 
-			<c:if test="<%= wikiPortletInstanceSettings.isEnableComments() %>">
+			<c:if test="<%= enableComments %>">
 				<liferay-ui:panel-container extended="<%= false %>" id="wikiCommentsPanelContainer" persistState="<%= true %>">
 					<liferay-ui:panel collapsible="<%= true %>" extended="<%= true %>" id="wikiCommentsPanel" persistState="<%= true %>" title="comments">
 						<portlet:actionURL var="discussionURL">
@@ -375,7 +372,7 @@ long portletDisplayDDMTemplateId = PortletDisplayTemplateUtil.getPortletDisplayT
 							classPK="<%= wikiPage.getResourcePrimKey() %>"
 							formAction="<%= discussionURL %>"
 							formName="fm2"
-							ratingsEnabled="<%= wikiPortletInstanceSettings.isEnableCommentRatings() %>"
+							ratingsEnabled="<%= enableCommentRatings %>"
 							redirect="<%= currentURL %>"
 							userId="<%= wikiPage.getUserId() %>"
 						/>

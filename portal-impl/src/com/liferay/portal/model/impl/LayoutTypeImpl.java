@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,46 +14,22 @@
 
 package com.liferay.portal.model.impl;
 
-import com.liferay.portal.kernel.util.StringPool;
-import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
-import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.Layout;
 import com.liferay.portal.model.LayoutType;
-import com.liferay.portal.model.LayoutTypeController;
-
-import java.util.Map;
 
 /**
  * @author Brian Wing Shun Chan
  */
 public class LayoutTypeImpl implements LayoutType {
 
-	public LayoutTypeImpl(
-		Layout layout, LayoutTypeController layoutTypeController) {
-
-		_layout = layout;
-		_layoutTypeController = layoutTypeController;
-	}
-
-	@Override
-	public String[] getConfigurationActionDelete() {
-		return _layoutTypeController.getConfigurationActionDelete();
-	}
-
-	@Override
-	public String[] getConfigurationActionUpdate() {
-		return _layoutTypeController.getConfigurationActionUpdate();
+	public LayoutTypeImpl(Layout layout) {
+		setLayout(layout);
 	}
 
 	@Override
 	public Layout getLayout() {
 		return _layout;
-	}
-
-	@Override
-	public LayoutTypeController getLayoutTypeController() {
-		return _layoutTypeController;
 	}
 
 	@Override
@@ -74,44 +50,8 @@ public class LayoutTypeImpl implements LayoutType {
 	}
 
 	@Override
-	public String getURL(Map<String, String> variables) {
-		String url = _layoutTypeController.getURL();
-
-		if (Validator.isNull(url) || !url.startsWith(_URL)) {
-			url = _URL;
-		}
-
-		return StringUtil.replace(
-			url, StringPool.DOLLAR_AND_OPEN_CURLY_BRACE,
-			StringPool.CLOSE_CURLY_BRACE, variables);
-	}
-
-	@Override
-	public boolean isFirstPageable() {
-		return _layoutTypeController.isFirstPageable();
-	}
-
-	@Override
-	public boolean isParentable() {
-		return _layoutTypeController.isParentable();
-	}
-
-	@Override
-	public boolean isSitemapable() {
-		return _layoutTypeController.isSitemapable();
-	}
-
-	@Override
-	public boolean isURLFriendliable() {
-		return _layoutTypeController.isURLFriendliable();
-	}
-
-	/**
-	 * @deprecated As of 7.0.0, with no direct replacement
-	 */
-	@Deprecated
-	@Override
 	public void setLayout(Layout layout) {
+		_layout = layout;
 	}
 
 	@Override
@@ -121,11 +61,6 @@ public class LayoutTypeImpl implements LayoutType {
 		typeSettingsProperties.setProperty(key, value);
 	}
 
-	private static final String _URL =
-		"${liferay:mainPath}/portal/layout?p_l_id=${liferay:plid}&" +
-			"p_v_l_s_g_id=${liferay:pvlsgid}";
-
-	private final Layout _layout;
-	private final LayoutTypeController _layoutTypeController;
+	private Layout _layout;
 
 }

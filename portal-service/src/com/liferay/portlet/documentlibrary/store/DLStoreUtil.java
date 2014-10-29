@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -16,6 +16,7 @@ package com.liferay.portlet.documentlibrary.store;
 
 import com.liferay.portal.kernel.bean.PortalBeanLocatorUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.ReferenceRegistry;
 
 import java.io.File;
@@ -71,10 +72,11 @@ public class DLStoreUtil {
 	 *         {@link com.liferay.portal.model.CompanyConstants#SYSTEM})
 	 * @param  dirName the directory's name
 	 * @throws PortalException if the directory's information was invalid
+	 * @throws SystemException if a system exception occurred
 	 */
 	public static void addDirectory(
 			long companyId, long repositoryId, String dirName)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		getStore().addDirectory(companyId, repositoryId, dirName);
 	}
@@ -90,11 +92,12 @@ public class DLStoreUtil {
 	 * @param  bytes the files's data
 	 * @throws PortalException if the file's information was invalid or is found
 	 *         to contain a virus
+	 * @throws SystemException if a system exception occurred
 	 */
 	public static void addFile(
 			long companyId, long repositoryId, String fileName,
 			boolean validateFileExtension, byte[] bytes)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		getStore().addFile(
 			companyId, repositoryId, fileName, validateFileExtension, bytes);
@@ -111,11 +114,12 @@ public class DLStoreUtil {
 	 * @param  file Name the file name
 	 * @throws PortalException if the file's information was invalid or is found
 	 *         to contain a virus
+	 * @throws SystemException if a system exception occurred
 	 */
 	public static void addFile(
 			long companyId, long repositoryId, String fileName,
 			boolean validateFileExtension, File file)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		getStore().addFile(
 			companyId, repositoryId, fileName, validateFileExtension, file);
@@ -132,11 +136,12 @@ public class DLStoreUtil {
 	 * @param  is the files's data
 	 * @throws PortalException if the file's information was invalid or is found
 	 *         to contain a virus
+	 * @throws SystemException if a system exception occurred
 	 */
 	public static void addFile(
 			long companyId, long repositoryId, String fileName,
 			boolean validateFileExtension, InputStream is)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		getStore().addFile(
 			companyId, repositoryId, fileName, validateFileExtension, is);
@@ -153,10 +158,11 @@ public class DLStoreUtil {
 	 * @param  bytes the files's data
 	 * @throws PortalException if the file's information was invalid or is found
 	 *         to contain a virus
+	 * @throws SystemException if a system exception occurred
 	 */
 	public static void addFile(
 			long companyId, long repositoryId, String fileName, byte[] bytes)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		getStore().addFile(companyId, repositoryId, fileName, bytes);
 	}
@@ -172,10 +178,11 @@ public class DLStoreUtil {
 	 * @param  file Name the file name
 	 * @throws PortalException if the file's information was invalid or is found
 	 *         to contain a virus
+	 * @throws SystemException if a system exception occurred
 	 */
 	public static void addFile(
 			long companyId, long repositoryId, String fileName, File file)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		getStore().addFile(companyId, repositoryId, fileName, file);
 	}
@@ -191,10 +198,11 @@ public class DLStoreUtil {
 	 * @param  is the files's data
 	 * @throws PortalException if the file's information was invalid or is found
 	 *         to contain a virus
+	 * @throws SystemException if a system exception occurred
 	 */
 	public static void addFile(
 			long companyId, long repositoryId, String fileName, InputStream is)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		getStore().addFile(companyId, repositoryId, fileName, is);
 	}
@@ -204,8 +212,9 @@ public class DLStoreUtil {
 	 * JCRStore#checkRoot(long)}.
 	 *
 	 * @param  companyId the primary key of the company
+	 * @throws SystemException if a system exception occurred
 	 */
-	public static void checkRoot(long companyId) {
+	public static void checkRoot(long companyId) throws SystemException {
 		getStore().checkRoot(companyId);
 	}
 
@@ -219,11 +228,12 @@ public class DLStoreUtil {
 	 * @param  fromVersionLabel the original file's version label
 	 * @param  toVersionLabel the new version label
 	 * @throws PortalException if the file's information was invalid
+	 * @throws SystemException if a system exception occurred
 	 */
 	public static void copyFileVersion(
 			long companyId, long repositoryId, String fileName,
 			String fromVersionLabel, String toVersionLabel)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		getStore().copyFileVersion(
 			companyId, repositoryId, fileName, fromVersionLabel,
@@ -238,10 +248,11 @@ public class DLStoreUtil {
 	 *         {@link com.liferay.portal.model.CompanyConstants#SYSTEM})
 	 * @param  dirName the directory's name
 	 * @throws PortalException if the directory's information was invalid
+	 * @throws SystemException if a system exception occurred
 	 */
 	public static void deleteDirectory(
 			long companyId, long repositoryId, String dirName)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		getStore().deleteDirectory(companyId, repositoryId, dirName);
 	}
@@ -255,10 +266,11 @@ public class DLStoreUtil {
 	 *         {@link com.liferay.portal.model.CompanyConstants#SYSTEM})
 	 * @param  fileName the file's name
 	 * @throws PortalException if the file's information was invalid
+	 * @throws SystemException if a system exception occurred
 	 */
 	public static void deleteFile(
 			long companyId, long repositoryId, String fileName)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		getStore().deleteFile(companyId, repositoryId, fileName);
 	}
@@ -272,11 +284,12 @@ public class DLStoreUtil {
 	 * @param  fileName the file's name
 	 * @param  versionLabel the file's version label
 	 * @throws PortalException if the file's information was invalid
+	 * @throws SystemException if a system exception occurred
 	 */
 	public static void deleteFile(
 			long companyId, long repositoryId, String fileName,
 			String versionLabel)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		getStore().deleteFile(companyId, repositoryId, fileName, versionLabel);
 	}
@@ -304,10 +317,11 @@ public class DLStoreUtil {
 	 * @param  fileName the file's name
 	 * @return Returns the {@link File} object with the file's name
 	 * @throws PortalException if the file's information was invalid
+	 * @throws SystemException if a system exception occurred
 	 */
 	public static File getFile(
 			long companyId, long repositoryId, String fileName)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return getStore().getFile(companyId, repositoryId, fileName);
 	}
@@ -336,11 +350,12 @@ public class DLStoreUtil {
 	 * @param  versionLabel the file's version label
 	 * @return Returns the {@link File} object with the file's name
 	 * @throws PortalException if the file's information was invalid
+	 * @throws SystemException if a system exception occurred
 	 */
 	public static File getFile(
 			long companyId, long repositoryId, String fileName,
 			String versionLabel)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return getStore().getFile(
 			companyId, repositoryId, fileName, versionLabel);
@@ -355,10 +370,11 @@ public class DLStoreUtil {
 	 * @param  fileName the file's name
 	 * @return Returns the byte array with the file's name
 	 * @throws PortalException if the file's information was invalid
+	 * @throws SystemException if a system exception occurred
 	 */
 	public static byte[] getFileAsBytes(
 			long companyId, long repositoryId, String fileName)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return getStore().getFileAsBytes(companyId, repositoryId, fileName);
 	}
@@ -373,11 +389,12 @@ public class DLStoreUtil {
 	 * @param  versionLabel the file's version label
 	 * @return Returns the byte array with the file's name
 	 * @throws PortalException if the file's information was invalid
+	 * @throws SystemException if a system exception occurred
 	 */
 	public static byte[] getFileAsBytes(
 			long companyId, long repositoryId, String fileName,
 			String versionLabel)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return getStore().getFileAsBytes(
 			companyId, repositoryId, fileName, versionLabel);
@@ -399,10 +416,11 @@ public class DLStoreUtil {
 	 * @return Returns the {@link java.io.InputStream} object with the file's
 	 *         name
 	 * @throws PortalException if the file's information was invalid
+	 * @throws SystemException if a system exception occurred
 	 */
 	public static InputStream getFileAsStream(
 			long companyId, long repositoryId, String fileName)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return getStore().getFileAsStream(companyId, repositoryId, fileName);
 	}
@@ -424,11 +442,12 @@ public class DLStoreUtil {
 	 * @return Returns the {@link java.io.InputStream} object with the file's
 	 *         name
 	 * @throws PortalException if the file's information was invalid
+	 * @throws SystemException if a system exception occurred
 	 */
 	public static InputStream getFileAsStream(
 			long companyId, long repositoryId, String fileName,
 			String versionLabel)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return getStore().getFileAsStream(
 			companyId, repositoryId, fileName, versionLabel);
@@ -443,10 +462,11 @@ public class DLStoreUtil {
 	 * @param  dirName the directory's name
 	 * @return Returns all files of the directory
 	 * @throws PortalException if the directory's information was invalid
+	 * @throws SystemException if a system exception occurred
 	 */
 	public static String[] getFileNames(
 			long companyId, long repositoryId, String dirName)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return getStore().getFileNames(companyId, repositoryId, dirName);
 	}
@@ -460,10 +480,11 @@ public class DLStoreUtil {
 	 * @param  fileName the file's name
 	 * @return Returns the size of the file
 	 * @throws PortalException if the file's information was invalid
+	 * @throws SystemException if a system exception occurred
 	 */
 	public static long getFileSize(
 			long companyId, long repositoryId, String fileName)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return getStore().getFileSize(companyId, repositoryId, fileName);
 	}
@@ -495,10 +516,11 @@ public class DLStoreUtil {
 	 * @return <code>true</code> if the directory exists; <code>false</code>
 	 *         otherwise
 	 * @throws PortalException if the directory's information was invalid
+	 * @throws SystemException if a system exception occurred
 	 */
 	public static boolean hasDirectory(
 			long companyId, long repositoryId, String dirName)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return getStore().hasDirectory(companyId, repositoryId, dirName);
 	}
@@ -513,10 +535,11 @@ public class DLStoreUtil {
 	 * @return <code>true</code> if the file exists; <code>false</code>
 	 *         otherwise
 	 * @throws PortalException if the file's information was invalid
+	 * @throws SystemException if a system exception occurred
 	 */
 	public static boolean hasFile(
 			long companyId, long repositoryId, String fileName)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return getStore().hasFile(companyId, repositoryId, fileName);
 	}
@@ -532,11 +555,12 @@ public class DLStoreUtil {
 	 * @return <code>true</code> if the file exists; <code>false</code>
 	 *         otherwise
 	 * @throws PortalException if the file's information was invalid
+	 * @throws SystemException if a system exception occurred
 	 */
 	public static boolean hasFile(
 			long companyId, long repositoryId, String fileName,
 			String versionLabel)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return getStore().hasFile(
 			companyId, repositoryId, fileName, versionLabel);
@@ -552,8 +576,11 @@ public class DLStoreUtil {
 	 *
 	 * @param  srcDir the original directory's name
 	 * @param  destDir the new directory's name
+	 * @throws SystemException if a system exception occurred
 	 */
-	public static void move(String srcDir, String destDir) {
+	public static void move(String srcDir, String destDir)
+		throws SystemException {
+
 		getStore().move(srcDir, destDir);
 	}
 
@@ -565,11 +592,12 @@ public class DLStoreUtil {
 	 * @param  newRepositoryId the primary key of the new data repository
 	 * @param  fileName the file's name
 	 * @throws PortalException if the file's information was invalid
+	 * @throws SystemException if a system exception occurred
 	 */
 	public static void updateFile(
 			long companyId, long repositoryId, long newRepositoryId,
 			String fileName)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		getStore().updateFile(
 			companyId, repositoryId, newRepositoryId, fileName);
@@ -584,11 +612,12 @@ public class DLStoreUtil {
 	 * @param  fileName the file's name
 	 * @param  newFileName the file's new name
 	 * @throws PortalException if the file's information was invalid
+	 * @throws SystemException if a system exception occurred
 	 */
 	public static void updateFile(
 			long companyId, long repositoryId, String fileName,
 			String newFileName)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		getStore().updateFile(companyId, repositoryId, fileName, newFileName);
 	}
@@ -607,12 +636,13 @@ public class DLStoreUtil {
 	 * @param  file Name the file name
 	 * @throws PortalException if the file's information was invalid or is found
 	 *         to contain a virus
+	 * @throws SystemException if a system exception occurred
 	 */
 	public static void updateFile(
 			long companyId, long repositoryId, String fileName,
 			String fileExtension, boolean validateFileExtension,
 			String versionLabel, String sourceFileName, File file)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		getStore().updateFile(
 			companyId, repositoryId, fileName, fileExtension,
@@ -633,12 +663,13 @@ public class DLStoreUtil {
 	 * @param  is the new file's data
 	 * @throws PortalException if the file's information was invalid or is found
 	 *         to contain a virus
+	 * @throws SystemException if a system exception occurred
 	 */
 	public static void updateFile(
 			long companyId, long repositoryId, String fileName,
 			String fileExtension, boolean validateFileExtension,
 			String versionLabel, String sourceFileName, InputStream is)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		getStore().updateFile(
 			companyId, repositoryId, fileName, fileExtension,
@@ -657,11 +688,12 @@ public class DLStoreUtil {
 	 * @param  fromVersionLabel the file's version label
 	 * @param  toVersionLabel the file's new version label
 	 * @throws PortalException if the file's information was invalid
+	 * @throws SystemException if a system exception occurred
 	 */
 	public static void updateFileVersion(
 			long companyId, long repositoryId, String fileName,
 			String fromVersionLabel, String toVersionLabel)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		getStore().updateFileVersion(
 			companyId, repositoryId, fileName, fromVersionLabel,
@@ -674,9 +706,10 @@ public class DLStoreUtil {
 	 * @param  fileName the file's name
 	 * @param  validateFileExtension whether to validate the file's extension
 	 * @throws PortalException if the file's information was invalid
+	 * @throws SystemException if a system exception occurred
 	 */
 	public static void validate(String fileName, boolean validateFileExtension)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		getStore().validate(fileName, validateFileExtension);
 	}
@@ -688,10 +721,11 @@ public class DLStoreUtil {
 	 * @param  validateFileExtension whether to validate the file's extension
 	 * @param  bytes the file's data (optionally <code>null</code>)
 	 * @throws PortalException if the file's information was invalid
+	 * @throws SystemException if a system exception occurred
 	 */
 	public static void validate(
 			String fileName, boolean validateFileExtension, byte[] bytes)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		getStore().validate(fileName, validateFileExtension, bytes);
 	}
@@ -703,10 +737,11 @@ public class DLStoreUtil {
 	 * @param  validateFileExtension whether to validate the file's extension
 	 * @param  file Name the file's name
 	 * @throws PortalException if the file's information was invalid
+	 * @throws SystemException if a system exception occurred
 	 */
 	public static void validate(
 			String fileName, boolean validateFileExtension, File file)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		getStore().validate(fileName, validateFileExtension, file);
 	}
@@ -718,21 +753,13 @@ public class DLStoreUtil {
 	 * @param  validateFileExtension whether to validate the file's extension
 	 * @param  is the file's data (optionally <code>null</code>)
 	 * @throws PortalException if the file's information was invalid
+	 * @throws SystemException if a system exception occurred
 	 */
 	public static void validate(
 			String fileName, boolean validateFileExtension, InputStream is)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		getStore().validate(fileName, validateFileExtension, is);
-	}
-
-	public static void validate(
-			String fileName, String fileExtension, String sourceFileName,
-			boolean validateFileExtension)
-		throws PortalException {
-
-		getStore().validate(
-			fileName, fileExtension, sourceFileName, validateFileExtension);
 	}
 
 	/**
@@ -744,11 +771,12 @@ public class DLStoreUtil {
 	 * @param  validateFileExtension whether to validate the file's extension
 	 * @param  file Name the file's name
 	 * @throws PortalException if the file's information was invalid
+	 * @throws SystemException if a system exception occurred
 	 */
 	public static void validate(
 			String fileName, String fileExtension, String sourceFileName,
 			boolean validateFileExtension, File file)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		getStore().validate(
 			fileName, fileExtension, sourceFileName, validateFileExtension,
@@ -764,11 +792,12 @@ public class DLStoreUtil {
 	 * @param  validateFileExtension whether to validate the file's extension
 	 * @param  is the file's data (optionally <code>null</code>)
 	 * @throws PortalException if the file's information was invalid
+	 * @throws SystemException if a system exception occurred
 	 */
 	public static void validate(
 			String fileName, String fileExtension, String sourceFileName,
 			boolean validateFileExtension, InputStream is)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		getStore().validate(
 			fileName, fileExtension, sourceFileName, validateFileExtension, is);

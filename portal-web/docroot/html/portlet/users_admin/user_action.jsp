@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -30,7 +30,7 @@ User user2 = (User)row.getObject();
 long userId = user2.getUserId();
 %>
 
-<liferay-ui:icon-menu icon="<%= StringPool.BLANK %>" message="<%= StringPool.BLANK %>">
+<liferay-ui:icon-menu>
 
 	<%
 	boolean hasUpdatePermission = UserPermissionUtil.contains(permissionChecker, userId, ActionKeys.UPDATE);
@@ -44,8 +44,7 @@ long userId = user2.getUserId();
 		</portlet:renderURL>
 
 		<liferay-ui:icon
-			iconCssClass="icon-edit"
-			message="edit"
+			image="edit"
 			url="<%= editUserURL %>"
 		/>
 	</c:if>
@@ -60,8 +59,7 @@ long userId = user2.getUserId();
 		/>
 
 		<liferay-ui:icon
-			iconCssClass="icon-lock"
-			message="permissions"
+			image="permissions"
 			method="get"
 			url="<%= permissionsUserURL %>"
 			useDialog="<%= true %>"
@@ -76,7 +74,7 @@ long userId = user2.getUserId();
 		</portlet:renderURL>
 
 		<liferay-ui:icon
-			iconCssClass="icon-copy"
+			image="pages"
 			message="manage-pages"
 			url="<%= managePagesURL %>"
 		/>
@@ -89,8 +87,7 @@ long userId = user2.getUserId();
 		/>
 
 		<liferay-ui:icon
-			iconCssClass="icon-user"
-			message="impersonate-user"
+			image="impersonate_user"
 			target="_blank"
 			url="<%= impersonateUserURL %>"
 		/>
@@ -106,8 +103,7 @@ long userId = user2.getUserId();
 			</portlet:actionURL>
 
 			<liferay-ui:icon
-				iconCssClass="icon-ok-sign"
-				message="activate"
+				image="activate"
 				url="<%= restoreUserURL %>"
 			/>
 		</c:if>

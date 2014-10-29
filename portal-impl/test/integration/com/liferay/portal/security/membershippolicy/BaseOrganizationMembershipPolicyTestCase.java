@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,16 +15,8 @@
 package com.liferay.portal.security.membershippolicy;
 
 import com.liferay.portal.model.Organization;
-import com.liferay.portal.security.membershippolicy.samples.TestOrganizationMembershipPolicy;
-import com.liferay.portal.test.DeleteAfterTestRun;
-import com.liferay.portal.util.test.OrganizationTestUtil;
-import com.liferay.portal.util.test.RoleTestUtil;
-import com.liferay.registry.Registry;
-import com.liferay.registry.RegistryUtil;
-import com.liferay.registry.ServiceRegistration;
-
-import java.util.HashMap;
-import java.util.Map;
+import com.liferay.portal.util.OrganizationTestUtil;
+import com.liferay.portal.util.RoleTestUtil;
 
 import org.junit.After;
 import org.junit.Before;
@@ -33,7 +25,7 @@ import org.junit.Before;
  * @author Roberto Díaz
  */
 public abstract class BaseOrganizationMembershipPolicyTestCase
-	extends BaseMembershipPolicyTestCase {
+	extends BaseMembersipPolicyTestCase {
 
 	public static long[] getForbiddenOrganizationIds() {
 		return _forbiddenOrganizationIds;
@@ -64,18 +56,6 @@ public abstract class BaseOrganizationMembershipPolicyTestCase
 	public void setUp() throws Exception {
 		super.setUp();
 
-		Registry registry = RegistryUtil.getRegistry();
-
-		Map<String, Object> properties = new HashMap<String, Object>();
-
-		properties.put("service.ranking", 1);
-
-		ServiceRegistration<?> serviceRegistration = registry.registerService(
-			OrganizationMembershipPolicy.class,
-			new TestOrganizationMembershipPolicy(), properties);
-
-		serviceRegistrations.add(serviceRegistration);
-
 		organization = OrganizationTestUtil.addOrganization();
 	}
 
@@ -83,6 +63,8 @@ public abstract class BaseOrganizationMembershipPolicyTestCase
 	@Override
 	public void tearDown() throws Exception {
 		super.tearDown();
+
+		organization = null;
 
 		_forbiddenOrganizationIds = new long[2];
 		_forbiddenRoleIds = new long[2];
@@ -163,7 +145,6 @@ public abstract class BaseOrganizationMembershipPolicyTestCase
 		return _standardRoleIds;
 	}
 
-	@DeleteAfterTestRun
 	protected Organization organization;
 
 	private static long[] _forbiddenOrganizationIds = new long[2];

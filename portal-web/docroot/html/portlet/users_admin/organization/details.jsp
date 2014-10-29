@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -46,7 +46,7 @@ User selUser = (User)request.getAttribute("user.selUser");
 
 <liferay-util:buffer var="removeOrganizationIcon">
 	<liferay-ui:icon
-		iconCssClass="icon-remove"
+		image="unlink"
 		label="<%= true %>"
 		message="remove"
 	/>
@@ -58,8 +58,8 @@ User selUser = (User)request.getAttribute("user.selUser");
 
 <h3><liferay-ui:message key="details" /></h3>
 
-<div class="row">
-	<aui:fieldset cssClass="col-md-6">
+<div class="row-fluid">
+	<aui:fieldset cssClass="span6">
 		<liferay-ui:error exception="<%= DuplicateOrganizationException.class %>" message="the-organization-name-is-already-taken" />
 		<liferay-ui:error exception="<%= OrganizationNameException.class %>" message="please-enter-a-valid-name" />
 
@@ -93,7 +93,9 @@ User selUser = (User)request.getAttribute("user.selUser");
 				</aui:select>
 			</c:when>
 			<c:otherwise>
-				<aui:input name="typeLabel" type="resource" value="<%= LanguageUtil.get(request, organization.getType()) %>" />
+				<aui:field-wrapper label="type">
+					<liferay-ui:input-resource url="<%= LanguageUtil.get(pageContext, organization.getType()) %>" />
+				</aui:field-wrapper>
 
 				<aui:input name="type" type="hidden" value="<%= organization.getType() %>" />
 			</c:otherwise>
@@ -108,11 +110,13 @@ User selUser = (User)request.getAttribute("user.selUser");
 		</div>
 
 		<c:if test="<%= organization != null %>">
-			<aui:input name="siteId" type="resource" value="<%= String.valueOf(groupId) %>" />
+			<aui:field-wrapper label="site-id">
+				<liferay-ui:input-resource url="<%= String.valueOf(groupId) %>" />
+			</aui:field-wrapper>
 		</c:if>
 	</aui:fieldset>
 
-	<aui:fieldset cssClass="col-md-6">
+	<aui:fieldset cssClass="span6">
 		<div>
 			<c:if test="<%= organization != null %>">
 
@@ -130,12 +134,18 @@ User selUser = (User)request.getAttribute("user.selUser");
 				}
 				%>
 
+				<portlet:renderURL var="editOrganizationLogoURL" windowState="<%= LiferayWindowState.POP_UP.toString() %>">
+					<portlet:param name="struts_action" value="/users_admin/edit_organization_logo" />
+					<portlet:param name="redirect" value="<%= currentURL %>" />
+					<portlet:param name="groupId" value="<%= String.valueOf(groupId) %>" />
+					<portlet:param name="publicLayoutSetId" value="<%= String.valueOf(publicLayoutSet.getLayoutSetId()) %>" />
+				</portlet:renderURL>
+
 				<liferay-ui:logo-selector
-					currentLogoURL='<%= themeDisplay.getPathImage() + "/organization_logo?img_id=" + logoId + "&t=" + WebServerServletTokenUtil.getToken(logoId) %>'
-					defaultLogo="<%= logoId == 0 %>"
 					defaultLogoURL='<%= themeDisplay.getPathImage() + "/organization_logo?img_id=0" %>'
+					editLogoURL="<%= editOrganizationLogoURL %>"
+					imageId="<%= logoId %>"
 					logoDisplaySelector=".organization-logo"
-					tempImageFileName="<%= String.valueOf(groupId) %>"
 				/>
 			</c:if>
 		</div>
@@ -149,7 +159,7 @@ if ((organization == null) && (parentOrganizationId == OrganizationConstants.DEF
 	List<Organization> manageableOrganizations = new ArrayList<Organization>();
 
 	for (Organization curOrganization : user.getOrganizations()) {
-		if (OrganizationPermissionUtil.contains(permissionChecker, curOrganization, ActionKeys.MANAGE_SUBORGANIZATIONS)) {
+		if (OrganizationPermissionUtil.contains(permissionChecker, curOrganization.getOrganizationId(), ActionKeys.MANAGE_SUBORGANIZATIONS)) {
 			manageableOrganizations.add(curOrganization);
 		}
 	}
@@ -210,7 +220,7 @@ if (parentOrganization != null) {
 		<liferay-ui:search-container-column-text
 			href="<%= rowURL %>"
 			name="type"
-			value="<%= LanguageUtil.get(request, curOrganization.getType()) %>"
+			value="<%= LanguageUtil.get(pageContext, curOrganization.getType()) %>"
 		/>
 
 		<liferay-ui:search-container-column-text>
@@ -221,12 +231,14 @@ if (parentOrganization != null) {
 	<liferay-ui:search-iterator paginate="<%= false %>" />
 </liferay-ui:search-container>
 
+<br />
+
 <liferay-ui:icon
 	cssClass="modify-link"
 	iconCssClass="icon-search"
 	id="selectOrganizationLink"
 	label="<%= true %>"
-	linkCssClass="btn btn-default"
+	linkCssClass="btn"
 	message="select"
 	method="get"
 	url="javascript:;"
@@ -285,7 +297,7 @@ if (parentOrganization != null) {
 					function(event) {
 						var rowColumns = [];
 
-						var href = '<portlet:renderURL><portlet:param name="struts_action" value="/users_admin/edit_organization" /><portlet:param name="redirect" value="<%= currentURL %>" /></portlet:renderURL>&<portlet:namespace />organizationId=' + event.organizationid;
+						var href = "<portlet:renderURL><portlet:param name="struts_action" value="/users_admin/edit_organization" /><portlet:param name="redirect" value="<%= currentURL %>" /></portlet:renderURL>&<portlet:namespace />organizationId=" + event.organizationid;
 
 						rowColumns.push(<portlet:namespace />createURL(href, event.name));
 						rowColumns.push(<portlet:namespace />createURL(href, event.type));

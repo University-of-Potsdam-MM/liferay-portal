@@ -1,7 +1,3 @@
-@import "compass";
-@import "compass/css3/user-interface";
-@import "mixins";
-
 .taglib-user-display {
 	padding: 0.5em;
 
@@ -16,23 +12,8 @@
 		.user-profile-image, .user-name {
 			clear: both;
 			display: block;
-			min-height: 20px;
 			text-align: center;
 		}
-	}
-
-	&.display-style-3 {
-		padding: 0;
-
-		.user-profile-image {
-			display: inline-block;
-			vertical-align: middle;
-		}
-	}
-
-	.avatar {
-		height: auto;
-		width: 65px;
 	}
 
 	.user-details {

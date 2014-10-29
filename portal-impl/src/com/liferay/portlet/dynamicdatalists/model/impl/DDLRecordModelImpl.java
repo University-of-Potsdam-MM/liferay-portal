@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,10 +14,8 @@
 
 package com.liferay.portlet.dynamicdatalists.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
-import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSON;
 import com.liferay.portal.kernel.lar.StagedModelType;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -25,10 +23,8 @@ import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.CacheModel;
-import com.liferay.portal.model.User;
 import com.liferay.portal.model.impl.BaseModelImpl;
 import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.service.UserLocalServiceUtil;
 import com.liferay.portal.util.PortalUtil;
 
 import com.liferay.portlet.dynamicdatalists.model.DDLRecord;
@@ -61,7 +57,6 @@ import java.util.Map;
  * @generated
  */
 @JSON(strict = true)
-@ProviderType
 public class DDLRecordModelImpl extends BaseModelImpl<DDLRecord>
 	implements DDLRecordModel {
 	/*
@@ -102,12 +97,12 @@ public class DDLRecordModelImpl extends BaseModelImpl<DDLRecord>
 	public static final boolean COLUMN_BITMASK_ENABLED = GetterUtil.getBoolean(com.liferay.portal.util.PropsUtil.get(
 				"value.object.column.bitmask.enabled.com.liferay.portlet.dynamicdatalists.model.DDLRecord"),
 			true);
-	public static final long COMPANYID_COLUMN_BITMASK = 1L;
-	public static final long GROUPID_COLUMN_BITMASK = 2L;
-	public static final long RECORDSETID_COLUMN_BITMASK = 4L;
-	public static final long USERID_COLUMN_BITMASK = 8L;
-	public static final long UUID_COLUMN_BITMASK = 16L;
-	public static final long RECORDID_COLUMN_BITMASK = 32L;
+	public static long COMPANYID_COLUMN_BITMASK = 1L;
+	public static long GROUPID_COLUMN_BITMASK = 2L;
+	public static long RECORDSETID_COLUMN_BITMASK = 4L;
+	public static long USERID_COLUMN_BITMASK = 8L;
+	public static long UUID_COLUMN_BITMASK = 16L;
+	public static long RECORDID_COLUMN_BITMASK = 32L;
 
 	/**
 	 * Converts the soap model instance into a normal model instance.
@@ -214,9 +209,6 @@ public class DDLRecordModelImpl extends BaseModelImpl<DDLRecord>
 		attributes.put("recordSetId", getRecordSetId());
 		attributes.put("version", getVersion());
 		attributes.put("displayIndex", getDisplayIndex());
-
-		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
-		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
 
 		return attributes;
 	}
@@ -409,19 +401,13 @@ public class DDLRecordModelImpl extends BaseModelImpl<DDLRecord>
 	}
 
 	@Override
-	public String getUserUuid() {
-		try {
-			User user = UserLocalServiceUtil.getUserById(getUserId());
-
-			return user.getUuid();
-		}
-		catch (PortalException pe) {
-			return StringPool.BLANK;
-		}
+	public String getUserUuid() throws SystemException {
+		return PortalUtil.getUserValue(getUserId(), "uuid", _userUuid);
 	}
 
 	@Override
 	public void setUserUuid(String userUuid) {
+		_userUuid = userUuid;
 	}
 
 	public long getOriginalUserId() {
@@ -456,19 +442,14 @@ public class DDLRecordModelImpl extends BaseModelImpl<DDLRecord>
 	}
 
 	@Override
-	public String getVersionUserUuid() {
-		try {
-			User user = UserLocalServiceUtil.getUserById(getVersionUserId());
-
-			return user.getUuid();
-		}
-		catch (PortalException pe) {
-			return StringPool.BLANK;
-		}
+	public String getVersionUserUuid() throws SystemException {
+		return PortalUtil.getUserValue(getVersionUserId(), "uuid",
+			_versionUserUuid);
 	}
 
 	@Override
 	public void setVersionUserUuid(String versionUserUuid) {
+		_versionUserUuid = versionUserUuid;
 	}
 
 	@JSON
@@ -667,16 +648,6 @@ public class DDLRecordModelImpl extends BaseModelImpl<DDLRecord>
 	@Override
 	public int hashCode() {
 		return (int)getPrimaryKey();
-	}
-
-	@Override
-	public boolean isEntityCacheEnabled() {
-		return ENTITY_CACHE_ENABLED;
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return FINDER_CACHE_ENABLED;
 	}
 
 	@Override
@@ -884,8 +855,8 @@ public class DDLRecordModelImpl extends BaseModelImpl<DDLRecord>
 		return sb.toString();
 	}
 
-	private static final ClassLoader _classLoader = DDLRecord.class.getClassLoader();
-	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
+	private static ClassLoader _classLoader = DDLRecord.class.getClassLoader();
+	private static Class<?>[] _escapedModelInterfaces = new Class[] {
 			DDLRecord.class
 		};
 	private String _uuid;
@@ -898,10 +869,12 @@ public class DDLRecordModelImpl extends BaseModelImpl<DDLRecord>
 	private long _originalCompanyId;
 	private boolean _setOriginalCompanyId;
 	private long _userId;
+	private String _userUuid;
 	private long _originalUserId;
 	private boolean _setOriginalUserId;
 	private String _userName;
 	private long _versionUserId;
+	private String _versionUserUuid;
 	private String _versionUserName;
 	private Date _createDate;
 	private Date _modifiedDate;

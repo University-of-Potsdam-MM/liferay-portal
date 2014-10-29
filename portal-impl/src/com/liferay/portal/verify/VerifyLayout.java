@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -29,18 +29,9 @@ import java.util.List;
  */
 public class VerifyLayout extends VerifyProcess {
 
-	protected void deleteOrphanedLayouts() throws Exception {
-		runSQL(
-			"delete from Layout where layoutPrototypeUuid != '' and " +
-				"layoutPrototypeUuid not in (select uuid_ from " +
-					"LayoutPrototype)");
-	}
-
 	@Override
 	protected void doVerify() throws Exception {
-		deleteOrphanedLayouts();
 		verifyFriendlyURL();
-		verifyLayoutPrototypeLinkEnabled();
 		verifyUuid();
 	}
 
@@ -57,37 +48,32 @@ public class VerifyLayout extends VerifyProcess {
 				String friendlyURL = StringPool.SLASH + layout.getLayoutId();
 
 				LayoutLocalServiceUtil.updateFriendlyURL(
-					layout.getUserId(), layout.getPlid(), friendlyURL,
+					layout.getPlid(), friendlyURL,
 					layoutFriendlyURL.getLanguageId());
 			}
 		}
-	}
-
-	protected void verifyLayoutPrototypeLinkEnabled() throws Exception {
-		runSQL(
-			"update Layout set layoutPrototypeLinkEnabled = [$FALSE$] where " +
-				"type_ = 'link_to_layout' and layoutPrototypeLinkEnabled = " +
-				"[$TRUE$]");
 	}
 
 	protected void verifyUuid() throws Exception {
 		verifyUuid("AssetEntry");
 		verifyUuid("JournalArticle");
 
-		runSQL(
-			"update Layout set uuid_ = sourcePrototypeLayoutUuid where " +
-				"sourcePrototypeLayoutUuid != '' and uuid_ != " +
-					"sourcePrototypeLayoutUuid");
+		StringBundler sb = new StringBundler(3);
+
+		sb.append("update Layout set uuid_ = sourcePrototypeLayoutUuid where ");
+		sb.append("sourcePrototypeLayoutUuid != '' and ");
+		sb.append("uuid_ != sourcePrototypeLayoutUuid");
+
+		runSQL(sb.toString());
 	}
 
 	protected void verifyUuid(String tableName) throws Exception {
-		StringBundler sb = new StringBundler(12);
+		StringBundler sb = new StringBundler(11);
 
 		sb.append("update ");
 		sb.append(tableName);
-		sb.append(" set layoutUuid = (select distinct ");
-		sb.append("sourcePrototypeLayoutUuid from Layout where ");
-		sb.append("Layout.uuid_ = ");
+		sb.append(" set layoutUuid = (select sourcePrototypeLayoutUuid from ");
+		sb.append("Layout where Layout.uuid_ = ");
 		sb.append(tableName);
 		sb.append(".layoutUuid) where exists (select 1 from Layout where ");
 		sb.append("Layout.uuid_ = ");

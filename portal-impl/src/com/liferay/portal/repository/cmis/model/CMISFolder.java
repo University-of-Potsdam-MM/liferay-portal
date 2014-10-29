@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -20,7 +20,6 @@ import com.liferay.portal.kernel.lar.StagedModelType;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.repository.model.Folder;
-import com.liferay.portal.kernel.repository.model.RepositoryModelOperation;
 import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.User;
@@ -83,7 +82,8 @@ public class CMISFolder extends CMISModel implements Folder {
 
 	@Override
 	public boolean containsPermission(
-		PermissionChecker permissionChecker, String actionId) {
+			PermissionChecker permissionChecker, String actionId)
+		throws SystemException {
 
 		if (_cmisFolder.isRootFolder() &&
 			(actionId.equals(ActionKeys.DELETE) ||
@@ -109,14 +109,9 @@ public class CMISFolder extends CMISModel implements Folder {
 	}
 
 	@Override
-	public void execute(RepositoryModelOperation repositoryModelOperation)
-		throws PortalException {
+	public List<Long> getAncestorFolderIds()
+		throws PortalException, SystemException {
 
-		repositoryModelOperation.execute(this);
-	}
-
-	@Override
-	public List<Long> getAncestorFolderIds() throws PortalException {
 		List<Long> folderIds = new ArrayList<Long>();
 
 		Folder folder = this;
@@ -131,7 +126,7 @@ public class CMISFolder extends CMISModel implements Folder {
 	}
 
 	@Override
-	public List<Folder> getAncestors() throws PortalException {
+	public List<Folder> getAncestors() throws PortalException, SystemException {
 		List<Folder> folders = new ArrayList<Folder>();
 
 		Folder folder = this;
@@ -227,7 +222,7 @@ public class CMISFolder extends CMISModel implements Folder {
 	}
 
 	@Override
-	public Folder getParentFolder() throws PortalException {
+	public Folder getParentFolder() throws PortalException, SystemException {
 		Folder parentFolder = null;
 
 		try {
@@ -303,7 +298,7 @@ public class CMISFolder extends CMISModel implements Folder {
 
 	@Override
 	public StagedModelType getStagedModelType() {
-		return new StagedModelType(DLFolderConstants.getClassName());
+		return new StagedModelType(Folder.class);
 	}
 
 	@Override

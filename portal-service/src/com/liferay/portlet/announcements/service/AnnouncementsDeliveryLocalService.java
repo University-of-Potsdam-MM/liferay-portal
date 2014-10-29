@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,7 +18,6 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.transaction.Isolation;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
@@ -53,14 +52,11 @@ public interface AnnouncementsDeliveryLocalService extends BaseLocalService,
 	*
 	* @param announcementsDelivery the announcements delivery
 	* @return the announcements delivery that was added
+	* @throws SystemException if a system exception occurred
 	*/
-	@com.liferay.portal.kernel.search.Indexable(type = IndexableType.REINDEX)
 	public com.liferay.portlet.announcements.model.AnnouncementsDelivery addAnnouncementsDelivery(
-		com.liferay.portlet.announcements.model.AnnouncementsDelivery announcementsDelivery);
-
-	public com.liferay.portlet.announcements.model.AnnouncementsDelivery addUserDelivery(
-		long userId, java.lang.String type)
-		throws com.liferay.portal.kernel.exception.PortalException;
+		com.liferay.portlet.announcements.model.AnnouncementsDelivery announcementsDelivery)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Creates a new announcements delivery with the primary key. Does not add the announcements delivery to the database.
@@ -72,44 +68,28 @@ public interface AnnouncementsDeliveryLocalService extends BaseLocalService,
 		long deliveryId);
 
 	/**
-	* Deletes the announcements delivery from the database. Also notifies the appropriate model listeners.
-	*
-	* @param announcementsDelivery the announcements delivery
-	* @return the announcements delivery that was removed
-	*/
-	@com.liferay.portal.kernel.search.Indexable(type = IndexableType.DELETE)
-	public com.liferay.portlet.announcements.model.AnnouncementsDelivery deleteAnnouncementsDelivery(
-		com.liferay.portlet.announcements.model.AnnouncementsDelivery announcementsDelivery);
-
-	/**
 	* Deletes the announcements delivery with the primary key from the database. Also notifies the appropriate model listeners.
 	*
 	* @param deliveryId the primary key of the announcements delivery
 	* @return the announcements delivery that was removed
 	* @throws PortalException if a announcements delivery with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
-	@com.liferay.portal.kernel.search.Indexable(type = IndexableType.DELETE)
 	public com.liferay.portlet.announcements.model.AnnouncementsDelivery deleteAnnouncementsDelivery(
 		long deliveryId)
-		throws com.liferay.portal.kernel.exception.PortalException;
-
-	public void deleteDeliveries(long userId);
-
-	public void deleteDelivery(
-		com.liferay.portlet.announcements.model.AnnouncementsDelivery delivery);
-
-	public void deleteDelivery(long deliveryId)
-		throws com.liferay.portal.kernel.exception.PortalException;
-
-	public void deleteDelivery(long userId, java.lang.String type);
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
-	* @throws PortalException
+	* Deletes the announcements delivery from the database. Also notifies the appropriate model listeners.
+	*
+	* @param announcementsDelivery the announcements delivery
+	* @return the announcements delivery that was removed
+	* @throws SystemException if a system exception occurred
 	*/
-	@Override
-	public com.liferay.portal.model.PersistedModel deletePersistedModel(
-		com.liferay.portal.model.PersistedModel persistedModel)
-		throws com.liferay.portal.kernel.exception.PortalException;
+	public com.liferay.portlet.announcements.model.AnnouncementsDelivery deleteAnnouncementsDelivery(
+		com.liferay.portlet.announcements.model.AnnouncementsDelivery announcementsDelivery)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	public com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery();
 
@@ -118,9 +98,12 @@ public interface AnnouncementsDeliveryLocalService extends BaseLocalService,
 	*
 	* @param dynamicQuery the dynamic query
 	* @return the matching rows
+	* @throws SystemException if a system exception occurred
 	*/
-	public <T> java.util.List<T> dynamicQuery(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery);
+	@SuppressWarnings("rawtypes")
+	public java.util.List dynamicQuery(
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Performs a dynamic query on the database and returns a range of the matching rows.
@@ -133,10 +116,12 @@ public interface AnnouncementsDeliveryLocalService extends BaseLocalService,
 	* @param start the lower bound of the range of model instances
 	* @param end the upper bound of the range of model instances (not inclusive)
 	* @return the range of matching rows
+	* @throws SystemException if a system exception occurred
 	*/
-	public <T> java.util.List<T> dynamicQuery(
+	@SuppressWarnings("rawtypes")
+	public java.util.List dynamicQuery(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
-		int end);
+		int end) throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Performs a dynamic query on the database and returns an ordered range of the matching rows.
@@ -150,20 +135,25 @@ public interface AnnouncementsDeliveryLocalService extends BaseLocalService,
 	* @param end the upper bound of the range of model instances (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching rows
+	* @throws SystemException if a system exception occurred
 	*/
-	public <T> java.util.List<T> dynamicQuery(
+	@SuppressWarnings("rawtypes")
+	public java.util.List dynamicQuery(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
 		int end,
-		com.liferay.portal.kernel.util.OrderByComparator<T> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of rows that match the dynamic query.
 	*
 	* @param dynamicQuery the dynamic query
 	* @return the number of rows that match the dynamic query
+	* @throws SystemException if a system exception occurred
 	*/
 	public long dynamicQueryCount(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery);
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of rows that match the dynamic query.
@@ -171,17 +161,38 @@ public interface AnnouncementsDeliveryLocalService extends BaseLocalService,
 	* @param dynamicQuery the dynamic query
 	* @param projection the projection to apply to the query
 	* @return the number of rows that match the dynamic query
+	* @throws SystemException if a system exception occurred
 	*/
 	public long dynamicQueryCount(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery,
-		com.liferay.portal.kernel.dao.orm.Projection projection);
+		com.liferay.portal.kernel.dao.orm.Projection projection)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public com.liferay.portlet.announcements.model.AnnouncementsDelivery fetchAnnouncementsDelivery(
-		long deliveryId);
+		long deliveryId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
+	/**
+	* Returns the announcements delivery with the primary key.
+	*
+	* @param deliveryId the primary key of the announcements delivery
+	* @return the announcements delivery
+	* @throws PortalException if a announcements delivery with the primary key could not be found
+	* @throws SystemException if a system exception occurred
+	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery getActionableDynamicQuery();
+	public com.liferay.portlet.announcements.model.AnnouncementsDelivery getAnnouncementsDelivery(
+		long deliveryId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException;
+
+	@Override
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public com.liferay.portal.model.PersistedModel getPersistedModel(
+		java.io.Serializable primaryKeyObj)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns a range of all the announcements deliveries.
@@ -193,30 +204,33 @@ public interface AnnouncementsDeliveryLocalService extends BaseLocalService,
 	* @param start the lower bound of the range of announcements deliveries
 	* @param end the upper bound of the range of announcements deliveries (not inclusive)
 	* @return the range of announcements deliveries
+	* @throws SystemException if a system exception occurred
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public java.util.List<com.liferay.portlet.announcements.model.AnnouncementsDelivery> getAnnouncementsDeliveries(
-		int start, int end);
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of announcements deliveries.
 	*
 	* @return the number of announcements deliveries
+	* @throws SystemException if a system exception occurred
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public int getAnnouncementsDeliveriesCount();
+	public int getAnnouncementsDeliveriesCount()
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
-	* Returns the announcements delivery with the primary key.
+	* Updates the announcements delivery in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	*
-	* @param deliveryId the primary key of the announcements delivery
-	* @return the announcements delivery
-	* @throws PortalException if a announcements delivery with the primary key could not be found
+	* @param announcementsDelivery the announcements delivery
+	* @return the announcements delivery that was updated
+	* @throws SystemException if a system exception occurred
 	*/
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public com.liferay.portlet.announcements.model.AnnouncementsDelivery getAnnouncementsDelivery(
-		long deliveryId)
-		throws com.liferay.portal.kernel.exception.PortalException;
+	public com.liferay.portlet.announcements.model.AnnouncementsDelivery updateAnnouncementsDelivery(
+		com.liferay.portlet.announcements.model.AnnouncementsDelivery announcementsDelivery)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the Spring bean ID for this bean.
@@ -225,26 +239,6 @@ public interface AnnouncementsDeliveryLocalService extends BaseLocalService,
 	*/
 	public java.lang.String getBeanIdentifier();
 
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public com.liferay.portlet.announcements.model.AnnouncementsDelivery getDelivery(
-		long deliveryId)
-		throws com.liferay.portal.kernel.exception.PortalException;
-
-	@Override
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public com.liferay.portal.model.PersistedModel getPersistedModel(
-		java.io.Serializable primaryKeyObj)
-		throws com.liferay.portal.kernel.exception.PortalException;
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public java.util.List<com.liferay.portlet.announcements.model.AnnouncementsDelivery> getUserDeliveries(
-		long userId) throws com.liferay.portal.kernel.exception.PortalException;
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public com.liferay.portlet.announcements.model.AnnouncementsDelivery getUserDelivery(
-		long userId, java.lang.String type)
-		throws com.liferay.portal.kernel.exception.PortalException;
-
 	/**
 	* Sets the Spring bean ID for this bean.
 	*
@@ -252,18 +246,46 @@ public interface AnnouncementsDeliveryLocalService extends BaseLocalService,
 	*/
 	public void setBeanIdentifier(java.lang.String beanIdentifier);
 
-	/**
-	* Updates the announcements delivery in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
-	*
-	* @param announcementsDelivery the announcements delivery
-	* @return the announcements delivery that was updated
-	*/
-	@com.liferay.portal.kernel.search.Indexable(type = IndexableType.REINDEX)
-	public com.liferay.portlet.announcements.model.AnnouncementsDelivery updateAnnouncementsDelivery(
-		com.liferay.portlet.announcements.model.AnnouncementsDelivery announcementsDelivery);
+	public com.liferay.portlet.announcements.model.AnnouncementsDelivery addUserDelivery(
+		long userId, java.lang.String type)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException;
+
+	public void deleteDeliveries(long userId)
+		throws com.liferay.portal.kernel.exception.SystemException;
+
+	public void deleteDelivery(
+		com.liferay.portlet.announcements.model.AnnouncementsDelivery delivery)
+		throws com.liferay.portal.kernel.exception.SystemException;
+
+	public void deleteDelivery(long deliveryId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException;
+
+	public void deleteDelivery(long userId, java.lang.String type)
+		throws com.liferay.portal.kernel.exception.SystemException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public com.liferay.portlet.announcements.model.AnnouncementsDelivery getDelivery(
+		long deliveryId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public java.util.List<com.liferay.portlet.announcements.model.AnnouncementsDelivery> getUserDeliveries(
+		long userId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public com.liferay.portlet.announcements.model.AnnouncementsDelivery getUserDelivery(
+		long userId, java.lang.String type)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	public com.liferay.portlet.announcements.model.AnnouncementsDelivery updateDelivery(
 		long userId, java.lang.String type, boolean email, boolean sms,
 		boolean website)
-		throws com.liferay.portal.kernel.exception.PortalException;
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException;
 }

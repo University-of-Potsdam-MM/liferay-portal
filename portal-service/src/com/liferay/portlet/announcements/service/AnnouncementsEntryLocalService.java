@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,7 +18,6 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.transaction.Isolation;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
@@ -53,38 +52,11 @@ public interface AnnouncementsEntryLocalService extends BaseLocalService,
 	*
 	* @param announcementsEntry the announcements entry
 	* @return the announcements entry that was added
+	* @throws SystemException if a system exception occurred
 	*/
-	@com.liferay.portal.kernel.search.Indexable(type = IndexableType.REINDEX)
 	public com.liferay.portlet.announcements.model.AnnouncementsEntry addAnnouncementsEntry(
-		com.liferay.portlet.announcements.model.AnnouncementsEntry announcementsEntry);
-
-	public com.liferay.portlet.announcements.model.AnnouncementsEntry addEntry(
-		long userId, long classNameId, long classPK, java.lang.String title,
-		java.lang.String content, java.lang.String url, java.lang.String type,
-		int displayDateMonth, int displayDateDay, int displayDateYear,
-		int displayDateHour, int displayDateMinute, boolean displayImmediately,
-		int expirationDateMonth, int expirationDateDay, int expirationDateYear,
-		int expirationDateHour, int expirationDateMinute, int priority,
-		boolean alert)
-		throws com.liferay.portal.kernel.exception.PortalException;
-
-	/**
-	* @deprecated As of 6.2.0, replaced by {@link #addEntry(long, long, long,
-	String, String, String, String, int, int, int, int, int,
-	boolean, int, int, int, int, int, int, boolean)}
-	*/
-	@java.lang.Deprecated
-	public com.liferay.portlet.announcements.model.AnnouncementsEntry addEntry(
-		long userId, long classNameId, long classPK, java.lang.String title,
-		java.lang.String content, java.lang.String url, java.lang.String type,
-		int displayDateMonth, int displayDateDay, int displayDateYear,
-		int displayDateHour, int displayDateMinute, int expirationDateMonth,
-		int expirationDateDay, int expirationDateYear, int expirationDateHour,
-		int expirationDateMinute, int priority, boolean alert)
-		throws com.liferay.portal.kernel.exception.PortalException;
-
-	public void checkEntries()
-		throws com.liferay.portal.kernel.exception.PortalException;
+		com.liferay.portlet.announcements.model.AnnouncementsEntry announcementsEntry)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Creates a new announcements entry with the primary key. Does not add the announcements entry to the database.
@@ -96,41 +68,28 @@ public interface AnnouncementsEntryLocalService extends BaseLocalService,
 		long entryId);
 
 	/**
-	* Deletes the announcements entry from the database. Also notifies the appropriate model listeners.
-	*
-	* @param announcementsEntry the announcements entry
-	* @return the announcements entry that was removed
-	*/
-	@com.liferay.portal.kernel.search.Indexable(type = IndexableType.DELETE)
-	public com.liferay.portlet.announcements.model.AnnouncementsEntry deleteAnnouncementsEntry(
-		com.liferay.portlet.announcements.model.AnnouncementsEntry announcementsEntry);
-
-	/**
 	* Deletes the announcements entry with the primary key from the database. Also notifies the appropriate model listeners.
 	*
 	* @param entryId the primary key of the announcements entry
 	* @return the announcements entry that was removed
 	* @throws PortalException if a announcements entry with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
-	@com.liferay.portal.kernel.search.Indexable(type = IndexableType.DELETE)
 	public com.liferay.portlet.announcements.model.AnnouncementsEntry deleteAnnouncementsEntry(
 		long entryId)
-		throws com.liferay.portal.kernel.exception.PortalException;
-
-	public void deleteEntry(
-		com.liferay.portlet.announcements.model.AnnouncementsEntry entry)
-		throws com.liferay.portal.kernel.exception.PortalException;
-
-	public void deleteEntry(long entryId)
-		throws com.liferay.portal.kernel.exception.PortalException;
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
-	* @throws PortalException
+	* Deletes the announcements entry from the database. Also notifies the appropriate model listeners.
+	*
+	* @param announcementsEntry the announcements entry
+	* @return the announcements entry that was removed
+	* @throws SystemException if a system exception occurred
 	*/
-	@Override
-	public com.liferay.portal.model.PersistedModel deletePersistedModel(
-		com.liferay.portal.model.PersistedModel persistedModel)
-		throws com.liferay.portal.kernel.exception.PortalException;
+	public com.liferay.portlet.announcements.model.AnnouncementsEntry deleteAnnouncementsEntry(
+		com.liferay.portlet.announcements.model.AnnouncementsEntry announcementsEntry)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	public com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery();
 
@@ -139,9 +98,12 @@ public interface AnnouncementsEntryLocalService extends BaseLocalService,
 	*
 	* @param dynamicQuery the dynamic query
 	* @return the matching rows
+	* @throws SystemException if a system exception occurred
 	*/
-	public <T> java.util.List<T> dynamicQuery(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery);
+	@SuppressWarnings("rawtypes")
+	public java.util.List dynamicQuery(
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Performs a dynamic query on the database and returns a range of the matching rows.
@@ -154,10 +116,12 @@ public interface AnnouncementsEntryLocalService extends BaseLocalService,
 	* @param start the lower bound of the range of model instances
 	* @param end the upper bound of the range of model instances (not inclusive)
 	* @return the range of matching rows
+	* @throws SystemException if a system exception occurred
 	*/
-	public <T> java.util.List<T> dynamicQuery(
+	@SuppressWarnings("rawtypes")
+	public java.util.List dynamicQuery(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
-		int end);
+		int end) throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Performs a dynamic query on the database and returns an ordered range of the matching rows.
@@ -171,20 +135,25 @@ public interface AnnouncementsEntryLocalService extends BaseLocalService,
 	* @param end the upper bound of the range of model instances (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching rows
+	* @throws SystemException if a system exception occurred
 	*/
-	public <T> java.util.List<T> dynamicQuery(
+	@SuppressWarnings("rawtypes")
+	public java.util.List dynamicQuery(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
 		int end,
-		com.liferay.portal.kernel.util.OrderByComparator<T> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of rows that match the dynamic query.
 	*
 	* @param dynamicQuery the dynamic query
 	* @return the number of rows that match the dynamic query
+	* @throws SystemException if a system exception occurred
 	*/
 	public long dynamicQueryCount(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery);
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of rows that match the dynamic query.
@@ -192,14 +161,17 @@ public interface AnnouncementsEntryLocalService extends BaseLocalService,
 	* @param dynamicQuery the dynamic query
 	* @param projection the projection to apply to the query
 	* @return the number of rows that match the dynamic query
+	* @throws SystemException if a system exception occurred
 	*/
 	public long dynamicQueryCount(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery,
-		com.liferay.portal.kernel.dao.orm.Projection projection);
+		com.liferay.portal.kernel.dao.orm.Projection projection)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public com.liferay.portlet.announcements.model.AnnouncementsEntry fetchAnnouncementsEntry(
-		long entryId);
+		long entryId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the announcements entry with the matching UUID and company.
@@ -207,13 +179,48 @@ public interface AnnouncementsEntryLocalService extends BaseLocalService,
 	* @param uuid the announcements entry's UUID
 	* @param companyId the primary key of the company
 	* @return the matching announcements entry, or <code>null</code> if a matching announcements entry could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public com.liferay.portlet.announcements.model.AnnouncementsEntry fetchAnnouncementsEntryByUuidAndCompanyId(
-		java.lang.String uuid, long companyId);
+		java.lang.String uuid, long companyId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
+	/**
+	* Returns the announcements entry with the primary key.
+	*
+	* @param entryId the primary key of the announcements entry
+	* @return the announcements entry
+	* @throws PortalException if a announcements entry with the primary key could not be found
+	* @throws SystemException if a system exception occurred
+	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery getActionableDynamicQuery();
+	public com.liferay.portlet.announcements.model.AnnouncementsEntry getAnnouncementsEntry(
+		long entryId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException;
+
+	@Override
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public com.liferay.portal.model.PersistedModel getPersistedModel(
+		java.io.Serializable primaryKeyObj)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException;
+
+	/**
+	* Returns the announcements entry with the matching UUID and company.
+	*
+	* @param uuid the announcements entry's UUID
+	* @param companyId the primary key of the company
+	* @return the matching announcements entry
+	* @throws PortalException if a matching announcements entry could not be found
+	* @throws SystemException if a system exception occurred
+	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public com.liferay.portlet.announcements.model.AnnouncementsEntry getAnnouncementsEntryByUuidAndCompanyId(
+		java.lang.String uuid, long companyId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns a range of all the announcements entries.
@@ -225,43 +232,33 @@ public interface AnnouncementsEntryLocalService extends BaseLocalService,
 	* @param start the lower bound of the range of announcements entries
 	* @param end the upper bound of the range of announcements entries (not inclusive)
 	* @return the range of announcements entries
+	* @throws SystemException if a system exception occurred
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public java.util.List<com.liferay.portlet.announcements.model.AnnouncementsEntry> getAnnouncementsEntries(
-		int start, int end);
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of announcements entries.
 	*
 	* @return the number of announcements entries
+	* @throws SystemException if a system exception occurred
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public int getAnnouncementsEntriesCount();
+	public int getAnnouncementsEntriesCount()
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
-	* Returns the announcements entry with the primary key.
+	* Updates the announcements entry in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	*
-	* @param entryId the primary key of the announcements entry
-	* @return the announcements entry
-	* @throws PortalException if a announcements entry with the primary key could not be found
+	* @param announcementsEntry the announcements entry
+	* @return the announcements entry that was updated
+	* @throws SystemException if a system exception occurred
 	*/
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public com.liferay.portlet.announcements.model.AnnouncementsEntry getAnnouncementsEntry(
-		long entryId)
-		throws com.liferay.portal.kernel.exception.PortalException;
-
-	/**
-	* Returns the announcements entry with the matching UUID and company.
-	*
-	* @param uuid the announcements entry's UUID
-	* @param companyId the primary key of the company
-	* @return the matching announcements entry
-	* @throws PortalException if a matching announcements entry could not be found
-	*/
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public com.liferay.portlet.announcements.model.AnnouncementsEntry getAnnouncementsEntryByUuidAndCompanyId(
-		java.lang.String uuid, long companyId)
-		throws com.liferay.portal.kernel.exception.PortalException;
+	public com.liferay.portlet.announcements.model.AnnouncementsEntry updateAnnouncementsEntry(
+		com.liferay.portlet.announcements.model.AnnouncementsEntry announcementsEntry)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the Spring bean ID for this bean.
@@ -270,9 +267,71 @@ public interface AnnouncementsEntryLocalService extends BaseLocalService,
 	*/
 	public java.lang.String getBeanIdentifier();
 
+	/**
+	* Sets the Spring bean ID for this bean.
+	*
+	* @param beanIdentifier the Spring bean ID for this bean
+	*/
+	public void setBeanIdentifier(java.lang.String beanIdentifier);
+
+	public com.liferay.portlet.announcements.model.AnnouncementsEntry addEntry(
+		long userId, long classNameId, long classPK, java.lang.String title,
+		java.lang.String content, java.lang.String url, java.lang.String type,
+		int displayDateMonth, int displayDateDay, int displayDateYear,
+		int displayDateHour, int displayDateMinute, boolean displayImmediately,
+		int expirationDateMonth, int expirationDateDay, int expirationDateYear,
+		int expirationDateHour, int expirationDateMinute, int priority,
+		boolean alert)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException;
+
+	/**
+	* @deprecated As of 6.2.0, replaced by {@link #addEntry(long, long, long,
+	String, String, String, String, int, int, int, int, int,
+	boolean, int, int, int, int, int, int, boolean)}
+	*/
+	public com.liferay.portlet.announcements.model.AnnouncementsEntry addEntry(
+		long userId, long classNameId, long classPK, java.lang.String title,
+		java.lang.String content, java.lang.String url, java.lang.String type,
+		int displayDateMonth, int displayDateDay, int displayDateYear,
+		int displayDateHour, int displayDateMinute, int expirationDateMonth,
+		int expirationDateDay, int expirationDateYear, int expirationDateHour,
+		int expirationDateMinute, int priority, boolean alert)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException;
+
+	public void checkEntries()
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException;
+
+	public void deleteEntry(
+		com.liferay.portlet.announcements.model.AnnouncementsEntry entry)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException;
+
+	public void deleteEntry(long entryId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException;
+
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public java.util.List<com.liferay.portlet.announcements.model.AnnouncementsEntry> getEntries(
-		long classNameId, long classPK, boolean alert, int start, int end);
+		long userId, java.util.LinkedHashMap<java.lang.Long, long[]> scopes,
+		boolean alert, int flagValue, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public java.util.List<com.liferay.portlet.announcements.model.AnnouncementsEntry> getEntries(
+		long userId, java.util.LinkedHashMap<java.lang.Long, long[]> scopes,
+		int displayDateMonth, int displayDateDay, int displayDateYear,
+		int displayDateHour, int displayDateMinute, int expirationDateMonth,
+		int expirationDateDay, int expirationDateYear, int expirationDateHour,
+		int expirationDateMinute, boolean alert, int flagValue, int start,
+		int end) throws com.liferay.portal.kernel.exception.SystemException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public java.util.List<com.liferay.portlet.announcements.model.AnnouncementsEntry> getEntries(
+		long classNameId, long classPK, boolean alert, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public java.util.List<com.liferay.portlet.announcements.model.AnnouncementsEntry> getEntries(
@@ -281,40 +340,13 @@ public interface AnnouncementsEntryLocalService extends BaseLocalService,
 		int displayDateMinute, int expirationDateMonth, int expirationDateDay,
 		int expirationDateYear, int expirationDateHour,
 		int expirationDateMinute, boolean alert, int flagValue, int start,
-		int end);
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public java.util.List<com.liferay.portlet.announcements.model.AnnouncementsEntry> getEntries(
-		long userId, java.util.LinkedHashMap<java.lang.Long, long[]> scopes,
-		boolean alert, int flagValue, int start, int end);
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public java.util.List<com.liferay.portlet.announcements.model.AnnouncementsEntry> getEntries(
-		long userId, java.util.LinkedHashMap<java.lang.Long, long[]> scopes,
-		int displayDateMonth, int displayDateDay, int displayDateYear,
-		int displayDateHour, int displayDateMinute, int expirationDateMonth,
-		int expirationDateDay, int expirationDateYear, int expirationDateHour,
-		int expirationDateMinute, boolean alert, int flagValue, int start,
-		int end);
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public int getEntriesCount(long classNameId, long classPK, boolean alert);
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public int getEntriesCount(long userId, long classNameId, long[] classPKs,
-		boolean alert, int flagValue);
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public int getEntriesCount(long userId, long classNameId, long[] classPKs,
-		int displayDateMonth, int displayDateDay, int displayDateYear,
-		int displayDateHour, int displayDateMinute, int expirationDateMonth,
-		int expirationDateDay, int expirationDateYear, int expirationDateHour,
-		int expirationDateMinute, boolean alert, int flagValue);
+		int end) throws com.liferay.portal.kernel.exception.SystemException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getEntriesCount(long userId,
 		java.util.LinkedHashMap<java.lang.Long, long[]> scopes, boolean alert,
-		int flagValue);
+		int flagValue)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getEntriesCount(long userId,
@@ -322,46 +354,40 @@ public interface AnnouncementsEntryLocalService extends BaseLocalService,
 		int displayDateMonth, int displayDateDay, int displayDateYear,
 		int displayDateHour, int displayDateMinute, int expirationDateMonth,
 		int expirationDateDay, int expirationDateYear, int expirationDateHour,
-		int expirationDateMinute, boolean alert, int flagValue);
+		int expirationDateMinute, boolean alert, int flagValue)
+		throws com.liferay.portal.kernel.exception.SystemException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getEntriesCount(long classNameId, long classPK, boolean alert)
+		throws com.liferay.portal.kernel.exception.SystemException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getEntriesCount(long userId, long classNameId, long[] classPKs,
+		boolean alert, int flagValue)
+		throws com.liferay.portal.kernel.exception.SystemException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getEntriesCount(long userId, long classNameId, long[] classPKs,
+		int displayDateMonth, int displayDateDay, int displayDateYear,
+		int displayDateHour, int displayDateMinute, int expirationDateMonth,
+		int expirationDateDay, int expirationDateYear, int expirationDateHour,
+		int expirationDateMinute, boolean alert, int flagValue)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public com.liferay.portlet.announcements.model.AnnouncementsEntry getEntry(
 		long entryId)
-		throws com.liferay.portal.kernel.exception.PortalException;
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public com.liferay.portal.kernel.dao.orm.ExportActionableDynamicQuery getExportActionableDynamicQuery(
-		com.liferay.portal.kernel.lar.PortletDataContext portletDataContext);
-
-	@Override
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public com.liferay.portal.model.PersistedModel getPersistedModel(
-		java.io.Serializable primaryKeyObj)
-		throws com.liferay.portal.kernel.exception.PortalException;
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public java.util.List<com.liferay.portlet.announcements.model.AnnouncementsEntry> getUserEntries(
-		long userId, int start, int end);
+		long userId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public int getUserEntriesCount(long userId);
-
-	/**
-	* Sets the Spring bean ID for this bean.
-	*
-	* @param beanIdentifier the Spring bean ID for this bean
-	*/
-	public void setBeanIdentifier(java.lang.String beanIdentifier);
-
-	/**
-	* Updates the announcements entry in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
-	*
-	* @param announcementsEntry the announcements entry
-	* @return the announcements entry that was updated
-	*/
-	@com.liferay.portal.kernel.search.Indexable(type = IndexableType.REINDEX)
-	public com.liferay.portlet.announcements.model.AnnouncementsEntry updateAnnouncementsEntry(
-		com.liferay.portlet.announcements.model.AnnouncementsEntry announcementsEntry);
+	public int getUserEntriesCount(long userId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	public com.liferay.portlet.announcements.model.AnnouncementsEntry updateEntry(
 		long userId, long entryId, java.lang.String title,
@@ -370,5 +396,6 @@ public interface AnnouncementsEntryLocalService extends BaseLocalService,
 		int displayDateHour, int displayDateMinute, boolean displayImmediately,
 		int expirationDateMonth, int expirationDateDay, int expirationDateYear,
 		int expirationDateHour, int expirationDateMinute, int priority)
-		throws com.liferay.portal.kernel.exception.PortalException;
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException;
 }

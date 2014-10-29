@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,6 +18,7 @@ import com.liferay.mail.NoSuchCyrusUserException;
 import com.liferay.mail.model.CyrusUser;
 import com.liferay.portal.kernel.dao.orm.ObjectNotFoundException;
 import com.liferay.portal.kernel.dao.orm.Session;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.model.Dummy;
 import com.liferay.portal.service.persistence.impl.BasePersistenceImpl;
 
@@ -29,7 +30,7 @@ public class CyrusUserPersistenceImpl
 
 	@Override
 	public CyrusUser findByPrimaryKey(long userId)
-		throws NoSuchCyrusUserException {
+		throws NoSuchCyrusUserException, SystemException {
 
 		Session session = null;
 
@@ -40,7 +41,7 @@ public class CyrusUserPersistenceImpl
 				CyrusUser.class, String.valueOf(userId));
 		}
 		catch (ObjectNotFoundException onfe) {
-			throw new NoSuchCyrusUserException("{userId=" + userId + "}");
+			throw new NoSuchCyrusUserException();
 		}
 		catch (Exception e) {
 			throw processException(e);
@@ -51,7 +52,9 @@ public class CyrusUserPersistenceImpl
 	}
 
 	@Override
-	public void remove(long userId) throws NoSuchCyrusUserException {
+	public void remove(long userId)
+		throws NoSuchCyrusUserException, SystemException {
+
 		Session session = null;
 
 		try {
@@ -65,7 +68,7 @@ public class CyrusUserPersistenceImpl
 			session.flush();
 		}
 		catch (ObjectNotFoundException onfe) {
-			throw new NoSuchCyrusUserException("{userId=" + userId + "}");
+			throw new NoSuchCyrusUserException();
 		}
 		catch (Exception e) {
 			throw processException(e);
@@ -76,7 +79,7 @@ public class CyrusUserPersistenceImpl
 	}
 
 	@Override
-	public void update(CyrusUser user) {
+	public void update(CyrusUser user) throws SystemException {
 		Session session = null;
 
 		try {

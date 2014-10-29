@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -136,8 +136,7 @@ public class SearchContainerTag<R> extends ParamAndPropertyAncestorTagImpl {
 				_searchContainer.setTotalVar(_totalVar);
 			}
 
-			pageContext.setAttribute(
-				_searchContainer.getTotalVar(), _searchContainer.getTotal());
+			pageContext.setAttribute(_searchContainer.getTotalVar(), 0);
 			pageContext.setAttribute(_var, _searchContainer);
 
 			SearchContainerReference searchContainerReference =
@@ -189,7 +188,7 @@ public class SearchContainerTag<R> extends ParamAndPropertyAncestorTagImpl {
 		return _orderByColParam;
 	}
 
-	public OrderByComparator<R> getOrderByComparator() {
+	public OrderByComparator getOrderByComparator() {
 		return _orderByComparator;
 	}
 
@@ -232,7 +231,6 @@ public class SearchContainerTag<R> extends ParamAndPropertyAncestorTagImpl {
 	/**
 	 * @deprecated As of 6.2.0, with no direct replacement. See LPS-41307.
 	 */
-	@Deprecated
 	public boolean isHasResults() {
 		return true;
 	}
@@ -268,7 +266,6 @@ public class SearchContainerTag<R> extends ParamAndPropertyAncestorTagImpl {
 	/**
 	 * @deprecated As of 6.2.0, see LPS-41307
 	 */
-	@Deprecated
 	public void setHasResults(boolean hasResults) {
 	}
 
@@ -296,7 +293,7 @@ public class SearchContainerTag<R> extends ParamAndPropertyAncestorTagImpl {
 		_orderByColParam = orderByColParam;
 	}
 
-	public void setOrderByComparator(OrderByComparator<R> orderByComparator) {
+	public void setOrderByComparator(OrderByComparator orderByComparator) {
 		_orderByComparator = orderByComparator;
 	}
 
@@ -346,7 +343,7 @@ public class SearchContainerTag<R> extends ParamAndPropertyAncestorTagImpl {
 	private String _orderByCol;
 	private String _orderByColParam =
 		SearchContainer.DEFAULT_ORDER_BY_COL_PARAM;
-	private OrderByComparator<R> _orderByComparator;
+	private OrderByComparator _orderByComparator;
 	private String _orderByType;
 	private String _orderByTypeParam =
 		SearchContainer.DEFAULT_ORDER_BY_TYPE_PARAM;

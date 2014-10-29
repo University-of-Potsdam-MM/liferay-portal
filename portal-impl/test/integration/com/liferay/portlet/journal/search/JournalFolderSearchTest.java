@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -19,15 +19,14 @@ import com.liferay.portal.model.BaseModel;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.search.BaseSearchTestCase;
 import com.liferay.portal.service.ServiceContext;
+import com.liferay.portal.service.ServiceTestUtil;
+import com.liferay.portal.test.LiferayIntegrationJUnitTestRunner;
+import com.liferay.portal.test.MainServletExecutionTestListener;
 import com.liferay.portal.test.Sync;
 import com.liferay.portal.test.SynchronousDestinationExecutionTestListener;
-import com.liferay.portal.test.listeners.MainServletExecutionTestListener;
-import com.liferay.portal.test.runners.LiferayIntegrationJUnitTestRunner;
-import com.liferay.portal.util.test.RandomTestUtil;
 import com.liferay.portlet.journal.model.JournalFolder;
 import com.liferay.portlet.journal.model.JournalFolderConstants;
-import com.liferay.portlet.journal.service.JournalFolderLocalServiceUtil;
-import com.liferay.portlet.journal.util.test.JournalTestUtil;
+import com.liferay.portlet.journal.util.JournalTestUtil;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -44,12 +43,6 @@ import org.junit.runner.RunWith;
 @RunWith(LiferayIntegrationJUnitTestRunner.class)
 @Sync
 public class JournalFolderSearchTest extends BaseSearchTestCase {
-
-	@Ignore()
-	@Override
-	@Test
-	public void testLocalizedSearch() throws Exception {
-	}
 
 	@Ignore()
 	@Override
@@ -129,11 +122,6 @@ public class JournalFolderSearchTest extends BaseSearchTestCase {
 	}
 
 	@Override
-	protected void deleteBaseModel(BaseModel<?> baseModel) throws Exception {
-		JournalFolderLocalServiceUtil.deleteFolder((JournalFolder)baseModel);
-	}
-
-	@Override
 	protected Class<?> getBaseModelClass() {
 		return JournalFolder.class;
 	}
@@ -145,7 +133,7 @@ public class JournalFolderSearchTest extends BaseSearchTestCase {
 
 		return JournalTestUtil.addFolder(
 			(Long)parentBaseModel.getPrimaryKeyObj(),
-			RandomTestUtil.randomString(), serviceContext);
+			ServiceTestUtil.randomString(), serviceContext);
 	}
 
 	@Override
@@ -155,25 +143,12 @@ public class JournalFolderSearchTest extends BaseSearchTestCase {
 
 		return JournalTestUtil.addFolder(
 			JournalFolderConstants.DEFAULT_PARENT_FOLDER_ID,
-			RandomTestUtil.randomString(), serviceContext);
+			ServiceTestUtil.randomString(), serviceContext);
 	}
 
 	@Override
 	protected String getSearchKeywords() {
 		return "Title";
-	}
-
-	@Override
-	protected BaseModel<?> updateBaseModel(
-			BaseModel<?> baseModel, String keywords,
-			ServiceContext serviceContext)
-		throws Exception {
-
-		JournalFolder folder = (JournalFolder)baseModel;
-
-		folder.setName(keywords);
-
-		return JournalFolderLocalServiceUtil.updateJournalFolder(folder);
 	}
 
 }

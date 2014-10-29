@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -50,11 +50,6 @@ public class ImageServiceUtil {
 		return getService().getBeanIdentifier();
 	}
 
-	public static com.liferay.portal.model.Image getImage(long imageId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().getImage(imageId);
-	}
-
 	/**
 	* Sets the Spring bean ID for this bean.
 	*
@@ -62,6 +57,12 @@ public class ImageServiceUtil {
 	*/
 	public static void setBeanIdentifier(java.lang.String beanIdentifier) {
 		getService().setBeanIdentifier(beanIdentifier);
+	}
+
+	public static com.liferay.portal.model.Image getImage(long imageId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getService().getImage(imageId);
 	}
 
 	public static ImageService getService() {
@@ -78,7 +79,6 @@ public class ImageServiceUtil {
 	/**
 	 * @deprecated As of 6.2.0
 	 */
-	@Deprecated
 	public void setService(ImageService service) {
 	}
 

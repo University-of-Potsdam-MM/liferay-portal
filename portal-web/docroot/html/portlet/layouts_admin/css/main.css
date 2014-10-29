@@ -26,6 +26,10 @@
 		text-align: center;
 		text-decoration: none;
 
+		&:hover label, &:hover {
+
+		}
+
 		&:hover {
 			&, & label {
 				color: #369;
@@ -86,6 +90,38 @@
 		border: 3px solid #369;
 	}
 
+	.lfr-header-row {
+		margin-bottom: 0.5em;
+
+		.icon-add, .icon-copy, .icon-delete, .icon-export, .icon-permissions, .icon-search {
+			background: url() no-repeat 0 0;
+		}
+
+		.icon-add {
+			background-image: url(@theme_image_path@/common/add.png);
+		}
+
+		.icon-copy {
+			background-image: url(@theme_image_path@/common/copy.png);
+		}
+
+		.icon-delete {
+			background-image: url(@theme_image_path@/common/delete.png);
+		}
+
+		.icon-export {
+			background-image: url(@theme_image_path@/common/export.png);
+		}
+
+		.icon-permissions {
+			background-image: url(@theme_image_path@/common/permissions.png);
+		}
+
+		.icon-search {
+			background-image: url(@theme_image_path@/common/search.png);
+		}
+	}
+
 	.button-holder.edit-toolbar {
 		margin: 0;
 	}
@@ -123,7 +159,7 @@
 	}
 
 	.layoutset-branch {
-		color: #FFF;
+		color: #FFFFFF;
 		display: inline-block;
 		font-weight: bold;
 		padding: 0.3em;
@@ -186,26 +222,8 @@
 
 	.organizations-msg-info {
 		background-color: #FEFEFE;
+		background-image: url(@theme_image_path@/common/organization_icon.png);
 		border-color: #BBB;
-	}
-
-	.organization-type {
-		font-size: 0.8em;
-	}
-
-	.subsites-count {
-		font-size: 0.85em;
-		margin-top: 0.3em;
-	}
-
-	.export-configuration-user-column {
-		text-align: center;
-		vertical-align: middle;
-		width: 30px;
-
-		.avatar {
-			width: 30px;
-		}
 	}
 
 	.process-list {
@@ -249,16 +267,6 @@
 				font-size: 0.7em;
 			}
 		}
-
-		.background-task-user-column {
-			text-align: center;
-			vertical-align: middle;
-			width: 30px;
-
-			.avatar {
-				width: 30px;
-			}
-		}
 	}
 }
 
@@ -287,6 +295,10 @@
 			cursor: move;
 		}
 	}
+}
+
+.lfr-page-locked .tree-icon {
+	background-image: url(@theme_image_path@/trees/page_locked.png);
 }
 
 .export-dialog-tree {
@@ -347,7 +359,6 @@
 	}
 
 	.portlet-list {
-		margin-left: 20px;
 		padding: 10px 0;
 
 		li.tree-item > ul {
@@ -381,7 +392,7 @@
 		display: inline;
 	}
 
-	ul.list-unstyled ul {
+	ul.unstyled ul {
 		list-style: none;
 	}
 }
@@ -396,7 +407,7 @@
 			margin-bottom: 1em;
 
 			legend {
-				border-width: 0;
+				border: 0;
 				display: block;
 				font-size: 1em;
 				font-weight: normal;
@@ -453,6 +464,14 @@
 
 .lfr-tree-controls-item {
 	padding: 0 0 6px 6px;
+}
+
+.lfr-tree-controls-expand {
+	background-image: url(@theme_image_path@/trees/expand_all.png);
+}
+
+.lfr-tree-controls-collapse {
+	background-image: url(@theme_image_path@/trees/collapse_all.png);
 }
 
 .ie6 {

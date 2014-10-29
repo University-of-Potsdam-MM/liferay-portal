@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portlet.wiki.asset;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.portlet.LiferayPortletURL;
 import com.liferay.portal.security.permission.PermissionChecker;
@@ -44,13 +45,9 @@ public class WikiPageAssetRendererFactory extends BaseAssetRendererFactory {
 
 	public static final String TYPE = "wiki";
 
-	public WikiPageAssetRendererFactory() {
-		setLinkable(true);
-	}
-
 	@Override
 	public AssetRenderer getAssetRenderer(long classPK, int type)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		WikiPage page = WikiPageLocalServiceUtil.fetchWikiPage(classPK);
 
@@ -78,11 +75,6 @@ public class WikiPageAssetRendererFactory extends BaseAssetRendererFactory {
 	@Override
 	public String getClassName() {
 		return WikiPage.class.getName();
-	}
-
-	@Override
-	public String getIconCssClass() {
-		return "icon-file-alt";
 	}
 
 	@Override
@@ -118,8 +110,15 @@ public class WikiPageAssetRendererFactory extends BaseAssetRendererFactory {
 	}
 
 	@Override
+	public boolean isLinkable() {
+		return _LINKABLE;
+	}
+
+	@Override
 	protected String getIconPath(ThemeDisplay themeDisplay) {
 		return themeDisplay.getPathThemeImages() + "/common/pages.png";
 	}
+
+	private static final boolean _LINKABLE = true;
 
 }

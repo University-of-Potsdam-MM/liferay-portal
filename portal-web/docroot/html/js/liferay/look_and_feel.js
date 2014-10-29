@@ -76,8 +76,6 @@ AUI.add(
 
 		var LINE_HEIGHT = 'lineHeight';
 
-		var NORMAL = 'normal';
-
 		var OK = 'ok';
 
 		var OPACITY = 'opacity';
@@ -115,17 +113,18 @@ AUI.add(
 
 				if (obj) {
 					instance._portletId = portletId;
+					instance._curPortlet = obj.one('.portlet');
 
-					if (!obj.hasClass('portlet-borderless')) {
-						instance._curPortlet = obj.one('.portlet');
-						instance._curPortletWrapperId = instance._curPortlet.attr(ID);
-					}
-					else {
+					instance._portletBoundary = obj;
+
+					if (!instance._curPortlet) {
 						instance._curPortlet = obj;
 						instance._curPortletWrapperId = curPortletBoundaryId;
 					}
+					else {
+						instance._curPortletWrapperId = instance._curPortlet.attr(ID);
+					}
 
-					instance._portletBoundary = obj;
 					instance._portletBoundaryId = curPortletBoundaryId;
 					instance._newPanel = A.one('#portlet-set-properties');
 					instance._currentLanguage = themeDisplay.getLanguageId();
@@ -141,10 +140,6 @@ AUI.add(
 							instance._currentPopup = Liferay.Util.Window.getWindow(
 								{
 									dialog: {
-										draggable: {
-											handles: ['.modal-header']
-										},
-										modal: false,
 										on: {
 											visibleChange: function(event) {
 												if (!event.newVal && Browser.isIe() && Browser.getMajorVersion() == 6) {
@@ -162,6 +157,7 @@ AUI.add(
 							instance._currentPopup.plug(
 								[
 									{
+										fn: A.Plugin.IO,
 										cfg: {
 											after: {
 												success: function(event) {
@@ -177,16 +173,15 @@ AUI.add(
 												}
 											},
 											autoLoad: false,
+											showLoading: false,
 											data: {
-												doAsUserId: themeDisplay.getDoAsUserIdEncoded(),
 												p_l_id: themeDisplay.getPlid(),
 												p_p_id: 113,
-												p_p_state: EXCLUSIVE
+												p_p_state: EXCLUSIVE,
+												doAsUserId: themeDisplay.getDoAsUserIdEncoded()
 											},
-											showLoading: false,
 											uri: themeDisplay.getPathMain() + '/portal/render_portlet'
-										},
-										fn: A.Plugin.IO
+										}
 									},
 									{
 										fn: A.LoadingMask
@@ -233,9 +228,8 @@ AUI.add(
 				if (!instance._backgroundColorPicker) {
 					instance._backgroundColorPicker = new A.ColorPickerPopover(
 						{
-							constrain: true,
-							plugins: [Liferay.WidgetZIndex],
-							trigger: backgroundColor
+							trigger: backgroundColor,
+							plugins: [Liferay.WidgetZIndex]
 						}
 					).render(instance._currentPopup.get(BOUNDING_BOX));
 				}
@@ -471,7 +465,7 @@ AUI.add(
 
 				A.each(
 					[cTopColor, cRightColor, cBottomColor, cLeftColor],
-					function(item, index) {
+					function(item, index, collection) {
 						var hexValue = item.val().replace('#', EMPTY);
 
 						var borderLocation = '_borderColorPicker' + index;
@@ -479,7 +473,6 @@ AUI.add(
 						if (!instance[borderLocation]) {
 							instance[borderLocation] = new A.ColorPickerPopover(
 								{
-									constrain: true,
 									trigger: item,
 									zIndex: 1000
 								}
@@ -583,53 +576,62 @@ AUI.add(
 
 				customPortletNote.html(portletInfoText);
 
-				refreshText = Liferay.Language.get('update-the-styles-on-this-page');
+				Liferay.Util.enableTextareaTabs(customCSS.getDOM());
 
-				var refreshLink = A.Node.create('<a href="javascript:;">' + refreshText + '</a>');
+				if (!Browser.isSafari()) {
+					refreshText = Liferay.Language.get('update-the-styles-on-this-page');
 
-				var customStyleBlock = A.one('#lfr-custom-css-block-' + portletId);
+					var refreshLink = A.Node.create('<a href="javascript:;">' + refreshText + '</a>');
 
-				if (!customStyleBlock) {
+					var customStyleBlock = A.one('#lfr-custom-css-block-' + portletId);
 
-					// Do not modify. This is a workaround for an IE bug.
+					if (!customStyleBlock) {
 
-					var styleEl = document.createElement(STYLE);
+						// Do not modify. This is a workaround for an IE bug.
 
-					styleEl.id = 'lfr-custom-css-block-' + portletId;
-					styleEl.className = 'lfr-custom-css-block';
-					styleEl.setAttribute(TYPE, 'text/css');
+						var styleEl = document.createElement(STYLE);
 
-					document.getElementsByTagName(HEAD)[0].appendChild(styleEl);
-				}
-				else {
-					styleEl = customStyleBlock.getDOM();
-				}
+						styleEl.id = 'lfr-custom-css-block-' + portletId;
+						styleEl.className = 'lfr-custom-css-block';
+						styleEl.setAttribute(TYPE, 'text/css');
 
-				var refreshStyles = function() {
-					var customStyles = customCSS.val();
-
-					customStyles = customStyles.replace(/<script[^>]*>([\u0001-\uFFFF]*?)<\/script>/gim, EMPTY);
-					customStyles = customStyles.replace(/<\/?[^>]+>/gi, EMPTY);
-
-					if (styleEl.styleSheet) { // for IE only
-						if (customStyles == EMPTY) {
-
-							// Do not modify. This is a workaround for an IE bug.
-
-							customStyles = '<!---->';
-						}
-
-						styleEl.styleSheet.cssText = customStyles;
+						document.getElementsByTagName(HEAD)[0].appendChild(styleEl);
 					}
 					else {
-						A.one(styleEl).html(customStyles);
+						styleEl = customStyleBlock.getDOM();
 					}
-				};
 
-				refreshLink.detach(CLICK);
-				refreshLink.on(CLICK, refreshStyles);
+					var refreshStyles = function() {
+						var customStyles = customCSS.val();
 
-				customNote.empty().append(refreshLink);
+						customStyles = customStyles.replace(/<script[^>]*>([\u0001-\uFFFF]*?)<\/script>/gim, EMPTY);
+						customStyles = customStyles.replace(/<\/?[^>]+>/gi, EMPTY);
+
+						if (styleEl.styleSheet) { // for IE only
+							if (customStyles == EMPTY) {
+
+								// Do not modify. This is a workaround for an IE bug.
+
+								customStyles = '<!---->';
+							}
+
+							styleEl.styleSheet.cssText = customStyles;
+						}
+						else {
+							A.one(styleEl).html(customStyles);
+						}
+					};
+
+					refreshLink.detach(CLICK);
+					refreshLink.on(CLICK, refreshStyles);
+
+					customNote.empty().append(refreshLink);
+				}
+				else {
+					refreshText = Liferay.Language.get('please-press-the-save-button-to-view-your-changes');
+
+					customNote.empty().text(refreshText);
+				}
 
 				var insertContainer = A.one('#lfr-add-rule-container');
 				var addIdLink = A.one('#lfr-add-id');
@@ -644,7 +646,7 @@ AUI.add(
 					var updateOnTypeHolder = A.Node.create('<span class="field"><span class="field-content"></span></span>');
 					var updateOnTypeLabel = A.Node.create('<label>' + Liferay.Language.get('update-my-styles-as-i-type') + ' </label>');
 
-					updateOnType = A.Node.create('<input checked="checked" id="lfr-update-on-type" type="' + CHECKBOX + '" />');
+					updateOnType = A.Node.create('<input id="lfr-update-on-type" type=CHECKBOX />');
 
 					updateOnTypeLabel.appendChild(updateOnType);
 					updateOnTypeHolder.get(FIRST_CHILD).appendChild(updateOnTypeLabel);
@@ -658,11 +660,7 @@ AUI.add(
 					insertContainer.appendChild(addClassLink);
 					insertContainer.appendChild(updateOnTypeHolder);
 
-					customNote.hide();
-
-					insertContainer.placeAfter(customNote);
-
-					customCSS.on(KEYUP, refreshStyles);
+					insertContainer.after(customNote);
 				}
 
 				updateOnType.on(
@@ -724,6 +722,17 @@ AUI.add(
 				}
 			},
 
+			_getCombo: function(input, selectBox) {
+				var instance = this;
+
+				var inputVal = input.val();
+				var selectVal = selectBox.val();
+
+				inputVal = instance._getSafeInteger(inputVal);
+
+				return {input: inputVal, selectBox: selectVal, both: inputVal + selectVal};
+			},
+
 			_getCSSClasses: function(portletBoundary, portlet) {
 				var instance = this;
 
@@ -753,148 +762,6 @@ AUI.add(
 				return '.' + boundaryClasses.join('.') + portletClasses;
 			},
 
-			_getCombo: function(input, selectBox) {
-				var instance = this;
-
-				var inputVal = input.val();
-				var selectVal = selectBox.val();
-
-				inputVal = instance._getSafeInteger(inputVal);
-
-				return {
-					both: inputVal + selectVal,
-					input: inputVal,
-					selectBox: selectVal
-				};
-			},
-
-			_getDefaultData: function() {
-				var instance = this;
-
-				return {
-					advancedData: {
-						customCSS: EMPTY,
-						customCSSClassName: EMPTY
-					},
-					bgData: {
-						backgroundColor: EMPTY,
-						backgroundImage: EMPTY,
-						backgroundPosition: {
-							left: {
-								unit: PX,
-								value: EMPTY
-							},
-							top: {
-								unit: PX,
-								value: EMPTY
-							}
-						},
-						backgroundRepeat: EMPTY,
-						useBgImage: false
-					},
-					borderData: {
-						borderColor: {
-							bottom: EMPTY,
-							left: EMPTY,
-							right: EMPTY,
-							sameForAll: true,
-							top: EMPTY
-						},
-						borderStyle: {
-							bottom: EMPTY,
-							left: EMPTY,
-							right: EMPTY,
-							sameForAll: true,
-							top: EMPTY
-						},
-						borderWidth: {
-							bottom: {
-								unit: PX,
-								value: EMPTY
-							},
-							left: {
-								unit: PX,
-								value: EMPTY
-							},
-							right: {
-								unit: PX,
-								value: EMPTY
-							},
-							sameForAll: true,
-							top: {
-								unit: PX,
-								value: EMPTY
-							}
-						}
-					},
-					portletData: {
-						customTitle: EMPTY,
-						language: 'en_US',
-						portletLinksTarget: EMPTY,
-						showBorders: EMPTY,
-						title: EMPTY,
-						titles: {},
-						useCustomTitle: false
-					},
-					spacingData: {
-						margin: {
-							bottom: {
-								unit: PX,
-								value: EMPTY
-							},
-							left: {
-								unit: PX,
-								value: EMPTY
-							},
-							right: {
-								unit: PX,
-								value: EMPTY
-							},
-							sameForAll: true,
-							top: {
-								unit: PX,
-								value: EMPTY
-							}
-						},
-						padding: {
-							bottom: {
-								unit: PX,
-								value: EMPTY
-							},
-							left: {
-								unit: PX,
-								value: EMPTY
-							},
-							right: {
-								unit: PX,
-								value: EMPTY
-							},
-							sameForAll: true,
-							top: {
-								unit: PX,
-								value: EMPTY
-							}
-						}
-					},
-					textData: {
-						color: EMPTY,
-						fontFamily: EMPTY,
-						fontSize: EMPTY,
-						fontStyle: EMPTY,
-						fontWeight: EMPTY,
-						letterSpacing: EMPTY,
-						lineHeight: EMPTY,
-						textAlign: EMPTY,
-						textDecoration: EMPTY,
-						wordSpacing: EMPTY
-					},
-					wapData: {
-						initialWindowState: 'NORMAL',
-						title: EMPTY
-					}
-				};
-			},
-
 			_getNodeById: function(id) {
 				var instance = this;
 
@@ -904,7 +771,13 @@ AUI.add(
 			_getSafeInteger: function(input) {
 				var instance = this;
 
-				return Lang.toInt(input);
+				var output = parseInt(input);
+
+				if (output == EMPTY || isNaN(output)) {
+					output = 0;
+				}
+
+				return output;
 			},
 
 			_insertCustomCSSValue: function(textarea, value) {
@@ -943,20 +816,18 @@ AUI.add(
 
 				var newPanel = instance._newPanel;
 
-				var portletConfig = instance._getDefaultData();
-
 				if (!instantiated) {
 					newPanel.addClass(INSTANTIATED);
 					instance._portletBoundaryIdVar = A.one('#portlet-boundary-id');
 
 					// Portlet config
 
-					var portletTitle = instance._curPortlet.one('.portlet-title-text');
+					var portletTitle = instance._curPortlet.one('.portlet-title');
 
 					instance._defaultPortletTitle = Lang.trim(portletTitle ? portletTitle.text() : EMPTY);
 
 					instance._customTitleInput = instance._getNodeById('custom-title');
-					instance._customTitleCheckbox = instance._getNodeById('use-custom-title');
+					instance._customTitleCheckbox = instance._getNodeById('use-custom-titleCheckbox');
 					instance._showBorders = instance._getNodeById('show-borders');
 					instance._borderNote = A.one('#border-note');
 					instance._portletLanguage = instance._getNodeById('lfr-portlet-language');
@@ -965,8 +836,8 @@ AUI.add(
 					// Text
 
 					instance._fontFamily = instance._getNodeById('lfr-font-family');
-					instance._fontWeight = instance._getNodeById('lfr-font-bold');
-					instance._fontStyle = instance._getNodeById('lfr-font-italic');
+					instance._fontWeight = instance._getNodeById('lfr-font-boldCheckbox');
+					instance._fontStyle = instance._getNodeById('lfr-font-italicCheckbox');
 					instance._fontSize = instance._getNodeById('lfr-font-size');
 					instance._fontColor = instance._getNodeById('lfr-font-color');
 					instance._textAlign = instance._getNodeById('lfr-font-align');
@@ -981,9 +852,9 @@ AUI.add(
 
 					// Border
 
-					instance._ufaBorderWidth = instance._getNodeById('lfr-use-for-all-width');
-					instance._ufaBorderStyle = instance._getNodeById('lfr-use-for-all-style');
-					instance._ufaBorderColor = instance._getNodeById('lfr-use-for-all-color');
+					instance._ufaBorderWidth = instance._getNodeById('lfr-use-for-all-widthCheckbox');
+					instance._ufaBorderStyle = instance._getNodeById('lfr-use-for-all-styleCheckbox');
+					instance._ufaBorderColor = instance._getNodeById('lfr-use-for-all-colorCheckbox');
 
 					instance._borderTopInt = instance._getNodeById('lfr-border-width-top');
 					instance._borderTopUnit = instance._getNodeById('lfr-border-width-top-unit');
@@ -1006,8 +877,8 @@ AUI.add(
 
 					// Spacing
 
-					instance._ufaPadding = instance._getNodeById('lfr-use-for-all-padding');
-					instance._ufaMargin = instance._getNodeById('lfr-use-for-all-margin');
+					instance._ufaPadding = instance._getNodeById('lfr-use-for-all-paddingCheckbox');
+					instance._ufaMargin = instance._getNodeById('lfr-use-for-all-marginCheckbox');
 
 					instance._paddingTopInt = instance._getNodeById('lfr-padding-top');
 					instance._paddingTopUnit = instance._getNodeById('lfr-padding-top-unit');
@@ -1047,8 +918,8 @@ AUI.add(
 
 				instance._tabs = new A.TabView(
 					{
-						panelNode: newPanel.one('.tab-pane'),
-						srcNode: newPanel
+						srcNode: newPanel,
+						panelNode: newPanel.one('.tab-pane')
 					}
 				).render();
 
@@ -1063,6 +934,137 @@ AUI.add(
 				if (instance._portletMsgResponse) {
 					instance._portletMsgResponse.hide();
 				}
+
+				var defaultData = {
+					advancedData: {
+						customCSS: EMPTY
+					},
+
+					bgData: {
+						backgroundColor: EMPTY,
+						backgroundImage: EMPTY,
+						backgroundPosition: {
+							left: {
+								unit: PX,
+								value: EMPTY
+							},
+							top: {
+								unit: PX,
+								value: EMPTY
+							}
+						},
+						backgroundRepeat: EMPTY,
+						useBgImage: false
+					},
+
+					borderData: {
+						borderColor: {
+							bottom: EMPTY,
+							left: EMPTY,
+							right: EMPTY,
+							sameForAll: true,
+							top: EMPTY
+						},
+
+						borderStyle: {
+							bottom: EMPTY,
+							left: EMPTY,
+							right: EMPTY,
+							sameForAll: true,
+							top: EMPTY
+						},
+
+						borderWidth: {
+							bottom: {
+								unit: PX,
+								value: EMPTY
+							},
+							left: {
+								unit: PX,
+								value: EMPTY
+							},
+							right: {
+								unit: PX,
+								value: EMPTY
+							},
+							sameForAll: true,
+							top: {
+								unit: PX,
+								value: EMPTY
+							}
+						}
+					},
+
+					portletData: {
+						customTitle: EMPTY,
+						language: 'en_US',
+						portletLinksTarget: EMPTY,
+						showBorders: EMPTY,
+						title: EMPTY,
+						titles: {},
+						useCustomTitle: false
+					},
+
+					spacingData: {
+						margin: {
+							bottom: {
+								unit: PX,
+								value: EMPTY
+							},
+							left: {
+								unit: PX,
+								value: EMPTY
+							},
+							right: {
+								unit: PX,
+								value: EMPTY
+							},
+							sameForAll: true,
+							top: {
+								unit: PX,
+								value: EMPTY
+							}
+						},
+						padding: {
+							bottom: {
+								unit: PX,
+								value: EMPTY
+							},
+							left: {
+								unit: PX,
+								value: EMPTY
+							},
+							right: {
+								unit: PX,
+								value: EMPTY
+							},
+							sameForAll: true,
+							top: {
+								unit: PX,
+								value: EMPTY
+							}
+						}
+
+					},
+
+					textData: {
+						color: EMPTY,
+						fontFamily: EMPTY,
+						fontSize: EMPTY,
+						fontStyle: EMPTY,
+						fontWeight: EMPTY,
+						letterSpacing: EMPTY,
+						lineHeight: EMPTY,
+						textAlign: EMPTY,
+						textDecoration: EMPTY,
+						wordSpacing: EMPTY
+					},
+
+					wapData: {
+						initialWindowState: 'NORMAL',
+						title: EMPTY
+					}
+				};
 
 				var onLookAndFeelComplete = function() {
 					instance._portletBoundaryIdVar.val(instance._curPortletWrapperId);
@@ -1080,7 +1082,7 @@ AUI.add(
 
 					var useForAll = newPanel.all('.lfr-use-for-all input[type=checkbox]');
 
-					var handleForms = function(item, index) {
+					var handleForms = function(item, index, collection) {
 						var checkBox = item;
 
 						var fieldset = checkBox.ancestor(FIELDSET);
@@ -1096,7 +1098,7 @@ AUI.add(
 						var checked = item.get(CHECKED);
 
 						otherHolders.each(
-							function(holderItem, holderIndex) {
+							function(holderItem, holderIndex, holderCollection) {
 								if (holderIndex > firstIndex) {
 									var fields = holderItem.all('input, select');
 									var colorPickerImages = holderItem.all('.buttonitem');
@@ -1154,10 +1156,8 @@ AUI.add(
 						}
 						else {
 							message = Liferay.Language.get('your-settings-could-not-be-saved');
-							messageClass = 'alert alert-danger';
+							messageClass = 'alert alert-error';
 						}
-
-						var ajaxResponse = ajaxResponseMsg;
 
 						if (!ajaxResponseMsg) {
 							ajaxResponse = A.Node.create(ajaxResponseHTML);
@@ -1226,8 +1226,7 @@ AUI.add(
 								customStyle.remove(true);
 							}
 
-							A.mix(instance._objData, instance._getDefaultData(), true);
-
+							instance._objData = defaultData;
 							instance._setDefaults();
 						}
 					);
@@ -1235,7 +1234,7 @@ AUI.add(
 					instance._currentPopup.loadingmask.hide();
 				};
 
-				instance._objData = portletConfig;
+				instance._objData = defaultData;
 
 				A.io.request(
 					themeDisplay.getPathMain() + '/portlet_configuration/get_look_and_feel',
@@ -1251,13 +1250,10 @@ AUI.add(
 							success: function(event, id, obj) {
 								var objectData = this.get(RESPONSE_DATA);
 
-								A.mix(objectData, portletConfig);
-
 								if (objectData.hasCssValue) {
 									instance._objData = objectData;
 								}
 								else {
-									instance._objData.defaultPortletTitles = objectData.defaultPortletTitles;
 									instance._objData.portletData = objectData.portletData;
 								}
 
@@ -1286,7 +1282,39 @@ AUI.add(
 				customTitleCheckbox.on(
 					CLICK,
 					function(event) {
-						instance._setCustomTitleInput(event);
+						var title;
+						var portletTitle = instance._curPortlet.one('.portlet-title');
+
+						var checked = event.currentTarget.get(CHECKED);
+
+						portletData.useCustomTitle = checked;
+
+						if (checked) {
+							customTitleInput.set(DISABLED, false);
+							language.set(DISABLED, false);
+
+							title = Lang.trim(customTitleInput.val());
+
+							if (title == EMPTY) {
+								title = (portletTitle && portletTitle.text()) || EMPTY;
+								title = Lang.trim(title);
+
+								customTitleInput.val(title);
+							}
+
+							portletData.title = title;
+
+							instance._portletTitles(false, title);
+						}
+						else {
+							customTitleInput.attr(DISABLED, true);
+							language.attr(DISABLED, true);
+							title = instance._defaultPortletTitle;
+						}
+
+						if (portletTitle) {
+							portletTitle.text(title);
+						}
 					}
 				);
 
@@ -1316,17 +1344,7 @@ AUI.add(
 							var portletLanguage = instance._portletLanguage.val();
 
 							if (portletLanguage == instance._currentLanguage) {
-								portletTitle.html(cruft);
-
-								var portletTitleText = portletTitle;
-
-								if (instance._showBorders.val() != 'false') {
-									portletTitleText = portletTitle.one('.portlet-title-text');
-								}
-
-								if (portletTitleText) {
-									portletTitleText.text(value);
-								}
+								portletTitle.html(cruft + value);
 							}
 
 							portletData.title = value;
@@ -1386,11 +1404,11 @@ AUI.add(
 				if (value == null) {
 					var portletTitle = portletTitles[key];
 
-					if (portletTitle != null) {
+					if (portletTitle) {
 						return portletTitle;
 					}
 
-					return instance._objData.defaultPortletTitles[key];
+					return EMPTY;
 				}
 				else {
 					portletTitles[key] = value;
@@ -1409,57 +1427,6 @@ AUI.add(
 
 				if (obj) {
 					obj.set(CHECKED, value);
-				}
-			},
-
-			_setCustomTitleInput: function(event) {
-				var instance = this;
-
-				var title;
-
-				var customTitleInput = instance._customTitleInput;
-				var language = instance._portletLanguage;
-
-				var portletData = instance._objData.portletData;
-
-				var portletTitleSelector = '.portlet-title-default';
-
-				if (instance._showBorders.val() != 'false') {
-					portletTitleSelector = '.portlet-title-text';
-				}
-
-				var portletTitleText = instance._curPortlet.one(portletTitleSelector);
-
-				var checked = event.currentTarget.get(CHECKED);
-
-				portletData.useCustomTitle = checked;
-
-				if (checked) {
-					customTitleInput.set(DISABLED, false);
-					language.set(DISABLED, false);
-
-					title = Lang.trim(customTitleInput.val());
-
-					if (title == EMPTY) {
-						title = (portletTitleText && portletTitleText.text()) || EMPTY;
-						title = Lang.trim(title);
-
-						customTitleInput.val(title);
-					}
-
-					portletData.title = title;
-
-					instance._portletTitles(false, title);
-				}
-				else {
-					customTitleInput.attr(DISABLED, true);
-					language.attr(DISABLED, true);
-
-					title = instance._defaultPortletTitle;
-				}
-
-				if (portletTitleText) {
-					portletTitleText.text(title);
 				}
 			},
 
@@ -1487,11 +1454,11 @@ AUI.add(
 				var fontStyle = false;
 				var fontWeight = false;
 
-				if (textData.fontStyle && textData.fontStyle != NORMAL) {
+				if (textData.fontStyle && textData.fontStyle != 'normal') {
 					fontStyle = true;
 				}
 
-				if (textData.fontWeight && textData.fontWeight != NORMAL) {
+				if (textData.fontWeight && textData.fontWeight != 'normal') {
 					fontWeight = true;
 				}
 
@@ -1502,30 +1469,31 @@ AUI.add(
 				instance._setSelect(instance._portletLanguage, instance._currentLanguage);
 				instance._setSelect(instance._portletLinksTarget, portletData.portletLinksTarget);
 
+				var portletTitles = portletData.titles;
+
 				var portletTitle = instance._portletTitles(portletData.language);
 
-				if (portletData.useCustomTitle) {
-					if (!portletTitle) {
-						instance._portletTitles(EMPTY);
+				if (!portletTitle) {
+					instance._portletTitles(EMPTY);
 
-						portletData.title = EMPTY;
-					}
-
-					if (portletData.titles) {
-						A.each(
-							portletData.titles,
-							function(item, index) {
-								instance._languageClasses(item);
-							}
-						);
-					}
-				}
-				else {
-					instance._customTitleInput.attr(DISABLED, true);
-					instance._portletLanguage.attr(DISABLED, true);
+					portletData.title = EMPTY;
 				}
 
 				instance._setInput(instance._customTitleInput, portletTitle);
+
+				if (!portletData.useCustomTitle) {
+					instance._customTitleInput.set(DISABLED, true);
+					instance._portletLanguage.set(DISABLED, true);
+				}
+
+				if (portletData.titles) {
+					A.each(
+						portletData.titles,
+						function(item, index, collection) {
+							instance._languageClasses(item);
+						}
+					);
+				}
 
 				// Text
 
@@ -1889,7 +1857,7 @@ AUI.add(
 				fontBold.on(
 					CLICK,
 					function(event) {
-						var style = NORMAL;
+						var style = 'normal';
 
 						if (event.currentTarget.get(CHECKED)) {
 							style = BOLD;
@@ -1948,9 +1916,8 @@ AUI.add(
 				if (!instance._fontColorPicker) {
 					instance._fontColorPicker = new A.ColorPickerPopover(
 						{
-							constrain: true,
-							plugins: [Liferay.WidgetZIndex],
-							trigger: fontColor
+							trigger: fontColor,
+							plugins: [Liferay.WidgetZIndex]
 						}
 					).render(instance._currentPopup.get(BOUNDING_BOX));
 				}

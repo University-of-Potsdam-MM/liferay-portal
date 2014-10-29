@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,10 +14,11 @@
 
 package com.liferay.portal.kernel.repository;
 
+import com.liferay.counter.service.CounterLocalService;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.service.CompanyLocalService;
-import com.liferay.portal.service.RepositoryEntryLocalService;
 import com.liferay.portal.service.UserLocalService;
 import com.liferay.portlet.asset.service.AssetEntryLocalService;
 import com.liferay.portlet.documentlibrary.service.DLAppHelperLocalService;
@@ -33,7 +34,7 @@ public interface BaseRepository extends Repository {
 
 	public String[][] getSupportedParameters();
 
-	public void initRepository() throws PortalException;
+	public void initRepository() throws PortalException, SystemException;
 
 	public void setAssetEntryLocalService(
 		AssetEntryLocalService assetEntryLocalService);
@@ -42,13 +43,12 @@ public interface BaseRepository extends Repository {
 
 	public void setCompanyLocalService(CompanyLocalService companyLocalService);
 
+	public void setCounterLocalService(CounterLocalService counterLocalService);
+
 	public void setDLAppHelperLocalService(
 		DLAppHelperLocalService dlAppHelperLocalService);
 
 	public void setGroupId(long groupId);
-
-	public void setRepositoryEntryLocalService(
-		RepositoryEntryLocalService repositoryEntryLocalService);
 
 	public void setRepositoryId(long repositoryId);
 

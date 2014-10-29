@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -17,7 +17,10 @@ package com.liferay.portal.kernel.security;
 import com.liferay.portal.kernel.io.BigEndianCodec;
 import com.liferay.portal.kernel.test.CodeCoverageAssertor;
 import com.liferay.portal.kernel.test.NewClassLoaderJUnitTestRunner;
-import com.liferay.portal.kernel.test.ReflectionTestUtil;
+import com.liferay.portal.kernel.util.ReflectionUtil;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 import java.security.SecureRandom;
 
@@ -60,7 +63,7 @@ public class SecureRandomUtilTest {
 			new Callable<Long>() {
 
 				@Override
-				public Long call() {
+				public Long call() throws Exception {
 					return reload();
 				}
 
@@ -90,27 +93,24 @@ public class SecureRandomUtilTest {
 	}
 
 	@Test
-	public void testConstructor() {
-		new SecureRandomUtil();
-	}
-
-	@Test
-	public void testInitialization() {
+	public void testInitialization() throws Exception {
 		System.setProperty(_KEY_BUFFER_SIZE, "10");
 
-		Assert.assertEquals(
-			1024,
-			ReflectionTestUtil.getFieldValue(
-				SecureRandomUtil.class, "_BUFFER_SIZE"));
+		Field bufferSizeField = ReflectionUtil.getDeclaredField(
+			SecureRandomUtil.class, "_BUFFER_SIZE");
 
-		byte[] bytes = ReflectionTestUtil.getFieldValue(
+		Assert.assertEquals(1024, bufferSizeField.get(null));
+
+		Field bytesField = ReflectionUtil.getDeclaredField(
 			SecureRandomUtil.class, "_bytes");
+
+		byte[] bytes = (byte[])bytesField.get(null);
 
 		Assert.assertEquals(1024, bytes.length);
 	}
 
 	@Test
-	public void testNextBoolean() {
+	public void testNextBoolean() throws Exception {
 
 		// First load
 
@@ -156,7 +156,7 @@ public class SecureRandomUtilTest {
 	}
 
 	@Test
-	public void testNextByte() {
+	public void testNextByte() throws Exception {
 
 		// First load
 
@@ -183,7 +183,7 @@ public class SecureRandomUtilTest {
 	}
 
 	@Test
-	public void testNextDouble() {
+	public void testNextDouble() throws Exception {
 
 		// First load
 
@@ -231,7 +231,7 @@ public class SecureRandomUtilTest {
 	}
 
 	@Test
-	public void testNextFloat() {
+	public void testNextFloat() throws Exception {
 
 		// First load
 
@@ -279,7 +279,7 @@ public class SecureRandomUtilTest {
 	}
 
 	@Test
-	public void testNextInt() {
+	public void testNextInt() throws Exception {
 
 		// First load
 
@@ -324,7 +324,7 @@ public class SecureRandomUtilTest {
 	}
 
 	@Test
-	public void testNextLong() {
+	public void testNextLong() throws Exception {
 
 		// First load
 
@@ -370,35 +370,45 @@ public class SecureRandomUtilTest {
 		}
 	}
 
-	protected long getFirstLong() {
-		byte[] bytes = ReflectionTestUtil.getFieldValue(
+	protected long getFirstLong() throws Exception {
+		Field bytesField = ReflectionUtil.getDeclaredField(
 			SecureRandomUtil.class, "_bytes");
+
+		byte[] bytes = (byte[])bytesField.get(null);
 
 		return BigEndianCodec.getLong(bytes, 0);
 	}
 
-	protected long getGapSeed() {
-		return ReflectionTestUtil.getFieldValue(
+	protected long getGapSeed() throws Exception {
+		Field gapSeedField = ReflectionUtil.getDeclaredField(
 			SecureRandomUtil.class, "_gapSeed");
+
+		return gapSeedField.getLong(null);
 	}
 
-	protected SecureRandom installPredictableRandom() {
+	protected SecureRandom installPredictableRandom() throws Exception {
+		Field secureRandomField = ReflectionUtil.getDeclaredField(
+			SecureRandomUtil.class, "_random");
+
 		SecureRandom predictableRandom = new PredictableRandom();
 
-		ReflectionTestUtil.setFieldValue(
-			SecureRandomUtil.class, "_random", predictableRandom);
+		secureRandomField.set(null, predictableRandom);
 
-		byte[] bytes = ReflectionTestUtil.getFieldValue(
+		Field bytesField = ReflectionUtil.getDeclaredField(
 			SecureRandomUtil.class, "_bytes");
+
+		byte[] bytes = (byte[])bytesField.get(null);
 
 		predictableRandom.nextBytes(bytes);
 
 		return predictableRandom;
 	}
 
-	protected long reload() {
-		return ReflectionTestUtil.invoke(
-			SecureRandomUtil.class, "_reload", new Class<?>[0]);
+	protected long reload() throws Exception {
+		Method reloadMethod = ReflectionUtil.getDeclaredMethod(
+			SecureRandomUtil.class, "_reload");
+
+		return (Long)reloadMethod.invoke(null);
 	}
 
 	private static final String _KEY_BUFFER_SIZE =

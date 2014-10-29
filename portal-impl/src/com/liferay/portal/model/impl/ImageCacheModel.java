@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,13 +14,10 @@
 
 package com.liferay.portal.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.CacheModel;
 import com.liferay.portal.model.Image;
-import com.liferay.portal.model.MVCCModel;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -36,26 +33,12 @@ import java.util.Date;
  * @see Image
  * @generated
  */
-@ProviderType
-public class ImageCacheModel implements CacheModel<Image>, Externalizable,
-	MVCCModel {
-	@Override
-	public long getMvccVersion() {
-		return mvccVersion;
-	}
-
-	@Override
-	public void setMvccVersion(long mvccVersion) {
-		this.mvccVersion = mvccVersion;
-	}
-
+public class ImageCacheModel implements CacheModel<Image>, Externalizable {
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(15);
+		StringBundler sb = new StringBundler(13);
 
-		sb.append("{mvccVersion=");
-		sb.append(mvccVersion);
-		sb.append(", imageId=");
+		sb.append("{imageId=");
 		sb.append(imageId);
 		sb.append(", modifiedDate=");
 		sb.append(modifiedDate);
@@ -76,7 +59,6 @@ public class ImageCacheModel implements CacheModel<Image>, Externalizable,
 	public Image toEntityModel() {
 		ImageImpl imageImpl = new ImageImpl();
 
-		imageImpl.setMvccVersion(mvccVersion);
 		imageImpl.setImageId(imageId);
 
 		if (modifiedDate == Long.MIN_VALUE) {
@@ -104,7 +86,6 @@ public class ImageCacheModel implements CacheModel<Image>, Externalizable,
 
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
-		mvccVersion = objectInput.readLong();
 		imageId = objectInput.readLong();
 		modifiedDate = objectInput.readLong();
 		type = objectInput.readUTF();
@@ -116,7 +97,6 @@ public class ImageCacheModel implements CacheModel<Image>, Externalizable,
 	@Override
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
-		objectOutput.writeLong(mvccVersion);
 		objectOutput.writeLong(imageId);
 		objectOutput.writeLong(modifiedDate);
 
@@ -132,7 +112,6 @@ public class ImageCacheModel implements CacheModel<Image>, Externalizable,
 		objectOutput.writeInt(size);
 	}
 
-	public long mvccVersion;
 	public long imageId;
 	public long modifiedDate;
 	public String type;

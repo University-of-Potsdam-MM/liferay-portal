@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portal.repository.cmis.model;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.lar.StagedModelType;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -22,7 +23,6 @@ import com.liferay.portal.kernel.repository.RepositoryException;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.FileVersion;
 import com.liferay.portal.kernel.repository.model.Folder;
-import com.liferay.portal.kernel.repository.model.RepositoryModelOperation;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -40,7 +40,6 @@ import com.liferay.portal.service.RepositoryEntryLocalServiceUtil;
 import com.liferay.portal.service.persistence.LockUtil;
 import com.liferay.portlet.documentlibrary.NoSuchFileEntryException;
 import com.liferay.portlet.documentlibrary.NoSuchFileVersionException;
-import com.liferay.portlet.documentlibrary.model.DLFileEntryConstants;
 import com.liferay.portlet.documentlibrary.service.DLAppHelperLocalServiceUtil;
 import com.liferay.portlet.documentlibrary.util.DLUtil;
 
@@ -98,16 +97,10 @@ public class CMISFileEntry extends CMISModel implements FileEntry {
 
 	@Override
 	public boolean containsPermission(
-		PermissionChecker permissionChecker, String actionId) {
+			PermissionChecker permissionChecker, String actionId)
+		throws SystemException {
 
 		return containsPermission(_document, actionId);
-	}
-
-	@Override
-	public void execute(RepositoryModelOperation repositoryModelOperation)
-		throws PortalException {
-
-		repositoryModelOperation.execute(this);
 	}
 
 	@Override
@@ -178,17 +171,16 @@ public class CMISFileEntry extends CMISModel implements FileEntry {
 	}
 
 	@Override
-	public String getFileName() {
-		return DLUtil.getSanitizedFileName(getTitle(), getExtension());
-	}
+	public FileVersion getFileVersion()
+		throws PortalException, SystemException {
 
-	@Override
-	public FileVersion getFileVersion() throws PortalException {
 		return getLatestFileVersion();
 	}
 
 	@Override
-	public FileVersion getFileVersion(String version) throws PortalException {
+	public FileVersion getFileVersion(String version)
+		throws PortalException, SystemException {
+
 		if (Validator.isNull(version)) {
 			return getFileVersion();
 		}
@@ -206,7 +198,9 @@ public class CMISFileEntry extends CMISModel implements FileEntry {
 	}
 
 	@Override
-	public List<FileVersion> getFileVersions(int status) {
+	public List<FileVersion> getFileVersions(int status)
+		throws SystemException {
+
 		try {
 			List<Document> documents = getAllVersions();
 
@@ -282,12 +276,9 @@ public class CMISFileEntry extends CMISModel implements FileEntry {
 	}
 
 	@Override
-	public String getIconCssClass() {
-		return DLUtil.getFileIconCssClass(getExtension());
-	}
+	public FileVersion getLatestFileVersion()
+		throws PortalException, SystemException {
 
-	@Override
-	public FileVersion getLatestFileVersion() throws PortalException {
 		if (_latestFileVersion != null) {
 			return _latestFileVersion;
 		}
@@ -306,13 +297,6 @@ public class CMISFileEntry extends CMISModel implements FileEntry {
 		}
 
 		return _latestFileVersion;
-	}
-
-	@Override
-	public FileVersion getLatestFileVersion(boolean trusted)
-		throws PortalException {
-
-		return getLatestFileVersion();
 	}
 
 	@Override
@@ -425,7 +409,7 @@ public class CMISFileEntry extends CMISModel implements FileEntry {
 
 	@Override
 	public StagedModelType getStagedModelType() {
-		return new StagedModelType(DLFileEntryConstants.getClassName());
+		return new StagedModelType(FileEntry.class);
 	}
 
 	@Override
@@ -483,7 +467,6 @@ public class CMISFileEntry extends CMISModel implements FileEntry {
 	/**
 	 * @deprecated As of 6.2.0, replaced by {@link CMISFileVersion#getUserId()}
 	 */
-	@Deprecated
 	@Override
 	public long getVersionUserId() {
 		long versionUserId = 0;
@@ -504,7 +487,6 @@ public class CMISFileEntry extends CMISModel implements FileEntry {
 	 * @deprecated As of 6.2.0, replaced by {@link
 	 *             CMISFileVersion#getUserName()}
 	 */
-	@Deprecated
 	@Override
 	public String getVersionUserName() {
 		String versionUserName = StringPool.BLANK;
@@ -525,7 +507,6 @@ public class CMISFileEntry extends CMISModel implements FileEntry {
 	 * @deprecated As of 6.2.0, replaced by {@link
 	 *             CMISFileVersion#getUserUuid()}
 	 */
-	@Deprecated
 	@Override
 	public String getVersionUserUuid() {
 		String versionUserUuid = StringPool.BLANK;
@@ -689,18 +670,20 @@ public class CMISFileEntry extends CMISModel implements FileEntry {
 	}
 
 	protected List<Document> getAllVersions() throws PortalException {
-		if (_allVersions == null) {
-			try {
-				_document.refresh();
-
-				_allVersions = _document.getAllVersions();
-			}
-			catch (CmisObjectNotFoundException confe) {
-				throw new NoSuchFileEntryException(confe);
-			}
-		}
-
-		return _allVersions;
+//		if (_allVersions == null) {
+//			try {
+//				_document.refresh();				
+//			}
+//			catch (CmisObjectNotFoundException confe) {
+//				throw new NoSuchFileEntryException(confe);
+//			}
+//		}
+//		
+//		return _allVersions;
+		
+		ArrayList<Document> list = new ArrayList<Document>();
+		list.add(_document);
+		return list;				
 	}
 
 	@Override

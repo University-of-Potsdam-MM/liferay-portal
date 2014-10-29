@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -20,7 +20,6 @@ import com.germinus.easyconf.ComponentProperties;
 import com.germinus.easyconf.ConfigurationNotFoundException;
 import com.germinus.easyconf.Conventions;
 
-import com.liferay.portal.kernel.exception.LoggedExceptionInInitializerError;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.SystemProperties;
@@ -127,7 +126,7 @@ public class ClassLoaderComponentConfiguration extends ComponentConfiguration {
 		}
 
 		try {
-			_properties = _CONSTRUCTOR.newInstance(
+			_properties = _constructor.newInstance(
 				new Object[] {classLoaderAggregateProperties});
 		}
 		catch (Exception e) {
@@ -137,30 +136,26 @@ public class ClassLoaderComponentConfiguration extends ComponentConfiguration {
 		return _properties;
 	}
 
-	private static final Constructor<ComponentProperties> _CONSTRUCTOR;
-
 	private static Log _log = LogFactoryUtil.getLog(
 		ClassLoaderComponentConfiguration.class);
 
-	static {
-		Constructor<ComponentProperties> constructor = null;
+	private static Constructor<ComponentProperties> _constructor;
 
+	static {
 		try {
-			constructor = ComponentProperties.class.getDeclaredConstructor(
+			_constructor = ComponentProperties.class.getDeclaredConstructor(
 				AggregatedProperties.class);
 
-			constructor.setAccessible(true);
+			_constructor.setAccessible(true);
 		}
 		catch (Exception e) {
-			throw new LoggedExceptionInInitializerError(e);
+			_log.error(e, e);
 		}
-
-		_CONSTRUCTOR = constructor;
 	}
 
-	private final ClassLoader _classLoader;
-	private final String _companyId;
-	private final String _componentName;
+	private ClassLoader _classLoader;
+	private String _companyId;
+	private String _componentName;
 	private ComponentProperties _properties;
 
 }

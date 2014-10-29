@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -17,11 +17,11 @@
 <%@ include file="/html/portlet/dockbar/init.jsp" %>
 
 <div id="<portlet:namespace />devicePreviewContainer">
-	<aui:button cssClass="close" name="closePanelPreview" value="&times;" />
+	<aui:button cssClass="close pull-right" name="closePanelPreview" value="&times;" />
 
 	<h1><liferay-ui:message key="preview" /></h1>
 
-	<aui:nav>
+	<aui:nav cssClass="nav-list">
 		<aui:nav-item cssClass="autosize lfr-device-item" data-device="autosize">
 			<div class="device-info">
 				<span class="device-name"><liferay-ui:message key="autosize" /></span>
@@ -52,21 +52,12 @@
 
 		<aui:nav-item cssClass="lfr-device-item" data-device="custom">
 			<p><liferay-ui:message key="custom" /> (px)</p>
-				<div class="col-xs-5">
-					<aui:input cssClass="form-control" inlineField="<%= true %>" label="" name="width" value="400" />
-				</div>
 
-				<div class="col-xs-2">
-					<span> &times; </span>
-				</div>
-
-				<div class="col-xs-5">
-					<aui:input cssClass="form-control" inlineField="<%= true %>" label="" name="height" value="400" />
-				</div>
+			<aui:input cssClass="input-mini" inlineField="<%= true %>" label="" name="width" value="400" /><span> &times; </span><aui:input cssClass="input-mini" inlineField="<%= true %>" label="" name="height" value="400" />
 		</aui:nav-item>
 	</aui:nav>
 
-	<div class="alert alert-warning">
+	<div class="alert">
 		<small><liferay-ui:message key="preview-may-not-be-accurate" /></small>
 	</div>
 </div>
@@ -75,9 +66,7 @@
 	var devicePreview = new Liferay.Dockbar.DevicePreview(
 		{
 			devices: {
-				autosize: {
-					skin: 'autosize'
-				},
+				autosize: {},
 				custom: {
 					height: '#<portlet:namespace />height',
 					resizable: true,

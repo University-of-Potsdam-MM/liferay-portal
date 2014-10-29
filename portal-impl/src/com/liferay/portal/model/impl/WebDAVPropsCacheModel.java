@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,12 +14,9 @@
 
 package com.liferay.portal.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.CacheModel;
-import com.liferay.portal.model.MVCCModel;
 import com.liferay.portal.model.WebDAVProps;
 
 import java.io.Externalizable;
@@ -36,26 +33,13 @@ import java.util.Date;
  * @see WebDAVProps
  * @generated
  */
-@ProviderType
 public class WebDAVPropsCacheModel implements CacheModel<WebDAVProps>,
-	Externalizable, MVCCModel {
-	@Override
-	public long getMvccVersion() {
-		return mvccVersion;
-	}
-
-	@Override
-	public void setMvccVersion(long mvccVersion) {
-		this.mvccVersion = mvccVersion;
-	}
-
+	Externalizable {
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(17);
+		StringBundler sb = new StringBundler(15);
 
-		sb.append("{mvccVersion=");
-		sb.append(mvccVersion);
-		sb.append(", webDavPropsId=");
+		sb.append("{webDavPropsId=");
 		sb.append(webDavPropsId);
 		sb.append(", companyId=");
 		sb.append(companyId);
@@ -78,7 +62,6 @@ public class WebDAVPropsCacheModel implements CacheModel<WebDAVProps>,
 	public WebDAVProps toEntityModel() {
 		WebDAVPropsImpl webDAVPropsImpl = new WebDAVPropsImpl();
 
-		webDAVPropsImpl.setMvccVersion(mvccVersion);
 		webDAVPropsImpl.setWebDavPropsId(webDavPropsId);
 		webDAVPropsImpl.setCompanyId(companyId);
 
@@ -113,7 +96,6 @@ public class WebDAVPropsCacheModel implements CacheModel<WebDAVProps>,
 
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
-		mvccVersion = objectInput.readLong();
 		webDavPropsId = objectInput.readLong();
 		companyId = objectInput.readLong();
 		createDate = objectInput.readLong();
@@ -126,7 +108,6 @@ public class WebDAVPropsCacheModel implements CacheModel<WebDAVProps>,
 	@Override
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
-		objectOutput.writeLong(mvccVersion);
 		objectOutput.writeLong(webDavPropsId);
 		objectOutput.writeLong(companyId);
 		objectOutput.writeLong(createDate);
@@ -142,7 +123,6 @@ public class WebDAVPropsCacheModel implements CacheModel<WebDAVProps>,
 		}
 	}
 
-	public long mvccVersion;
 	public long webDavPropsId;
 	public long companyId;
 	public long createDate;

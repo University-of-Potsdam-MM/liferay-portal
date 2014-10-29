@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portlet.softwarecatalog.service.impl;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.security.permission.ActionKeys;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portlet.softwarecatalog.model.SCProductEntry;
@@ -37,7 +38,7 @@ public class SCProductEntryServiceImpl extends SCProductEntryServiceBaseImpl {
 			String repoGroupId, String repoArtifactId, long[] licenseIds,
 			List<byte[]> thumbnails, List<byte[]> fullImages,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		SCPermission.check(
 			getPermissionChecker(), serviceContext.getScopeGroupId(),
@@ -50,7 +51,9 @@ public class SCProductEntryServiceImpl extends SCProductEntryServiceBaseImpl {
 	}
 
 	@Override
-	public void deleteProductEntry(long productEntryId) throws PortalException {
+	public void deleteProductEntry(long productEntryId)
+		throws PortalException, SystemException {
+
 		SCProductEntryPermission.check(
 			getPermissionChecker(), productEntryId, ActionKeys.DELETE);
 
@@ -59,7 +62,7 @@ public class SCProductEntryServiceImpl extends SCProductEntryServiceBaseImpl {
 
 	@Override
 	public SCProductEntry getProductEntry(long productEntryId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		SCProductEntryPermission.check(
 			getPermissionChecker(), productEntryId, ActionKeys.VIEW);
@@ -73,7 +76,7 @@ public class SCProductEntryServiceImpl extends SCProductEntryServiceBaseImpl {
 			String shortDescription, String longDescription, String pageURL,
 			String author, String repoGroupId, String repoArtifactId,
 			long[] licenseIds, List<byte[]> thumbnails, List<byte[]> fullImages)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		SCProductEntryPermission.check(
 			getPermissionChecker(), productEntryId, ActionKeys.UPDATE);

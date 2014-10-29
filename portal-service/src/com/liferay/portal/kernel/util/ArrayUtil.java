@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -28,7 +28,6 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -806,22 +805,6 @@ public class ArrayUtil {
 		return true;
 	}
 
-	public static <T> int count(T[] array, PredicateFilter<T> predicateFilter) {
-		if (isEmpty(array)) {
-			return 0;
-		}
-
-		int count = 0;
-
-		for (T t : array) {
-			if (predicateFilter.filter(t)) {
-				count++;
-			}
-		}
-
-		return count;
-	}
-
 	public static String[] distinct(String[] array) {
 		return distinct(array, null);
 	}
@@ -842,27 +825,15 @@ public class ArrayUtil {
 			set = new TreeSet<String>(comparator);
 		}
 
-		for (String s : array) {
-			set.add(s);
-		}
+		for (int i = 0; i < array.length; i++) {
+			String s = array[i];
 
-		return set.toArray(new String[set.size()]);
-	}
-
-	public static <T> boolean exists(
-		T[] array, PredicateFilter<T> predicateFilter) {
-
-		if (isEmpty(array)) {
-			return false;
-		}
-
-		for (T t : array) {
-			if (predicateFilter.filter(t)) {
-				return true;
+			if (!set.contains(s)) {
+				set.add(s);
 			}
 		}
 
-		return false;
+		return set.toArray(new String[set.size()]);
 	}
 
 	public static boolean[] filter(
@@ -1277,16 +1248,6 @@ public class ArrayUtil {
 		return list.toArray(new String[list.size()]);
 	}
 
-	public static void replace(
-		String[] values, String oldValue, String newValue) {
-
-		for (int i = 0; i < values.length; i++) {
-			if (values[i].equals(oldValue)) {
-				values[i] = newValue;
-			}
-		}
-	}
-
 	public static void reverse(boolean[] array) {
 		for (int left = 0, right = array.length - 1; left < right;
 				left++, right--) {
@@ -1635,17 +1596,6 @@ public class ArrayUtil {
 		return newArray;
 	}
 
-	public static <T, A> A[] toArray(T[] list, Accessor<T, A> accessor) {
-		A[] aArray = (A[])Array.newInstance(
-			accessor.getAttributeClass(), list.length);
-
-		for (int i = 0; i < list.length; i++) {
-			aArray[i] = accessor.get(list[i]);
-		}
-
-		return aArray;
-	}
-
 	public static double[] toDoubleArray(Collection<Double> collection) {
 		double[] newArray = new double[collection.size()];
 
@@ -1754,26 +1704,6 @@ public class ArrayUtil {
 		return newArray;
 	}
 
-	public static Long[] toLongArray(int[] array) {
-		Long[] newArray = new Long[array.length];
-
-		for (int i = 0; i < array.length; i++) {
-			newArray[i] = (long)array[i];
-		}
-
-		return newArray;
-	}
-
-	public static Long[] toLongArray(long[] array) {
-		Long[] newArray = new Long[array.length];
-
-		for (int i = 0; i < array.length; i++) {
-			newArray[i] = array[i];
-		}
-
-		return newArray;
-	}
-
 	public static Long[] toLongArray(Object[] array) {
 		Long[] newArray = new Long[array.length];
 
@@ -1861,21 +1791,21 @@ public class ArrayUtil {
 	/**
 	 * @see ListUtil#toString(List, Accessor)
 	 */
-	public static <T, A> String toString(T[] list, Accessor<T, A> accessor) {
+	public static <T, V> String toString(T[] list, Accessor<T, V> accessor) {
 		return toString(list, accessor, StringPool.COMMA);
 	}
 
 	/**
 	 * @see ListUtil#toString(List, Accessor, String)
 	 */
-	public static <T, A> String toString(
-		T[] list, Accessor<T, A> accessor, String delimiter) {
+	public static <T, V> String toString(
+		T[] list, Accessor<T, V> accessor, String delimiter) {
 
 		return toString(list, accessor, delimiter, null);
 	}
 
-	public static <T, A> String toString(
-		T[] list, Accessor<T, A> accessor, String delimiter, Locale locale) {
+	public static <T, V> String toString(
+		T[] list, Accessor<T, V> accessor, String delimiter, Locale locale) {
 
 		if (isEmpty(list)) {
 			return StringPool.BLANK;
@@ -1886,14 +1816,14 @@ public class ArrayUtil {
 		for (int i = 0; i < list.length; i++) {
 			T bean = list[i];
 
-			A attribute = accessor.get(bean);
+			V value = accessor.get(bean);
 
-			if (attribute != null) {
+			if (value != null) {
 				if (locale != null) {
-					sb.append(LanguageUtil.get(locale, attribute.toString()));
+					sb.append(LanguageUtil.get(locale, value.toString()));
 				}
 				else {
-					sb.append(attribute);
+					sb.append(value);
 				}
 			}
 
@@ -1930,33 +1860,6 @@ public class ArrayUtil {
 
 		for (int i = 0; i < array.length; i++) {
 			newArray[i] = String.valueOf(array[i]);
-		}
-
-		return newArray;
-	}
-
-	public static String[] toStringArray(Collection<String> collection) {
-		String[] newArray = new String[collection.size()];
-
-		if (collection instanceof List) {
-			List<String> list = (List<String>)collection;
-
-			for (int i = 0; i < list.size(); i++) {
-				String value = list.get(i);
-
-				newArray[i] = String.valueOf(value);
-			}
-		}
-		else {
-			int i = 0;
-
-			Iterator<String> iterator = collection.iterator();
-
-			while (iterator.hasNext()) {
-				String value = iterator.next();
-
-				newArray[i++] = String.valueOf(value);
-			}
 		}
 
 		return newArray;
@@ -2043,63 +1946,63 @@ public class ArrayUtil {
 	}
 
 	public static byte[] unique(byte[] array) {
-		Set<Byte> set = new LinkedHashSet<Byte>();
+		List<Byte> list = new UniqueList<Byte>();
 
 		for (int i = 0; i < array.length; i++) {
-			set.add(array[i]);
+			list.add(array[i]);
 		}
 
-		return toArray(set.toArray(new Byte[set.size()]));
+		return toArray(list.toArray(new Byte[list.size()]));
 	}
 
 	public static double[] unique(double[] array) {
-		Set<Double> set = new LinkedHashSet<Double>();
+		List<Double> list = new UniqueList<Double>();
 
 		for (int i = 0; i < array.length; i++) {
-			set.add(array[i]);
+			list.add(array[i]);
 		}
 
-		return toArray(set.toArray(new Double[set.size()]));
+		return toArray(list.toArray(new Double[list.size()]));
 	}
 
 	public static float[] unique(float[] array) {
-		Set<Float> set = new LinkedHashSet<Float>();
+		List<Float> list = new UniqueList<Float>();
 
 		for (int i = 0; i < array.length; i++) {
-			set.add(array[i]);
+			list.add(array[i]);
 		}
 
-		return toArray(set.toArray(new Float[set.size()]));
+		return toArray(list.toArray(new Float[list.size()]));
 	}
 
 	public static int[] unique(int[] array) {
-		Set<Integer> set = new LinkedHashSet<Integer>();
+		List<Integer> list = new UniqueList<Integer>();
 
 		for (int i = 0; i < array.length; i++) {
-			set.add(array[i]);
+			list.add(array[i]);
 		}
 
-		return toArray(set.toArray(new Integer[set.size()]));
+		return toArray(list.toArray(new Integer[list.size()]));
 	}
 
 	public static long[] unique(long[] array) {
-		Set<Long> set = new LinkedHashSet<Long>();
+		List<Long> list = new UniqueList<Long>();
 
 		for (int i = 0; i < array.length; i++) {
-			set.add(array[i]);
+			list.add(array[i]);
 		}
 
-		return toArray(set.toArray(new Long[set.size()]));
+		return toArray(list.toArray(new Long[list.size()]));
 	}
 
 	public static short[] unique(short[] array) {
-		Set<Short> set = new LinkedHashSet<Short>();
+		List<Short> list = new UniqueList<Short>();
 
 		for (int i = 0; i < array.length; i++) {
-			set.add(array[i]);
+			list.add(array[i]);
 		}
 
-		return toArray(set.toArray(new Short[set.size()]));
+		return toArray(list.toArray(new Short[list.size()]));
 	}
 
 }

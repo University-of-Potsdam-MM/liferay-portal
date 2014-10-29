@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -19,17 +19,27 @@ userParams.put("expandoAttributes", searchTerms.getKeywords());
 
 Sort sort = SortFactoryUtil.getSort(User.class, userSearchContainer.getOrderByCol(), userSearchContainer.getOrderByType());
 
-BaseModelSearchResult<User> baseModelSearchResult = null;
+boolean corruptIndex = false;
 
-if (searchTerms.isAdvancedSearch()) {
-	baseModelSearchResult = UserLocalServiceUtil.searchUsers(company.getCompanyId(), searchTerms.getFirstName(), searchTerms.getMiddleName(), searchTerms.getLastName(), searchTerms.getScreenName(), searchTerms.getEmailAddress(), searchTerms.getStatus(), userParams, searchTerms.isAndOperator(), userSearchContainer.getStart(), userSearchContainer.getEnd(), sort);
-}
-else {
-	baseModelSearchResult = UserLocalServiceUtil.searchUsers(company.getCompanyId(), searchTerms.getKeywords(), searchTerms.getStatus(), userParams, userSearchContainer.getStart(), userSearchContainer.getEnd(), sort);
-}
+Hits hits = null;
+Tuple tuple = null;
 
-results = baseModelSearchResult.getBaseModels();
+do {
+	if (searchTerms.isAdvancedSearch()) {
+		hits = UserLocalServiceUtil.search(company.getCompanyId(), searchTerms.getFirstName(), searchTerms.getMiddleName(), searchTerms.getLastName(), searchTerms.getScreenName(), searchTerms.getEmailAddress(), searchTerms.getStatus(), userParams, searchTerms.isAndOperator(), userSearchContainer.getStart(), userSearchContainer.getEnd(), sort);
+	}
+	else {
+		hits = UserLocalServiceUtil.search(company.getCompanyId(), searchTerms.getKeywords(), searchTerms.getStatus(), userParams, userSearchContainer.getStart(), userSearchContainer.getEnd(), sort);
+	}
+
+	tuple = UsersAdminUtil.getUsers(hits);
+
+	corruptIndex = (Boolean)tuple.getObject(1);
+}
+while (corruptIndex);
+
+results = (List<User>)tuple.getObject(0);
 
 userSearchContainer.setResults(results);
-userSearchContainer.setTotal(baseModelSearchResult.getLength());
+userSearchContainer.setTotal(hits.getLength());
 %>

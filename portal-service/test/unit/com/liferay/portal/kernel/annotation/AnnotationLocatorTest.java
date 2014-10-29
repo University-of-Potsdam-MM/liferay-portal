@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -455,6 +455,7 @@ public class AnnotationLocatorTest {
 	}
 
 	private Method _method(final int value) {
+
 		return new Method() {
 
 			@Override
@@ -468,6 +469,7 @@ public class AnnotationLocatorTest {
 			}
 
 		};
+
 	}
 
 	private void _methodListLocate(
@@ -565,8 +567,8 @@ public class AnnotationLocatorTest {
 
 						Assert.assertEquals(
 							"@Type : " + method.getName() + "()@" +
-								clazz.getName(),
-							expectedType.value(), actualType.value());
+							clazz.getName(), expectedType.value(),
+							actualType.value());
 					}
 				}
 			}
@@ -760,9 +762,9 @@ public class AnnotationLocatorTest {
 	@Type(value = 5)
 	private class OriginClass implements OriginInterface2, OriginInterface1 {
 
+		@Override
 		@Method(value = 5)
 		@Mix(value = 5)
-		@Override
 		public void originMethod1() {
 		}
 
@@ -798,8 +800,8 @@ public class AnnotationLocatorTest {
 		public void originMethod2() {
 		}
 
-		@Method(value = 2)
 		@Override
+		@Method(value = 2)
 		public void superMethod1() {
 		}
 
@@ -847,9 +849,9 @@ public class AnnotationLocatorTest {
 		public void superMethod2() {
 		}
 
+		@Override
 		@Method(value = 1)
 		@Mix(value = 1)
-		@Override
 		public void testMethod1() {
 		}
 
@@ -871,8 +873,8 @@ public class AnnotationLocatorTest {
 	@Mix(value = 3)
 	private interface TestInterface2 extends TestInterface1, SuperInterface2 {
 
-		@Method(value = 3)
 		@Override
+		@Method(value = 3)
 		public void superMethod1();
 
 		@Method(value = 3)

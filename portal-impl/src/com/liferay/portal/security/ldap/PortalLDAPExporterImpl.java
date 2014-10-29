@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -22,10 +22,10 @@ import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.model.Contact;
 import com.liferay.portal.model.User;
 import com.liferay.portal.model.UserGroup;
+import com.liferay.portal.security.auth.AuthSettingsUtil;
 import com.liferay.portal.service.UserGroupLocalServiceUtil;
 import com.liferay.portal.service.UserLocalServiceUtil;
 import com.liferay.portal.util.PrefsPropsUtil;
-import com.liferay.portal.util.PropsValues;
 
 import java.io.Serializable;
 
@@ -48,7 +48,6 @@ import javax.naming.ldap.LdapContext;
  * @author Brian Wing Shun Chan
  * @author Marcellus Tavares
  * @author Wesley Gong
- * @author Vilmos Papp
  */
 @DoPrivileged
 public class PortalLDAPExporterImpl implements PortalLDAPExporter {
@@ -60,9 +59,7 @@ public class PortalLDAPExporterImpl implements PortalLDAPExporter {
 
 		long companyId = contact.getCompanyId();
 
-		if (!PrefsPropsUtil.getBoolean(
-				companyId, PropsKeys.LDAP_AUTH_ENABLED,
-				PropsValues.LDAP_AUTH_ENABLED) ||
+		if (!AuthSettingsUtil.isLDAPAuthEnabled(companyId) ||
 			!LDAPSettingsUtil.isExportEnabled(companyId)) {
 
 			return;
@@ -141,9 +138,7 @@ public class PortalLDAPExporterImpl implements PortalLDAPExporter {
 
 		long companyId = user.getCompanyId();
 
-		if (!PrefsPropsUtil.getBoolean(
-				companyId, PropsKeys.LDAP_AUTH_ENABLED,
-				PropsValues.LDAP_AUTH_ENABLED) ||
+		if (!AuthSettingsUtil.isLDAPAuthEnabled(companyId) ||
 			!LDAPSettingsUtil.isExportEnabled(companyId) ||
 			!LDAPSettingsUtil.isExportGroupEnabled(companyId)) {
 
@@ -231,9 +226,7 @@ public class PortalLDAPExporterImpl implements PortalLDAPExporter {
 
 		long companyId = user.getCompanyId();
 
-		if (!PrefsPropsUtil.getBoolean(
-				companyId, PropsKeys.LDAP_AUTH_ENABLED,
-				PropsValues.LDAP_AUTH_ENABLED) ||
+		if (!AuthSettingsUtil.isLDAPAuthEnabled(companyId) ||
 			!LDAPSettingsUtil.isExportEnabled(companyId)) {
 
 			return;
@@ -258,7 +251,7 @@ public class PortalLDAPExporterImpl implements PortalLDAPExporter {
 
 			Binding binding = PortalLDAPUtil.getUser(
 				ldapServerId, user.getCompanyId(), user.getScreenName(),
-				user.getEmailAddress(), true);
+				user.getEmailAddress());
 
 			if (binding == null) {
 				binding = addUser(

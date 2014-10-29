@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portal.convert;
 
 import com.liferay.counter.service.CounterLocalServiceUtil;
+import com.liferay.portal.kernel.dao.orm.FinderCacheUtil;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.test.ExecutionTestListeners;
@@ -28,17 +29,17 @@ import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.Image;
 import com.liferay.portal.model.User;
+import com.liferay.portal.service.GroupLocalServiceUtil;
 import com.liferay.portal.service.ImageLocalServiceUtil;
 import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.test.DeleteAfterTestRun;
-import com.liferay.portal.test.listeners.MainServletExecutionTestListener;
-import com.liferay.portal.test.runners.LiferayIntegrationJUnitTestRunner;
+import com.liferay.portal.service.ServiceTestUtil;
+import com.liferay.portal.test.EnvironmentExecutionTestListener;
+import com.liferay.portal.test.LiferayIntegrationJUnitTestRunner;
+import com.liferay.portal.test.MainServletExecutionTestListener;
 import com.liferay.portal.util.ClassLoaderUtil;
+import com.liferay.portal.util.GroupTestUtil;
 import com.liferay.portal.util.PropsValues;
-import com.liferay.portal.util.test.GroupTestUtil;
-import com.liferay.portal.util.test.RandomTestUtil;
-import com.liferay.portal.util.test.ServiceContextTestUtil;
-import com.liferay.portal.util.test.TestPropsValues;
+import com.liferay.portal.util.TestPropsValues;
 import com.liferay.portlet.documentlibrary.NoSuchContentException;
 import com.liferay.portlet.documentlibrary.model.DLFileEntry;
 import com.liferay.portlet.documentlibrary.model.DLFolderConstants;
@@ -48,15 +49,15 @@ import com.liferay.portlet.documentlibrary.store.DBStore;
 import com.liferay.portlet.documentlibrary.store.FileSystemStore;
 import com.liferay.portlet.documentlibrary.store.Store;
 import com.liferay.portlet.documentlibrary.store.StoreFactory;
-import com.liferay.portlet.documentlibrary.util.test.DLAppTestUtil;
+import com.liferay.portlet.documentlibrary.util.DLAppTestUtil;
 import com.liferay.portlet.messageboards.model.MBCategoryConstants;
 import com.liferay.portlet.messageboards.model.MBMessage;
 import com.liferay.portlet.messageboards.model.MBMessageConstants;
 import com.liferay.portlet.messageboards.service.MBMessageLocalServiceUtil;
-import com.liferay.portlet.messageboards.util.test.MBTestUtil;
+import com.liferay.portlet.messageboards.util.MBTestUtil;
 import com.liferay.portlet.wiki.model.WikiNode;
 import com.liferay.portlet.wiki.model.WikiPage;
-import com.liferay.portlet.wiki.util.test.WikiTestUtil;
+import com.liferay.portlet.wiki.util.WikiTestUtil;
 
 import java.io.InputStream;
 
@@ -75,13 +76,16 @@ import org.junit.runner.RunWith;
  */
 @ExecutionTestListeners(
 	listeners = {
-		MainServletExecutionTestListener.class
+		MainServletExecutionTestListener.class,
+		EnvironmentExecutionTestListener.class
 	})
 @RunWith(LiferayIntegrationJUnitTestRunner.class)
 public class ConvertDocumentLibraryTest {
 
 	@Before
 	public void setUp() throws Exception {
+		FinderCacheUtil.clearCache();
+
 		PropsValues.DL_STORE_IMPL = FileSystemStore.class.getName();
 
 		Store store = (Store)InstanceFactory.newInstance(
@@ -107,13 +111,15 @@ public class ConvertDocumentLibraryTest {
 			ClassLoaderUtil.getPortalClassLoader(), PropsValues.DL_STORE_IMPL);
 
 		StoreFactory.setInstance(store);
+
+		GroupLocalServiceUtil.deleteGroup(_group);
 	}
 
 	@Test
 	public void testMigrateDLWhenFileEntryInFolder() throws Exception {
 		Folder folder = DLAppTestUtil.addFolder(
 			_group.getGroupId(), DLFolderConstants.DEFAULT_PARENT_FOLDER_ID,
-			RandomTestUtil.randomString());
+			ServiceTestUtil.randomString());
 
 		testMigrateDL(folder.getFolderId());
 	}
@@ -127,19 +133,14 @@ public class ConvertDocumentLibraryTest {
 	public void testMigrateImages() throws Exception {
 		Image image = addImage();
 
-		try {
-			_convertProcess.convert();
+		_convertProcess.convert();
 
-			try {
-				DLContentLocalServiceUtil.getContent(
-					0, 0, image.getImageId() + ".jpg");
-			}
-			catch (NoSuchContentException nsce) {
-				Assert.fail();
-			}
+		try {
+			DLContentLocalServiceUtil.getContent(
+				0, 0, image.getImageId() + ".jpg");
 		}
-		finally {
-			ImageLocalServiceUtil.deleteImage(image);
+		catch (NoSuchContentException nsce) {
+			Assert.fail();
 		}
 	}
 
@@ -206,7 +207,8 @@ public class ConvertDocumentLibraryTest {
 	protected Image addImage() throws Exception {
 		return ImageLocalServiceUtil.updateImage(
 			CounterLocalServiceUtil.increment(),
-			FileUtil.getBytes(getClass(), "dependencies/liferay.jpg"));
+			FileUtil.getBytes(
+				getClass().getResourceAsStream("dependencies/liferay.jpg")));
 	}
 
 	protected MBMessage addMBMessageAttachment() throws Exception {
@@ -214,8 +216,8 @@ public class ConvertDocumentLibraryTest {
 			MBTestUtil.getInputStreamOVPs(
 				"OSX_Test.docx", getClass(), StringPool.BLANK);
 
-		ServiceContext serviceContext =
-			ServiceContextTestUtil.getServiceContext(_group.getGroupId());
+		ServiceContext serviceContext = ServiceTestUtil.getServiceContext(
+			_group.getGroupId());
 
 		User user = TestPropsValues.getUser();
 
@@ -227,11 +229,13 @@ public class ConvertDocumentLibraryTest {
 	}
 
 	protected WikiPage addWikiPage() throws Exception {
-		WikiNode wikiNode = WikiTestUtil.addNode(_group.getGroupId());
+		WikiNode wikiNode = WikiTestUtil.addNode(
+			TestPropsValues.getUserId(), _group.getGroupId(),
+			ServiceTestUtil.randomString(), ServiceTestUtil.randomString(50));
 
 		return WikiTestUtil.addPage(
 			wikiNode.getUserId(), _group.getGroupId(), wikiNode.getNodeId(),
-			RandomTestUtil.randomString(), true);
+			ServiceTestUtil.randomString(), true);
 	}
 
 	protected void addWikiPageAttachment(WikiPage wikiPage) throws Exception {
@@ -263,7 +267,7 @@ public class ConvertDocumentLibraryTest {
 	protected void testMigrateDL(long folderId) throws Exception {
 		FileEntry fileEntry = DLAppTestUtil.addFileEntry(
 			_group.getGroupId(), folderId,
-			RandomTestUtil.randomString() + ".txt");
+			ServiceTestUtil.randomString() + ".txt");
 
 		_convertProcess.convert();
 
@@ -282,8 +286,6 @@ public class ConvertDocumentLibraryTest {
 	}
 
 	private ConvertProcess _convertProcess;
-
-	@DeleteAfterTestRun
 	private Group _group;
 
 }

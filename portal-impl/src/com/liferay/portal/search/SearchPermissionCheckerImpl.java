@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -31,6 +31,7 @@ import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.UniqueList;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.model.GroupConstants;
@@ -55,10 +56,8 @@ import com.liferay.portal.util.PortalUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @author Allen Chiang
@@ -294,9 +293,9 @@ public class SearchPermissionCheckerImpl implements SearchPermissionChecker {
 			return query;
 		}
 
-		Set<Group> groups = new LinkedHashSet<Group>();
-		Set<Role> roles = new LinkedHashSet<Role>();
-		Set<UserGroupRole> userGroupRoles = new LinkedHashSet<UserGroupRole>();
+		List<Group> groups = new UniqueList<Group>();
+		List<Role> roles = new UniqueList<Role>();
+		List<UserGroupRole> userGroupRoles = new UniqueList<UserGroupRole>();
 		Map<Long, List<Role>> groupIdsToRoles = new HashMap<Long, List<Role>>();
 
 		roles.addAll(permissionCheckerBag.getRoles());
@@ -305,8 +304,8 @@ public class SearchPermissionCheckerImpl implements SearchPermissionChecker {
 			groups.addAll(GroupLocalServiceUtil.getUserGroups(userId, true));
 			groups.addAll(permissionCheckerBag.getGroups());
 
-			userGroupRoles.addAll(
-				UserGroupRoleLocalServiceUtil.getUserGroupRoles( userId));
+			userGroupRoles = UserGroupRoleLocalServiceUtil.getUserGroupRoles(
+				userId);
 		}
 		else {
 			groups.addAll(permissionCheckerBag.getGroups());
@@ -354,8 +353,8 @@ public class SearchPermissionCheckerImpl implements SearchPermissionChecker {
 			long companyId, long[] groupIds, long userId, String className,
 			Query query, SearchContext searchContext,
 			AdvancedPermissionChecker advancedPermissionChecker,
-			Set<Group> groups, Set<Role> roles,
-			Set<UserGroupRole> userGroupRoles,
+			List<Group> groups, List<Role> roles,
+			List<UserGroupRole> userGroupRoles,
 			Map<Long, List<Role>> groupIdsToRoles)
 		throws Exception {
 
@@ -427,16 +426,6 @@ public class SearchPermissionCheckerImpl implements SearchPermissionChecker {
 						Field.GROUP_ROLE_ID,
 						group.getGroupId() + StringPool.DASH +
 							role.getRoleId());
-				}
-			}
-
-			for (long groupId : groupIds) {
-				if (ResourcePermissionLocalServiceUtil.hasResourcePermission(
-						companyId, className, ResourceConstants.SCOPE_GROUP,
-						String.valueOf(groupId), role.getRoleId(),
-						ActionKeys.VIEW)) {
-
-					groupsQuery.addTerm(Field.GROUP_ID, groupId);
 				}
 			}
 

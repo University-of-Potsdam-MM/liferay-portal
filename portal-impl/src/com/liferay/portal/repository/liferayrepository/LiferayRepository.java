@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,13 +15,15 @@
 package com.liferay.portal.repository.liferayrepository;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.repository.Repository;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.FileVersion;
 import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.Indexer;
-import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.search.Query;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.SearchEngineUtil;
@@ -38,6 +40,9 @@ import com.liferay.portal.service.RepositoryLocalService;
 import com.liferay.portal.service.RepositoryService;
 import com.liferay.portal.service.ResourceLocalService;
 import com.liferay.portal.service.ServiceContext;
+import com.liferay.portlet.documentlibrary.NoSuchFileEntryException;
+import com.liferay.portlet.documentlibrary.NoSuchFileVersionException;
+import com.liferay.portlet.documentlibrary.NoSuchFolderException;
 import com.liferay.portlet.documentlibrary.model.DLFileEntry;
 import com.liferay.portlet.documentlibrary.model.DLFileVersion;
 import com.liferay.portlet.documentlibrary.model.DLFolder;
@@ -50,9 +55,6 @@ import com.liferay.portlet.documentlibrary.service.DLFileVersionService;
 import com.liferay.portlet.documentlibrary.service.DLFolderLocalService;
 import com.liferay.portlet.documentlibrary.service.DLFolderService;
 import com.liferay.portlet.documentlibrary.util.DLSearcher;
-import com.liferay.portlet.documentlibrary.util.RepositoryModelUtil;
-import com.liferay.portlet.documentlibrary.util.comparator.DLFileEntryOrderByComparator;
-import com.liferay.portlet.documentlibrary.util.comparator.DLFolderOrderByComparator;
 import com.liferay.portlet.dynamicdatamapping.storage.Fields;
 
 import java.io.File;
@@ -78,15 +80,36 @@ public class LiferayRepository
 		DLFileVersionService dlFileVersionService,
 		DLFolderLocalService dlFolderLocalService,
 		DLFolderService dlFolderService,
-		ResourceLocalService resourceLocalService, long groupId,
-		long repositoryId, long dlFolderId) {
+		ResourceLocalService resourceLocalService, long repositoryId) {
 
 		super(
 			repositoryLocalService, repositoryService, dlAppHelperLocalService,
 			dlFileEntryLocalService, dlFileEntryService,
 			dlFileEntryTypeLocalService, dlFileVersionLocalService,
 			dlFileVersionService, dlFolderLocalService, dlFolderService,
-			resourceLocalService, groupId, repositoryId, dlFolderId);
+			resourceLocalService, repositoryId);
+	}
+
+	public LiferayRepository(
+		RepositoryLocalService repositoryLocalService,
+		RepositoryService repositoryService,
+		DLAppHelperLocalService dlAppHelperLocalService,
+		DLFileEntryLocalService dlFileEntryLocalService,
+		DLFileEntryService dlFileEntryService,
+		DLFileEntryTypeLocalService dlFileEntryTypeLocalService,
+		DLFileVersionLocalService dlFileVersionLocalService,
+		DLFileVersionService dlFileVersionService,
+		DLFolderLocalService dlFolderLocalService,
+		DLFolderService dlFolderService,
+		ResourceLocalService resourceLocalService, long folderId,
+		long fileEntryId, long fileVersionId) {
+
+		super(
+			repositoryLocalService, repositoryService, dlAppHelperLocalService,
+			dlFileEntryLocalService, dlFileEntryService,
+			dlFileEntryTypeLocalService, dlFileVersionLocalService,
+			dlFileVersionService, dlFolderLocalService, dlFolderService,
+			resourceLocalService, folderId, fileEntryId, fileVersionId);
 	}
 
 	@Override
@@ -94,7 +117,7 @@ public class LiferayRepository
 			long folderId, String sourceFileName, String mimeType, String title,
 			String description, String changeLog, File file,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		long fileEntryTypeId = ParamUtil.getLong(
 			serviceContext, "fileEntryTypeId",
@@ -124,7 +147,7 @@ public class LiferayRepository
 			long folderId, String sourceFileName, String mimeType, String title,
 			String description, String changeLog, InputStream is, long size,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		long fileEntryTypeId = ParamUtil.getLong(
 			serviceContext, "fileEntryTypeId",
@@ -145,21 +168,23 @@ public class LiferayRepository
 
 	@Override
 	public Folder addFolder(
-			long parentFolderId, String name, String description,
+			long parentFolderId, String title, String description,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		boolean mountPoint = ParamUtil.getBoolean(serviceContext, "mountPoint");
 
 		DLFolder dlFolder = dlFolderService.addFolder(
 			getGroupId(), getRepositoryId(), mountPoint,
-			toFolderId(parentFolderId), name, description, serviceContext);
+			toFolderId(parentFolderId), title, description, serviceContext);
 
 		return new LiferayFolder(dlFolder);
 	}
 
 	@Override
-	public FileVersion cancelCheckOut(long fileEntryId) throws PortalException {
+	public FileVersion cancelCheckOut(long fileEntryId)
+		throws PortalException, SystemException {
+
 		DLFileVersion dlFileVersion = dlFileEntryService.cancelCheckOut(
 			fileEntryId);
 
@@ -174,7 +199,7 @@ public class LiferayRepository
 	public void checkInFileEntry(
 			long fileEntryId, boolean major, String changeLog,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		dlFileEntryService.checkInFileEntry(
 			fileEntryId, major, changeLog, serviceContext);
@@ -184,10 +209,9 @@ public class LiferayRepository
 	 * @deprecated As of 6.2.0, replaced by {@link #checkInFileEntry(long,
 	 *             String, ServiceContext)}
 	 */
-	@Deprecated
 	@Override
 	public void checkInFileEntry(long fileEntryId, String lockUuid)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		checkInFileEntry(fileEntryId, lockUuid, new ServiceContext());
 	}
@@ -195,7 +219,7 @@ public class LiferayRepository
 	@Override
 	public void checkInFileEntry(
 			long fileEntryId, String lockUuid, ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		dlFileEntryService.checkInFileEntry(
 			fileEntryId, lockUuid, serviceContext);
@@ -204,7 +228,7 @@ public class LiferayRepository
 	@Override
 	public FileEntry checkOutFileEntry(
 			long fileEntryId, ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		DLFileEntry dlFileEntry = dlFileEntryService.checkOutFileEntry(
 			fileEntryId, serviceContext);
@@ -216,7 +240,7 @@ public class LiferayRepository
 	public FileEntry checkOutFileEntry(
 			long fileEntryId, String owner, long expirationTime,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		DLFileEntry dlFileEntry = dlFileEntryService.checkOutFileEntry(
 			fileEntryId, owner, expirationTime, serviceContext);
@@ -228,7 +252,7 @@ public class LiferayRepository
 	public FileEntry copyFileEntry(
 			long groupId, long fileEntryId, long destFolderId,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		DLFileEntry dlFileEntry = dlFileEntryService.copyFileEntry(
 			groupId, getRepositoryId(), fileEntryId, destFolderId,
@@ -238,13 +262,15 @@ public class LiferayRepository
 	}
 
 	@Override
-	public void deleteFileEntry(long fileEntryId) throws PortalException {
+	public void deleteFileEntry(long fileEntryId)
+		throws PortalException, SystemException {
+
 		dlFileEntryService.deleteFileEntry(fileEntryId);
 	}
 
 	@Override
 	public void deleteFileEntry(long folderId, String title)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		dlFileEntryService.deleteFileEntry(
 			getGroupId(), toFolderId(folderId), title);
@@ -252,78 +278,77 @@ public class LiferayRepository
 
 	@Override
 	public void deleteFileVersion(long fileEntryId, String version)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		dlFileEntryService.deleteFileVersion(fileEntryId, version);
 	}
 
 	@Override
-	public void deleteFolder(long folderId) throws PortalException {
+	public void deleteFolder(long folderId)
+		throws PortalException, SystemException {
+
 		dlFolderService.deleteFolder(folderId);
 	}
 
 	@Override
-	public void deleteFolder(long parentFolderId, String name)
-		throws PortalException {
+	public void deleteFolder(long parentFolderId, String title)
+		throws PortalException, SystemException {
 
 		dlFolderService.deleteFolder(
-			getGroupId(), toFolderId(parentFolderId), name);
+			getGroupId(), toFolderId(parentFolderId), title);
 	}
 
 	@Override
 	public List<FileEntry> getFileEntries(
-			long folderId, int start, int end, OrderByComparator<FileEntry> obc)
-		throws PortalException {
+			long folderId, int start, int end, OrderByComparator obc)
+		throws PortalException, SystemException {
 
 		List<DLFileEntry> dlFileEntries = dlFileEntryService.getFileEntries(
-			getGroupId(), toFolderId(folderId), start, end,
-			DLFileEntryOrderByComparator.getOrderByComparator(obc));
+			getGroupId(), toFolderId(folderId), start, end, obc);
 
-		return RepositoryModelUtil.toFileEntries(dlFileEntries);
+		return toFileEntries(dlFileEntries);
 	}
 
 	@Override
 	public List<FileEntry> getFileEntries(
 			long folderId, long fileEntryTypeId, int start, int end,
-			OrderByComparator<FileEntry> obc)
-		throws PortalException {
+			OrderByComparator obc)
+		throws PortalException, SystemException {
 
 		List<DLFileEntry> dlFileEntries = dlFileEntryService.getFileEntries(
 			getGroupId(), toFolderId(folderId), fileEntryTypeId, start, end,
-			DLFileEntryOrderByComparator.getOrderByComparator(obc));
+			obc);
 
-		return RepositoryModelUtil.toFileEntries(dlFileEntries);
+		return toFileEntries(dlFileEntries);
 	}
 
 	@Override
 	public List<FileEntry> getFileEntries(
 			long folderId, String[] mimeTypes, int start, int end,
-			OrderByComparator<FileEntry> obc)
-		throws PortalException {
+			OrderByComparator obc)
+		throws PortalException, SystemException {
 
 		List<DLFileEntry> dlFileEntries = dlFileEntryService.getFileEntries(
-			getGroupId(), toFolderId(folderId), mimeTypes, start, end,
-			DLFileEntryOrderByComparator.getOrderByComparator(obc));
+			getGroupId(), toFolderId(folderId), mimeTypes, start, end, obc);
 
-		return RepositoryModelUtil.toFileEntries(dlFileEntries);
+		return toFileEntries(dlFileEntries);
 	}
 
 	@Override
 	public List<Object> getFileEntriesAndFileShortcuts(
 			long folderId, int status, int start, int end)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		List<Object> dlFileEntriesAndFileShortcuts =
 			dlFolderService.getFileEntriesAndFileShortcuts(
 				getGroupId(), toFolderId(folderId), status, start, end);
 
-		return RepositoryModelUtil.toFileEntriesAndFolders(
-			dlFileEntriesAndFileShortcuts);
+		return toFileEntriesAndFolders(dlFileEntriesAndFileShortcuts);
 	}
 
 	@Override
 	public int getFileEntriesAndFileShortcutsCount(long folderId, int status)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return dlFolderService.getFileEntriesAndFileShortcutsCount(
 			getGroupId(), toFolderId(folderId), status);
@@ -332,32 +357,38 @@ public class LiferayRepository
 	@Override
 	public int getFileEntriesAndFileShortcutsCount(
 			long folderId, int status, String[] mimeTypes)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return dlFolderService.getFileEntriesAndFileShortcutsCount(
 			getGroupId(), toFolderId(folderId), status, mimeTypes);
 	}
 
 	@Override
-	public int getFileEntriesCount(long folderId) {
+	public int getFileEntriesCount(long folderId) throws SystemException {
 		return dlFileEntryService.getFileEntriesCount(
 			getGroupId(), toFolderId(folderId));
 	}
 
 	@Override
-	public int getFileEntriesCount(long folderId, long fileEntryTypeId) {
+	public int getFileEntriesCount(long folderId, long fileEntryTypeId)
+		throws SystemException {
+
 		return dlFileEntryService.getFileEntriesCount(
 			getGroupId(), toFolderId(folderId), fileEntryTypeId);
 	}
 
 	@Override
-	public int getFileEntriesCount(long folderId, String[] mimeTypes) {
+	public int getFileEntriesCount(long folderId, String[] mimeTypes)
+		throws SystemException {
+
 		return dlFileEntryService.getFileEntriesCount(
 			getGroupId(), folderId, mimeTypes);
 	}
 
 	@Override
-	public FileEntry getFileEntry(long fileEntryId) throws PortalException {
+	public FileEntry getFileEntry(long fileEntryId)
+		throws PortalException, SystemException {
+
 		DLFileEntry dlFileEntry = dlFileEntryService.getFileEntry(fileEntryId);
 
 		return new LiferayFileEntry(dlFileEntry);
@@ -365,7 +396,7 @@ public class LiferayRepository
 
 	@Override
 	public FileEntry getFileEntry(long folderId, String title)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		DLFileEntry dlFileEntry = dlFileEntryService.getFileEntry(
 			getGroupId(), toFolderId(folderId), title);
@@ -374,7 +405,9 @@ public class LiferayRepository
 	}
 
 	@Override
-	public FileEntry getFileEntryByUuid(String uuid) throws PortalException {
+	public FileEntry getFileEntryByUuid(String uuid)
+		throws PortalException, SystemException {
+
 		DLFileEntry dlFileEntry =
 			dlFileEntryService.getFileEntryByUuidAndGroupId(uuid, getGroupId());
 
@@ -387,7 +420,7 @@ public class LiferayRepository
 
 	@Override
 	public FileVersion getFileVersion(long fileVersionId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		DLFileVersion dlFileVersion = dlFileVersionService.getFileVersion(
 			fileVersionId);
@@ -396,18 +429,20 @@ public class LiferayRepository
 	}
 
 	@Override
-	public Folder getFolder(long folderId) throws PortalException {
+	public Folder getFolder(long folderId)
+		throws PortalException, SystemException {
+
 		DLFolder dlFolder = dlFolderService.getFolder(toFolderId(folderId));
 
 		return new LiferayFolder(dlFolder);
 	}
 
 	@Override
-	public Folder getFolder(long parentFolderId, String name)
-		throws PortalException {
+	public Folder getFolder(long parentFolderId, String title)
+		throws PortalException, SystemException {
 
 		DLFolder dlFolder = dlFolderService.getFolder(
-			getGroupId(), toFolderId(parentFolderId), name);
+			getGroupId(), toFolderId(parentFolderId), title);
 
 		return new LiferayFolder(dlFolder);
 	}
@@ -415,8 +450,8 @@ public class LiferayRepository
 	@Override
 	public List<Folder> getFolders(
 			long parentFolderId, boolean includeMountfolders, int start,
-			int end, OrderByComparator<Folder> obc)
-		throws PortalException {
+			int end, OrderByComparator obc)
+		throws PortalException, SystemException {
 
 		return getFolders(
 			parentFolderId, WorkflowConstants.STATUS_APPROVED,
@@ -426,52 +461,49 @@ public class LiferayRepository
 	@Override
 	public List<Folder> getFolders(
 			long parentFolderId, int status, boolean includeMountfolders,
-			int start, int end, OrderByComparator<Folder> obc)
-		throws PortalException {
+			int start, int end, OrderByComparator obc)
+		throws PortalException, SystemException {
 
 		List<DLFolder> dlFolders = dlFolderService.getFolders(
 			getGroupId(), toFolderId(parentFolderId), status,
-			includeMountfolders, start, end,
-			DLFolderOrderByComparator.getOrderByComparator(obc));
+			includeMountfolders, start, end, obc);
 
-		return RepositoryModelUtil.toFolders(dlFolders);
+		return toFolders(dlFolders);
 	}
 
 	@Override
 	public List<Object> getFoldersAndFileEntriesAndFileShortcuts(
 			long folderId, int status, boolean includeMountFolders, int start,
-			int end, OrderByComparator<?> obc)
-		throws PortalException {
+			int end, OrderByComparator obc)
+		throws PortalException, SystemException {
 
 		List<Object> dlFoldersAndFileEntriesAndFileShortcuts =
 			dlFolderService.getFoldersAndFileEntriesAndFileShortcuts(
 				getGroupId(), toFolderId(folderId), status, includeMountFolders,
 				start, end, obc);
 
-		return RepositoryModelUtil.toFileEntriesAndFolders(
-			dlFoldersAndFileEntriesAndFileShortcuts);
+		return toFileEntriesAndFolders(dlFoldersAndFileEntriesAndFileShortcuts);
 	}
 
 	@Override
 	public List<Object> getFoldersAndFileEntriesAndFileShortcuts(
 			long folderId, int status, String[] mimeTypes,
 			boolean includeMountFolders, int start, int end,
-			OrderByComparator<?> obc)
-		throws PortalException {
+			OrderByComparator obc)
+		throws PortalException, SystemException {
 
 		List<Object> dlFoldersAndFileEntriesAndFileShortcuts =
 			dlFolderService.getFoldersAndFileEntriesAndFileShortcuts(
 				getGroupId(), toFolderId(folderId), status, mimeTypes,
 				includeMountFolders, start, end, obc);
 
-		return RepositoryModelUtil.toFileEntriesAndFolders(
-			dlFoldersAndFileEntriesAndFileShortcuts);
+		return toFileEntriesAndFolders(dlFoldersAndFileEntriesAndFileShortcuts);
 	}
 
 	@Override
 	public int getFoldersAndFileEntriesAndFileShortcutsCount(
 			long folderId, int status, boolean includeMountFolders)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return dlFolderService.getFoldersAndFileEntriesAndFileShortcutsCount(
 			getGroupId(), toFolderId(folderId), status, includeMountFolders);
@@ -481,7 +513,7 @@ public class LiferayRepository
 	public int getFoldersAndFileEntriesAndFileShortcutsCount(
 			long folderId, int status, String[] mimeTypes,
 			boolean includeMountFolders)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return dlFolderService.getFoldersAndFileEntriesAndFileShortcutsCount(
 			getGroupId(), toFolderId(folderId), status, mimeTypes,
@@ -490,7 +522,7 @@ public class LiferayRepository
 
 	@Override
 	public int getFoldersCount(long parentFolderId, boolean includeMountfolders)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return getFoldersCount(
 			parentFolderId, WorkflowConstants.STATUS_APPROVED,
@@ -500,7 +532,7 @@ public class LiferayRepository
 	@Override
 	public int getFoldersCount(
 			long parentFolderId, int status, boolean includeMountfolders)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return dlFolderService.getFoldersCount(
 			getGroupId(), toFolderId(parentFolderId), status,
@@ -508,27 +540,27 @@ public class LiferayRepository
 	}
 
 	@Override
-	public int getFoldersFileEntriesCount(List<Long> folderIds, int status) {
+	public int getFoldersFileEntriesCount(List<Long> folderIds, int status)
+		throws SystemException {
+
 		return dlFileEntryService.getFoldersFileEntriesCount(
 			getGroupId(), toFolderIds(folderIds), status);
 	}
 
 	@Override
 	public List<Folder> getMountFolders(
-			long parentFolderId, int start, int end,
-			OrderByComparator<Folder> obc)
-		throws PortalException {
+			long parentFolderId, int start, int end, OrderByComparator obc)
+		throws PortalException, SystemException {
 
 		List<DLFolder> dlFolders = dlFolderService.getMountFolders(
-			getGroupId(), toFolderId(parentFolderId), start, end,
-			DLFolderOrderByComparator.getOrderByComparator(obc));
+			getGroupId(), toFolderId(parentFolderId), start, end, obc);
 
-		return RepositoryModelUtil.toFolders(dlFolders);
+		return toFolders(dlFolders);
 	}
 
 	@Override
 	public int getMountFoldersCount(long parentFolderId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return dlFolderService.getMountFoldersCount(
 			getGroupId(), toFolderId(parentFolderId));
@@ -537,35 +569,34 @@ public class LiferayRepository
 	@Override
 	public List<FileEntry> getRepositoryFileEntries(
 			long userId, long rootFolderId, int start, int end,
-			OrderByComparator<FileEntry> obc)
-		throws PortalException {
+			OrderByComparator obc)
+		throws PortalException, SystemException {
 
 		List<DLFileEntry> dlFileEntries =
 			dlFileEntryService.getGroupFileEntries(
 				getGroupId(), userId, toFolderId(rootFolderId), start, end,
-				DLFileEntryOrderByComparator.getOrderByComparator(obc));
+				obc);
 
-		return RepositoryModelUtil.toFileEntries(dlFileEntries);
+		return toFileEntries(dlFileEntries);
 	}
 
 	@Override
 	public List<FileEntry> getRepositoryFileEntries(
 			long userId, long rootFolderId, String[] mimeTypes, int status,
-			int start, int end, OrderByComparator<FileEntry> obc)
-		throws PortalException {
+			int start, int end, OrderByComparator obc)
+		throws PortalException, SystemException {
 
 		List<DLFileEntry> dlFileEntries =
 			dlFileEntryService.getGroupFileEntries(
-				getGroupId(), userId, getRepositoryId(),
-				toFolderId(rootFolderId), mimeTypes, status, start, end,
-				DLFileEntryOrderByComparator.getOrderByComparator(obc));
+				getGroupId(), userId, toFolderId(rootFolderId), mimeTypes,
+				status, start, end, obc);
 
-		return RepositoryModelUtil.toFileEntries(dlFileEntries);
+		return toFileEntries(dlFileEntries);
 	}
 
 	@Override
 	public int getRepositoryFileEntriesCount(long userId, long rootFolderId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return dlFileEntryService.getGroupFileEntriesCount(
 			getGroupId(), userId, toFolderId(rootFolderId));
@@ -574,24 +605,23 @@ public class LiferayRepository
 	@Override
 	public int getRepositoryFileEntriesCount(
 			long userId, long rootFolderId, String[] mimeTypes, int status)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return dlFileEntryService.getGroupFileEntriesCount(
-			getGroupId(), userId, getRepositoryId(), toFolderId(rootFolderId),
-			mimeTypes, status);
+			getGroupId(), userId, toFolderId(rootFolderId), mimeTypes, status);
 	}
 
 	@Override
 	public void getSubfolderIds(List<Long> folderIds, long folderId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		dlFolderService.getSubfolderIds(
-			folderIds, getGroupId(), toFolderId(folderId), true);
+			folderIds, getGroupId(), toFolderId(folderId));
 	}
 
 	@Override
 	public List<Long> getSubfolderIds(long folderId, boolean recurse)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return dlFolderService.getSubfolderIds(
 			getGroupId(), toFolderId(folderId), recurse);
@@ -601,9 +631,10 @@ public class LiferayRepository
 	 * @deprecated As of 6.2.0, replaced by {@link #checkOutFileEntry(long,
 	 *             ServiceContext)}
 	 */
-	@Deprecated
 	@Override
-	public Lock lockFileEntry(long fileEntryId) throws PortalException {
+	public Lock lockFileEntry(long fileEntryId)
+		throws PortalException, SystemException {
+
 		FileEntry fileEntry = checkOutFileEntry(
 			fileEntryId, new ServiceContext());
 
@@ -614,11 +645,10 @@ public class LiferayRepository
 	 * @deprecated As of 6.2.0, replaced by {@link #checkOutFileEntry(long,
 	 *             String, long, ServiceContext)}
 	 */
-	@Deprecated
 	@Override
 	public Lock lockFileEntry(
 			long fileEntryId, String owner, long expirationTime)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		FileEntry fileEntry = checkOutFileEntry(
 			fileEntryId, owner, expirationTime, new ServiceContext());
@@ -627,7 +657,9 @@ public class LiferayRepository
 	}
 
 	@Override
-	public Lock lockFolder(long folderId) throws PortalException {
+	public Lock lockFolder(long folderId)
+		throws PortalException, SystemException {
+
 		return dlFolderService.lockFolder(toFolderId(folderId));
 	}
 
@@ -635,7 +667,7 @@ public class LiferayRepository
 	public Lock lockFolder(
 			long folderId, String owner, boolean inheritable,
 			long expirationTime)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return dlFolderService.lockFolder(
 			toFolderId(folderId), owner, inheritable, expirationTime);
@@ -644,7 +676,7 @@ public class LiferayRepository
 	@Override
 	public FileEntry moveFileEntry(
 			long fileEntryId, long newFolderId, ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		DLFileEntry dlFileEntry = dlFileEntryService.moveFileEntry(
 			fileEntryId, toFolderId(newFolderId), serviceContext);
@@ -655,7 +687,7 @@ public class LiferayRepository
 	@Override
 	public Folder moveFolder(
 			long folderId, long parentFolderId, ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		DLFolder dlFolder = dlFolderService.moveFolder(
 			toFolderId(folderId), toFolderId(parentFolderId), serviceContext);
@@ -666,7 +698,7 @@ public class LiferayRepository
 	@Override
 	public Lock refreshFileEntryLock(
 			String lockUuid, long companyId, long expirationTime)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return dlFileEntryService.refreshFileEntryLock(
 			lockUuid, companyId, expirationTime);
@@ -675,7 +707,7 @@ public class LiferayRepository
 	@Override
 	public Lock refreshFolderLock(
 			String lockUuid, long companyId, long expirationTime)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return dlFolderService.refreshFolderLock(
 			lockUuid, companyId, expirationTime);
@@ -684,7 +716,7 @@ public class LiferayRepository
 	@Override
 	public void revertFileEntry(
 			long fileEntryId, String version, ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		dlFileEntryService.revertFileEntry(
 			fileEntryId, version, serviceContext);
@@ -692,7 +724,7 @@ public class LiferayRepository
 
 	@Override
 	public Hits search(long creatorUserId, int status, int start, int end)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return dlFileEntryService.search(
 			getGroupId(), creatorUserId, status, start, end);
@@ -702,7 +734,7 @@ public class LiferayRepository
 	public Hits search(
 			long creatorUserId, long folderId, String[] mimeTypes, int status,
 			int start, int end)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return dlFileEntryService.search(
 			getGroupId(), creatorUserId, folderId, mimeTypes, status, start,
@@ -711,14 +743,7 @@ public class LiferayRepository
 
 	@Override
 	public Hits search(SearchContext searchContext) throws SearchException {
-		Indexer indexer = null;
-
-		if (searchContext.isIncludeFolders()) {
-			indexer = DLSearcher.getInstance();
-		}
-		else {
-			indexer = IndexerRegistryUtil.getIndexer(DLFileEntry.class);
-		}
+		Indexer indexer = DLSearcher.getInstance();
 
 		searchContext.setSearchEngineId(indexer.getSearchEngineId());
 
@@ -734,17 +759,17 @@ public class LiferayRepository
 
 	@Override
 	public void unlockFolder(long folderId, String lockUuid)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		dlFolderService.unlockFolder(toFolderId(folderId), lockUuid);
 	}
 
 	@Override
-	public void unlockFolder(long parentFolderId, String name, String lockUuid)
-		throws PortalException {
+	public void unlockFolder(long parentFolderId, String title, String lockUuid)
+		throws PortalException, SystemException {
 
 		dlFolderService.unlockFolder(
-			getGroupId(), toFolderId(parentFolderId), name, lockUuid);
+			getGroupId(), toFolderId(parentFolderId), title, lockUuid);
 	}
 
 	@Override
@@ -752,7 +777,7 @@ public class LiferayRepository
 			long fileEntryId, String sourceFileName, String mimeType,
 			String title, String description, String changeLog,
 			boolean majorVersion, File file, ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		long fileEntryTypeId = ParamUtil.getLong(
 			serviceContext, "fileEntryTypeId", -1L);
@@ -780,7 +805,7 @@ public class LiferayRepository
 			String title, String description, String changeLog,
 			boolean majorVersion, InputStream is, long size,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		long fileEntryTypeId = ParamUtil.getLong(
 			serviceContext, "fileEntryTypeId", -1L);
@@ -798,9 +823,9 @@ public class LiferayRepository
 
 	@Override
 	public Folder updateFolder(
-			long folderId, String name, String description,
+			long folderId, String title, String description,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		long defaultFileEntryTypeId = ParamUtil.getLong(
 			serviceContext, "defaultFileEntryTypeId");
@@ -810,7 +835,7 @@ public class LiferayRepository
 			serviceContext, "overrideFileEntryTypes");
 
 		DLFolder dlFolder = dlFolderService.updateFolder(
-			toFolderId(folderId), name, description, defaultFileEntryTypeId,
+			toFolderId(folderId), title, description, defaultFileEntryTypeId,
 			fileEntryTypeIds, overrideFileEntryTypes, serviceContext);
 
 		return new LiferayFolder(dlFolder);
@@ -818,7 +843,7 @@ public class LiferayRepository
 
 	@Override
 	public boolean verifyFileEntryCheckOut(long fileEntryId, String lockUuid)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return dlFileEntryService.verifyFileEntryCheckOut(
 			fileEntryId, lockUuid);
@@ -826,17 +851,95 @@ public class LiferayRepository
 
 	@Override
 	public boolean verifyFileEntryLock(long fileEntryId, String lockUuid)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return dlFileEntryService.verifyFileEntryLock(fileEntryId, lockUuid);
 	}
 
 	@Override
 	public boolean verifyInheritableLock(long folderId, String lockUuid)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return dlFolderService.verifyInheritableLock(
 			toFolderId(folderId), lockUuid);
 	}
+
+	@Override
+	protected void initByFileEntryId(long fileEntryId) {
+		try {
+			DLFileEntry dlFileEntry = dlFileEntryService.getFileEntry(
+				fileEntryId);
+
+			initByRepositoryId(dlFileEntry.getRepositoryId());
+		}
+		catch (Exception e) {
+			if (_log.isTraceEnabled()) {
+				if (e instanceof NoSuchFileEntryException) {
+					_log.trace(e.getMessage());
+				}
+				else {
+					_log.trace(e, e);
+				}
+			}
+		}
+	}
+
+	@Override
+	protected void initByFileVersionId(long fileVersionId) {
+		try {
+			DLFileVersion dlFileVersion = dlFileVersionService.getFileVersion(
+				fileVersionId);
+
+			initByRepositoryId(dlFileVersion.getRepositoryId());
+		}
+		catch (Exception e) {
+			if (_log.isTraceEnabled()) {
+				if (e instanceof NoSuchFileVersionException) {
+					_log.trace(e.getMessage());
+				}
+				else {
+					_log.trace(e, e);
+				}
+			}
+		}
+	}
+
+	@Override
+	protected void initByFolderId(long folderId) {
+		try {
+			DLFolder dlFolder = dlFolderService.getFolder(folderId);
+
+			initByRepositoryId(dlFolder.getRepositoryId());
+		}
+		catch (Exception e) {
+			if (_log.isTraceEnabled()) {
+				if (e instanceof NoSuchFolderException) {
+					_log.trace(e.getMessage());
+				}
+				else {
+					_log.trace(e, e);
+				}
+			}
+		}
+	}
+
+	@Override
+	protected void initByRepositoryId(long repositoryId) {
+		setGroupId(repositoryId);
+		setRepositoryId(repositoryId);
+
+		try {
+			com.liferay.portal.model.Repository repository =
+				repositoryService.getRepository(repositoryId);
+
+			setDlFolderId(repository.getDlFolderId());
+			setGroupId(repository.getGroupId());
+			setRepositoryId(repository.getRepositoryId());
+		}
+		catch (Exception e) {
+		}
+	}
+
+	private static Log _log = LogFactoryUtil.getLog(LiferayRepository.class);
 
 }

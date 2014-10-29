@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -17,7 +17,6 @@ package com.liferay.portal.security.auth;
 import com.liferay.portal.NoSuchUserException;
 import com.liferay.portal.PasswordExpiredException;
 import com.liferay.portal.UserLockoutException;
-import com.liferay.portal.kernel.ldap.LDAPFilterException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.AutoResetThreadLocal;
@@ -294,8 +293,7 @@ public class LDAPAuth implements Authenticator {
 							companyId, PropsKeys.LDAP_ERROR_USER_LOCKOUT));
 
 					if (pos != -1) {
-						throw new UserLockoutException.LDAPLockout(
-							fullUserDN, errorMessage);
+						throw new UserLockoutException();
 					}
 
 					pos = errorMessage.indexOf(
@@ -334,8 +332,7 @@ public class LDAPAuth implements Authenticator {
 			}
 		}
 		catch (Exception e) {
-			if (e instanceof LDAPFilterException ||
-				e instanceof PasswordExpiredException ||
+			if (e instanceof PasswordExpiredException ||
 				e instanceof UserLockoutException) {
 
 				throw e;
@@ -363,10 +360,7 @@ public class LDAPAuth implements Authenticator {
 			String password)
 		throws Exception {
 
-		if (!PrefsPropsUtil.getBoolean(
-				companyId, PropsKeys.LDAP_AUTH_ENABLED,
-				PropsValues.LDAP_AUTH_ENABLED)) {
-
+		if (!AuthSettingsUtil.isLDAPAuthEnabled(companyId)) {
 			if (_log.isDebugEnabled()) {
 				_log.debug("Authenticator is not enabled");
 			}

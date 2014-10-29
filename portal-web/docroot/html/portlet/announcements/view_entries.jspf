@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -56,48 +56,87 @@ int hiddenMessagesCount = total;
 </c:if>
 
 <%
-if ((hiddenMessagesCount == 0) && (visibleMessagesCount == 0) && portletName.equals(PortletKeys.ALERTS) && !AnnouncementsEntryPermission.contains(permissionChecker, layout, PortletKeys.ALERTS, ActionKeys.ADD_ENTRY)) {
+if (((hiddenMessagesCount == 0) && (visibleMessagesCount == 0)) && portletName.equals(PortletKeys.ALERTS) && !AnnouncementsEntryPermission.contains(permissionChecker, layout, PortletKeys.ALERTS, ActionKeys.ADD_ENTRY)) {
 	renderRequest.setAttribute(WebKeys.PORTLET_CONFIGURATOR_VISIBILITY, Boolean.TRUE);
 }
 %>
 
 <aui:script>
-	function <portlet:namespace />handleEntry(entryId) {
-		var entry = AUI.$('#<portlet:namespace />' + entryId);
+	Liferay.provide(
+		window,
+		'<portlet:namespace />handleEntry',
+		function(entryId) {
+			var A = AUI();
 
-		var container = entry.parent();
+			var entry = A.one('#<portlet:namespace />' + entryId);
 
-		if (container.hasClass('unread-entries')) {
-			<portlet:namespace />markEntry(entryId);
-		}
-		else {
-			<portlet:namespace />toggleContent(entry);
-		}
-	}
+			if (entry) {
+				var container = entry.get('parentNode');
 
-	function <portlet:namespace />markEntry(entryId) {
-		Liferay.Service(
-			'/announcementsflag/add-flag',
-			{
-				entryId : entryId,
-				value: <%= AnnouncementsFlagConstants.HIDDEN %>
-			},
-			AUI.$.proxy(Liferay.Portlet, 'refresh', '#p_p_id<portlet:namespace />')
-		);
-	}
+				if (container) {
+					if (container.hasClass('unread-entries')) {
+						<portlet:namespace />markEntry(entry, entryId);
+					}
+					else {
+						<portlet:namespace />toggleContent(entry);
+					}
+				}
+			}
+		},
+		['aui-base']
+	);
 
-	function <portlet:namespace />toggleContent(entry) {
-		var content = entry.find('.entry-content');
-		var control = entry.find('.control-entry a');
+	Liferay.provide(
+		window,
+		'<portlet:namespace />markEntry',
+		function(entry, entryId) {
+			var A = AUI();
 
-		var visible = entry.hasClass('visible');
+			Liferay.Service(
+				'/announcementsflag/add-flag',
+				{
+					entryId : entryId,
+					value: <%= AnnouncementsFlagConstants.HIDDEN %>
+				}
+			);
 
-		entry.toggleClass('visible', !visible);
+			Liferay.Portlet.refresh('#p_p_id<portlet:namespace />');
+		},
+		['aui-base']
+	);
 
-		content.toggleClass('hide', visible);
+	Liferay.provide(
+		window,
+		'<portlet:namespace />toggleContent',
+		function(entry) {
+			var A = AUI();
 
-		var label = visible ? '<%= UnicodeLanguageUtil.get(request, "show") %>' : '<%= UnicodeLanguageUtil.get(request, "hide") %>';
+			var content = entry.all('.entry-content');
+			var control = entry.all('.control-entry a');
 
-		control.html(label);
-	}
+			if (entry.hasClass('visible')) {
+				entry.removeClass('visible');
+
+				if (content) {
+					content.hide();
+				}
+
+				if (control) {
+					control.html('<%= UnicodeLanguageUtil.get(pageContext, "show") %>');
+				}
+			}
+			else {
+				entry.addClass('visible');
+
+				if (content) {
+					content.show();
+				}
+
+				if (control) {
+					control.html('<%= UnicodeLanguageUtil.get(pageContext, "hide") %>');
+				}
+			}
+		},
+		['aui-base']
+	);
 </aui:script>

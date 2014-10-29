@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -24,10 +24,12 @@ Long[] organizationIds = UsersAdminUtil.getOrganizationIds(organizations);
 List<Role> roles = (List<Role>)request.getAttribute("user.roles");
 List<UserGroupRole> organizationRoles = (List<UserGroupRole>)request.getAttribute("user.organizationRoles");
 List<UserGroupRole> siteRoles = (List<UserGroupRole>)request.getAttribute("user.siteRoles");
-List<UserGroupGroupRole> inheritedSiteRoles = (List<UserGroupGroupRole>)request.getAttribute("user.inheritedSiteRoles");
-List<Group> roleGroups = (List<Group>)request.getAttribute("user.roleGroups");
+List<Group> allGroups = (List<Group>)request.getAttribute("user.allGroups");
 
-currentURLObj.setParameter("historyKey", renderResponse.getNamespace() + "roles");
+List<UserGroupRole> userGroupRoles = new ArrayList<UserGroupRole>();
+
+userGroupRoles.addAll(organizationRoles);
+userGroupRoles.addAll(siteRoles);
 %>
 
 <liferay-ui:error-marker key="errorSection" value="roles" />
@@ -36,28 +38,24 @@ currentURLObj.setParameter("historyKey", renderResponse.getNamespace() + "roles"
 
 <liferay-util:buffer var="removeRoleIcon">
 	<liferay-ui:icon
-		iconCssClass="icon-remove"
+		image="unlink"
 		label="<%= true %>"
 		message="remove"
 	/>
 </liferay-util:buffer>
 
-<aui:input name="addGroupRolesGroupIds" type="hidden" />
-<aui:input name="addGroupRolesRoleIds" type="hidden" />
-<aui:input name="deleteGroupRolesGroupIds" type="hidden" />
-<aui:input name="deleteGroupRolesRoleIds" type="hidden" />
+<aui:input name="groupRolesRoleIds" type="hidden" value="<%= ListUtil.toString(userGroupRoles, UserGroupRole.ROLE_ID_ACCESSOR) %>" />
+<aui:input name="groupRolesGroupIds" type="hidden" value="<%= ListUtil.toString(userGroupRoles, UserGroupRole.GROUP_ID_ACCESSOR) %>" />
 
 <h3><liferay-ui:message key="regular-roles" /></h3>
 
 <liferay-ui:search-container
-	curParam="regularRolesCur"
 	headerNames="title,null"
 	id="rolesSearchContainer"
-	iteratorURL="<%= currentURLObj %>"
-	total="<%= roles.size() %>"
 >
 	<liferay-ui:search-container-results
-		results="<%= roles.subList(searchContainer.getStart(), searchContainer.getResultEnd()) %>"
+		results="<%= roles %>"
+		total="<%= roles.size() %>"
 	/>
 
 	<liferay-ui:search-container-row
@@ -65,15 +63,13 @@ currentURLObj.setParameter("historyKey", renderResponse.getNamespace() + "roles"
 		keyProperty="roleId"
 		modelVar="role"
 	>
+		<liferay-util:param name="className" value="<%= RolesAdminUtil.getCssClassName(role) %>" />
+		<liferay-util:param name="classHoverName" value="<%= RolesAdminUtil.getCssClassName(role) %>" />
+
 		<liferay-ui:search-container-column-text
 			name="title"
-		>
-			<liferay-ui:icon
-				iconCssClass="<%= RolesAdminUtil.getIconCssClass(role) %>"
-				label="<%= true %>"
-				message="<%= HtmlUtil.escape(role.getTitle(locale)) %>"
-			/>
-		</liferay-ui:search-container-column-text>
+			value="<%= HtmlUtil.escape(role.getTitle(locale)) %>"
+		/>
 
 		<c:if test="<%= !portletName.equals(PortletKeys.MY_ACCOUNT) && !RoleMembershipPolicyUtil.isRoleRequired(selUser.getUserId(), role.getRoleId()) %>">
 			<liferay-ui:search-container-column-text>
@@ -82,7 +78,7 @@ currentURLObj.setParameter("historyKey", renderResponse.getNamespace() + "roles"
 		</c:if>
 	</liferay-ui:search-container-row>
 
-	<liferay-ui:search-iterator />
+	<liferay-ui:search-iterator paginate="<%= false %>" />
 </liferay-ui:search-container>
 
 <c:if test="<%= !portletName.equals(PortletKeys.MY_ACCOUNT) %>">
@@ -91,7 +87,7 @@ currentURLObj.setParameter("historyKey", renderResponse.getNamespace() + "roles"
 		iconCssClass="icon-search"
 		id="selectRegularRoleLink"
 		label="<%= true %>"
-		linkCssClass="btn btn-default"
+		linkCssClass="btn"
 		message="select"
 		method="get"
 		url="javascript:;"
@@ -113,7 +109,7 @@ currentURLObj.setParameter("historyKey", renderResponse.getNamespace() + "roles"
 						uri: '<portlet:renderURL windowState="<%= LiferayWindowState.POP_UP.toString() %>"><portlet:param name="struts_action" value="/users_admin/select_regular_role" /><portlet:param name="p_u_i_d" value='<%= (selUser == null) ? "0" : String.valueOf(selUser.getUserId()) %>' /></portlet:renderURL>'
 					},
 					function(event) {
-						<portlet:namespace />selectRole(event.roleid, event.roletitle, event.searchcontainername, event.groupdescriptivename, event.groupid, event.iconcssclass);
+						<portlet:namespace />selectRole(event.roleid, event.roletitle, event.searchcontainername, event.groupdescriptivename, event.groupid);
 					}
 				);
 			}
@@ -121,21 +117,26 @@ currentURLObj.setParameter("historyKey", renderResponse.getNamespace() + "roles"
 	</aui:script>
 </c:if>
 
-<h3><liferay-ui:message key="inherited-regular-roles" /></h3>
-
-<c:if test="<%= roleGroups.isEmpty() %>">
-	<liferay-ui:message key="this-user-does-not-have-any-inherited-regular-roles" />
-</c:if>
+<h3><liferay-ui:message key="inherited-roles" /></h3>
 
 <liferay-ui:search-container
-	curParam="inheritedRegularRolesCur"
 	headerNames="title,group"
 	id="inheritedRolesSearchContainer"
-	iteratorURL="<%= currentURLObj %>"
-	total="<%= roleGroups.size() %>"
 >
+
+	<%
+	List<Group> roleGroups = new ArrayList<Group>();
+
+	for (Group group : allGroups) {
+		if (RoleLocalServiceUtil.hasGroupRoles(group.getGroupId())) {
+			roleGroups.add(group);
+		}
+	}
+	%>
+
 	<liferay-ui:search-container-results
-		results="<%= roleGroups.subList(searchContainer.getStart(), searchContainer.getResultEnd()) %>"
+		results="<%= roleGroups %>"
+		total="<%= roleGroups.size() %>"
 	/>
 
 	<liferay-ui:search-container-row
@@ -149,16 +150,13 @@ currentURLObj.setParameter("historyKey", renderResponse.getNamespace() + "roles"
 		List<Role> groupRoles = RoleLocalServiceUtil.getGroupRoles(group.getGroupId());
 		%>
 
+		<liferay-util:param name="className" value="<%= RolesAdminUtil.getCssClassName(groupRoles.get(0)) %>" />
+		<liferay-util:param name="classHoverName" value="<%= RolesAdminUtil.getCssClassName(groupRoles.get(0)) %>" />
+
 		<liferay-ui:search-container-column-text
 			name="title"
 			value="<%= HtmlUtil.escape(ListUtil.toString(groupRoles, Role.NAME_ACCESSOR)) %>"
-		>
-			<liferay-ui:icon
-				iconCssClass="<%= RolesAdminUtil.getIconCssClass(groupRoles.get(0)) %>"
-				label="<%= true %>"
-				message="<%= HtmlUtil.escape(ListUtil.toString(groupRoles, Role.NAME_ACCESSOR)) %>"
-			/>
-		</liferay-ui:search-container-column-text>
+		/>
 
 		<liferay-ui:search-container-column-text
 			name="group"
@@ -166,7 +164,7 @@ currentURLObj.setParameter("historyKey", renderResponse.getNamespace() + "roles"
 		/>
 	</liferay-ui:search-container-row>
 
-	<liferay-ui:search-iterator />
+	<liferay-ui:search-iterator paginate="<%= false %>" />
 </liferay-ui:search-container>
 
 <h3><liferay-ui:message key="organization-roles" /></h3>
@@ -177,14 +175,12 @@ currentURLObj.setParameter("historyKey", renderResponse.getNamespace() + "roles"
 
 <c:if test="<%= !organizations.isEmpty() %>">
 	<liferay-ui:search-container
-		curParam="organizationRolesCur"
 		headerNames="title,organization,null"
 		id="organizationRolesSearchContainer"
-		iteratorURL="<%= currentURLObj %>"
-		total="<%= organizationRoles.size() %>"
 	>
 		<liferay-ui:search-container-results
-			results="<%= organizationRoles.subList(searchContainer.getStart(), searchContainer.getResultEnd()) %>"
+			results="<%= organizationRoles %>"
+			total="<%= organizationRoles.size() %>"
 		/>
 
 		<liferay-ui:search-container-row
@@ -192,15 +188,13 @@ currentURLObj.setParameter("historyKey", renderResponse.getNamespace() + "roles"
 			keyProperty="roleId"
 			modelVar="userGroupRole"
 		>
+			<liferay-util:param name="className" value="<%= RolesAdminUtil.getCssClassName(userGroupRole.getRole()) %>" />
+			<liferay-util:param name="classHoverName" value="<%= RolesAdminUtil.getCssClassName(userGroupRole.getRole()) %>" />
+
 			<liferay-ui:search-container-column-text
 				name="title"
-			>
-				<liferay-ui:icon
-					iconCssClass="<%= RolesAdminUtil.getIconCssClass(userGroupRole.getRole()) %>"
-					label="<%= true %>"
-					message="<%= HtmlUtil.escape(userGroupRole.getRole().getTitle(locale)) %>"
-				/>
-			</liferay-ui:search-container-column-text>
+				value="<%= HtmlUtil.escape(userGroupRole.getRole().getTitle(locale)) %>"
+			/>
 
 			<liferay-ui:search-container-column-text
 				name="organization"
@@ -229,54 +223,26 @@ currentURLObj.setParameter("historyKey", renderResponse.getNamespace() + "roles"
 			</c:if>
 		</liferay-ui:search-container-row>
 
-		<liferay-ui:search-iterator />
+		<liferay-ui:search-iterator paginate="<%= false %>" />
 	</liferay-ui:search-container>
 
 	<aui:script use="liferay-search-container">
-		var Util = Liferay.Util;
-
 		var searchContainer = Liferay.SearchContainer.get('<portlet:namespace />organizationRolesSearchContainer');
 
-		var searchContainerContentBox = searchContainer.get('contentBox');
-
-		searchContainerContentBox.delegate(
+		searchContainer.get('contentBox').delegate(
 			'click',
 			function(event) {
 				var link = event.currentTarget;
 				var tr = link.ancestor('tr');
 
-				var groupId = link.getAttribute('data-groupId');
 				var rowId = link.getAttribute('data-rowId');
-
-				var selectOrganizationRole = Util.getWindow('<portlet:namespace />selectOrganizationRole');
-
-				if (selectOrganizationRole) {
-					var selectButton = selectOrganizationRole.iframe.node.get('contentWindow.document').one('.selector-button[data-groupid="' + groupId + '"][data-roleid="' + rowId + '"]');
-
-					Util.toggleDisabled(selectButton, false);
-				}
+				var groupId =link.getAttribute('data-groupId');
 
 				searchContainer.deleteRow(tr, rowId);
 
 				<portlet:namespace />deleteGroupRole(rowId, groupId);
 			},
 			'.modify-link'
-		);
-
-		Liferay.on(
-			'<portlet:namespace />syncOrganizationRoles',
-			function(event) {
-				event.selectors.each(
-					function(item, index, collection) {
-						var groupId = item.attr('data-groupid');
-						var roleId = item.attr('data-roleid');
-
-						var modifyLink = searchContainerContentBox.one('.modify-link[data-groupid="' + groupId + '"][data-rowid="' + roleId + '"]');
-
-						Util.toggleDisabled(item, !!modifyLink);
-					}
-				);
-			}
 		);
 	</aui:script>
 </c:if>
@@ -287,7 +253,7 @@ currentURLObj.setParameter("historyKey", renderResponse.getNamespace() + "roles"
 		iconCssClass="icon-search"
 		id="selectOrganizationRoleLink"
 		label="<%= true %>"
-		linkCssClass="btn btn-default"
+		linkCssClass="btn"
 		message="select"
 		method="get"
 		url="javascript:;"
@@ -307,7 +273,7 @@ currentURLObj.setParameter("historyKey", renderResponse.getNamespace() + "roles"
 						uri: '<portlet:renderURL windowState="<%= LiferayWindowState.POP_UP.toString() %>"><portlet:param name="struts_action" value="/users_admin/select_organization_role" /><portlet:param name="step" value="1" /><portlet:param name="organizationIds" value="<%= StringUtil.merge(organizationIds) %>" /><portlet:param name="p_u_i_d" value='<%= (selUser == null) ? "0" : String.valueOf(selUser.getUserId()) %>' /></portlet:renderURL>'
 					},
 					function(event) {
-						<portlet:namespace />selectRole(event.roleid, event.roletitle, event.searchcontainername, event.groupdescriptivename, event.groupid, event.iconcssclass);
+						<portlet:namespace />selectRole(event.roleid, event.roletitle, event.searchcontainername, event.groupdescriptivename, event.groupid);
 					}
 				);
 			}
@@ -323,14 +289,12 @@ currentURLObj.setParameter("historyKey", renderResponse.getNamespace() + "roles"
 	</c:when>
 	<c:otherwise>
 		<liferay-ui:search-container
-			curParam="siteRolesCur"
 			headerNames="title,site,null"
 			id="siteRolesSearchContainer"
-			iteratorURL="<%= currentURLObj %>"
-			total="<%= siteRoles.size() %>"
 		>
 			<liferay-ui:search-container-results
-				results="<%= siteRoles.subList(searchContainer.getStart(), searchContainer.getResultEnd()) %>"
+				results="<%= siteRoles %>"
+				total="<%= siteRoles.size() %>"
 			/>
 
 			<liferay-ui:search-container-row
@@ -338,15 +302,13 @@ currentURLObj.setParameter("historyKey", renderResponse.getNamespace() + "roles"
 				keyProperty="roleId"
 				modelVar="userGroupRole"
 			>
+				<liferay-util:param name="className" value="<%= RolesAdminUtil.getCssClassName(userGroupRole.getRole()) %>" />
+				<liferay-util:param name="classHoverName" value="<%= RolesAdminUtil.getCssClassName(userGroupRole.getRole()) %>" />
+
 				<liferay-ui:search-container-column-text
 					name="title"
-				>
-					<liferay-ui:icon
-						iconCssClass="<%= RolesAdminUtil.getIconCssClass(userGroupRole.getRole()) %>"
-						label="<%= true %>"
-						message="<%= HtmlUtil.escape(userGroupRole.getRole().getTitle(locale)) %>"
-					/>
-				</liferay-ui:search-container-column-text>
+					value="<%= HtmlUtil.escape(userGroupRole.getRole().getTitle(locale)) %>"
+				/>
 
 				<liferay-ui:search-container-column-text
 					name="site"
@@ -375,7 +337,7 @@ currentURLObj.setParameter("historyKey", renderResponse.getNamespace() + "roles"
 				</c:if>
 			</liferay-ui:search-container-row>
 
-			<liferay-ui:search-iterator />
+			<liferay-ui:search-iterator paginate="<%= false %>" />
 		</liferay-ui:search-container>
 
 		<c:if test="<%= !portletName.equals(PortletKeys.MY_ACCOUNT) %>">
@@ -384,35 +346,23 @@ currentURLObj.setParameter("historyKey", renderResponse.getNamespace() + "roles"
 				iconCssClass="icon-search"
 				id="selectSiteRoleLink"
 				label="<%= true %>"
-				linkCssClass="btn btn-default"
+				linkCssClass="btn"
 				message="select"
 				method="get"
 				url="javascript:;"
 			/>
 
 			<aui:script use="liferay-search-container">
-				var Util = Liferay.Util;
-
 				var searchContainer = Liferay.SearchContainer.get('<portlet:namespace />siteRolesSearchContainer');
 
-				var searchContainerContentBox = searchContainer.get('contentBox');
-
-				searchContainerContentBox.delegate(
+				searchContainer.get('contentBox').delegate(
 					'click',
 					function(event) {
 						var link = event.currentTarget;
 						var tr = link.ancestor('tr');
 
-						var groupId = link.getAttribute('data-groupId');
 						var rowId = link.getAttribute('data-rowId');
-
-						var selectSiteRole = Util.getWindow('<portlet:namespace />selectSiteRole');
-
-						if (selectSiteRole) {
-							var selectButton = selectSiteRole.iframe.node.get('contentWindow.document').one('.selector-button[data-groupid="' + groupId + '"][data-roleid="' + rowId + '"]');
-
-							Util.toggleDisabled(selectButton, false);
-						}
+						var groupId =link.getAttribute('data-groupId');
 
 						searchContainer.deleteRow(tr, rowId);
 
@@ -421,26 +371,10 @@ currentURLObj.setParameter("historyKey", renderResponse.getNamespace() + "roles"
 					'.modify-link'
 				);
 
-				Liferay.on(
-					'<portlet:namespace />syncSiteRoles',
-					function(event) {
-						event.selectors.each(
-							function(item, index, collection) {
-								var groupId = item.attr('data-groupid');
-								var roleId = item.attr('data-roleid');
-
-								var modifyLink = searchContainerContentBox.one('.modify-link[data-groupid="' + groupId + '"][data-rowid="' + roleId + '"]');
-
-								Util.toggleDisabled(item, !!modifyLink);
-							}
-						);
-					}
-				);
-
 				A.one('#<portlet:namespace />selectSiteRoleLink').on(
 					'click',
 					function(event) {
-						Util.selectEntity(
+						Liferay.Util.selectEntity(
 							{
 								dialog: {
 									constrain: true,
@@ -452,7 +386,7 @@ currentURLObj.setParameter("historyKey", renderResponse.getNamespace() + "roles"
 								uri: '<portlet:renderURL windowState="<%= LiferayWindowState.POP_UP.toString() %>"><portlet:param name="struts_action" value="/users_admin/select_site_role" /><portlet:param name="step" value="1" /><portlet:param name="p_u_i_d" value='<%= (selUser == null) ? "0" : String.valueOf(selUser.getUserId()) %>' /></portlet:renderURL>'
 							},
 							function(event) {
-								<portlet:namespace />selectRole(event.roleid, event.roletitle, event.searchcontainername, event.groupdescriptivename, event.groupid, event.iconcssclass);
+								<portlet:namespace />selectRole(event.roleid, event.roletitle, event.searchcontainername, event.groupdescriptivename, event.groupid);
 							}
 						);
 					}
@@ -462,83 +396,28 @@ currentURLObj.setParameter("historyKey", renderResponse.getNamespace() + "roles"
 	</c:otherwise>
 </c:choose>
 
-<h3><liferay-ui:message key="inherited-site-roles" /></h3>
-
-<c:if test="<%= inheritedSiteRoles.isEmpty() %>">
-	<liferay-ui:message key="this-user-does-not-have-any-inherited-site-roles" />
-</c:if>
-
-<c:if test="<%= !inheritedSiteRoles.isEmpty() %>">
-	<liferay-ui:search-container
-		curParam="inheritedSiteRolesCur"
-		headerNames="title,site,user-group"
-		id="inheritedSiteRolesSearchContainer"
-		iteratorURL="<%= currentURLObj %>"
-		total="<%= inheritedSiteRoles.size() %>"
-	>
-		<liferay-ui:search-container-results
-			results="<%= inheritedSiteRoles.subList(searchContainer.getStart(), searchContainer.getResultEnd()) %>"
-		/>
-
-		<liferay-ui:search-container-row
-			className="com.liferay.portal.model.UserGroupGroupRole"
-			keyProperty="roleId"
-			modelVar="userGroupGroupRole"
-		>
-			<liferay-ui:search-container-column-text
-				name="title"
-			>
-				<liferay-ui:icon
-					iconCssClass="<%= RolesAdminUtil.getIconCssClass(userGroupGroupRole.getRole()) %>"
-					label="<%= true %>"
-					message="<%= HtmlUtil.escape(userGroupGroupRole.getRole().getTitle(locale)) %>"
-				/>
-			</liferay-ui:search-container-column-text>
-
-			<liferay-ui:search-container-column-text
-				name="site"
-				value="<%= HtmlUtil.escape(userGroupGroupRole.getGroup().getDescriptiveName(locale)) %>"
-			/>
-
-			<liferay-ui:search-container-column-text
-				name="user-group"
-				value="<%= HtmlUtil.escape(userGroupGroupRole.getUserGroup().getName()) %>"
-			/>
-		</liferay-ui:search-container-row>
-
-		<liferay-ui:search-iterator />
-	</liferay-ui:search-container>
-</c:if>
-
 <aui:script>
-	var <portlet:namespace />addGroupRolesGroupIds = [];
-	var <portlet:namespace />addGroupRolesRoleIds = [];
-	var <portlet:namespace />deleteGroupRolesGroupIds = [];
-	var <portlet:namespace />deleteGroupRolesRoleIds = [];
+	var <portlet:namespace />groupRolesGroupIds = ['<%= ListUtil.toString(userGroupRoles, UserGroupRole.GROUP_ID_ACCESSOR, "', '") %>'];
+	var <portlet:namespace />groupRolesRoleIds = ['<%= ListUtil.toString(userGroupRoles, UserGroupRole.ROLE_ID_ACCESSOR, "', '") %>'];
 
 	function <portlet:namespace />deleteGroupRole(roleId, groupId) {
-		for (var i = 0; i < <portlet:namespace />addGroupRolesRoleIds.length; i++) {
-			if ((<portlet:namespace />addGroupRolesGroupIds[i] == groupId) && (<portlet:namespace />addGroupRolesRoleIds[i] == roleId)) {
-				<portlet:namespace />addGroupRolesGroupIds.splice(i, 1);
-				<portlet:namespace />addGroupRolesRoleIds.splice(i, 1);
+		for (var i = 0; i < <portlet:namespace />groupRolesRoleIds.length; i++) {
+			if ((<portlet:namespace />groupRolesRoleIds[i] == roleId) && (<portlet:namespace />groupRolesGroupIds[i] == groupId)) {
+				<portlet:namespace />groupRolesGroupIds.splice(i, 1);
+				<portlet:namespace />groupRolesRoleIds.splice(i, 1);
 
 				break;
 			}
 		}
 
-		<portlet:namespace />deleteGroupRolesGroupIds.push(groupId);
-		<portlet:namespace />deleteGroupRolesRoleIds.push(roleId);
-
-		document.<portlet:namespace />fm.<portlet:namespace />addGroupRolesGroupIds.value = <portlet:namespace />addGroupRolesGroupIds.join(',');
-		document.<portlet:namespace />fm.<portlet:namespace />addGroupRolesRoleIds.value = <portlet:namespace />addGroupRolesRoleIds.join(',');
-		document.<portlet:namespace />fm.<portlet:namespace />deleteGroupRolesGroupIds.value = <portlet:namespace />deleteGroupRolesGroupIds.join(',');
-		document.<portlet:namespace />fm.<portlet:namespace />deleteGroupRolesRoleIds.value = <portlet:namespace />deleteGroupRolesRoleIds.join(',');
+		document.<portlet:namespace />fm.<portlet:namespace />groupRolesGroupIds.value = <portlet:namespace />groupRolesGroupIds.join(',');
+		document.<portlet:namespace />fm.<portlet:namespace />groupRolesRoleIds.value = <portlet:namespace />groupRolesRoleIds.join(',');
 	}
 
 	Liferay.provide(
 		window,
 		'<portlet:namespace />selectRole',
-		function(roleId, name, searchContainer, groupName, groupId, iconCssClass) {
+		function(roleId, name, searchContainer, groupName, groupId) {
 			var A = AUI();
 
 			var searchContainerName = '<portlet:namespace />' + searchContainer + 'SearchContainer';
@@ -547,31 +426,20 @@ currentURLObj.setParameter("historyKey", renderResponse.getNamespace() + "roles"
 
 			var rowColumns = [];
 
-			rowColumns.push('<i class="' + iconCssClass + '"></i> ' + name);
+			rowColumns.push(A.Escape.html(name));
 
 			if (groupName) {
-				rowColumns.push(groupName);
+				rowColumns.push(A.Escape.html(groupName));
 			}
 
 			if (groupId) {
 				rowColumns.push('<a class="modify-link" data-groupId="' + groupId + '" data-rowId="' + roleId + '" href="javascript:;"><%= UnicodeFormatter.toString(removeRoleIcon) %></a>');
 
-				<portlet:namespace />addGroupRolesGroupIds.push(groupId);
-				<portlet:namespace />addGroupRolesRoleIds.push(roleId);
+				<portlet:namespace />groupRolesRoleIds.push(roleId);
+				<portlet:namespace />groupRolesGroupIds.push(groupId);
 
-				for (var i = 0; i < <portlet:namespace />deleteGroupRolesRoleIds.length; i++) {
-					if ((<portlet:namespace />deleteGroupRolesGroupIds[i] == groupId) && (<portlet:namespace />deleteGroupRolesRoleIds[i] == roleId)) {
-						<portlet:namespace />deleteGroupRolesGroupIds.splice(i, 1);
-						<portlet:namespace />deleteGroupRolesRoleIds.splice(i, 1);
-
-						break;
-					}
-				}
-
-				document.<portlet:namespace />fm.<portlet:namespace />addGroupRolesGroupIds.value = <portlet:namespace />addGroupRolesGroupIds.join(',');
-				document.<portlet:namespace />fm.<portlet:namespace />addGroupRolesRoleIds.value = <portlet:namespace />addGroupRolesRoleIds.join(',');
-				document.<portlet:namespace />fm.<portlet:namespace />deleteGroupRolesGroupIds.value = <portlet:namespace />deleteGroupRolesGroupIds.join(',');
-				document.<portlet:namespace />fm.<portlet:namespace />deleteGroupRolesRoleIds.value = <portlet:namespace />deleteGroupRolesRoleIds.join(',');
+				document.<portlet:namespace />fm.<portlet:namespace />groupRolesRoleIds.value = <portlet:namespace />groupRolesRoleIds.join(',');
+				document.<portlet:namespace />fm.<portlet:namespace />groupRolesGroupIds.value = <portlet:namespace />groupRolesGroupIds.join(',');
 			}
 			else {
 				rowColumns.push('<a class="modify-link" data-rowId="' + roleId + '" href="javascript:;"><%= UnicodeFormatter.toString(removeRoleIcon) %></a>');
@@ -580,51 +448,21 @@ currentURLObj.setParameter("historyKey", renderResponse.getNamespace() + "roles"
 			searchContainer.addRow(rowColumns, roleId);
 			searchContainer.updateDataStore();
 		},
-		['liferay-search-container']
+		['liferay-search-container', 'escape']
 	);
 </aui:script>
 
 <aui:script use="liferay-search-container">
-	var Util = Liferay.Util;
-
 	var searchContainer = Liferay.SearchContainer.get('<portlet:namespace />rolesSearchContainer');
 
-	var searchContainerContentBox = searchContainer.get('contentBox');
-
-	searchContainerContentBox.delegate(
+	searchContainer.get('contentBox').delegate(
 		'click',
 		function(event) {
 			var link = event.currentTarget;
-
-			var rowId = link.attr('data-rowId');
-
 			var tr = link.ancestor('tr');
-
-			var selectRegularRole = Util.getWindow('<portlet:namespace />selectRegularRole');
-
-			if (selectRegularRole) {
-				var selectButton = selectRegularRole.iframe.node.get('contentWindow.document').one('.selector-button[data-roleid="' + rowId + '"]');
-
-				Util.toggleDisabled(selectButton, false);
-			}
 
 			searchContainer.deleteRow(tr, link.getAttribute('data-rowId'));
 		},
 		'.modify-link'
-	);
-
-	Liferay.on(
-		'<portlet:namespace />enableRemovedRegularRoles',
-		function(event) {
-			event.selectors.each(
-				function(item, index, collection) {
-					var modifyLink = searchContainerContentBox.one('.modify-link[data-rowid="' + item.attr('data-roleid') + '"]');
-
-					if (!modifyLink) {
-						Util.toggleDisabled(item, false);
-					}
-				}
-			);
-		}
 	);
 </aui:script>

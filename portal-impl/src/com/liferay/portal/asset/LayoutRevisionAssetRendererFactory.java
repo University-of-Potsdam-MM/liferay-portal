@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portal.asset;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.model.LayoutRevision;
@@ -38,19 +39,16 @@ public class LayoutRevisionAssetRendererFactory
 
 	public static final String TYPE = "layout_revision";
 
-	public LayoutRevisionAssetRendererFactory() {
-		setCategorizable(false);
-		setSelectable(false);
-	}
-
 	@Override
-	public AssetEntry getAssetEntry(long assetEntryId) throws PortalException {
+	public AssetEntry getAssetEntry(long assetEntryId)
+		throws PortalException, SystemException {
+
 		return getAssetEntry(getClassName(), assetEntryId);
 	}
 
 	@Override
 	public AssetEntry getAssetEntry(String className, long classPK)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		LayoutRevision layoutRevision =
 			LayoutRevisionLocalServiceUtil.getLayoutRevision(classPK);
@@ -74,7 +72,7 @@ public class LayoutRevisionAssetRendererFactory
 			PortalUtil.getClassNameId(LayoutRevision.class.getName()));
 		assetEntry.setClassPK(layoutRevision.getLayoutRevisionId());
 
-		StringBundler sb = new StringBundler(4);
+		StringBundler sb = new StringBundler();
 
 		sb.append(layoutRevision.getHTMLTitle(LocaleUtil.getSiteDefault()));
 		sb.append(" [");
@@ -88,7 +86,7 @@ public class LayoutRevisionAssetRendererFactory
 
 	@Override
 	public AssetRenderer getAssetRenderer(long layoutRevisionId, int type)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		LayoutRevision layoutRevision =
 			LayoutRevisionLocalServiceUtil.getLayoutRevision(layoutRevisionId);
@@ -107,18 +105,25 @@ public class LayoutRevisionAssetRendererFactory
 	}
 
 	@Override
-	public String getIconCssClass() {
-		return "icon-file";
+	public String getType() {
+		return TYPE;
 	}
 
 	@Override
-	public String getType() {
-		return TYPE;
+	public boolean isCategorizable() {
+		return false;
+	}
+
+	@Override
+	public boolean isSelectable() {
+		return _SELECTABLE;
 	}
 
 	@Override
 	protected String getIconPath(ThemeDisplay themeDisplay) {
 		return themeDisplay.getPathThemeImages() + "/common/pages.png";
 	}
+
+	private static final boolean _SELECTABLE = false;
 
 }

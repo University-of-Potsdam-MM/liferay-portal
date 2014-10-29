@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -45,8 +45,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class FileSystemStore extends BaseStore {
 
 	public FileSystemStore() {
-		_rootDir = new File(getRootDirName());
-
 		if (!_rootDir.exists()) {
 			_rootDir.mkdirs();
 		}
@@ -68,7 +66,7 @@ public class FileSystemStore extends BaseStore {
 	@Override
 	public void addFile(
 			long companyId, long repositoryId, String fileName, InputStream is)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		try {
 			File fileNameVersionFile = getFileNameVersionFile(
@@ -93,7 +91,7 @@ public class FileSystemStore extends BaseStore {
 	public void copyFileVersion(
 			long companyId, long repositoryId, String fileName,
 			String fromVersionLabel, String toVersionLabel)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		File fromFileNameVersionFile = getFileNameVersionFile(
 			companyId, repositoryId, fileName, fromVersionLabel);
@@ -300,7 +298,7 @@ public class FileSystemStore extends BaseStore {
 	public void updateFile(
 			long companyId, long repositoryId, long newRepositoryId,
 			String fileName)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		File fileNameDir = getFileNameDir(companyId, repositoryId, fileName);
 		File newFileNameDir = getFileNameDir(
@@ -327,7 +325,7 @@ public class FileSystemStore extends BaseStore {
 	public void updateFile(
 			long companyId, long repositoryId, String fileName,
 			String newFileName)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		File fileNameDir = getFileNameDir(companyId, repositoryId, fileName);
 		File newFileNameDir = getFileNameDir(
@@ -354,7 +352,7 @@ public class FileSystemStore extends BaseStore {
 	public void updateFile(
 			long companyId, long repositoryId, String fileName,
 			String versionLabel, InputStream is)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		try {
 			File fileNameVersionFile = getFileNameVersionFile(
@@ -375,7 +373,7 @@ public class FileSystemStore extends BaseStore {
 	public void updateFileVersion(
 			long companyId, long repositoryId, String fileName,
 			String fromVersionLabel, String toVersionLabel)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		File fromFileNameVersionFile = getFileNameVersionFile(
 			companyId, repositoryId, fileName, fromVersionLabel);
@@ -511,13 +509,9 @@ public class FileSystemStore extends BaseStore {
 		return repositoryDir;
 	}
 
-	protected String getRootDirName() {
-		return PropsValues.DL_STORE_FILE_SYSTEM_ROOT_DIR;
-	}
-
 	private Map<RepositoryDirKey, File> _repositoryDirs =
 		new ConcurrentHashMap<RepositoryDirKey, File>();
-	private File _rootDir;
+	private File _rootDir = new File(PropsValues.DL_STORE_FILE_SYSTEM_ROOT_DIR);
 
 	private class RepositoryDirKey {
 

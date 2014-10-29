@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,38 +15,40 @@
 --%>
 
 <%
-List<AssetRendererFactory> availableAssetRendererFactories = ListUtil.filter(
-	AssetRendererFactoryRegistryUtil.getAssetRendererFactories(company.getCompanyId()),
-	new PredicateFilter<AssetRendererFactory>() {
+List<Long> availableClassNameIds = new ArrayList<Long>();
 
-		@Override
-		public boolean filter(AssetRendererFactory assetRendererFactory) {
-			return assetRendererFactory.isCategorizable();
-		}
+for (AssetRendererFactory assetRendererFactory : AssetRendererFactoryRegistryUtil.getAssetRendererFactories()) {
+	if (assetRendererFactory.isCategorizable()) {
+		availableClassNameIds.add(assetRendererFactory.getClassNameId());
+	}
+}
 
-	});
+boolean required = false;
 
-List<AssetRendererFactory> classTypedAssetRendererFactories = ListUtil.filter(
-	availableAssetRendererFactories,
-	new PredicateFilter<AssetRendererFactory>() {
-
-		@Override
-		public boolean filter(AssetRendererFactory assetRendererFactory) {
-			return assetRendererFactory.isSupportsClassTypes();
-		}
-
-	});
-
-long[] selectedClassNameIds = AssetVocabularySettingsHelper.DEFAULT_SELECTED_CLASSNAME_IDS;
-long[] selectedClassTypePKs = AssetVocabularySettingsHelper.DEFAULT_SELECTED_CLASSTYPE_PKS;
+long[] selectedClassNameIds = null;
+long[] requiredClassNameIds = null;
 
 if (vocabulary != null) {
-	selectedClassNameIds = vocabulary.getSelectedClassNameIds();
-	selectedClassTypePKs = vocabulary.getSelectedClassTypePKs();
+	UnicodeProperties settingsProperties = vocabulary.getSettingsProperties();
+
+	selectedClassNameIds = StringUtil.split(settingsProperties.getProperty("selectedClassNameIds"), 0L);
+	requiredClassNameIds = StringUtil.split(settingsProperties.getProperty("requiredClassNameIds"), 0L);
+
+	if ((requiredClassNameIds != null) && _isDefaultClassNameIds(requiredClassNameIds)) {
+		required = true;
+	}
+}
+
+if (ArrayUtil.isEmpty(selectedClassNameIds)) {
+	selectedClassNameIds = new long[] {0};
+}
+
+if (ArrayUtil.isEmpty(requiredClassNameIds)) {
+	requiredClassNameIds = new long[] {0};
 }
 %>
 
-<aui:input helpMessage="multi-valued-help" label="allow-multiple-categories" name="multiValued" type="checkbox" value="<%= (vocabulary != null) ? vocabulary.isMultiValued() : true %>" />
+<aui:input cssClass="vocabulary-checkbox" helpMessage="multi-valued-help" label="allow-multiple-categories" name="multiValued" type="checkbox" value="<%= (vocabulary != null) ? vocabulary.isMultiValued() : true %>" />
 
 <liferay-ui:panel collapsible="<%= true %>" defaultState="closed" extended="<%= false %>" id="vocabularyExtraFieldsPanelContainer" persistState="<%= true %>" title="associated-asset-types">
 	<aui:fieldset id="extraFields">
@@ -54,23 +56,20 @@ if (vocabulary != null) {
 		<%
 		List<String> indexes = new ArrayList<String>();
 
-		for (int index = 0; index < selectedClassNameIds.length; index++) {
-			indexes.add(String.valueOf(index));
-
-			long classNameId = selectedClassNameIds[index];
-			long classTypePK = selectedClassTypePKs[index];
+		if (_isDefaultClassNameIds(selectedClassNameIds)) {
+			indexes.add("0");
 		%>
 
 			<div class="lfr-form-row lfr-form-row-inline">
 				<div class="row-fields">
-					<aui:select cssClass="vocabulary-asset-type-select" inlineField="<%= true %>" label="choose-asset-type" name='<%= "classNameId" + index %>'>
-						<aui:option label="all-asset-types" value="<%= AssetCategoryConstants.ALL_CLASS_NAME_ID %>" />
+					<aui:select label="choose-asset-type" name="classNameId0">
+						<aui:option label="all-asset-types" selected="<%= true %>" value="<%= AssetCategoryConstants.ALL_CLASS_NAME_IDS %>" />
 
 						<%
-						for (AssetRendererFactory assetRendererFactory : availableAssetRendererFactories) {
+						for (long availableClassNameId : availableClassNameIds) {
 						%>
 
-							<aui:option label="<%= ResourceActionsUtil.getModelResource(locale, assetRendererFactory.getClassName()) %>" selected="<%= classNameId == assetRendererFactory.getClassNameId() %>" value="<%= assetRendererFactory.getClassNameId() %>" />
+							<aui:option label="<%= ResourceActionsUtil.getModelResource(locale, PortalUtil.getClassName(availableClassNameId)) %>" selected="<%= false %>" value="<%= availableClassNameId %>" />
 
 						<%
 						}
@@ -78,26 +77,40 @@ if (vocabulary != null) {
 
 					</aui:select>
 
-					<%
-					for (AssetRendererFactory assetRendererFactory : classTypedAssetRendererFactories) {
-					%>
+					<aui:input cssClass="vocabulary-checkbox" label="required" name="required0" type="checkbox" value="<%= required %>" />
+				</div>
+			</div>
 
-						<aui:select inlineField="<%= true %>" label="" name='<%= "subtype" + assetRendererFactory.getClassNameId() + "-classNameId" + index %>' wrapperCssClass='<%= (classNameId != assetRendererFactory.getClassNameId() ? "hide " : "") + "subtype-select" %>'>
-							<aui:option label="all-asset-subtypes" selected="<%= false %>" value="<%= AssetCategoryConstants.ALL_CLASS_TYPE_PK %>" />
+		<%
+		}
+		else {
+			for (int index = 0; index < selectedClassNameIds.length; index++) {
+				indexes.add(String.valueOf(index));
+
+				boolean requiredIndex = false;
+
+				if (ArrayUtil.contains(requiredClassNameIds, selectedClassNameIds[index])) {
+					requiredIndex = true;
+				}
+		%>
+
+				<div class="lfr-form-row lfr-form-row-inline">
+					<div class="row-fields">
+						<aui:select label="choose-asset-type" name='<%= "classNameId" + index %>'>
+							<aui:option label="all-asset-types" value="<%= AssetCategoryConstants.ALL_CLASS_NAME_IDS %>" />
 
 							<%
-							ClassTypeReader classTypeReader = assetRendererFactory.getClassTypeReader();
+							for (int i = 0; i < availableClassNameIds.size(); i++) {
+								long availableClassNameId = availableClassNameIds.get(i);
 
-							List<ClassType> classTypes = classTypeReader.getAvailableClassTypes(new long[] {themeDisplay.getCompanyGroupId(), scopeGroupId}, themeDisplay.getLocale());
+								boolean selected = false;
 
-							if (classTypes.isEmpty()) {
-								continue;
-							}
-
-							for (ClassType classType : classTypes) {
+								if (availableClassNameId == selectedClassNameIds[index]) {
+									selected = true;
+								}
 							%>
 
-								<aui:option label="<%= classType.getName() %>" selected="<%= (classNameId == assetRendererFactory.getClassNameId()) && (classTypePK == (classType.getClassTypeId())) %>" value="<%= classType.getClassTypeId() %>" />
+								<aui:option label="<%= ResourceActionsUtil.getModelResource(locale, PortalUtil.getClassName(availableClassNameId)) %>" selected="<%= selected %>" value="<%= availableClassNameId %>" />
 
 							<%
 							}
@@ -105,15 +118,12 @@ if (vocabulary != null) {
 
 						</aui:select>
 
-					<%
-					}
-					%>
-
-					<aui:input label="required" name='<%= "required" + index %>' type="checkbox" value="<%= (vocabulary != null) ? vocabulary.isRequired(classNameId, classTypePK) : false %>" />
+						<aui:input cssClass="vocabulary-checkbox" label="required" name='<%= "required" + index %>' type="checkbox" value="<%= requiredIndex %>" />
+					</div>
 				</div>
-			</div>
 
 		<%
+			}
 		}
 		%>
 
@@ -128,34 +138,20 @@ if (vocabulary != null) {
 		{
 			contentBox: '#<portlet:namespace />extraFields',
 			fieldIndexes: '<portlet:namespace />indexes',
-			namespace: '<portlet:namespace />',
-			on: {
-				clone: function(event) {
-					event.row.all('.subtype-select').hide();
-				}
-			}
+			namespace: '<portlet:namespace />'
 		}
 	).render();
 
 	extraFields.setData('autoFieldsInstance', autoFields);
-
-	var form = A.one('#<portlet:namespace />fm');
-
-	form.delegate(
-		'change',
-		function(event) {
-			var target = event.currentTarget;
-
-			var row = target.ancestor('.lfr-form-row');
-
-			row.all('.subtype-select').hide();
-
-			var select = row.one('[name*=subtype' + target.val() + ']');
-
-			if (select) {
-				select.ancestor('.subtype-select').show();
-			}
-		},
-		'.vocabulary-asset-type-select'
-	);
 </aui:script>
+
+<%!
+private boolean _isDefaultClassNameIds(long[] classNameIds) {
+	if ((classNameIds.length == 1) && (classNameIds[0] == 0)) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+%>

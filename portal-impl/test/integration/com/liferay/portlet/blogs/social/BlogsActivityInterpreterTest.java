@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -16,15 +16,17 @@ package com.liferay.portlet.blogs.social;
 
 import com.liferay.portal.kernel.test.ExecutionTestListeners;
 import com.liferay.portal.kernel.util.Constants;
+import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.service.ServiceTestUtil;
+import com.liferay.portal.test.LiferayIntegrationJUnitTestRunner;
+import com.liferay.portal.test.MainServletExecutionTestListener;
 import com.liferay.portal.test.Sync;
 import com.liferay.portal.test.SynchronousDestinationExecutionTestListener;
-import com.liferay.portal.test.listeners.MainServletExecutionTestListener;
-import com.liferay.portal.test.runners.LiferayIntegrationJUnitTestRunner;
-import com.liferay.portal.util.test.RandomTestUtil;
-import com.liferay.portal.util.test.TestPropsValues;
+import com.liferay.portal.test.TransactionalExecutionTestListener;
+import com.liferay.portal.util.TestPropsValues;
 import com.liferay.portlet.blogs.model.BlogsEntry;
 import com.liferay.portlet.blogs.service.BlogsEntryLocalServiceUtil;
-import com.liferay.portlet.blogs.util.test.BlogsTestUtil;
+import com.liferay.portlet.blogs.util.BlogsTestUtil;
 import com.liferay.portlet.social.BaseSocialActivityInterpreterTestCase;
 import com.liferay.portlet.social.model.SocialActivityConstants;
 import com.liferay.portlet.social.model.SocialActivityInterpreter;
@@ -37,7 +39,8 @@ import org.junit.runner.RunWith;
 @ExecutionTestListeners(
 	listeners = {
 		MainServletExecutionTestListener.class,
-		SynchronousDestinationExecutionTestListener.class
+		SynchronousDestinationExecutionTestListener.class,
+		TransactionalExecutionTestListener.class
 	})
 @RunWith(LiferayIntegrationJUnitTestRunner.class)
 @Sync
@@ -46,7 +49,8 @@ public class BlogsActivityInterpreterTest
 
 	@Override
 	protected void addActivities() throws Exception {
-		_entry = BlogsTestUtil.addEntry(group, true);
+		_entry = BlogsTestUtil.addEntry(
+			TestPropsValues.getUserId(), group, true);
 	}
 
 	@Override
@@ -71,15 +75,15 @@ public class BlogsActivityInterpreterTest
 
 	@Override
 	protected void renameModels() throws Exception {
-		_entry.setTitle(RandomTestUtil.randomString());
+		_entry.setTitle(ServiceTestUtil.randomString());
 
 		serviceContext.setCommand(Constants.UPDATE);
 
 		BlogsEntryLocalServiceUtil.updateEntry(
 			_entry.getUserId(), _entry.getEntryId(), _entry.getTitle(),
-			_entry.getSubtitle(), _entry.getDescription(), _entry.getContent(),
-			1, 1, 2012, 12, 00, true, true, new String[0], null,
-			serviceContext);
+			_entry.getDescription(), _entry.getContent(), 1, 1, 2012, 12, 00,
+			true, true, new String[0], _entry.getSmallImage(),
+			_entry.getSmallImageURL(), StringPool.BLANK, null, serviceContext);
 	}
 
 	@Override

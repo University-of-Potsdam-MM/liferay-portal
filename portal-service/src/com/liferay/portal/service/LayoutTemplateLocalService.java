@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -51,9 +51,17 @@ public interface LayoutTemplateLocalService extends BaseLocalService {
 	*/
 	public java.lang.String getBeanIdentifier();
 
+	/**
+	* Sets the Spring bean ID for this bean.
+	*
+	* @param beanIdentifier the Spring bean ID for this bean
+	*/
+	public void setBeanIdentifier(java.lang.String beanIdentifier);
+
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public java.lang.String getContent(java.lang.String layoutTemplateId,
-		boolean standard, java.lang.String themeId);
+		boolean standard, java.lang.String themeId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public com.liferay.portal.model.LayoutTemplate getLayoutTemplate(
@@ -69,7 +77,8 @@ public interface LayoutTemplateLocalService extends BaseLocalService {
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public java.lang.String getWapContent(java.lang.String layoutTemplateId,
-		boolean standard, java.lang.String themeId);
+		boolean standard, java.lang.String themeId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	public java.util.List<com.liferay.portal.model.LayoutTemplate> init(
 		javax.servlet.ServletContext servletContext, java.lang.String[] xmls,
@@ -86,13 +95,6 @@ public interface LayoutTemplateLocalService extends BaseLocalService {
 		com.liferay.portal.kernel.xml.Element element, boolean standard,
 		java.lang.String themeId,
 		com.liferay.portal.kernel.plugin.PluginPackage pluginPackage);
-
-	/**
-	* Sets the Spring bean ID for this bean.
-	*
-	* @param beanIdentifier the Spring bean ID for this bean
-	*/
-	public void setBeanIdentifier(java.lang.String beanIdentifier);
 
 	public void uninstallLayoutTemplate(java.lang.String layoutTemplateId,
 		boolean standard);

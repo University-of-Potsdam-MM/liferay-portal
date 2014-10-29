@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -72,7 +72,7 @@ public class MailboxUtil {
 		}
 	}
 
-	protected static long depositMail(ByteBuffer byteBuffer) {
+	static long depositMail(ByteBuffer byteBuffer) {
 		long receipt = _receiptGenerator.getAndIncrement();
 
 		_mailMap.put(receipt, byteBuffer);
@@ -102,23 +102,11 @@ public class MailboxUtil {
 		GetterUtil.getLong(
 			PropsUtil.get(PropsKeys.INTRABAND_MAILBOX_STORAGE_LIFE));
 
-	private static final Map<Long, ByteBuffer> _mailMap =
+	private final static Map<Long, ByteBuffer> _mailMap =
 		new ConcurrentHashMap<Long, ByteBuffer>();
-	private static final BlockingQueue<ReceiptStub> _overdueMailQueue =
+	private final static BlockingQueue<ReceiptStub> _overdueMailQueue =
 		new DelayQueue<ReceiptStub>();
-	private static final AtomicLong _receiptGenerator = new AtomicLong();
-
-	static {
-		if (_INTRABAND_MAILBOX_REAPER_THREAD_ENABLED) {
-			Thread thread = new OverdueMailReaperThread(
-				MailboxUtil.class.getName());
-
-			thread.setContextClassLoader(MailboxUtil.class.getClassLoader());
-			thread.setDaemon(true);
-
-			thread.start();
-		}
-	}
+	private final static AtomicLong _receiptGenerator = new AtomicLong();
 
 	private static class OverdueMailReaperThread extends Thread {
 
@@ -166,18 +154,30 @@ public class MailboxUtil {
 			return _receipt == receiptStub._receipt;
 		}
 
+		public long getReceipt() {
+			return _receipt;
+		}
+
 		@Override
 		public long getDelay(TimeUnit unit) {
 			return _expireTime - System.nanoTime();
 		}
 
-		public long getReceipt() {
-			return _receipt;
-		}
-
 		private final long _expireTime;
 		private final long _receipt;
 
+	}
+
+	static {
+		if (_INTRABAND_MAILBOX_REAPER_THREAD_ENABLED) {
+			Thread thread = new OverdueMailReaperThread(
+				MailboxUtil.class.getName());
+
+			thread.setContextClassLoader(MailboxUtil.class.getClassLoader());
+			thread.setDaemon(true);
+
+			thread.start();
+		}
 	}
 
 }

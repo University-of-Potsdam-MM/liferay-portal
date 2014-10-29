@@ -9,12 +9,15 @@
 /* ---------- Wrapper ---------- */
 
 #wrapper {
-	padding-bottom: 0;
-	padding-top: 2em;
-	position: relative;
+	padding: 2em 5em 0;
 
-	@include respond-to(desktop) {
-		padding-left: 5em;
-		padding-right: 5em;
+	@include respond-to(phone) {
+		padding-left: 0.5em;
+		padding-right: 0.5em;
+	}
+
+	@include respond-to(tablet) {
+		padding-left: 2em;
+		padding-right: 2em;
 	}
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -25,30 +25,35 @@ import com.liferay.portal.kernel.util.ReferenceRegistry;
 @ProviderType
 public class WikiPageFinderUtil {
 	public static int countByCreateDate(long groupId, long nodeId,
-		java.util.Date createDate, boolean before) {
+		java.util.Date createDate, boolean before)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getFinder().countByCreateDate(groupId, nodeId, createDate, before);
 	}
 
 	public static int countByCreateDate(long groupId, long nodeId,
-		java.sql.Timestamp createDate, boolean before) {
+		java.sql.Timestamp createDate, boolean before)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getFinder().countByCreateDate(groupId, nodeId, createDate, before);
 	}
 
 	public static int filterCountByCreateDate(long groupId, long nodeId,
-		java.util.Date createDate, boolean before) {
+		java.util.Date createDate, boolean before)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getFinder()
 				   .filterCountByCreateDate(groupId, nodeId, createDate, before);
 	}
 
 	public static int filterCountByCreateDate(long groupId, long nodeId,
-		java.sql.Timestamp createDate, boolean before) {
+		java.sql.Timestamp createDate, boolean before)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getFinder()
 				   .filterCountByCreateDate(groupId, nodeId, createDate, before);
 	}
 
 	public static java.util.List<com.liferay.portlet.wiki.model.WikiPage> filterFindByCreateDate(
 		long groupId, long nodeId, java.util.Date createDate, boolean before,
-		int start, int end) {
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getFinder()
 				   .filterFindByCreateDate(groupId, nodeId, createDate, before,
 			start, end);
@@ -56,7 +61,8 @@ public class WikiPageFinderUtil {
 
 	public static java.util.List<com.liferay.portlet.wiki.model.WikiPage> filterFindByCreateDate(
 		long groupId, long nodeId, java.sql.Timestamp createDate,
-		boolean before, int start, int end) {
+		boolean before, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getFinder()
 				   .filterFindByCreateDate(groupId, nodeId, createDate, before,
 			start, end);
@@ -64,13 +70,15 @@ public class WikiPageFinderUtil {
 
 	public static com.liferay.portlet.wiki.model.WikiPage findByResourcePrimKey(
 		long resourcePrimKey)
-		throws com.liferay.portlet.wiki.NoSuchPageException {
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.wiki.NoSuchPageException {
 		return getFinder().findByResourcePrimKey(resourcePrimKey);
 	}
 
 	public static java.util.List<com.liferay.portlet.wiki.model.WikiPage> findByCreateDate(
 		long groupId, long nodeId, java.util.Date createDate, boolean before,
-		int start, int end) {
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getFinder()
 				   .findByCreateDate(groupId, nodeId, createDate, before,
 			start, end);
@@ -78,13 +86,15 @@ public class WikiPageFinderUtil {
 
 	public static java.util.List<com.liferay.portlet.wiki.model.WikiPage> findByCreateDate(
 		long groupId, long nodeId, java.sql.Timestamp createDate,
-		boolean before, int start, int end) {
+		boolean before, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getFinder()
 				   .findByCreateDate(groupId, nodeId, createDate, before,
 			start, end);
 	}
 
-	public static java.util.List<com.liferay.portlet.wiki.model.WikiPage> findByNoAssets() {
+	public static java.util.List<com.liferay.portlet.wiki.model.WikiPage> findByNoAssets()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getFinder().findByNoAssets();
 	}
 

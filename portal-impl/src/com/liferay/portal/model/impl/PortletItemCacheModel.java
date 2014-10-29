@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,12 +14,9 @@
 
 package com.liferay.portal.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.CacheModel;
-import com.liferay.portal.model.MVCCModel;
 import com.liferay.portal.model.PortletItem;
 
 import java.io.Externalizable;
@@ -36,26 +33,13 @@ import java.util.Date;
  * @see PortletItem
  * @generated
  */
-@ProviderType
 public class PortletItemCacheModel implements CacheModel<PortletItem>,
-	Externalizable, MVCCModel {
-	@Override
-	public long getMvccVersion() {
-		return mvccVersion;
-	}
-
-	@Override
-	public void setMvccVersion(long mvccVersion) {
-		this.mvccVersion = mvccVersion;
-	}
-
+	Externalizable {
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(23);
+		StringBundler sb = new StringBundler(21);
 
-		sb.append("{mvccVersion=");
-		sb.append(mvccVersion);
-		sb.append(", portletItemId=");
+		sb.append("{portletItemId=");
 		sb.append(portletItemId);
 		sb.append(", groupId=");
 		sb.append(groupId);
@@ -84,7 +68,6 @@ public class PortletItemCacheModel implements CacheModel<PortletItem>,
 	public PortletItem toEntityModel() {
 		PortletItemImpl portletItemImpl = new PortletItemImpl();
 
-		portletItemImpl.setMvccVersion(mvccVersion);
 		portletItemImpl.setPortletItemId(portletItemId);
 		portletItemImpl.setGroupId(groupId);
 		portletItemImpl.setCompanyId(companyId);
@@ -134,7 +117,6 @@ public class PortletItemCacheModel implements CacheModel<PortletItem>,
 
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
-		mvccVersion = objectInput.readLong();
 		portletItemId = objectInput.readLong();
 		groupId = objectInput.readLong();
 		companyId = objectInput.readLong();
@@ -150,7 +132,6 @@ public class PortletItemCacheModel implements CacheModel<PortletItem>,
 	@Override
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
-		objectOutput.writeLong(mvccVersion);
 		objectOutput.writeLong(portletItemId);
 		objectOutput.writeLong(groupId);
 		objectOutput.writeLong(companyId);
@@ -183,7 +164,6 @@ public class PortletItemCacheModel implements CacheModel<PortletItem>,
 		objectOutput.writeLong(classNameId);
 	}
 
-	public long mvccVersion;
 	public long portletItemId;
 	public long groupId;
 	public long companyId;

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -78,9 +78,13 @@ public class ScriptingImpl implements Scripting {
 			throw new UnsupportedLanguageException(language);
 		}
 
-		StopWatch stopWatch = new StopWatch();
+		StopWatch stopWatch = null;
 
-		stopWatch.start();
+		if (_log.isDebugEnabled()) {
+			stopWatch = new StopWatch();
+
+			stopWatch.start();
+		}
 
 		try {
 			return scriptingExecutor.eval(

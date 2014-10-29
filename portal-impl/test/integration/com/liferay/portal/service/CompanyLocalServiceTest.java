@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -28,20 +28,12 @@ import com.liferay.portal.model.Group;
 import com.liferay.portal.model.GroupConstants;
 import com.liferay.portal.model.LayoutSetPrototype;
 import com.liferay.portal.model.User;
-import com.liferay.portal.security.auth.CompanyThreadLocal;
-import com.liferay.portal.test.Sync;
-import com.liferay.portal.test.SynchronousDestinationExecutionTestListener;
-import com.liferay.portal.test.listeners.MainServletExecutionTestListener;
-import com.liferay.portal.test.runners.LiferayIntegrationJUnitTestRunner;
+import com.liferay.portal.test.LiferayIntegrationJUnitTestRunner;
+import com.liferay.portal.test.MainServletExecutionTestListener;
+import com.liferay.portal.util.GroupTestUtil;
 import com.liferay.portal.util.PortalInstances;
 import com.liferay.portal.util.PropsValues;
-import com.liferay.portal.util.test.GroupTestUtil;
-import com.liferay.portal.util.test.RandomTestUtil;
-import com.liferay.portal.util.test.UserTestUtil;
-import com.liferay.portlet.documentlibrary.model.DLFileEntryType;
-import com.liferay.portlet.documentlibrary.model.DLFileEntryTypeConstants;
-import com.liferay.portlet.documentlibrary.service.DLAppLocalServiceUtil;
-import com.liferay.portlet.documentlibrary.service.DLFileEntryTypeLocalServiceUtil;
+import com.liferay.portal.util.UserTestUtil;
 import com.liferay.portlet.sites.util.SitesUtil;
 
 import java.io.File;
@@ -52,7 +44,6 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -67,40 +58,27 @@ import org.springframework.mock.web.MockServletContext;
  */
 @ExecutionTestListeners(
 	listeners = {
-		MainServletExecutionTestListener.class,
-		SynchronousDestinationExecutionTestListener.class
+		MainServletExecutionTestListener.class
 	})
 @RunWith(LiferayIntegrationJUnitTestRunner.class)
-@Sync
 public class CompanyLocalServiceTest {
 
 	@Before
 	public void setUp() {
-		_companyId = CompanyThreadLocal.getCompanyId();
-
-		CompanyThreadLocal.setCompanyId(PortalInstances.getDefaultCompanyId());
-
 		File file = new File("portal-web/docroot");
 
 		_mockServletContext = new MockServletContext(
 			"file:" + file.getAbsolutePath(), new FileSystemResourceLoader());
 	}
 
-	@After
-	public void tearDown() {
-		CompanyThreadLocal.setCompanyId(_companyId);
-	}
-
 	@Test
 	public void testAddAndDeleteCompany() throws Exception {
 		Company company = addCompany();
 
-		String companyWebId = company.getWebId();
-
 		CompanyLocalServiceUtil.deleteCompany(company.getCompanyId());
 
 		for (String webId : PortalInstances.getWebIds()) {
-			Assert.assertNotEquals(companyWebId, webId);
+			Assert.assertNotEquals("test.com", webId);
 		}
 	}
 
@@ -144,39 +122,7 @@ public class CompanyLocalServiceTest {
 	}
 
 	@Test
-	public void testAddAndDeleteCompanyWithDLFileEntryTypes() throws Exception {
-		Company company = addCompany();
-
-		long companyId = company.getCompanyId();
-
-		long userId = UserLocalServiceUtil.getDefaultUserId(companyId);
-
-		Group guestGroup = GroupLocalServiceUtil.getGroup(
-			companyId, GroupConstants.GUEST);
-
-		Group companyGroup = company.getGroup();
-
-		DLFileEntryType dlFileEntryType =
-			DLFileEntryTypeLocalServiceUtil.getFileEntryType(
-				companyGroup.getGroupId(),
-				DLFileEntryTypeConstants.NAME_CONTRACT);
-
-		ServiceContext serviceContext = getServiceContext(companyId);
-
-		serviceContext.setAttribute(
-			"fileEntryTypeId", dlFileEntryType.getFileEntryTypeId());
-		serviceContext.setScopeGroupId(guestGroup.getGroupId());
-		serviceContext.setUserId(userId);
-
-		DLAppLocalServiceUtil.addFileEntry(
-			userId, guestGroup.getGroupId(), 0, "test.xml", "text/xml",
-			"test.xml", "", "", "test".getBytes(), serviceContext);
-
-		CompanyLocalServiceUtil.deleteCompany(companyId);
-	}
-
-	@Test
-	public void testAddAndDeleteCompanyWithLayoutSetPrototype()
+	public void testAddandDeleteCompanyWithLayoutSetPrototype()
 		throws Exception {
 
 		Company company = addCompany();
@@ -187,10 +133,10 @@ public class CompanyLocalServiceTest {
 
 		Group group = GroupTestUtil.addGroup(
 			companyId, userId, GroupConstants.DEFAULT_PARENT_GROUP_ID,
-			RandomTestUtil.randomString(), RandomTestUtil.randomString());
+			ServiceTestUtil.randomString(), ServiceTestUtil.randomString());
 
 		LayoutSetPrototype layoutSetPrototype = addLayoutSetPrototype(
-			companyId, userId, RandomTestUtil.randomString());
+			companyId, userId, ServiceTestUtil.randomString());
 
 		SitesUtil.updateLayoutSetPrototypesLinks(
 			group, layoutSetPrototype.getLayoutSetPrototypeId(), 0, true,
@@ -210,7 +156,7 @@ public class CompanyLocalServiceTest {
 	}
 
 	@Test
-	public void testAddAndDeleteCompanyWithParentGroup() throws Exception {
+	public void testAddandDeleteCompanyWithParentGroup() throws Exception {
 		Company company = addCompany();
 
 		long companyId = company.getCompanyId();
@@ -219,11 +165,11 @@ public class CompanyLocalServiceTest {
 
 		Group parentGroup = GroupTestUtil.addGroup(
 			companyId, userId, GroupConstants.DEFAULT_PARENT_GROUP_ID,
-			RandomTestUtil.randomString(), RandomTestUtil.randomString());
+			ServiceTestUtil.randomString(), ServiceTestUtil.randomString());
 
 		Group group = GroupTestUtil.addGroup(
 			companyId, userId, parentGroup.getGroupId(),
-			RandomTestUtil.randomString(), RandomTestUtil.randomString());
+			ServiceTestUtil.randomString(), ServiceTestUtil.randomString());
 
 		addUser(
 			companyId, userId, group.getGroupId(),
@@ -246,23 +192,6 @@ public class CompanyLocalServiceTest {
 		long companyId = PortalInstances.getDefaultCompanyId();
 
 		CompanyLocalServiceUtil.deleteCompany(companyId);
-	}
-
-	@Test
-	public void testUpdateDisplay() throws Exception {
-		Company company = addCompany();
-
-		User user = UserLocalServiceUtil.getDefaultUser(company.getCompanyId());
-
-		UserLocalServiceUtil.updateUser(user);
-
-		CompanyLocalServiceUtil.updateDisplay(
-			company.getCompanyId(), "hu", "CET");
-
-		user = UserLocalServiceUtil.getDefaultUser(company.getCompanyId());
-
-		Assert.assertEquals("hu", user.getLanguageId());
-		Assert.assertEquals("CET", user.getTimeZoneId());
 	}
 
 	@Test
@@ -302,7 +231,7 @@ public class CompanyLocalServiceTest {
 		Company company = addCompany();
 
 		testUpdateAccountNames(
-			company, new String[] {RandomTestUtil.randomString()}, false);
+			company, new String[] {ServiceTestUtil.randomString()}, false);
 
 		CompanyLocalServiceUtil.deleteCompany(company.getCompanyId());
 	}
@@ -313,13 +242,11 @@ public class CompanyLocalServiceTest {
 	}
 
 	protected Company addCompany() throws Exception {
-		String webId = RandomTestUtil.randomString() + "test.com";
-
 		Company company = CompanyLocalServiceUtil.addCompany(
-			webId, webId, "test.com", PropsValues.SHARD_DEFAULT_NAME, false, 0,
-			true);
+			"test.com", "test.com", "test.com", PropsValues.SHARD_DEFAULT_NAME,
+			false, 0, true);
 
-		PortalInstances.initCompany(_mockServletContext, webId);
+		PortalInstances.initCompany(_mockServletContext, "test.com");
 
 		return company;
 	}
@@ -334,8 +261,8 @@ public class CompanyLocalServiceTest {
 
 		LayoutSetPrototype layoutSetPrototype =
 			LayoutSetPrototypeLocalServiceUtil.addLayoutSetPrototype(
-				userId, companyId, nameMap, new HashMap<Locale, String>(), true,
-				true, getServiceContext(companyId));
+				userId, companyId, nameMap, StringPool.BLANK, true, true,
+				getServiceContext(companyId));
 
 		return layoutSetPrototype;
 	}
@@ -346,9 +273,9 @@ public class CompanyLocalServiceTest {
 		throws Exception {
 
 		return UserTestUtil.addUser(
-			companyId, userId, RandomTestUtil.randomString(), false,
-			LocaleUtil.getDefault(), RandomTestUtil.randomString(),
-			RandomTestUtil.randomString(), new long[] {groupId},
+			companyId, userId, ServiceTestUtil.randomString(), false,
+			LocaleUtil.getDefault(), ServiceTestUtil.randomString(),
+			ServiceTestUtil.randomString(), new long[] {groupId},
 			serviceContext);
 	}
 
@@ -373,8 +300,8 @@ public class CompanyLocalServiceTest {
 			try {
 				company = CompanyLocalServiceUtil.updateCompany(
 					company.getCompanyId(), company.getVirtualHostname(),
-					company.getMx(), company.getHomeURL(), true, null,
-					accountName, account.getLegalName(), account.getLegalId(),
+					company.getMx(), company.getHomeURL(), accountName,
+					account.getLegalName(), account.getLegalId(),
 					account.getLegalType(), account.getSicCode(),
 					account.getTickerSymbol(), account.getIndustry(),
 					account.getType(), account.getSize());
@@ -465,7 +392,6 @@ public class CompanyLocalServiceTest {
 		CompanyLocalServiceUtil.deleteCompany(company.getCompanyId());
 	}
 
-	private long _companyId;
 	private MockServletContext _mockServletContext;
 
 }

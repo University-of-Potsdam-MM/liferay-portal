@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -42,32 +42,15 @@ public class PortalPreferencesLocalServiceUtil {
 	 */
 
 	/**
-	* @deprecated As of 6.2.0, replaced by {@link #addPortalPreferences(long,
-	int, String)}
-	*/
-	@Deprecated
-	public static com.liferay.portal.model.PortalPreferences addPortalPreferences(
-		long companyId, long ownerId, int ownerType,
-		java.lang.String defaultPreferences) {
-		return getService()
-				   .addPortalPreferences(companyId, ownerId, ownerType,
-			defaultPreferences);
-	}
-
-	public static com.liferay.portal.model.PortalPreferences addPortalPreferences(
-		long ownerId, int ownerType, java.lang.String defaultPreferences) {
-		return getService()
-				   .addPortalPreferences(ownerId, ownerType, defaultPreferences);
-	}
-
-	/**
 	* Adds the portal preferences to the database. Also notifies the appropriate model listeners.
 	*
 	* @param portalPreferences the portal preferences
 	* @return the portal preferences that was added
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.PortalPreferences addPortalPreferences(
-		com.liferay.portal.model.PortalPreferences portalPreferences) {
+		com.liferay.portal.model.PortalPreferences portalPreferences)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().addPortalPreferences(portalPreferences);
 	}
 
@@ -83,12 +66,18 @@ public class PortalPreferencesLocalServiceUtil {
 	}
 
 	/**
-	* @throws PortalException
+	* Deletes the portal preferences with the primary key from the database. Also notifies the appropriate model listeners.
+	*
+	* @param portalPreferencesId the primary key of the portal preferences
+	* @return the portal preferences that was removed
+	* @throws PortalException if a portal preferences with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
-	public static com.liferay.portal.model.PersistedModel deletePersistedModel(
-		com.liferay.portal.model.PersistedModel persistedModel)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().deletePersistedModel(persistedModel);
+	public static com.liferay.portal.model.PortalPreferences deletePortalPreferences(
+		long portalPreferencesId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getService().deletePortalPreferences(portalPreferencesId);
 	}
 
 	/**
@@ -96,23 +85,12 @@ public class PortalPreferencesLocalServiceUtil {
 	*
 	* @param portalPreferences the portal preferences
 	* @return the portal preferences that was removed
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.PortalPreferences deletePortalPreferences(
-		com.liferay.portal.model.PortalPreferences portalPreferences) {
+		com.liferay.portal.model.PortalPreferences portalPreferences)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().deletePortalPreferences(portalPreferences);
-	}
-
-	/**
-	* Deletes the portal preferences with the primary key from the database. Also notifies the appropriate model listeners.
-	*
-	* @param portalPreferencesId the primary key of the portal preferences
-	* @return the portal preferences that was removed
-	* @throws PortalException if a portal preferences with the primary key could not be found
-	*/
-	public static com.liferay.portal.model.PortalPreferences deletePortalPreferences(
-		long portalPreferencesId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().deletePortalPreferences(portalPreferencesId);
 	}
 
 	public static com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery() {
@@ -124,9 +102,12 @@ public class PortalPreferencesLocalServiceUtil {
 	*
 	* @param dynamicQuery the dynamic query
 	* @return the matching rows
+	* @throws SystemException if a system exception occurred
 	*/
-	public static <T> java.util.List<T> dynamicQuery(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery) {
+	@SuppressWarnings("rawtypes")
+	public static java.util.List dynamicQuery(
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().dynamicQuery(dynamicQuery);
 	}
 
@@ -141,10 +122,12 @@ public class PortalPreferencesLocalServiceUtil {
 	* @param start the lower bound of the range of model instances
 	* @param end the upper bound of the range of model instances (not inclusive)
 	* @return the range of matching rows
+	* @throws SystemException if a system exception occurred
 	*/
-	public static <T> java.util.List<T> dynamicQuery(
+	@SuppressWarnings("rawtypes")
+	public static java.util.List dynamicQuery(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
-		int end) {
+		int end) throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().dynamicQuery(dynamicQuery, start, end);
 	}
 
@@ -160,11 +143,14 @@ public class PortalPreferencesLocalServiceUtil {
 	* @param end the upper bound of the range of model instances (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching rows
+	* @throws SystemException if a system exception occurred
 	*/
-	public static <T> java.util.List<T> dynamicQuery(
+	@SuppressWarnings("rawtypes")
+	public static java.util.List dynamicQuery(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
 		int end,
-		com.liferay.portal.kernel.util.OrderByComparator<T> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService()
 				   .dynamicQuery(dynamicQuery, start, end, orderByComparator);
 	}
@@ -174,9 +160,11 @@ public class PortalPreferencesLocalServiceUtil {
 	*
 	* @param dynamicQuery the dynamic query
 	* @return the number of rows that match the dynamic query
+	* @throws SystemException if a system exception occurred
 	*/
 	public static long dynamicQueryCount(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery) {
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().dynamicQueryCount(dynamicQuery);
 	}
 
@@ -186,35 +174,19 @@ public class PortalPreferencesLocalServiceUtil {
 	* @param dynamicQuery the dynamic query
 	* @param projection the projection to apply to the query
 	* @return the number of rows that match the dynamic query
+	* @throws SystemException if a system exception occurred
 	*/
 	public static long dynamicQueryCount(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery,
-		com.liferay.portal.kernel.dao.orm.Projection projection) {
+		com.liferay.portal.kernel.dao.orm.Projection projection)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().dynamicQueryCount(dynamicQuery, projection);
 	}
 
 	public static com.liferay.portal.model.PortalPreferences fetchPortalPreferences(
-		long portalPreferencesId) {
+		long portalPreferencesId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().fetchPortalPreferences(portalPreferencesId);
-	}
-
-	public static com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery getActionableDynamicQuery() {
-		return getService().getActionableDynamicQuery();
-	}
-
-	/**
-	* Returns the Spring bean ID for this bean.
-	*
-	* @return the Spring bean ID for this bean
-	*/
-	public static java.lang.String getBeanIdentifier() {
-		return getService().getBeanIdentifier();
-	}
-
-	public static com.liferay.portal.model.PersistedModel getPersistedModel(
-		java.io.Serializable primaryKeyObj)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().getPersistedModel(primaryKeyObj);
 	}
 
 	/**
@@ -223,11 +195,20 @@ public class PortalPreferencesLocalServiceUtil {
 	* @param portalPreferencesId the primary key of the portal preferences
 	* @return the portal preferences
 	* @throws PortalException if a portal preferences with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.PortalPreferences getPortalPreferences(
 		long portalPreferencesId)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getService().getPortalPreferences(portalPreferencesId);
+	}
+
+	public static com.liferay.portal.model.PersistedModel getPersistedModel(
+		java.io.Serializable primaryKeyObj)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getService().getPersistedModel(primaryKeyObj);
 	}
 
 	/**
@@ -240,9 +221,11 @@ public class PortalPreferencesLocalServiceUtil {
 	* @param start the lower bound of the range of portal preferenceses
 	* @param end the upper bound of the range of portal preferenceses (not inclusive)
 	* @return the range of portal preferenceses
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portal.model.PortalPreferences> getPortalPreferenceses(
-		int start, int end) {
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().getPortalPreferenceses(start, end);
 	}
 
@@ -250,42 +233,33 @@ public class PortalPreferencesLocalServiceUtil {
 	* Returns the number of portal preferenceses.
 	*
 	* @return the number of portal preferenceses
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int getPortalPreferencesesCount() {
+	public static int getPortalPreferencesesCount()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().getPortalPreferencesesCount();
 	}
 
 	/**
-	* @deprecated As of 6.2.0, replaced by {@link #getPreferences(long, int)}
+	* Updates the portal preferences in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
+	*
+	* @param portalPreferences the portal preferences
+	* @return the portal preferences that was updated
+	* @throws SystemException if a system exception occurred
 	*/
-	@Deprecated
-	public static javax.portlet.PortletPreferences getPreferences(
-		long companyId, long ownerId, int ownerType) {
-		return getService().getPreferences(companyId, ownerId, ownerType);
+	public static com.liferay.portal.model.PortalPreferences updatePortalPreferences(
+		com.liferay.portal.model.PortalPreferences portalPreferences)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().updatePortalPreferences(portalPreferences);
 	}
 
 	/**
-	* @deprecated As of 6.2.0, replaced by {@link #getPreferences(long, int,
-	String)}
+	* Returns the Spring bean ID for this bean.
+	*
+	* @return the Spring bean ID for this bean
 	*/
-	@Deprecated
-	public static javax.portlet.PortletPreferences getPreferences(
-		long companyId, long ownerId, int ownerType,
-		java.lang.String defaultPreferences) {
-		return getService()
-				   .getPreferences(companyId, ownerId, ownerType,
-			defaultPreferences);
-	}
-
-	public static javax.portlet.PortletPreferences getPreferences(
-		long ownerId, int ownerType) {
-		return getService().getPreferences(ownerId, ownerType);
-	}
-
-	public static javax.portlet.PortletPreferences getPreferences(
-		long ownerId, int ownerType, java.lang.String defaultPreferences) {
-		return getService()
-				   .getPreferences(ownerId, ownerType, defaultPreferences);
+	public static java.lang.String getBeanIdentifier() {
+		return getService().getBeanIdentifier();
 	}
 
 	/**
@@ -297,26 +271,72 @@ public class PortalPreferencesLocalServiceUtil {
 		getService().setBeanIdentifier(beanIdentifier);
 	}
 
+	public static com.liferay.portal.model.PortalPreferences addPortalPreferences(
+		long ownerId, int ownerType, java.lang.String defaultPreferences)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService()
+				   .addPortalPreferences(ownerId, ownerType, defaultPreferences);
+	}
+
 	/**
-	* Updates the portal preferences in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
-	*
-	* @param portalPreferences the portal preferences
-	* @return the portal preferences that was updated
+	* @deprecated As of 6.2.0, replaced by {@link #addPortalPreferences(long,
+	int, String)}
 	*/
-	public static com.liferay.portal.model.PortalPreferences updatePortalPreferences(
-		com.liferay.portal.model.PortalPreferences portalPreferences) {
-		return getService().updatePortalPreferences(portalPreferences);
+	public static com.liferay.portal.model.PortalPreferences addPortalPreferences(
+		long companyId, long ownerId, int ownerType,
+		java.lang.String defaultPreferences)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService()
+				   .addPortalPreferences(companyId, ownerId, ownerType,
+			defaultPreferences);
+	}
+
+	public static javax.portlet.PortletPreferences getPreferences(
+		long ownerId, int ownerType)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().getPreferences(ownerId, ownerType);
+	}
+
+	public static javax.portlet.PortletPreferences getPreferences(
+		long ownerId, int ownerType, java.lang.String defaultPreferences)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService()
+				   .getPreferences(ownerId, ownerType, defaultPreferences);
+	}
+
+	/**
+	* @deprecated As of 6.2.0, replaced by {@link #getPreferences(long, int)}
+	*/
+	public static javax.portlet.PortletPreferences getPreferences(
+		long companyId, long ownerId, int ownerType)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().getPreferences(companyId, ownerId, ownerType);
+	}
+
+	/**
+	* @deprecated As of 6.2.0, replaced by {@link #getPreferences(long, int,
+	String)}
+	*/
+	public static javax.portlet.PortletPreferences getPreferences(
+		long companyId, long ownerId, int ownerType,
+		java.lang.String defaultPreferences)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService()
+				   .getPreferences(companyId, ownerId, ownerType,
+			defaultPreferences);
 	}
 
 	public static com.liferay.portal.model.PortalPreferences updatePreferences(
 		long ownerId, int ownerType,
-		com.liferay.portlet.PortalPreferences portalPreferences) {
+		com.liferay.portlet.PortalPreferences portalPreferences)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService()
 				   .updatePreferences(ownerId, ownerType, portalPreferences);
 	}
 
 	public static com.liferay.portal.model.PortalPreferences updatePreferences(
-		long ownerId, int ownerType, java.lang.String xml) {
+		long ownerId, int ownerType, java.lang.String xml)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().updatePreferences(ownerId, ownerType, xml);
 	}
 
@@ -334,7 +354,6 @@ public class PortalPreferencesLocalServiceUtil {
 	/**
 	 * @deprecated As of 6.2.0
 	 */
-	@Deprecated
 	public void setService(PortalPreferencesLocalService service) {
 	}
 

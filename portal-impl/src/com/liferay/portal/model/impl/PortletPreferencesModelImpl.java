@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -13,8 +13,6 @@
  */
 
 package com.liferay.portal.model.impl;
-
-import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
 import com.liferay.portal.kernel.json.JSON;
@@ -54,7 +52,6 @@ import java.util.Map;
  * @generated
  */
 @JSON(strict = true)
-@ProviderType
 public class PortletPreferencesModelImpl extends BaseModelImpl<PortletPreferences>
 	implements PortletPreferencesModel {
 	/*
@@ -64,7 +61,6 @@ public class PortletPreferencesModelImpl extends BaseModelImpl<PortletPreference
 	 */
 	public static final String TABLE_NAME = "PortletPreferences";
 	public static final Object[][] TABLE_COLUMNS = {
-			{ "mvccVersion", Types.BIGINT },
 			{ "portletPreferencesId", Types.BIGINT },
 			{ "ownerId", Types.BIGINT },
 			{ "ownerType", Types.INTEGER },
@@ -72,7 +68,7 @@ public class PortletPreferencesModelImpl extends BaseModelImpl<PortletPreference
 			{ "portletId", Types.VARCHAR },
 			{ "preferences", Types.CLOB }
 		};
-	public static final String TABLE_SQL_CREATE = "create table PortletPreferences (mvccVersion LONG default 0,portletPreferencesId LONG not null primary key,ownerId LONG,ownerType INTEGER,plid LONG,portletId VARCHAR(200) null,preferences TEXT null)";
+	public static final String TABLE_SQL_CREATE = "create table PortletPreferences (portletPreferencesId LONG not null primary key,ownerId LONG,ownerType INTEGER,plid LONG,portletId VARCHAR(200) null,preferences TEXT null)";
 	public static final String TABLE_SQL_DROP = "drop table PortletPreferences";
 	public static final String ORDER_BY_JPQL = " ORDER BY portletPreferences.portletPreferencesId ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY PortletPreferences.portletPreferencesId ASC";
@@ -88,11 +84,11 @@ public class PortletPreferencesModelImpl extends BaseModelImpl<PortletPreference
 	public static final boolean COLUMN_BITMASK_ENABLED = GetterUtil.getBoolean(com.liferay.portal.util.PropsUtil.get(
 				"value.object.column.bitmask.enabled.com.liferay.portal.model.PortletPreferences"),
 			true);
-	public static final long OWNERID_COLUMN_BITMASK = 1L;
-	public static final long OWNERTYPE_COLUMN_BITMASK = 2L;
-	public static final long PLID_COLUMN_BITMASK = 4L;
-	public static final long PORTLETID_COLUMN_BITMASK = 8L;
-	public static final long PORTLETPREFERENCESID_COLUMN_BITMASK = 16L;
+	public static long OWNERID_COLUMN_BITMASK = 1L;
+	public static long OWNERTYPE_COLUMN_BITMASK = 2L;
+	public static long PLID_COLUMN_BITMASK = 4L;
+	public static long PORTLETID_COLUMN_BITMASK = 8L;
+	public static long PORTLETPREFERENCESID_COLUMN_BITMASK = 16L;
 
 	/**
 	 * Converts the soap model instance into a normal model instance.
@@ -107,7 +103,6 @@ public class PortletPreferencesModelImpl extends BaseModelImpl<PortletPreference
 
 		PortletPreferences model = new PortletPreferencesImpl();
 
-		model.setMvccVersion(soapModel.getMvccVersion());
 		model.setPortletPreferencesId(soapModel.getPortletPreferencesId());
 		model.setOwnerId(soapModel.getOwnerId());
 		model.setOwnerType(soapModel.getOwnerType());
@@ -179,7 +174,6 @@ public class PortletPreferencesModelImpl extends BaseModelImpl<PortletPreference
 	public Map<String, Object> getModelAttributes() {
 		Map<String, Object> attributes = new HashMap<String, Object>();
 
-		attributes.put("mvccVersion", getMvccVersion());
 		attributes.put("portletPreferencesId", getPortletPreferencesId());
 		attributes.put("ownerId", getOwnerId());
 		attributes.put("ownerType", getOwnerType());
@@ -187,20 +181,11 @@ public class PortletPreferencesModelImpl extends BaseModelImpl<PortletPreference
 		attributes.put("portletId", getPortletId());
 		attributes.put("preferences", getPreferences());
 
-		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
-		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
-
 		return attributes;
 	}
 
 	@Override
 	public void setModelAttributes(Map<String, Object> attributes) {
-		Long mvccVersion = (Long)attributes.get("mvccVersion");
-
-		if (mvccVersion != null) {
-			setMvccVersion(mvccVersion);
-		}
-
 		Long portletPreferencesId = (Long)attributes.get("portletPreferencesId");
 
 		if (portletPreferencesId != null) {
@@ -236,17 +221,6 @@ public class PortletPreferencesModelImpl extends BaseModelImpl<PortletPreference
 		if (preferences != null) {
 			setPreferences(preferences);
 		}
-	}
-
-	@JSON
-	@Override
-	public long getMvccVersion() {
-		return _mvccVersion;
-	}
-
-	@Override
-	public void setMvccVersion(long mvccVersion) {
-		_mvccVersion = mvccVersion;
 	}
 
 	@JSON
@@ -402,7 +376,6 @@ public class PortletPreferencesModelImpl extends BaseModelImpl<PortletPreference
 	public Object clone() {
 		PortletPreferencesImpl portletPreferencesImpl = new PortletPreferencesImpl();
 
-		portletPreferencesImpl.setMvccVersion(getMvccVersion());
 		portletPreferencesImpl.setPortletPreferencesId(getPortletPreferencesId());
 		portletPreferencesImpl.setOwnerId(getOwnerId());
 		portletPreferencesImpl.setOwnerType(getOwnerType());
@@ -458,16 +431,6 @@ public class PortletPreferencesModelImpl extends BaseModelImpl<PortletPreference
 	}
 
 	@Override
-	public boolean isEntityCacheEnabled() {
-		return ENTITY_CACHE_ENABLED;
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return FINDER_CACHE_ENABLED;
-	}
-
-	@Override
 	public void resetOriginalValues() {
 		PortletPreferencesModelImpl portletPreferencesModelImpl = this;
 
@@ -491,8 +454,6 @@ public class PortletPreferencesModelImpl extends BaseModelImpl<PortletPreference
 	@Override
 	public CacheModel<PortletPreferences> toCacheModel() {
 		PortletPreferencesCacheModel portletPreferencesCacheModel = new PortletPreferencesCacheModel();
-
-		portletPreferencesCacheModel.mvccVersion = getMvccVersion();
 
 		portletPreferencesCacheModel.portletPreferencesId = getPortletPreferencesId();
 
@@ -523,11 +484,9 @@ public class PortletPreferencesModelImpl extends BaseModelImpl<PortletPreference
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(15);
+		StringBundler sb = new StringBundler(13);
 
-		sb.append("{mvccVersion=");
-		sb.append(getMvccVersion());
-		sb.append(", portletPreferencesId=");
+		sb.append("{portletPreferencesId=");
 		sb.append(getPortletPreferencesId());
 		sb.append(", ownerId=");
 		sb.append(getOwnerId());
@@ -546,16 +505,12 @@ public class PortletPreferencesModelImpl extends BaseModelImpl<PortletPreference
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(25);
+		StringBundler sb = new StringBundler(22);
 
 		sb.append("<model><model-name>");
 		sb.append("com.liferay.portal.model.PortletPreferences");
 		sb.append("</model-name>");
 
-		sb.append(
-			"<column><column-name>mvccVersion</column-name><column-value><![CDATA[");
-		sb.append(getMvccVersion());
-		sb.append("]]></column-value></column>");
 		sb.append(
 			"<column><column-name>portletPreferencesId</column-name><column-value><![CDATA[");
 		sb.append(getPortletPreferencesId());
@@ -586,11 +541,10 @@ public class PortletPreferencesModelImpl extends BaseModelImpl<PortletPreference
 		return sb.toString();
 	}
 
-	private static final ClassLoader _classLoader = PortletPreferences.class.getClassLoader();
-	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
+	private static ClassLoader _classLoader = PortletPreferences.class.getClassLoader();
+	private static Class<?>[] _escapedModelInterfaces = new Class[] {
 			PortletPreferences.class
 		};
-	private long _mvccVersion;
 	private long _portletPreferencesId;
 	private long _ownerId;
 	private long _originalOwnerId;

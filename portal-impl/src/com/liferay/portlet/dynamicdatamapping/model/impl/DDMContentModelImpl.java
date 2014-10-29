@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,11 +14,9 @@
 
 package com.liferay.portlet.dynamicdatamapping.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.LocaleException;
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
-import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSON;
 import com.liferay.portal.kernel.lar.StagedModelType;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -29,10 +27,8 @@ import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.CacheModel;
-import com.liferay.portal.model.User;
 import com.liferay.portal.model.impl.BaseModelImpl;
 import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.service.UserLocalServiceUtil;
 import com.liferay.portal.util.PortalUtil;
 
 import com.liferay.portlet.dynamicdatamapping.model.DDMContent;
@@ -64,7 +60,6 @@ import java.util.TreeSet;
  * @see com.liferay.portlet.dynamicdatamapping.model.DDMContentModel
  * @generated
  */
-@ProviderType
 public class DDMContentModelImpl extends BaseModelImpl<DDMContent>
 	implements DDMContentModel {
 	/*
@@ -84,9 +79,9 @@ public class DDMContentModelImpl extends BaseModelImpl<DDMContent>
 			{ "modifiedDate", Types.TIMESTAMP },
 			{ "name", Types.VARCHAR },
 			{ "description", Types.VARCHAR },
-			{ "data_", Types.CLOB }
+			{ "xml", Types.CLOB }
 		};
-	public static final String TABLE_SQL_CREATE = "create table DDMContent (uuid_ VARCHAR(75) null,contentId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,name STRING null,description STRING null,data_ TEXT null)";
+	public static final String TABLE_SQL_CREATE = "create table DDMContent (uuid_ VARCHAR(75) null,contentId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,name STRING null,description STRING null,xml TEXT null)";
 	public static final String TABLE_SQL_DROP = "drop table DDMContent";
 	public static final String ORDER_BY_JPQL = " ORDER BY ddmContent.contentId ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY DDMContent.contentId ASC";
@@ -102,10 +97,10 @@ public class DDMContentModelImpl extends BaseModelImpl<DDMContent>
 	public static final boolean COLUMN_BITMASK_ENABLED = GetterUtil.getBoolean(com.liferay.portal.util.PropsUtil.get(
 				"value.object.column.bitmask.enabled.com.liferay.portlet.dynamicdatamapping.model.DDMContent"),
 			true);
-	public static final long COMPANYID_COLUMN_BITMASK = 1L;
-	public static final long GROUPID_COLUMN_BITMASK = 2L;
-	public static final long UUID_COLUMN_BITMASK = 4L;
-	public static final long CONTENTID_COLUMN_BITMASK = 8L;
+	public static long COMPANYID_COLUMN_BITMASK = 1L;
+	public static long GROUPID_COLUMN_BITMASK = 2L;
+	public static long UUID_COLUMN_BITMASK = 4L;
+	public static long CONTENTID_COLUMN_BITMASK = 8L;
 	public static final long LOCK_EXPIRATION_TIME = GetterUtil.getLong(com.liferay.portal.util.PropsUtil.get(
 				"lock.expiration.time.com.liferay.portlet.dynamicdatamapping.model.DDMContent"));
 
@@ -156,10 +151,7 @@ public class DDMContentModelImpl extends BaseModelImpl<DDMContent>
 		attributes.put("modifiedDate", getModifiedDate());
 		attributes.put("name", getName());
 		attributes.put("description", getDescription());
-		attributes.put("data", getData());
-
-		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
-		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
+		attributes.put("xml", getXml());
 
 		return attributes;
 	}
@@ -226,10 +218,10 @@ public class DDMContentModelImpl extends BaseModelImpl<DDMContent>
 			setDescription(description);
 		}
 
-		String data = (String)attributes.get("data");
+		String xml = (String)attributes.get("xml");
 
-		if (data != null) {
-			setData(data);
+		if (xml != null) {
+			setXml(xml);
 		}
 	}
 
@@ -321,19 +313,13 @@ public class DDMContentModelImpl extends BaseModelImpl<DDMContent>
 	}
 
 	@Override
-	public String getUserUuid() {
-		try {
-			User user = UserLocalServiceUtil.getUserById(getUserId());
-
-			return user.getUuid();
-		}
-		catch (PortalException pe) {
-			return StringPool.BLANK;
-		}
+	public String getUserUuid() throws SystemException {
+		return PortalUtil.getUserValue(getUserId(), "uuid", _userUuid);
 	}
 
 	@Override
 	public void setUserUuid(String userUuid) {
+		_userUuid = userUuid;
 	}
 
 	@Override
@@ -485,18 +471,18 @@ public class DDMContentModelImpl extends BaseModelImpl<DDMContent>
 	}
 
 	@Override
-	public String getData() {
-		if (_data == null) {
+	public String getXml() {
+		if (_xml == null) {
 			return StringPool.BLANK;
 		}
 		else {
-			return _data;
+			return _xml;
 		}
 	}
 
 	@Override
-	public void setData(String data) {
-		_data = data;
+	public void setXml(String xml) {
+		_xml = xml;
 	}
 
 	@Override
@@ -548,28 +534,19 @@ public class DDMContentModelImpl extends BaseModelImpl<DDMContent>
 			return StringPool.BLANK;
 		}
 
-		Locale defaultLocale = LocaleUtil.getSiteDefault();
-
-		return LocalizationUtil.getDefaultLanguageId(xml, defaultLocale);
+		return LocalizationUtil.getDefaultLanguageId(xml);
 	}
 
 	@Override
 	public void prepareLocalizedFieldsForImport() throws LocaleException {
-		Locale defaultLocale = LocaleUtil.fromLanguageId(getDefaultLanguageId());
-
-		Locale[] availableLocales = LocaleUtil.fromLanguageIds(getAvailableLanguageIds());
-
-		Locale defaultImportLocale = LocalizationUtil.getDefaultImportLocale(DDMContent.class.getName(),
-				getPrimaryKey(), defaultLocale, availableLocales);
-
-		prepareLocalizedFieldsForImport(defaultImportLocale);
+		prepareLocalizedFieldsForImport(null);
 	}
 
 	@Override
 	@SuppressWarnings("unused")
 	public void prepareLocalizedFieldsForImport(Locale defaultImportLocale)
 		throws LocaleException {
-		Locale defaultLocale = LocaleUtil.getSiteDefault();
+		Locale defaultLocale = LocaleUtil.getDefault();
 
 		String modelDefaultLanguageId = getDefaultLanguageId();
 
@@ -607,7 +584,7 @@ public class DDMContentModelImpl extends BaseModelImpl<DDMContent>
 		ddmContentImpl.setModifiedDate(getModifiedDate());
 		ddmContentImpl.setName(getName());
 		ddmContentImpl.setDescription(getDescription());
-		ddmContentImpl.setData(getData());
+		ddmContentImpl.setXml(getXml());
 
 		ddmContentImpl.resetOriginalValues();
 
@@ -654,16 +631,6 @@ public class DDMContentModelImpl extends BaseModelImpl<DDMContent>
 	@Override
 	public int hashCode() {
 		return (int)getPrimaryKey();
-	}
-
-	@Override
-	public boolean isEntityCacheEnabled() {
-		return ENTITY_CACHE_ENABLED;
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return FINDER_CACHE_ENABLED;
 	}
 
 	@Override
@@ -745,12 +712,12 @@ public class DDMContentModelImpl extends BaseModelImpl<DDMContent>
 			ddmContentCacheModel.description = null;
 		}
 
-		ddmContentCacheModel.data = getData();
+		ddmContentCacheModel.xml = getXml();
 
-		String data = ddmContentCacheModel.data;
+		String xml = ddmContentCacheModel.xml;
 
-		if ((data != null) && (data.length() == 0)) {
-			ddmContentCacheModel.data = null;
+		if ((xml != null) && (xml.length() == 0)) {
+			ddmContentCacheModel.xml = null;
 		}
 
 		return ddmContentCacheModel;
@@ -780,8 +747,8 @@ public class DDMContentModelImpl extends BaseModelImpl<DDMContent>
 		sb.append(getName());
 		sb.append(", description=");
 		sb.append(getDescription());
-		sb.append(", data=");
-		sb.append(getData());
+		sb.append(", xml=");
+		sb.append(getXml());
 		sb.append("}");
 
 		return sb.toString();
@@ -836,8 +803,8 @@ public class DDMContentModelImpl extends BaseModelImpl<DDMContent>
 		sb.append(getDescription());
 		sb.append("]]></column-value></column>");
 		sb.append(
-			"<column><column-name>data</column-name><column-value><![CDATA[");
-		sb.append(getData());
+			"<column><column-name>xml</column-name><column-value><![CDATA[");
+		sb.append(getXml());
 		sb.append("]]></column-value></column>");
 
 		sb.append("</model>");
@@ -845,8 +812,8 @@ public class DDMContentModelImpl extends BaseModelImpl<DDMContent>
 		return sb.toString();
 	}
 
-	private static final ClassLoader _classLoader = DDMContent.class.getClassLoader();
-	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
+	private static ClassLoader _classLoader = DDMContent.class.getClassLoader();
+	private static Class<?>[] _escapedModelInterfaces = new Class[] {
 			DDMContent.class
 		};
 	private String _uuid;
@@ -859,13 +826,14 @@ public class DDMContentModelImpl extends BaseModelImpl<DDMContent>
 	private long _originalCompanyId;
 	private boolean _setOriginalCompanyId;
 	private long _userId;
+	private String _userUuid;
 	private String _userName;
 	private Date _createDate;
 	private Date _modifiedDate;
 	private String _name;
 	private String _nameCurrentLanguageId;
 	private String _description;
-	private String _data;
+	private String _xml;
 	private long _columnBitmask;
 	private DDMContent _escapedModel;
 }

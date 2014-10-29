@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -42,11 +42,8 @@ import javax.portlet.PortletURL;
  */
 public class UserSearch extends SearchContainer<User> {
 
-	public static final String EMPTY_RESULTS_MESSAGE = "no-users-were-found";
-
-	public static List<String> headerNames = new ArrayList<String>();
-	public static Map<String, String> orderableHeaders =
-		new HashMap<String, String>();
+	static List<String> headerNames = new ArrayList<String>();
+	static Map<String, String> orderableHeaders = new HashMap<String, String>();
 
 	static {
 		headerNames.add("first-name");
@@ -62,6 +59,8 @@ public class UserSearch extends SearchContainer<User> {
 		//orderableHeaders.put("email-address", "email-address");
 		orderableHeaders.put("job-title", "job-title");
 	}
+
+	public static final String EMPTY_RESULTS_MESSAGE = "no-users-were-found";
 
 	public UserSearch(PortletRequest portletRequest, PortletURL iteratorURL) {
 		this(portletRequest, DEFAULT_CUR_PARAM, iteratorURL);
@@ -138,7 +137,7 @@ public class UserSearch extends SearchContainer<User> {
 					PortletKeys.USERS_ADMIN, "users-order-by-type", "asc");
 			}
 
-			OrderByComparator<User> orderByComparator =
+			OrderByComparator orderByComparator =
 				UsersAdminUtil.getUserOrderByComparator(
 					orderByCol, orderByType);
 

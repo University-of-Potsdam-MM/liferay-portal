@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -24,19 +24,18 @@ import com.liferay.portal.model.ClassedModel;
 import com.liferay.portal.model.Group;
 import com.liferay.portal.search.BaseSearchTestCase;
 import com.liferay.portal.service.ServiceContext;
+import com.liferay.portal.service.ServiceTestUtil;
+import com.liferay.portal.test.LiferayIntegrationJUnitTestRunner;
+import com.liferay.portal.test.MainServletExecutionTestListener;
 import com.liferay.portal.test.Sync;
 import com.liferay.portal.test.SynchronousDestinationExecutionTestListener;
-import com.liferay.portal.test.listeners.MainServletExecutionTestListener;
-import com.liferay.portal.test.runners.LiferayIntegrationJUnitTestRunner;
 import com.liferay.portal.util.PropsValues;
-import com.liferay.portal.util.test.RandomTestUtil;
-import com.liferay.portal.util.test.TestPropsValues;
 import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
 import com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalServiceUtil;
 import com.liferay.portlet.dynamicdatamapping.util.DDMIndexerUtil;
-import com.liferay.portlet.dynamicdatamapping.util.test.DDMStructureTestUtil;
-import com.liferay.portlet.dynamicdatamapping.util.test.DDMTemplateTestUtil;
+import com.liferay.portlet.dynamicdatamapping.util.DDMStructureTestUtil;
+import com.liferay.portlet.dynamicdatamapping.util.DDMTemplateTestUtil;
 import com.liferay.portlet.journal.asset.JournalArticleAssetRenderer;
 import com.liferay.portlet.journal.model.JournalArticle;
 import com.liferay.portlet.journal.model.JournalFolder;
@@ -44,10 +43,7 @@ import com.liferay.portlet.journal.model.JournalFolderConstants;
 import com.liferay.portlet.journal.service.JournalArticleLocalServiceUtil;
 import com.liferay.portlet.journal.service.JournalArticleServiceUtil;
 import com.liferay.portlet.journal.service.JournalFolderServiceUtil;
-import com.liferay.portlet.journal.util.test.JournalTestUtil;
-
-import java.util.Locale;
-import java.util.Map;
+import com.liferay.portlet.journal.util.JournalTestUtil;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -55,7 +51,6 @@ import org.junit.runner.RunWith;
 
 /**
  * @author Juan Fernández
- * @author Tibor Lipusz
  */
 @ExecutionTestListeners(
 	listeners = {
@@ -80,12 +75,11 @@ public class JournalArticleSearchTest extends BaseSearchTestCase {
 
 		JournalFolder folder = (JournalFolder)parentBaseModel;
 
-		String definition = DDMStructureTestUtil.getSampleStructureDefinition(
-			"name");
+		String xsd = DDMStructureTestUtil.getSampleStructureXSD("name");
 
 		_ddmStructure = DDMStructureTestUtil.addStructure(
 			serviceContext.getScopeGroupId(), JournalArticle.class.getName(),
-			definition);
+			xsd);
 
 		DDMTemplate ddmTemplate = DDMTemplateTestUtil.addTemplate(
 			serviceContext.getScopeGroupId(), _ddmStructure.getStructureId());
@@ -96,16 +90,6 @@ public class JournalArticleSearchTest extends BaseSearchTestCase {
 		return JournalTestUtil.addArticleWithXMLContent(
 			folder.getFolderId(), content, _ddmStructure.getStructureKey(),
 			ddmTemplate.getTemplateKey(), serviceContext);
-	}
-
-	@Override
-	protected BaseModel<?> addBaseModelWithWorkflow(
-			BaseModel<?> parentBaseModel, boolean approved,
-			Map<Locale, String> keywordsMap, ServiceContext serviceContext)
-		throws Exception {
-
-		return JournalTestUtil.addArticleWithWorkflow(
-			group.getGroupId(), keywordsMap, null, keywordsMap, approved);
 	}
 
 	@Override
@@ -123,13 +107,7 @@ public class JournalArticleSearchTest extends BaseSearchTestCase {
 		}
 
 		return JournalTestUtil.addArticleWithWorkflow(
-			group.getGroupId(), folderId, keywords,
-			RandomTestUtil.randomString(50), approved, serviceContext);
-	}
-
-	@Override
-	protected void deleteBaseModel(BaseModel<?> baseModel) throws Exception {
-		JournalArticleLocalServiceUtil.deleteArticle((JournalArticle)baseModel);
+			folderId, keywords, approved, serviceContext);
 	}
 
 	@Override
@@ -178,7 +156,7 @@ public class JournalArticleSearchTest extends BaseSearchTestCase {
 
 		return JournalTestUtil.addFolder(
 			(Long)parentBaseModel.getPrimaryKeyObj(),
-			RandomTestUtil.randomString(), serviceContext);
+			ServiceTestUtil.randomString(), serviceContext);
 	}
 
 	@Override
@@ -188,7 +166,7 @@ public class JournalArticleSearchTest extends BaseSearchTestCase {
 
 		return JournalTestUtil.addFolder(
 			JournalFolderConstants.DEFAULT_PARENT_FOLDER_ID,
-			RandomTestUtil.randomString(), serviceContext);
+			ServiceTestUtil.randomString(), serviceContext);
 	}
 
 	@Override
@@ -202,22 +180,8 @@ public class JournalArticleSearchTest extends BaseSearchTestCase {
 	}
 
 	@Override
-	protected boolean isCheckBaseModelPermission() {
-		return PropsValues.JOURNAL_ARTICLE_VIEW_PERMISSION_CHECK_ENABLED;
-	}
-
-	@Override
 	protected boolean isExpirableAllVersions() {
 		return PropsValues.JOURNAL_ARTICLE_EXPIRE_ALL_VERSIONS;
-	}
-
-	@Override
-	protected void moveBaseModelToTrash(long primaryKey) throws Exception {
-		JournalArticle article = JournalArticleLocalServiceUtil.getArticle(
-			primaryKey);
-
-		JournalArticleLocalServiceUtil.moveArticleToTrash(
-			TestPropsValues.getUserId(), article);
 	}
 
 	@Override
@@ -247,21 +211,19 @@ public class JournalArticleSearchTest extends BaseSearchTestCase {
 		JournalArticle article = (JournalArticle)baseModel;
 
 		return JournalTestUtil.updateArticle(
-			article, keywords, article.getContent(), false, true,
-			serviceContext);
+			article, keywords, article.getContent(), serviceContext);
 	}
 
 	@Override
 	protected void updateDDMStructure(ServiceContext serviceContext)
 		throws Exception {
 
-		String definition = DDMStructureTestUtil.getSampleStructureDefinition(
-			"title");
+		String xsd = DDMStructureTestUtil.getSampleStructureXSD("title");
 
 		DDMStructureLocalServiceUtil.updateStructure(
 			_ddmStructure.getStructureId(),
 			_ddmStructure.getParentStructureId(), _ddmStructure.getNameMap(),
-			_ddmStructure.getDescriptionMap(), definition, serviceContext);
+			_ddmStructure.getDescriptionMap(), xsd, serviceContext);
 	}
 
 	private DDMStructure _ddmStructure;

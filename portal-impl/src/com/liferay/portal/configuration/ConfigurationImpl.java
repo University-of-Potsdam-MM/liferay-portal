@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -81,7 +81,8 @@ public class ConfigurationImpl
 	@Override
 	public void addProperties(Properties properties) {
 		try {
-			ComponentProperties componentProperties = getComponentProperties();
+			ComponentProperties componentProperties =
+				_componentConfiguration.getProperties();
 
 			ClassLoaderAggregateProperties classLoaderAggregateProperties =
 				(ClassLoaderAggregateProperties)
@@ -111,8 +112,6 @@ public class ConfigurationImpl
 				compositeConfiguration);
 
 			configurations.add(0, newConfiguration);
-
-			_properties = null;
 
 			clearCache();
 		}
@@ -256,9 +255,6 @@ public class ConfigurationImpl
 
 	@Override
 	public Properties getProperties() {
-		if (_properties != null) {
-			return _properties;
-		}
 
 		// For some strange reason, componentProperties.getProperties() returns
 		// values with spaces after commas. So a property setting of "xyz=1,2,3"
@@ -268,7 +264,7 @@ public class ConfigurationImpl
 		// method fixes the weird behavior by returning properties with the
 		// correct values.
 
-		_properties = new Properties();
+		Properties properties = new Properties();
 
 		ComponentProperties componentProperties = getComponentProperties();
 
@@ -281,10 +277,10 @@ public class ConfigurationImpl
 			String key = (String)entry.getKey();
 			String value = (String)entry.getValue();
 
-			_properties.setProperty(key, value);
+			properties.setProperty(key, value);
 		}
 
-		return _properties;
+		return properties;
 	}
 
 	@Override
@@ -297,7 +293,8 @@ public class ConfigurationImpl
 	@Override
 	public void removeProperties(Properties properties) {
 		try {
-			ComponentProperties componentProperties = getComponentProperties();
+			ComponentProperties componentProperties =
+				_componentConfiguration.getProperties();
 
 			ClassLoaderAggregateProperties classLoaderAggregateProperties =
 				(ClassLoaderAggregateProperties)
@@ -334,8 +331,6 @@ public class ConfigurationImpl
 						configuration);
 				}
 			}
-
-			_properties = null;
 
 			clearCache();
 		}
@@ -466,7 +461,6 @@ public class ConfigurationImpl
 
 	private ComponentConfiguration _componentConfiguration;
 	private Set<String> _printedSources = new HashSet<String>();
-	private Properties _properties;
 	private Map<String, Object> _values =
 		new ConcurrentHashMap<String, Object>();
 

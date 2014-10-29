@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -42,8 +42,7 @@ public class MVCPortletAutoDeployer extends PortletAutoDeployer {
 		}
 
 		filterMap.put(
-			"portlet_class",
-			"com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet");
+			"portlet_class", "com.liferay.util.bridges.mvc.MVCPortlet");
 		filterMap.put("portlet_name", pluginName);
 		filterMap.put("portlet_title", pluginName);
 		filterMap.put("restore_current_view", "false");

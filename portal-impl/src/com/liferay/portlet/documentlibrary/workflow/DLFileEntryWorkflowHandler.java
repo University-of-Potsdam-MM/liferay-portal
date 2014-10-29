@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portlet.documentlibrary.workflow;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.workflow.BaseWorkflowHandler;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
@@ -42,8 +43,7 @@ import java.util.Map;
  * @author Jorge Ferrer
  * @author Alexander Chow
  */
-public class DLFileEntryWorkflowHandler
-	extends BaseWorkflowHandler<DLFileEntry> {
+public class DLFileEntryWorkflowHandler extends BaseWorkflowHandler {
 
 	@Override
 	public String getClassName() {
@@ -58,7 +58,7 @@ public class DLFileEntryWorkflowHandler
 	@Override
 	public WorkflowDefinitionLink getWorkflowDefinitionLink(
 			long companyId, long groupId, long classPK)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		DLFileVersion dlFileVersion =
 			DLFileVersionLocalServiceUtil.getFileVersion(classPK);
@@ -99,7 +99,7 @@ public class DLFileEntryWorkflowHandler
 	@Override
 	public DLFileEntry updateStatus(
 			int status, Map<String, Serializable> workflowContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		long userId = GetterUtil.getLong(
 			(String)workflowContext.get(WorkflowConstants.CONTEXT_USER_ID));
@@ -111,7 +111,7 @@ public class DLFileEntryWorkflowHandler
 			"serviceContext");
 
 		return DLFileEntryLocalServiceUtil.updateStatus(
-			userId, classPK, status, serviceContext, workflowContext);
+			userId, classPK, status, workflowContext, serviceContext);
 	}
 
 	@Override

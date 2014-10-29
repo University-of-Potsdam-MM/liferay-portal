@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,19 +14,16 @@
 
 package com.liferay.portlet.shopping.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
-import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.CacheModel;
-import com.liferay.portal.model.User;
 import com.liferay.portal.model.impl.BaseModelImpl;
 import com.liferay.portal.service.ServiceContext;
-import com.liferay.portal.service.UserLocalServiceUtil;
+import com.liferay.portal.util.PortalUtil;
 
 import com.liferay.portlet.expando.model.ExpandoBridge;
 import com.liferay.portlet.expando.util.ExpandoBridgeFactoryUtil;
@@ -54,7 +51,6 @@ import java.util.Map;
  * @see com.liferay.portlet.shopping.model.ShoppingCartModel
  * @generated
  */
-@ProviderType
 public class ShoppingCartModelImpl extends BaseModelImpl<ShoppingCart>
 	implements ShoppingCartModel {
 	/*
@@ -71,12 +67,12 @@ public class ShoppingCartModelImpl extends BaseModelImpl<ShoppingCart>
 			{ "userName", Types.VARCHAR },
 			{ "createDate", Types.TIMESTAMP },
 			{ "modifiedDate", Types.TIMESTAMP },
-			{ "itemIds", Types.CLOB },
+			{ "itemIds", Types.VARCHAR },
 			{ "couponCodes", Types.VARCHAR },
 			{ "altShipping", Types.INTEGER },
 			{ "insure", Types.BOOLEAN }
 		};
-	public static final String TABLE_SQL_CREATE = "create table ShoppingCart (cartId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,itemIds TEXT null,couponCodes VARCHAR(75) null,altShipping INTEGER,insure BOOLEAN)";
+	public static final String TABLE_SQL_CREATE = "create table ShoppingCart (cartId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,itemIds STRING null,couponCodes VARCHAR(75) null,altShipping INTEGER,insure BOOLEAN)";
 	public static final String TABLE_SQL_DROP = "drop table ShoppingCart";
 	public static final String ORDER_BY_JPQL = " ORDER BY shoppingCart.cartId ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY ShoppingCart.cartId ASC";
@@ -92,9 +88,9 @@ public class ShoppingCartModelImpl extends BaseModelImpl<ShoppingCart>
 	public static final boolean COLUMN_BITMASK_ENABLED = GetterUtil.getBoolean(com.liferay.portal.util.PropsUtil.get(
 				"value.object.column.bitmask.enabled.com.liferay.portlet.shopping.model.ShoppingCart"),
 			true);
-	public static final long GROUPID_COLUMN_BITMASK = 1L;
-	public static final long USERID_COLUMN_BITMASK = 2L;
-	public static final long CARTID_COLUMN_BITMASK = 4L;
+	public static long GROUPID_COLUMN_BITMASK = 1L;
+	public static long USERID_COLUMN_BITMASK = 2L;
+	public static long CARTID_COLUMN_BITMASK = 4L;
 	public static final long LOCK_EXPIRATION_TIME = GetterUtil.getLong(com.liferay.portal.util.PropsUtil.get(
 				"lock.expiration.time.com.liferay.portlet.shopping.model.ShoppingCart"));
 
@@ -146,9 +142,6 @@ public class ShoppingCartModelImpl extends BaseModelImpl<ShoppingCart>
 		attributes.put("couponCodes", getCouponCodes());
 		attributes.put("altShipping", getAltShipping());
 		attributes.put("insure", getInsure());
-
-		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
-		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
 
 		return attributes;
 	}
@@ -283,19 +276,13 @@ public class ShoppingCartModelImpl extends BaseModelImpl<ShoppingCart>
 	}
 
 	@Override
-	public String getUserUuid() {
-		try {
-			User user = UserLocalServiceUtil.getUserById(getUserId());
-
-			return user.getUuid();
-		}
-		catch (PortalException pe) {
-			return StringPool.BLANK;
-		}
+	public String getUserUuid() throws SystemException {
+		return PortalUtil.getUserValue(getUserId(), "uuid", _userUuid);
 	}
 
 	@Override
 	public void setUserUuid(String userUuid) {
+		_userUuid = userUuid;
 	}
 
 	public long getOriginalUserId() {
@@ -483,16 +470,6 @@ public class ShoppingCartModelImpl extends BaseModelImpl<ShoppingCart>
 	}
 
 	@Override
-	public boolean isEntityCacheEnabled() {
-		return ENTITY_CACHE_ENABLED;
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return FINDER_CACHE_ENABLED;
-	}
-
-	@Override
 	public void resetOriginalValues() {
 		ShoppingCartModelImpl shoppingCartModelImpl = this;
 
@@ -657,8 +634,8 @@ public class ShoppingCartModelImpl extends BaseModelImpl<ShoppingCart>
 		return sb.toString();
 	}
 
-	private static final ClassLoader _classLoader = ShoppingCart.class.getClassLoader();
-	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
+	private static ClassLoader _classLoader = ShoppingCart.class.getClassLoader();
+	private static Class<?>[] _escapedModelInterfaces = new Class[] {
 			ShoppingCart.class
 		};
 	private long _cartId;
@@ -667,6 +644,7 @@ public class ShoppingCartModelImpl extends BaseModelImpl<ShoppingCart>
 	private boolean _setOriginalGroupId;
 	private long _companyId;
 	private long _userId;
+	private String _userUuid;
 	private long _originalUserId;
 	private boolean _setOriginalUserId;
 	private String _userName;

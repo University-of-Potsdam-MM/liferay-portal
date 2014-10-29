@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,8 +14,6 @@
 
 package com.liferay.portal.kernel.trash;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -23,6 +21,7 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.model.ClassedModel;
 import com.liferay.portal.model.ContainerModel;
 import com.liferay.portal.model.SystemEvent;
 import com.liferay.portal.model.SystemEventConstants;
@@ -36,9 +35,10 @@ import com.liferay.portlet.asset.model.AssetRenderer;
 import com.liferay.portlet.asset.model.AssetRendererFactory;
 import com.liferay.portlet.trash.model.TrashEntry;
 
+import java.io.Serializable;
+
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 
 import javax.portlet.PortletRequest;
 
@@ -49,14 +49,13 @@ import javax.portlet.PortletRequest;
  * @author Zsolt Berentey
  * @see    TrashHandler
  */
-@ProviderType
 public abstract class BaseTrashHandler implements TrashHandler {
 
 	@Override
 	public SystemEvent addDeletionSystemEvent(
 			long userId, long groupId, long classPK, String classUuid,
 			String referrerClassName)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		JSONObject extraDataJSONObject = JSONFactoryUtil.createJSONObject();
 
@@ -68,83 +67,35 @@ public abstract class BaseTrashHandler implements TrashHandler {
 			extraDataJSONObject.toString());
 	}
 
-	/**
-	 * @deprecated As of 7.0.0, replaced by {@link #checkRestorableEntry(long,
-	 *             long, String)}
-	 */
-	@Deprecated
 	@Override
+	@SuppressWarnings("unused")
 	public void checkDuplicateEntry(
 			long classPK, long containerModelId, String newName)
-		throws PortalException {
-
-		checkRestorableEntry(classPK, containerModelId, newName);
+		throws PortalException, SystemException {
 	}
 
-	/**
-	 * @deprecated As of 7.0.0, replaced by {@link
-	 *             #checkRestorableEntry(TrashEntry, long, String)}
-	 */
-	@Deprecated
 	@Override
+	@SuppressWarnings("unused")
 	public void checkDuplicateTrashEntry(
 			TrashEntry trashEntry, long containerModelId, String newName)
-		throws PortalException {
-
-		checkRestorableEntry(trashEntry, containerModelId, newName);
-	}
-
-	@Override
-	@SuppressWarnings("unused")
-	public void checkRestorableEntry(
-			long classPK, long containerModelId, String newName)
-		throws PortalException {
-	}
-
-	@Override
-	@SuppressWarnings("unused")
-	public void checkRestorableEntry(
-			TrashEntry trashEntry, long containerModelId, String newName)
-		throws PortalException {
+		throws PortalException, SystemException {
 	}
 
 	@Override
 	@SuppressWarnings("unused")
 	public ContainerModel getContainerModel(long containerModelId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return null;
 	}
 
-	/**
-	 * @deprecated As of 7.0.0, replaced by {@link #getContainerModel(long)}
-	 */
-	@Deprecated
 	@Override
 	public String getContainerModelClassName() {
-		return getContainerModelClassName(0);
-	}
-
-	@Override
-	public String getContainerModelClassName(long classPK) {
 		return StringPool.BLANK;
 	}
 
-	/**
-	 * @deprecated As of 7.0.0, replaced by {@link
-	 *             #getContainerModelName(long)}
-	 */
-	@Deprecated
 	@Override
 	public String getContainerModelName() {
-		return StringPool.BLANK;
-	}
-
-	/**
-	 * @throws PortalException
-	 */
-	@Override
-	public String getContainerModelName(long classPK) throws PortalException {
 		return StringPool.BLANK;
 	}
 
@@ -152,7 +103,7 @@ public abstract class BaseTrashHandler implements TrashHandler {
 	@SuppressWarnings("unused")
 	public List<ContainerModel> getContainerModels(
 			long classPK, long containerModelId, int start, int end)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return Collections.emptyList();
 	}
@@ -160,7 +111,7 @@ public abstract class BaseTrashHandler implements TrashHandler {
 	@Override
 	@SuppressWarnings("unused")
 	public int getContainerModelsCount(long classPK, long containerModelId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return 0;
 	}
@@ -171,23 +122,16 @@ public abstract class BaseTrashHandler implements TrashHandler {
 	}
 
 	@Override
-	public long getDestinationContainerModelId(
-		long classPK, long destinationContainerModelId) {
-
-		return destinationContainerModelId;
-	}
-
-	@Override
 	@SuppressWarnings("unused")
 	public ContainerModel getParentContainerModel(long classPK)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return null;
 	}
 
 	@Override
 	public ContainerModel getParentContainerModel(TrashedModel trashedModel)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		if ((trashedModel == null) ||
 			!(trashedModel instanceof ContainerModel)) {
@@ -203,7 +147,7 @@ public abstract class BaseTrashHandler implements TrashHandler {
 	@Override
 	@SuppressWarnings("unused")
 	public List<ContainerModel> getParentContainerModels(long classPK)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return Collections.emptyList();
 	}
@@ -212,7 +156,7 @@ public abstract class BaseTrashHandler implements TrashHandler {
 	@SuppressWarnings("unused")
 	public String getRestoreContainedModelLink(
 			PortletRequest portletRequest, long classPK)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return StringPool.BLANK;
 	}
@@ -221,7 +165,7 @@ public abstract class BaseTrashHandler implements TrashHandler {
 	@SuppressWarnings("unused")
 	public String getRestoreContainerModelLink(
 			PortletRequest portletRequest, long classPK)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return StringPool.BLANK;
 	}
@@ -229,52 +173,13 @@ public abstract class BaseTrashHandler implements TrashHandler {
 	@Override
 	@SuppressWarnings("unused")
 	public String getRestoreMessage(PortletRequest portletRequest, long classPK)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return StringPool.BLANK;
-	}
-
-	@Override
-	public String getRootContainerModelClassName() {
-		return getContainerModelClassName(0);
-	}
-
-	/**
-	 * @throws PortalException
-	 */
-	@Override
-	public long getRootContainerModelId(long classPK) throws PortalException {
-		return 0;
 	}
 
 	@Override
 	public String getRootContainerModelName() {
-		return StringPool.BLANK;
-	}
-
-	/**
-	 * @throws PortalException
-	 */
-	@Override
-	public List<ContainerModel> getRootContainerModels(long groupId)
-		throws PortalException {
-
-		return Collections.emptyList();
-	}
-
-	@Override
-	public int getRootContainerModelsCount(long groupId) {
-		return 0;
-	}
-
-	/**
-	 * @throws PortalException
-	 */
-	@Override
-	public String getRootContainerModelTitle(
-			long containerModelId, Locale locale)
-		throws PortalException {
-
 		return StringPool.BLANK;
 	}
 
@@ -296,7 +201,7 @@ public abstract class BaseTrashHandler implements TrashHandler {
 	@Override
 	@SuppressWarnings("unused")
 	public int getTrashContainedModelsCount(long classPK)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return 0;
 	}
@@ -305,7 +210,7 @@ public abstract class BaseTrashHandler implements TrashHandler {
 	@SuppressWarnings("unused")
 	public List<TrashRenderer> getTrashContainedModelTrashRenderers(
 			long classPK, int start, int end)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return Collections.emptyList();
 	}
@@ -318,7 +223,7 @@ public abstract class BaseTrashHandler implements TrashHandler {
 	@Override
 	@SuppressWarnings("unused")
 	public int getTrashContainerModelsCount(long classPK)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return 0;
 	}
@@ -327,19 +232,23 @@ public abstract class BaseTrashHandler implements TrashHandler {
 	@SuppressWarnings("unused")
 	public List<TrashRenderer> getTrashContainerModelTrashRenderers(
 			long classPK, int start, int end)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return Collections.emptyList();
 	}
 
 	@Override
 	@SuppressWarnings("unused")
-	public TrashEntry getTrashEntry(long classPK) throws PortalException {
+	public TrashEntry getTrashEntry(long classPK)
+		throws PortalException, SystemException {
+
 		return null;
 	}
 
 	@Override
-	public TrashRenderer getTrashRenderer(long classPK) throws PortalException {
+	public TrashRenderer getTrashRenderer(long classPK)
+		throws PortalException, SystemException {
+
 		AssetRendererFactory assetRendererFactory = getAssetRendererFactory();
 
 		if (assetRendererFactory != null) {
@@ -358,7 +267,7 @@ public abstract class BaseTrashHandler implements TrashHandler {
 	public boolean hasTrashPermission(
 			PermissionChecker permissionChecker, long groupId, long classPK,
 			String trashActionId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		String actionId = trashActionId;
 
@@ -393,7 +302,9 @@ public abstract class BaseTrashHandler implements TrashHandler {
 
 	@Override
 	@SuppressWarnings("unused")
-	public boolean isInTrashContainer(long classPK) throws PortalException {
+	public boolean isInTrashContainer(long classPK)
+		throws PortalException, SystemException {
+
 		return false;
 	}
 
@@ -404,12 +315,36 @@ public abstract class BaseTrashHandler implements TrashHandler {
 
 	@Override
 	@SuppressWarnings("unused")
-	public boolean isRestorable(long classPK) throws PortalException {
+	public boolean isRestorable(long classPK)
+		throws PortalException, SystemException {
+
 		return true;
 	}
 
 	@Override
-	public boolean isRootContainerModelMovable() {
+	public boolean isTrashEntry(
+		TrashEntry trashEntry, ClassedModel classedModel) {
+
+		if ((trashEntry == null) || (classedModel == null)) {
+			return false;
+		}
+
+		String className = getClassName();
+
+		if (!className.equals(trashEntry.getClassName())) {
+			return false;
+		}
+
+		Serializable primaryKeyObj = classedModel.getPrimaryKeyObj();
+
+		if (!(primaryKeyObj instanceof Long)) {
+			return false;
+		}
+
+		if (trashEntry.getClassPK() == (Long)primaryKeyObj) {
+			return true;
+		}
+
 		return false;
 	}
 
@@ -418,14 +353,14 @@ public abstract class BaseTrashHandler implements TrashHandler {
 	public void moveEntry(
 			long userId, long classPK, long containerModelId,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 	}
 
 	@Override
 	public void moveTrashEntry(
 			long userId, long classPK, long containerModelId,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		if (isRestorable(classPK)) {
 			restoreTrashEntry(userId, classPK);
@@ -440,12 +375,13 @@ public abstract class BaseTrashHandler implements TrashHandler {
 	@Override
 	@SuppressWarnings("unused")
 	public void restoreRelatedTrashEntry(String className, long classPK)
-		throws PortalException {
+		throws PortalException, SystemException {
 	}
 
 	@Override
 	@SuppressWarnings("unused")
-	public void updateTitle(long classPK, String title) throws PortalException {
+	public void updateTitle(long classPK, String title)
+		throws PortalException, SystemException {
 	}
 
 	protected AssetRendererFactory getAssetRendererFactory() {
@@ -455,7 +391,7 @@ public abstract class BaseTrashHandler implements TrashHandler {
 
 	protected abstract boolean hasPermission(
 			PermissionChecker permissionChecker, long classPK, String actionId)
-		throws PortalException;
+		throws PortalException, SystemException;
 
 	private static Log _log = LogFactoryUtil.getLog(BaseTrashHandler.class);
 

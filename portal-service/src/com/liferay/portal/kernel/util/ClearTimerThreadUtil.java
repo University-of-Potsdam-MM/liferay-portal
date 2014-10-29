@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -26,7 +26,7 @@ import java.lang.reflect.Method;
 public class ClearTimerThreadUtil {
 
 	public static void clearTimerThread() throws Exception {
-		if (!_INITIALIZED) {
+		if (!_initialized) {
 			return;
 		}
 
@@ -45,63 +45,48 @@ public class ClearTimerThreadUtil {
 				continue;
 			}
 
-			Object queue = _QUEUE_FIELD.get(thread);
+			Object queue = _queueField.get(thread);
 
 			synchronized (queue) {
-				_NEW_TASKS_MAY_BE_SCHEDULED_FIELD.setBoolean(thread, false);
+				_newTasksMayBeScheduledField.setBoolean(thread, false);
 
-				_CLEAR_METHOD.invoke(queue);
+				_clearMethod.invoke(queue);
 
 				queue.notify();
 			}
 		}
 	}
 
-	private static final Method _CLEAR_METHOD;
-
-	private static final boolean _INITIALIZED;
-
-	private static final Field _NEW_TASKS_MAY_BE_SCHEDULED_FIELD;
-
-	private static final Field _QUEUE_FIELD;
-
 	private static Log _log = LogFactoryUtil.getLog(ClearTimerThreadUtil.class);
 
+	private static Method _clearMethod;
+	private static boolean _initialized;
+	private static Field _newTasksMayBeScheduledField;
+	private static Field _queueField;
+
 	static {
-		Method clearMethod = null;
-		Field newTasksMayBeScheduledField = null;
-		Field queueField = null;
-
-		boolean initialized = false;
-
 		try {
-			Class<?> taskQueueClass = Class.forName("java.util.TaskQueue");
-
-			clearMethod = ReflectionUtil.getDeclaredMethod(
-				taskQueueClass, "clear");
-
 			Class<?> timeThreadClass = Class.forName("java.util.TimerThread");
 
-			newTasksMayBeScheduledField = ReflectionUtil.getDeclaredField(
+			_newTasksMayBeScheduledField = ReflectionUtil.getDeclaredField(
 				timeThreadClass, "newTasksMayBeScheduled");
-			queueField = ReflectionUtil.getDeclaredField(
+			_queueField = ReflectionUtil.getDeclaredField(
 				timeThreadClass, "queue");
 
-			initialized = true;
+			Class<?> taskQueueClass = Class.forName("java.util.TaskQueue");
+
+			_clearMethod = ReflectionUtil.getDeclaredMethod(
+				taskQueueClass, "clear");
+
+			_initialized = true;
 		}
 		catch (Throwable t) {
+			_initialized = false;
+
 			if (_log.isWarnEnabled()) {
 				_log.warn("Failed to initialize ClearTimerThreadUtil");
 			}
 		}
-
-		_CLEAR_METHOD = clearMethod;
-
-		_NEW_TASKS_MAY_BE_SCHEDULED_FIELD = newTasksMayBeScheduledField;
-
-		_QUEUE_FIELD = queueField;
-
-		_INITIALIZED = initialized;
 	}
 
 }

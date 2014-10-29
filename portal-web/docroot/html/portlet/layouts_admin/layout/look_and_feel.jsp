@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -17,15 +17,15 @@
 <%@ include file="/html/portlet/layouts_admin/init.jsp" %>
 
 <%
-Group group = layoutsAdminDisplayContext.getGroup();
-long groupId = layoutsAdminDisplayContext.getGroupId();
-long liveGroupId = layoutsAdminDisplayContext.getLiveGroupId();
-boolean privateLayout = layoutsAdminDisplayContext.isPrivateLayout();
-Layout selLayout = layoutsAdminDisplayContext.getSelLayout();
+Group group = (Group)request.getAttribute("edit_pages.jsp-group");
+long groupId = ((Long)request.getAttribute("edit_pages.jsp-groupId")).longValue();
+long liveGroupId = ((Long)request.getAttribute("edit_pages.jsp-liveGroupId")).longValue();
+boolean privateLayout = ((Boolean)request.getAttribute("edit_pages.jsp-privateLayout")).booleanValue();
+Layout selLayout = (Layout)request.getAttribute("edit_pages.jsp-selLayout");
 
-String rootNodeName = layoutsAdminDisplayContext.getRootNodeName();
+String rootNodeName = (String)request.getAttribute("edit_pages.jsp-rootNodeName");
 
-PortletURL redirectURL = layoutsAdminDisplayContext.getRedirectURL();
+PortletURL redirectURL = (PortletURL)request.getAttribute("edit_pages.jsp-redirectURL");
 
 Theme selTheme = null;
 ColorScheme selColorScheme = null;
@@ -75,7 +75,9 @@ else {
 				<%= HtmlUtil.escape(rootNodeName) %>
 			</c:when>
 			<c:otherwise>
-				<aui:a href="<%= redirectURL.toString() %>"><%= HtmlUtil.escape(rootNodeName) %></aui:a>
+				<aui:a href="<%= redirectURL.toString() %>">
+					<%= HtmlUtil.escape(rootNodeName) %>
+				</aui:a>
 			</c:otherwise>
 		</c:choose>
 	</liferay-util:buffer>
@@ -84,10 +86,10 @@ else {
 	String taglibLabel = null;
 
 	if (group.isLayoutPrototype()) {
-		taglibLabel = LanguageUtil.get(request, "use-the-same-look-and-feel-of-the-pages-in-which-this-template-is-used");
+		taglibLabel = LanguageUtil.get(pageContext, "use-the-same-look-and-feel-of-the-pages-in-which-this-template-is-used");
 	}
 	else {
-		taglibLabel = LanguageUtil.format(request, "use-the-same-look-and-feel-of-the-x", rootNodeNameLink, false);
+		taglibLabel = LanguageUtil.format(pageContext, "use-the-same-look-and-feel-of-the-x", rootNodeNameLink);
 	}
 	%>
 

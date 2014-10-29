@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -16,52 +16,46 @@ package com.liferay.portal.verify;
 
 import com.liferay.counter.service.CounterLocalServiceUtil;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
+import com.liferay.portal.kernel.dao.orm.Criterion;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.FileVersion;
 import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.util.ContentTypes;
-import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.MimeTypesUtil;
 import com.liferay.portal.kernel.util.StreamUtil;
-import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.repository.liferayrepository.model.LiferayFileEntry;
 import com.liferay.portal.repository.liferayrepository.model.LiferayFileVersion;
 import com.liferay.portal.repository.liferayrepository.model.LiferayFolder;
 import com.liferay.portal.util.PortalInstances;
-import com.liferay.portlet.documentlibrary.DuplicateFileException;
-import com.liferay.portlet.documentlibrary.DuplicateFolderNameException;
 import com.liferay.portlet.documentlibrary.model.DLFileEntry;
-import com.liferay.portlet.documentlibrary.model.DLFileEntryMetadata;
 import com.liferay.portlet.documentlibrary.model.DLFileEntryType;
 import com.liferay.portlet.documentlibrary.model.DLFileEntryTypeConstants;
 import com.liferay.portlet.documentlibrary.model.DLFileVersion;
 import com.liferay.portlet.documentlibrary.model.DLFolder;
 import com.liferay.portlet.documentlibrary.service.DLAppHelperLocalServiceUtil;
 import com.liferay.portlet.documentlibrary.service.DLFileEntryLocalServiceUtil;
-import com.liferay.portlet.documentlibrary.service.DLFileEntryMetadataLocalServiceUtil;
 import com.liferay.portlet.documentlibrary.service.DLFileEntryTypeLocalServiceUtil;
+import com.liferay.portlet.documentlibrary.service.DLFileShortcutLocalServiceUtil;
 import com.liferay.portlet.documentlibrary.service.DLFileVersionLocalServiceUtil;
 import com.liferay.portlet.documentlibrary.service.DLFolderLocalServiceUtil;
+import com.liferay.portlet.documentlibrary.service.persistence.DLFileEntryActionableDynamicQuery;
+import com.liferay.portlet.documentlibrary.service.persistence.DLFileVersionActionableDynamicQuery;
 import com.liferay.portlet.documentlibrary.store.DLStoreUtil;
 import com.liferay.portlet.documentlibrary.util.DLUtil;
 import com.liferay.portlet.documentlibrary.util.comparator.FileVersionVersionComparator;
 import com.liferay.portlet.documentlibrary.webdav.DLWebDAVStorageImpl;
-import com.liferay.portlet.dynamicdatamapping.model.DDMStructure;
-import com.liferay.portlet.dynamicdatamapping.service.DDMStructureLinkLocalServiceUtil;
-import com.liferay.portlet.dynamicdatamapping.service.DDMStructureLocalServiceUtil;
-import com.liferay.portlet.dynamicdatamapping.storage.StorageEngineUtil;
 import com.liferay.portlet.trash.model.TrashEntry;
 import com.liferay.portlet.trash.service.TrashEntryLocalServiceUtil;
 
@@ -78,7 +72,9 @@ import java.util.List;
  */
 public class VerifyDocumentLibrary extends VerifyProcess {
 
-	protected void addDLFileVersion(DLFileEntry dlFileEntry) {
+	protected void addDLFileVersion(DLFileEntry dlFileEntry)
+		throws SystemException {
+
 		long fileVersionId = CounterLocalServiceUtil.increment();
 
 		DLFileVersion dlFileVersion =
@@ -116,57 +112,6 @@ public class VerifyDocumentLibrary extends VerifyProcess {
 		DLFileVersionLocalServiceUtil.updateDLFileVersion(dlFileVersion);
 	}
 
-	protected void checkDLFileEntryMetadata() throws Exception {
-		ActionableDynamicQuery actionableDynamicQuery =
-			DLFileEntryMetadataLocalServiceUtil.getActionableDynamicQuery();
-
-		actionableDynamicQuery.setPerformActionMethod(
-			new ActionableDynamicQuery.PerformActionMethod() {
-
-				@Override
-				public void performAction(Object object) {
-					DLFileEntryMetadata dlFileEntryMetadata =
-						(DLFileEntryMetadata)object;
-
-					try {
-						DLFileEntry dlFileEntry =
-							DLFileEntryLocalServiceUtil.getFileEntry(
-								dlFileEntryMetadata.getFileEntryId());
-
-						DDMStructure ddmStructure =
-							DDMStructureLocalServiceUtil.fetchStructure(
-								dlFileEntryMetadata.getDDMStructureId());
-
-						if (ddmStructure == null) {
-							deleteUnusedDLFileEntryMetadata(
-								dlFileEntryMetadata);
-
-							return;
-						}
-
-						if (dlFileEntry.getCompanyId() !=
-								ddmStructure.getCompanyId()) {
-
-							deleteUnusedDLFileEntryMetadata(
-								dlFileEntryMetadata);
-						}
-					}
-					catch (Exception e) {
-						if (_log.isWarnEnabled()) {
-							_log.warn(
-								"Unable to delete unused metadata for file " +
-									"entry " +
-										dlFileEntryMetadata.getFileEntryId(),
-								e);
-						}
-					}
-				}
-
-			});
-
-		actionableDynamicQuery.performActions();
-	}
-
 	protected void checkDLFileEntryType() throws Exception {
 		DLFileEntryType dlFileEntryType =
 			DLFileEntryTypeLocalServiceUtil.fetchDLFileEntryType(
@@ -193,111 +138,58 @@ public class VerifyDocumentLibrary extends VerifyProcess {
 		DLFileEntryTypeLocalServiceUtil.updateDLFileEntryType(dlFileEntryType);
 	}
 
-	protected void checkDuplicateTitles() throws Exception {
-		ActionableDynamicQuery actionableDynamicQuery =
-			DLFileEntryLocalServiceUtil.getActionableDynamicQuery();
-
-		actionableDynamicQuery.setPerformActionMethod(
-			new ActionableDynamicQuery.PerformActionMethod() {
-
-				@Override
-				public void performAction(Object object) {
-					DLFileEntry dlFileEntry = (DLFileEntry)object;
-
-					if (dlFileEntry.isInTrash()) {
-						return;
-					}
-
-					try {
-						DLFileEntryLocalServiceUtil.validateFile(
-							dlFileEntry.getGroupId(), dlFileEntry.getFolderId(),
-							dlFileEntry.getFileEntryId(),
-							dlFileEntry.getFileName(), dlFileEntry.getTitle());
-					}
-					catch (PortalException pe) {
-						if (!(pe instanceof DuplicateFileException) &&
-							!(pe instanceof DuplicateFolderNameException)) {
-
-							return;
-						}
-
-						try {
-							renameDuplicateTitle(dlFileEntry);
-						}
-						catch (Exception e) {
-							if (_log.isWarnEnabled()) {
-								_log.warn(
-									"Unable to rename duplicate title for " +
-										"file entry " +
-											dlFileEntry.getFileEntryId() +
-												": " + e.getMessage(),
-									e);
-							}
-						}
-					}
-				}
-
-			});
-
-		actionableDynamicQuery.performActions();
-	}
-
 	protected void checkFileEntryMimeTypes(final String originalMimeType)
 		throws Exception {
 
 		ActionableDynamicQuery actionableDynamicQuery =
-			DLFileEntryLocalServiceUtil.getActionableDynamicQuery();
+			new DLFileEntryActionableDynamicQuery() {
 
-		actionableDynamicQuery.setPerformActionMethod(
-			new ActionableDynamicQuery.PerformActionMethod() {
+			@Override
+			protected void performAction(Object object)
+				throws PortalException, SystemException {
 
-				@Override
-				public void performAction(Object object)
-					throws PortalException {
+				DLFileEntry dlFileEntry = (DLFileEntry)object;
 
-					DLFileEntry dlFileEntry = (DLFileEntry)object;
+				InputStream inputStream = null;
 
-					InputStream inputStream = null;
-
-					try {
-						inputStream =
-							DLFileEntryLocalServiceUtil.getFileAsStream(
-								dlFileEntry.getFileEntryId(),
-								dlFileEntry.getVersion(), false);
-					}
-					catch (Exception e) {
-						if (_log.isWarnEnabled()) {
-							_log.warn(
-								"Unable to find file entry " +
-									dlFileEntry.getName(),
-								e);
-						}
-
-						return;
+				try {
+					inputStream = DLFileEntryLocalServiceUtil.getFileAsStream(
+						dlFileEntry.getUserId(), dlFileEntry.getFileEntryId(),
+						dlFileEntry.getVersion(), false);
+				}
+				catch (Exception e) {
+					if (_log.isWarnEnabled()) {
+						_log.warn(
+							"Unable to find file entry " +
+								dlFileEntry.getName(),
+							e);
 					}
 
-					String title = DLUtil.getTitleWithExtension(
-						dlFileEntry.getTitle(), dlFileEntry.getExtension());
-
-					String mimeType = getMimeType(inputStream, title);
-
-					if (mimeType.equals(originalMimeType)) {
-						return;
-					}
-
-					dlFileEntry.setMimeType(mimeType);
-
-					DLFileEntryLocalServiceUtil.updateDLFileEntry(dlFileEntry);
-
-					DLFileVersion dlFileVersion = dlFileEntry.getFileVersion();
-
-					dlFileVersion.setMimeType(mimeType);
-
-					DLFileVersionLocalServiceUtil.updateDLFileVersion(
-						dlFileVersion);
+					return;
 				}
 
-			});
+				String title = DLUtil.getTitleWithExtension(
+					dlFileEntry.getTitle(), dlFileEntry.getExtension());
+
+				String mimeType = getMimeType(inputStream, title);
+
+				if (mimeType.equals(originalMimeType)) {
+					return;
+				}
+
+				dlFileEntry.setMimeType(mimeType);
+
+				DLFileEntryLocalServiceUtil.updateDLFileEntry(dlFileEntry);
+
+				DLFileVersion dlFileVersion = dlFileEntry.getFileVersion();
+
+				dlFileVersion.setMimeType(mimeType);
+
+				DLFileVersionLocalServiceUtil.updateDLFileVersion(
+					dlFileVersion);
+			}
+
+		};
 
 		actionableDynamicQuery.performActions();
 	}
@@ -306,67 +198,61 @@ public class VerifyDocumentLibrary extends VerifyProcess {
 		throws Exception {
 
 		ActionableDynamicQuery actionableDynamicQuery =
-			DLFileVersionLocalServiceUtil.getActionableDynamicQuery();
+			new DLFileVersionActionableDynamicQuery() {
 
-		actionableDynamicQuery.setPerformActionMethod(
-			new ActionableDynamicQuery.PerformActionMethod() {
+			@Override
+			protected void performAction(Object object) throws SystemException {
+				DLFileVersion dlFileVersion = (DLFileVersion)object;
 
-				@Override
-				public void performAction(Object object) {
-					DLFileVersion dlFileVersion = (DLFileVersion)object;
+				InputStream inputStream = null;
 
-					InputStream inputStream = null;
+				try {
+					inputStream = DLFileEntryLocalServiceUtil.getFileAsStream(
+						dlFileVersion.getUserId(),
+						dlFileVersion.getFileEntryId(),
+						dlFileVersion.getVersion(), false);
+				}
+				catch (Exception e) {
+					if (_log.isWarnEnabled()) {
+						DLFileEntry dlFileEntry =
+							DLFileEntryLocalServiceUtil.fetchDLFileEntry(
+								dlFileVersion.getFileEntryId());
 
-					try {
-						inputStream =
-							DLFileEntryLocalServiceUtil.getFileAsStream(
-								dlFileVersion.getFileEntryId(),
-								dlFileVersion.getVersion(), false);
-					}
-					catch (Exception e) {
-						if (_log.isWarnEnabled()) {
-							DLFileEntry dlFileEntry =
-								DLFileEntryLocalServiceUtil.fetchDLFileEntry(
-									dlFileVersion.getFileEntryId());
-
-							if (dlFileEntry == null) {
-								_log.warn(
-									"Unable to find file entry associated " +
-										"with file version " +
-											dlFileVersion.getFileVersionId(),
-									e);
-							}
-							else {
-								StringBundler sb = new StringBundler(4);
-
-								sb.append("Unable to find file version ");
-								sb.append(dlFileVersion.getVersion());
-								sb.append(" for file entry ");
-								sb.append(dlFileEntry.getName());
-
-								_log.warn(sb.toString(), e);
-							}
+						if (dlFileEntry == null) {
+							_log.warn(
+								"Unable to find file entry associated with " +
+									"file version " +
+										dlFileVersion.getFileVersionId(),
+								e);
 						}
-
-						return;
+						else {
+							_log.warn(
+								"Unable to find file version " +
+									dlFileVersion.getVersion() + " for file " +
+										"entry " + dlFileEntry.getName(),
+								e);
+						}
 					}
 
-					String title = DLUtil.getTitleWithExtension(
-						dlFileVersion.getTitle(), dlFileVersion.getExtension());
-
-					String mimeType = getMimeType(inputStream, title);
-
-					if (mimeType.equals(originalMimeType)) {
-						return;
-					}
-
-					dlFileVersion.setMimeType(mimeType);
-
-					DLFileVersionLocalServiceUtil.updateDLFileVersion(
-						dlFileVersion);
+					return;
 				}
 
-			});
+				String title = DLUtil.getTitleWithExtension(
+					dlFileVersion.getTitle(), dlFileVersion.getExtension());
+
+				String mimeType = getMimeType(inputStream, title);
+
+				if (mimeType.equals(originalMimeType)) {
+					return;
+				}
+
+				dlFileVersion.setMimeType(mimeType);
+
+				DLFileVersionLocalServiceUtil.updateDLFileVersion(
+					dlFileVersion);
+			}
+
+		};
 
 		actionableDynamicQuery.performActions();
 	}
@@ -412,7 +298,10 @@ public class VerifyDocumentLibrary extends VerifyProcess {
 		DynamicQuery dynamicQuery = DynamicQueryFactoryUtil.forClass(
 			DLFileEntry.class);
 
-		dynamicQuery.add(RestrictionsFactoryUtil.like("title", "%\\\\%"));
+		Criterion criterion1 = RestrictionsFactoryUtil.like("title", "%/%");
+		Criterion criterion2 = RestrictionsFactoryUtil.like("title", "%\\\\%");
+
+		dynamicQuery.add(RestrictionsFactoryUtil.or(criterion1, criterion2));
 
 		List<DLFileEntry> dlFileEntries =
 			DLFileEntryLocalServiceUtil.dynamicQuery(dynamicQuery);
@@ -427,17 +316,31 @@ public class VerifyDocumentLibrary extends VerifyProcess {
 
 			String title = dlFileEntry.getTitle();
 
-			String newTitle = title.replace(
+			String newTitle = title.replace(StringPool.SLASH, StringPool.BLANK);
+
+			newTitle = newTitle.replace(
 				StringPool.BACK_SLASH, StringPool.UNDERLINE);
 
-			renameTitle(dlFileEntry, newTitle);
-		}
+			dlFileEntry.setTitle(newTitle);
 
-		checkDuplicateTitles();
+			DLFileEntryLocalServiceUtil.updateDLFileEntry(dlFileEntry);
+
+			DLFileVersion dlFileVersion = dlFileEntry.getFileVersion();
+
+			dlFileVersion.setTitle(newTitle);
+
+			DLFileVersionLocalServiceUtil.updateDLFileVersion(dlFileVersion);
+
+			if (_log.isDebugEnabled()) {
+				_log.debug(
+					"Invalid document title " + title + "renamed to " +
+						newTitle);
+			}
+		}
 	}
 
 	protected void copyDLFileEntry(DLFileEntry dlFileEntry)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		long companyId = dlFileEntry.getCompanyId();
 		long dataRepositoryId = dlFileEntry.getDataRepositoryId();
@@ -476,7 +379,33 @@ public class VerifyDocumentLibrary extends VerifyProcess {
 			version);
 	}
 
-	protected void deleteOrphanedDLFileEntries() throws Exception {
+	@Override
+	protected void doVerify() throws Exception {
+		checkMisversionedDLFileEntries();
+
+		checkDLFileEntryType();
+		checkMimeTypes();
+		checkTitles();
+		removeOrphanedDLFileEntries();
+		updateFileEntryAssets();
+		updateFolderAssets();
+		verifyTree();
+	}
+
+	protected String getMimeType(InputStream inputStream, String title) {
+		String mimeType = null;
+
+		try {
+			mimeType = MimeTypesUtil.getContentType(inputStream, title);
+		}
+		finally {
+			StreamUtil.cleanUp(inputStream);
+		}
+
+		return mimeType;
+	}
+
+	protected void removeOrphanedDLFileEntries() throws Exception {
 		List<DLFileEntry> dlFileEntries =
 			DLFileEntryLocalServiceUtil.getOrphanedFileEntries();
 
@@ -503,138 +432,6 @@ public class VerifyDocumentLibrary extends VerifyProcess {
 
 		if (_log.isDebugEnabled()) {
 			_log.debug("Removed orphaned file entries");
-		}
-	}
-
-	protected void deleteUnusedDLFileEntryMetadata(
-			DLFileEntryMetadata dlFileEntryMetadata)
-		throws Exception {
-
-		DLFileEntryMetadataLocalServiceUtil.deleteDLFileEntryMetadata(
-			dlFileEntryMetadata);
-
-		StorageEngineUtil.deleteByClass(dlFileEntryMetadata.getDDMStorageId());
-
-		DDMStructureLinkLocalServiceUtil.deleteClassStructureLink(
-			dlFileEntryMetadata.getFileEntryMetadataId());
-	}
-
-	@Override
-	protected void doVerify() throws Exception {
-		checkMisversionedDLFileEntries();
-
-		checkDLFileEntryType();
-		checkDLFileEntryMetadata();
-		checkMimeTypes();
-		checkTitles();
-		deleteOrphanedDLFileEntries();
-		updateClassNameId();
-		updateFileEntryAssets();
-		updateFolderAssets();
-		verifyTree();
-	}
-
-	protected String getMimeType(InputStream inputStream, String title) {
-		String mimeType = null;
-
-		try {
-			mimeType = MimeTypesUtil.getContentType(inputStream, title);
-		}
-		finally {
-			StreamUtil.cleanUp(inputStream);
-		}
-
-		return mimeType;
-	}
-
-	protected void renameDuplicateTitle(DLFileEntry dlFileEntry)
-		throws PortalException {
-
-		String title = dlFileEntry.getTitle();
-		String titleExtension = StringPool.BLANK;
-		String titleWithoutExtension = dlFileEntry.getTitle();
-
-		if (title.endsWith(
-				StringPool.PERIOD.concat(dlFileEntry.getExtension()))) {
-
-			titleExtension = dlFileEntry.getExtension();
-			titleWithoutExtension = FileUtil.stripExtension(title);
-		}
-
-		for (int i = 1;;) {
-			String uniqueTitle =
-				titleWithoutExtension + StringPool.UNDERLINE +
-					String.valueOf(i);
-
-			if (Validator.isNotNull(titleExtension)) {
-				uniqueTitle = uniqueTitle.concat(
-					StringPool.PERIOD.concat(titleExtension));
-			}
-
-			String uniqueFileName = DLUtil.getSanitizedFileName(
-				uniqueTitle, dlFileEntry.getExtension());
-
-			try {
-				DLFileEntryLocalServiceUtil.validateFile(
-					dlFileEntry.getGroupId(), dlFileEntry.getFolderId(),
-					dlFileEntry.getFileEntryId(), uniqueFileName, uniqueTitle);
-
-				renameTitle(dlFileEntry, uniqueTitle);
-
-				return;
-			}
-			catch (PortalException pe) {
-				if (!(pe instanceof DuplicateFolderNameException) &&
-					 !(pe instanceof DuplicateFileException)) {
-
-					throw pe;
-				}
-
-				i++;
-			}
-		}
-	}
-
-	protected void renameTitle(DLFileEntry dlFileEntry, String newTitle)
-		throws PortalException {
-
-		String title = dlFileEntry.getTitle();
-
-		dlFileEntry.setTitle(newTitle);
-
-		String fileName = DLUtil.getSanitizedFileName(
-			newTitle, dlFileEntry.getExtension());
-
-		dlFileEntry.setFileName(fileName);
-
-		DLFileEntryLocalServiceUtil.updateDLFileEntry(dlFileEntry);
-
-		DLFileVersion dlFileVersion = dlFileEntry.getFileVersion();
-
-		dlFileVersion.setTitle(newTitle);
-		dlFileVersion.setFileName(fileName);
-
-		DLFileVersionLocalServiceUtil.updateDLFileVersion(dlFileVersion);
-
-		if (_log.isDebugEnabled()) {
-			_log.debug(
-				"Invalid title " + title + " renamed to " + newTitle +
-					" for file entry " + dlFileEntry.getFileEntryId());
-		}
-	}
-
-	protected void updateClassNameId() {
-		try {
-			runSQL(
-				"update DLFileEntry set classNameId = 0 where classNameId is " +
-					"null");
-		}
-		catch (Exception e) {
-			if (_log.isWarnEnabled()) {
-				_log.warn(
-					"Unable to fix file entries where class name ID is null",
-					e);
-			}
 		}
 	}
 
@@ -706,6 +503,9 @@ public class VerifyDocumentLibrary extends VerifyProcess {
 		long[] companyIds = PortalInstances.getCompanyIdsBySQL();
 
 		for (long companyId : companyIds) {
+			DLFileEntryLocalServiceUtil.rebuildTree(companyId);
+			DLFileShortcutLocalServiceUtil.rebuildTree(companyId);
+			DLFileVersionLocalServiceUtil.rebuildTree(companyId);
 			DLFolderLocalServiceUtil.rebuildTree(companyId);
 		}
 	}

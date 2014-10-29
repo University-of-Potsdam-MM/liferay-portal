@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portlet.directory.asset;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.model.Group;
@@ -36,13 +37,9 @@ public class UserAssetRendererFactory extends BaseAssetRendererFactory {
 
 	public static final String TYPE = "user";
 
-	public UserAssetRendererFactory() {
-		setSelectable(false);
-	}
-
 	@Override
 	public AssetRenderer getAssetRenderer(long classPK, int type)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		User user = UserLocalServiceUtil.getUserById(classPK);
 
@@ -55,7 +52,7 @@ public class UserAssetRendererFactory extends BaseAssetRendererFactory {
 
 	@Override
 	public AssetRenderer getAssetRenderer(long groupId, String urlTitle)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Group group = GroupLocalServiceUtil.getGroup(groupId);
 
@@ -68,11 +65,6 @@ public class UserAssetRendererFactory extends BaseAssetRendererFactory {
 	@Override
 	public String getClassName() {
 		return User.class.getName();
-	}
-
-	@Override
-	public String getIconCssClass() {
-		return "icon-user";
 	}
 
 	@Override
@@ -98,8 +90,15 @@ public class UserAssetRendererFactory extends BaseAssetRendererFactory {
 	}
 
 	@Override
+	public boolean isSelectable() {
+		return _SELECTABLE;
+	}
+
+	@Override
 	protected String getIconPath(ThemeDisplay themeDisplay) {
 		return themeDisplay.getPathThemeImages() + "/common/user_icon.png";
 	}
+
+	private static final boolean _SELECTABLE = false;
 
 }

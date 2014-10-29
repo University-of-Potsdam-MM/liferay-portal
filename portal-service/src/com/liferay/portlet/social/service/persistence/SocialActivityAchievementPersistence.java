@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -45,9 +45,11 @@ public interface SocialActivityAchievementPersistence extends BasePersistence<So
 	*
 	* @param groupId the group ID
 	* @return the matching social activity achievements
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portlet.social.model.SocialActivityAchievement> findByGroupId(
-		long groupId);
+		long groupId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns a range of all the social activity achievements where groupId = &#63;.
@@ -60,9 +62,11 @@ public interface SocialActivityAchievementPersistence extends BasePersistence<So
 	* @param start the lower bound of the range of social activity achievements
 	* @param end the upper bound of the range of social activity achievements (not inclusive)
 	* @return the range of matching social activity achievements
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portlet.social.model.SocialActivityAchievement> findByGroupId(
-		long groupId, int start, int end);
+		long groupId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns an ordered range of all the social activity achievements where groupId = &#63;.
@@ -76,10 +80,12 @@ public interface SocialActivityAchievementPersistence extends BasePersistence<So
 	* @param end the upper bound of the range of social activity achievements (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching social activity achievements
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portlet.social.model.SocialActivityAchievement> findByGroupId(
 		long groupId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialActivityAchievement> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the first social activity achievement in the ordered set where groupId = &#63;.
@@ -88,11 +94,13 @@ public interface SocialActivityAchievementPersistence extends BasePersistence<So
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching social activity achievement
 	* @throws com.liferay.portlet.social.NoSuchActivityAchievementException if a matching social activity achievement could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.social.model.SocialActivityAchievement findByGroupId_First(
 		long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialActivityAchievement> orderByComparator)
-		throws com.liferay.portlet.social.NoSuchActivityAchievementException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchActivityAchievementException;
 
 	/**
 	* Returns the first social activity achievement in the ordered set where groupId = &#63;.
@@ -100,10 +108,12 @@ public interface SocialActivityAchievementPersistence extends BasePersistence<So
 	* @param groupId the group ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching social activity achievement, or <code>null</code> if a matching social activity achievement could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.social.model.SocialActivityAchievement fetchByGroupId_First(
 		long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialActivityAchievement> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the last social activity achievement in the ordered set where groupId = &#63;.
@@ -112,11 +122,13 @@ public interface SocialActivityAchievementPersistence extends BasePersistence<So
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching social activity achievement
 	* @throws com.liferay.portlet.social.NoSuchActivityAchievementException if a matching social activity achievement could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.social.model.SocialActivityAchievement findByGroupId_Last(
 		long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialActivityAchievement> orderByComparator)
-		throws com.liferay.portlet.social.NoSuchActivityAchievementException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchActivityAchievementException;
 
 	/**
 	* Returns the last social activity achievement in the ordered set where groupId = &#63;.
@@ -124,10 +136,12 @@ public interface SocialActivityAchievementPersistence extends BasePersistence<So
 	* @param groupId the group ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching social activity achievement, or <code>null</code> if a matching social activity achievement could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.social.model.SocialActivityAchievement fetchByGroupId_Last(
 		long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialActivityAchievement> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the social activity achievements before and after the current social activity achievement in the ordered set where groupId = &#63;.
@@ -137,26 +151,32 @@ public interface SocialActivityAchievementPersistence extends BasePersistence<So
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next social activity achievement
 	* @throws com.liferay.portlet.social.NoSuchActivityAchievementException if a social activity achievement with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.social.model.SocialActivityAchievement[] findByGroupId_PrevAndNext(
 		long activityAchievementId, long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialActivityAchievement> orderByComparator)
-		throws com.liferay.portlet.social.NoSuchActivityAchievementException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchActivityAchievementException;
 
 	/**
 	* Removes all the social activity achievements where groupId = &#63; from the database.
 	*
 	* @param groupId the group ID
+	* @throws SystemException if a system exception occurred
 	*/
-	public void removeByGroupId(long groupId);
+	public void removeByGroupId(long groupId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of social activity achievements where groupId = &#63;.
 	*
 	* @param groupId the group ID
 	* @return the number of matching social activity achievements
+	* @throws SystemException if a system exception occurred
 	*/
-	public int countByGroupId(long groupId);
+	public int countByGroupId(long groupId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns all the social activity achievements where groupId = &#63; and userId = &#63;.
@@ -164,9 +184,11 @@ public interface SocialActivityAchievementPersistence extends BasePersistence<So
 	* @param groupId the group ID
 	* @param userId the user ID
 	* @return the matching social activity achievements
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portlet.social.model.SocialActivityAchievement> findByG_U(
-		long groupId, long userId);
+		long groupId, long userId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns a range of all the social activity achievements where groupId = &#63; and userId = &#63;.
@@ -180,9 +202,11 @@ public interface SocialActivityAchievementPersistence extends BasePersistence<So
 	* @param start the lower bound of the range of social activity achievements
 	* @param end the upper bound of the range of social activity achievements (not inclusive)
 	* @return the range of matching social activity achievements
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portlet.social.model.SocialActivityAchievement> findByG_U(
-		long groupId, long userId, int start, int end);
+		long groupId, long userId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns an ordered range of all the social activity achievements where groupId = &#63; and userId = &#63;.
@@ -197,10 +221,12 @@ public interface SocialActivityAchievementPersistence extends BasePersistence<So
 	* @param end the upper bound of the range of social activity achievements (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching social activity achievements
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portlet.social.model.SocialActivityAchievement> findByG_U(
 		long groupId, long userId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialActivityAchievement> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the first social activity achievement in the ordered set where groupId = &#63; and userId = &#63;.
@@ -210,11 +236,13 @@ public interface SocialActivityAchievementPersistence extends BasePersistence<So
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching social activity achievement
 	* @throws com.liferay.portlet.social.NoSuchActivityAchievementException if a matching social activity achievement could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.social.model.SocialActivityAchievement findByG_U_First(
 		long groupId, long userId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialActivityAchievement> orderByComparator)
-		throws com.liferay.portlet.social.NoSuchActivityAchievementException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchActivityAchievementException;
 
 	/**
 	* Returns the first social activity achievement in the ordered set where groupId = &#63; and userId = &#63;.
@@ -223,10 +251,12 @@ public interface SocialActivityAchievementPersistence extends BasePersistence<So
 	* @param userId the user ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching social activity achievement, or <code>null</code> if a matching social activity achievement could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.social.model.SocialActivityAchievement fetchByG_U_First(
 		long groupId, long userId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialActivityAchievement> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the last social activity achievement in the ordered set where groupId = &#63; and userId = &#63;.
@@ -236,11 +266,13 @@ public interface SocialActivityAchievementPersistence extends BasePersistence<So
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching social activity achievement
 	* @throws com.liferay.portlet.social.NoSuchActivityAchievementException if a matching social activity achievement could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.social.model.SocialActivityAchievement findByG_U_Last(
 		long groupId, long userId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialActivityAchievement> orderByComparator)
-		throws com.liferay.portlet.social.NoSuchActivityAchievementException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchActivityAchievementException;
 
 	/**
 	* Returns the last social activity achievement in the ordered set where groupId = &#63; and userId = &#63;.
@@ -249,10 +281,12 @@ public interface SocialActivityAchievementPersistence extends BasePersistence<So
 	* @param userId the user ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching social activity achievement, or <code>null</code> if a matching social activity achievement could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.social.model.SocialActivityAchievement fetchByG_U_Last(
 		long groupId, long userId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialActivityAchievement> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the social activity achievements before and after the current social activity achievement in the ordered set where groupId = &#63; and userId = &#63;.
@@ -263,19 +297,23 @@ public interface SocialActivityAchievementPersistence extends BasePersistence<So
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next social activity achievement
 	* @throws com.liferay.portlet.social.NoSuchActivityAchievementException if a social activity achievement with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.social.model.SocialActivityAchievement[] findByG_U_PrevAndNext(
 		long activityAchievementId, long groupId, long userId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialActivityAchievement> orderByComparator)
-		throws com.liferay.portlet.social.NoSuchActivityAchievementException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchActivityAchievementException;
 
 	/**
 	* Removes all the social activity achievements where groupId = &#63; and userId = &#63; from the database.
 	*
 	* @param groupId the group ID
 	* @param userId the user ID
+	* @throws SystemException if a system exception occurred
 	*/
-	public void removeByG_U(long groupId, long userId);
+	public void removeByG_U(long groupId, long userId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of social activity achievements where groupId = &#63; and userId = &#63;.
@@ -283,8 +321,10 @@ public interface SocialActivityAchievementPersistence extends BasePersistence<So
 	* @param groupId the group ID
 	* @param userId the user ID
 	* @return the number of matching social activity achievements
+	* @throws SystemException if a system exception occurred
 	*/
-	public int countByG_U(long groupId, long userId);
+	public int countByG_U(long groupId, long userId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns all the social activity achievements where groupId = &#63; and name = &#63;.
@@ -292,9 +332,11 @@ public interface SocialActivityAchievementPersistence extends BasePersistence<So
 	* @param groupId the group ID
 	* @param name the name
 	* @return the matching social activity achievements
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portlet.social.model.SocialActivityAchievement> findByG_N(
-		long groupId, java.lang.String name);
+		long groupId, java.lang.String name)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns a range of all the social activity achievements where groupId = &#63; and name = &#63;.
@@ -308,9 +350,11 @@ public interface SocialActivityAchievementPersistence extends BasePersistence<So
 	* @param start the lower bound of the range of social activity achievements
 	* @param end the upper bound of the range of social activity achievements (not inclusive)
 	* @return the range of matching social activity achievements
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portlet.social.model.SocialActivityAchievement> findByG_N(
-		long groupId, java.lang.String name, int start, int end);
+		long groupId, java.lang.String name, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns an ordered range of all the social activity achievements where groupId = &#63; and name = &#63;.
@@ -325,10 +369,12 @@ public interface SocialActivityAchievementPersistence extends BasePersistence<So
 	* @param end the upper bound of the range of social activity achievements (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching social activity achievements
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portlet.social.model.SocialActivityAchievement> findByG_N(
 		long groupId, java.lang.String name, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialActivityAchievement> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the first social activity achievement in the ordered set where groupId = &#63; and name = &#63;.
@@ -338,11 +384,13 @@ public interface SocialActivityAchievementPersistence extends BasePersistence<So
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching social activity achievement
 	* @throws com.liferay.portlet.social.NoSuchActivityAchievementException if a matching social activity achievement could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.social.model.SocialActivityAchievement findByG_N_First(
 		long groupId, java.lang.String name,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialActivityAchievement> orderByComparator)
-		throws com.liferay.portlet.social.NoSuchActivityAchievementException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchActivityAchievementException;
 
 	/**
 	* Returns the first social activity achievement in the ordered set where groupId = &#63; and name = &#63;.
@@ -351,10 +399,12 @@ public interface SocialActivityAchievementPersistence extends BasePersistence<So
 	* @param name the name
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching social activity achievement, or <code>null</code> if a matching social activity achievement could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.social.model.SocialActivityAchievement fetchByG_N_First(
 		long groupId, java.lang.String name,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialActivityAchievement> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the last social activity achievement in the ordered set where groupId = &#63; and name = &#63;.
@@ -364,11 +414,13 @@ public interface SocialActivityAchievementPersistence extends BasePersistence<So
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching social activity achievement
 	* @throws com.liferay.portlet.social.NoSuchActivityAchievementException if a matching social activity achievement could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.social.model.SocialActivityAchievement findByG_N_Last(
 		long groupId, java.lang.String name,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialActivityAchievement> orderByComparator)
-		throws com.liferay.portlet.social.NoSuchActivityAchievementException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchActivityAchievementException;
 
 	/**
 	* Returns the last social activity achievement in the ordered set where groupId = &#63; and name = &#63;.
@@ -377,10 +429,12 @@ public interface SocialActivityAchievementPersistence extends BasePersistence<So
 	* @param name the name
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching social activity achievement, or <code>null</code> if a matching social activity achievement could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.social.model.SocialActivityAchievement fetchByG_N_Last(
 		long groupId, java.lang.String name,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialActivityAchievement> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the social activity achievements before and after the current social activity achievement in the ordered set where groupId = &#63; and name = &#63;.
@@ -391,19 +445,23 @@ public interface SocialActivityAchievementPersistence extends BasePersistence<So
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next social activity achievement
 	* @throws com.liferay.portlet.social.NoSuchActivityAchievementException if a social activity achievement with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.social.model.SocialActivityAchievement[] findByG_N_PrevAndNext(
 		long activityAchievementId, long groupId, java.lang.String name,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialActivityAchievement> orderByComparator)
-		throws com.liferay.portlet.social.NoSuchActivityAchievementException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchActivityAchievementException;
 
 	/**
 	* Removes all the social activity achievements where groupId = &#63; and name = &#63; from the database.
 	*
 	* @param groupId the group ID
 	* @param name the name
+	* @throws SystemException if a system exception occurred
 	*/
-	public void removeByG_N(long groupId, java.lang.String name);
+	public void removeByG_N(long groupId, java.lang.String name)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of social activity achievements where groupId = &#63; and name = &#63;.
@@ -411,8 +469,10 @@ public interface SocialActivityAchievementPersistence extends BasePersistence<So
 	* @param groupId the group ID
 	* @param name the name
 	* @return the number of matching social activity achievements
+	* @throws SystemException if a system exception occurred
 	*/
-	public int countByG_N(long groupId, java.lang.String name);
+	public int countByG_N(long groupId, java.lang.String name)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns all the social activity achievements where groupId = &#63; and firstInGroup = &#63;.
@@ -420,9 +480,11 @@ public interface SocialActivityAchievementPersistence extends BasePersistence<So
 	* @param groupId the group ID
 	* @param firstInGroup the first in group
 	* @return the matching social activity achievements
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portlet.social.model.SocialActivityAchievement> findByG_F(
-		long groupId, boolean firstInGroup);
+		long groupId, boolean firstInGroup)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns a range of all the social activity achievements where groupId = &#63; and firstInGroup = &#63;.
@@ -436,9 +498,11 @@ public interface SocialActivityAchievementPersistence extends BasePersistence<So
 	* @param start the lower bound of the range of social activity achievements
 	* @param end the upper bound of the range of social activity achievements (not inclusive)
 	* @return the range of matching social activity achievements
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portlet.social.model.SocialActivityAchievement> findByG_F(
-		long groupId, boolean firstInGroup, int start, int end);
+		long groupId, boolean firstInGroup, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns an ordered range of all the social activity achievements where groupId = &#63; and firstInGroup = &#63;.
@@ -453,10 +517,12 @@ public interface SocialActivityAchievementPersistence extends BasePersistence<So
 	* @param end the upper bound of the range of social activity achievements (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching social activity achievements
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portlet.social.model.SocialActivityAchievement> findByG_F(
 		long groupId, boolean firstInGroup, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialActivityAchievement> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the first social activity achievement in the ordered set where groupId = &#63; and firstInGroup = &#63;.
@@ -466,11 +532,13 @@ public interface SocialActivityAchievementPersistence extends BasePersistence<So
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching social activity achievement
 	* @throws com.liferay.portlet.social.NoSuchActivityAchievementException if a matching social activity achievement could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.social.model.SocialActivityAchievement findByG_F_First(
 		long groupId, boolean firstInGroup,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialActivityAchievement> orderByComparator)
-		throws com.liferay.portlet.social.NoSuchActivityAchievementException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchActivityAchievementException;
 
 	/**
 	* Returns the first social activity achievement in the ordered set where groupId = &#63; and firstInGroup = &#63;.
@@ -479,10 +547,12 @@ public interface SocialActivityAchievementPersistence extends BasePersistence<So
 	* @param firstInGroup the first in group
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching social activity achievement, or <code>null</code> if a matching social activity achievement could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.social.model.SocialActivityAchievement fetchByG_F_First(
 		long groupId, boolean firstInGroup,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialActivityAchievement> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the last social activity achievement in the ordered set where groupId = &#63; and firstInGroup = &#63;.
@@ -492,11 +562,13 @@ public interface SocialActivityAchievementPersistence extends BasePersistence<So
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching social activity achievement
 	* @throws com.liferay.portlet.social.NoSuchActivityAchievementException if a matching social activity achievement could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.social.model.SocialActivityAchievement findByG_F_Last(
 		long groupId, boolean firstInGroup,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialActivityAchievement> orderByComparator)
-		throws com.liferay.portlet.social.NoSuchActivityAchievementException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchActivityAchievementException;
 
 	/**
 	* Returns the last social activity achievement in the ordered set where groupId = &#63; and firstInGroup = &#63;.
@@ -505,10 +577,12 @@ public interface SocialActivityAchievementPersistence extends BasePersistence<So
 	* @param firstInGroup the first in group
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching social activity achievement, or <code>null</code> if a matching social activity achievement could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.social.model.SocialActivityAchievement fetchByG_F_Last(
 		long groupId, boolean firstInGroup,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialActivityAchievement> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the social activity achievements before and after the current social activity achievement in the ordered set where groupId = &#63; and firstInGroup = &#63;.
@@ -519,19 +593,23 @@ public interface SocialActivityAchievementPersistence extends BasePersistence<So
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next social activity achievement
 	* @throws com.liferay.portlet.social.NoSuchActivityAchievementException if a social activity achievement with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.social.model.SocialActivityAchievement[] findByG_F_PrevAndNext(
 		long activityAchievementId, long groupId, boolean firstInGroup,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialActivityAchievement> orderByComparator)
-		throws com.liferay.portlet.social.NoSuchActivityAchievementException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchActivityAchievementException;
 
 	/**
 	* Removes all the social activity achievements where groupId = &#63; and firstInGroup = &#63; from the database.
 	*
 	* @param groupId the group ID
 	* @param firstInGroup the first in group
+	* @throws SystemException if a system exception occurred
 	*/
-	public void removeByG_F(long groupId, boolean firstInGroup);
+	public void removeByG_F(long groupId, boolean firstInGroup)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of social activity achievements where groupId = &#63; and firstInGroup = &#63;.
@@ -539,8 +617,10 @@ public interface SocialActivityAchievementPersistence extends BasePersistence<So
 	* @param groupId the group ID
 	* @param firstInGroup the first in group
 	* @return the number of matching social activity achievements
+	* @throws SystemException if a system exception occurred
 	*/
-	public int countByG_F(long groupId, boolean firstInGroup);
+	public int countByG_F(long groupId, boolean firstInGroup)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the social activity achievement where groupId = &#63; and userId = &#63; and name = &#63; or throws a {@link com.liferay.portlet.social.NoSuchActivityAchievementException} if it could not be found.
@@ -550,10 +630,12 @@ public interface SocialActivityAchievementPersistence extends BasePersistence<So
 	* @param name the name
 	* @return the matching social activity achievement
 	* @throws com.liferay.portlet.social.NoSuchActivityAchievementException if a matching social activity achievement could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.social.model.SocialActivityAchievement findByG_U_N(
 		long groupId, long userId, java.lang.String name)
-		throws com.liferay.portlet.social.NoSuchActivityAchievementException;
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchActivityAchievementException;
 
 	/**
 	* Returns the social activity achievement where groupId = &#63; and userId = &#63; and name = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
@@ -562,9 +644,11 @@ public interface SocialActivityAchievementPersistence extends BasePersistence<So
 	* @param userId the user ID
 	* @param name the name
 	* @return the matching social activity achievement, or <code>null</code> if a matching social activity achievement could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.social.model.SocialActivityAchievement fetchByG_U_N(
-		long groupId, long userId, java.lang.String name);
+		long groupId, long userId, java.lang.String name)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the social activity achievement where groupId = &#63; and userId = &#63; and name = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
@@ -574,10 +658,12 @@ public interface SocialActivityAchievementPersistence extends BasePersistence<So
 	* @param name the name
 	* @param retrieveFromCache whether to use the finder cache
 	* @return the matching social activity achievement, or <code>null</code> if a matching social activity achievement could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.social.model.SocialActivityAchievement fetchByG_U_N(
 		long groupId, long userId, java.lang.String name,
-		boolean retrieveFromCache);
+		boolean retrieveFromCache)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Removes the social activity achievement where groupId = &#63; and userId = &#63; and name = &#63; from the database.
@@ -586,10 +672,12 @@ public interface SocialActivityAchievementPersistence extends BasePersistence<So
 	* @param userId the user ID
 	* @param name the name
 	* @return the social activity achievement that was removed
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.social.model.SocialActivityAchievement removeByG_U_N(
 		long groupId, long userId, java.lang.String name)
-		throws com.liferay.portlet.social.NoSuchActivityAchievementException;
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchActivityAchievementException;
 
 	/**
 	* Returns the number of social activity achievements where groupId = &#63; and userId = &#63; and name = &#63;.
@@ -598,8 +686,10 @@ public interface SocialActivityAchievementPersistence extends BasePersistence<So
 	* @param userId the user ID
 	* @param name the name
 	* @return the number of matching social activity achievements
+	* @throws SystemException if a system exception occurred
 	*/
-	public int countByG_U_N(long groupId, long userId, java.lang.String name);
+	public int countByG_U_N(long groupId, long userId, java.lang.String name)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns all the social activity achievements where groupId = &#63; and userId = &#63; and firstInGroup = &#63;.
@@ -608,9 +698,11 @@ public interface SocialActivityAchievementPersistence extends BasePersistence<So
 	* @param userId the user ID
 	* @param firstInGroup the first in group
 	* @return the matching social activity achievements
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portlet.social.model.SocialActivityAchievement> findByG_U_F(
-		long groupId, long userId, boolean firstInGroup);
+		long groupId, long userId, boolean firstInGroup)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns a range of all the social activity achievements where groupId = &#63; and userId = &#63; and firstInGroup = &#63;.
@@ -625,9 +717,11 @@ public interface SocialActivityAchievementPersistence extends BasePersistence<So
 	* @param start the lower bound of the range of social activity achievements
 	* @param end the upper bound of the range of social activity achievements (not inclusive)
 	* @return the range of matching social activity achievements
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portlet.social.model.SocialActivityAchievement> findByG_U_F(
-		long groupId, long userId, boolean firstInGroup, int start, int end);
+		long groupId, long userId, boolean firstInGroup, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns an ordered range of all the social activity achievements where groupId = &#63; and userId = &#63; and firstInGroup = &#63;.
@@ -643,10 +737,12 @@ public interface SocialActivityAchievementPersistence extends BasePersistence<So
 	* @param end the upper bound of the range of social activity achievements (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching social activity achievements
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portlet.social.model.SocialActivityAchievement> findByG_U_F(
 		long groupId, long userId, boolean firstInGroup, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialActivityAchievement> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the first social activity achievement in the ordered set where groupId = &#63; and userId = &#63; and firstInGroup = &#63;.
@@ -657,11 +753,13 @@ public interface SocialActivityAchievementPersistence extends BasePersistence<So
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching social activity achievement
 	* @throws com.liferay.portlet.social.NoSuchActivityAchievementException if a matching social activity achievement could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.social.model.SocialActivityAchievement findByG_U_F_First(
 		long groupId, long userId, boolean firstInGroup,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialActivityAchievement> orderByComparator)
-		throws com.liferay.portlet.social.NoSuchActivityAchievementException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchActivityAchievementException;
 
 	/**
 	* Returns the first social activity achievement in the ordered set where groupId = &#63; and userId = &#63; and firstInGroup = &#63;.
@@ -671,10 +769,12 @@ public interface SocialActivityAchievementPersistence extends BasePersistence<So
 	* @param firstInGroup the first in group
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching social activity achievement, or <code>null</code> if a matching social activity achievement could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.social.model.SocialActivityAchievement fetchByG_U_F_First(
 		long groupId, long userId, boolean firstInGroup,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialActivityAchievement> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the last social activity achievement in the ordered set where groupId = &#63; and userId = &#63; and firstInGroup = &#63;.
@@ -685,11 +785,13 @@ public interface SocialActivityAchievementPersistence extends BasePersistence<So
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching social activity achievement
 	* @throws com.liferay.portlet.social.NoSuchActivityAchievementException if a matching social activity achievement could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.social.model.SocialActivityAchievement findByG_U_F_Last(
 		long groupId, long userId, boolean firstInGroup,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialActivityAchievement> orderByComparator)
-		throws com.liferay.portlet.social.NoSuchActivityAchievementException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchActivityAchievementException;
 
 	/**
 	* Returns the last social activity achievement in the ordered set where groupId = &#63; and userId = &#63; and firstInGroup = &#63;.
@@ -699,10 +801,12 @@ public interface SocialActivityAchievementPersistence extends BasePersistence<So
 	* @param firstInGroup the first in group
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching social activity achievement, or <code>null</code> if a matching social activity achievement could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.social.model.SocialActivityAchievement fetchByG_U_F_Last(
 		long groupId, long userId, boolean firstInGroup,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialActivityAchievement> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the social activity achievements before and after the current social activity achievement in the ordered set where groupId = &#63; and userId = &#63; and firstInGroup = &#63;.
@@ -714,12 +818,14 @@ public interface SocialActivityAchievementPersistence extends BasePersistence<So
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next social activity achievement
 	* @throws com.liferay.portlet.social.NoSuchActivityAchievementException if a social activity achievement with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.social.model.SocialActivityAchievement[] findByG_U_F_PrevAndNext(
 		long activityAchievementId, long groupId, long userId,
 		boolean firstInGroup,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialActivityAchievement> orderByComparator)
-		throws com.liferay.portlet.social.NoSuchActivityAchievementException;
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchActivityAchievementException;
 
 	/**
 	* Removes all the social activity achievements where groupId = &#63; and userId = &#63; and firstInGroup = &#63; from the database.
@@ -727,8 +833,10 @@ public interface SocialActivityAchievementPersistence extends BasePersistence<So
 	* @param groupId the group ID
 	* @param userId the user ID
 	* @param firstInGroup the first in group
+	* @throws SystemException if a system exception occurred
 	*/
-	public void removeByG_U_F(long groupId, long userId, boolean firstInGroup);
+	public void removeByG_U_F(long groupId, long userId, boolean firstInGroup)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of social activity achievements where groupId = &#63; and userId = &#63; and firstInGroup = &#63;.
@@ -737,8 +845,10 @@ public interface SocialActivityAchievementPersistence extends BasePersistence<So
 	* @param userId the user ID
 	* @param firstInGroup the first in group
 	* @return the number of matching social activity achievements
+	* @throws SystemException if a system exception occurred
 	*/
-	public int countByG_U_F(long groupId, long userId, boolean firstInGroup);
+	public int countByG_U_F(long groupId, long userId, boolean firstInGroup)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Caches the social activity achievement in the entity cache if it is enabled.
@@ -771,13 +881,16 @@ public interface SocialActivityAchievementPersistence extends BasePersistence<So
 	* @param activityAchievementId the primary key of the social activity achievement
 	* @return the social activity achievement that was removed
 	* @throws com.liferay.portlet.social.NoSuchActivityAchievementException if a social activity achievement with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.social.model.SocialActivityAchievement remove(
 		long activityAchievementId)
-		throws com.liferay.portlet.social.NoSuchActivityAchievementException;
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchActivityAchievementException;
 
 	public com.liferay.portlet.social.model.SocialActivityAchievement updateImpl(
-		com.liferay.portlet.social.model.SocialActivityAchievement socialActivityAchievement);
+		com.liferay.portlet.social.model.SocialActivityAchievement socialActivityAchievement)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the social activity achievement with the primary key or throws a {@link com.liferay.portlet.social.NoSuchActivityAchievementException} if it could not be found.
@@ -785,30 +898,32 @@ public interface SocialActivityAchievementPersistence extends BasePersistence<So
 	* @param activityAchievementId the primary key of the social activity achievement
 	* @return the social activity achievement
 	* @throws com.liferay.portlet.social.NoSuchActivityAchievementException if a social activity achievement with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.social.model.SocialActivityAchievement findByPrimaryKey(
 		long activityAchievementId)
-		throws com.liferay.portlet.social.NoSuchActivityAchievementException;
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchActivityAchievementException;
 
 	/**
 	* Returns the social activity achievement with the primary key or returns <code>null</code> if it could not be found.
 	*
 	* @param activityAchievementId the primary key of the social activity achievement
 	* @return the social activity achievement, or <code>null</code> if a social activity achievement with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.social.model.SocialActivityAchievement fetchByPrimaryKey(
-		long activityAchievementId);
-
-	@Override
-	public java.util.Map<java.io.Serializable, com.liferay.portlet.social.model.SocialActivityAchievement> fetchByPrimaryKeys(
-		java.util.Set<java.io.Serializable> primaryKeys);
+		long activityAchievementId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns all the social activity achievements.
 	*
 	* @return the social activity achievements
+	* @throws SystemException if a system exception occurred
 	*/
-	public java.util.List<com.liferay.portlet.social.model.SocialActivityAchievement> findAll();
+	public java.util.List<com.liferay.portlet.social.model.SocialActivityAchievement> findAll()
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns a range of all the social activity achievements.
@@ -820,9 +935,11 @@ public interface SocialActivityAchievementPersistence extends BasePersistence<So
 	* @param start the lower bound of the range of social activity achievements
 	* @param end the upper bound of the range of social activity achievements (not inclusive)
 	* @return the range of social activity achievements
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portlet.social.model.SocialActivityAchievement> findAll(
-		int start, int end);
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns an ordered range of all the social activity achievements.
@@ -835,20 +952,27 @@ public interface SocialActivityAchievementPersistence extends BasePersistence<So
 	* @param end the upper bound of the range of social activity achievements (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of social activity achievements
+	* @throws SystemException if a system exception occurred
 	*/
 	public java.util.List<com.liferay.portlet.social.model.SocialActivityAchievement> findAll(
 		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialActivityAchievement> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Removes all the social activity achievements from the database.
+	*
+	* @throws SystemException if a system exception occurred
 	*/
-	public void removeAll();
+	public void removeAll()
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of social activity achievements.
 	*
 	* @return the number of social activity achievements
+	* @throws SystemException if a system exception occurred
 	*/
-	public int countAll();
+	public int countAll()
+		throws com.liferay.portal.kernel.exception.SystemException;
 }

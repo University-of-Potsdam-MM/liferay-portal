@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -36,9 +36,9 @@ import com.liferay.portal.service.BaseService;
  * @see com.liferay.portlet.asset.service.impl.AssetTagPropertyServiceImpl
  * @generated
  */
+@ProviderType
 @AccessControlled
 @JSONWebService
-@ProviderType
 @Transactional(isolation = Isolation.PORTAL, rollbackFor =  {
 	PortalException.class, SystemException.class})
 public interface AssetTagPropertyService extends BaseService {
@@ -49,6 +49,20 @@ public interface AssetTagPropertyService extends BaseService {
 	 */
 
 	/**
+	* Returns the Spring bean ID for this bean.
+	*
+	* @return the Spring bean ID for this bean
+	*/
+	public java.lang.String getBeanIdentifier();
+
+	/**
+	* Sets the Spring bean ID for this bean.
+	*
+	* @param beanIdentifier the Spring bean ID for this bean
+	*/
+	public void setBeanIdentifier(java.lang.String beanIdentifier);
+
+	/**
 	* Adds an asset tag property.
 	*
 	* @param tagId the primary key of the tag
@@ -57,10 +71,12 @@ public interface AssetTagPropertyService extends BaseService {
 	* @return the created asset tag property
 	* @throws PortalException if the user did not have permission to update the
 	asset tag, or if the key or value were invalid
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.asset.model.AssetTagProperty addTagProperty(
 		long tagId, java.lang.String key, java.lang.String value)
-		throws com.liferay.portal.kernel.exception.PortalException;
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Deletes the asset tag property with the specified ID.
@@ -69,26 +85,22 @@ public interface AssetTagPropertyService extends BaseService {
 	* @throws PortalException if an asset tag property with the primary key
 	could not be found or if the user did not have permission to
 	update the asset tag property
+	* @throws SystemException if a system exception occurred
 	*/
 	public void deleteTagProperty(long tagPropertyId)
-		throws com.liferay.portal.kernel.exception.PortalException;
-
-	/**
-	* Returns the Spring bean ID for this bean.
-	*
-	* @return the Spring bean ID for this bean
-	*/
-	public java.lang.String getBeanIdentifier();
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns all the asset tag property instances with the specified tag ID.
 	*
 	* @param tagId the primary key of the tag
 	* @return the matching asset tag properties
+	* @throws SystemException if a system exception occurred
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public java.util.List<com.liferay.portlet.asset.model.AssetTagProperty> getTagProperties(
-		long tagId);
+		long tagId) throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns asset tag properties with the specified group and key.
@@ -96,17 +108,12 @@ public interface AssetTagPropertyService extends BaseService {
 	* @param companyId the primary key of the company
 	* @param key the key that refers to some value
 	* @return the matching asset tag properties
+	* @throws SystemException if a system exception occurred
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public java.util.List<com.liferay.portlet.asset.model.AssetTagProperty> getTagPropertyValues(
-		long companyId, java.lang.String key);
-
-	/**
-	* Sets the Spring bean ID for this bean.
-	*
-	* @param beanIdentifier the Spring bean ID for this bean
-	*/
-	public void setBeanIdentifier(java.lang.String beanIdentifier);
+		long companyId, java.lang.String key)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Updates the asset tag property.
@@ -118,8 +125,10 @@ public interface AssetTagPropertyService extends BaseService {
 	* @throws PortalException if an asset tag property with the primary key
 	could not be found, if the user did not have permission to update
 	the asset tag, or if the key or value were invalid
+	* @throws SystemException if a system exception occurred
 	*/
 	public com.liferay.portlet.asset.model.AssetTagProperty updateTagProperty(
 		long tagPropertyId, java.lang.String key, java.lang.String value)
-		throws com.liferay.portal.kernel.exception.PortalException;
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException;
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -20,6 +20,7 @@ import com.liferay.portal.kernel.dao.orm.Projection;
 import com.liferay.portal.kernel.dao.orm.ProjectionFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.Property;
 import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portlet.documentlibrary.model.DLSyncEvent;
 import com.liferay.portlet.documentlibrary.service.base.DLSyncEventLocalServiceBaseImpl;
 
@@ -32,7 +33,9 @@ public class DLSyncEventLocalServiceImpl
 	extends DLSyncEventLocalServiceBaseImpl {
 
 	@Override
-	public DLSyncEvent addDLSyncEvent(String event, String type, long typePK) {
+	public DLSyncEvent addDLSyncEvent(String event, String type, long typePK)
+		throws SystemException {
+
 		DLSyncEvent dlSyncEvent = dlSyncEventPersistence.fetchByTypePK(typePK);
 
 		if (dlSyncEvent == null) {
@@ -51,17 +54,19 @@ public class DLSyncEventLocalServiceImpl
 	}
 
 	@Override
-	public void deleteDLSyncEvents() {
+	public void deleteDLSyncEvents() throws SystemException {
 		dlSyncEventPersistence.removeAll();
 	}
 
 	@Override
-	public List<DLSyncEvent> getDLSyncEvents(long modifiedTime) {
+	public List<DLSyncEvent> getDLSyncEvents(long modifiedTime)
+		throws SystemException {
+
 		return dlSyncEventPersistence.findByModifiedTime(modifiedTime);
 	}
 
 	@Override
-	public List<DLSyncEvent> getLatestDLSyncEvents() {
+	public List<DLSyncEvent> getLatestDLSyncEvents() throws SystemException {
 		DynamicQuery dynamicQuery = DynamicQueryFactoryUtil.forClass(
 			DLSyncEvent.class);
 

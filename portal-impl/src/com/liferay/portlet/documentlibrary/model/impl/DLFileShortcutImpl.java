@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,16 +15,15 @@
 package com.liferay.portlet.documentlibrary.model.impl;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.Folder;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.Repository;
 import com.liferay.portal.repository.liferayrepository.model.LiferayFolder;
 import com.liferay.portal.service.RepositoryLocalServiceUtil;
 import com.liferay.portlet.documentlibrary.model.DLFolder;
-import com.liferay.portlet.documentlibrary.model.DLFolderConstants;
 import com.liferay.portlet.documentlibrary.service.DLAppLocalServiceUtil;
 import com.liferay.portlet.documentlibrary.service.DLFolderLocalServiceUtil;
 
@@ -37,25 +36,21 @@ public class DLFileShortcutImpl extends DLFileShortcutBaseImpl {
 	}
 
 	@Override
-	public String buildTreePath() throws PortalException {
-		if (getFolderId() == DLFolderConstants.DEFAULT_PARENT_FOLDER_ID) {
-			return StringPool.SLASH;
-		}
-
+	public String buildTreePath() throws PortalException, SystemException {
 		DLFolder dlFolder = getDLFolder();
 
 		return dlFolder.buildTreePath();
 	}
 
 	@Override
-	public DLFolder getDLFolder() throws PortalException {
+	public DLFolder getDLFolder() throws PortalException, SystemException {
 		Folder folder = getFolder();
 
 		return (DLFolder)folder.getModel();
 	}
 
 	@Override
-	public Folder getFolder() throws PortalException {
+	public Folder getFolder() throws PortalException, SystemException {
 		if (getFolderId() <= 0) {
 			return new LiferayFolder(new DLFolderImpl());
 		}

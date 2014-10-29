@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,13 +14,12 @@
 
 package com.liferay.portal.security.pacl;
 
-import com.liferay.portal.kernel.concurrent.ConcurrentReferenceValueHashMap;
-import com.liferay.portal.kernel.memory.FinalizeManager;
 import com.liferay.portal.kernel.security.pacl.permission.PortalHookPermission;
 import com.liferay.portal.kernel.security.pacl.permission.PortalMessageBusPermission;
 import com.liferay.portal.kernel.security.pacl.permission.PortalRuntimePermission;
 import com.liferay.portal.kernel.security.pacl.permission.PortalServicePermission;
 import com.liferay.portal.kernel.util.JavaDetector;
+import com.liferay.portal.kernel.util.WeakValueConcurrentHashMap;
 
 import java.lang.reflect.Field;
 
@@ -277,13 +276,11 @@ public class PortalPolicy extends Policy {
 	private Field _field;
 	private PACLPolicy _paclPolicy = PACLPolicyManager.getDefaultPACLPolicy();
 	private ConcurrentMap<Object, PermissionCollection> _permissionCollections =
-		new ConcurrentReferenceValueHashMap<Object, PermissionCollection>(
-			FinalizeManager.WEAK_REFERENCE_FACTORY);
+		new WeakValueConcurrentHashMap<Object, PermissionCollection>();
 	private Policy _policy;
 	private ConcurrentMap<URLWrapper, PermissionCollection>
-		_urlPermissionCollections = new ConcurrentReferenceValueHashMap
-			<URLWrapper, PermissionCollection>(
-				FinalizeManager.WEAK_REFERENCE_FACTORY);
+		_urlPermissionCollections =
+			new WeakValueConcurrentHashMap<URLWrapper, PermissionCollection>();
 
 	private class FieldPrivilegedExceptionAction
 		implements PrivilegedExceptionAction<Field> {

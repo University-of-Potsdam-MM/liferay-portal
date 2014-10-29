@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,11 +14,8 @@
 
 package com.liferay.taglib.aui;
 
-import com.liferay.portal.kernel.dao.search.DisplayTerms;
-import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.util.JavaConstants;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.taglib.aui.base.BaseNavBarSearchTag;
@@ -44,17 +41,11 @@ public class NavBarSearchTag extends BaseNavBarSearchTag {
 		if (navBarTag != null) {
 			StringBundler sb = navBarTag.getResponsiveButtonsSB();
 
-			sb.append("<a class=\"btn navbar-btn navbar-toggle");
-
-			if (_hasSearchResults()) {
-				sb.append(" hide");
-			}
-
-			sb.append("\" id=\"");
+			sb.append("<a class=\"btn btn-navbar\" id=\"");
 			sb.append(_getNamespacedId());
 			sb.append("NavbarBtn\" data-navId=\"");
 			sb.append(_getNamespacedId());
-			sb.append("\" tabindex=\"0\">");
+			sb.append("\">");
 			sb.append("<i class=\"icon-search\"></i></a>");
 		}
 
@@ -73,7 +64,6 @@ public class NavBarSearchTag extends BaseNavBarSearchTag {
 		super.setAttributes(request);
 
 		setNamespacedAttribute(request, "id", _getNamespacedId());
-		setNamespacedAttribute(request, "searchResults", _hasSearchResults());
 	}
 
 	private String _getNamespacedId() {
@@ -98,26 +88,6 @@ public class NavBarSearchTag extends BaseNavBarSearchTag {
 		}
 
 		return _namespacedId;
-	}
-
-	private boolean _hasSearchResults() {
-		SearchContainer<?> searchContainer = getSearchContainer();
-
-		if (searchContainer == null) {
-			return false;
-		}
-
-		DisplayTerms displayTerms = searchContainer.getDisplayTerms();
-
-		String keywords = displayTerms.getKeywords();
-
-		if (displayTerms.isAdvancedSearch() ||
-			!keywords.equals(StringPool.BLANK)) {
-
-			return true;
-		}
-
-		return false;
 	}
 
 	private String _namespacedId;

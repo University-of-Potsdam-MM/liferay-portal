@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,8 +14,6 @@
 
 package com.liferay.portal.model;
 
-import aQute.bnd.annotation.ProviderType;
-
 import java.io.Serializable;
 
 import java.util.ArrayList;
@@ -29,12 +27,10 @@ import java.util.List;
  * @see com.liferay.portal.service.http.ImageServiceSoap
  * @generated
  */
-@ProviderType
 public class ImageSoap implements Serializable {
 	public static ImageSoap toSoapModel(Image model) {
 		ImageSoap soapModel = new ImageSoap();
 
-		soapModel.setMvccVersion(model.getMvccVersion());
 		soapModel.setImageId(model.getImageId());
 		soapModel.setModifiedDate(model.getModifiedDate());
 		soapModel.setType(model.getType());
@@ -93,14 +89,6 @@ public class ImageSoap implements Serializable {
 		setImageId(pk);
 	}
 
-	public long getMvccVersion() {
-		return _mvccVersion;
-	}
-
-	public void setMvccVersion(long mvccVersion) {
-		_mvccVersion = mvccVersion;
-	}
-
 	public long getImageId() {
 		return _imageId;
 	}
@@ -149,7 +137,6 @@ public class ImageSoap implements Serializable {
 		_size = size;
 	}
 
-	private long _mvccVersion;
 	private long _imageId;
 	private Date _modifiedDate;
 	private String _type;

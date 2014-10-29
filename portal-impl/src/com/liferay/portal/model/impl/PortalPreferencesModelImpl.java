@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -13,8 +13,6 @@
  */
 
 package com.liferay.portal.model.impl;
-
-import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -49,7 +47,6 @@ import java.util.Map;
  * @see com.liferay.portal.model.PortalPreferencesModel
  * @generated
  */
-@ProviderType
 public class PortalPreferencesModelImpl extends BaseModelImpl<PortalPreferences>
 	implements PortalPreferencesModel {
 	/*
@@ -59,13 +56,12 @@ public class PortalPreferencesModelImpl extends BaseModelImpl<PortalPreferences>
 	 */
 	public static final String TABLE_NAME = "PortalPreferences";
 	public static final Object[][] TABLE_COLUMNS = {
-			{ "mvccVersion", Types.BIGINT },
 			{ "portalPreferencesId", Types.BIGINT },
 			{ "ownerId", Types.BIGINT },
 			{ "ownerType", Types.INTEGER },
 			{ "preferences", Types.CLOB }
 		};
-	public static final String TABLE_SQL_CREATE = "create table PortalPreferences (mvccVersion LONG default 0,portalPreferencesId LONG not null primary key,ownerId LONG,ownerType INTEGER,preferences TEXT null)";
+	public static final String TABLE_SQL_CREATE = "create table PortalPreferences (portalPreferencesId LONG not null primary key,ownerId LONG,ownerType INTEGER,preferences TEXT null)";
 	public static final String TABLE_SQL_DROP = "drop table PortalPreferences";
 	public static final String ORDER_BY_JPQL = " ORDER BY portalPreferences.portalPreferencesId ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY PortalPreferences.portalPreferencesId ASC";
@@ -81,9 +77,9 @@ public class PortalPreferencesModelImpl extends BaseModelImpl<PortalPreferences>
 	public static final boolean COLUMN_BITMASK_ENABLED = GetterUtil.getBoolean(com.liferay.portal.util.PropsUtil.get(
 				"value.object.column.bitmask.enabled.com.liferay.portal.model.PortalPreferences"),
 			true);
-	public static final long OWNERID_COLUMN_BITMASK = 1L;
-	public static final long OWNERTYPE_COLUMN_BITMASK = 2L;
-	public static final long PORTALPREFERENCESID_COLUMN_BITMASK = 4L;
+	public static long OWNERID_COLUMN_BITMASK = 1L;
+	public static long OWNERTYPE_COLUMN_BITMASK = 2L;
+	public static long PORTALPREFERENCESID_COLUMN_BITMASK = 4L;
 	public static final long LOCK_EXPIRATION_TIME = GetterUtil.getLong(com.liferay.portal.util.PropsUtil.get(
 				"lock.expiration.time.com.liferay.portal.model.PortalPreferences"));
 
@@ -124,26 +120,16 @@ public class PortalPreferencesModelImpl extends BaseModelImpl<PortalPreferences>
 	public Map<String, Object> getModelAttributes() {
 		Map<String, Object> attributes = new HashMap<String, Object>();
 
-		attributes.put("mvccVersion", getMvccVersion());
 		attributes.put("portalPreferencesId", getPortalPreferencesId());
 		attributes.put("ownerId", getOwnerId());
 		attributes.put("ownerType", getOwnerType());
 		attributes.put("preferences", getPreferences());
-
-		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
-		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
 
 		return attributes;
 	}
 
 	@Override
 	public void setModelAttributes(Map<String, Object> attributes) {
-		Long mvccVersion = (Long)attributes.get("mvccVersion");
-
-		if (mvccVersion != null) {
-			setMvccVersion(mvccVersion);
-		}
-
 		Long portalPreferencesId = (Long)attributes.get("portalPreferencesId");
 
 		if (portalPreferencesId != null) {
@@ -167,16 +153,6 @@ public class PortalPreferencesModelImpl extends BaseModelImpl<PortalPreferences>
 		if (preferences != null) {
 			setPreferences(preferences);
 		}
-	}
-
-	@Override
-	public long getMvccVersion() {
-		return _mvccVersion;
-	}
-
-	@Override
-	public void setMvccVersion(long mvccVersion) {
-		_mvccVersion = mvccVersion;
 	}
 
 	@Override
@@ -279,7 +255,6 @@ public class PortalPreferencesModelImpl extends BaseModelImpl<PortalPreferences>
 	public Object clone() {
 		PortalPreferencesImpl portalPreferencesImpl = new PortalPreferencesImpl();
 
-		portalPreferencesImpl.setMvccVersion(getMvccVersion());
 		portalPreferencesImpl.setPortalPreferencesId(getPortalPreferencesId());
 		portalPreferencesImpl.setOwnerId(getOwnerId());
 		portalPreferencesImpl.setOwnerType(getOwnerType());
@@ -333,16 +308,6 @@ public class PortalPreferencesModelImpl extends BaseModelImpl<PortalPreferences>
 	}
 
 	@Override
-	public boolean isEntityCacheEnabled() {
-		return ENTITY_CACHE_ENABLED;
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return FINDER_CACHE_ENABLED;
-	}
-
-	@Override
 	public void resetOriginalValues() {
 		PortalPreferencesModelImpl portalPreferencesModelImpl = this;
 
@@ -360,8 +325,6 @@ public class PortalPreferencesModelImpl extends BaseModelImpl<PortalPreferences>
 	@Override
 	public CacheModel<PortalPreferences> toCacheModel() {
 		PortalPreferencesCacheModel portalPreferencesCacheModel = new PortalPreferencesCacheModel();
-
-		portalPreferencesCacheModel.mvccVersion = getMvccVersion();
 
 		portalPreferencesCacheModel.portalPreferencesId = getPortalPreferencesId();
 
@@ -382,11 +345,9 @@ public class PortalPreferencesModelImpl extends BaseModelImpl<PortalPreferences>
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(11);
+		StringBundler sb = new StringBundler(9);
 
-		sb.append("{mvccVersion=");
-		sb.append(getMvccVersion());
-		sb.append(", portalPreferencesId=");
+		sb.append("{portalPreferencesId=");
 		sb.append(getPortalPreferencesId());
 		sb.append(", ownerId=");
 		sb.append(getOwnerId());
@@ -401,16 +362,12 @@ public class PortalPreferencesModelImpl extends BaseModelImpl<PortalPreferences>
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(19);
+		StringBundler sb = new StringBundler(16);
 
 		sb.append("<model><model-name>");
 		sb.append("com.liferay.portal.model.PortalPreferences");
 		sb.append("</model-name>");
 
-		sb.append(
-			"<column><column-name>mvccVersion</column-name><column-value><![CDATA[");
-		sb.append(getMvccVersion());
-		sb.append("]]></column-value></column>");
 		sb.append(
 			"<column><column-name>portalPreferencesId</column-name><column-value><![CDATA[");
 		sb.append(getPortalPreferencesId());
@@ -433,11 +390,10 @@ public class PortalPreferencesModelImpl extends BaseModelImpl<PortalPreferences>
 		return sb.toString();
 	}
 
-	private static final ClassLoader _classLoader = PortalPreferences.class.getClassLoader();
-	private static final Class<?>[] _escapedModelInterfaces = new Class[] {
+	private static ClassLoader _classLoader = PortalPreferences.class.getClassLoader();
+	private static Class<?>[] _escapedModelInterfaces = new Class[] {
 			PortalPreferences.class
 		};
-	private long _mvccVersion;
 	private long _portalPreferencesId;
 	private long _ownerId;
 	private long _originalOwnerId;

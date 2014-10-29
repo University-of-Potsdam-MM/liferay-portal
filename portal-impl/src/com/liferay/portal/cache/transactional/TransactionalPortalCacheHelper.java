@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,11 +15,6 @@
 package com.liferay.portal.cache.transactional;
 
 import com.liferay.portal.kernel.cache.PortalCache;
-import com.liferay.portal.kernel.dao.orm.EntityCacheUtil;
-import com.liferay.portal.kernel.dao.orm.FinderCacheUtil;
-import com.liferay.portal.kernel.transaction.TransactionAttribute;
-import com.liferay.portal.kernel.transaction.TransactionLifecycleListener;
-import com.liferay.portal.kernel.transaction.TransactionStatus;
 import com.liferay.portal.kernel.util.InitialThreadLocal;
 import com.liferay.portal.util.PropsValues;
 
@@ -34,38 +29,6 @@ import java.util.Map;
  * @author Shuyang Zhou
  */
 public class TransactionalPortalCacheHelper {
-
-	public static final TransactionLifecycleListener
-		TRANSACTION_LIFECYCLE_LISTENER = new TransactionLifecycleListener() {
-
-			@Override
-			public void created(
-				TransactionAttribute transactionAttribute,
-				TransactionStatus transactionStatus) {
-
-				begin();
-			}
-
-			@Override
-			public void committed(
-				TransactionAttribute transactionAttribute,
-				TransactionStatus transactionStatus) {
-
-				commit();
-			}
-
-			@Override
-			public void rollbacked(
-				TransactionAttribute transactionAttribute,
-				TransactionStatus transactionStatus, Throwable throwable) {
-
-				rollback();
-
-				EntityCacheUtil.clearLocalCache();
-				FinderCacheUtil.clearLocalCache();
-			}
-
-		};
 
 	public static void begin() {
 		if (!PropsValues.TRANSACTIONAL_CACHE_ENABLED) {
@@ -130,17 +93,11 @@ public class TransactionalPortalCacheHelper {
 			return null;
 		}
 
-		ValueEntry valueEntry = uncommittedBuffer.get(key);
-
-		if (valueEntry == null) {
-			return null;
-		}
-
-		return (V)valueEntry._value;
+		return (V)uncommittedBuffer.get(key);
 	}
 
 	protected static <K extends Serializable, V> void put(
-		PortalCache<K, V> portalCache, K key, V value, boolean quiet, int ttl) {
+		PortalCache<K, V> portalCache, K key, V value) {
 
 		PortalCacheMap portalCacheMap = _peekPortalCacheMap();
 
@@ -152,7 +109,7 @@ public class TransactionalPortalCacheHelper {
 			portalCacheMap.put(portalCache, uncommittedBuffer);
 		}
 
-		uncommittedBuffer.put(key, new ValueEntry(value, ttl, quiet));
+		uncommittedBuffer.put(key, value);
 	}
 
 	protected static <K extends Serializable, V> void removeAll(
@@ -192,10 +149,6 @@ public class TransactionalPortalCacheHelper {
 		portalCacheMaps.add(new PortalCacheMap());
 	}
 
-	private static ValueEntry _NULL_HOLDER_VALUE_ENTRY = new ValueEntry(
-		TransactionalPortalCache.NULL_HOLDER, PortalCache.DEFAULT_TIME_TO_LIVE,
-		false);
-
 	private static ThreadLocal<List<PortalCacheMap>>
 		_portalCacheMapsThreadLocal =
 			new InitialThreadLocal<List<PortalCacheMap>>(
@@ -215,31 +168,33 @@ public class TransactionalPortalCacheHelper {
 				portalCache.removeAll();
 			}
 
-			for (Map.Entry<? extends Serializable, ValueEntry> entry :
+			for (Map.Entry<? extends Serializable, ?> entry :
 					_uncommittedMap.entrySet()) {
 
-				ValueEntry valueEntry = entry.getValue();
+				Serializable key = entry.getKey();
+				Object value = entry.getValue();
 
-				valueEntry.commitTo(portalCache, entry.getKey());
+				if (value == TransactionalPortalCache.NULL_HOLDER) {
+					portalCache.remove(key);
+				}
+				else {
+					portalCache.put(entry.getKey(), entry.getValue());
+				}
 			}
 		}
 
-		public ValueEntry get(Serializable key) {
-			ValueEntry valueEntry = _uncommittedMap.get(key);
+		public Object get(Serializable key) {
+			Object value = _uncommittedMap.get(key);
 
-			if ((valueEntry == null) && _removeAll) {
-				valueEntry = _NULL_HOLDER_VALUE_ENTRY;
+			if ((value == null) && _removeAll) {
+				value = TransactionalPortalCache.NULL_HOLDER;
 			}
 
-			return valueEntry;
+			return value;
 		}
 
-		public void put(Serializable key, ValueEntry valueEntry) {
-			ValueEntry oldValueEntry = _uncommittedMap.put(key, valueEntry);
-
-			if (oldValueEntry != null) {
-				oldValueEntry.merge(valueEntry);
-			}
+		public void put(Serializable key, Object value) {
+			_uncommittedMap.put(key, value);
 		}
 
 		public void removeAll() {
@@ -249,42 +204,8 @@ public class TransactionalPortalCacheHelper {
 		}
 
 		private boolean _removeAll;
-		private Map<Serializable, ValueEntry> _uncommittedMap =
-			new HashMap<Serializable, ValueEntry>();
-
-	}
-
-	private static class ValueEntry {
-
-		public ValueEntry(Object value, int ttl, boolean quiet) {
-			_value = value;
-			_ttl = ttl;
-			_quiet = quiet;
-		}
-
-		public void commitTo(
-			PortalCache<Serializable, Object> portalCache, Serializable key) {
-
-			if (_value == TransactionalPortalCache.NULL_HOLDER) {
-				portalCache.remove(key);
-			}
-			else if (_quiet) {
-				portalCache.putQuiet(key, _value, _ttl);
-			}
-			else {
-				portalCache.put(key, _value, _ttl);
-			}
-		}
-
-		public void merge(ValueEntry valueEntry) {
-			if (!_quiet) {
-				valueEntry._quiet = false;
-			}
-		}
-
-		private boolean _quiet;
-		private int _ttl;
-		private Object _value;
+		private Map<Serializable, Object> _uncommittedMap =
+			new HashMap<Serializable, Object>();
 
 	}
 

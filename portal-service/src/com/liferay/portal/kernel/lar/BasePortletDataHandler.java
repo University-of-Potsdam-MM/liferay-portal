@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,6 +14,7 @@
 
 package com.liferay.portal.kernel.lar;
 
+import com.liferay.portal.kernel.backgroundtask.BackgroundTaskThreadLocal;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
@@ -28,10 +29,8 @@ import com.liferay.portal.kernel.xml.SAXReaderUtil;
 import com.liferay.portal.model.Portlet;
 import com.liferay.portal.service.PortletLocalServiceUtil;
 import com.liferay.portal.service.PortletPreferencesLocalServiceUtil;
-import com.liferay.portal.util.PortalUtil;
 import com.liferay.portal.util.PortletKeys;
 import com.liferay.portlet.dynamicdatamapping.model.DDMTemplate;
-import com.liferay.portlet.dynamicdatamapping.service.DDMTemplateLocalServiceUtil;
 import com.liferay.portlet.portletdisplaytemplate.util.PortletDisplayTemplate;
 import com.liferay.portlet.portletdisplaytemplate.util.PortletDisplayTemplateUtil;
 
@@ -46,41 +45,6 @@ import javax.portlet.PortletPreferences;
  * @author Brian Wing Shun Chan
  */
 public abstract class BasePortletDataHandler implements PortletDataHandler {
-
-	@Override
-	public PortletPreferences addDefaultData(
-			PortletDataContext portletDataContext, String portletId,
-			PortletPreferences portletPreferences)
-		throws PortletDataException {
-
-		long startTime = 0;
-
-		if (_log.isInfoEnabled()) {
-			_log.info("Adding default data to portlet " + portletId);
-
-			startTime = System.currentTimeMillis();
-		}
-
-		try {
-			return doAddDefaultData(
-				portletDataContext, portletId, portletPreferences);
-		}
-		catch (PortletDataException pde) {
-			throw pde;
-		}
-		catch (Exception e) {
-			throw new PortletDataException(e);
-		}
-		finally {
-			if (_log.isInfoEnabled()) {
-				long duration = System.currentTimeMillis() - startTime;
-
-				_log.info(
-					"Added default data to portlet in " +
-						Time.getDuration(duration));
-			}
-		}
-	}
 
 	@Override
 	public PortletPreferences deleteData(
@@ -138,6 +102,19 @@ public abstract class BasePortletDataHandler implements PortletDataHandler {
 
 				addUncheckedModelAdditionCount(
 					portletDataContext, portletDataHandlerControl);
+			}
+
+			if (BackgroundTaskThreadLocal.hasBackgroundTask()) {
+				PortletDataContext clonePortletDataContext =
+					PortletDataContextFactoryUtil.clonePortletDataContext(
+						portletDataContext);
+
+				prepareManifestSummary(
+					clonePortletDataContext, portletPreferences);
+
+				PortletDataHandlerStatusMessageSenderUtil.sendStatusMessage(
+					"portlet", portletId,
+					clonePortletDataContext.getManifestSummary());
 			}
 
 			return doExportData(
@@ -205,16 +182,10 @@ public abstract class BasePortletDataHandler implements PortletDataHandler {
 				companyId, PortletKeys.PREFS_OWNER_TYPE_COMPANY,
 				portlet.getRootPortletId(), false) > 0)) {
 
-				PortletDataHandlerControl[] portletDataHandlerControls = null;
-
-				if (isDisplayPortlet()) {
-					portletDataHandlerControls = getExportControls();
-				}
-
 				configurationControls.add(
 					new PortletDataHandlerBoolean(
 						null, PortletDataHandlerKeys.PORTLET_SETUP, "setup",
-						true, false, portletDataHandlerControls, null, null));
+						true, false, null, null, null));
 		}
 
 		// Archived setups
@@ -285,16 +256,10 @@ public abstract class BasePortletDataHandler implements PortletDataHandler {
 		// Setup
 
 		if (ArrayUtil.contains(configurationPortletOptions, "setup")) {
-			PortletDataHandlerControl[] portletDataHandlerControls = null;
-
-			if (isDisplayPortlet()) {
-				portletDataHandlerControls = getExportControls();
-			}
-
 			configurationControls.add(
 				new PortletDataHandlerBoolean(
 					null, PortletDataHandlerKeys.PORTLET_SETUP, "setup", true,
-					false, portletDataHandlerControls, null, null));
+					false, null, null, null));
 		}
 
 		// Archived setups
@@ -336,11 +301,6 @@ public abstract class BasePortletDataHandler implements PortletDataHandler {
 	@Override
 	public String getPortletId() {
 		return _portletId;
-	}
-
-	@Override
-	public String getServiceName() {
-		return null;
 	}
 
 	@Override
@@ -388,11 +348,6 @@ public abstract class BasePortletDataHandler implements PortletDataHandler {
 	}
 
 	@Override
-	public boolean isDataAlwaysStaged() {
-		return _dataAlwaysStaged;
-	}
-
-	@Override
 	public boolean isDataLocalized() {
 		return _dataLocalized;
 	}
@@ -426,18 +381,6 @@ public abstract class BasePortletDataHandler implements PortletDataHandler {
 	@Override
 	public boolean isPublishToLiveByDefault() {
 		return _publishToLiveByDefault;
-	}
-
-	@Override
-	public boolean isRollbackOnException() {
-
-		// For now, we are going to throw an exception if one portlet data
-		// handler has an exception to ensure that the transaction is rolled
-		// back for data integrity. We may decide that this is not the best
-		// behavior in the future because a bad plugin could prevent deletion of
-		// groups.
-
-		return true;
 	}
 
 	@Override
@@ -535,58 +478,10 @@ public abstract class BasePortletDataHandler implements PortletDataHandler {
 					portletDataContext, portletId, portletPreferences);
 
 				if (displayStyleGroupId ==
-						portletDataContext.getSourceCompanyGroupId()) {
+						portletDataContext.getCompanyGroupId()) {
 
-					Element importDataRootElement =
-						portletDataContext.getImportDataRootElement();
-
-					Element referencesElement = importDataRootElement.element(
-						"references");
-
-					List<Element> referenceElements =
-						referencesElement.elements();
-
-					String ddmTemplateUuid =
-						PortletDisplayTemplateUtil.getDDMTemplateUuid(
-							displayStyle);
-
-					boolean preloaded = false;
-					long referenceClassNameId = 0;
-					String templateKey = null;
-
-					for (Element referenceElement : referenceElements) {
-						String className = referenceElement.attributeValue(
-							"class-name");
-						String uuid = referenceElement.attributeValue("uuid");
-
-						if (!className.equals(DDMTemplate.class.getName()) ||
-							!uuid.equals(ddmTemplateUuid)) {
-
-							continue;
-						}
-
-						preloaded = GetterUtil.getBoolean(
-							referenceElement.attributeValue("preloaded"));
-						referenceClassNameId = PortalUtil.getClassNameId(
-							referenceElement.attributeValue(
-								"referenced-class-name"));
-						templateKey = referenceElement.attributeValue(
-							"template-key");
-
-						break;
-					}
-
-					if (!preloaded) {
-						ddmTemplate =
-							PortletDisplayTemplateUtil.fetchDDMTemplate(
-								portletDataContext.getCompanyGroupId(),
-								displayStyle);
-					}
-					else {
-						ddmTemplate = DDMTemplateLocalServiceUtil.fetchTemplate(
-							portletDataContext.getCompanyGroupId(),
-							referenceClassNameId, templateKey);
-					}
+					ddmTemplate = PortletDisplayTemplateUtil.fetchDDMTemplate(
+						portletDataContext.getCompanyGroupId(), displayStyle);
 				}
 				else if (displayStyleGroupId ==
 							portletDataContext.getSourceGroupId()) {
@@ -729,14 +624,6 @@ public abstract class BasePortletDataHandler implements PortletDataHandler {
 
 			manifestSummary.addModelAdditionCount(manifestSummaryKey, 0);
 		}
-	}
-
-	protected PortletPreferences doAddDefaultData(
-			PortletDataContext portletDataContext, String portletId,
-			PortletPreferences portletPreferences)
-		throws Exception {
-
-		return portletPreferences;
 	}
 
 	protected PortletPreferences doDeleteData(
@@ -892,19 +779,13 @@ public abstract class BasePortletDataHandler implements PortletDataHandler {
 	/**
 	 * @deprecated As of 6.2.0
 	 */
-	@Deprecated
 	protected void setAlwaysExportable(boolean alwaysExportable) {
 	}
 
 	/**
 	 * @deprecated As of 6.2.0
 	 */
-	@Deprecated
 	protected void setAlwaysStaged(boolean alwaysStaged) {
-	}
-
-	protected void setDataAlwaysStaged(boolean dataAlwaysStaged) {
-		_dataAlwaysStaged = dataAlwaysStaged;
 	}
 
 	protected void setDataLevel(DataLevel dataLevel) {
@@ -967,7 +848,6 @@ public abstract class BasePortletDataHandler implements PortletDataHandler {
 	private static Log _log = LogFactoryUtil.getLog(
 		BasePortletDataHandler.class);
 
-	private boolean _dataAlwaysStaged;
 	private DataLevel _dataLevel = DataLevel.SITE;
 	private boolean _dataLocalized;
 	private String[] _dataPortletPreferences = StringPool.EMPTY_ARRAY;

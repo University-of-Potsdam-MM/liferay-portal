@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -35,13 +35,9 @@ String keywords = ParamUtil.getString(request, "keywords");
 		title="search"
 	/>
 
-	<aui:nav-bar>
-		<aui:nav-bar-search>
-			<div class="form-search">
-				<liferay-ui:input-search autoFocus="<%= windowState.equals(WindowState.MAXIMIZED) %>" id="keywords1" name="keywords" placeholder='<%= LanguageUtil.get(locale, "keywords") %>' />
-			</div>
-		</aui:nav-bar-search>
-	</aui:nav-bar>
+	<div class="form-search">
+		<liferay-ui:input-search autoFocus="<%= windowState.equals(WindowState.MAXIMIZED) %>" id="keywords1" name="keywords" placeholder='<%= LanguageUtil.get(locale, "keywords") %>' />
+	</div>
 
 	<%
 	PortletURL portletURL = renderResponse.createRenderURL();
@@ -52,7 +48,7 @@ String keywords = ParamUtil.getString(request, "keywords");
 	%>
 
 	<liferay-ui:search-container
-		emptyResultsMessage='<%= LanguageUtil.format(request, "no-entries-were-found-that-matched-the-keywords-x", "<strong>" + HtmlUtil.escape(keywords) + "</strong>", false) %>'
+		emptyResultsMessage='<%= LanguageUtil.format(pageContext, "no-entries-were-found-that-matched-the-keywords-x", "<strong>" + HtmlUtil.escape(keywords) + "</strong>") %>'
 		iteratorURL="<%= portletURL %>"
 	>
 
@@ -65,6 +61,13 @@ String keywords = ParamUtil.getString(request, "keywords");
 		searchContext.setEnd(searchContainer.getEnd());
 		searchContext.setIncludeDiscussions(true);
 		searchContext.setKeywords(keywords);
+
+		QueryConfig queryConfig = new QueryConfig();
+
+		queryConfig.setHighlightEnabled(true);
+
+		searchContext.setQueryConfig(queryConfig);
+
 		searchContext.setStart(searchContainer.getStart());
 
 		Hits hits = indexer.search(searchContext);
@@ -102,11 +105,11 @@ String keywords = ParamUtil.getString(request, "keywords");
 
 			<liferay-ui:app-view-search-entry
 				cssClass='<%= MathUtil.isEven(index) ? "search" : "search alt" %>'
-				description="<%= (summary != null) ? summary.getContent() : entry.getDescription() %>"
+				description="<%= (summary != null) ? HtmlUtil.escape(summary.getContent()) : entry.getDescription() %>"
 				mbMessages="<%= searchResult.getMBMessages() %>"
 				queryTerms="<%= hits.getQueryTerms() %>"
 				thumbnailSrc="<%= Validator.isNotNull(entry.getEntryImageURL(themeDisplay)) ? entry.getEntryImageURL(themeDisplay) : StringPool.BLANK %>"
-				title="<%= (summary != null) ? summary.getTitle() : entry.getTitle() %>"
+				title="<%= (summary != null) ? HtmlUtil.escape(summary.getTitle()) : entry.getTitle() %>"
 				url="<%= rowURL %>"
 			/>
 		</liferay-ui:search-container-row>
@@ -117,6 +120,6 @@ String keywords = ParamUtil.getString(request, "keywords");
 
 <%
 if (Validator.isNotNull(keywords)) {
-	PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.get(request, "search") + ": " + keywords, currentURL);
+	PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.get(pageContext, "search") + ": " + keywords, currentURL);
 }
 %>

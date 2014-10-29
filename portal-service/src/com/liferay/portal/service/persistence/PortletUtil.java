@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,6 +18,7 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.bean.PortalBeanLocatorUtil;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ReferenceRegistry;
 import com.liferay.portal.model.Portlet;
@@ -62,14 +63,16 @@ public class PortletUtil {
 	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#countWithDynamicQuery(DynamicQuery)
 	 */
-	public static long countWithDynamicQuery(DynamicQuery dynamicQuery) {
+	public static long countWithDynamicQuery(DynamicQuery dynamicQuery)
+		throws SystemException {
 		return getPersistence().countWithDynamicQuery(dynamicQuery);
 	}
 
 	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#findWithDynamicQuery(DynamicQuery)
 	 */
-	public static List<Portlet> findWithDynamicQuery(DynamicQuery dynamicQuery) {
+	public static List<Portlet> findWithDynamicQuery(DynamicQuery dynamicQuery)
+		throws SystemException {
 		return getPersistence().findWithDynamicQuery(dynamicQuery);
 	}
 
@@ -77,7 +80,8 @@ public class PortletUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#findWithDynamicQuery(DynamicQuery, int, int)
 	 */
 	public static List<Portlet> findWithDynamicQuery(
-		DynamicQuery dynamicQuery, int start, int end) {
+		DynamicQuery dynamicQuery, int start, int end)
+		throws SystemException {
 		return getPersistence().findWithDynamicQuery(dynamicQuery, start, end);
 	}
 
@@ -86,7 +90,7 @@ public class PortletUtil {
 	 */
 	public static List<Portlet> findWithDynamicQuery(
 		DynamicQuery dynamicQuery, int start, int end,
-		OrderByComparator<Portlet> orderByComparator) {
+		OrderByComparator orderByComparator) throws SystemException {
 		return getPersistence()
 				   .findWithDynamicQuery(dynamicQuery, start, end,
 			orderByComparator);
@@ -95,14 +99,15 @@ public class PortletUtil {
 	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel)
 	 */
-	public static Portlet update(Portlet portlet) {
+	public static Portlet update(Portlet portlet) throws SystemException {
 		return getPersistence().update(portlet);
 	}
 
 	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, ServiceContext)
 	 */
-	public static Portlet update(Portlet portlet, ServiceContext serviceContext) {
+	public static Portlet update(Portlet portlet, ServiceContext serviceContext)
+		throws SystemException {
 		return getPersistence().update(portlet, serviceContext);
 	}
 
@@ -111,9 +116,11 @@ public class PortletUtil {
 	*
 	* @param companyId the company ID
 	* @return the matching portlets
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portal.model.Portlet> findByCompanyId(
-		long companyId) {
+		long companyId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByCompanyId(companyId);
 	}
 
@@ -128,9 +135,11 @@ public class PortletUtil {
 	* @param start the lower bound of the range of portlets
 	* @param end the upper bound of the range of portlets (not inclusive)
 	* @return the range of matching portlets
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portal.model.Portlet> findByCompanyId(
-		long companyId, int start, int end) {
+		long companyId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByCompanyId(companyId, start, end);
 	}
 
@@ -146,10 +155,12 @@ public class PortletUtil {
 	* @param end the upper bound of the range of portlets (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching portlets
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portal.model.Portlet> findByCompanyId(
 		long companyId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Portlet> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByCompanyId(companyId, start, end, orderByComparator);
 	}
@@ -161,11 +172,13 @@ public class PortletUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching portlet
 	* @throws com.liferay.portal.NoSuchPortletException if a matching portlet could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.Portlet findByCompanyId_First(
 		long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Portlet> orderByComparator)
-		throws com.liferay.portal.NoSuchPortletException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchPortletException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByCompanyId_First(companyId, orderByComparator);
 	}
@@ -176,10 +189,12 @@ public class PortletUtil {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching portlet, or <code>null</code> if a matching portlet could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.Portlet fetchByCompanyId_First(
 		long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Portlet> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByCompanyId_First(companyId, orderByComparator);
 	}
@@ -191,11 +206,13 @@ public class PortletUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching portlet
 	* @throws com.liferay.portal.NoSuchPortletException if a matching portlet could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.Portlet findByCompanyId_Last(
 		long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Portlet> orderByComparator)
-		throws com.liferay.portal.NoSuchPortletException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchPortletException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByCompanyId_Last(companyId, orderByComparator);
 	}
@@ -206,10 +223,12 @@ public class PortletUtil {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching portlet, or <code>null</code> if a matching portlet could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.Portlet fetchByCompanyId_Last(
 		long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Portlet> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByCompanyId_Last(companyId, orderByComparator);
 	}
@@ -222,11 +241,13 @@ public class PortletUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next portlet
 	* @throws com.liferay.portal.NoSuchPortletException if a portlet with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.Portlet[] findByCompanyId_PrevAndNext(
 		long id, long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Portlet> orderByComparator)
-		throws com.liferay.portal.NoSuchPortletException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.NoSuchPortletException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByCompanyId_PrevAndNext(id, companyId, orderByComparator);
 	}
@@ -235,8 +256,10 @@ public class PortletUtil {
 	* Removes all the portlets where companyId = &#63; from the database.
 	*
 	* @param companyId the company ID
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByCompanyId(long companyId) {
+	public static void removeByCompanyId(long companyId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeByCompanyId(companyId);
 	}
 
@@ -245,8 +268,10 @@ public class PortletUtil {
 	*
 	* @param companyId the company ID
 	* @return the number of matching portlets
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByCompanyId(long companyId) {
+	public static int countByCompanyId(long companyId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByCompanyId(companyId);
 	}
 
@@ -257,10 +282,12 @@ public class PortletUtil {
 	* @param portletId the portlet ID
 	* @return the matching portlet
 	* @throws com.liferay.portal.NoSuchPortletException if a matching portlet could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.Portlet findByC_P(long companyId,
 		java.lang.String portletId)
-		throws com.liferay.portal.NoSuchPortletException {
+		throws com.liferay.portal.NoSuchPortletException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByC_P(companyId, portletId);
 	}
 
@@ -270,9 +297,11 @@ public class PortletUtil {
 	* @param companyId the company ID
 	* @param portletId the portlet ID
 	* @return the matching portlet, or <code>null</code> if a matching portlet could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.Portlet fetchByC_P(long companyId,
-		java.lang.String portletId) {
+		java.lang.String portletId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByC_P(companyId, portletId);
 	}
 
@@ -283,9 +312,11 @@ public class PortletUtil {
 	* @param portletId the portlet ID
 	* @param retrieveFromCache whether to use the finder cache
 	* @return the matching portlet, or <code>null</code> if a matching portlet could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.Portlet fetchByC_P(long companyId,
-		java.lang.String portletId, boolean retrieveFromCache) {
+		java.lang.String portletId, boolean retrieveFromCache)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByC_P(companyId, portletId, retrieveFromCache);
 	}
@@ -296,10 +327,12 @@ public class PortletUtil {
 	* @param companyId the company ID
 	* @param portletId the portlet ID
 	* @return the portlet that was removed
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.Portlet removeByC_P(long companyId,
 		java.lang.String portletId)
-		throws com.liferay.portal.NoSuchPortletException {
+		throws com.liferay.portal.NoSuchPortletException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().removeByC_P(companyId, portletId);
 	}
 
@@ -309,8 +342,10 @@ public class PortletUtil {
 	* @param companyId the company ID
 	* @param portletId the portlet ID
 	* @return the number of matching portlets
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByC_P(long companyId, java.lang.String portletId) {
+	public static int countByC_P(long companyId, java.lang.String portletId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByC_P(companyId, portletId);
 	}
 
@@ -349,14 +384,17 @@ public class PortletUtil {
 	* @param id the primary key of the portlet
 	* @return the portlet that was removed
 	* @throws com.liferay.portal.NoSuchPortletException if a portlet with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.Portlet remove(long id)
-		throws com.liferay.portal.NoSuchPortletException {
+		throws com.liferay.portal.NoSuchPortletException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().remove(id);
 	}
 
 	public static com.liferay.portal.model.Portlet updateImpl(
-		com.liferay.portal.model.Portlet portlet) {
+		com.liferay.portal.model.Portlet portlet)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().updateImpl(portlet);
 	}
 
@@ -366,9 +404,11 @@ public class PortletUtil {
 	* @param id the primary key of the portlet
 	* @return the portlet
 	* @throws com.liferay.portal.NoSuchPortletException if a portlet with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portal.model.Portlet findByPrimaryKey(long id)
-		throws com.liferay.portal.NoSuchPortletException {
+		throws com.liferay.portal.NoSuchPortletException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByPrimaryKey(id);
 	}
 
@@ -377,22 +417,21 @@ public class PortletUtil {
 	*
 	* @param id the primary key of the portlet
 	* @return the portlet, or <code>null</code> if a portlet with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
-	public static com.liferay.portal.model.Portlet fetchByPrimaryKey(long id) {
+	public static com.liferay.portal.model.Portlet fetchByPrimaryKey(long id)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByPrimaryKey(id);
-	}
-
-	public static java.util.Map<java.io.Serializable, com.liferay.portal.model.Portlet> fetchByPrimaryKeys(
-		java.util.Set<java.io.Serializable> primaryKeys) {
-		return getPersistence().fetchByPrimaryKeys(primaryKeys);
 	}
 
 	/**
 	* Returns all the portlets.
 	*
 	* @return the portlets
+	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portal.model.Portlet> findAll() {
+	public static java.util.List<com.liferay.portal.model.Portlet> findAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll();
 	}
 
@@ -406,9 +445,11 @@ public class PortletUtil {
 	* @param start the lower bound of the range of portlets
 	* @param end the upper bound of the range of portlets (not inclusive)
 	* @return the range of portlets
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portal.model.Portlet> findAll(
-		int start, int end) {
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll(start, end);
 	}
 
@@ -423,17 +464,22 @@ public class PortletUtil {
 	* @param end the upper bound of the range of portlets (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of portlets
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portal.model.Portlet> findAll(
 		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portal.model.Portlet> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll(start, end, orderByComparator);
 	}
 
 	/**
 	* Removes all the portlets from the database.
+	*
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeAll() {
+	public static void removeAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeAll();
 	}
 
@@ -441,8 +487,10 @@ public class PortletUtil {
 	* Returns the number of portlets.
 	*
 	* @return the number of portlets
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countAll() {
+	public static int countAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countAll();
 	}
 
@@ -460,7 +508,6 @@ public class PortletUtil {
 	/**
 	 * @deprecated As of 6.2.0
 	 */
-	@Deprecated
 	public void setPersistence(PortletPersistence persistence) {
 	}
 

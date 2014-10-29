@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,8 +14,6 @@
 
 package com.liferay.portlet.dynamicdatamapping.model;
 
-import aQute.bnd.annotation.ProviderType;
-
 import java.io.Serializable;
 
 import java.util.ArrayList;
@@ -29,7 +27,6 @@ import java.util.List;
  * @see com.liferay.portlet.dynamicdatamapping.service.http.DDMStructureServiceSoap
  * @generated
  */
-@ProviderType
 public class DDMStructureSoap implements Serializable {
 	public static DDMStructureSoap toSoapModel(DDMStructure model) {
 		DDMStructureSoap soapModel = new DDMStructureSoap();
@@ -47,7 +44,7 @@ public class DDMStructureSoap implements Serializable {
 		soapModel.setStructureKey(model.getStructureKey());
 		soapModel.setName(model.getName());
 		soapModel.setDescription(model.getDescription());
-		soapModel.setDefinition(model.getDefinition());
+		soapModel.setXsd(model.getXsd());
 		soapModel.setStorageType(model.getStorageType());
 		soapModel.setType(model.getType());
 
@@ -206,12 +203,12 @@ public class DDMStructureSoap implements Serializable {
 		_description = description;
 	}
 
-	public String getDefinition() {
-		return _definition;
+	public String getXsd() {
+		return _xsd;
 	}
 
-	public void setDefinition(String definition) {
-		_definition = definition;
+	public void setXsd(String xsd) {
+		_xsd = xsd;
 	}
 
 	public String getStorageType() {
@@ -243,7 +240,7 @@ public class DDMStructureSoap implements Serializable {
 	private String _structureKey;
 	private String _name;
 	private String _description;
-	private String _definition;
+	private String _xsd;
 	private String _storageType;
 	private int _type;
 }

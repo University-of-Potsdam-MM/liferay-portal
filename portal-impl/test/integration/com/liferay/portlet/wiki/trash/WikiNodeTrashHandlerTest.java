@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -19,12 +19,12 @@ import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.model.BaseModel;
 import com.liferay.portal.model.ClassedModel;
 import com.liferay.portal.service.ServiceContext;
+import com.liferay.portal.service.ServiceTestUtil;
+import com.liferay.portal.test.LiferayIntegrationJUnitTestRunner;
+import com.liferay.portal.test.MainServletExecutionTestListener;
 import com.liferay.portal.test.Sync;
 import com.liferay.portal.test.SynchronousDestinationExecutionTestListener;
-import com.liferay.portal.test.listeners.MainServletExecutionTestListener;
-import com.liferay.portal.test.runners.LiferayIntegrationJUnitTestRunner;
-import com.liferay.portal.util.test.RandomTestUtil;
-import com.liferay.portal.util.test.TestPropsValues;
+import com.liferay.portal.util.TestPropsValues;
 import com.liferay.portlet.trash.BaseTrashHandlerTestCase;
 import com.liferay.portlet.trash.util.TrashUtil;
 import com.liferay.portlet.wiki.model.WikiNode;
@@ -62,32 +62,6 @@ public class WikiNodeTrashHandlerTest extends BaseTrashHandlerTestCase {
 	@Override
 	@Test
 	public void testTrashAndRestoreDraft() throws Exception {
-	}
-
-	@Ignore()
-	@Override
-	@Test
-	public void testTrashBaseModelAndParentAndDeleteGroupTrashEntries()
-		throws Exception {
-	}
-
-	@Ignore()
-	@Override
-	@Test
-	public void testTrashBaseModelAndParentAndDeleteParent() throws Exception {
-	}
-
-	@Ignore()
-	@Override
-	@Test
-	public void testTrashBaseModelAndParentAndRestoreModel() throws Exception {
-	}
-
-	@Ignore()
-	@Override
-	@Test
-	public void testTrashGrandparentBaseModelAndRestoreParentModel()
-		throws Exception {
 	}
 
 	@Ignore()
@@ -135,13 +109,19 @@ public class WikiNodeTrashHandlerTest extends BaseTrashHandlerTestCase {
 	@Ignore()
 	@Override
 	@Test
-	public void testTrashParentAndDeleteGroupTrashEntries() throws Exception {
+	public void testTrashParentAndDeleteParent() throws Exception {
 	}
 
 	@Ignore()
 	@Override
 	@Test
-	public void testTrashParentAndDeleteParent() throws Exception {
+	public void testTrashParentAndDeleteTrashEntries() throws Exception {
+	}
+
+	@Ignore()
+	@Override
+	@Test
+	public void testTrashParentAndRestoreModel() throws Exception {
 	}
 
 	@Ignore()
@@ -184,9 +164,14 @@ public class WikiNodeTrashHandlerTest extends BaseTrashHandlerTestCase {
 
 		serviceContext.setWorkflowAction(WorkflowConstants.ACTION_PUBLISH);
 
+		String title = getSearchKeywords();
+
+		title += ServiceTestUtil.randomString(
+			_NODE_NAME_MAX_LENGTH - title.length());
+
 		return WikiNodeLocalServiceUtil.addNode(
-			TestPropsValues.getUserId(), getSearchKeywords(),
-			RandomTestUtil.randomString(), serviceContext);
+			TestPropsValues.getUserId(), title, ServiceTestUtil.randomString(),
+			serviceContext);
 	}
 
 	@Override
@@ -217,7 +202,7 @@ public class WikiNodeTrashHandlerTest extends BaseTrashHandlerTestCase {
 
 	@Override
 	protected String getSearchKeywords() {
-		return _NODE_NAME;
+		return "Title";
 	}
 
 	@Override
@@ -243,6 +228,6 @@ public class WikiNodeTrashHandlerTest extends BaseTrashHandlerTestCase {
 			TestPropsValues.getUserId(), primaryKey);
 	}
 
-	private static final String _NODE_NAME = RandomTestUtil.randomString(75);
+	private static final int _NODE_NAME_MAX_LENGTH = 75;
 
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -22,13 +22,13 @@ import com.liferay.portal.kernel.dao.orm.ScrollableResults;
 import com.liferay.portal.kernel.security.pacl.DoPrivileged;
 import com.liferay.portal.kernel.security.pacl.NotPrivileged;
 import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.kernel.util.UnmodifiableList;
 
 import java.io.Serializable;
 
 import java.sql.Timestamp;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -45,15 +45,11 @@ public class QueryImpl implements Query {
 		_query = query;
 		_strictName = strictName;
 
-		String[] names = null;
-
 		if (!_strictName) {
-			names = query.getNamedParameters();
+			_names = query.getNamedParameters();
 
-			Arrays.sort(names);
+			Arrays.sort(_names);
 		}
-
-		_names = names;
 	}
 
 	@NotPrivileged
@@ -117,7 +113,7 @@ public class QueryImpl implements Query {
 			List<?> list = _query.list();
 
 			if (unmodifiable) {
-				list = Collections.unmodifiableList(list);
+				list = new UnmodifiableList<Object>(list);
 			}
 			else if (copy) {
 				list = ListUtil.copy(list);
@@ -363,8 +359,8 @@ public class QueryImpl implements Query {
 		}
 	}
 
-	private final String[] _names;
-	private final org.hibernate.Query _query;
-	private final boolean _strictName;
+	private String[] _names;
+	private org.hibernate.Query _query;
+	private boolean _strictName;
 
 }

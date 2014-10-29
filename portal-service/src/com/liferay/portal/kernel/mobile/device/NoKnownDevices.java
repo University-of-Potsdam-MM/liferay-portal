@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portal.kernel.mobile.device;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -32,12 +33,12 @@ public class NoKnownDevices implements KnownDevices {
 
 	@Override
 	public Set<VersionableName> getBrands() {
-		return _unknownVersionableNames;
+		return _brands;
 	}
 
 	@Override
 	public Set<VersionableName> getBrowsers() {
-		return _unknownVersionableNames;
+		return _browsers;
 	}
 
 	@Override
@@ -47,7 +48,7 @@ public class NoKnownDevices implements KnownDevices {
 
 	@Override
 	public Set<VersionableName> getOperatingSystems() {
-		return _unknownVersionableNames;
+		return _operatingSystems;
 	}
 
 	@Override
@@ -60,13 +61,29 @@ public class NoKnownDevices implements KnownDevices {
 	}
 
 	private NoKnownDevices() {
+		_brands.add(VersionableName.UNKNOWN);
+
+		_brands = Collections.unmodifiableSet(_brands);
+
+		_browsers.add(VersionableName.UNKNOWN);
+
+		_browsers = Collections.unmodifiableSet(_browsers);
+
+		_operatingSystems.add(VersionableName.UNKNOWN);
+
+		_operatingSystems = Collections.unmodifiableSet(_operatingSystems);
+
+		_pointingMethods.add(VersionableName.UNKNOWN.getName());
+
+		_pointingMethods = Collections.unmodifiableSet(_pointingMethods);
 	}
 
-	private static final NoKnownDevices _instance = new NoKnownDevices();
+	private static NoKnownDevices _instance = new NoKnownDevices();
 
-	private final Set<String> _pointingMethods = Collections.singleton(
-		VersionableName.UNKNOWN.getName());
-	private final Set<VersionableName> _unknownVersionableNames =
-		Collections.singleton(VersionableName.UNKNOWN);
+	private Set<VersionableName> _brands = new HashSet<VersionableName>();
+	private Set<VersionableName> _browsers = new HashSet<VersionableName>();
+	private Set<VersionableName> _operatingSystems =
+		new HashSet<VersionableName>();
+	private Set<String> _pointingMethods = new HashSet<String>();
 
 }

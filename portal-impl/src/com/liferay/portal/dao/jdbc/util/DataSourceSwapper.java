@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,28 +14,36 @@
 
 package com.liferay.portal.dao.jdbc.util;
 
+import com.liferay.portal.dao.orm.hibernate.PortletSessionFactoryImpl;
 import com.liferay.portal.dao.orm.hibernate.SessionFactoryImpl;
 import com.liferay.portal.kernel.bean.PortalBeanLocatorUtil;
 import com.liferay.portal.kernel.dao.jdbc.DataSourceFactoryUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.portlet.PortletClassLoaderUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.spring.hibernate.PortalHibernateConfiguration;
+import com.liferay.portal.spring.hibernate.PortletHibernateConfiguration;
+import com.liferay.portal.spring.jpa.LocalContainerEntityManagerFactoryBean;
+import com.liferay.portal.util.ClassLoaderUtil;
+import com.liferay.portal.util.PropsValues;
 
+import java.util.List;
 import java.util.Properties;
+
+import javax.persistence.EntityManagerFactory;
 
 import javax.sql.DataSource;
 
 import org.hibernate.engine.SessionFactoryImplementor;
 
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.orm.hibernate3.HibernateTransactionManager;
 import org.springframework.transaction.support.AbstractPlatformTransactionManager;
 
 /**
  * @author Shuyang Zhou
  */
-public class DataSourceSwapper implements BeanFactoryAware {
+public class DataSourceSwapper {
 
 	public static void swapCounterDataSource(Properties properties)
 		throws Exception {
@@ -62,11 +70,22 @@ public class DataSourceSwapper implements BeanFactoryAware {
 
 		DataSourceFactoryUtil.destroyDataSource(oldDataSource);
 
-		if (_log.isInfoEnabled()) {
-			_log.info("Reinitialize Hibernate for new counter data source");
-		}
+		if (StringUtil.equalsIgnoreCase(
+				PropsValues.PERSISTENCE_PROVIDER, "jpa")) {
 
-		_reinitializeHibernate("counterSessionFactory", newDataSource);
+			if (_log.isInfoEnabled()) {
+				_log.info("Reinitialize Hibernate for new counter data source");
+			}
+
+			_reinitializeJPA("counterSessionFactory", newDataSource);
+		}
+		else {
+			if (_log.isInfoEnabled()) {
+				_log.info("Reinitialize JPA for new counter data source");
+			}
+
+			_reinitializeHibernate("counterSessionFactory", newDataSource);
+		}
 	}
 
 	public static void swapLiferayDataSource(Properties properties)
@@ -94,16 +113,24 @@ public class DataSourceSwapper implements BeanFactoryAware {
 
 		DataSourceFactoryUtil.destroyDataSource(oldDataSource);
 
-		if (_log.isInfoEnabled()) {
-			_log.info("Reinitialize Hibernate for new liferay data source");
+		if (StringUtil.equalsIgnoreCase(
+				PropsValues.PERSISTENCE_PROVIDER, "jpa")) {
+
+			if (_log.isInfoEnabled()) {
+				_log.info("Reinitialize Hibernate for new liferay data source");
+			}
+
+			_reinitializeJPA("liferaySessionFactory", newDataSource);
+		}
+		else {
+			if (_log.isInfoEnabled()) {
+				_log.info("Reinitialize JPA for new liferay data source");
+			}
+
+			_reinitializeHibernate("liferaySessionFactory", newDataSource);
 		}
 
-		_reinitializeHibernate("liferaySessionFactory", newDataSource);
-	}
-
-	@Override
-	public void setBeanFactory(BeanFactory beanFactory) {
-		_beanFactory = beanFactory;
+		_reinitializePortletsHibernate(newDataSource);
 	}
 
 	public void setCounterDataSourceWrapper(
@@ -125,7 +152,6 @@ public class DataSourceSwapper implements BeanFactoryAware {
 		PortalHibernateConfiguration portalHibernateConfiguration =
 			new PortalHibernateConfiguration();
 
-		portalHibernateConfiguration.setBeanFactory(_beanFactory);
 		portalHibernateConfiguration.setDataSource(dataSource);
 
 		portalHibernateConfiguration.afterPropertiesSet();
@@ -160,9 +186,72 @@ public class DataSourceSwapper implements BeanFactoryAware {
 		}
 	}
 
+	private static void _reinitializeJPA(String name, DataSource dataSource)
+		throws Exception {
+
+		LocalContainerEntityManagerFactoryBean
+			localContainerEntityManagerFactoryBean =
+				new LocalContainerEntityManagerFactoryBean();
+
+		localContainerEntityManagerFactoryBean.setDataSource(dataSource);
+
+		localContainerEntityManagerFactoryBean.afterPropertiesSet();
+
+		EntityManagerFactory entityManagerFactory =
+			localContainerEntityManagerFactoryBean.getObject();
+
+		com.liferay.portal.dao.orm.jpa.SessionFactoryImpl sessionFactoryImpl =
+			(com.liferay.portal.dao.orm.jpa.SessionFactoryImpl)
+				PortalBeanLocatorUtil.locate(name);
+
+		sessionFactoryImpl.setEntityManagerFactory(entityManagerFactory);
+	}
+
+	private static void _reinitializePortletsHibernate(DataSource newDataSource)
+		throws Exception {
+
+		List<PortletSessionFactoryImpl> portletSessionFactoryImpls =
+			SessionFactoryImpl.getPortletSessionFactories();
+
+		for (PortletSessionFactoryImpl portletSessionFactoryImpl :
+				portletSessionFactoryImpls) {
+
+			ClassLoader classLoader = PortletClassLoaderUtil.getClassLoader();
+			ClassLoader contextClassLoader =
+				ClassLoaderUtil.getContextClassLoader();
+
+			try {
+				ClassLoader sessionFactoryClassLoader =
+					portletSessionFactoryImpl.getSessionFactoryClassLoader();
+
+				PortletClassLoaderUtil.setClassLoader(
+					sessionFactoryClassLoader);
+				ClassLoaderUtil.setContextClassLoader(
+					sessionFactoryClassLoader);
+
+				PortletHibernateConfiguration portletHibernateConfiguration =
+					new PortletHibernateConfiguration();
+
+				portletHibernateConfiguration.setDataSource(newDataSource);
+
+				portletHibernateConfiguration.afterPropertiesSet();
+
+				SessionFactoryImplementor sessionFactoryImplementor =
+					(SessionFactoryImplementor)
+						portletHibernateConfiguration.getObject();
+
+				portletSessionFactoryImpl.setSessionFactoryImplementor(
+					sessionFactoryImplementor);
+			}
+			finally {
+				PortletClassLoaderUtil.setClassLoader(classLoader);
+				ClassLoaderUtil.setContextClassLoader(contextClassLoader);
+			}
+		}
+	}
+
 	private static Log _log = LogFactoryUtil.getLog(DataSourceSwapper.class);
 
-	private static BeanFactory _beanFactory;
 	private static DataSourceWrapper _counterDataSourceWrapper;
 	private static DataSourceWrapper _liferayDataSourceWrapper;
 

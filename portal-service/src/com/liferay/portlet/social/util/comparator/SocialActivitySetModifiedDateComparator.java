@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -20,8 +20,7 @@ import com.liferay.portlet.social.model.SocialActivitySet;
 /**
  * @author Matthew Kong
  */
-public class SocialActivitySetModifiedDateComparator
-	extends OrderByComparator<SocialActivitySet> {
+public class SocialActivitySetModifiedDateComparator extends OrderByComparator {
 
 	public static final String ORDER_BY_ASC =
 		"SocialActivitySet.modifiedDate ASC";
@@ -40,8 +39,9 @@ public class SocialActivitySetModifiedDateComparator
 	}
 
 	@Override
-	public int compare(
-		SocialActivitySet activitySet1, SocialActivitySet activitySet2) {
+	public int compare(Object obj1, Object obj2) {
+		SocialActivitySet activitySet1 = (SocialActivitySet)obj1;
+		SocialActivitySet activitySet2 = (SocialActivitySet)obj2;
 
 		long modifiedDate1 = activitySet1.getModifiedDate();
 		long modifiedDate2 = activitySet2.getModifiedDate();

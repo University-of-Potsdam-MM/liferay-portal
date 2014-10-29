@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,7 +18,6 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.transaction.Isolation;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
@@ -53,10 +52,11 @@ public interface CounterLocalService extends BaseLocalService,
 	*
 	* @param counter the counter
 	* @return the counter that was added
+	* @throws SystemException if a system exception occurred
 	*/
-	@com.liferay.portal.kernel.search.Indexable(type = IndexableType.REINDEX)
 	public com.liferay.counter.model.Counter addCounter(
-		com.liferay.counter.model.Counter counter);
+		com.liferay.counter.model.Counter counter)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Creates a new counter with the primary key. Does not add the counter to the database.
@@ -68,34 +68,28 @@ public interface CounterLocalService extends BaseLocalService,
 		java.lang.String name);
 
 	/**
-	* Deletes the counter from the database. Also notifies the appropriate model listeners.
-	*
-	* @param counter the counter
-	* @return the counter that was removed
-	*/
-	@com.liferay.portal.kernel.search.Indexable(type = IndexableType.DELETE)
-	public com.liferay.counter.model.Counter deleteCounter(
-		com.liferay.counter.model.Counter counter);
-
-	/**
 	* Deletes the counter with the primary key from the database. Also notifies the appropriate model listeners.
 	*
 	* @param name the primary key of the counter
 	* @return the counter that was removed
 	* @throws PortalException if a counter with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
-	@com.liferay.portal.kernel.search.Indexable(type = IndexableType.DELETE)
 	public com.liferay.counter.model.Counter deleteCounter(
 		java.lang.String name)
-		throws com.liferay.portal.kernel.exception.PortalException;
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
-	* @throws PortalException
+	* Deletes the counter from the database. Also notifies the appropriate model listeners.
+	*
+	* @param counter the counter
+	* @return the counter that was removed
+	* @throws SystemException if a system exception occurred
 	*/
-	@Override
-	public com.liferay.portal.model.PersistedModel deletePersistedModel(
-		com.liferay.portal.model.PersistedModel persistedModel)
-		throws com.liferay.portal.kernel.exception.PortalException;
+	public com.liferay.counter.model.Counter deleteCounter(
+		com.liferay.counter.model.Counter counter)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	public com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery();
 
@@ -104,9 +98,12 @@ public interface CounterLocalService extends BaseLocalService,
 	*
 	* @param dynamicQuery the dynamic query
 	* @return the matching rows
+	* @throws SystemException if a system exception occurred
 	*/
-	public <T> java.util.List<T> dynamicQuery(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery);
+	@SuppressWarnings("rawtypes")
+	public java.util.List dynamicQuery(
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Performs a dynamic query on the database and returns a range of the matching rows.
@@ -119,10 +116,12 @@ public interface CounterLocalService extends BaseLocalService,
 	* @param start the lower bound of the range of model instances
 	* @param end the upper bound of the range of model instances (not inclusive)
 	* @return the range of matching rows
+	* @throws SystemException if a system exception occurred
 	*/
-	public <T> java.util.List<T> dynamicQuery(
+	@SuppressWarnings("rawtypes")
+	public java.util.List dynamicQuery(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
-		int end);
+		int end) throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Performs a dynamic query on the database and returns an ordered range of the matching rows.
@@ -136,20 +135,25 @@ public interface CounterLocalService extends BaseLocalService,
 	* @param end the upper bound of the range of model instances (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching rows
+	* @throws SystemException if a system exception occurred
 	*/
-	public <T> java.util.List<T> dynamicQuery(
+	@SuppressWarnings("rawtypes")
+	public java.util.List dynamicQuery(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
 		int end,
-		com.liferay.portal.kernel.util.OrderByComparator<T> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of rows that match the dynamic query.
 	*
 	* @param dynamicQuery the dynamic query
 	* @return the number of rows that match the dynamic query
+	* @throws SystemException if a system exception occurred
 	*/
 	public long dynamicQueryCount(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery);
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of rows that match the dynamic query.
@@ -157,20 +161,16 @@ public interface CounterLocalService extends BaseLocalService,
 	* @param dynamicQuery the dynamic query
 	* @param projection the projection to apply to the query
 	* @return the number of rows that match the dynamic query
+	* @throws SystemException if a system exception occurred
 	*/
 	public long dynamicQueryCount(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery,
-		com.liferay.portal.kernel.dao.orm.Projection projection);
+		com.liferay.portal.kernel.dao.orm.Projection projection)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public com.liferay.counter.model.Counter fetchCounter(java.lang.String name);
-
-	/**
-	* Returns the Spring bean ID for this bean.
-	*
-	* @return the Spring bean ID for this bean
-	*/
-	public java.lang.String getBeanIdentifier();
+	public com.liferay.counter.model.Counter fetchCounter(java.lang.String name)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the counter with the primary key.
@@ -178,10 +178,19 @@ public interface CounterLocalService extends BaseLocalService,
 	* @param name the primary key of the counter
 	* @return the counter
 	* @throws PortalException if a counter with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public com.liferay.counter.model.Counter getCounter(java.lang.String name)
-		throws com.liferay.portal.kernel.exception.PortalException;
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException;
+
+	@Override
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public com.liferay.portal.model.PersistedModel getPersistedModel(
+		java.io.Serializable primaryKeyObj)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns a range of all the counters.
@@ -193,45 +202,40 @@ public interface CounterLocalService extends BaseLocalService,
 	* @param start the lower bound of the range of counters
 	* @param end the upper bound of the range of counters (not inclusive)
 	* @return the range of counters
+	* @throws SystemException if a system exception occurred
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public java.util.List<com.liferay.counter.model.Counter> getCounters(
-		int start, int end);
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
 	* Returns the number of counters.
 	*
 	* @return the number of counters
+	* @throws SystemException if a system exception occurred
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public int getCountersCount();
+	public int getCountersCount()
+		throws com.liferay.portal.kernel.exception.SystemException;
 
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public java.util.List<java.lang.String> getNames();
+	/**
+	* Updates the counter in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
+	*
+	* @param counter the counter
+	* @return the counter that was updated
+	* @throws SystemException if a system exception occurred
+	*/
+	public com.liferay.counter.model.Counter updateCounter(
+		com.liferay.counter.model.Counter counter)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
-	@Override
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public com.liferay.portal.model.PersistedModel getPersistedModel(
-		java.io.Serializable primaryKeyObj)
-		throws com.liferay.portal.kernel.exception.PortalException;
-
-	@com.liferay.portal.kernel.transaction.Transactional(isolation = Isolation.COUNTER, propagation = Propagation.REQUIRES_NEW)
-	public long increment();
-
-	@com.liferay.portal.kernel.transaction.Transactional(isolation = Isolation.COUNTER, propagation = Propagation.REQUIRES_NEW)
-	public long increment(java.lang.String name);
-
-	@com.liferay.portal.kernel.transaction.Transactional(isolation = Isolation.COUNTER, propagation = Propagation.REQUIRES_NEW)
-	public long increment(java.lang.String name, int size);
-
-	@com.liferay.portal.kernel.transaction.Transactional(isolation = Isolation.COUNTER, propagation = Propagation.REQUIRES_NEW)
-	public void rename(java.lang.String oldName, java.lang.String newName);
-
-	@com.liferay.portal.kernel.transaction.Transactional(isolation = Isolation.COUNTER, propagation = Propagation.REQUIRES_NEW)
-	public void reset(java.lang.String name);
-
-	@com.liferay.portal.kernel.transaction.Transactional(isolation = Isolation.COUNTER, propagation = Propagation.REQUIRES_NEW)
-	public void reset(java.lang.String name, long size);
+	/**
+	* Returns the Spring bean ID for this bean.
+	*
+	* @return the Spring bean ID for this bean
+	*/
+	public java.lang.String getBeanIdentifier();
 
 	/**
 	* Sets the Spring bean ID for this bean.
@@ -240,13 +244,25 @@ public interface CounterLocalService extends BaseLocalService,
 	*/
 	public void setBeanIdentifier(java.lang.String beanIdentifier);
 
-	/**
-	* Updates the counter in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
-	*
-	* @param counter the counter
-	* @return the counter that was updated
-	*/
-	@com.liferay.portal.kernel.search.Indexable(type = IndexableType.REINDEX)
-	public com.liferay.counter.model.Counter updateCounter(
-		com.liferay.counter.model.Counter counter);
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public java.util.List<java.lang.String> getNames()
+		throws com.liferay.portal.kernel.exception.SystemException;
+
+	public long increment()
+		throws com.liferay.portal.kernel.exception.SystemException;
+
+	public long increment(java.lang.String name)
+		throws com.liferay.portal.kernel.exception.SystemException;
+
+	public long increment(java.lang.String name, int size)
+		throws com.liferay.portal.kernel.exception.SystemException;
+
+	public void rename(java.lang.String oldName, java.lang.String newName)
+		throws com.liferay.portal.kernel.exception.SystemException;
+
+	public void reset(java.lang.String name)
+		throws com.liferay.portal.kernel.exception.SystemException;
+
+	public void reset(java.lang.String name, long size)
+		throws com.liferay.portal.kernel.exception.SystemException;
 }

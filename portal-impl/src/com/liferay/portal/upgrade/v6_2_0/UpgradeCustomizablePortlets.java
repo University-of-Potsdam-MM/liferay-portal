@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portal.upgrade.v6_2_0;
 
 import com.liferay.portal.kernel.dao.jdbc.DataAccess;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.upgrade.UpgradeProcess;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringPool;
@@ -78,7 +79,8 @@ public class UpgradeCustomizablePortlets extends UpgradeProcess {
 	}
 
 	protected PortalPreferencesWrapper getPortalPreferencesInstance(
-		long ownerId, int ownerType, String xml) {
+			long ownerId, int ownerType, String xml)
+		throws SystemException {
 
 		PortalPreferencesImpl portalPreferencesImpl =
 			(PortalPreferencesImpl)PortletPreferencesFactoryUtil.fromXML(
@@ -164,7 +166,7 @@ public class UpgradeCustomizablePortlets extends UpgradeProcess {
 			ps = con.prepareStatement(
 				"update PortletPreferences set ownerId = ?, ownerType = ?, " +
 					"plid = ?, portletId = ? where ownerId = ? and " +
-						"ownerType = ? and plid = ? and portletId = ?");
+						"ownerType = ? and portletId = ?");
 
 			ps.setLong(1, userId);
 			ps.setInt(2, PortletKeys.PREFS_OWNER_TYPE_USER);
@@ -172,8 +174,7 @@ public class UpgradeCustomizablePortlets extends UpgradeProcess {
 			ps.setString(4, newPortletId);
 			ps.setLong(5, 0L);
 			ps.setInt(6, PortletKeys.PREFS_OWNER_TYPE_LAYOUT);
-			ps.setLong(7, plid);
-			ps.setString(8, portletId);
+			ps.setString(7, portletId);
 
 			ps.executeUpdate();
 		}

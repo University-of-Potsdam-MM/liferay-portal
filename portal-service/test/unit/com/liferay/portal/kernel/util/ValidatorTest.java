@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,7 +14,7 @@
 
 package com.liferay.portal.kernel.util;
 
-import com.liferay.portal.kernel.test.ReflectionTestUtil;
+import java.lang.reflect.Method;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -33,17 +33,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 public class ValidatorTest extends PowerMockito {
 
 	@Test
-	public void testIsContent() throws Exception {
-		Assert.assertTrue(Validator.isContent("Hello World\n\t"));
-		Assert.assertTrue(Validator.isContent("\n\tHello World"));
-		Assert.assertTrue(Validator.isContent("Hello\n\t World"));
-		Assert.assertFalse(Validator.isContent("\t"));
-		Assert.assertFalse(Validator.isContent("\n"));
-		Assert.assertFalse(Validator.isContent("\n\t"));
-	}
-
-	@Test
-	public void testIsDomain() {
+	public void testIsDomain() throws Exception {
 
 		// 来锐.com, живот.рс
 
@@ -102,7 +92,7 @@ public class ValidatorTest extends PowerMockito {
 			"test", "liferay.com", "@liferay.com", "test(@liferay.com",
 			"test)@liferay.com", "test,@liferay.com", ".test@liferay.com",
 			"test.@liferay.com", "te..st@liferay.com", "test user@liferay.com",
-			"test@-liferay.com", "test@_liferay.com"
+			"test@-liferay.com", "test@liferay"
 		};
 
 		testValidEmailAddreses(invalidEmailAddresses, false);
@@ -394,8 +384,7 @@ public class ValidatorTest extends PowerMockito {
 			"test-@liferay.com", "test/@liferay.com", "test=@liferay.com",
 			"test?@liferay.com", "test^@liferay.com", "test_@liferay.com",
 			"test`@liferay.com", "test{@liferay.com", "test|@liferay.com",
-			"test{@liferay.com", "test~@liferay.com", "test@liferay.com.",
-			"test@liferay"
+			"test{@liferay.com", "test~@liferay.com"
 		};
 
 		testValidEmailAddreses(validEmailAddresses, true);
@@ -541,38 +530,40 @@ public class ValidatorTest extends PowerMockito {
 			boolean b = Validator.isNull(string);
 
 			Assert.assertEquals(valid, b);
-
-			boolean notB = Validator.isNotNull(string);
-
-			Assert.assertEquals(valid, !notB);
 		}
 	}
 
 	protected void testIsValidByMethodName(
-		String methodName, String[] params, boolean valid) {
+			String methodName, String[] params, boolean valid)
+		throws Exception {
+
+		Method method = ReflectionUtil.getDeclaredMethod(
+			Validator.class, methodName, String.class);
 
 		for (String param : params) {
-			Assert.assertEquals(
-				valid,
-				ReflectionTestUtil.invoke(
-					Validator.class, methodName, new Class<?>[] {String.class},
-					param));
+			Boolean b = (Boolean)method.invoke(null, param);
+
+			Assert.assertEquals(valid, b);
 		}
 	}
 
 	protected void testValidEmailAddreses(
-		String[] emailAddresses, boolean valid) {
+			String[] emailAddresses, boolean valid)
+		throws Exception {
 
 		testIsValidByMethodName("isEmailAddress", emailAddresses, valid);
 	}
 
 	protected void testValidFileExtensions(
-		String[] fileExtensions, boolean valid) {
+			String[] fileExtensions, boolean valid)
+		throws Exception {
 
 		testIsValidByMethodName("isFileExtension", fileExtensions, valid);
 	}
 
-	protected void testValidFileNames(String[] fileNames, boolean valid) {
+	protected void testValidFileNames(String[] fileNames, boolean valid)
+		throws Exception {
+
 		testIsValidByMethodName("isFileName", fileNames, valid);
 	}
 
@@ -587,27 +578,31 @@ public class ValidatorTest extends PowerMockito {
 		}
 	}
 
-	protected void testValidHostNames(String[] hostNames, boolean valid) {
+	protected void testValidHostNames(String[] hostNames, boolean valid)
+		throws Exception {
+
 		testIsValidByMethodName("isHostName", hostNames, valid);
 	}
 
-	protected void testValidIPv4Addresses(
-		String[] iPv4Addresses, boolean valid) {
+	protected void testValidIPv4Addresses(String[] iPv4Addresses, boolean valid)
+		throws Exception {
 
 		testIsValidByMethodName("isIPv4Address", iPv4Addresses, valid);
 	}
 
-	protected void testValidIPv6Addresses(
-		String[] iPv6Addresses, boolean valid) {
+	protected void testValidIPv6Addresses(String[] iPv6Addresses, boolean valid)
+		throws Exception {
 
 		testIsValidByMethodName("isIPv6Address", iPv6Addresses, valid);
 	}
 
-	protected void testValidUris(String[] uris, boolean valid) {
+	protected void testValidUris(String[] uris, boolean valid)
+		throws Exception {
+
 		testIsValidByMethodName("isUri", uris, valid);
 	}
 
-	protected void testValidUrl(String[] urls, boolean valid) {
+	protected void testValidUrl(String[] urls, boolean valid) throws Exception {
 		testIsValidByMethodName("isUrl", urls, valid);
 	}
 

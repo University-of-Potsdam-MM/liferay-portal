@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portal.service.impl;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.util.ListUtil;
@@ -66,10 +67,11 @@ public class OrganizationServiceImpl extends OrganizationServiceBaseImpl {
 	 * @throws PortalException if a group or organization with the primary key
 	 *         could not be found or if the user did not have permission to
 	 *         assign group members
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public void addGroupOrganizations(long groupId, long[] organizationIds)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		GroupPermissionUtil.check(
 			getPermissionChecker(), groupId, ActionKeys.ASSIGN_MEMBERS);
@@ -111,12 +113,12 @@ public class OrganizationServiceImpl extends OrganizationServiceBaseImpl {
 	 *             could not be found, if the organization's information was
 	 *             invalid, or if the user did not have permission to add the
 	 *             organization
+	 * @throws     SystemException if a system exception occurred
 	 * @deprecated As of 6.2.0, replaced by {@link #addOrganization(long,
 	 *             String, String, long, long, int, String, boolean,
 	 *             java.util.List, java.util.List, java.util.List,
 	 *             java.util.List, java.util.List, ServiceContext)}
 	 */
-	@Deprecated
 	@Override
 	public Organization addOrganization(
 			long parentOrganizationId, String name, String type,
@@ -125,7 +127,7 @@ public class OrganizationServiceImpl extends OrganizationServiceBaseImpl {
 			List<EmailAddress> emailAddresses, List<OrgLabor> orgLabors,
 			List<Phone> phones, List<Website> websites,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return addOrganization(
 			parentOrganizationId, name, type, regionId, countryId, statusId,
@@ -161,17 +163,17 @@ public class OrganizationServiceImpl extends OrganizationServiceBaseImpl {
 	 *             key could not be found, if the organization information was
 	 *             invalid, or if the user did not have permission to add the
 	 *             organization
+	 * @throws     SystemException if a system exception occurred
 	 * @deprecated As of 6.2.0, replaced by {@link #addOrganization(long,
 	 *             String, String, long, long, int, String, boolean,
 	 *             ServiceContext)}
 	 */
-	@Deprecated
 	@Override
 	public Organization addOrganization(
 			long parentOrganizationId, String name, String type,
 			boolean recursable, long regionId, long countryId, int statusId,
 			String comments, boolean site, ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return addOrganization(
 			parentOrganizationId, name, type, regionId, countryId, statusId,
@@ -209,6 +211,7 @@ public class OrganizationServiceImpl extends OrganizationServiceBaseImpl {
 	 *         could not be found, if the organization's information was
 	 *         invalid, or if the user did not have permission to add the
 	 *         organization
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public Organization addOrganization(
@@ -217,15 +220,11 @@ public class OrganizationServiceImpl extends OrganizationServiceBaseImpl {
 			List<Address> addresses, List<EmailAddress> emailAddresses,
 			List<OrgLabor> orgLabors, List<Phone> phones,
 			List<Website> websites, ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
-		boolean indexingEnabled = true;
+		boolean indexingEnabled = serviceContext.isIndexingEnabled();
 
-		if (serviceContext != null) {
-			indexingEnabled = serviceContext.isIndexingEnabled();
-
-			serviceContext.setIndexingEnabled(false);
-		}
+		serviceContext.setIndexingEnabled(false);
 
 		try {
 			Organization organization = addOrganization(
@@ -261,9 +260,7 @@ public class OrganizationServiceImpl extends OrganizationServiceBaseImpl {
 			return organization;
 		}
 		finally {
-			if (serviceContext != null) {
-				serviceContext.setIndexingEnabled(indexingEnabled);
-			}
+			serviceContext.setIndexingEnabled(indexingEnabled);
 		}
 	}
 
@@ -292,13 +289,14 @@ public class OrganizationServiceImpl extends OrganizationServiceBaseImpl {
 	 * @throws PortalException if the parent organization with the primary key
 	 *         could not be found, if the organization information was invalid,
 	 *         or if the user did not have permission to add the organization
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public Organization addOrganization(
 			long parentOrganizationId, String name, String type, long regionId,
 			long countryId, int statusId, String comments, boolean site,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		if (parentOrganizationId ==
 				OrganizationConstants.DEFAULT_PARENT_ORGANIZATION_ID) {
@@ -329,11 +327,12 @@ public class OrganizationServiceImpl extends OrganizationServiceBaseImpl {
 	 * @param  organizationIds the primary keys of the organizations
 	 * @throws PortalException if the user did not have permission to update the
 	 *         password policy
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public void addPasswordPolicyOrganizations(
 			long passwordPolicyId, long[] organizationIds)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		PasswordPolicyPermissionUtil.check(
 			getPermissionChecker(), passwordPolicyId, ActionKeys.UPDATE);
@@ -343,15 +342,18 @@ public class OrganizationServiceImpl extends OrganizationServiceBaseImpl {
 	}
 
 	/**
-	 * Deletes the organization's logo.
+	 * Deletes the logo of the organization.
 	 *
 	 * @param  organizationId the primary key of the organization
 	 * @throws PortalException if an organization with the primary key could not
 	 *         be found, if the organization's logo could not be found, or if
 	 *         the user did not have permission to update the organization
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public void deleteLogo(long organizationId) throws PortalException {
+	public void deleteLogo(long organizationId)
+		throws PortalException, SystemException {
+
 		OrganizationPermissionUtil.check(
 			getPermissionChecker(), organizationId, ActionKeys.UPDATE);
 
@@ -367,9 +369,12 @@ public class OrganizationServiceImpl extends OrganizationServiceBaseImpl {
 	 *         be found, if the user did not have permission to delete the
 	 *         organization, if the organization had a workflow in approved
 	 *         status, or if the organization was a parent organization
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public void deleteOrganization(long organizationId) throws PortalException {
+	public void deleteOrganization(long organizationId)
+		throws PortalException, SystemException {
+
 		OrganizationPermissionUtil.check(
 			getPermissionChecker(), organizationId, ActionKeys.DELETE);
 
@@ -383,14 +388,14 @@ public class OrganizationServiceImpl extends OrganizationServiceBaseImpl {
 	 * @param      max the maximum number of the organizations to be considered
 	 * @return     the organizations which the user has permission to manage
 	 * @throws     PortalException if a portal exception occurred
+	 * @throws     SystemException if a system exception occurred
 	 * @deprecated As of 6.2.0, replaced by {@link #getOrganizations(long, long,
 	 *             int, int)}
 	 */
-	@Deprecated
 	@Override
 	public List<Organization> getManageableOrganizations(
 			String actionId, int max)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		PermissionChecker permissionChecker = getPermissionChecker();
 
@@ -441,18 +446,16 @@ public class OrganizationServiceImpl extends OrganizationServiceBaseImpl {
 	 * @throws PortalException if an organization with the primary key could not
 	 *         be found or if the user did not have permission to view the
 	 *         organization
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public Organization getOrganization(long organizationId)
-		throws PortalException {
-
-		Organization organization = organizationLocalService.getOrganization(
-			organizationId);
+		throws PortalException, SystemException {
 
 		OrganizationPermissionUtil.check(
-			getPermissionChecker(), organization, ActionKeys.VIEW);
+			getPermissionChecker(), organizationId, ActionKeys.VIEW);
 
-		return organization;
+		return organizationLocalService.getOrganization(organizationId);
 	}
 
 	/**
@@ -464,10 +467,11 @@ public class OrganizationServiceImpl extends OrganizationServiceBaseImpl {
 	 *         <code>0</code> if the organization could not be found
 	 * @throws PortalException if the user did not have permission to view the
 	 *         organization
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public long getOrganizationId(long companyId, String name)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		long organizationId = organizationLocalService.getOrganizationId(
 			companyId, name);
@@ -485,16 +489,12 @@ public class OrganizationServiceImpl extends OrganizationServiceBaseImpl {
 	 * @param  parentOrganizationId the primary key of the organizations' parent
 	 *         organization
 	 * @return the organizations belonging to the parent organization
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public List<Organization> getOrganizations(
-		long companyId, long parentOrganizationId) {
-
-		if (parentOrganizationId ==
-				OrganizationConstants.ANY_PARENT_ORGANIZATION_ID) {
-
-			return organizationPersistence.filterFindByCompanyId(companyId);
-		}
+			long companyId, long parentOrganizationId)
+		throws SystemException {
 
 		return organizationPersistence.filterFindByC_P(
 			companyId, parentOrganizationId);
@@ -521,17 +521,12 @@ public class OrganizationServiceImpl extends OrganizationServiceBaseImpl {
 	 * @param  end the upper bound of the range of organizations to return (not
 	 *         inclusive)
 	 * @return the range of organizations belonging to the parent organization
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public List<Organization> getOrganizations(
-		long companyId, long parentOrganizationId, int start, int end) {
-
-		if (parentOrganizationId ==
-				OrganizationConstants.ANY_PARENT_ORGANIZATION_ID) {
-
-			return organizationPersistence.filterFindByCompanyId(
-				companyId, start, end);
-		}
+			long companyId, long parentOrganizationId, int start, int end)
+		throws SystemException {
 
 		return organizationPersistence.filterFindByC_P(
 			companyId, parentOrganizationId, start, end);
@@ -544,16 +539,11 @@ public class OrganizationServiceImpl extends OrganizationServiceBaseImpl {
 	 * @param  parentOrganizationId the primary key of the organizations' parent
 	 *         organization
 	 * @return the number of organizations belonging to the parent organization
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public int getOrganizationsCount(
-		long companyId, long parentOrganizationId) {
-
-		if (parentOrganizationId ==
-				OrganizationConstants.ANY_PARENT_ORGANIZATION_ID) {
-
-			return organizationPersistence.filterCountByCompanyId(companyId);
-		}
+	public int getOrganizationsCount(long companyId, long parentOrganizationId)
+		throws SystemException {
 
 		return organizationPersistence.filterCountByC_P(
 			companyId, parentOrganizationId);
@@ -565,10 +555,11 @@ public class OrganizationServiceImpl extends OrganizationServiceBaseImpl {
 	 * @param  userId the primary key of the user
 	 * @return the organizations associated with the user
 	 * @throws PortalException if a user with the primary key could not be found
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public List<Organization> getUserOrganizations(long userId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		UserPermissionUtil.check(
 			getPermissionChecker(), userId, ActionKeys.VIEW);
@@ -585,10 +576,11 @@ public class OrganizationServiceImpl extends OrganizationServiceBaseImpl {
 	 * @throws PortalException if a group or organization with the primary key
 	 *         could not be found or if the user did not have permission to
 	 *         assign group members
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public void setGroupOrganizations(long groupId, long[] organizationIds)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		GroupPermissionUtil.check(
 			getPermissionChecker(), groupId, ActionKeys.ASSIGN_MEMBERS);
@@ -605,10 +597,11 @@ public class OrganizationServiceImpl extends OrganizationServiceBaseImpl {
 	 * @throws PortalException if a group or organization with the primary key
 	 *         could not be found or if the user did not have permission to
 	 *         assign group members
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public void unsetGroupOrganizations(long groupId, long[] organizationIds)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		GroupPermissionUtil.check(
 			getPermissionChecker(), groupId, ActionKeys.ASSIGN_MEMBERS);
@@ -625,11 +618,12 @@ public class OrganizationServiceImpl extends OrganizationServiceBaseImpl {
 	 * @throws PortalException if a password policy or organization with the
 	 *         primary key could not be found, or if the user did not have
 	 *         permission to update the password policy
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public void unsetPasswordPolicyOrganizations(
 			long passwordPolicyId, long[] organizationIds)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		PasswordPolicyPermissionUtil.check(
 			getPermissionChecker(), passwordPolicyId, ActionKeys.UPDATE);
@@ -668,13 +662,12 @@ public class OrganizationServiceImpl extends OrganizationServiceBaseImpl {
 	 *             with the primary key could not be found, if the user did not
 	 *             have permission to update the organization information, or if
 	 *             the new information was invalid
+	 * @throws     SystemException if a system exception occurred
 	 * @deprecated As of 6.2.0, replaced by {@link #updateOrganization(long,
 	 *             long, String, String, long, long, int, String, boolean,
 	 *             java.util.List, java.util.List, java.util.List,
-	 *             java.util.List, java.util.List, boolean, byte[],
-	 *             ServiceContext)}
+	 *             java.util.List, java.util.List, ServiceContext)}
 	 */
-	@Deprecated
 	@Override
 	public Organization updateOrganization(
 			long organizationId, long parentOrganizationId, String name,
@@ -683,12 +676,12 @@ public class OrganizationServiceImpl extends OrganizationServiceBaseImpl {
 			List<Address> addresses, List<EmailAddress> emailAddresses,
 			List<OrgLabor> orgLabors, List<Phone> phones,
 			List<Website> websites, ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return updateOrganization(
 			organizationId, parentOrganizationId, name, type, regionId,
-			countryId, statusId, comments, true, null, site, addresses,
-			emailAddresses, orgLabors, phones, websites, serviceContext);
+			countryId, statusId, comments, site, addresses, emailAddresses,
+			orgLabors, phones, websites, serviceContext);
 	}
 
 	/**
@@ -716,18 +709,18 @@ public class OrganizationServiceImpl extends OrganizationServiceBaseImpl {
 	 *             with the primary key could not be found, if the user did not
 	 *             have permission to update the organization, or if the new
 	 *             information was invalid
+	 * @throws     SystemException if a system exception occurred
 	 * @deprecated As of 6.2.0, replaced by {@link #updateOrganization(long,
 	 *             long, String, String, long, long, int, String, boolean,
 	 *             ServiceContext)}
 	 */
-	@Deprecated
 	@Override
 	public Organization updateOrganization(
 			long organizationId, long parentOrganizationId, String name,
 			String type, boolean recursable, long regionId, long countryId,
 			int statusId, String comments, boolean site,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return updateOrganization(
 			organizationId, parentOrganizationId, name, type, regionId,
@@ -746,8 +739,6 @@ public class OrganizationServiceImpl extends OrganizationServiceBaseImpl {
 	 * @param  countryId the primary key of the organization's country
 	 * @param  statusId the organization's workflow status
 	 * @param  comments the comments about the organization
-	 * @param  logo whether to update the ogranization's logo
-	 * @param  logoBytes the new logo image data
 	 * @param  site whether the organization is to be associated with a main
 	 *         site
 	 * @param  addresses the organization's addresses
@@ -764,16 +755,17 @@ public class OrganizationServiceImpl extends OrganizationServiceBaseImpl {
 	 *         the primary key could not be found, if the user did not have
 	 *         permission to update the organization information, or if the new
 	 *         information was invalid
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public Organization updateOrganization(
 			long organizationId, long parentOrganizationId, String name,
 			String type, long regionId, long countryId, int statusId,
-			String comments, boolean logo, byte[] logoBytes, boolean site,
-			List<Address> addresses, List<EmailAddress> emailAddresses,
-			List<OrgLabor> orgLabors, List<Phone> phones,
-			List<Website> websites, ServiceContext serviceContext)
-		throws PortalException {
+			String comments, boolean site, List<Address> addresses,
+			List<EmailAddress> emailAddresses, List<OrgLabor> orgLabors,
+			List<Phone> phones, List<Website> websites,
+			ServiceContext serviceContext)
+		throws PortalException, SystemException {
 
 		Organization organization = organizationPersistence.findByPrimaryKey(
 			organizationId);
@@ -837,65 +829,14 @@ public class OrganizationServiceImpl extends OrganizationServiceBaseImpl {
 
 		organization = organizationLocalService.updateOrganization(
 			user.getCompanyId(), organizationId, parentOrganizationId, name,
-			type, regionId, countryId, statusId, comments, logo, logoBytes,
-			site, serviceContext);
+			type, regionId, countryId, statusId, comments, site,
+			serviceContext);
 
 		OrganizationMembershipPolicyUtil.verifyPolicy(
 			organization, oldOrganization, oldAssetCategories, oldAssetTags,
 			oldExpandoAttributes);
 
 		return organization;
-	}
-
-	/**
-	 * Updates the organization with additional parameters.
-	 *
-	 * @param      organizationId the primary key of the organization
-	 * @param      parentOrganizationId the primary key of the organization's
-	 *             parent organization
-	 * @param      name the organization's name
-	 * @param      type the organization's type
-	 * @param      regionId the primary key of the organization's region
-	 * @param      countryId the primary key of the organization's country
-	 * @param      statusId the organization's workflow status
-	 * @param      comments the comments about the organization
-	 * @param      site whether the organization is to be associated with a main
-	 *             site
-	 * @param      addresses the organization's addresses
-	 * @param      emailAddresses the organization's email addresses
-	 * @param      orgLabors the organization's hours of operation
-	 * @param      phones the organization's phone numbers
-	 * @param      websites the organization's websites
-	 * @param      serviceContext the service context to be applied (optionally
-	 *             <code>null</code>). Can set asset category IDs and asset tag
-	 *             names for the organization, and merge expando bridge
-	 *             attributes for the organization.
-	 * @return     the organization
-	 * @throws     PortalException if an organization or parent organization
-	 *             with the primary key could not be found, if the user did not
-	 *             have permission to update the organization information, or if
-	 *             the new information was invalid
-	 * @deprecated As of 7.0.0, replaced by {@link #updateOrganization(long,
-	 *             long, String, String, long, long, int, String, boolean,
-	 *             java.util.List, java.util.List, java.util.List,
-	 *             java.util.List, java.util.List, boolean, byte[],
-	 *             ServiceContext)}
-	 */
-	@Deprecated
-	@Override
-	public Organization updateOrganization(
-			long organizationId, long parentOrganizationId, String name,
-			String type, long regionId, long countryId, int statusId,
-			String comments, boolean site, List<Address> addresses,
-			List<EmailAddress> emailAddresses, List<OrgLabor> orgLabors,
-			List<Phone> phones, List<Website> websites,
-			ServiceContext serviceContext)
-		throws PortalException {
-
-		return updateOrganization(
-			organizationId, parentOrganizationId, name, type, regionId,
-			countryId, statusId, comments, true, null, site, addresses,
-			emailAddresses, orgLabors, phones, websites, serviceContext);
 	}
 
 	/**
@@ -921,18 +862,19 @@ public class OrganizationServiceImpl extends OrganizationServiceBaseImpl {
 	 *         the primary key could not be found, if the user did not have
 	 *         permission to update the organization, or if the new information
 	 *         was invalid
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public Organization updateOrganization(
 			long organizationId, long parentOrganizationId, String name,
 			String type, long regionId, long countryId, int statusId,
 			String comments, boolean site, ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return updateOrganization(
 			organizationId, parentOrganizationId, name, type, regionId,
-			countryId, statusId, comments, true, null, site, null, null, null,
-			null, null, serviceContext);
+			countryId, statusId, comments, site, null, null, null, null, null,
+			serviceContext);
 	}
 
 }

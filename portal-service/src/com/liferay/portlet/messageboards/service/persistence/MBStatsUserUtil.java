@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,6 +18,7 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.bean.PortalBeanLocatorUtil;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ReferenceRegistry;
 import com.liferay.portal.service.ServiceContext;
@@ -63,7 +64,8 @@ public class MBStatsUserUtil {
 	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#countWithDynamicQuery(DynamicQuery)
 	 */
-	public static long countWithDynamicQuery(DynamicQuery dynamicQuery) {
+	public static long countWithDynamicQuery(DynamicQuery dynamicQuery)
+		throws SystemException {
 		return getPersistence().countWithDynamicQuery(dynamicQuery);
 	}
 
@@ -71,7 +73,7 @@ public class MBStatsUserUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#findWithDynamicQuery(DynamicQuery)
 	 */
 	public static List<MBStatsUser> findWithDynamicQuery(
-		DynamicQuery dynamicQuery) {
+		DynamicQuery dynamicQuery) throws SystemException {
 		return getPersistence().findWithDynamicQuery(dynamicQuery);
 	}
 
@@ -79,7 +81,8 @@ public class MBStatsUserUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#findWithDynamicQuery(DynamicQuery, int, int)
 	 */
 	public static List<MBStatsUser> findWithDynamicQuery(
-		DynamicQuery dynamicQuery, int start, int end) {
+		DynamicQuery dynamicQuery, int start, int end)
+		throws SystemException {
 		return getPersistence().findWithDynamicQuery(dynamicQuery, start, end);
 	}
 
@@ -88,7 +91,7 @@ public class MBStatsUserUtil {
 	 */
 	public static List<MBStatsUser> findWithDynamicQuery(
 		DynamicQuery dynamicQuery, int start, int end,
-		OrderByComparator<MBStatsUser> orderByComparator) {
+		OrderByComparator orderByComparator) throws SystemException {
 		return getPersistence()
 				   .findWithDynamicQuery(dynamicQuery, start, end,
 			orderByComparator);
@@ -97,7 +100,8 @@ public class MBStatsUserUtil {
 	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel)
 	 */
-	public static MBStatsUser update(MBStatsUser mbStatsUser) {
+	public static MBStatsUser update(MBStatsUser mbStatsUser)
+		throws SystemException {
 		return getPersistence().update(mbStatsUser);
 	}
 
@@ -105,7 +109,7 @@ public class MBStatsUserUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, ServiceContext)
 	 */
 	public static MBStatsUser update(MBStatsUser mbStatsUser,
-		ServiceContext serviceContext) {
+		ServiceContext serviceContext) throws SystemException {
 		return getPersistence().update(mbStatsUser, serviceContext);
 	}
 
@@ -114,9 +118,11 @@ public class MBStatsUserUtil {
 	*
 	* @param groupId the group ID
 	* @return the matching message boards stats users
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.messageboards.model.MBStatsUser> findByGroupId(
-		long groupId) {
+		long groupId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByGroupId(groupId);
 	}
 
@@ -131,9 +137,11 @@ public class MBStatsUserUtil {
 	* @param start the lower bound of the range of message boards stats users
 	* @param end the upper bound of the range of message boards stats users (not inclusive)
 	* @return the range of matching message boards stats users
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.messageboards.model.MBStatsUser> findByGroupId(
-		long groupId, int start, int end) {
+		long groupId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByGroupId(groupId, start, end);
 	}
 
@@ -149,10 +157,12 @@ public class MBStatsUserUtil {
 	* @param end the upper bound of the range of message boards stats users (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching message boards stats users
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.messageboards.model.MBStatsUser> findByGroupId(
 		long groupId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.messageboards.model.MBStatsUser> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByGroupId(groupId, start, end, orderByComparator);
 	}
@@ -164,11 +174,13 @@ public class MBStatsUserUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching message boards stats user
 	* @throws com.liferay.portlet.messageboards.NoSuchStatsUserException if a matching message boards stats user could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.messageboards.model.MBStatsUser findByGroupId_First(
 		long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.messageboards.model.MBStatsUser> orderByComparator)
-		throws com.liferay.portlet.messageboards.NoSuchStatsUserException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.messageboards.NoSuchStatsUserException {
 		return getPersistence().findByGroupId_First(groupId, orderByComparator);
 	}
 
@@ -178,10 +190,12 @@ public class MBStatsUserUtil {
 	* @param groupId the group ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching message boards stats user, or <code>null</code> if a matching message boards stats user could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.messageboards.model.MBStatsUser fetchByGroupId_First(
 		long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.messageboards.model.MBStatsUser> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByGroupId_First(groupId, orderByComparator);
 	}
 
@@ -192,11 +206,13 @@ public class MBStatsUserUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching message boards stats user
 	* @throws com.liferay.portlet.messageboards.NoSuchStatsUserException if a matching message boards stats user could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.messageboards.model.MBStatsUser findByGroupId_Last(
 		long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.messageboards.model.MBStatsUser> orderByComparator)
-		throws com.liferay.portlet.messageboards.NoSuchStatsUserException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.messageboards.NoSuchStatsUserException {
 		return getPersistence().findByGroupId_Last(groupId, orderByComparator);
 	}
 
@@ -206,10 +222,12 @@ public class MBStatsUserUtil {
 	* @param groupId the group ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching message boards stats user, or <code>null</code> if a matching message boards stats user could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.messageboards.model.MBStatsUser fetchByGroupId_Last(
 		long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.messageboards.model.MBStatsUser> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByGroupId_Last(groupId, orderByComparator);
 	}
 
@@ -221,11 +239,13 @@ public class MBStatsUserUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next message boards stats user
 	* @throws com.liferay.portlet.messageboards.NoSuchStatsUserException if a message boards stats user with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.messageboards.model.MBStatsUser[] findByGroupId_PrevAndNext(
 		long statsUserId, long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.messageboards.model.MBStatsUser> orderByComparator)
-		throws com.liferay.portlet.messageboards.NoSuchStatsUserException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.messageboards.NoSuchStatsUserException {
 		return getPersistence()
 				   .findByGroupId_PrevAndNext(statsUserId, groupId,
 			orderByComparator);
@@ -235,8 +255,10 @@ public class MBStatsUserUtil {
 	* Removes all the message boards stats users where groupId = &#63; from the database.
 	*
 	* @param groupId the group ID
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByGroupId(long groupId) {
+	public static void removeByGroupId(long groupId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeByGroupId(groupId);
 	}
 
@@ -245,8 +267,10 @@ public class MBStatsUserUtil {
 	*
 	* @param groupId the group ID
 	* @return the number of matching message boards stats users
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByGroupId(long groupId) {
+	public static int countByGroupId(long groupId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByGroupId(groupId);
 	}
 
@@ -255,9 +279,10 @@ public class MBStatsUserUtil {
 	*
 	* @param userId the user ID
 	* @return the matching message boards stats users
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.messageboards.model.MBStatsUser> findByUserId(
-		long userId) {
+		long userId) throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByUserId(userId);
 	}
 
@@ -272,9 +297,11 @@ public class MBStatsUserUtil {
 	* @param start the lower bound of the range of message boards stats users
 	* @param end the upper bound of the range of message boards stats users (not inclusive)
 	* @return the range of matching message boards stats users
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.messageboards.model.MBStatsUser> findByUserId(
-		long userId, int start, int end) {
+		long userId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByUserId(userId, start, end);
 	}
 
@@ -290,10 +317,12 @@ public class MBStatsUserUtil {
 	* @param end the upper bound of the range of message boards stats users (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching message boards stats users
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.messageboards.model.MBStatsUser> findByUserId(
 		long userId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.messageboards.model.MBStatsUser> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByUserId(userId, start, end, orderByComparator);
 	}
@@ -305,11 +334,13 @@ public class MBStatsUserUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching message boards stats user
 	* @throws com.liferay.portlet.messageboards.NoSuchStatsUserException if a matching message boards stats user could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.messageboards.model.MBStatsUser findByUserId_First(
 		long userId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.messageboards.model.MBStatsUser> orderByComparator)
-		throws com.liferay.portlet.messageboards.NoSuchStatsUserException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.messageboards.NoSuchStatsUserException {
 		return getPersistence().findByUserId_First(userId, orderByComparator);
 	}
 
@@ -319,10 +350,12 @@ public class MBStatsUserUtil {
 	* @param userId the user ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching message boards stats user, or <code>null</code> if a matching message boards stats user could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.messageboards.model.MBStatsUser fetchByUserId_First(
 		long userId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.messageboards.model.MBStatsUser> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByUserId_First(userId, orderByComparator);
 	}
 
@@ -333,11 +366,13 @@ public class MBStatsUserUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching message boards stats user
 	* @throws com.liferay.portlet.messageboards.NoSuchStatsUserException if a matching message boards stats user could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.messageboards.model.MBStatsUser findByUserId_Last(
 		long userId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.messageboards.model.MBStatsUser> orderByComparator)
-		throws com.liferay.portlet.messageboards.NoSuchStatsUserException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.messageboards.NoSuchStatsUserException {
 		return getPersistence().findByUserId_Last(userId, orderByComparator);
 	}
 
@@ -347,10 +382,12 @@ public class MBStatsUserUtil {
 	* @param userId the user ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching message boards stats user, or <code>null</code> if a matching message boards stats user could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.messageboards.model.MBStatsUser fetchByUserId_Last(
 		long userId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.messageboards.model.MBStatsUser> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByUserId_Last(userId, orderByComparator);
 	}
 
@@ -362,11 +399,13 @@ public class MBStatsUserUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next message boards stats user
 	* @throws com.liferay.portlet.messageboards.NoSuchStatsUserException if a message boards stats user with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.messageboards.model.MBStatsUser[] findByUserId_PrevAndNext(
 		long statsUserId, long userId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.messageboards.model.MBStatsUser> orderByComparator)
-		throws com.liferay.portlet.messageboards.NoSuchStatsUserException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.messageboards.NoSuchStatsUserException {
 		return getPersistence()
 				   .findByUserId_PrevAndNext(statsUserId, userId,
 			orderByComparator);
@@ -376,8 +415,10 @@ public class MBStatsUserUtil {
 	* Removes all the message boards stats users where userId = &#63; from the database.
 	*
 	* @param userId the user ID
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByUserId(long userId) {
+	public static void removeByUserId(long userId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeByUserId(userId);
 	}
 
@@ -386,8 +427,10 @@ public class MBStatsUserUtil {
 	*
 	* @param userId the user ID
 	* @return the number of matching message boards stats users
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByUserId(long userId) {
+	public static int countByUserId(long userId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByUserId(userId);
 	}
 
@@ -398,10 +441,12 @@ public class MBStatsUserUtil {
 	* @param userId the user ID
 	* @return the matching message boards stats user
 	* @throws com.liferay.portlet.messageboards.NoSuchStatsUserException if a matching message boards stats user could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.messageboards.model.MBStatsUser findByG_U(
 		long groupId, long userId)
-		throws com.liferay.portlet.messageboards.NoSuchStatsUserException {
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.messageboards.NoSuchStatsUserException {
 		return getPersistence().findByG_U(groupId, userId);
 	}
 
@@ -411,9 +456,11 @@ public class MBStatsUserUtil {
 	* @param groupId the group ID
 	* @param userId the user ID
 	* @return the matching message boards stats user, or <code>null</code> if a matching message boards stats user could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.messageboards.model.MBStatsUser fetchByG_U(
-		long groupId, long userId) {
+		long groupId, long userId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByG_U(groupId, userId);
 	}
 
@@ -424,9 +471,11 @@ public class MBStatsUserUtil {
 	* @param userId the user ID
 	* @param retrieveFromCache whether to use the finder cache
 	* @return the matching message boards stats user, or <code>null</code> if a matching message boards stats user could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.messageboards.model.MBStatsUser fetchByG_U(
-		long groupId, long userId, boolean retrieveFromCache) {
+		long groupId, long userId, boolean retrieveFromCache)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByG_U(groupId, userId, retrieveFromCache);
 	}
 
@@ -436,10 +485,12 @@ public class MBStatsUserUtil {
 	* @param groupId the group ID
 	* @param userId the user ID
 	* @return the message boards stats user that was removed
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.messageboards.model.MBStatsUser removeByG_U(
 		long groupId, long userId)
-		throws com.liferay.portlet.messageboards.NoSuchStatsUserException {
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.messageboards.NoSuchStatsUserException {
 		return getPersistence().removeByG_U(groupId, userId);
 	}
 
@@ -449,8 +500,10 @@ public class MBStatsUserUtil {
 	* @param groupId the group ID
 	* @param userId the user ID
 	* @return the number of matching message boards stats users
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByG_U(long groupId, long userId) {
+	public static int countByG_U(long groupId, long userId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByG_U(groupId, userId);
 	}
 
@@ -461,9 +514,11 @@ public class MBStatsUserUtil {
 	* @param userId the user ID
 	* @param messageCount the message count
 	* @return the matching message boards stats users
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.messageboards.model.MBStatsUser> findByG_NotU_NotM(
-		long groupId, long userId, int messageCount) {
+		long groupId, long userId, int messageCount)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByG_NotU_NotM(groupId, userId, messageCount);
 	}
 
@@ -480,9 +535,11 @@ public class MBStatsUserUtil {
 	* @param start the lower bound of the range of message boards stats users
 	* @param end the upper bound of the range of message boards stats users (not inclusive)
 	* @return the range of matching message boards stats users
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.messageboards.model.MBStatsUser> findByG_NotU_NotM(
-		long groupId, long userId, int messageCount, int start, int end) {
+		long groupId, long userId, int messageCount, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByG_NotU_NotM(groupId, userId, messageCount, start, end);
 	}
@@ -501,10 +558,12 @@ public class MBStatsUserUtil {
 	* @param end the upper bound of the range of message boards stats users (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching message boards stats users
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.messageboards.model.MBStatsUser> findByG_NotU_NotM(
 		long groupId, long userId, int messageCount, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.messageboards.model.MBStatsUser> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByG_NotU_NotM(groupId, userId, messageCount, start,
 			end, orderByComparator);
@@ -519,11 +578,13 @@ public class MBStatsUserUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching message boards stats user
 	* @throws com.liferay.portlet.messageboards.NoSuchStatsUserException if a matching message boards stats user could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.messageboards.model.MBStatsUser findByG_NotU_NotM_First(
 		long groupId, long userId, int messageCount,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.messageboards.model.MBStatsUser> orderByComparator)
-		throws com.liferay.portlet.messageboards.NoSuchStatsUserException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.messageboards.NoSuchStatsUserException {
 		return getPersistence()
 				   .findByG_NotU_NotM_First(groupId, userId, messageCount,
 			orderByComparator);
@@ -537,10 +598,12 @@ public class MBStatsUserUtil {
 	* @param messageCount the message count
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching message boards stats user, or <code>null</code> if a matching message boards stats user could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.messageboards.model.MBStatsUser fetchByG_NotU_NotM_First(
 		long groupId, long userId, int messageCount,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.messageboards.model.MBStatsUser> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByG_NotU_NotM_First(groupId, userId, messageCount,
 			orderByComparator);
@@ -555,11 +618,13 @@ public class MBStatsUserUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching message boards stats user
 	* @throws com.liferay.portlet.messageboards.NoSuchStatsUserException if a matching message boards stats user could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.messageboards.model.MBStatsUser findByG_NotU_NotM_Last(
 		long groupId, long userId, int messageCount,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.messageboards.model.MBStatsUser> orderByComparator)
-		throws com.liferay.portlet.messageboards.NoSuchStatsUserException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.messageboards.NoSuchStatsUserException {
 		return getPersistence()
 				   .findByG_NotU_NotM_Last(groupId, userId, messageCount,
 			orderByComparator);
@@ -573,10 +638,12 @@ public class MBStatsUserUtil {
 	* @param messageCount the message count
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching message boards stats user, or <code>null</code> if a matching message boards stats user could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.messageboards.model.MBStatsUser fetchByG_NotU_NotM_Last(
 		long groupId, long userId, int messageCount,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.messageboards.model.MBStatsUser> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByG_NotU_NotM_Last(groupId, userId, messageCount,
 			orderByComparator);
@@ -592,11 +659,13 @@ public class MBStatsUserUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next message boards stats user
 	* @throws com.liferay.portlet.messageboards.NoSuchStatsUserException if a message boards stats user with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.messageboards.model.MBStatsUser[] findByG_NotU_NotM_PrevAndNext(
 		long statsUserId, long groupId, long userId, int messageCount,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.messageboards.model.MBStatsUser> orderByComparator)
-		throws com.liferay.portlet.messageboards.NoSuchStatsUserException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.messageboards.NoSuchStatsUserException {
 		return getPersistence()
 				   .findByG_NotU_NotM_PrevAndNext(statsUserId, groupId, userId,
 			messageCount, orderByComparator);
@@ -608,9 +677,11 @@ public class MBStatsUserUtil {
 	* @param groupId the group ID
 	* @param userId the user ID
 	* @param messageCount the message count
+	* @throws SystemException if a system exception occurred
 	*/
 	public static void removeByG_NotU_NotM(long groupId, long userId,
-		int messageCount) {
+		int messageCount)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeByG_NotU_NotM(groupId, userId, messageCount);
 	}
 
@@ -621,9 +692,11 @@ public class MBStatsUserUtil {
 	* @param userId the user ID
 	* @param messageCount the message count
 	* @return the number of matching message boards stats users
+	* @throws SystemException if a system exception occurred
 	*/
 	public static int countByG_NotU_NotM(long groupId, long userId,
-		int messageCount) {
+		int messageCount)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByG_NotU_NotM(groupId, userId, messageCount);
 	}
 
@@ -664,15 +737,18 @@ public class MBStatsUserUtil {
 	* @param statsUserId the primary key of the message boards stats user
 	* @return the message boards stats user that was removed
 	* @throws com.liferay.portlet.messageboards.NoSuchStatsUserException if a message boards stats user with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.messageboards.model.MBStatsUser remove(
 		long statsUserId)
-		throws com.liferay.portlet.messageboards.NoSuchStatsUserException {
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.messageboards.NoSuchStatsUserException {
 		return getPersistence().remove(statsUserId);
 	}
 
 	public static com.liferay.portlet.messageboards.model.MBStatsUser updateImpl(
-		com.liferay.portlet.messageboards.model.MBStatsUser mbStatsUser) {
+		com.liferay.portlet.messageboards.model.MBStatsUser mbStatsUser)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().updateImpl(mbStatsUser);
 	}
 
@@ -682,10 +758,12 @@ public class MBStatsUserUtil {
 	* @param statsUserId the primary key of the message boards stats user
 	* @return the message boards stats user
 	* @throws com.liferay.portlet.messageboards.NoSuchStatsUserException if a message boards stats user with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.messageboards.model.MBStatsUser findByPrimaryKey(
 		long statsUserId)
-		throws com.liferay.portlet.messageboards.NoSuchStatsUserException {
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.messageboards.NoSuchStatsUserException {
 		return getPersistence().findByPrimaryKey(statsUserId);
 	}
 
@@ -694,23 +772,22 @@ public class MBStatsUserUtil {
 	*
 	* @param statsUserId the primary key of the message boards stats user
 	* @return the message boards stats user, or <code>null</code> if a message boards stats user with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.messageboards.model.MBStatsUser fetchByPrimaryKey(
-		long statsUserId) {
+		long statsUserId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByPrimaryKey(statsUserId);
-	}
-
-	public static java.util.Map<java.io.Serializable, com.liferay.portlet.messageboards.model.MBStatsUser> fetchByPrimaryKeys(
-		java.util.Set<java.io.Serializable> primaryKeys) {
-		return getPersistence().fetchByPrimaryKeys(primaryKeys);
 	}
 
 	/**
 	* Returns all the message boards stats users.
 	*
 	* @return the message boards stats users
+	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portlet.messageboards.model.MBStatsUser> findAll() {
+	public static java.util.List<com.liferay.portlet.messageboards.model.MBStatsUser> findAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll();
 	}
 
@@ -724,9 +801,11 @@ public class MBStatsUserUtil {
 	* @param start the lower bound of the range of message boards stats users
 	* @param end the upper bound of the range of message boards stats users (not inclusive)
 	* @return the range of message boards stats users
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.messageboards.model.MBStatsUser> findAll(
-		int start, int end) {
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll(start, end);
 	}
 
@@ -741,17 +820,22 @@ public class MBStatsUserUtil {
 	* @param end the upper bound of the range of message boards stats users (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of message boards stats users
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.messageboards.model.MBStatsUser> findAll(
 		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.messageboards.model.MBStatsUser> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll(start, end, orderByComparator);
 	}
 
 	/**
 	* Removes all the message boards stats users from the database.
+	*
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeAll() {
+	public static void removeAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeAll();
 	}
 
@@ -759,8 +843,10 @@ public class MBStatsUserUtil {
 	* Returns the number of message boards stats users.
 	*
 	* @return the number of message boards stats users
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countAll() {
+	public static int countAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countAll();
 	}
 
@@ -778,7 +864,6 @@ public class MBStatsUserUtil {
 	/**
 	 * @deprecated As of 6.2.0
 	 */
-	@Deprecated
 	public void setPersistence(MBStatsUserPersistence persistence) {
 	}
 

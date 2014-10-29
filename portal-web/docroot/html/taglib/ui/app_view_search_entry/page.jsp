@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,12 +18,13 @@
 
 <%
 String actionJsp = (String)request.getAttribute("liferay-ui:app-view-search-entry:actionJsp");
+String containerIcon = GetterUtil.getString(request.getAttribute("liferay-ui:app-view-search-entry:containerIcon"), "folder");
 String containerName = (String)request.getAttribute("liferay-ui:app-view-search-entry:containerName");
+String containerSrc = (String)request.getAttribute("liferay-ui:app-view-search-entry:containerSrc");
 String containerType = GetterUtil.getString(request.getAttribute("liferay-ui:app-view-search-entry:containerType"), LanguageUtil.get(locale, "folder"));
 String cssClass = GetterUtil.getString((String)request.getAttribute("liferay-ui:app-view-search-entry:cssClass"));
 String description = (String)request.getAttribute("liferay-ui:app-view-search-entry:description");
 List<Tuple> fileEntryTuples = (List<Tuple>)request.getAttribute("liferay-ui:app-view-search-entry:fileEntryTuples");
-boolean highlightEnabled = GetterUtil.getBoolean(request.getAttribute("liferay-ui:app-view-search-entry:highlightEnabled"));
 boolean locked = GetterUtil.getBoolean(request.getAttribute("liferay-ui:app-view-search-entry:locked"));
 List<MBMessage> mbMessages = (List<MBMessage>)request.getAttribute("liferay-ui:app-view-search-entry:mbMessages");
 String[] queryTerms = (String[])request.getAttribute("liferay-ui:app-view-search-entry:queryTerms");
@@ -35,28 +36,23 @@ String thumbnailSrc = (String)request.getAttribute("liferay-ui:app-view-search-e
 String title = (String)request.getAttribute("liferay-ui:app-view-search-entry:title");
 String url = (String)request.getAttribute("liferay-ui:app-view-search-entry:url");
 List<String> versions = (List<String>)request.getAttribute("liferay-ui:app-view-search-entry:versions");
-
-Summary summary = new Summary(title, description, null);
-
-summary.setHighlight(highlightEnabled);
-summary.setQueryTerms(queryTerms);
 %>
 
 <div class="app-view-entry app-view-search-entry-taglib entry-display-style <%= showCheckbox ? "selectable" : StringPool.BLANK %> <%= cssClass %>" data-title="<%= HtmlUtil.escapeAttribute(StringUtil.shorten(title, 60)) %>">
 	<a class="entry-link" href="<%= url %>" title="<%= HtmlUtil.escapeAttribute(title + " - " + description) %>">
 		<c:if test="<%= Validator.isNotNull(thumbnailSrc) %>">
 			<div class="entry-thumbnail">
-				<img alt="" class="img-thumbnail" src="<%= HtmlUtil.escapeAttribute(thumbnailSrc) %>" />
+				<img alt="" border="no" class="img-polaroid" src="<%= thumbnailSrc %>" />
 
 				<c:if test="<%= locked %>">
-					<img alt="<liferay-ui:message escapeAttribute="<%= true %>" key="locked" />" class="locked-icon" src="<%= themeDisplay.getPathThemeImages() %>/file_system/large/overlay_lock.png" />
+					<img alt="<liferay-ui:message key="locked" />" class="locked-icon" src="<%= themeDisplay.getPathThemeImages() %>/file_system/large/overlay_lock.png" />
 				</c:if>
 			</div>
 		</c:if>
 
 		<div class="entry-metadata">
 			<span class="entry-title">
-				<%= summary.getHighlightedTitle() %>
+				<%= StringUtil.highlight(HtmlUtil.escape(title), queryTerms) %>
 
 				<c:if test="<%= (status != WorkflowConstants.STATUS_ANY) && (status != WorkflowConstants.STATUS_APPROVED) %>">
 					<aui:workflow-status showIcon="<%= false %>" showLabel="<%= false %>" status="<%= status %>" />
@@ -79,7 +75,23 @@ summary.setQueryTerms(queryTerms);
 
 						<c:if test="<%= Validator.isNotNull(containerName) %>">
 							<dt>
-								<%= LanguageUtil.get(locale, containerType) %>:
+								<c:choose>
+									<c:when test="<%= Validator.isNotNull(containerSrc) %>">
+										<liferay-ui:icon
+											label="<%= true %>"
+											message="<%= LanguageUtil.get(locale, containerType) %>"
+											src="<%= containerSrc %>"
+										/>
+									</c:when>
+									<c:otherwise>
+										<liferay-ui:icon
+											image='<%= (Validator.isNotNull(containerIcon)) ? containerIcon : "folder" %>'
+											label="<%= true %>"
+											message="<%= LanguageUtil.get(locale, containerType) %>"
+										/>
+									</c:otherwise>
+								</c:choose>
+								:
 							</dt>
 							<dd>
 
@@ -92,7 +104,7 @@ summary.setQueryTerms(queryTerms);
 			</c:if>
 
 			<span class="entry-description">
-				<%= summary.getHighlightedContent() %>
+				<%= StringUtil.highlight(HtmlUtil.escape(description), queryTerms) %>
 			</span>
 		</div>
 	</a>
@@ -102,38 +114,26 @@ summary.setQueryTerms(queryTerms);
 		<%
 		for (Tuple fileEntryTuple : fileEntryTuples) {
 			FileEntry fileEntry = (FileEntry)fileEntryTuple.getObject(0);
-
-			AssetRendererFactory assetRendererFactory = AssetRendererFactoryRegistryUtil.getAssetRendererFactoryByClassName(DLFileEntry.class.getName());
-
-			AssetRenderer assetRenderer = assetRendererFactory.getAssetRenderer(fileEntry.getFileEntryId());
-
-			summary = (Summary)fileEntryTuple.getObject(1);
-
-			if (Validator.isNull(summary.getContent())) {
-				summary.setContent(fileEntry.getTitle());
-			}
-
-			summary.setHighlight(highlightEnabled);
-			summary.setQueryTerms(queryTerms);
+			Summary summary = (Summary)fileEntryTuple.getObject(1);
 		%>
 
 			<div class="entry-attachment">
 				<aui:a class="lfr-discussion-details" href="<%= url %>">
 					<div class="image">
-						<img alt="<%= HtmlUtil.escapeAttribute(fileEntry.getTitle()) %>" class="attachment" src="<%= DLUtil.getThumbnailSrc(fileEntry, null, themeDisplay) %>" />
+						<img alt="<%= fileEntry.getTitle() %>" class="attachment" src="<%= DLUtil.getThumbnailSrc(fileEntry, null, themeDisplay) %>" />
 					</div>
 
-					<span class="title">
-						<liferay-ui:icon
-							iconCssClass="<%= assetRenderer.getIconCssClass() %>"
-							label="<%= true %>"
-							message='<%= LanguageUtil.format(locale, "attachment-added-by-x", HtmlUtil.escape(fileEntry.getUserName()), false) %>'
-						/>
-					</span>
+						<span class="title">
+							<liferay-ui:icon
+								image='<%= "../file_system/small/" + DLUtil.getFileIcon(fileEntry.getExtension()) %>'
+								label="<%= true %>"
+								message='<%= LanguageUtil.format(locale, "attachment-added-by-x", HtmlUtil.escape(fileEntry.getUserName())) %>'
+							/>
+						</span>
 
-					<span class="body">
-						<%= summary.getHighlightedContent() %>
-					</span>
+						<span class="body">
+							<%= StringUtil.highlight((Validator.isNotNull(summary.getContent())) ? summary.getContent() : fileEntry.getTitle(), queryTerms) %>
+						</span>
 				</aui:a>
 			</div>
 
@@ -148,11 +148,6 @@ summary.setQueryTerms(queryTerms);
 		<%
 		for (MBMessage mbMessage : mbMessages) {
 			User userDisplay = UserLocalServiceUtil.getUser(mbMessage.getUserId());
-
-			summary = new Summary(null, mbMessage.getBody(), null);
-
-			summary.setHighlight(highlightEnabled);
-			summary.setQueryTerms(queryTerms);
 		%>
 
 			<div class="entry-discussion">
@@ -163,14 +158,14 @@ summary.setQueryTerms(queryTerms);
 
 					<span class="title">
 						<liferay-ui:icon
-							iconCssClass="icon-comment"
+							image="message"
 							label="<%= true %>"
-							message='<%= LanguageUtil.format(locale, "comment-by-x", HtmlUtil.escape(userDisplay.getFullName()), false) %>'
+							message='<%= LanguageUtil.format(locale, "comment-by-x", HtmlUtil.escape(userDisplay.getFullName())) %>'
 						/>
 					</span>
 
 					<span class="body">
-						<%= summary.getHighlightedContent() %>
+						<%= StringUtil.highlight(mbMessage.getSubject(), queryTerms) %>
 					</span>
 				</aui:a>
 			</div>
@@ -182,7 +177,7 @@ summary.setQueryTerms(queryTerms);
 	</c:if>
 
 	<c:if test="<%= showCheckbox %>">
-		<aui:input cssClass="entry-selector overlay" label="" name="<%= RowChecker.ROW_IDS + rowCheckerName %>" type="checkbox" value="<%= rowCheckerId %>" />
+		<aui:input cssClass="overlay entry-selector" label="" name="<%= RowChecker.ROW_IDS + rowCheckerName %>" type="checkbox" value="<%= rowCheckerId %>" />
 	</c:if>
 
 	<c:if test="<%= Validator.isNotNull(actionJsp) %>">

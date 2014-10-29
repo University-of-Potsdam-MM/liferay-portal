@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -50,9 +50,19 @@ public class LayoutTemplateLocalServiceUtil {
 		return getService().getBeanIdentifier();
 	}
 
+	/**
+	* Sets the Spring bean ID for this bean.
+	*
+	* @param beanIdentifier the Spring bean ID for this bean
+	*/
+	public static void setBeanIdentifier(java.lang.String beanIdentifier) {
+		getService().setBeanIdentifier(beanIdentifier);
+	}
+
 	public static java.lang.String getContent(
 		java.lang.String layoutTemplateId, boolean standard,
-		java.lang.String themeId) {
+		java.lang.String themeId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().getContent(layoutTemplateId, standard, themeId);
 	}
 
@@ -74,7 +84,8 @@ public class LayoutTemplateLocalServiceUtil {
 
 	public static java.lang.String getWapContent(
 		java.lang.String layoutTemplateId, boolean standard,
-		java.lang.String themeId) {
+		java.lang.String themeId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().getWapContent(layoutTemplateId, standard, themeId);
 	}
 
@@ -103,15 +114,6 @@ public class LayoutTemplateLocalServiceUtil {
 			layoutTemplates, element, standard, themeId, pluginPackage);
 	}
 
-	/**
-	* Sets the Spring bean ID for this bean.
-	*
-	* @param beanIdentifier the Spring bean ID for this bean
-	*/
-	public static void setBeanIdentifier(java.lang.String beanIdentifier) {
-		getService().setBeanIdentifier(beanIdentifier);
-	}
-
 	public static void uninstallLayoutTemplate(
 		java.lang.String layoutTemplateId, boolean standard) {
 		getService().uninstallLayoutTemplate(layoutTemplateId, standard);
@@ -135,7 +137,6 @@ public class LayoutTemplateLocalServiceUtil {
 	/**
 	 * @deprecated As of 6.2.0
 	 */
-	@Deprecated
 	public void setService(LayoutTemplateLocalService service) {
 	}
 

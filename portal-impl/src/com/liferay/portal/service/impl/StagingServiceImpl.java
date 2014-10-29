@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portal.service.impl;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.lar.MissingReferences;
 import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.portletfilerepository.PortletFileRepositoryUtil;
@@ -31,7 +32,7 @@ public class StagingServiceImpl extends StagingServiceBaseImpl {
 
 	@Override
 	public void cleanUpStagingRequest(long stagingRequestId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		checkPermission(stagingRequestId);
 
@@ -40,7 +41,7 @@ public class StagingServiceImpl extends StagingServiceBaseImpl {
 
 	@Override
 	public long createStagingRequest(long groupId, String checksum)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		GroupPermissionUtil.check(
 			getPermissionChecker(), groupId, ActionKeys.EXPORT_IMPORT_LAYOUTS);
@@ -53,7 +54,7 @@ public class StagingServiceImpl extends StagingServiceBaseImpl {
 	public void publishStagingRequest(
 			long stagingRequestId, boolean privateLayout,
 			Map<String, String[]> parameterMap)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		checkPermission(stagingRequestId);
 
@@ -64,7 +65,7 @@ public class StagingServiceImpl extends StagingServiceBaseImpl {
 	@Override
 	public void updateStagingRequest(
 			long stagingRequestId, String fileName, byte[] bytes)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		checkPermission(stagingRequestId);
 
@@ -76,7 +77,7 @@ public class StagingServiceImpl extends StagingServiceBaseImpl {
 	public MissingReferences validateStagingRequest(
 			long stagingRequestId, boolean privateLayout,
 			Map<String, String[]> parameterMap)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		checkPermission(stagingRequestId);
 
@@ -85,7 +86,7 @@ public class StagingServiceImpl extends StagingServiceBaseImpl {
 	}
 
 	protected void checkPermission(long stagingRequestId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Folder folder = PortletFileRepositoryUtil.getPortletFolder(
 			stagingRequestId);

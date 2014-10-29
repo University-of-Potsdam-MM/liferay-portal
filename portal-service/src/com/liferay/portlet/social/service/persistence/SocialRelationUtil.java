@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,6 +18,7 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.bean.PortalBeanLocatorUtil;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ReferenceRegistry;
 import com.liferay.portal.service.ServiceContext;
@@ -63,7 +64,8 @@ public class SocialRelationUtil {
 	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#countWithDynamicQuery(DynamicQuery)
 	 */
-	public static long countWithDynamicQuery(DynamicQuery dynamicQuery) {
+	public static long countWithDynamicQuery(DynamicQuery dynamicQuery)
+		throws SystemException {
 		return getPersistence().countWithDynamicQuery(dynamicQuery);
 	}
 
@@ -71,7 +73,7 @@ public class SocialRelationUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#findWithDynamicQuery(DynamicQuery)
 	 */
 	public static List<SocialRelation> findWithDynamicQuery(
-		DynamicQuery dynamicQuery) {
+		DynamicQuery dynamicQuery) throws SystemException {
 		return getPersistence().findWithDynamicQuery(dynamicQuery);
 	}
 
@@ -79,7 +81,8 @@ public class SocialRelationUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#findWithDynamicQuery(DynamicQuery, int, int)
 	 */
 	public static List<SocialRelation> findWithDynamicQuery(
-		DynamicQuery dynamicQuery, int start, int end) {
+		DynamicQuery dynamicQuery, int start, int end)
+		throws SystemException {
 		return getPersistence().findWithDynamicQuery(dynamicQuery, start, end);
 	}
 
@@ -88,7 +91,7 @@ public class SocialRelationUtil {
 	 */
 	public static List<SocialRelation> findWithDynamicQuery(
 		DynamicQuery dynamicQuery, int start, int end,
-		OrderByComparator<SocialRelation> orderByComparator) {
+		OrderByComparator orderByComparator) throws SystemException {
 		return getPersistence()
 				   .findWithDynamicQuery(dynamicQuery, start, end,
 			orderByComparator);
@@ -97,7 +100,8 @@ public class SocialRelationUtil {
 	/**
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel)
 	 */
-	public static SocialRelation update(SocialRelation socialRelation) {
+	public static SocialRelation update(SocialRelation socialRelation)
+		throws SystemException {
 		return getPersistence().update(socialRelation);
 	}
 
@@ -105,7 +109,7 @@ public class SocialRelationUtil {
 	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, ServiceContext)
 	 */
 	public static SocialRelation update(SocialRelation socialRelation,
-		ServiceContext serviceContext) {
+		ServiceContext serviceContext) throws SystemException {
 		return getPersistence().update(socialRelation, serviceContext);
 	}
 
@@ -114,9 +118,11 @@ public class SocialRelationUtil {
 	*
 	* @param uuid the uuid
 	* @return the matching social relations
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.social.model.SocialRelation> findByUuid(
-		java.lang.String uuid) {
+		java.lang.String uuid)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByUuid(uuid);
 	}
 
@@ -131,9 +137,11 @@ public class SocialRelationUtil {
 	* @param start the lower bound of the range of social relations
 	* @param end the upper bound of the range of social relations (not inclusive)
 	* @return the range of matching social relations
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.social.model.SocialRelation> findByUuid(
-		java.lang.String uuid, int start, int end) {
+		java.lang.String uuid, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByUuid(uuid, start, end);
 	}
 
@@ -149,10 +157,12 @@ public class SocialRelationUtil {
 	* @param end the upper bound of the range of social relations (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching social relations
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.social.model.SocialRelation> findByUuid(
 		java.lang.String uuid, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialRelation> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByUuid(uuid, start, end, orderByComparator);
 	}
 
@@ -163,11 +173,13 @@ public class SocialRelationUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching social relation
 	* @throws com.liferay.portlet.social.NoSuchRelationException if a matching social relation could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialRelation findByUuid_First(
 		java.lang.String uuid,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialRelation> orderByComparator)
-		throws com.liferay.portlet.social.NoSuchRelationException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchRelationException {
 		return getPersistence().findByUuid_First(uuid, orderByComparator);
 	}
 
@@ -177,10 +189,12 @@ public class SocialRelationUtil {
 	* @param uuid the uuid
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching social relation, or <code>null</code> if a matching social relation could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialRelation fetchByUuid_First(
 		java.lang.String uuid,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialRelation> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByUuid_First(uuid, orderByComparator);
 	}
 
@@ -191,11 +205,13 @@ public class SocialRelationUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching social relation
 	* @throws com.liferay.portlet.social.NoSuchRelationException if a matching social relation could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialRelation findByUuid_Last(
 		java.lang.String uuid,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialRelation> orderByComparator)
-		throws com.liferay.portlet.social.NoSuchRelationException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchRelationException {
 		return getPersistence().findByUuid_Last(uuid, orderByComparator);
 	}
 
@@ -205,10 +221,12 @@ public class SocialRelationUtil {
 	* @param uuid the uuid
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching social relation, or <code>null</code> if a matching social relation could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialRelation fetchByUuid_Last(
 		java.lang.String uuid,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialRelation> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByUuid_Last(uuid, orderByComparator);
 	}
 
@@ -220,11 +238,13 @@ public class SocialRelationUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next social relation
 	* @throws com.liferay.portlet.social.NoSuchRelationException if a social relation with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialRelation[] findByUuid_PrevAndNext(
 		long relationId, java.lang.String uuid,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialRelation> orderByComparator)
-		throws com.liferay.portlet.social.NoSuchRelationException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchRelationException {
 		return getPersistence()
 				   .findByUuid_PrevAndNext(relationId, uuid, orderByComparator);
 	}
@@ -233,8 +253,10 @@ public class SocialRelationUtil {
 	* Removes all the social relations where uuid = &#63; from the database.
 	*
 	* @param uuid the uuid
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByUuid(java.lang.String uuid) {
+	public static void removeByUuid(java.lang.String uuid)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeByUuid(uuid);
 	}
 
@@ -243,8 +265,10 @@ public class SocialRelationUtil {
 	*
 	* @param uuid the uuid
 	* @return the number of matching social relations
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByUuid(java.lang.String uuid) {
+	public static int countByUuid(java.lang.String uuid)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByUuid(uuid);
 	}
 
@@ -254,9 +278,11 @@ public class SocialRelationUtil {
 	* @param uuid the uuid
 	* @param companyId the company ID
 	* @return the matching social relations
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.social.model.SocialRelation> findByUuid_C(
-		java.lang.String uuid, long companyId) {
+		java.lang.String uuid, long companyId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByUuid_C(uuid, companyId);
 	}
 
@@ -272,9 +298,11 @@ public class SocialRelationUtil {
 	* @param start the lower bound of the range of social relations
 	* @param end the upper bound of the range of social relations (not inclusive)
 	* @return the range of matching social relations
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.social.model.SocialRelation> findByUuid_C(
-		java.lang.String uuid, long companyId, int start, int end) {
+		java.lang.String uuid, long companyId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByUuid_C(uuid, companyId, start, end);
 	}
 
@@ -291,10 +319,12 @@ public class SocialRelationUtil {
 	* @param end the upper bound of the range of social relations (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching social relations
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.social.model.SocialRelation> findByUuid_C(
 		java.lang.String uuid, long companyId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialRelation> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByUuid_C(uuid, companyId, start, end, orderByComparator);
 	}
@@ -307,11 +337,13 @@ public class SocialRelationUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching social relation
 	* @throws com.liferay.portlet.social.NoSuchRelationException if a matching social relation could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialRelation findByUuid_C_First(
 		java.lang.String uuid, long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialRelation> orderByComparator)
-		throws com.liferay.portlet.social.NoSuchRelationException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchRelationException {
 		return getPersistence()
 				   .findByUuid_C_First(uuid, companyId, orderByComparator);
 	}
@@ -323,10 +355,12 @@ public class SocialRelationUtil {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching social relation, or <code>null</code> if a matching social relation could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialRelation fetchByUuid_C_First(
 		java.lang.String uuid, long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialRelation> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByUuid_C_First(uuid, companyId, orderByComparator);
 	}
@@ -339,11 +373,13 @@ public class SocialRelationUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching social relation
 	* @throws com.liferay.portlet.social.NoSuchRelationException if a matching social relation could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialRelation findByUuid_C_Last(
 		java.lang.String uuid, long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialRelation> orderByComparator)
-		throws com.liferay.portlet.social.NoSuchRelationException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchRelationException {
 		return getPersistence()
 				   .findByUuid_C_Last(uuid, companyId, orderByComparator);
 	}
@@ -355,10 +391,12 @@ public class SocialRelationUtil {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching social relation, or <code>null</code> if a matching social relation could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialRelation fetchByUuid_C_Last(
 		java.lang.String uuid, long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialRelation> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByUuid_C_Last(uuid, companyId, orderByComparator);
 	}
@@ -372,11 +410,13 @@ public class SocialRelationUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next social relation
 	* @throws com.liferay.portlet.social.NoSuchRelationException if a social relation with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialRelation[] findByUuid_C_PrevAndNext(
 		long relationId, java.lang.String uuid, long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialRelation> orderByComparator)
-		throws com.liferay.portlet.social.NoSuchRelationException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchRelationException {
 		return getPersistence()
 				   .findByUuid_C_PrevAndNext(relationId, uuid, companyId,
 			orderByComparator);
@@ -387,8 +427,10 @@ public class SocialRelationUtil {
 	*
 	* @param uuid the uuid
 	* @param companyId the company ID
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByUuid_C(java.lang.String uuid, long companyId) {
+	public static void removeByUuid_C(java.lang.String uuid, long companyId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeByUuid_C(uuid, companyId);
 	}
 
@@ -398,8 +440,10 @@ public class SocialRelationUtil {
 	* @param uuid the uuid
 	* @param companyId the company ID
 	* @return the number of matching social relations
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByUuid_C(java.lang.String uuid, long companyId) {
+	public static int countByUuid_C(java.lang.String uuid, long companyId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByUuid_C(uuid, companyId);
 	}
 
@@ -408,9 +452,11 @@ public class SocialRelationUtil {
 	*
 	* @param companyId the company ID
 	* @return the matching social relations
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.social.model.SocialRelation> findByCompanyId(
-		long companyId) {
+		long companyId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByCompanyId(companyId);
 	}
 
@@ -425,9 +471,11 @@ public class SocialRelationUtil {
 	* @param start the lower bound of the range of social relations
 	* @param end the upper bound of the range of social relations (not inclusive)
 	* @return the range of matching social relations
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.social.model.SocialRelation> findByCompanyId(
-		long companyId, int start, int end) {
+		long companyId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByCompanyId(companyId, start, end);
 	}
 
@@ -443,10 +491,12 @@ public class SocialRelationUtil {
 	* @param end the upper bound of the range of social relations (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching social relations
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.social.model.SocialRelation> findByCompanyId(
 		long companyId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialRelation> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByCompanyId(companyId, start, end, orderByComparator);
 	}
@@ -458,11 +508,13 @@ public class SocialRelationUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching social relation
 	* @throws com.liferay.portlet.social.NoSuchRelationException if a matching social relation could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialRelation findByCompanyId_First(
 		long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialRelation> orderByComparator)
-		throws com.liferay.portlet.social.NoSuchRelationException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchRelationException {
 		return getPersistence()
 				   .findByCompanyId_First(companyId, orderByComparator);
 	}
@@ -473,10 +525,12 @@ public class SocialRelationUtil {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching social relation, or <code>null</code> if a matching social relation could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialRelation fetchByCompanyId_First(
 		long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialRelation> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByCompanyId_First(companyId, orderByComparator);
 	}
@@ -488,11 +542,13 @@ public class SocialRelationUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching social relation
 	* @throws com.liferay.portlet.social.NoSuchRelationException if a matching social relation could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialRelation findByCompanyId_Last(
 		long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialRelation> orderByComparator)
-		throws com.liferay.portlet.social.NoSuchRelationException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchRelationException {
 		return getPersistence()
 				   .findByCompanyId_Last(companyId, orderByComparator);
 	}
@@ -503,10 +559,12 @@ public class SocialRelationUtil {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching social relation, or <code>null</code> if a matching social relation could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialRelation fetchByCompanyId_Last(
 		long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialRelation> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByCompanyId_Last(companyId, orderByComparator);
 	}
@@ -519,11 +577,13 @@ public class SocialRelationUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next social relation
 	* @throws com.liferay.portlet.social.NoSuchRelationException if a social relation with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialRelation[] findByCompanyId_PrevAndNext(
 		long relationId, long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialRelation> orderByComparator)
-		throws com.liferay.portlet.social.NoSuchRelationException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchRelationException {
 		return getPersistence()
 				   .findByCompanyId_PrevAndNext(relationId, companyId,
 			orderByComparator);
@@ -533,8 +593,10 @@ public class SocialRelationUtil {
 	* Removes all the social relations where companyId = &#63; from the database.
 	*
 	* @param companyId the company ID
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByCompanyId(long companyId) {
+	public static void removeByCompanyId(long companyId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeByCompanyId(companyId);
 	}
 
@@ -543,8 +605,10 @@ public class SocialRelationUtil {
 	*
 	* @param companyId the company ID
 	* @return the number of matching social relations
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByCompanyId(long companyId) {
+	public static int countByCompanyId(long companyId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByCompanyId(companyId);
 	}
 
@@ -553,9 +617,11 @@ public class SocialRelationUtil {
 	*
 	* @param userId1 the user id1
 	* @return the matching social relations
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.social.model.SocialRelation> findByUserId1(
-		long userId1) {
+		long userId1)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByUserId1(userId1);
 	}
 
@@ -570,9 +636,11 @@ public class SocialRelationUtil {
 	* @param start the lower bound of the range of social relations
 	* @param end the upper bound of the range of social relations (not inclusive)
 	* @return the range of matching social relations
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.social.model.SocialRelation> findByUserId1(
-		long userId1, int start, int end) {
+		long userId1, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByUserId1(userId1, start, end);
 	}
 
@@ -588,10 +656,12 @@ public class SocialRelationUtil {
 	* @param end the upper bound of the range of social relations (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching social relations
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.social.model.SocialRelation> findByUserId1(
 		long userId1, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialRelation> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByUserId1(userId1, start, end, orderByComparator);
 	}
@@ -603,11 +673,13 @@ public class SocialRelationUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching social relation
 	* @throws com.liferay.portlet.social.NoSuchRelationException if a matching social relation could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialRelation findByUserId1_First(
 		long userId1,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialRelation> orderByComparator)
-		throws com.liferay.portlet.social.NoSuchRelationException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchRelationException {
 		return getPersistence().findByUserId1_First(userId1, orderByComparator);
 	}
 
@@ -617,10 +689,12 @@ public class SocialRelationUtil {
 	* @param userId1 the user id1
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching social relation, or <code>null</code> if a matching social relation could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialRelation fetchByUserId1_First(
 		long userId1,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialRelation> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByUserId1_First(userId1, orderByComparator);
 	}
 
@@ -631,11 +705,13 @@ public class SocialRelationUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching social relation
 	* @throws com.liferay.portlet.social.NoSuchRelationException if a matching social relation could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialRelation findByUserId1_Last(
 		long userId1,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialRelation> orderByComparator)
-		throws com.liferay.portlet.social.NoSuchRelationException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchRelationException {
 		return getPersistence().findByUserId1_Last(userId1, orderByComparator);
 	}
 
@@ -645,10 +721,12 @@ public class SocialRelationUtil {
 	* @param userId1 the user id1
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching social relation, or <code>null</code> if a matching social relation could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialRelation fetchByUserId1_Last(
 		long userId1,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialRelation> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByUserId1_Last(userId1, orderByComparator);
 	}
 
@@ -660,11 +738,13 @@ public class SocialRelationUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next social relation
 	* @throws com.liferay.portlet.social.NoSuchRelationException if a social relation with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialRelation[] findByUserId1_PrevAndNext(
 		long relationId, long userId1,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialRelation> orderByComparator)
-		throws com.liferay.portlet.social.NoSuchRelationException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchRelationException {
 		return getPersistence()
 				   .findByUserId1_PrevAndNext(relationId, userId1,
 			orderByComparator);
@@ -674,8 +754,10 @@ public class SocialRelationUtil {
 	* Removes all the social relations where userId1 = &#63; from the database.
 	*
 	* @param userId1 the user id1
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByUserId1(long userId1) {
+	public static void removeByUserId1(long userId1)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeByUserId1(userId1);
 	}
 
@@ -684,8 +766,10 @@ public class SocialRelationUtil {
 	*
 	* @param userId1 the user id1
 	* @return the number of matching social relations
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByUserId1(long userId1) {
+	public static int countByUserId1(long userId1)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByUserId1(userId1);
 	}
 
@@ -694,9 +778,11 @@ public class SocialRelationUtil {
 	*
 	* @param userId2 the user id2
 	* @return the matching social relations
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.social.model.SocialRelation> findByUserId2(
-		long userId2) {
+		long userId2)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByUserId2(userId2);
 	}
 
@@ -711,9 +797,11 @@ public class SocialRelationUtil {
 	* @param start the lower bound of the range of social relations
 	* @param end the upper bound of the range of social relations (not inclusive)
 	* @return the range of matching social relations
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.social.model.SocialRelation> findByUserId2(
-		long userId2, int start, int end) {
+		long userId2, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByUserId2(userId2, start, end);
 	}
 
@@ -729,10 +817,12 @@ public class SocialRelationUtil {
 	* @param end the upper bound of the range of social relations (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching social relations
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.social.model.SocialRelation> findByUserId2(
 		long userId2, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialRelation> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByUserId2(userId2, start, end, orderByComparator);
 	}
@@ -744,11 +834,13 @@ public class SocialRelationUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching social relation
 	* @throws com.liferay.portlet.social.NoSuchRelationException if a matching social relation could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialRelation findByUserId2_First(
 		long userId2,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialRelation> orderByComparator)
-		throws com.liferay.portlet.social.NoSuchRelationException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchRelationException {
 		return getPersistence().findByUserId2_First(userId2, orderByComparator);
 	}
 
@@ -758,10 +850,12 @@ public class SocialRelationUtil {
 	* @param userId2 the user id2
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching social relation, or <code>null</code> if a matching social relation could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialRelation fetchByUserId2_First(
 		long userId2,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialRelation> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByUserId2_First(userId2, orderByComparator);
 	}
 
@@ -772,11 +866,13 @@ public class SocialRelationUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching social relation
 	* @throws com.liferay.portlet.social.NoSuchRelationException if a matching social relation could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialRelation findByUserId2_Last(
 		long userId2,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialRelation> orderByComparator)
-		throws com.liferay.portlet.social.NoSuchRelationException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchRelationException {
 		return getPersistence().findByUserId2_Last(userId2, orderByComparator);
 	}
 
@@ -786,10 +882,12 @@ public class SocialRelationUtil {
 	* @param userId2 the user id2
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching social relation, or <code>null</code> if a matching social relation could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialRelation fetchByUserId2_Last(
 		long userId2,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialRelation> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByUserId2_Last(userId2, orderByComparator);
 	}
 
@@ -801,11 +899,13 @@ public class SocialRelationUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next social relation
 	* @throws com.liferay.portlet.social.NoSuchRelationException if a social relation with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialRelation[] findByUserId2_PrevAndNext(
 		long relationId, long userId2,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialRelation> orderByComparator)
-		throws com.liferay.portlet.social.NoSuchRelationException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchRelationException {
 		return getPersistence()
 				   .findByUserId2_PrevAndNext(relationId, userId2,
 			orderByComparator);
@@ -815,8 +915,10 @@ public class SocialRelationUtil {
 	* Removes all the social relations where userId2 = &#63; from the database.
 	*
 	* @param userId2 the user id2
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByUserId2(long userId2) {
+	public static void removeByUserId2(long userId2)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeByUserId2(userId2);
 	}
 
@@ -825,8 +927,10 @@ public class SocialRelationUtil {
 	*
 	* @param userId2 the user id2
 	* @return the number of matching social relations
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByUserId2(long userId2) {
+	public static int countByUserId2(long userId2)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByUserId2(userId2);
 	}
 
@@ -835,9 +939,10 @@ public class SocialRelationUtil {
 	*
 	* @param type the type
 	* @return the matching social relations
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.social.model.SocialRelation> findByType(
-		int type) {
+		int type) throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByType(type);
 	}
 
@@ -852,9 +957,11 @@ public class SocialRelationUtil {
 	* @param start the lower bound of the range of social relations
 	* @param end the upper bound of the range of social relations (not inclusive)
 	* @return the range of matching social relations
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.social.model.SocialRelation> findByType(
-		int type, int start, int end) {
+		int type, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByType(type, start, end);
 	}
 
@@ -870,10 +977,12 @@ public class SocialRelationUtil {
 	* @param end the upper bound of the range of social relations (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching social relations
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.social.model.SocialRelation> findByType(
 		int type, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialRelation> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByType(type, start, end, orderByComparator);
 	}
 
@@ -884,11 +993,13 @@ public class SocialRelationUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching social relation
 	* @throws com.liferay.portlet.social.NoSuchRelationException if a matching social relation could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialRelation findByType_First(
 		int type,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialRelation> orderByComparator)
-		throws com.liferay.portlet.social.NoSuchRelationException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchRelationException {
 		return getPersistence().findByType_First(type, orderByComparator);
 	}
 
@@ -898,10 +1009,12 @@ public class SocialRelationUtil {
 	* @param type the type
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching social relation, or <code>null</code> if a matching social relation could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialRelation fetchByType_First(
 		int type,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialRelation> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByType_First(type, orderByComparator);
 	}
 
@@ -912,11 +1025,13 @@ public class SocialRelationUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching social relation
 	* @throws com.liferay.portlet.social.NoSuchRelationException if a matching social relation could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialRelation findByType_Last(
 		int type,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialRelation> orderByComparator)
-		throws com.liferay.portlet.social.NoSuchRelationException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchRelationException {
 		return getPersistence().findByType_Last(type, orderByComparator);
 	}
 
@@ -926,10 +1041,12 @@ public class SocialRelationUtil {
 	* @param type the type
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching social relation, or <code>null</code> if a matching social relation could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialRelation fetchByType_Last(
 		int type,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialRelation> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByType_Last(type, orderByComparator);
 	}
 
@@ -941,11 +1058,13 @@ public class SocialRelationUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next social relation
 	* @throws com.liferay.portlet.social.NoSuchRelationException if a social relation with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialRelation[] findByType_PrevAndNext(
 		long relationId, int type,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialRelation> orderByComparator)
-		throws com.liferay.portlet.social.NoSuchRelationException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchRelationException {
 		return getPersistence()
 				   .findByType_PrevAndNext(relationId, type, orderByComparator);
 	}
@@ -954,8 +1073,10 @@ public class SocialRelationUtil {
 	* Removes all the social relations where type = &#63; from the database.
 	*
 	* @param type the type
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByType(int type) {
+	public static void removeByType(int type)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeByType(type);
 	}
 
@@ -964,8 +1085,10 @@ public class SocialRelationUtil {
 	*
 	* @param type the type
 	* @return the number of matching social relations
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByType(int type) {
+	public static int countByType(int type)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByType(type);
 	}
 
@@ -975,9 +1098,11 @@ public class SocialRelationUtil {
 	* @param companyId the company ID
 	* @param type the type
 	* @return the matching social relations
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.social.model.SocialRelation> findByC_T(
-		long companyId, int type) {
+		long companyId, int type)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByC_T(companyId, type);
 	}
 
@@ -993,9 +1118,11 @@ public class SocialRelationUtil {
 	* @param start the lower bound of the range of social relations
 	* @param end the upper bound of the range of social relations (not inclusive)
 	* @return the range of matching social relations
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.social.model.SocialRelation> findByC_T(
-		long companyId, int type, int start, int end) {
+		long companyId, int type, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByC_T(companyId, type, start, end);
 	}
 
@@ -1012,10 +1139,12 @@ public class SocialRelationUtil {
 	* @param end the upper bound of the range of social relations (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching social relations
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.social.model.SocialRelation> findByC_T(
 		long companyId, int type, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialRelation> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByC_T(companyId, type, start, end, orderByComparator);
 	}
@@ -1028,11 +1157,13 @@ public class SocialRelationUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching social relation
 	* @throws com.liferay.portlet.social.NoSuchRelationException if a matching social relation could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialRelation findByC_T_First(
 		long companyId, int type,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialRelation> orderByComparator)
-		throws com.liferay.portlet.social.NoSuchRelationException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchRelationException {
 		return getPersistence()
 				   .findByC_T_First(companyId, type, orderByComparator);
 	}
@@ -1044,10 +1175,12 @@ public class SocialRelationUtil {
 	* @param type the type
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching social relation, or <code>null</code> if a matching social relation could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialRelation fetchByC_T_First(
 		long companyId, int type,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialRelation> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByC_T_First(companyId, type, orderByComparator);
 	}
@@ -1060,11 +1193,13 @@ public class SocialRelationUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching social relation
 	* @throws com.liferay.portlet.social.NoSuchRelationException if a matching social relation could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialRelation findByC_T_Last(
 		long companyId, int type,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialRelation> orderByComparator)
-		throws com.liferay.portlet.social.NoSuchRelationException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchRelationException {
 		return getPersistence()
 				   .findByC_T_Last(companyId, type, orderByComparator);
 	}
@@ -1076,10 +1211,12 @@ public class SocialRelationUtil {
 	* @param type the type
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching social relation, or <code>null</code> if a matching social relation could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialRelation fetchByC_T_Last(
 		long companyId, int type,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialRelation> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByC_T_Last(companyId, type, orderByComparator);
 	}
@@ -1093,11 +1230,13 @@ public class SocialRelationUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next social relation
 	* @throws com.liferay.portlet.social.NoSuchRelationException if a social relation with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialRelation[] findByC_T_PrevAndNext(
 		long relationId, long companyId, int type,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialRelation> orderByComparator)
-		throws com.liferay.portlet.social.NoSuchRelationException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchRelationException {
 		return getPersistence()
 				   .findByC_T_PrevAndNext(relationId, companyId, type,
 			orderByComparator);
@@ -1108,8 +1247,10 @@ public class SocialRelationUtil {
 	*
 	* @param companyId the company ID
 	* @param type the type
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByC_T(long companyId, int type) {
+	public static void removeByC_T(long companyId, int type)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeByC_T(companyId, type);
 	}
 
@@ -1119,8 +1260,10 @@ public class SocialRelationUtil {
 	* @param companyId the company ID
 	* @param type the type
 	* @return the number of matching social relations
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByC_T(long companyId, int type) {
+	public static int countByC_T(long companyId, int type)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByC_T(companyId, type);
 	}
 
@@ -1130,9 +1273,11 @@ public class SocialRelationUtil {
 	* @param userId1 the user id1
 	* @param userId2 the user id2
 	* @return the matching social relations
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.social.model.SocialRelation> findByU1_U2(
-		long userId1, long userId2) {
+		long userId1, long userId2)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByU1_U2(userId1, userId2);
 	}
 
@@ -1148,9 +1293,11 @@ public class SocialRelationUtil {
 	* @param start the lower bound of the range of social relations
 	* @param end the upper bound of the range of social relations (not inclusive)
 	* @return the range of matching social relations
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.social.model.SocialRelation> findByU1_U2(
-		long userId1, long userId2, int start, int end) {
+		long userId1, long userId2, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByU1_U2(userId1, userId2, start, end);
 	}
 
@@ -1167,10 +1314,12 @@ public class SocialRelationUtil {
 	* @param end the upper bound of the range of social relations (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching social relations
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.social.model.SocialRelation> findByU1_U2(
 		long userId1, long userId2, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialRelation> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByU1_U2(userId1, userId2, start, end, orderByComparator);
 	}
@@ -1183,11 +1332,13 @@ public class SocialRelationUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching social relation
 	* @throws com.liferay.portlet.social.NoSuchRelationException if a matching social relation could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialRelation findByU1_U2_First(
 		long userId1, long userId2,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialRelation> orderByComparator)
-		throws com.liferay.portlet.social.NoSuchRelationException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchRelationException {
 		return getPersistence()
 				   .findByU1_U2_First(userId1, userId2, orderByComparator);
 	}
@@ -1199,10 +1350,12 @@ public class SocialRelationUtil {
 	* @param userId2 the user id2
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching social relation, or <code>null</code> if a matching social relation could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialRelation fetchByU1_U2_First(
 		long userId1, long userId2,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialRelation> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByU1_U2_First(userId1, userId2, orderByComparator);
 	}
@@ -1215,11 +1368,13 @@ public class SocialRelationUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching social relation
 	* @throws com.liferay.portlet.social.NoSuchRelationException if a matching social relation could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialRelation findByU1_U2_Last(
 		long userId1, long userId2,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialRelation> orderByComparator)
-		throws com.liferay.portlet.social.NoSuchRelationException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchRelationException {
 		return getPersistence()
 				   .findByU1_U2_Last(userId1, userId2, orderByComparator);
 	}
@@ -1231,10 +1386,12 @@ public class SocialRelationUtil {
 	* @param userId2 the user id2
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching social relation, or <code>null</code> if a matching social relation could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialRelation fetchByU1_U2_Last(
 		long userId1, long userId2,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialRelation> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByU1_U2_Last(userId1, userId2, orderByComparator);
 	}
@@ -1248,11 +1405,13 @@ public class SocialRelationUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next social relation
 	* @throws com.liferay.portlet.social.NoSuchRelationException if a social relation with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialRelation[] findByU1_U2_PrevAndNext(
 		long relationId, long userId1, long userId2,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialRelation> orderByComparator)
-		throws com.liferay.portlet.social.NoSuchRelationException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchRelationException {
 		return getPersistence()
 				   .findByU1_U2_PrevAndNext(relationId, userId1, userId2,
 			orderByComparator);
@@ -1263,8 +1422,10 @@ public class SocialRelationUtil {
 	*
 	* @param userId1 the user id1
 	* @param userId2 the user id2
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByU1_U2(long userId1, long userId2) {
+	public static void removeByU1_U2(long userId1, long userId2)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeByU1_U2(userId1, userId2);
 	}
 
@@ -1274,8 +1435,10 @@ public class SocialRelationUtil {
 	* @param userId1 the user id1
 	* @param userId2 the user id2
 	* @return the number of matching social relations
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByU1_U2(long userId1, long userId2) {
+	public static int countByU1_U2(long userId1, long userId2)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByU1_U2(userId1, userId2);
 	}
 
@@ -1285,9 +1448,11 @@ public class SocialRelationUtil {
 	* @param userId1 the user id1
 	* @param type the type
 	* @return the matching social relations
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.social.model.SocialRelation> findByU1_T(
-		long userId1, int type) {
+		long userId1, int type)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByU1_T(userId1, type);
 	}
 
@@ -1303,9 +1468,11 @@ public class SocialRelationUtil {
 	* @param start the lower bound of the range of social relations
 	* @param end the upper bound of the range of social relations (not inclusive)
 	* @return the range of matching social relations
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.social.model.SocialRelation> findByU1_T(
-		long userId1, int type, int start, int end) {
+		long userId1, int type, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByU1_T(userId1, type, start, end);
 	}
 
@@ -1322,10 +1489,12 @@ public class SocialRelationUtil {
 	* @param end the upper bound of the range of social relations (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching social relations
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.social.model.SocialRelation> findByU1_T(
 		long userId1, int type, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialRelation> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByU1_T(userId1, type, start, end, orderByComparator);
 	}
@@ -1338,11 +1507,13 @@ public class SocialRelationUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching social relation
 	* @throws com.liferay.portlet.social.NoSuchRelationException if a matching social relation could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialRelation findByU1_T_First(
 		long userId1, int type,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialRelation> orderByComparator)
-		throws com.liferay.portlet.social.NoSuchRelationException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchRelationException {
 		return getPersistence()
 				   .findByU1_T_First(userId1, type, orderByComparator);
 	}
@@ -1354,10 +1525,12 @@ public class SocialRelationUtil {
 	* @param type the type
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching social relation, or <code>null</code> if a matching social relation could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialRelation fetchByU1_T_First(
 		long userId1, int type,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialRelation> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByU1_T_First(userId1, type, orderByComparator);
 	}
@@ -1370,11 +1543,13 @@ public class SocialRelationUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching social relation
 	* @throws com.liferay.portlet.social.NoSuchRelationException if a matching social relation could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialRelation findByU1_T_Last(
 		long userId1, int type,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialRelation> orderByComparator)
-		throws com.liferay.portlet.social.NoSuchRelationException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchRelationException {
 		return getPersistence().findByU1_T_Last(userId1, type, orderByComparator);
 	}
 
@@ -1385,10 +1560,12 @@ public class SocialRelationUtil {
 	* @param type the type
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching social relation, or <code>null</code> if a matching social relation could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialRelation fetchByU1_T_Last(
 		long userId1, int type,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialRelation> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByU1_T_Last(userId1, type, orderByComparator);
 	}
@@ -1402,11 +1579,13 @@ public class SocialRelationUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next social relation
 	* @throws com.liferay.portlet.social.NoSuchRelationException if a social relation with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialRelation[] findByU1_T_PrevAndNext(
 		long relationId, long userId1, int type,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialRelation> orderByComparator)
-		throws com.liferay.portlet.social.NoSuchRelationException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchRelationException {
 		return getPersistence()
 				   .findByU1_T_PrevAndNext(relationId, userId1, type,
 			orderByComparator);
@@ -1417,8 +1596,10 @@ public class SocialRelationUtil {
 	*
 	* @param userId1 the user id1
 	* @param type the type
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByU1_T(long userId1, int type) {
+	public static void removeByU1_T(long userId1, int type)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeByU1_T(userId1, type);
 	}
 
@@ -1428,8 +1609,10 @@ public class SocialRelationUtil {
 	* @param userId1 the user id1
 	* @param type the type
 	* @return the number of matching social relations
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByU1_T(long userId1, int type) {
+	public static int countByU1_T(long userId1, int type)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByU1_T(userId1, type);
 	}
 
@@ -1439,9 +1622,11 @@ public class SocialRelationUtil {
 	* @param userId2 the user id2
 	* @param type the type
 	* @return the matching social relations
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.social.model.SocialRelation> findByU2_T(
-		long userId2, int type) {
+		long userId2, int type)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByU2_T(userId2, type);
 	}
 
@@ -1457,9 +1642,11 @@ public class SocialRelationUtil {
 	* @param start the lower bound of the range of social relations
 	* @param end the upper bound of the range of social relations (not inclusive)
 	* @return the range of matching social relations
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.social.model.SocialRelation> findByU2_T(
-		long userId2, int type, int start, int end) {
+		long userId2, int type, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByU2_T(userId2, type, start, end);
 	}
 
@@ -1476,10 +1663,12 @@ public class SocialRelationUtil {
 	* @param end the upper bound of the range of social relations (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching social relations
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.social.model.SocialRelation> findByU2_T(
 		long userId2, int type, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialRelation> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .findByU2_T(userId2, type, start, end, orderByComparator);
 	}
@@ -1492,11 +1681,13 @@ public class SocialRelationUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching social relation
 	* @throws com.liferay.portlet.social.NoSuchRelationException if a matching social relation could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialRelation findByU2_T_First(
 		long userId2, int type,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialRelation> orderByComparator)
-		throws com.liferay.portlet.social.NoSuchRelationException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchRelationException {
 		return getPersistence()
 				   .findByU2_T_First(userId2, type, orderByComparator);
 	}
@@ -1508,10 +1699,12 @@ public class SocialRelationUtil {
 	* @param type the type
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching social relation, or <code>null</code> if a matching social relation could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialRelation fetchByU2_T_First(
 		long userId2, int type,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialRelation> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByU2_T_First(userId2, type, orderByComparator);
 	}
@@ -1524,11 +1717,13 @@ public class SocialRelationUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching social relation
 	* @throws com.liferay.portlet.social.NoSuchRelationException if a matching social relation could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialRelation findByU2_T_Last(
 		long userId2, int type,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialRelation> orderByComparator)
-		throws com.liferay.portlet.social.NoSuchRelationException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchRelationException {
 		return getPersistence().findByU2_T_Last(userId2, type, orderByComparator);
 	}
 
@@ -1539,10 +1734,12 @@ public class SocialRelationUtil {
 	* @param type the type
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching social relation, or <code>null</code> if a matching social relation could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialRelation fetchByU2_T_Last(
 		long userId2, int type,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialRelation> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByU2_T_Last(userId2, type, orderByComparator);
 	}
@@ -1556,11 +1753,13 @@ public class SocialRelationUtil {
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next social relation
 	* @throws com.liferay.portlet.social.NoSuchRelationException if a social relation with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialRelation[] findByU2_T_PrevAndNext(
 		long relationId, long userId2, int type,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialRelation> orderByComparator)
-		throws com.liferay.portlet.social.NoSuchRelationException {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchRelationException {
 		return getPersistence()
 				   .findByU2_T_PrevAndNext(relationId, userId2, type,
 			orderByComparator);
@@ -1571,8 +1770,10 @@ public class SocialRelationUtil {
 	*
 	* @param userId2 the user id2
 	* @param type the type
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByU2_T(long userId2, int type) {
+	public static void removeByU2_T(long userId2, int type)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeByU2_T(userId2, type);
 	}
 
@@ -1582,8 +1783,10 @@ public class SocialRelationUtil {
 	* @param userId2 the user id2
 	* @param type the type
 	* @return the number of matching social relations
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByU2_T(long userId2, int type) {
+	public static int countByU2_T(long userId2, int type)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByU2_T(userId2, type);
 	}
 
@@ -1595,10 +1798,12 @@ public class SocialRelationUtil {
 	* @param type the type
 	* @return the matching social relation
 	* @throws com.liferay.portlet.social.NoSuchRelationException if a matching social relation could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialRelation findByU1_U2_T(
 		long userId1, long userId2, int type)
-		throws com.liferay.portlet.social.NoSuchRelationException {
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchRelationException {
 		return getPersistence().findByU1_U2_T(userId1, userId2, type);
 	}
 
@@ -1609,9 +1814,11 @@ public class SocialRelationUtil {
 	* @param userId2 the user id2
 	* @param type the type
 	* @return the matching social relation, or <code>null</code> if a matching social relation could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialRelation fetchByU1_U2_T(
-		long userId1, long userId2, int type) {
+		long userId1, long userId2, int type)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByU1_U2_T(userId1, userId2, type);
 	}
 
@@ -1623,9 +1830,11 @@ public class SocialRelationUtil {
 	* @param type the type
 	* @param retrieveFromCache whether to use the finder cache
 	* @return the matching social relation, or <code>null</code> if a matching social relation could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialRelation fetchByU1_U2_T(
-		long userId1, long userId2, int type, boolean retrieveFromCache) {
+		long userId1, long userId2, int type, boolean retrieveFromCache)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
 				   .fetchByU1_U2_T(userId1, userId2, type, retrieveFromCache);
 	}
@@ -1637,10 +1846,12 @@ public class SocialRelationUtil {
 	* @param userId2 the user id2
 	* @param type the type
 	* @return the social relation that was removed
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialRelation removeByU1_U2_T(
 		long userId1, long userId2, int type)
-		throws com.liferay.portlet.social.NoSuchRelationException {
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchRelationException {
 		return getPersistence().removeByU1_U2_T(userId1, userId2, type);
 	}
 
@@ -1651,8 +1862,10 @@ public class SocialRelationUtil {
 	* @param userId2 the user id2
 	* @param type the type
 	* @return the number of matching social relations
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByU1_U2_T(long userId1, long userId2, int type) {
+	public static int countByU1_U2_T(long userId1, long userId2, int type)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByU1_U2_T(userId1, userId2, type);
 	}
 
@@ -1693,15 +1906,18 @@ public class SocialRelationUtil {
 	* @param relationId the primary key of the social relation
 	* @return the social relation that was removed
 	* @throws com.liferay.portlet.social.NoSuchRelationException if a social relation with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialRelation remove(
 		long relationId)
-		throws com.liferay.portlet.social.NoSuchRelationException {
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchRelationException {
 		return getPersistence().remove(relationId);
 	}
 
 	public static com.liferay.portlet.social.model.SocialRelation updateImpl(
-		com.liferay.portlet.social.model.SocialRelation socialRelation) {
+		com.liferay.portlet.social.model.SocialRelation socialRelation)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().updateImpl(socialRelation);
 	}
 
@@ -1711,10 +1927,12 @@ public class SocialRelationUtil {
 	* @param relationId the primary key of the social relation
 	* @return the social relation
 	* @throws com.liferay.portlet.social.NoSuchRelationException if a social relation with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialRelation findByPrimaryKey(
 		long relationId)
-		throws com.liferay.portlet.social.NoSuchRelationException {
+		throws com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portlet.social.NoSuchRelationException {
 		return getPersistence().findByPrimaryKey(relationId);
 	}
 
@@ -1723,23 +1941,22 @@ public class SocialRelationUtil {
 	*
 	* @param relationId the primary key of the social relation
 	* @return the social relation, or <code>null</code> if a social relation with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.social.model.SocialRelation fetchByPrimaryKey(
-		long relationId) {
+		long relationId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().fetchByPrimaryKey(relationId);
-	}
-
-	public static java.util.Map<java.io.Serializable, com.liferay.portlet.social.model.SocialRelation> fetchByPrimaryKeys(
-		java.util.Set<java.io.Serializable> primaryKeys) {
-		return getPersistence().fetchByPrimaryKeys(primaryKeys);
 	}
 
 	/**
 	* Returns all the social relations.
 	*
 	* @return the social relations
+	* @throws SystemException if a system exception occurred
 	*/
-	public static java.util.List<com.liferay.portlet.social.model.SocialRelation> findAll() {
+	public static java.util.List<com.liferay.portlet.social.model.SocialRelation> findAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll();
 	}
 
@@ -1753,9 +1970,11 @@ public class SocialRelationUtil {
 	* @param start the lower bound of the range of social relations
 	* @param end the upper bound of the range of social relations (not inclusive)
 	* @return the range of social relations
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.social.model.SocialRelation> findAll(
-		int start, int end) {
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll(start, end);
 	}
 
@@ -1770,17 +1989,22 @@ public class SocialRelationUtil {
 	* @param end the upper bound of the range of social relations (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of social relations
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.social.model.SocialRelation> findAll(
 		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.social.model.SocialRelation> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findAll(start, end, orderByComparator);
 	}
 
 	/**
 	* Removes all the social relations from the database.
+	*
+	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeAll() {
+	public static void removeAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeAll();
 	}
 
@@ -1788,8 +2012,10 @@ public class SocialRelationUtil {
 	* Returns the number of social relations.
 	*
 	* @return the number of social relations
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int countAll() {
+	public static int countAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countAll();
 	}
 
@@ -1807,7 +2033,6 @@ public class SocialRelationUtil {
 	/**
 	 * @deprecated As of 6.2.0
 	 */
-	@Deprecated
 	public void setPersistence(SocialRelationPersistence persistence) {
 	}
 

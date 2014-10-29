@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,12 +14,11 @@
 
 package com.liferay.portal.repository.proxy;
 
-import aQute.bnd.annotation.ProviderType;
-
+import com.liferay.counter.service.CounterLocalService;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.repository.BaseRepository;
 import com.liferay.portal.kernel.repository.LocalRepository;
-import com.liferay.portal.kernel.repository.capabilities.Capability;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.FileVersion;
 import com.liferay.portal.kernel.repository.model.Folder;
@@ -31,7 +30,6 @@ import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.model.Lock;
 import com.liferay.portal.service.CompanyLocalService;
-import com.liferay.portal.service.RepositoryEntryLocalService;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.UserLocalService;
 import com.liferay.portlet.asset.service.AssetEntryLocalService;
@@ -45,7 +43,6 @@ import java.util.List;
 /**
  * @author Mika Koivisto
  */
-@ProviderType
 public class BaseRepositoryProxyBean
 	extends RepositoryModelProxyBean implements BaseRepository {
 
@@ -62,7 +59,7 @@ public class BaseRepositoryProxyBean
 			long folderId, String sourceFileName, String mimeType, String title,
 			String description, String changeLog, File file,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		FileEntry fileEntry = _baseRepository.addFileEntry(
 			folderId, sourceFileName, mimeType, title, description, changeLog,
@@ -76,7 +73,7 @@ public class BaseRepositoryProxyBean
 			long folderId, String sourceFileName, String mimeType, String title,
 			String description, String changeLog, InputStream is, long size,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		FileEntry fileEntry = _baseRepository.addFileEntry(
 			folderId, sourceFileName, mimeType, title, description, changeLog,
@@ -87,18 +84,20 @@ public class BaseRepositoryProxyBean
 
 	@Override
 	public Folder addFolder(
-			long parentFolderId, String name, String description,
+			long parentFolderId, String title, String description,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Folder folder = _baseRepository.addFolder(
-			parentFolderId, name, description, serviceContext);
+			parentFolderId, title, description, serviceContext);
 
 		return newFolderProxyBean(folder);
 	}
 
 	@Override
-	public FileVersion cancelCheckOut(long fileEntryId) throws PortalException {
+	public FileVersion cancelCheckOut(long fileEntryId)
+		throws PortalException, SystemException {
+
 		return _baseRepository.cancelCheckOut(fileEntryId);
 	}
 
@@ -106,7 +105,7 @@ public class BaseRepositoryProxyBean
 	public void checkInFileEntry(
 			long fileEntryId, boolean major, String changeLog,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		_baseRepository.checkInFileEntry(
 			fileEntryId, major, changeLog, serviceContext);
@@ -116,10 +115,9 @@ public class BaseRepositoryProxyBean
 	 * @deprecated As of 6.2.0, replaced by {@link #checkInFileEntry(long,
 	 *             String, ServiceContext)}
 	 */
-	@Deprecated
 	@Override
 	public void checkInFileEntry(long fileEntryId, String lockUuid)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		_baseRepository.checkInFileEntry(fileEntryId, lockUuid);
 	}
@@ -127,7 +125,7 @@ public class BaseRepositoryProxyBean
 	@Override
 	public void checkInFileEntry(
 			long fileEntryId, String lockUuid, ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		_baseRepository.checkInFileEntry(fileEntryId, lockUuid, serviceContext);
 	}
@@ -135,7 +133,7 @@ public class BaseRepositoryProxyBean
 	@Override
 	public FileEntry checkOutFileEntry(
 			long fileEntryId, ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		FileEntry fileEntry = _baseRepository.checkOutFileEntry(
 			fileEntryId, serviceContext);
@@ -147,7 +145,7 @@ public class BaseRepositoryProxyBean
 	public FileEntry checkOutFileEntry(
 			long fileEntryId, String owner, long expirationTime,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		FileEntry fileEntry = _baseRepository.checkOutFileEntry(
 			fileEntryId, owner, expirationTime, serviceContext);
@@ -159,52 +157,51 @@ public class BaseRepositoryProxyBean
 	public FileEntry copyFileEntry(
 			long groupId, long fileEntryId, long destFolderId,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return _baseRepository.copyFileEntry(
 			groupId, fileEntryId, destFolderId, serviceContext);
 	}
 
 	@Override
-	public void deleteFileEntry(long fileEntryId) throws PortalException {
+	public void deleteFileEntry(long fileEntryId)
+		throws PortalException, SystemException {
+
 		_baseRepository.deleteFileEntry(fileEntryId);
 	}
 
 	@Override
 	public void deleteFileEntry(long folderId, String title)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		_baseRepository.deleteFileEntry(folderId, title);
 	}
 
 	@Override
 	public void deleteFileVersion(long fileEntryId, String version)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		_baseRepository.deleteFileVersion(fileEntryId, version);
 	}
 
 	@Override
-	public void deleteFolder(long folderId) throws PortalException {
+	public void deleteFolder(long folderId)
+		throws PortalException, SystemException {
+
 		_baseRepository.deleteFolder(folderId);
 	}
 
 	@Override
-	public void deleteFolder(long parentFolderId, String name)
-		throws PortalException {
+	public void deleteFolder(long parentFolderId, String title)
+		throws PortalException, SystemException {
 
-		_baseRepository.deleteFolder(parentFolderId, name);
-	}
-
-	@Override
-	public <T extends Capability> T getCapability(Class<T> capabilityClass) {
-		return _baseRepository.getCapability(capabilityClass);
+		_baseRepository.deleteFolder(parentFolderId, title);
 	}
 
 	@Override
 	public List<FileEntry> getFileEntries(
-			long folderId, int start, int end, OrderByComparator<FileEntry> obc)
-		throws PortalException {
+			long folderId, int start, int end, OrderByComparator obc)
+		throws PortalException, SystemException {
 
 		List<FileEntry> fileEntries = _baseRepository.getFileEntries(
 			folderId, start, end, obc);
@@ -215,8 +212,8 @@ public class BaseRepositoryProxyBean
 	@Override
 	public List<FileEntry> getFileEntries(
 			long folderId, long documentTypeId, int start, int end,
-			OrderByComparator<FileEntry> obc)
-		throws PortalException {
+			OrderByComparator obc)
+		throws PortalException, SystemException {
 
 		List<FileEntry> fileEntries = _baseRepository.getFileEntries(
 			folderId, documentTypeId, start, end, obc);
@@ -227,8 +224,8 @@ public class BaseRepositoryProxyBean
 	@Override
 	public List<FileEntry> getFileEntries(
 			long folderId, String[] mimeTypes, int start, int end,
-			OrderByComparator<FileEntry> obc)
-		throws PortalException {
+			OrderByComparator obc)
+		throws PortalException, SystemException {
 
 		List<FileEntry> fileEntries = _baseRepository.getFileEntries(
 			folderId, mimeTypes, start, end, obc);
@@ -239,7 +236,7 @@ public class BaseRepositoryProxyBean
 	@Override
 	public List<Object> getFileEntriesAndFileShortcuts(
 			long folderId, int status, int start, int end)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		List<Object> objects = _baseRepository.getFileEntriesAndFileShortcuts(
 			folderId, status, start, end);
@@ -249,7 +246,7 @@ public class BaseRepositoryProxyBean
 
 	@Override
 	public int getFileEntriesAndFileShortcutsCount(long folderId, int status)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return _baseRepository.getFileEntriesAndFileShortcutsCount(
 			folderId, status);
@@ -258,33 +255,37 @@ public class BaseRepositoryProxyBean
 	@Override
 	public int getFileEntriesAndFileShortcutsCount(
 			long folderId, int status, String[] mimeTypes)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return _baseRepository.getFileEntriesAndFileShortcutsCount(
 			folderId, status, mimeTypes);
 	}
 
 	@Override
-	public int getFileEntriesCount(long folderId) throws PortalException {
+	public int getFileEntriesCount(long folderId)
+		throws PortalException, SystemException {
+
 		return _baseRepository.getFileEntriesCount(folderId);
 	}
 
 	@Override
 	public int getFileEntriesCount(long folderId, long documentTypeId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return _baseRepository.getFileEntriesCount(folderId, documentTypeId);
 	}
 
 	@Override
 	public int getFileEntriesCount(long folderId, String[] mimeTypes)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return _baseRepository.getFileEntriesCount(folderId, mimeTypes);
 	}
 
 	@Override
-	public FileEntry getFileEntry(long fileEntryId) throws PortalException {
+	public FileEntry getFileEntry(long fileEntryId)
+		throws PortalException, SystemException {
+
 		FileEntry fileEntry = _baseRepository.getFileEntry(fileEntryId);
 
 		return newFileEntryProxyBean(fileEntry);
@@ -292,7 +293,7 @@ public class BaseRepositoryProxyBean
 
 	@Override
 	public FileEntry getFileEntry(long folderId, String title)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		FileEntry fileEntry = _baseRepository.getFileEntry(folderId, title);
 
@@ -300,7 +301,9 @@ public class BaseRepositoryProxyBean
 	}
 
 	@Override
-	public FileEntry getFileEntryByUuid(String uuid) throws PortalException {
+	public FileEntry getFileEntryByUuid(String uuid)
+		throws PortalException, SystemException {
+
 		FileEntry fileEntry = _baseRepository.getFileEntryByUuid(uuid);
 
 		return newFileEntryProxyBean(fileEntry);
@@ -308,7 +311,7 @@ public class BaseRepositoryProxyBean
 
 	@Override
 	public FileVersion getFileVersion(long fileVersionId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		FileVersion fileVersion = _baseRepository.getFileVersion(fileVersionId);
 
@@ -316,17 +319,19 @@ public class BaseRepositoryProxyBean
 	}
 
 	@Override
-	public Folder getFolder(long folderId) throws PortalException {
+	public Folder getFolder(long folderId)
+		throws PortalException, SystemException {
+
 		Folder folder = _baseRepository.getFolder(folderId);
 
 		return newFolderProxyBean(folder);
 	}
 
 	@Override
-	public Folder getFolder(long parentFolderId, String name)
-		throws PortalException {
+	public Folder getFolder(long parentFolderId, String title)
+		throws PortalException, SystemException {
 
-		Folder folder = _baseRepository.getFolder(parentFolderId, name);
+		Folder folder = _baseRepository.getFolder(parentFolderId, title);
 
 		return newFolderProxyBean(folder);
 	}
@@ -334,8 +339,8 @@ public class BaseRepositoryProxyBean
 	@Override
 	public List<Folder> getFolders(
 			long parentFolderId, boolean includeMountfolders, int start,
-			int end, OrderByComparator<Folder> obc)
-		throws PortalException {
+			int end, OrderByComparator obc)
+		throws PortalException, SystemException {
 
 		List<Folder> folders = _baseRepository.getFolders(
 			parentFolderId, includeMountfolders, start, end, obc);
@@ -346,8 +351,8 @@ public class BaseRepositoryProxyBean
 	@Override
 	public List<Folder> getFolders(
 			long parentFolderId, int status, boolean includeMountfolders,
-			int start, int end, OrderByComparator<Folder> obc)
-		throws PortalException {
+			int start, int end, OrderByComparator obc)
+		throws PortalException, SystemException {
 
 		List<Folder> folders = _baseRepository.getFolders(
 			parentFolderId, status, includeMountfolders, start, end, obc);
@@ -358,8 +363,8 @@ public class BaseRepositoryProxyBean
 	@Override
 	public List<Object> getFoldersAndFileEntriesAndFileShortcuts(
 			long folderId, int status, boolean includeMountFolders, int start,
-			int end, OrderByComparator<?> obc)
-		throws PortalException {
+			int end, OrderByComparator obc)
+		throws PortalException, SystemException {
 
 		List<Object> objects =
 			_baseRepository.getFoldersAndFileEntriesAndFileShortcuts(
@@ -372,8 +377,8 @@ public class BaseRepositoryProxyBean
 	public List<Object> getFoldersAndFileEntriesAndFileShortcuts(
 			long folderId, int status, String[] mimeTypes,
 			boolean includeMountFolders, int start, int end,
-			OrderByComparator<?> obc)
-		throws PortalException {
+			OrderByComparator obc)
+		throws PortalException, SystemException {
 
 		List<Object> objects =
 			_baseRepository.getFoldersAndFileEntriesAndFileShortcuts(
@@ -386,7 +391,7 @@ public class BaseRepositoryProxyBean
 	@Override
 	public int getFoldersAndFileEntriesAndFileShortcutsCount(
 			long folderId, int status, boolean includeMountFolders)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return _baseRepository.getFoldersAndFileEntriesAndFileShortcutsCount(
 			folderId, status, includeMountFolders);
@@ -396,7 +401,7 @@ public class BaseRepositoryProxyBean
 	public int getFoldersAndFileEntriesAndFileShortcutsCount(
 			long folderId, int status, String[] mimeTypes,
 			boolean includeMountFolders)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return _baseRepository.getFoldersAndFileEntriesAndFileShortcutsCount(
 			folderId, status, mimeTypes, includeMountFolders);
@@ -404,7 +409,7 @@ public class BaseRepositoryProxyBean
 
 	@Override
 	public int getFoldersCount(long parentFolderId, boolean includeMountfolders)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return _baseRepository.getFoldersCount(
 			parentFolderId, includeMountfolders);
@@ -413,7 +418,7 @@ public class BaseRepositoryProxyBean
 	@Override
 	public int getFoldersCount(
 			long parentFolderId, int status, boolean includeMountfolders)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return _baseRepository.getFoldersCount(
 			parentFolderId, status, includeMountfolders);
@@ -421,7 +426,7 @@ public class BaseRepositoryProxyBean
 
 	@Override
 	public int getFoldersFileEntriesCount(List<Long> folderIds, int status)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return _baseRepository.getFoldersFileEntriesCount(folderIds, status);
 	}
@@ -435,9 +440,8 @@ public class BaseRepositoryProxyBean
 
 	@Override
 	public List<Folder> getMountFolders(
-			long parentFolderId, int start, int end,
-			OrderByComparator<Folder> obc)
-		throws PortalException {
+			long parentFolderId, int start, int end, OrderByComparator obc)
+		throws PortalException, SystemException {
 
 		List<Folder> folders = _baseRepository.getMountFolders(
 			parentFolderId, start, end, obc);
@@ -447,7 +451,7 @@ public class BaseRepositoryProxyBean
 
 	@Override
 	public int getMountFoldersCount(long parentFolderId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return _baseRepository.getMountFoldersCount(parentFolderId);
 	}
@@ -459,8 +463,8 @@ public class BaseRepositoryProxyBean
 	@Override
 	public List<FileEntry> getRepositoryFileEntries(
 			long userId, long rootFolderId, int start, int end,
-			OrderByComparator<FileEntry> obc)
-		throws PortalException {
+			OrderByComparator obc)
+		throws PortalException, SystemException {
 
 		List<FileEntry> fileEntries = _baseRepository.getRepositoryFileEntries(
 			userId, rootFolderId, start, end, obc);
@@ -471,8 +475,8 @@ public class BaseRepositoryProxyBean
 	@Override
 	public List<FileEntry> getRepositoryFileEntries(
 			long userId, long rootFolderId, String[] mimeTypes, int status,
-			int start, int end, OrderByComparator<FileEntry> obc)
-		throws PortalException {
+			int start, int end, OrderByComparator obc)
+		throws PortalException, SystemException {
 
 		List<FileEntry> fileEntries = _baseRepository.getRepositoryFileEntries(
 			userId, rootFolderId, mimeTypes, status, start, end, obc);
@@ -482,7 +486,7 @@ public class BaseRepositoryProxyBean
 
 	@Override
 	public int getRepositoryFileEntriesCount(long userId, long rootFolderId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return _baseRepository.getRepositoryFileEntriesCount(
 			userId, rootFolderId);
@@ -491,7 +495,7 @@ public class BaseRepositoryProxyBean
 	@Override
 	public int getRepositoryFileEntriesCount(
 			long userId, long rootFolderId, String[] mimeTypes, int status)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return _baseRepository.getRepositoryFileEntriesCount(
 			userId, rootFolderId, mimeTypes, status);
@@ -504,14 +508,14 @@ public class BaseRepositoryProxyBean
 
 	@Override
 	public void getSubfolderIds(List<Long> folderIds, long folderId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		_baseRepository.getSubfolderIds(folderIds, folderId);
 	}
 
 	@Override
 	public List<Long> getSubfolderIds(long folderId, boolean recurse)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return _baseRepository.getSubfolderIds(folderId, recurse);
 	}
@@ -527,24 +531,18 @@ public class BaseRepositoryProxyBean
 	}
 
 	@Override
-	public void initRepository() throws PortalException {
+	public void initRepository() throws PortalException, SystemException {
 		_baseRepository.initRepository();
-	}
-
-	@Override
-	public <T extends Capability> boolean isCapabilityProvided(
-		Class<T> capabilityClass) {
-
-		return _baseRepository.isCapabilityProvided(capabilityClass);
 	}
 
 	/**
 	 * @deprecated As of 6.2.0, replaced by {@link #checkOutFileEntry(long,
 	 *             ServiceContext)}
 	 */
-	@Deprecated
 	@Override
-	public Lock lockFileEntry(long fileEntryId) throws PortalException {
+	public Lock lockFileEntry(long fileEntryId)
+		throws PortalException, SystemException {
+
 		Lock lock = _baseRepository.lockFileEntry(fileEntryId);
 
 		return (Lock)newProxyInstance(lock, Lock.class);
@@ -554,11 +552,10 @@ public class BaseRepositoryProxyBean
 	 * @deprecated As of 6.2.0, replaced by {@link #checkOutFileEntry(long,
 	 *             String, long, ServiceContext)}
 	 */
-	@Deprecated
 	@Override
 	public Lock lockFileEntry(
 			long fileEntryId, String owner, long expirationTime)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Lock lock = _baseRepository.lockFileEntry(
 			fileEntryId, owner, expirationTime);
@@ -567,7 +564,9 @@ public class BaseRepositoryProxyBean
 	}
 
 	@Override
-	public Lock lockFolder(long folderId) throws PortalException {
+	public Lock lockFolder(long folderId)
+		throws PortalException, SystemException {
+
 		Lock lock = _baseRepository.lockFolder(folderId);
 
 		return (Lock)newProxyInstance(lock, Lock.class);
@@ -577,7 +576,7 @@ public class BaseRepositoryProxyBean
 	public Lock lockFolder(
 			long folderId, String owner, boolean inheritable,
 			long expirationTime)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Lock lock = _baseRepository.lockFolder(
 			folderId, owner, inheritable, expirationTime);
@@ -588,7 +587,7 @@ public class BaseRepositoryProxyBean
 	@Override
 	public FileEntry moveFileEntry(
 			long fileEntryId, long newFolderId, ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		FileEntry fileEntry = _baseRepository.moveFileEntry(
 			fileEntryId, newFolderId, serviceContext);
@@ -600,7 +599,7 @@ public class BaseRepositoryProxyBean
 	public Folder moveFolder(
 			long folderId, long newParentFolderId,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Folder folder = _baseRepository.moveFolder(
 			folderId, newParentFolderId, serviceContext);
@@ -611,7 +610,7 @@ public class BaseRepositoryProxyBean
 	@Override
 	public Lock refreshFileEntryLock(
 			String lockUuid, long companyId, long expirationTime)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Lock lock = _baseRepository.refreshFileEntryLock(
 			lockUuid, companyId, expirationTime);
@@ -622,7 +621,7 @@ public class BaseRepositoryProxyBean
 	@Override
 	public Lock refreshFolderLock(
 			String lockUuid, long companyId, long expirationTime)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Lock lock = _baseRepository.refreshFolderLock(
 			lockUuid, companyId, expirationTime);
@@ -633,14 +632,14 @@ public class BaseRepositoryProxyBean
 	@Override
 	public void revertFileEntry(
 			long fileEntryId, String version, ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		_baseRepository.revertFileEntry(fileEntryId, version, serviceContext);
 	}
 
 	@Override
 	public Hits search(long creatorUserId, int status, int start, int end)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return _baseRepository.search(creatorUserId, status, start, end);
 	}
@@ -649,7 +648,7 @@ public class BaseRepositoryProxyBean
 	public Hits search(
 			long creatorUserId, long folderId, String[] mimeTypes, int status,
 			int start, int end)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return _baseRepository.search(
 			creatorUserId, folderId, mimeTypes, status, start, end);
@@ -687,6 +686,13 @@ public class BaseRepositoryProxyBean
 	}
 
 	@Override
+	public void setCounterLocalService(
+		CounterLocalService counterLocalService) {
+
+		_baseRepository.setCounterLocalService(counterLocalService);
+	}
+
+	@Override
 	public void setDLAppHelperLocalService(
 		DLAppHelperLocalService dlAppHelperLocalService) {
 
@@ -696,14 +702,6 @@ public class BaseRepositoryProxyBean
 	@Override
 	public void setGroupId(long groupId) {
 		_baseRepository.setGroupId(groupId);
-	}
-
-	@Override
-	public void setRepositoryEntryLocalService(
-		RepositoryEntryLocalService repositoryEntryLocalService) {
-
-		_baseRepository.setRepositoryEntryLocalService(
-			repositoryEntryLocalService);
 	}
 
 	@Override
@@ -725,16 +723,16 @@ public class BaseRepositoryProxyBean
 
 	@Override
 	public void unlockFolder(long folderId, String lockUuid)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		_baseRepository.unlockFolder(folderId, lockUuid);
 	}
 
 	@Override
-	public void unlockFolder(long parentFolderId, String name, String lockUuid)
-		throws PortalException {
+	public void unlockFolder(long parentFolderId, String title, String lockUuid)
+		throws PortalException, SystemException {
 
-		_baseRepository.unlockFolder(parentFolderId, name, lockUuid);
+		_baseRepository.unlockFolder(parentFolderId, title, lockUuid);
 	}
 
 	@Override
@@ -742,7 +740,7 @@ public class BaseRepositoryProxyBean
 			long fileEntryId, String sourceFileName, String mimeType,
 			String title, String description, String changeLog,
 			boolean majorVersion, File file, ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		FileEntry fileEntry = _baseRepository.updateFileEntry(
 			fileEntryId, sourceFileName, mimeType, title, description,
@@ -757,7 +755,7 @@ public class BaseRepositoryProxyBean
 			String title, String description, String changeLog,
 			boolean majorVersion, InputStream is, long size,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		FileEntry fileEntry = _baseRepository.updateFileEntry(
 			fileEntryId, sourceFileName, mimeType, title, description,
@@ -768,33 +766,33 @@ public class BaseRepositoryProxyBean
 
 	@Override
 	public Folder updateFolder(
-			long folderId, String name, String description,
+			long folderId, String title, String description,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Folder folder = _baseRepository.updateFolder(
-			folderId, name, description, serviceContext);
+			folderId, title, description, serviceContext);
 
 		return newFolderProxyBean(folder);
 	}
 
 	@Override
 	public boolean verifyFileEntryCheckOut(long fileEntryId, String lockUuid)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return _baseRepository.verifyFileEntryCheckOut(fileEntryId, lockUuid);
 	}
 
 	@Override
 	public boolean verifyFileEntryLock(long fileEntryId, String lockUuid)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return _baseRepository.verifyFileEntryLock(fileEntryId, lockUuid);
 	}
 
 	@Override
 	public boolean verifyInheritableLock(long folderId, String lockUuid)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return _baseRepository.verifyInheritableLock(folderId, lockUuid);
 	}

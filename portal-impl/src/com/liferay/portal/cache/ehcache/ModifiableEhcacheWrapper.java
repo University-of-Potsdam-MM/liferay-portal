@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -21,7 +21,6 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import net.sf.ehcache.CacheException;
@@ -82,7 +81,6 @@ public class ModifiableEhcacheWrapper implements Ehcache {
 	/**
 	 * @deprecated As of 6.2.0
 	 */
-	@Deprecated
 	@Override
 	public long calculateInMemorySize()
 		throws CacheException, IllegalStateException {
@@ -93,7 +91,6 @@ public class ModifiableEhcacheWrapper implements Ehcache {
 	/**
 	 * @deprecated As of 6.2.0
 	 */
-	@Deprecated
 	@Override
 	public long calculateOffHeapSize()
 		throws CacheException, IllegalStateException {
@@ -104,7 +101,6 @@ public class ModifiableEhcacheWrapper implements Ehcache {
 	/**
 	 * @deprecated As of 6.2.0
 	 */
-	@Deprecated
 	@Override
 	public long calculateOnDiskSize()
 		throws CacheException, IllegalStateException {
@@ -208,7 +204,6 @@ public class ModifiableEhcacheWrapper implements Ehcache {
 	/**
 	 * @deprecated As of 6.2.0
 	 */
-	@Deprecated
 	@Override
 	public int getDiskStoreSize() throws IllegalStateException {
 		return _ehcache.getDiskStoreSize();
@@ -233,7 +228,6 @@ public class ModifiableEhcacheWrapper implements Ehcache {
 	/**
 	 * @deprecated As of 6.2.0
 	 */
-	@Deprecated
 	@Override
 	@SuppressWarnings("rawtypes")
 	public List getKeysNoDuplicateCheck() throws IllegalStateException {
@@ -251,7 +245,6 @@ public class ModifiableEhcacheWrapper implements Ehcache {
 	/**
 	 * @deprecated As of 6.2.0
 	 */
-	@Deprecated
 	@Override
 	public long getMemoryStoreSize() throws IllegalStateException {
 		return _ehcache.getMemoryStoreSize();
@@ -265,7 +258,6 @@ public class ModifiableEhcacheWrapper implements Ehcache {
 	/**
 	 * @deprecated As of 6.2.0
 	 */
-	@Deprecated
 	@Override
 	public long getOffHeapStoreSize() throws IllegalStateException {
 		return _ehcache.getOffHeapStoreSize();
@@ -305,12 +297,6 @@ public class ModifiableEhcacheWrapper implements Ehcache {
 		throws CacheException {
 
 		return _ehcache.getSearchAttribute(attributeName);
-	}
-
-	@Override
-	@SuppressWarnings("rawtypes")
-	public Set<Attribute> getSearchAttributes() throws CacheException {
-		return _ehcache.getSearchAttributes();
 	}
 
 	@Override
@@ -370,7 +356,6 @@ public class ModifiableEhcacheWrapper implements Ehcache {
 	/**
 	 * @deprecated As of 6.1.0, replaced by {@link #isClusterBulkLoadEnabled}
 	 */
-	@Deprecated
 	@Override
 	public boolean isClusterCoherent() throws TerracottaNotRunningException {
 		return _ehcache.isClusterBulkLoadEnabled();
@@ -423,7 +408,6 @@ public class ModifiableEhcacheWrapper implements Ehcache {
 	/**
 	 * @deprecated As of 6.1.0, replaced by {@link #isNodeBulkLoadEnabled}
 	 */
-	@Deprecated
 	@Override
 	public boolean isNodeCoherent() throws TerracottaNotRunningException {
 		return _ehcache.isNodeBulkLoadEnabled();
@@ -516,6 +500,7 @@ public class ModifiableEhcacheWrapper implements Ehcache {
 
 	@Override
 	public void registerCacheExtension(CacheExtension cacheExtension) {
+
 		_ehcache.registerCacheExtension(cacheExtension);
 	}
 
@@ -526,6 +511,7 @@ public class ModifiableEhcacheWrapper implements Ehcache {
 
 	@Override
 	public void registerCacheWriter(CacheWriter cacheWriter) {
+
 		_ehcache.registerCacheWriter(cacheWriter);
 	}
 
@@ -703,7 +689,6 @@ public class ModifiableEhcacheWrapper implements Ehcache {
 	 * @deprecated As of 6.1.0, replaced by {@link
 	 *             #setNodeBulkLoadEnabled(boolean)}
 	 */
-	@Deprecated
 	@Override
 	public void setNodeCoherent(boolean nodeCoherent)
 		throws TerracottaNotRunningException, UnsupportedOperationException {
@@ -767,7 +752,6 @@ public class ModifiableEhcacheWrapper implements Ehcache {
 	 * @deprecated As of 6.1.0, replaced by {@link
 	 *             #waitUntilClusterBulkLoadComplete}
 	 */
-	@Deprecated
 	@Override
 	public void waitUntilClusterCoherent()
 		throws TerracottaNotRunningException, UnsupportedOperationException {

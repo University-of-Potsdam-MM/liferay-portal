@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -16,7 +16,6 @@ package com.liferay.portal.events;
 
 import com.liferay.portal.kernel.events.ActionException;
 import com.liferay.portal.kernel.metadata.RawMetadataProcessorUtil;
-import com.liferay.portal.kernel.upgrade.util.UpgradeProcessUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringBundler;
@@ -28,6 +27,7 @@ import com.liferay.portal.model.Group;
 import com.liferay.portal.service.GroupLocalServiceUtil;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.UserLocalServiceUtil;
+import com.liferay.portal.upgrade.UpgradeProcessUtil;
 import com.liferay.portal.util.PortalUtil;
 import com.liferay.portlet.documentlibrary.NoSuchFileEntryTypeException;
 import com.liferay.portlet.documentlibrary.model.DLFileEntryMetadata;
@@ -91,10 +91,10 @@ public class AddDefaultDocumentLibraryStructuresAction
 
 		Locale locale = PortalUtil.getSiteDefaultLocale(groupId);
 
-		String definition = getDynamicDDMStructureDefinition(
+		String xsd = getDynamicDDMStructureXSD(
 			"document-library-structures.xml", dlFileEntryTypeKey, locale);
 
-		serviceContext.setAttribute("definition", definition);
+		serviceContext.setAttribute("xsd", xsd);
 
 		try {
 			DLFileEntryTypeLocalServiceUtil.getFileEntryType(
@@ -184,7 +184,7 @@ public class AddDefaultDocumentLibraryStructuresAction
 					name);
 
 			if (ddmStructure != null) {
-				ddmStructure.setDefinition(structureElementRootXML);
+				ddmStructure.setXsd(structureElementRootXML);
 
 				DDMStructureLocalServiceUtil.updateDDMStructure(ddmStructure);
 			}
@@ -209,10 +209,9 @@ public class AddDefaultDocumentLibraryStructuresAction
 	}
 
 	protected String buildDLRawMetadataElementXML(Field field, Locale locale) {
-		StringBundler sb = new StringBundler(15);
+		StringBundler sb = new StringBundler(14);
 
-		sb.append("<dynamic-element dataType=\"string\" indexType=\"text\" ");
-		sb.append("name=\"");
+		sb.append("<dynamic-element dataType=\"string\" name=\"");
 
 		Class<?> fieldClass = field.getDeclaringClass();
 

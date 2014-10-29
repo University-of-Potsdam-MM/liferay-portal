@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -605,11 +605,6 @@ public class BeanPropertiesImpl implements BeanProperties {
 		catch (Exception e) {
 			_log.error(e, e);
 		}
-	}
-
-	@Override
-	public void setPropertySilent(Object bean, String param, Object value) {
-		BeanUtil.setPropertyForcedSilent(bean, param, value);
 	}
 
 	protected Date getDate(String param, HttpServletRequest request) {

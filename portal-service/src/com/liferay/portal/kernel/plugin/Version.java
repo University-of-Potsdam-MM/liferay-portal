@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -290,9 +290,6 @@ public class Version implements Comparable<Version>, Serializable {
 		if (st.hasMoreTokens()) {
 			_buildNumber = st.nextToken();
 		}
-		else {
-			_buildNumber = null;
-		}
 	}
 
 	private static boolean _contains(
@@ -320,7 +317,7 @@ public class Version implements Comparable<Version>, Serializable {
 	private static String _toString(
 		String major, String minor, String bugFix, String buildNumber) {
 
-		StringBundler sb = new StringBundler(7);
+		StringBundler sb = new StringBundler();
 
 		sb.append(major);
 
@@ -359,11 +356,11 @@ public class Version implements Comparable<Version>, Serializable {
 
 	private static final String _SEPARATOR = StringPool.PERIOD;
 
-	private static final Map<String, Version> _versions =
+	private static Map<String, Version> _versions =
 		new ConcurrentHashMap<String, Version>();
 
 	private String _bugFix;
-	private final String _buildNumber;
+	private String _buildNumber;
 	private String _major;
 	private String _minor;
 

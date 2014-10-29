@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portlet.documentlibrary.service.impl;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.security.permission.ActionKeys;
 import com.liferay.portal.service.ServiceContext;
@@ -34,7 +35,7 @@ public class DLFileShortcutServiceImpl extends DLFileShortcutServiceBaseImpl {
 	public DLFileShortcut addFileShortcut(
 			long groupId, long folderId, long toFileEntryId,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		DLFolderPermission.check(
 			getPermissionChecker(), groupId, folderId, ActionKeys.ADD_SHORTCUT);
@@ -52,7 +53,9 @@ public class DLFileShortcutServiceImpl extends DLFileShortcutServiceBaseImpl {
 	}
 
 	@Override
-	public void deleteFileShortcut(long fileShortcutId) throws PortalException {
+	public void deleteFileShortcut(long fileShortcutId)
+		throws PortalException, SystemException {
+
 		DLFileShortcutPermission.check(
 			getPermissionChecker(), fileShortcutId, ActionKeys.DELETE);
 
@@ -61,7 +64,7 @@ public class DLFileShortcutServiceImpl extends DLFileShortcutServiceBaseImpl {
 
 	@Override
 	public DLFileShortcut getFileShortcut(long fileShortcutId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		DLFileShortcutPermission.check(
 			getPermissionChecker(), fileShortcutId, ActionKeys.VIEW);
@@ -73,7 +76,7 @@ public class DLFileShortcutServiceImpl extends DLFileShortcutServiceBaseImpl {
 	public DLFileShortcut updateFileShortcut(
 			long fileShortcutId, long folderId, long toFileEntryId,
 			ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		DLFileShortcutPermission.check(
 			getPermissionChecker(), fileShortcutId, ActionKeys.UPDATE);

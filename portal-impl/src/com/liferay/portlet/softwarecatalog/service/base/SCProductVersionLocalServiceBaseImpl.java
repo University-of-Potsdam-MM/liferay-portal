@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,16 +14,10 @@
 
 package com.liferay.portlet.softwarecatalog.service.base;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.bean.IdentifiableBean;
-import com.liferay.portal.kernel.dao.db.DB;
-import com.liferay.portal.kernel.dao.db.DBFactoryUtil;
 import com.liferay.portal.kernel.dao.jdbc.SqlUpdate;
 import com.liferay.portal.kernel.dao.jdbc.SqlUpdateFactoryUtil;
-import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
-import com.liferay.portal.kernel.dao.orm.DefaultActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.Projection;
@@ -37,12 +31,13 @@ import com.liferay.portal.service.BaseLocalServiceImpl;
 import com.liferay.portal.service.PersistedModelLocalServiceRegistry;
 import com.liferay.portal.service.persistence.UserFinder;
 import com.liferay.portal.service.persistence.UserPersistence;
-import com.liferay.portal.util.PortalUtil;
 
 import com.liferay.portlet.softwarecatalog.model.SCProductVersion;
 import com.liferay.portlet.softwarecatalog.service.SCProductVersionLocalService;
 import com.liferay.portlet.softwarecatalog.service.persistence.SCFrameworkVersionPersistence;
+import com.liferay.portlet.softwarecatalog.service.persistence.SCLicensePersistence;
 import com.liferay.portlet.softwarecatalog.service.persistence.SCProductEntryPersistence;
+import com.liferay.portlet.softwarecatalog.service.persistence.SCProductScreenshotPersistence;
 import com.liferay.portlet.softwarecatalog.service.persistence.SCProductVersionPersistence;
 
 import java.io.Serializable;
@@ -63,7 +58,6 @@ import javax.sql.DataSource;
  * @see com.liferay.portlet.softwarecatalog.service.SCProductVersionLocalServiceUtil
  * @generated
  */
-@ProviderType
 public abstract class SCProductVersionLocalServiceBaseImpl
 	extends BaseLocalServiceImpl implements SCProductVersionLocalService,
 		IdentifiableBean {
@@ -78,11 +72,12 @@ public abstract class SCProductVersionLocalServiceBaseImpl
 	 *
 	 * @param scProductVersion the s c product version
 	 * @return the s c product version that was added
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
 	public SCProductVersion addSCProductVersion(
-		SCProductVersion scProductVersion) {
+		SCProductVersion scProductVersion) throws SystemException {
 		scProductVersion.setNew(true);
 
 		return scProductVersionPersistence.update(scProductVersion);
@@ -105,11 +100,12 @@ public abstract class SCProductVersionLocalServiceBaseImpl
 	 * @param productVersionId the primary key of the s c product version
 	 * @return the s c product version that was removed
 	 * @throws PortalException if a s c product version with the primary key could not be found
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.DELETE)
 	@Override
 	public SCProductVersion deleteSCProductVersion(long productVersionId)
-		throws PortalException {
+		throws PortalException, SystemException {
 		return scProductVersionPersistence.remove(productVersionId);
 	}
 
@@ -118,11 +114,12 @@ public abstract class SCProductVersionLocalServiceBaseImpl
 	 *
 	 * @param scProductVersion the s c product version
 	 * @return the s c product version that was removed
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.DELETE)
 	@Override
 	public SCProductVersion deleteSCProductVersion(
-		SCProductVersion scProductVersion) {
+		SCProductVersion scProductVersion) throws SystemException {
 		return scProductVersionPersistence.remove(scProductVersion);
 	}
 
@@ -139,9 +136,12 @@ public abstract class SCProductVersionLocalServiceBaseImpl
 	 *
 	 * @param dynamicQuery the dynamic query
 	 * @return the matching rows
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery) {
+	@SuppressWarnings("rawtypes")
+	public List dynamicQuery(DynamicQuery dynamicQuery)
+		throws SystemException {
 		return scProductVersionPersistence.findWithDynamicQuery(dynamicQuery);
 	}
 
@@ -156,10 +156,12 @@ public abstract class SCProductVersionLocalServiceBaseImpl
 	 * @param start the lower bound of the range of model instances
 	 * @param end the upper bound of the range of model instances (not inclusive)
 	 * @return the range of matching rows
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
-		int end) {
+	@SuppressWarnings("rawtypes")
+	public List dynamicQuery(DynamicQuery dynamicQuery, int start, int end)
+		throws SystemException {
 		return scProductVersionPersistence.findWithDynamicQuery(dynamicQuery,
 			start, end);
 	}
@@ -176,10 +178,12 @@ public abstract class SCProductVersionLocalServiceBaseImpl
 	 * @param end the upper bound of the range of model instances (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching rows
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
-		int end, OrderByComparator<T> orderByComparator) {
+	@SuppressWarnings("rawtypes")
+	public List dynamicQuery(DynamicQuery dynamicQuery, int start, int end,
+		OrderByComparator orderByComparator) throws SystemException {
 		return scProductVersionPersistence.findWithDynamicQuery(dynamicQuery,
 			start, end, orderByComparator);
 	}
@@ -189,9 +193,11 @@ public abstract class SCProductVersionLocalServiceBaseImpl
 	 *
 	 * @param dynamicQuery the dynamic query
 	 * @return the number of rows that match the dynamic query
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public long dynamicQueryCount(DynamicQuery dynamicQuery) {
+	public long dynamicQueryCount(DynamicQuery dynamicQuery)
+		throws SystemException {
 		return scProductVersionPersistence.countWithDynamicQuery(dynamicQuery);
 	}
 
@@ -201,16 +207,18 @@ public abstract class SCProductVersionLocalServiceBaseImpl
 	 * @param dynamicQuery the dynamic query
 	 * @param projection the projection to apply to the query
 	 * @return the number of rows that match the dynamic query
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public long dynamicQueryCount(DynamicQuery dynamicQuery,
-		Projection projection) {
+		Projection projection) throws SystemException {
 		return scProductVersionPersistence.countWithDynamicQuery(dynamicQuery,
 			projection);
 	}
 
 	@Override
-	public SCProductVersion fetchSCProductVersion(long productVersionId) {
+	public SCProductVersion fetchSCProductVersion(long productVersionId)
+		throws SystemException {
 		return scProductVersionPersistence.fetchByPrimaryKey(productVersionId);
 	}
 
@@ -220,47 +228,17 @@ public abstract class SCProductVersionLocalServiceBaseImpl
 	 * @param productVersionId the primary key of the s c product version
 	 * @return the s c product version
 	 * @throws PortalException if a s c product version with the primary key could not be found
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public SCProductVersion getSCProductVersion(long productVersionId)
-		throws PortalException {
+		throws PortalException, SystemException {
 		return scProductVersionPersistence.findByPrimaryKey(productVersionId);
 	}
 
 	@Override
-	public ActionableDynamicQuery getActionableDynamicQuery() {
-		ActionableDynamicQuery actionableDynamicQuery = new DefaultActionableDynamicQuery();
-
-		actionableDynamicQuery.setBaseLocalService(com.liferay.portlet.softwarecatalog.service.SCProductVersionLocalServiceUtil.getService());
-		actionableDynamicQuery.setClass(SCProductVersion.class);
-		actionableDynamicQuery.setClassLoader(getClassLoader());
-
-		actionableDynamicQuery.setPrimaryKeyPropertyName("productVersionId");
-
-		return actionableDynamicQuery;
-	}
-
-	protected void initActionableDynamicQuery(
-		ActionableDynamicQuery actionableDynamicQuery) {
-		actionableDynamicQuery.setBaseLocalService(com.liferay.portlet.softwarecatalog.service.SCProductVersionLocalServiceUtil.getService());
-		actionableDynamicQuery.setClass(SCProductVersion.class);
-		actionableDynamicQuery.setClassLoader(getClassLoader());
-
-		actionableDynamicQuery.setPrimaryKeyPropertyName("productVersionId");
-	}
-
-	/**
-	 * @throws PortalException
-	 */
-	@Override
-	public PersistedModel deletePersistedModel(PersistedModel persistedModel)
-		throws PortalException {
-		return scProductVersionLocalService.deleteSCProductVersion((SCProductVersion)persistedModel);
-	}
-
-	@Override
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
-		throws PortalException {
+		throws PortalException, SystemException {
 		return scProductVersionPersistence.findByPrimaryKey(primaryKeyObj);
 	}
 
@@ -274,9 +252,11 @@ public abstract class SCProductVersionLocalServiceBaseImpl
 	 * @param start the lower bound of the range of s c product versions
 	 * @param end the upper bound of the range of s c product versions (not inclusive)
 	 * @return the range of s c product versions
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public List<SCProductVersion> getSCProductVersions(int start, int end) {
+	public List<SCProductVersion> getSCProductVersions(int start, int end)
+		throws SystemException {
 		return scProductVersionPersistence.findAll(start, end);
 	}
 
@@ -284,9 +264,10 @@ public abstract class SCProductVersionLocalServiceBaseImpl
 	 * Returns the number of s c product versions.
 	 *
 	 * @return the number of s c product versions
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public int getSCProductVersionsCount() {
+	public int getSCProductVersionsCount() throws SystemException {
 		return scProductVersionPersistence.countAll();
 	}
 
@@ -295,164 +276,387 @@ public abstract class SCProductVersionLocalServiceBaseImpl
 	 *
 	 * @param scProductVersion the s c product version
 	 * @return the s c product version that was updated
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
 	public SCProductVersion updateSCProductVersion(
-		SCProductVersion scProductVersion) {
+		SCProductVersion scProductVersion) throws SystemException {
 		return scProductVersionPersistence.update(scProductVersion);
 	}
 
 	/**
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public void addSCFrameworkVersionSCProductVersion(long frameworkVersionId,
-		long productVersionId) {
+		long productVersionId) throws SystemException {
 		scFrameworkVersionPersistence.addSCProductVersion(frameworkVersionId,
 			productVersionId);
 	}
 
 	/**
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public void addSCFrameworkVersionSCProductVersion(long frameworkVersionId,
-		SCProductVersion scProductVersion) {
+		SCProductVersion scProductVersion) throws SystemException {
 		scFrameworkVersionPersistence.addSCProductVersion(frameworkVersionId,
 			scProductVersion);
 	}
 
 	/**
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public void addSCFrameworkVersionSCProductVersions(
-		long frameworkVersionId, long[] productVersionIds) {
+		long frameworkVersionId, long[] productVersionIds)
+		throws SystemException {
 		scFrameworkVersionPersistence.addSCProductVersions(frameworkVersionId,
 			productVersionIds);
 	}
 
 	/**
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public void addSCFrameworkVersionSCProductVersions(
-		long frameworkVersionId, List<SCProductVersion> SCProductVersions) {
+		long frameworkVersionId, List<SCProductVersion> SCProductVersions)
+		throws SystemException {
 		scFrameworkVersionPersistence.addSCProductVersions(frameworkVersionId,
 			SCProductVersions);
 	}
 
 	/**
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public void clearSCFrameworkVersionSCProductVersions(
-		long frameworkVersionId) {
+		long frameworkVersionId) throws SystemException {
 		scFrameworkVersionPersistence.clearSCProductVersions(frameworkVersionId);
 	}
 
 	/**
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public void deleteSCFrameworkVersionSCProductVersion(
-		long frameworkVersionId, long productVersionId) {
+		long frameworkVersionId, long productVersionId)
+		throws SystemException {
 		scFrameworkVersionPersistence.removeSCProductVersion(frameworkVersionId,
 			productVersionId);
 	}
 
 	/**
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public void deleteSCFrameworkVersionSCProductVersion(
-		long frameworkVersionId, SCProductVersion scProductVersion) {
+		long frameworkVersionId, SCProductVersion scProductVersion)
+		throws SystemException {
 		scFrameworkVersionPersistence.removeSCProductVersion(frameworkVersionId,
 			scProductVersion);
 	}
 
 	/**
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public void deleteSCFrameworkVersionSCProductVersions(
-		long frameworkVersionId, long[] productVersionIds) {
+		long frameworkVersionId, long[] productVersionIds)
+		throws SystemException {
 		scFrameworkVersionPersistence.removeSCProductVersions(frameworkVersionId,
 			productVersionIds);
 	}
 
 	/**
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public void deleteSCFrameworkVersionSCProductVersions(
-		long frameworkVersionId, List<SCProductVersion> SCProductVersions) {
+		long frameworkVersionId, List<SCProductVersion> SCProductVersions)
+		throws SystemException {
 		scFrameworkVersionPersistence.removeSCProductVersions(frameworkVersionId,
 			SCProductVersions);
 	}
 
 	/**
-	 * Returns the frameworkVersionIds of the s c framework versions associated with the s c product version.
-	 *
-	 * @param productVersionId the productVersionId of the s c product version
-	 * @return long[] the frameworkVersionIds of s c framework versions associated with the s c product version
-	 */
-	@Override
-	public long[] getSCFrameworkVersionPrimaryKeys(long productVersionId) {
-		return scProductVersionPersistence.getSCFrameworkVersionPrimaryKeys(productVersionId);
-	}
-
-	/**
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public List<SCProductVersion> getSCFrameworkVersionSCProductVersions(
-		long frameworkVersionId) {
+		long frameworkVersionId) throws SystemException {
 		return scFrameworkVersionPersistence.getSCProductVersions(frameworkVersionId);
 	}
 
 	/**
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public List<SCProductVersion> getSCFrameworkVersionSCProductVersions(
-		long frameworkVersionId, int start, int end) {
+		long frameworkVersionId, int start, int end) throws SystemException {
 		return scFrameworkVersionPersistence.getSCProductVersions(frameworkVersionId,
 			start, end);
 	}
 
 	/**
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public List<SCProductVersion> getSCFrameworkVersionSCProductVersions(
 		long frameworkVersionId, int start, int end,
-		OrderByComparator<SCProductVersion> orderByComparator) {
+		OrderByComparator orderByComparator) throws SystemException {
 		return scFrameworkVersionPersistence.getSCProductVersions(frameworkVersionId,
 			start, end, orderByComparator);
 	}
 
 	/**
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public int getSCFrameworkVersionSCProductVersionsCount(
-		long frameworkVersionId) {
+		long frameworkVersionId) throws SystemException {
 		return scFrameworkVersionPersistence.getSCProductVersionsSize(frameworkVersionId);
 	}
 
 	/**
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public boolean hasSCFrameworkVersionSCProductVersion(
-		long frameworkVersionId, long productVersionId) {
+		long frameworkVersionId, long productVersionId)
+		throws SystemException {
 		return scFrameworkVersionPersistence.containsSCProductVersion(frameworkVersionId,
 			productVersionId);
 	}
 
 	/**
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public boolean hasSCFrameworkVersionSCProductVersions(
-		long frameworkVersionId) {
+		long frameworkVersionId) throws SystemException {
 		return scFrameworkVersionPersistence.containsSCProductVersions(frameworkVersionId);
 	}
 
 	/**
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public void setSCFrameworkVersionSCProductVersions(
-		long frameworkVersionId, long[] productVersionIds) {
+		long frameworkVersionId, long[] productVersionIds)
+		throws SystemException {
 		scFrameworkVersionPersistence.setSCProductVersions(frameworkVersionId,
 			productVersionIds);
+	}
+
+	/**
+	 * Returns the s c framework version local service.
+	 *
+	 * @return the s c framework version local service
+	 */
+	public com.liferay.portlet.softwarecatalog.service.SCFrameworkVersionLocalService getSCFrameworkVersionLocalService() {
+		return scFrameworkVersionLocalService;
+	}
+
+	/**
+	 * Sets the s c framework version local service.
+	 *
+	 * @param scFrameworkVersionLocalService the s c framework version local service
+	 */
+	public void setSCFrameworkVersionLocalService(
+		com.liferay.portlet.softwarecatalog.service.SCFrameworkVersionLocalService scFrameworkVersionLocalService) {
+		this.scFrameworkVersionLocalService = scFrameworkVersionLocalService;
+	}
+
+	/**
+	 * Returns the s c framework version remote service.
+	 *
+	 * @return the s c framework version remote service
+	 */
+	public com.liferay.portlet.softwarecatalog.service.SCFrameworkVersionService getSCFrameworkVersionService() {
+		return scFrameworkVersionService;
+	}
+
+	/**
+	 * Sets the s c framework version remote service.
+	 *
+	 * @param scFrameworkVersionService the s c framework version remote service
+	 */
+	public void setSCFrameworkVersionService(
+		com.liferay.portlet.softwarecatalog.service.SCFrameworkVersionService scFrameworkVersionService) {
+		this.scFrameworkVersionService = scFrameworkVersionService;
+	}
+
+	/**
+	 * Returns the s c framework version persistence.
+	 *
+	 * @return the s c framework version persistence
+	 */
+	public SCFrameworkVersionPersistence getSCFrameworkVersionPersistence() {
+		return scFrameworkVersionPersistence;
+	}
+
+	/**
+	 * Sets the s c framework version persistence.
+	 *
+	 * @param scFrameworkVersionPersistence the s c framework version persistence
+	 */
+	public void setSCFrameworkVersionPersistence(
+		SCFrameworkVersionPersistence scFrameworkVersionPersistence) {
+		this.scFrameworkVersionPersistence = scFrameworkVersionPersistence;
+	}
+
+	/**
+	 * Returns the s c license local service.
+	 *
+	 * @return the s c license local service
+	 */
+	public com.liferay.portlet.softwarecatalog.service.SCLicenseLocalService getSCLicenseLocalService() {
+		return scLicenseLocalService;
+	}
+
+	/**
+	 * Sets the s c license local service.
+	 *
+	 * @param scLicenseLocalService the s c license local service
+	 */
+	public void setSCLicenseLocalService(
+		com.liferay.portlet.softwarecatalog.service.SCLicenseLocalService scLicenseLocalService) {
+		this.scLicenseLocalService = scLicenseLocalService;
+	}
+
+	/**
+	 * Returns the s c license remote service.
+	 *
+	 * @return the s c license remote service
+	 */
+	public com.liferay.portlet.softwarecatalog.service.SCLicenseService getSCLicenseService() {
+		return scLicenseService;
+	}
+
+	/**
+	 * Sets the s c license remote service.
+	 *
+	 * @param scLicenseService the s c license remote service
+	 */
+	public void setSCLicenseService(
+		com.liferay.portlet.softwarecatalog.service.SCLicenseService scLicenseService) {
+		this.scLicenseService = scLicenseService;
+	}
+
+	/**
+	 * Returns the s c license persistence.
+	 *
+	 * @return the s c license persistence
+	 */
+	public SCLicensePersistence getSCLicensePersistence() {
+		return scLicensePersistence;
+	}
+
+	/**
+	 * Sets the s c license persistence.
+	 *
+	 * @param scLicensePersistence the s c license persistence
+	 */
+	public void setSCLicensePersistence(
+		SCLicensePersistence scLicensePersistence) {
+		this.scLicensePersistence = scLicensePersistence;
+	}
+
+	/**
+	 * Returns the s c product entry local service.
+	 *
+	 * @return the s c product entry local service
+	 */
+	public com.liferay.portlet.softwarecatalog.service.SCProductEntryLocalService getSCProductEntryLocalService() {
+		return scProductEntryLocalService;
+	}
+
+	/**
+	 * Sets the s c product entry local service.
+	 *
+	 * @param scProductEntryLocalService the s c product entry local service
+	 */
+	public void setSCProductEntryLocalService(
+		com.liferay.portlet.softwarecatalog.service.SCProductEntryLocalService scProductEntryLocalService) {
+		this.scProductEntryLocalService = scProductEntryLocalService;
+	}
+
+	/**
+	 * Returns the s c product entry remote service.
+	 *
+	 * @return the s c product entry remote service
+	 */
+	public com.liferay.portlet.softwarecatalog.service.SCProductEntryService getSCProductEntryService() {
+		return scProductEntryService;
+	}
+
+	/**
+	 * Sets the s c product entry remote service.
+	 *
+	 * @param scProductEntryService the s c product entry remote service
+	 */
+	public void setSCProductEntryService(
+		com.liferay.portlet.softwarecatalog.service.SCProductEntryService scProductEntryService) {
+		this.scProductEntryService = scProductEntryService;
+	}
+
+	/**
+	 * Returns the s c product entry persistence.
+	 *
+	 * @return the s c product entry persistence
+	 */
+	public SCProductEntryPersistence getSCProductEntryPersistence() {
+		return scProductEntryPersistence;
+	}
+
+	/**
+	 * Sets the s c product entry persistence.
+	 *
+	 * @param scProductEntryPersistence the s c product entry persistence
+	 */
+	public void setSCProductEntryPersistence(
+		SCProductEntryPersistence scProductEntryPersistence) {
+		this.scProductEntryPersistence = scProductEntryPersistence;
+	}
+
+	/**
+	 * Returns the s c product screenshot local service.
+	 *
+	 * @return the s c product screenshot local service
+	 */
+	public com.liferay.portlet.softwarecatalog.service.SCProductScreenshotLocalService getSCProductScreenshotLocalService() {
+		return scProductScreenshotLocalService;
+	}
+
+	/**
+	 * Sets the s c product screenshot local service.
+	 *
+	 * @param scProductScreenshotLocalService the s c product screenshot local service
+	 */
+	public void setSCProductScreenshotLocalService(
+		com.liferay.portlet.softwarecatalog.service.SCProductScreenshotLocalService scProductScreenshotLocalService) {
+		this.scProductScreenshotLocalService = scProductScreenshotLocalService;
+	}
+
+	/**
+	 * Returns the s c product screenshot persistence.
+	 *
+	 * @return the s c product screenshot persistence
+	 */
+	public SCProductScreenshotPersistence getSCProductScreenshotPersistence() {
+		return scProductScreenshotPersistence;
+	}
+
+	/**
+	 * Sets the s c product screenshot persistence.
+	 *
+	 * @param scProductScreenshotPersistence the s c product screenshot persistence
+	 */
+	public void setSCProductScreenshotPersistence(
+		SCProductScreenshotPersistence scProductScreenshotPersistence) {
+		this.scProductScreenshotPersistence = scProductScreenshotPersistence;
 	}
 
 	/**
@@ -532,6 +736,25 @@ public abstract class SCProductVersionLocalServiceBaseImpl
 	}
 
 	/**
+	 * Returns the resource local service.
+	 *
+	 * @return the resource local service
+	 */
+	public com.liferay.portal.service.ResourceLocalService getResourceLocalService() {
+		return resourceLocalService;
+	}
+
+	/**
+	 * Sets the resource local service.
+	 *
+	 * @param resourceLocalService the resource local service
+	 */
+	public void setResourceLocalService(
+		com.liferay.portal.service.ResourceLocalService resourceLocalService) {
+		this.resourceLocalService = resourceLocalService;
+	}
+
+	/**
 	 * Returns the user local service.
 	 *
 	 * @return the user local service
@@ -605,120 +828,6 @@ public abstract class SCProductVersionLocalServiceBaseImpl
 		this.userFinder = userFinder;
 	}
 
-	/**
-	 * Returns the s c framework version local service.
-	 *
-	 * @return the s c framework version local service
-	 */
-	public com.liferay.portlet.softwarecatalog.service.SCFrameworkVersionLocalService getSCFrameworkVersionLocalService() {
-		return scFrameworkVersionLocalService;
-	}
-
-	/**
-	 * Sets the s c framework version local service.
-	 *
-	 * @param scFrameworkVersionLocalService the s c framework version local service
-	 */
-	public void setSCFrameworkVersionLocalService(
-		com.liferay.portlet.softwarecatalog.service.SCFrameworkVersionLocalService scFrameworkVersionLocalService) {
-		this.scFrameworkVersionLocalService = scFrameworkVersionLocalService;
-	}
-
-	/**
-	 * Returns the s c framework version remote service.
-	 *
-	 * @return the s c framework version remote service
-	 */
-	public com.liferay.portlet.softwarecatalog.service.SCFrameworkVersionService getSCFrameworkVersionService() {
-		return scFrameworkVersionService;
-	}
-
-	/**
-	 * Sets the s c framework version remote service.
-	 *
-	 * @param scFrameworkVersionService the s c framework version remote service
-	 */
-	public void setSCFrameworkVersionService(
-		com.liferay.portlet.softwarecatalog.service.SCFrameworkVersionService scFrameworkVersionService) {
-		this.scFrameworkVersionService = scFrameworkVersionService;
-	}
-
-	/**
-	 * Returns the s c framework version persistence.
-	 *
-	 * @return the s c framework version persistence
-	 */
-	public SCFrameworkVersionPersistence getSCFrameworkVersionPersistence() {
-		return scFrameworkVersionPersistence;
-	}
-
-	/**
-	 * Sets the s c framework version persistence.
-	 *
-	 * @param scFrameworkVersionPersistence the s c framework version persistence
-	 */
-	public void setSCFrameworkVersionPersistence(
-		SCFrameworkVersionPersistence scFrameworkVersionPersistence) {
-		this.scFrameworkVersionPersistence = scFrameworkVersionPersistence;
-	}
-
-	/**
-	 * Returns the s c product entry local service.
-	 *
-	 * @return the s c product entry local service
-	 */
-	public com.liferay.portlet.softwarecatalog.service.SCProductEntryLocalService getSCProductEntryLocalService() {
-		return scProductEntryLocalService;
-	}
-
-	/**
-	 * Sets the s c product entry local service.
-	 *
-	 * @param scProductEntryLocalService the s c product entry local service
-	 */
-	public void setSCProductEntryLocalService(
-		com.liferay.portlet.softwarecatalog.service.SCProductEntryLocalService scProductEntryLocalService) {
-		this.scProductEntryLocalService = scProductEntryLocalService;
-	}
-
-	/**
-	 * Returns the s c product entry remote service.
-	 *
-	 * @return the s c product entry remote service
-	 */
-	public com.liferay.portlet.softwarecatalog.service.SCProductEntryService getSCProductEntryService() {
-		return scProductEntryService;
-	}
-
-	/**
-	 * Sets the s c product entry remote service.
-	 *
-	 * @param scProductEntryService the s c product entry remote service
-	 */
-	public void setSCProductEntryService(
-		com.liferay.portlet.softwarecatalog.service.SCProductEntryService scProductEntryService) {
-		this.scProductEntryService = scProductEntryService;
-	}
-
-	/**
-	 * Returns the s c product entry persistence.
-	 *
-	 * @return the s c product entry persistence
-	 */
-	public SCProductEntryPersistence getSCProductEntryPersistence() {
-		return scProductEntryPersistence;
-	}
-
-	/**
-	 * Sets the s c product entry persistence.
-	 *
-	 * @param scProductEntryPersistence the s c product entry persistence
-	 */
-	public void setSCProductEntryPersistence(
-		SCProductEntryPersistence scProductEntryPersistence) {
-		this.scProductEntryPersistence = scProductEntryPersistence;
-	}
-
 	public void afterPropertiesSet() {
 		persistedModelLocalServiceRegistry.register("com.liferay.portlet.softwarecatalog.model.SCProductVersion",
 			scProductVersionLocalService);
@@ -758,18 +867,13 @@ public abstract class SCProductVersionLocalServiceBaseImpl
 	}
 
 	/**
-	 * Performs a SQL query.
+	 * Performs an SQL query.
 	 *
 	 * @param sql the sql query
 	 */
-	protected void runSQL(String sql) {
+	protected void runSQL(String sql) throws SystemException {
 		try {
 			DataSource dataSource = scProductVersionPersistence.getDataSource();
-
-			DB db = DBFactoryUtil.getDB();
-
-			sql = db.buildSQL(sql);
-			sql = PortalUtil.transformSQL(sql);
 
 			SqlUpdate sqlUpdate = SqlUpdateFactoryUtil.getSqlUpdate(dataSource,
 					sql, new int[0]);
@@ -781,6 +885,28 @@ public abstract class SCProductVersionLocalServiceBaseImpl
 		}
 	}
 
+	@BeanReference(type = com.liferay.portlet.softwarecatalog.service.SCFrameworkVersionLocalService.class)
+	protected com.liferay.portlet.softwarecatalog.service.SCFrameworkVersionLocalService scFrameworkVersionLocalService;
+	@BeanReference(type = com.liferay.portlet.softwarecatalog.service.SCFrameworkVersionService.class)
+	protected com.liferay.portlet.softwarecatalog.service.SCFrameworkVersionService scFrameworkVersionService;
+	@BeanReference(type = SCFrameworkVersionPersistence.class)
+	protected SCFrameworkVersionPersistence scFrameworkVersionPersistence;
+	@BeanReference(type = com.liferay.portlet.softwarecatalog.service.SCLicenseLocalService.class)
+	protected com.liferay.portlet.softwarecatalog.service.SCLicenseLocalService scLicenseLocalService;
+	@BeanReference(type = com.liferay.portlet.softwarecatalog.service.SCLicenseService.class)
+	protected com.liferay.portlet.softwarecatalog.service.SCLicenseService scLicenseService;
+	@BeanReference(type = SCLicensePersistence.class)
+	protected SCLicensePersistence scLicensePersistence;
+	@BeanReference(type = com.liferay.portlet.softwarecatalog.service.SCProductEntryLocalService.class)
+	protected com.liferay.portlet.softwarecatalog.service.SCProductEntryLocalService scProductEntryLocalService;
+	@BeanReference(type = com.liferay.portlet.softwarecatalog.service.SCProductEntryService.class)
+	protected com.liferay.portlet.softwarecatalog.service.SCProductEntryService scProductEntryService;
+	@BeanReference(type = SCProductEntryPersistence.class)
+	protected SCProductEntryPersistence scProductEntryPersistence;
+	@BeanReference(type = com.liferay.portlet.softwarecatalog.service.SCProductScreenshotLocalService.class)
+	protected com.liferay.portlet.softwarecatalog.service.SCProductScreenshotLocalService scProductScreenshotLocalService;
+	@BeanReference(type = SCProductScreenshotPersistence.class)
+	protected SCProductScreenshotPersistence scProductScreenshotPersistence;
 	@BeanReference(type = com.liferay.portlet.softwarecatalog.service.SCProductVersionLocalService.class)
 	protected com.liferay.portlet.softwarecatalog.service.SCProductVersionLocalService scProductVersionLocalService;
 	@BeanReference(type = com.liferay.portlet.softwarecatalog.service.SCProductVersionService.class)
@@ -789,6 +915,8 @@ public abstract class SCProductVersionLocalServiceBaseImpl
 	protected SCProductVersionPersistence scProductVersionPersistence;
 	@BeanReference(type = com.liferay.counter.service.CounterLocalService.class)
 	protected com.liferay.counter.service.CounterLocalService counterLocalService;
+	@BeanReference(type = com.liferay.portal.service.ResourceLocalService.class)
+	protected com.liferay.portal.service.ResourceLocalService resourceLocalService;
 	@BeanReference(type = com.liferay.portal.service.UserLocalService.class)
 	protected com.liferay.portal.service.UserLocalService userLocalService;
 	@BeanReference(type = com.liferay.portal.service.UserService.class)
@@ -797,18 +925,6 @@ public abstract class SCProductVersionLocalServiceBaseImpl
 	protected UserPersistence userPersistence;
 	@BeanReference(type = UserFinder.class)
 	protected UserFinder userFinder;
-	@BeanReference(type = com.liferay.portlet.softwarecatalog.service.SCFrameworkVersionLocalService.class)
-	protected com.liferay.portlet.softwarecatalog.service.SCFrameworkVersionLocalService scFrameworkVersionLocalService;
-	@BeanReference(type = com.liferay.portlet.softwarecatalog.service.SCFrameworkVersionService.class)
-	protected com.liferay.portlet.softwarecatalog.service.SCFrameworkVersionService scFrameworkVersionService;
-	@BeanReference(type = SCFrameworkVersionPersistence.class)
-	protected SCFrameworkVersionPersistence scFrameworkVersionPersistence;
-	@BeanReference(type = com.liferay.portlet.softwarecatalog.service.SCProductEntryLocalService.class)
-	protected com.liferay.portlet.softwarecatalog.service.SCProductEntryLocalService scProductEntryLocalService;
-	@BeanReference(type = com.liferay.portlet.softwarecatalog.service.SCProductEntryService.class)
-	protected com.liferay.portlet.softwarecatalog.service.SCProductEntryService scProductEntryService;
-	@BeanReference(type = SCProductEntryPersistence.class)
-	protected SCProductEntryPersistence scProductEntryPersistence;
 	@BeanReference(type = PersistedModelLocalServiceRegistry.class)
 	protected PersistedModelLocalServiceRegistry persistedModelLocalServiceRegistry;
 	private String _beanIdentifier;

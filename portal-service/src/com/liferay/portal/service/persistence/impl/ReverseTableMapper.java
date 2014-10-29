@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,6 +14,7 @@
 
 package com.liferay.portal.service.persistence.impl;
 
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.model.BaseModel;
 
@@ -30,50 +31,55 @@ public class ReverseTableMapper<L extends BaseModel<L>, R extends BaseModel<R>>
 	}
 
 	@Override
-	public boolean addTableMapping(long leftPrimaryKey, long rightPrimaryKey) {
+	public boolean addTableMapping(long leftPrimaryKey, long rightPrimaryKey)
+		throws SystemException {
+
 		return _tableMapper.addTableMapping(rightPrimaryKey, leftPrimaryKey);
 	}
 
 	@Override
 	public boolean containsTableMapping(
-		long leftPrimaryKey, long rightPrimaryKey) {
+			long leftPrimaryKey, long rightPrimaryKey)
+		throws SystemException {
 
 		return _tableMapper.containsTableMapping(
 			rightPrimaryKey, leftPrimaryKey);
 	}
 
 	@Override
-	public int deleteLeftPrimaryKeyTableMappings(long leftPrimaryKey) {
+	public int deleteLeftPrimaryKeyTableMappings(long leftPrimaryKey)
+		throws SystemException {
+
 		return _tableMapper.deleteRightPrimaryKeyTableMappings(leftPrimaryKey);
 	}
 
 	@Override
-	public int deleteRightPrimaryKeyTableMappings(long rightPrimaryKey) {
+	public int deleteRightPrimaryKeyTableMappings(long rightPrimaryKey)
+		throws SystemException {
+
 		return _tableMapper.deleteLeftPrimaryKeyTableMappings(rightPrimaryKey);
 	}
 
 	@Override
-	public boolean deleteTableMapping(
-		long leftPrimaryKey, long rightPrimaryKey) {
+	public boolean deleteTableMapping(long leftPrimaryKey, long rightPrimaryKey)
+		throws SystemException {
 
 		return _tableMapper.deleteTableMapping(rightPrimaryKey, leftPrimaryKey);
 	}
 
 	@Override
-	public void destroy() {
-		_tableMapper.destroy();
-	}
-
-	@Override
 	public List<L> getLeftBaseModels(
-		long rightPrimaryKey, int start, int end, OrderByComparator<L> obc) {
+			long rightPrimaryKey, int start, int end, OrderByComparator obc)
+		throws SystemException {
 
 		return _tableMapper.getRightBaseModels(
 			rightPrimaryKey, start, end, obc);
 	}
 
 	@Override
-	public long[] getLeftPrimaryKeys(long rightPrimaryKey) {
+	public long[] getLeftPrimaryKeys(long rightPrimaryKey)
+		throws SystemException {
+
 		return _tableMapper.getRightPrimaryKeys(rightPrimaryKey);
 	}
 
@@ -84,13 +90,16 @@ public class ReverseTableMapper<L extends BaseModel<L>, R extends BaseModel<R>>
 
 	@Override
 	public List<R> getRightBaseModels(
-		long leftPrimaryKey, int start, int end, OrderByComparator<R> obc) {
+			long leftPrimaryKey, int start, int end, OrderByComparator obc)
+		throws SystemException {
 
 		return _tableMapper.getLeftBaseModels(leftPrimaryKey, start, end, obc);
 	}
 
 	@Override
-	public long[] getRightPrimaryKeys(long leftPrimaryKey) {
+	public long[] getRightPrimaryKeys(long leftPrimaryKey)
+		throws SystemException {
+
 		return _tableMapper.getLeftPrimaryKeys(leftPrimaryKey);
 	}
 

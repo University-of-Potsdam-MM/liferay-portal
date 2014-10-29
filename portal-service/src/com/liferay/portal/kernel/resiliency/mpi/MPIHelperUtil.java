@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -26,44 +26,27 @@ import com.liferay.portal.kernel.resiliency.spi.SPI;
 import com.liferay.portal.kernel.resiliency.spi.SPIConfiguration;
 import com.liferay.portal.kernel.resiliency.spi.SPIRegistryUtil;
 import com.liferay.portal.kernel.resiliency.spi.provider.SPIProvider;
-import com.liferay.portal.kernel.util.CentralizedThreadLocal;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.PropsUtil;
+import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.Validator;
 
 import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @author Shuyang Zhou
  */
 public class MPIHelperUtil {
-
-	public static SPI checkSPILiveness(SPI spi) {
-		boolean alive = false;
-
-		try {
-			alive = spi.isAlive();
-		}
-		catch (RemoteException re) {
-			_log.error(re);
-		}
-
-		if (alive) {
-			return spi;
-		}
-
-		unregisterSPI(spi);
-
-		return null;
-	}
 
 	public static Intraband getIntraband() {
 		return _intraband;
@@ -74,57 +57,33 @@ public class MPIHelperUtil {
 	}
 
 	public static SPI getSPI(String spiProviderName, String spiId) {
-		SPIProviderContainer spiProviderContainer = _spiProviderContainers.get(
-			spiProviderName);
+		SPIKey spiKey = new SPIKey(spiProviderName, spiId);
 
-		if (spiProviderContainer == null) {
-			return null;
-		}
-
-		SPI spi = spiProviderContainer.getSPI(spiId);
+		SPI spi = _spis.get(spiKey);
 
 		if (spi != null) {
-			spi = checkSPILiveness(spi);
+			spi = _checkSPILiveness(spi);
 		}
 
 		return spi;
 	}
 
 	public static SPIProvider getSPIProvider(String spiProviderName) {
-		SPIProviderContainer spiProviderContainer = _spiProviderContainers.get(
-			spiProviderName);
-
-		if (spiProviderContainer == null) {
-			return null;
-		}
-
-		return spiProviderContainer.getSPIProvider();
+		return _spiProviders.get(spiProviderName);
 	}
 
 	public static List<SPIProvider> getSPIProviders() {
-		List<SPIProvider> spiProviders = new ArrayList<SPIProvider>();
-
-		for (SPIProviderContainer spiProviderContainer :
-				_spiProviderContainers.values()) {
-
-			spiProviders.add(spiProviderContainer.getSPIProvider());
-		}
-
-		return spiProviders;
+		return new ArrayList<SPIProvider>(_spiProviders.values());
 	}
 
 	public static List<SPI> getSPIs() {
 		List<SPI> spis = new ArrayList<SPI>();
 
-		for (SPIProviderContainer spiProviderContainer :
-				_spiProviderContainers.values()) {
+		for (SPI spi : _spis.values()) {
+			spi = _checkSPILiveness(spi);
 
-			for (SPI spi : spiProviderContainer.getSPIs()) {
-				spi = checkSPILiveness(spi);
-
-				if (spi != null) {
-					spis.add(spi);
-				}
+			if (spi != null) {
+				spis.add(spi);
 			}
 		}
 
@@ -134,16 +93,19 @@ public class MPIHelperUtil {
 	public static List<SPI> getSPIs(String spiProviderName) {
 		List<SPI> spis = new ArrayList<SPI>();
 
-		SPIProviderContainer spiProviderContainer = _spiProviderContainers.get(
-			spiProviderName);
+		for (Map.Entry<SPIKey, SPI> entry : _spis.entrySet()) {
+			SPIKey spiKey = entry.getKey();
 
-		if (spiProviderContainer != null) {
-			for (SPI spi : spiProviderContainer.getSPIs()) {
-				spi = checkSPILiveness(spi);
+			if (!spiProviderName.equals(spiKey._spiProviderName)) {
+				continue;
+			}
 
-				if (spi != null) {
-					spis.add(spi);
-				}
+			SPI spi = entry.getValue();
+
+			spi = _checkSPILiveness(spi);
+
+			if (spi != null) {
+				spis.add(spi);
 			}
 		}
 
@@ -151,6 +113,8 @@ public class MPIHelperUtil {
 	}
 
 	public static boolean registerSPI(SPI spi) {
+		_lock.lock();
+
 		try {
 			MPI mpi = spi.getMPI();
 
@@ -166,10 +130,9 @@ public class MPIHelperUtil {
 
 			String spiProviderName = spi.getSPIProviderName();
 
-			SPIProviderContainer spiProviderContainer =
-				_spiProviderContainers.get(spiProviderName);
+			SPIProvider spiProvider = _spiProviders.get(spiProviderName);
 
-			if (spiProviderContainer == null) {
+			if (spiProvider == null) {
 				if (_log.isWarnEnabled()) {
 					_log.warn(
 						"Not registering SPI " + spi +
@@ -181,8 +144,10 @@ public class MPIHelperUtil {
 
 			SPIConfiguration spiConfiguration = spi.getSPIConfiguration();
 
-			SPI previousSPI = spiProviderContainer.putSPIIfAbsent(
-				spiConfiguration.getSPIId(), spi);
+			SPIKey spiKey = new SPIKey(
+				spiProviderName, spiConfiguration.getSPIId());
+
+			SPI previousSPI = _spis.putIfAbsent(spiKey, spi);
 
 			if (previousSPI != null) {
 				if (_log.isWarnEnabled()) {
@@ -221,21 +186,31 @@ public class MPIHelperUtil {
 		catch (RemoteException re) {
 			throw new RuntimeException(re);
 		}
+		finally {
+			_lock.unlock();
+		}
 	}
 
 	public static boolean registerSPIProvider(SPIProvider spiProvider) {
 		String spiProviderName = spiProvider.getName();
 
-		SPIProviderContainer previousSPIProviderContainer =
-			_spiProviderContainers.putIfAbsent(
-				spiProviderName, new SPIProviderContainer(spiProvider));
+		SPIProvider previousSPIProvider = null;
 
-		if (previousSPIProviderContainer != null) {
+		_lock.lock();
+
+		try {
+			previousSPIProvider = _spiProviders.putIfAbsent(
+				spiProviderName, spiProvider);
+		}
+		finally {
+			_lock.unlock();
+		}
+
+		if (previousSPIProvider != null) {
 			if (_log.isWarnEnabled()) {
 				_log.warn(
 					"Not registering SPI provider " + spiProvider +
-						" because it duplicates " +
-							previousSPIProviderContainer.getSPIProvider());
+						" because it duplicates " + previousSPIProvider);
 			}
 
 			return false;
@@ -257,25 +232,12 @@ public class MPIHelperUtil {
 				_log.warn("Unable to unexport " + _mpiImpl, nsoe);
 			}
 		}
-
-		try {
-			_intraband.close();
-		}
-		catch (Exception e) {
-			if (_log.isWarnEnabled()) {
-				_log.warn("Unable to close intraband", e);
-			}
-		}
 	}
 
 	public static boolean unregisterSPI(SPI spi) {
+		_lock.lock();
+
 		try {
-			if (spi == _unregisteringSPIThreadLocal.get()) {
-				_doUnregisterSPI(spi);
-
-				return true;
-			}
-
 			MPI mpi = spi.getMPI();
 
 			if (mpi != _mpi) {
@@ -290,10 +252,9 @@ public class MPIHelperUtil {
 
 			String spiProviderName = spi.getSPIProviderName();
 
-			SPIProviderContainer spiProviderContainer =
-				_spiProviderContainers.get(spiProviderName);
+			SPIProvider spiProvider = _spiProviders.get(spiProviderName);
 
-			if (spiProviderContainer == null) {
+			if (spiProvider == null) {
 				if (_log.isWarnEnabled()) {
 					_log.warn(
 						"Not unregistering SPI " + spi +
@@ -305,10 +266,32 @@ public class MPIHelperUtil {
 
 			SPIConfiguration spiConfiguration = spi.getSPIConfiguration();
 
-			if (spiProviderContainer.removeSPI(
-					spiConfiguration.getSPIId(), spi)) {
+			String spiId = spiConfiguration.getSPIId();
 
-				_doUnregisterSPI(spi);
+			SPIKey spiKey = new SPIKey(spiProviderName, spiId);
+
+			if (_spis.remove(spiKey, spi)) {
+				SPIRegistryUtil.unregisterSPI(spi);
+
+				for (String servletContextName :
+						spiConfiguration.getServletContextNames()) {
+
+					List<MessagingConfigurator> messagingConfigurators =
+						MessagingConfiguratorRegistry.getMessagingConfigurators(
+							servletContextName);
+
+					if (messagingConfigurators != null) {
+						for (MessagingConfigurator messagingConfigurator :
+								messagingConfigurators) {
+
+							messagingConfigurator.connect();
+						}
+					}
+				}
+
+				if (_log.isInfoEnabled()) {
+					_log.info("Unregistered SPI " + spi);
+				}
 
 				return true;
 			}
@@ -322,107 +305,140 @@ public class MPIHelperUtil {
 		catch (RemoteException re) {
 			throw new RuntimeException(re);
 		}
+		finally {
+			_lock.unlock();
+		}
 	}
 
 	public static boolean unregisterSPIProvider(SPIProvider spiProvider) {
-		String spiProviderName = spiProvider.getName();
+		_lock.lock();
 
-		SPIProviderContainer spiProviderContainer = _spiProviderContainers.get(
-			spiProviderName);
+		try {
+			String spiProviderName = spiProvider.getName();
 
-		if ((spiProviderContainer != null) &&
-			(spiProviderContainer.getSPIProvider() == spiProvider) &&
-			_spiProviderContainers.remove(
-				spiProviderName, spiProviderContainer)) {
+			if (_spiProviders.remove(spiProviderName, spiProvider)) {
+				for (Map.Entry<SPIKey, SPI> entry : _spis.entrySet()) {
+					SPIKey spiKey = entry.getKey();
 
-			Collection<SPI> spis = spiProviderContainer.getSPIs();
+					if (!spiProviderName.equals(spiKey._spiProviderName)) {
+						continue;
+					}
 
-			Iterator<SPI> iterator = spis.iterator();
+					SPI spi = entry.getValue();
 
-			while (iterator.hasNext()) {
-				SPI spi = iterator.next();
+					try {
+						spi.destroy();
 
-				iterator.remove();
-
-				_unregisteringSPIThreadLocal.set(spi);
-
-				try {
-					spi.stop();
-
-					spi.destroy();
-
-					if (_log.isInfoEnabled()) {
-						_log.info(
-							"Unregistered SPI " + spi +
+						if (_log.isInfoEnabled()) {
+							_log.info(
+								"Unregistered SPI " + spi +
+									" while unregistering SPI provider " +
+										spiProvider);
+						}
+					}
+					catch (RemoteException re) {
+						_log.error(
+							"Unable to unregister SPI " + spi +
 								" while unregistering SPI provider " +
-									spiProvider);
+									spiProvider,
+							re);
 					}
 				}
-				catch (RemoteException re) {
-					_log.error(
-						"Unable to unregister SPI " + spi +
-							" while unregistering SPI provider " + spiProvider,
-						re);
+
+				if (_log.isInfoEnabled()) {
+					_log.info("Unregistered SPI provider " + spiProvider);
 				}
-				finally {
-					_unregisteringSPIThreadLocal.remove();
-				}
+
+				return true;
 			}
 
-			if (_log.isInfoEnabled()) {
-				_log.info("Unregistered SPI provider " + spiProvider);
+			if (_log.isWarnEnabled()) {
+				_log.warn(
+					"Not unregistering unregistered SPI provider " +
+						spiProvider);
 			}
 
-			return true;
+			return false;
 		}
-
-		if (_log.isWarnEnabled()) {
-			_log.warn(
-				"Not unregistering unregistered SPI provider " +
-					spiProvider);
+		finally {
+			_lock.unlock();
 		}
-
-		return false;
 	}
 
-	private static void _doUnregisterSPI(SPI spi) throws RemoteException {
-		SPIRegistryUtil.unregisterSPI(spi);
+	private static SPI _checkSPILiveness(SPI spi) {
+		boolean alive = false;
 
-		SPIConfiguration spiConfiguration = spi.getSPIConfiguration();
-
-		for (String servletContextName :
-				spiConfiguration.getServletContextNames()) {
-
-			List<MessagingConfigurator> messagingConfigurators =
-				MessagingConfiguratorRegistry.getMessagingConfigurators(
-					servletContextName);
-
-			if (messagingConfigurators == null) {
-				continue;
-			}
-
-			for (MessagingConfigurator messagingConfigurator :
-					messagingConfigurators) {
-
-				messagingConfigurator.connect();
-			}
+		try {
+			alive = spi.isAlive();
+		}
+		catch (RemoteException re) {
+			_log.error(re);
 		}
 
-		if (_log.isInfoEnabled()) {
-			_log.info("Unregistered SPI " + spi);
+		if (alive) {
+			return spi;
 		}
+
+		unregisterSPI(spi);
+
+		return null;
 	}
 
 	private static Log _log = LogFactoryUtil.getLog(MPIHelperUtil.class);
 
 	private static Intraband _intraband;
+	private static Lock _lock = new ReentrantLock();
 	private static MPI _mpi;
 	private static MPI _mpiImpl;
-	private static ConcurrentMap<String, SPIProviderContainer>
-		_spiProviderContainers =
-			new ConcurrentHashMap<String, SPIProviderContainer>();
-	private static ThreadLocal<SPI> _unregisteringSPIThreadLocal =
-		new CentralizedThreadLocal<SPI>(true);
+	private static ConcurrentMap<String, SPIProvider> _spiProviders =
+		new ConcurrentHashMap<String, SPIProvider>();
+	private static ConcurrentMap<SPIKey, SPI> _spis =
+		new ConcurrentHashMap<SPIKey, SPI>();
+
+	private static class MPIImpl implements MPI {
+
+		@Override
+		public boolean isAlive() {
+			return true;
+		}
+
+	}
+
+	private static class SPIKey {
+
+		public SPIKey(String spiProviderName, String spiId) {
+			_spiProviderName = spiProviderName;
+			_spiId = spiId;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			SPIKey spiKey = (SPIKey)obj;
+
+			if (Validator.equals(
+					_spiProviderName, spiKey._spiProviderName) &&
+				Validator.equals(_spiId, spiKey._spiId)) {
+
+				return true;
+			}
+
+			return false;
+		}
+
+		@Override
+		public int hashCode() {
+			return _spiProviderName.hashCode() * 11 + _spiId.hashCode();
+		}
+
+		@Override
+		public String toString() {
+			return _spiProviderName.concat(StringPool.POUND).concat(_spiId);
+		}
+
+		private String _spiId;
+		private String _spiProviderName;
+
+	}
 
 	static {
 
@@ -454,47 +470,6 @@ public class MPIHelperUtil {
 		catch (Exception e) {
 			throw new ExceptionInInitializerError(e);
 		}
-	}
-
-	private static class MPIImpl implements MPI {
-
-		@Override
-		public boolean isAlive() {
-			return true;
-		}
-
-	}
-
-	private static class SPIProviderContainer {
-
-		public SPIProviderContainer(SPIProvider spiProvider) {
-			_spiProvider = spiProvider;
-		}
-
-		public SPI getSPI(String spiId) {
-			return _spis.get(spiId);
-		}
-
-		public SPIProvider getSPIProvider() {
-			return _spiProvider;
-		}
-
-		public Collection<SPI> getSPIs() {
-			return _spis.values();
-		}
-
-		public SPI putSPIIfAbsent(String spiId, SPI spi) {
-			return _spis.putIfAbsent(spiId, spi);
-		}
-
-		public boolean removeSPI(String spiId, SPI spi) {
-			return _spis.remove(spiId, spi);
-		}
-
-		private SPIProvider _spiProvider;
-		private ConcurrentMap<String, SPI> _spis =
-			new ConcurrentHashMap<String, SPI>();
-
 	}
 
 }

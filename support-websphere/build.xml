@@ -17,6 +17,7 @@
 		<mkdir dir="classes" />
 
 		<path id="web-lib.classpath">
+			<fileset dir="${project.dir}/osgi/lib/common/core" includes="*.jar" />
 			<fileset dir="${app.server.websphere.dir}/plugins" includes="com.ibm.ws.runtime.jar" />
 		</path>
 

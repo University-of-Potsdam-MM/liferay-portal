@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -13,8 +13,6 @@
  */
 
 package com.liferay.portlet.dynamicdatamapping.model.impl;
-
-import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
@@ -36,7 +34,6 @@ import java.util.Date;
  * @see DDMStructure
  * @generated
  */
-@ProviderType
 public class DDMStructureCacheModel implements CacheModel<DDMStructure>,
 	Externalizable {
 	@Override
@@ -69,8 +66,8 @@ public class DDMStructureCacheModel implements CacheModel<DDMStructure>,
 		sb.append(name);
 		sb.append(", description=");
 		sb.append(description);
-		sb.append(", definition=");
-		sb.append(definition);
+		sb.append(", xsd=");
+		sb.append(xsd);
 		sb.append(", storageType=");
 		sb.append(storageType);
 		sb.append(", type=");
@@ -141,11 +138,11 @@ public class DDMStructureCacheModel implements CacheModel<DDMStructure>,
 			ddmStructureImpl.setDescription(description);
 		}
 
-		if (definition == null) {
-			ddmStructureImpl.setDefinition(StringPool.BLANK);
+		if (xsd == null) {
+			ddmStructureImpl.setXsd(StringPool.BLANK);
 		}
 		else {
-			ddmStructureImpl.setDefinition(definition);
+			ddmStructureImpl.setXsd(xsd);
 		}
 
 		if (storageType == null) {
@@ -159,9 +156,11 @@ public class DDMStructureCacheModel implements CacheModel<DDMStructure>,
 
 		ddmStructureImpl.resetOriginalValues();
 
-		ddmStructureImpl.setDDMForm(_ddmForm);
+		ddmStructureImpl.setDocument(_document);
 
-		ddmStructureImpl.setFullHierarchyDDMForm(_fullHierarchyDDMForm);
+		ddmStructureImpl.setLocalizedFieldsMap(_localizedFieldsMap);
+
+		ddmStructureImpl.setLocalizedTransientFieldsMap(_localizedTransientFieldsMap);
 
 		return ddmStructureImpl;
 	}
@@ -182,12 +181,13 @@ public class DDMStructureCacheModel implements CacheModel<DDMStructure>,
 		structureKey = objectInput.readUTF();
 		name = objectInput.readUTF();
 		description = objectInput.readUTF();
-		definition = objectInput.readUTF();
+		xsd = objectInput.readUTF();
 		storageType = objectInput.readUTF();
 		type = objectInput.readInt();
 
-		_ddmForm = (com.liferay.portlet.dynamicdatamapping.model.DDMForm)objectInput.readObject();
-		_fullHierarchyDDMForm = (com.liferay.portlet.dynamicdatamapping.model.DDMForm)objectInput.readObject();
+		_document = (com.liferay.portal.kernel.xml.Document)objectInput.readObject();
+		_localizedFieldsMap = (java.util.Map<java.lang.String, java.util.Map<java.lang.String, java.util.Map<java.lang.String, java.lang.String>>>)objectInput.readObject();
+		_localizedTransientFieldsMap = (java.util.Map<java.lang.String, java.util.Map<java.lang.String, java.util.Map<java.lang.String, java.lang.String>>>)objectInput.readObject();
 	}
 
 	@Override
@@ -238,11 +238,11 @@ public class DDMStructureCacheModel implements CacheModel<DDMStructure>,
 			objectOutput.writeUTF(description);
 		}
 
-		if (definition == null) {
+		if (xsd == null) {
 			objectOutput.writeUTF(StringPool.BLANK);
 		}
 		else {
-			objectOutput.writeUTF(definition);
+			objectOutput.writeUTF(xsd);
 		}
 
 		if (storageType == null) {
@@ -254,8 +254,9 @@ public class DDMStructureCacheModel implements CacheModel<DDMStructure>,
 
 		objectOutput.writeInt(type);
 
-		objectOutput.writeObject(_ddmForm);
-		objectOutput.writeObject(_fullHierarchyDDMForm);
+		objectOutput.writeObject(_document);
+		objectOutput.writeObject(_localizedFieldsMap);
+		objectOutput.writeObject(_localizedTransientFieldsMap);
 	}
 
 	public String uuid;
@@ -271,9 +272,10 @@ public class DDMStructureCacheModel implements CacheModel<DDMStructure>,
 	public String structureKey;
 	public String name;
 	public String description;
-	public String definition;
+	public String xsd;
 	public String storageType;
 	public int type;
-	public com.liferay.portlet.dynamicdatamapping.model.DDMForm _ddmForm;
-	public com.liferay.portlet.dynamicdatamapping.model.DDMForm _fullHierarchyDDMForm;
+	public com.liferay.portal.kernel.xml.Document _document;
+	public java.util.Map<java.lang.String, java.util.Map<java.lang.String, java.util.Map<java.lang.String, java.lang.String>>> _localizedFieldsMap;
+	public java.util.Map<java.lang.String, java.util.Map<java.lang.String, java.util.Map<java.lang.String, java.lang.String>>> _localizedTransientFieldsMap;
 }

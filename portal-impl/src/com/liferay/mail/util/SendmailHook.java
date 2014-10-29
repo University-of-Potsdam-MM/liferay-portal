@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -20,7 +20,6 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.process.ProcessUtil;
 import com.liferay.portal.kernel.util.FileUtil;
-import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -48,7 +47,7 @@ public class SendmailHook implements Hook {
 
 				File file = new File(home + "/" + userId + "/.forward");
 
-				if (!emailAddresses.isEmpty()) {
+				if (emailAddresses.size() > 0) {
 					StringBundler sb = new StringBundler(
 						emailAddresses.size() * 2);
 
@@ -144,7 +143,7 @@ public class SendmailHook implements Hook {
 
 		File file = new File(home + "/" + userId + "/.procmailrc");
 
-		if (ListUtil.isEmpty(blocked)) {
+		if ((blocked == null) || (blocked.size() == 0)) {
 			file.delete();
 
 			return;
@@ -186,28 +185,30 @@ public class SendmailHook implements Hook {
 			String virtusertable = PropsUtil.get(
 				PropsKeys.MAIL_HOOK_SENDMAIL_VIRTUSERTABLE);
 
+			FileReader fileReader = new FileReader(virtusertable);
+			UnsyncBufferedReader unsyncBufferedReader =
+				new UnsyncBufferedReader(fileReader);
+
 			StringBundler sb = new StringBundler();
 
-			try (FileReader fileReader = new FileReader(virtusertable);
-				UnsyncBufferedReader unsyncBufferedReader =
-					new UnsyncBufferedReader(fileReader)) {
-
-				for (String s = unsyncBufferedReader.readLine(); s != null;
+			for (String s = unsyncBufferedReader.readLine(); s != null;
 					s = unsyncBufferedReader.readLine()) {
 
-					if (!s.endsWith(" " + userId)) {
-						sb.append(s);
-						sb.append('\n');
-					}
-				}
-
-				if ((emailAddress != null) && !emailAddress.equals("")) {
-					sb.append(emailAddress);
-					sb.append(" ");
-					sb.append(userId);
+				if (!s.endsWith(" " + userId)) {
+					sb.append(s);
 					sb.append('\n');
 				}
 			}
+
+			if ((emailAddress != null) && !emailAddress.equals("")) {
+				sb.append(emailAddress);
+				sb.append(" ");
+				sb.append(userId);
+				sb.append('\n');
+			}
+
+			unsyncBufferedReader.close();
+			fileReader.close();
 
 			FileUtil.write(virtusertable, sb.toString());
 

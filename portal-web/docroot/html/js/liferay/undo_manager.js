@@ -132,7 +132,7 @@ AUI.add(
 						var undoCache = instance._undoCache;
 
 						undoCache.each(
-							function(item, index) {
+							function(item, index, collection) {
 								if (index < limit) {
 									item.handler.call(instance, item.stateData);
 

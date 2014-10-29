@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -528,11 +528,11 @@ public abstract class BaseIntraband implements Intraband {
 	protected static final EnumSet<CompletionType> REPLIED_ENUM_SET =
 		EnumSet.of(CompletionType.REPLIED);
 
+	protected final long defaultTimeout;
 	protected final AtomicReference<DatagramReceiveHandler[]>
 		datagramReceiveHandlersReference =
 			new AtomicReference<DatagramReceiveHandler[]>(
 				new DatagramReceiveHandler[256]);
-	protected final long defaultTimeout;
 	protected volatile boolean open = true;
 	protected final Map<Long, Datagram> responseWaitingMap =
 		new ConcurrentHashMap<Long, Datagram>();

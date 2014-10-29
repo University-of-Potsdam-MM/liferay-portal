@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,10 +15,10 @@
 package com.liferay.portlet.journal.asset;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
-import com.liferay.portal.kernel.portlet.PortletRequestModel;
 import com.liferay.portal.kernel.trash.TrashRenderer;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
@@ -37,7 +37,6 @@ import com.liferay.portal.util.PropsValues;
 import com.liferay.portal.util.WebKeys;
 import com.liferay.portlet.PortletPreferencesFactoryUtil;
 import com.liferay.portlet.asset.model.BaseAssetRenderer;
-import com.liferay.portlet.asset.model.DDMFieldReader;
 import com.liferay.portlet.journal.model.JournalArticle;
 import com.liferay.portlet.journal.model.JournalArticleConstants;
 import com.liferay.portlet.journal.model.JournalArticleDisplay;
@@ -51,7 +50,6 @@ import java.util.Locale;
 
 import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
-import javax.portlet.PortletResponse;
 import javax.portlet.PortletURL;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
@@ -108,11 +106,6 @@ public class JournalArticleAssetRenderer
 	}
 
 	@Override
-	public DDMFieldReader getDDMFieldReader() {
-		return new JournalArticleDDMFieldReader(_article);
-	}
-
-	@Override
 	public String getDiscussionPath() {
 		if (PropsValues.JOURNAL_ARTICLE_COMMENTS_ENABLED) {
 			return "edit_article_discussion";
@@ -138,37 +131,21 @@ public class JournalArticleAssetRenderer
 	}
 
 	@Override
-	public String getSummary(
-		PortletRequest portletRequest, PortletResponse portletResponse) {
-
-		Locale locale = getLocale(portletRequest);
-
+	public String getSummary(Locale locale) {
 		String summary = _article.getDescription(locale);
 
-		if (Validator.isNotNull(summary)) {
-			return summary;
-		}
+		if (Validator.isNull(summary)) {
+			try {
+				JournalArticleDisplay articleDisplay =
+					JournalArticleLocalServiceUtil.getArticleDisplay(
+						_article, null, null,
+						LanguageUtil.getLanguageId(locale), 1, null, null);
 
-		try {
-			PortletRequestModel portletRequestModel = null;
-			ThemeDisplay themeDisplay = null;
-
-			if ((portletRequest != null) && (portletResponse != null)) {
-				portletRequestModel = new PortletRequestModel(
-					portletRequest, portletResponse);
-				themeDisplay = (ThemeDisplay)portletRequest.getAttribute(
-					WebKeys.THEME_DISPLAY);
+				summary = StringUtil.shorten(
+					HtmlUtil.stripHtml(articleDisplay.getContent()), 200);
 			}
-
-			JournalArticleDisplay articleDisplay =
-				JournalArticleLocalServiceUtil.getArticleDisplay(
-					_article, null, null, LanguageUtil.getLanguageId(locale), 1,
-					portletRequestModel, themeDisplay);
-
-			summary = StringUtil.shorten(
-				HtmlUtil.stripHtml(articleDisplay.getContent()), 200);
-		}
-		catch (Exception e) {
+			catch (Exception e) {
+			}
 		}
 
 		return summary;
@@ -243,36 +220,6 @@ public class JournalArticleAssetRenderer
 	}
 
 	@Override
-	public PortletURL getURLViewDiffs(
-			LiferayPortletRequest liferayPortletRequest,
-			LiferayPortletResponse liferayPortletResponse)
-		throws Exception {
-
-		PortletURL portletURL = liferayPortletResponse.createLiferayPortletURL(
-			getControlPanelPlid(liferayPortletRequest), PortletKeys.JOURNAL,
-			PortletRequest.RENDER_PHASE);
-
-		JournalArticle previousApprovedArticle =
-			JournalArticleLocalServiceUtil.getPreviousApprovedArticle(_article);
-
-		if (previousApprovedArticle.getVersion() == _article.getVersion()) {
-			return null;
-		}
-
-		portletURL.setParameter("struts_action", "/journal/compare_versions");
-		portletURL.setParameter(
-			"groupId", String.valueOf(_article.getGroupId()));
-		portletURL.setParameter("articleId", _article.getArticleId());
-		portletURL.setParameter(
-			"sourceVersion",
-			String.valueOf(previousApprovedArticle.getVersion()));
-		portletURL.setParameter(
-			"targetVersion", String.valueOf(_article.getVersion()));
-
-		return portletURL;
-	}
-
-	@Override
 	public String getURLViewInContext(
 			LiferayPortletRequest liferayPortletRequest,
 			LiferayPortletResponse liferayPortletResponse,
@@ -283,10 +230,11 @@ public class JournalArticleAssetRenderer
 			(ThemeDisplay)liferayPortletRequest.getAttribute(
 				WebKeys.THEME_DISPLAY);
 
-		Layout layout = _article.getLayout();
+		Layout layout = themeDisplay.getLayout();
 
-		if (layout == null) {
-			layout = themeDisplay.getLayout();
+		if (Validator.isNotNull(_article.getLayoutUuid())) {
+			layout = LayoutLocalServiceUtil.getLayoutByUuidAndCompanyId(
+				_article.getLayoutUuid(), _article.getCompanyId());
 		}
 
 		String portletId = (String)liferayPortletRequest.getAttribute(
@@ -311,11 +259,9 @@ public class JournalArticleAssetRenderer
 			String groupFriendlyURL = PortalUtil.getGroupFriendlyURL(
 				group, layout.isPrivateLayout(), themeDisplay);
 
-			return PortalUtil.addPreservedParameters(
-				themeDisplay,
-				groupFriendlyURL.concat(
-					JournalArticleConstants.CANONICAL_URL_SEPARATOR).concat(
-						_article.getUrlTitle()));
+			return groupFriendlyURL.concat(
+				JournalArticleConstants.CANONICAL_URL_SEPARATOR).concat(
+					_article.getUrlTitle());
 		}
 
 		List<Long> hitLayoutIds =
@@ -353,12 +299,12 @@ public class JournalArticleAssetRenderer
 
 	@Override
 	public String getViewInContextMessage() {
-		return "view[action]";
+		return "view";
 	}
 
 	@Override
 	public boolean hasEditPermission(PermissionChecker permissionChecker)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return JournalArticlePermission.contains(
 			permissionChecker, _article, ActionKeys.UPDATE);
@@ -366,7 +312,7 @@ public class JournalArticleAssetRenderer
 
 	@Override
 	public boolean hasViewPermission(PermissionChecker permissionChecker)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		return JournalArticlePermission.contains(
 			permissionChecker, _article, ActionKeys.VIEW);

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,8 +14,6 @@
 
 package com.liferay.portal.model;
 
-import aQute.bnd.annotation.ProviderType;
-
 import java.io.Serializable;
 
 import java.util.ArrayList;
@@ -29,12 +27,10 @@ import java.util.List;
  * @see com.liferay.portal.service.http.LayoutSetBranchServiceSoap
  * @generated
  */
-@ProviderType
 public class LayoutSetBranchSoap implements Serializable {
 	public static LayoutSetBranchSoap toSoapModel(LayoutSetBranch model) {
 		LayoutSetBranchSoap soapModel = new LayoutSetBranchSoap();
 
-		soapModel.setMvccVersion(model.getMvccVersion());
 		soapModel.setLayoutSetBranchId(model.getLayoutSetBranchId());
 		soapModel.setGroupId(model.getGroupId());
 		soapModel.setCompanyId(model.getCompanyId());
@@ -46,6 +42,7 @@ public class LayoutSetBranchSoap implements Serializable {
 		soapModel.setName(model.getName());
 		soapModel.setDescription(model.getDescription());
 		soapModel.setMaster(model.getMaster());
+		soapModel.setLogo(model.getLogo());
 		soapModel.setLogoId(model.getLogoId());
 		soapModel.setThemeId(model.getThemeId());
 		soapModel.setColorSchemeId(model.getColorSchemeId());
@@ -107,14 +104,6 @@ public class LayoutSetBranchSoap implements Serializable {
 
 	public void setPrimaryKey(long pk) {
 		setLayoutSetBranchId(pk);
-	}
-
-	public long getMvccVersion() {
-		return _mvccVersion;
-	}
-
-	public void setMvccVersion(long mvccVersion) {
-		_mvccVersion = mvccVersion;
 	}
 
 	public long getLayoutSetBranchId() {
@@ -213,6 +202,18 @@ public class LayoutSetBranchSoap implements Serializable {
 		_master = master;
 	}
 
+	public boolean getLogo() {
+		return _logo;
+	}
+
+	public boolean isLogo() {
+		return _logo;
+	}
+
+	public void setLogo(boolean logo) {
+		_logo = logo;
+	}
+
 	public long getLogoId() {
 		return _logoId;
 	}
@@ -290,7 +291,6 @@ public class LayoutSetBranchSoap implements Serializable {
 		_layoutSetPrototypeLinkEnabled = layoutSetPrototypeLinkEnabled;
 	}
 
-	private long _mvccVersion;
 	private long _layoutSetBranchId;
 	private long _groupId;
 	private long _companyId;
@@ -302,6 +302,7 @@ public class LayoutSetBranchSoap implements Serializable {
 	private String _name;
 	private String _description;
 	private boolean _master;
+	private boolean _logo;
 	private long _logoId;
 	private String _themeId;
 	private String _colorSchemeId;

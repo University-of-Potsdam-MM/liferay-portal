@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -39,7 +39,7 @@ public class MBThreadFlagLocalServiceImpl
 	@Override
 	public void addThreadFlag(
 			long userId, MBThread thread, ServiceContext serviceContext)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		User user = userPersistence.findByPrimaryKey(userId);
 
@@ -96,32 +96,38 @@ public class MBThreadFlagLocalServiceImpl
 	}
 
 	@Override
-	public void deleteThreadFlag(long threadFlagId) throws PortalException {
+	public void deleteThreadFlag(long threadFlagId)
+		throws PortalException, SystemException {
+
 		MBThreadFlag threadFlag = mbThreadFlagPersistence.findByPrimaryKey(
 			threadFlagId);
 
-		mbThreadFlagLocalService.deleteThreadFlag(threadFlag);
+		deleteThreadFlag(threadFlag);
 	}
 
 	@Override
 	@SystemEvent(type = SystemEventConstants.TYPE_DELETE)
-	public void deleteThreadFlag(MBThreadFlag threadFlag) {
+	public void deleteThreadFlag(MBThreadFlag threadFlag)
+		throws SystemException {
+
 		mbThreadFlagPersistence.remove(threadFlag);
 	}
 
 	@Override
-	public void deleteThreadFlagsByThreadId(long threadId) {
+	public void deleteThreadFlagsByThreadId(long threadId)
+		throws SystemException {
+
 		mbThreadFlagPersistence.removeByThreadId(threadId);
 	}
 
 	@Override
-	public void deleteThreadFlagsByUserId(long userId) {
+	public void deleteThreadFlagsByUserId(long userId) throws SystemException {
 		mbThreadFlagPersistence.removeByUserId(userId);
 	}
 
 	@Override
 	public MBThreadFlag getThreadFlag(long userId, MBThread thread)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		User user = userPersistence.findByPrimaryKey(userId);
 
@@ -134,7 +140,7 @@ public class MBThreadFlagLocalServiceImpl
 
 	@Override
 	public boolean hasThreadFlag(long userId, MBThread thread)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		User user = userPersistence.findByPrimaryKey(userId);
 

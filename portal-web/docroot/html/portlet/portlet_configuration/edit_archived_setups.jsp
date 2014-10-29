@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -65,40 +65,42 @@ portletURL.setParameter("portletResource", portletResource);
 	headerNames.add("modified-date");
 	headerNames.add(StringPool.BLANK);
 
-	SearchContainer<ArchivedSettings> searchContainer = new SearchContainer<ArchivedSettings>(renderRequest, null, null, SearchContainer.DEFAULT_CUR_PARAM, SearchContainer.DEFAULT_DELTA, portletURL, headerNames, "there-are-no-archived-setups");
+	SearchContainer searchContainer = new SearchContainer(renderRequest, null, null, SearchContainer.DEFAULT_CUR_PARAM, SearchContainer.DEFAULT_DELTA, portletURL, headerNames, "there-are-no-archived-setups");
 
-	List<ArchivedSettings> archivedSettingsList = SettingsFactoryUtil.getPortletInstanceArchivedSettingsList(scopeGroupId, selPortlet.getRootPortletId());
+	List archivedSetups = PortletItemLocalServiceUtil.getPortletItems(scopeGroupId, selPortlet.getRootPortletId(), com.liferay.portal.model.PortletPreferences.class.getName());
 
-	int total = archivedSettingsList.size();
+	int total = archivedSetups.size();
 
 	searchContainer.setTotal(total);
 
-	List<ArchivedSettings> results = ListUtil.subList(archivedSettingsList, searchContainer.getStart(), searchContainer.getEnd());
+	List results = ListUtil.subList(archivedSetups, searchContainer.getStart(), searchContainer.getEnd());
 
 	searchContainer.setResults(results);
 
 	List resultRows = searchContainer.getResultRows();
 
 	for (int i = 0; i < results.size(); i++) {
-		ArchivedSettings archivedSettings = results.get(i);
+		PortletItem portletItem = (PortletItem)results.get(i);
 
-		ResultRow row = new ResultRow(new Object[] {archivedSettings, portletResource}, archivedSettings.getName(), i);
+		portletItem = portletItem.toEscapedModel();
+
+		ResultRow row = new ResultRow(new Object[] {portletItem, portletResource}, portletItem.getName(), i);
 
 		// Name
 
-		row.addText(archivedSettings.getName());
+		row.addText(portletItem.getName());
 
 		// User
 
-		row.addText(archivedSettings.getUserName());
+		row.addText(PortalUtil.getUserName(portletItem));
 
 		// Date
 
-		row.addDate(archivedSettings.getModifiedDate());
+		row.addDate(portletItem.getModifiedDate());
 
 		// Action
 
-		row.addJSP("/html/portlet/portlet_configuration/archived_setup_action.jsp", "entry-action");
+		row.addJSP("right", SearchEntry.DEFAULT_VALIGN, "/html/portlet/portlet_configuration/archived_setup_action.jsp");
 
 		// Add result row
 
@@ -118,5 +120,5 @@ portletURL.setParameter("portletResource", portletResource);
 </aui:form>
 
 <%
-PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.get(request, "archived"), currentURL);
+PortalUtil.addPortletBreadcrumbEntry(request, LanguageUtil.get(pageContext, "archived"), currentURL);
 %>

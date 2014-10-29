@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,31 +14,15 @@
 
 package com.liferay.portlet.messageboards.service.base;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.bean.IdentifiableBean;
-import com.liferay.portal.kernel.dao.db.DB;
-import com.liferay.portal.kernel.dao.db.DBFactoryUtil;
 import com.liferay.portal.kernel.dao.jdbc.SqlUpdate;
 import com.liferay.portal.kernel.dao.jdbc.SqlUpdateFactoryUtil;
-import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
-import com.liferay.portal.kernel.dao.orm.DefaultActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
-import com.liferay.portal.kernel.dao.orm.ExportActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Projection;
-import com.liferay.portal.kernel.dao.orm.Property;
-import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.lar.ExportImportHelperUtil;
-import com.liferay.portal.kernel.lar.ManifestSummary;
-import com.liferay.portal.kernel.lar.PortletDataContext;
-import com.liferay.portal.kernel.lar.StagedModelDataHandler;
-import com.liferay.portal.kernel.lar.StagedModelDataHandlerRegistryUtil;
-import com.liferay.portal.kernel.lar.StagedModelDataHandlerUtil;
-import com.liferay.portal.kernel.lar.StagedModelType;
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.util.OrderByComparator;
@@ -51,7 +35,6 @@ import com.liferay.portal.service.persistence.SubscriptionPersistence;
 import com.liferay.portal.service.persistence.SystemEventPersistence;
 import com.liferay.portal.service.persistence.UserFinder;
 import com.liferay.portal.service.persistence.UserPersistence;
-import com.liferay.portal.util.PortalUtil;
 
 import com.liferay.portlet.asset.service.persistence.AssetEntryFinder;
 import com.liferay.portlet.asset.service.persistence.AssetEntryPersistence;
@@ -60,12 +43,16 @@ import com.liferay.portlet.asset.service.persistence.AssetTagPersistence;
 import com.liferay.portlet.expando.service.persistence.ExpandoRowPersistence;
 import com.liferay.portlet.messageboards.model.MBCategory;
 import com.liferay.portlet.messageboards.service.MBCategoryLocalService;
+import com.liferay.portlet.messageboards.service.persistence.MBBanPersistence;
 import com.liferay.portlet.messageboards.service.persistence.MBCategoryFinder;
 import com.liferay.portlet.messageboards.service.persistence.MBCategoryPersistence;
+import com.liferay.portlet.messageboards.service.persistence.MBDiscussionPersistence;
 import com.liferay.portlet.messageboards.service.persistence.MBMailingListPersistence;
 import com.liferay.portlet.messageboards.service.persistence.MBMessageFinder;
 import com.liferay.portlet.messageboards.service.persistence.MBMessagePersistence;
+import com.liferay.portlet.messageboards.service.persistence.MBStatsUserPersistence;
 import com.liferay.portlet.messageboards.service.persistence.MBThreadFinder;
+import com.liferay.portlet.messageboards.service.persistence.MBThreadFlagPersistence;
 import com.liferay.portlet.messageboards.service.persistence.MBThreadPersistence;
 import com.liferay.portlet.trash.service.persistence.TrashEntryPersistence;
 import com.liferay.portlet.trash.service.persistence.TrashVersionPersistence;
@@ -88,7 +75,6 @@ import javax.sql.DataSource;
  * @see com.liferay.portlet.messageboards.service.MBCategoryLocalServiceUtil
  * @generated
  */
-@ProviderType
 public abstract class MBCategoryLocalServiceBaseImpl
 	extends BaseLocalServiceImpl implements MBCategoryLocalService,
 		IdentifiableBean {
@@ -103,10 +89,12 @@ public abstract class MBCategoryLocalServiceBaseImpl
 	 *
 	 * @param mbCategory the message boards category
 	 * @return the message boards category that was added
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
-	public MBCategory addMBCategory(MBCategory mbCategory) {
+	public MBCategory addMBCategory(MBCategory mbCategory)
+		throws SystemException {
 		mbCategory.setNew(true);
 
 		return mbCategoryPersistence.update(mbCategory);
@@ -129,11 +117,12 @@ public abstract class MBCategoryLocalServiceBaseImpl
 	 * @param categoryId the primary key of the message boards category
 	 * @return the message boards category that was removed
 	 * @throws PortalException if a message boards category with the primary key could not be found
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.DELETE)
 	@Override
 	public MBCategory deleteMBCategory(long categoryId)
-		throws PortalException {
+		throws PortalException, SystemException {
 		return mbCategoryPersistence.remove(categoryId);
 	}
 
@@ -142,10 +131,12 @@ public abstract class MBCategoryLocalServiceBaseImpl
 	 *
 	 * @param mbCategory the message boards category
 	 * @return the message boards category that was removed
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.DELETE)
 	@Override
-	public MBCategory deleteMBCategory(MBCategory mbCategory) {
+	public MBCategory deleteMBCategory(MBCategory mbCategory)
+		throws SystemException {
 		return mbCategoryPersistence.remove(mbCategory);
 	}
 
@@ -162,9 +153,12 @@ public abstract class MBCategoryLocalServiceBaseImpl
 	 *
 	 * @param dynamicQuery the dynamic query
 	 * @return the matching rows
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery) {
+	@SuppressWarnings("rawtypes")
+	public List dynamicQuery(DynamicQuery dynamicQuery)
+		throws SystemException {
 		return mbCategoryPersistence.findWithDynamicQuery(dynamicQuery);
 	}
 
@@ -179,10 +173,12 @@ public abstract class MBCategoryLocalServiceBaseImpl
 	 * @param start the lower bound of the range of model instances
 	 * @param end the upper bound of the range of model instances (not inclusive)
 	 * @return the range of matching rows
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
-		int end) {
+	@SuppressWarnings("rawtypes")
+	public List dynamicQuery(DynamicQuery dynamicQuery, int start, int end)
+		throws SystemException {
 		return mbCategoryPersistence.findWithDynamicQuery(dynamicQuery, start,
 			end);
 	}
@@ -199,10 +195,12 @@ public abstract class MBCategoryLocalServiceBaseImpl
 	 * @param end the upper bound of the range of model instances (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching rows
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
-		int end, OrderByComparator<T> orderByComparator) {
+	@SuppressWarnings("rawtypes")
+	public List dynamicQuery(DynamicQuery dynamicQuery, int start, int end,
+		OrderByComparator orderByComparator) throws SystemException {
 		return mbCategoryPersistence.findWithDynamicQuery(dynamicQuery, start,
 			end, orderByComparator);
 	}
@@ -212,9 +210,11 @@ public abstract class MBCategoryLocalServiceBaseImpl
 	 *
 	 * @param dynamicQuery the dynamic query
 	 * @return the number of rows that match the dynamic query
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public long dynamicQueryCount(DynamicQuery dynamicQuery) {
+	public long dynamicQueryCount(DynamicQuery dynamicQuery)
+		throws SystemException {
 		return mbCategoryPersistence.countWithDynamicQuery(dynamicQuery);
 	}
 
@@ -224,17 +224,33 @@ public abstract class MBCategoryLocalServiceBaseImpl
 	 * @param dynamicQuery the dynamic query
 	 * @param projection the projection to apply to the query
 	 * @return the number of rows that match the dynamic query
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public long dynamicQueryCount(DynamicQuery dynamicQuery,
-		Projection projection) {
+		Projection projection) throws SystemException {
 		return mbCategoryPersistence.countWithDynamicQuery(dynamicQuery,
 			projection);
 	}
 
 	@Override
-	public MBCategory fetchMBCategory(long categoryId) {
+	public MBCategory fetchMBCategory(long categoryId)
+		throws SystemException {
 		return mbCategoryPersistence.fetchByPrimaryKey(categoryId);
+	}
+
+	/**
+	 * Returns the message boards category with the matching UUID and company.
+	 *
+	 * @param uuid the message boards category's UUID
+	 * @param  companyId the primary key of the company
+	 * @return the matching message boards category, or <code>null</code> if a matching message boards category could not be found
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public MBCategory fetchMBCategoryByUuidAndCompanyId(String uuid,
+		long companyId) throws SystemException {
+		return mbCategoryPersistence.fetchByUuid_C_First(uuid, companyId, null);
 	}
 
 	/**
@@ -243,9 +259,11 @@ public abstract class MBCategoryLocalServiceBaseImpl
 	 * @param uuid the message boards category's UUID
 	 * @param groupId the primary key of the group
 	 * @return the matching message boards category, or <code>null</code> if a matching message boards category could not be found
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public MBCategory fetchMBCategoryByUuidAndGroupId(String uuid, long groupId) {
+	public MBCategory fetchMBCategoryByUuidAndGroupId(String uuid, long groupId)
+		throws SystemException {
 		return mbCategoryPersistence.fetchByUUID_G(uuid, groupId);
 	}
 
@@ -255,124 +273,33 @@ public abstract class MBCategoryLocalServiceBaseImpl
 	 * @param categoryId the primary key of the message boards category
 	 * @return the message boards category
 	 * @throws PortalException if a message boards category with the primary key could not be found
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public MBCategory getMBCategory(long categoryId) throws PortalException {
+	public MBCategory getMBCategory(long categoryId)
+		throws PortalException, SystemException {
 		return mbCategoryPersistence.findByPrimaryKey(categoryId);
 	}
 
 	@Override
-	public ActionableDynamicQuery getActionableDynamicQuery() {
-		ActionableDynamicQuery actionableDynamicQuery = new DefaultActionableDynamicQuery();
-
-		actionableDynamicQuery.setBaseLocalService(com.liferay.portlet.messageboards.service.MBCategoryLocalServiceUtil.getService());
-		actionableDynamicQuery.setClass(MBCategory.class);
-		actionableDynamicQuery.setClassLoader(getClassLoader());
-
-		actionableDynamicQuery.setPrimaryKeyPropertyName("categoryId");
-
-		return actionableDynamicQuery;
-	}
-
-	protected void initActionableDynamicQuery(
-		ActionableDynamicQuery actionableDynamicQuery) {
-		actionableDynamicQuery.setBaseLocalService(com.liferay.portlet.messageboards.service.MBCategoryLocalServiceUtil.getService());
-		actionableDynamicQuery.setClass(MBCategory.class);
-		actionableDynamicQuery.setClassLoader(getClassLoader());
-
-		actionableDynamicQuery.setPrimaryKeyPropertyName("categoryId");
-	}
-
-	@Override
-	public ExportActionableDynamicQuery getExportActionableDynamicQuery(
-		final PortletDataContext portletDataContext) {
-		final ExportActionableDynamicQuery exportActionableDynamicQuery = new ExportActionableDynamicQuery() {
-				@Override
-				public long performCount() throws PortalException {
-					ManifestSummary manifestSummary = portletDataContext.getManifestSummary();
-
-					StagedModelType stagedModelType = getStagedModelType();
-
-					long modelAdditionCount = super.performCount();
-
-					manifestSummary.addModelAdditionCount(stagedModelType.toString(),
-						modelAdditionCount);
-
-					long modelDeletionCount = ExportImportHelperUtil.getModelDeletionCount(portletDataContext,
-							stagedModelType);
-
-					manifestSummary.addModelDeletionCount(stagedModelType.toString(),
-						modelDeletionCount);
-
-					return modelAdditionCount;
-				}
-			};
-
-		initActionableDynamicQuery(exportActionableDynamicQuery);
-
-		exportActionableDynamicQuery.setAddCriteriaMethod(new ActionableDynamicQuery.AddCriteriaMethod() {
-				@Override
-				public void addCriteria(DynamicQuery dynamicQuery) {
-					portletDataContext.addDateRangeCriteria(dynamicQuery,
-						"modifiedDate");
-
-					StagedModelDataHandler<?> stagedModelDataHandler = StagedModelDataHandlerRegistryUtil.getStagedModelDataHandler(MBCategory.class.getName());
-
-					Property workflowStatusProperty = PropertyFactoryUtil.forName(
-							"status");
-
-					dynamicQuery.add(workflowStatusProperty.in(
-							stagedModelDataHandler.getExportableStatuses()));
-				}
-			});
-
-		exportActionableDynamicQuery.setCompanyId(portletDataContext.getCompanyId());
-
-		exportActionableDynamicQuery.setGroupId(portletDataContext.getScopeGroupId());
-
-		exportActionableDynamicQuery.setPerformActionMethod(new ActionableDynamicQuery.PerformActionMethod() {
-				@Override
-				public void performAction(Object object)
-					throws PortalException {
-					MBCategory stagedModel = (MBCategory)object;
-
-					StagedModelDataHandlerUtil.exportStagedModel(portletDataContext,
-						stagedModel);
-				}
-			});
-		exportActionableDynamicQuery.setStagedModelType(new StagedModelType(
-				PortalUtil.getClassNameId(MBCategory.class.getName())));
-
-		return exportActionableDynamicQuery;
-	}
-
-	/**
-	 * @throws PortalException
-	 */
-	@Override
-	public PersistedModel deletePersistedModel(PersistedModel persistedModel)
-		throws PortalException {
-		return mbCategoryLocalService.deleteMBCategory((MBCategory)persistedModel);
-	}
-
-	@Override
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
-		throws PortalException {
+		throws PortalException, SystemException {
 		return mbCategoryPersistence.findByPrimaryKey(primaryKeyObj);
 	}
 
+	/**
+	 * Returns the message boards category with the matching UUID and company.
+	 *
+	 * @param uuid the message boards category's UUID
+	 * @param  companyId the primary key of the company
+	 * @return the matching message boards category
+	 * @throws PortalException if a matching message boards category could not be found
+	 * @throws SystemException if a system exception occurred
+	 */
 	@Override
-	public List<MBCategory> getMBCategoriesByUuidAndCompanyId(String uuid,
-		long companyId) {
-		return mbCategoryPersistence.findByUuid_C(uuid, companyId);
-	}
-
-	@Override
-	public List<MBCategory> getMBCategoriesByUuidAndCompanyId(String uuid,
-		long companyId, int start, int end,
-		OrderByComparator<MBCategory> orderByComparator) {
-		return mbCategoryPersistence.findByUuid_C(uuid, companyId, start, end,
-			orderByComparator);
+	public MBCategory getMBCategoryByUuidAndCompanyId(String uuid,
+		long companyId) throws PortalException, SystemException {
+		return mbCategoryPersistence.findByUuid_C_First(uuid, companyId, null);
 	}
 
 	/**
@@ -382,10 +309,11 @@ public abstract class MBCategoryLocalServiceBaseImpl
 	 * @param groupId the primary key of the group
 	 * @return the matching message boards category
 	 * @throws PortalException if a matching message boards category could not be found
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
 	public MBCategory getMBCategoryByUuidAndGroupId(String uuid, long groupId)
-		throws PortalException {
+		throws PortalException, SystemException {
 		return mbCategoryPersistence.findByUUID_G(uuid, groupId);
 	}
 
@@ -399,9 +327,11 @@ public abstract class MBCategoryLocalServiceBaseImpl
 	 * @param start the lower bound of the range of message boards categories
 	 * @param end the upper bound of the range of message boards categories (not inclusive)
 	 * @return the range of message boards categories
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public List<MBCategory> getMBCategories(int start, int end) {
+	public List<MBCategory> getMBCategories(int start, int end)
+		throws SystemException {
 		return mbCategoryPersistence.findAll(start, end);
 	}
 
@@ -409,9 +339,10 @@ public abstract class MBCategoryLocalServiceBaseImpl
 	 * Returns the number of message boards categories.
 	 *
 	 * @return the number of message boards categories
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public int getMBCategoriesCount() {
+	public int getMBCategoriesCount() throws SystemException {
 		return mbCategoryPersistence.countAll();
 	}
 
@@ -420,11 +351,69 @@ public abstract class MBCategoryLocalServiceBaseImpl
 	 *
 	 * @param mbCategory the message boards category
 	 * @return the message boards category that was updated
+	 * @throws SystemException if a system exception occurred
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
-	public MBCategory updateMBCategory(MBCategory mbCategory) {
+	public MBCategory updateMBCategory(MBCategory mbCategory)
+		throws SystemException {
 		return mbCategoryPersistence.update(mbCategory);
+	}
+
+	/**
+	 * Returns the message boards ban local service.
+	 *
+	 * @return the message boards ban local service
+	 */
+	public com.liferay.portlet.messageboards.service.MBBanLocalService getMBBanLocalService() {
+		return mbBanLocalService;
+	}
+
+	/**
+	 * Sets the message boards ban local service.
+	 *
+	 * @param mbBanLocalService the message boards ban local service
+	 */
+	public void setMBBanLocalService(
+		com.liferay.portlet.messageboards.service.MBBanLocalService mbBanLocalService) {
+		this.mbBanLocalService = mbBanLocalService;
+	}
+
+	/**
+	 * Returns the message boards ban remote service.
+	 *
+	 * @return the message boards ban remote service
+	 */
+	public com.liferay.portlet.messageboards.service.MBBanService getMBBanService() {
+		return mbBanService;
+	}
+
+	/**
+	 * Sets the message boards ban remote service.
+	 *
+	 * @param mbBanService the message boards ban remote service
+	 */
+	public void setMBBanService(
+		com.liferay.portlet.messageboards.service.MBBanService mbBanService) {
+		this.mbBanService = mbBanService;
+	}
+
+	/**
+	 * Returns the message boards ban persistence.
+	 *
+	 * @return the message boards ban persistence
+	 */
+	public MBBanPersistence getMBBanPersistence() {
+		return mbBanPersistence;
+	}
+
+	/**
+	 * Sets the message boards ban persistence.
+	 *
+	 * @param mbBanPersistence the message boards ban persistence
+	 */
+	public void setMBBanPersistence(MBBanPersistence mbBanPersistence) {
+		this.mbBanPersistence = mbBanPersistence;
 	}
 
 	/**
@@ -500,6 +489,307 @@ public abstract class MBCategoryLocalServiceBaseImpl
 	 */
 	public void setMBCategoryFinder(MBCategoryFinder mbCategoryFinder) {
 		this.mbCategoryFinder = mbCategoryFinder;
+	}
+
+	/**
+	 * Returns the message boards discussion local service.
+	 *
+	 * @return the message boards discussion local service
+	 */
+	public com.liferay.portlet.messageboards.service.MBDiscussionLocalService getMBDiscussionLocalService() {
+		return mbDiscussionLocalService;
+	}
+
+	/**
+	 * Sets the message boards discussion local service.
+	 *
+	 * @param mbDiscussionLocalService the message boards discussion local service
+	 */
+	public void setMBDiscussionLocalService(
+		com.liferay.portlet.messageboards.service.MBDiscussionLocalService mbDiscussionLocalService) {
+		this.mbDiscussionLocalService = mbDiscussionLocalService;
+	}
+
+	/**
+	 * Returns the message boards discussion persistence.
+	 *
+	 * @return the message boards discussion persistence
+	 */
+	public MBDiscussionPersistence getMBDiscussionPersistence() {
+		return mbDiscussionPersistence;
+	}
+
+	/**
+	 * Sets the message boards discussion persistence.
+	 *
+	 * @param mbDiscussionPersistence the message boards discussion persistence
+	 */
+	public void setMBDiscussionPersistence(
+		MBDiscussionPersistence mbDiscussionPersistence) {
+		this.mbDiscussionPersistence = mbDiscussionPersistence;
+	}
+
+	/**
+	 * Returns the message boards mailing list local service.
+	 *
+	 * @return the message boards mailing list local service
+	 */
+	public com.liferay.portlet.messageboards.service.MBMailingListLocalService getMBMailingListLocalService() {
+		return mbMailingListLocalService;
+	}
+
+	/**
+	 * Sets the message boards mailing list local service.
+	 *
+	 * @param mbMailingListLocalService the message boards mailing list local service
+	 */
+	public void setMBMailingListLocalService(
+		com.liferay.portlet.messageboards.service.MBMailingListLocalService mbMailingListLocalService) {
+		this.mbMailingListLocalService = mbMailingListLocalService;
+	}
+
+	/**
+	 * Returns the message boards mailing list persistence.
+	 *
+	 * @return the message boards mailing list persistence
+	 */
+	public MBMailingListPersistence getMBMailingListPersistence() {
+		return mbMailingListPersistence;
+	}
+
+	/**
+	 * Sets the message boards mailing list persistence.
+	 *
+	 * @param mbMailingListPersistence the message boards mailing list persistence
+	 */
+	public void setMBMailingListPersistence(
+		MBMailingListPersistence mbMailingListPersistence) {
+		this.mbMailingListPersistence = mbMailingListPersistence;
+	}
+
+	/**
+	 * Returns the message-boards message local service.
+	 *
+	 * @return the message-boards message local service
+	 */
+	public com.liferay.portlet.messageboards.service.MBMessageLocalService getMBMessageLocalService() {
+		return mbMessageLocalService;
+	}
+
+	/**
+	 * Sets the message-boards message local service.
+	 *
+	 * @param mbMessageLocalService the message-boards message local service
+	 */
+	public void setMBMessageLocalService(
+		com.liferay.portlet.messageboards.service.MBMessageLocalService mbMessageLocalService) {
+		this.mbMessageLocalService = mbMessageLocalService;
+	}
+
+	/**
+	 * Returns the message-boards message remote service.
+	 *
+	 * @return the message-boards message remote service
+	 */
+	public com.liferay.portlet.messageboards.service.MBMessageService getMBMessageService() {
+		return mbMessageService;
+	}
+
+	/**
+	 * Sets the message-boards message remote service.
+	 *
+	 * @param mbMessageService the message-boards message remote service
+	 */
+	public void setMBMessageService(
+		com.liferay.portlet.messageboards.service.MBMessageService mbMessageService) {
+		this.mbMessageService = mbMessageService;
+	}
+
+	/**
+	 * Returns the message-boards message persistence.
+	 *
+	 * @return the message-boards message persistence
+	 */
+	public MBMessagePersistence getMBMessagePersistence() {
+		return mbMessagePersistence;
+	}
+
+	/**
+	 * Sets the message-boards message persistence.
+	 *
+	 * @param mbMessagePersistence the message-boards message persistence
+	 */
+	public void setMBMessagePersistence(
+		MBMessagePersistence mbMessagePersistence) {
+		this.mbMessagePersistence = mbMessagePersistence;
+	}
+
+	/**
+	 * Returns the message-boards message finder.
+	 *
+	 * @return the message-boards message finder
+	 */
+	public MBMessageFinder getMBMessageFinder() {
+		return mbMessageFinder;
+	}
+
+	/**
+	 * Sets the message-boards message finder.
+	 *
+	 * @param mbMessageFinder the message-boards message finder
+	 */
+	public void setMBMessageFinder(MBMessageFinder mbMessageFinder) {
+		this.mbMessageFinder = mbMessageFinder;
+	}
+
+	/**
+	 * Returns the message boards stats user local service.
+	 *
+	 * @return the message boards stats user local service
+	 */
+	public com.liferay.portlet.messageboards.service.MBStatsUserLocalService getMBStatsUserLocalService() {
+		return mbStatsUserLocalService;
+	}
+
+	/**
+	 * Sets the message boards stats user local service.
+	 *
+	 * @param mbStatsUserLocalService the message boards stats user local service
+	 */
+	public void setMBStatsUserLocalService(
+		com.liferay.portlet.messageboards.service.MBStatsUserLocalService mbStatsUserLocalService) {
+		this.mbStatsUserLocalService = mbStatsUserLocalService;
+	}
+
+	/**
+	 * Returns the message boards stats user persistence.
+	 *
+	 * @return the message boards stats user persistence
+	 */
+	public MBStatsUserPersistence getMBStatsUserPersistence() {
+		return mbStatsUserPersistence;
+	}
+
+	/**
+	 * Sets the message boards stats user persistence.
+	 *
+	 * @param mbStatsUserPersistence the message boards stats user persistence
+	 */
+	public void setMBStatsUserPersistence(
+		MBStatsUserPersistence mbStatsUserPersistence) {
+		this.mbStatsUserPersistence = mbStatsUserPersistence;
+	}
+
+	/**
+	 * Returns the message boards thread local service.
+	 *
+	 * @return the message boards thread local service
+	 */
+	public com.liferay.portlet.messageboards.service.MBThreadLocalService getMBThreadLocalService() {
+		return mbThreadLocalService;
+	}
+
+	/**
+	 * Sets the message boards thread local service.
+	 *
+	 * @param mbThreadLocalService the message boards thread local service
+	 */
+	public void setMBThreadLocalService(
+		com.liferay.portlet.messageboards.service.MBThreadLocalService mbThreadLocalService) {
+		this.mbThreadLocalService = mbThreadLocalService;
+	}
+
+	/**
+	 * Returns the message boards thread remote service.
+	 *
+	 * @return the message boards thread remote service
+	 */
+	public com.liferay.portlet.messageboards.service.MBThreadService getMBThreadService() {
+		return mbThreadService;
+	}
+
+	/**
+	 * Sets the message boards thread remote service.
+	 *
+	 * @param mbThreadService the message boards thread remote service
+	 */
+	public void setMBThreadService(
+		com.liferay.portlet.messageboards.service.MBThreadService mbThreadService) {
+		this.mbThreadService = mbThreadService;
+	}
+
+	/**
+	 * Returns the message boards thread persistence.
+	 *
+	 * @return the message boards thread persistence
+	 */
+	public MBThreadPersistence getMBThreadPersistence() {
+		return mbThreadPersistence;
+	}
+
+	/**
+	 * Sets the message boards thread persistence.
+	 *
+	 * @param mbThreadPersistence the message boards thread persistence
+	 */
+	public void setMBThreadPersistence(MBThreadPersistence mbThreadPersistence) {
+		this.mbThreadPersistence = mbThreadPersistence;
+	}
+
+	/**
+	 * Returns the message boards thread finder.
+	 *
+	 * @return the message boards thread finder
+	 */
+	public MBThreadFinder getMBThreadFinder() {
+		return mbThreadFinder;
+	}
+
+	/**
+	 * Sets the message boards thread finder.
+	 *
+	 * @param mbThreadFinder the message boards thread finder
+	 */
+	public void setMBThreadFinder(MBThreadFinder mbThreadFinder) {
+		this.mbThreadFinder = mbThreadFinder;
+	}
+
+	/**
+	 * Returns the message boards thread flag local service.
+	 *
+	 * @return the message boards thread flag local service
+	 */
+	public com.liferay.portlet.messageboards.service.MBThreadFlagLocalService getMBThreadFlagLocalService() {
+		return mbThreadFlagLocalService;
+	}
+
+	/**
+	 * Sets the message boards thread flag local service.
+	 *
+	 * @param mbThreadFlagLocalService the message boards thread flag local service
+	 */
+	public void setMBThreadFlagLocalService(
+		com.liferay.portlet.messageboards.service.MBThreadFlagLocalService mbThreadFlagLocalService) {
+		this.mbThreadFlagLocalService = mbThreadFlagLocalService;
+	}
+
+	/**
+	 * Returns the message boards thread flag persistence.
+	 *
+	 * @return the message boards thread flag persistence
+	 */
+	public MBThreadFlagPersistence getMBThreadFlagPersistence() {
+		return mbThreadFlagPersistence;
+	}
+
+	/**
+	 * Sets the message boards thread flag persistence.
+	 *
+	 * @param mbThreadFlagPersistence the message boards thread flag persistence
+	 */
+	public void setMBThreadFlagPersistence(
+		MBThreadFlagPersistence mbThreadFlagPersistence) {
+		this.mbThreadFlagPersistence = mbThreadFlagPersistence;
 	}
 
 	/**
@@ -1046,193 +1336,6 @@ public abstract class MBCategoryLocalServiceBaseImpl
 		this.trashVersionPersistence = trashVersionPersistence;
 	}
 
-	/**
-	 * Returns the message boards mailing list local service.
-	 *
-	 * @return the message boards mailing list local service
-	 */
-	public com.liferay.portlet.messageboards.service.MBMailingListLocalService getMBMailingListLocalService() {
-		return mbMailingListLocalService;
-	}
-
-	/**
-	 * Sets the message boards mailing list local service.
-	 *
-	 * @param mbMailingListLocalService the message boards mailing list local service
-	 */
-	public void setMBMailingListLocalService(
-		com.liferay.portlet.messageboards.service.MBMailingListLocalService mbMailingListLocalService) {
-		this.mbMailingListLocalService = mbMailingListLocalService;
-	}
-
-	/**
-	 * Returns the message boards mailing list persistence.
-	 *
-	 * @return the message boards mailing list persistence
-	 */
-	public MBMailingListPersistence getMBMailingListPersistence() {
-		return mbMailingListPersistence;
-	}
-
-	/**
-	 * Sets the message boards mailing list persistence.
-	 *
-	 * @param mbMailingListPersistence the message boards mailing list persistence
-	 */
-	public void setMBMailingListPersistence(
-		MBMailingListPersistence mbMailingListPersistence) {
-		this.mbMailingListPersistence = mbMailingListPersistence;
-	}
-
-	/**
-	 * Returns the message-boards message local service.
-	 *
-	 * @return the message-boards message local service
-	 */
-	public com.liferay.portlet.messageboards.service.MBMessageLocalService getMBMessageLocalService() {
-		return mbMessageLocalService;
-	}
-
-	/**
-	 * Sets the message-boards message local service.
-	 *
-	 * @param mbMessageLocalService the message-boards message local service
-	 */
-	public void setMBMessageLocalService(
-		com.liferay.portlet.messageboards.service.MBMessageLocalService mbMessageLocalService) {
-		this.mbMessageLocalService = mbMessageLocalService;
-	}
-
-	/**
-	 * Returns the message-boards message remote service.
-	 *
-	 * @return the message-boards message remote service
-	 */
-	public com.liferay.portlet.messageboards.service.MBMessageService getMBMessageService() {
-		return mbMessageService;
-	}
-
-	/**
-	 * Sets the message-boards message remote service.
-	 *
-	 * @param mbMessageService the message-boards message remote service
-	 */
-	public void setMBMessageService(
-		com.liferay.portlet.messageboards.service.MBMessageService mbMessageService) {
-		this.mbMessageService = mbMessageService;
-	}
-
-	/**
-	 * Returns the message-boards message persistence.
-	 *
-	 * @return the message-boards message persistence
-	 */
-	public MBMessagePersistence getMBMessagePersistence() {
-		return mbMessagePersistence;
-	}
-
-	/**
-	 * Sets the message-boards message persistence.
-	 *
-	 * @param mbMessagePersistence the message-boards message persistence
-	 */
-	public void setMBMessagePersistence(
-		MBMessagePersistence mbMessagePersistence) {
-		this.mbMessagePersistence = mbMessagePersistence;
-	}
-
-	/**
-	 * Returns the message-boards message finder.
-	 *
-	 * @return the message-boards message finder
-	 */
-	public MBMessageFinder getMBMessageFinder() {
-		return mbMessageFinder;
-	}
-
-	/**
-	 * Sets the message-boards message finder.
-	 *
-	 * @param mbMessageFinder the message-boards message finder
-	 */
-	public void setMBMessageFinder(MBMessageFinder mbMessageFinder) {
-		this.mbMessageFinder = mbMessageFinder;
-	}
-
-	/**
-	 * Returns the message boards thread local service.
-	 *
-	 * @return the message boards thread local service
-	 */
-	public com.liferay.portlet.messageboards.service.MBThreadLocalService getMBThreadLocalService() {
-		return mbThreadLocalService;
-	}
-
-	/**
-	 * Sets the message boards thread local service.
-	 *
-	 * @param mbThreadLocalService the message boards thread local service
-	 */
-	public void setMBThreadLocalService(
-		com.liferay.portlet.messageboards.service.MBThreadLocalService mbThreadLocalService) {
-		this.mbThreadLocalService = mbThreadLocalService;
-	}
-
-	/**
-	 * Returns the message boards thread remote service.
-	 *
-	 * @return the message boards thread remote service
-	 */
-	public com.liferay.portlet.messageboards.service.MBThreadService getMBThreadService() {
-		return mbThreadService;
-	}
-
-	/**
-	 * Sets the message boards thread remote service.
-	 *
-	 * @param mbThreadService the message boards thread remote service
-	 */
-	public void setMBThreadService(
-		com.liferay.portlet.messageboards.service.MBThreadService mbThreadService) {
-		this.mbThreadService = mbThreadService;
-	}
-
-	/**
-	 * Returns the message boards thread persistence.
-	 *
-	 * @return the message boards thread persistence
-	 */
-	public MBThreadPersistence getMBThreadPersistence() {
-		return mbThreadPersistence;
-	}
-
-	/**
-	 * Sets the message boards thread persistence.
-	 *
-	 * @param mbThreadPersistence the message boards thread persistence
-	 */
-	public void setMBThreadPersistence(MBThreadPersistence mbThreadPersistence) {
-		this.mbThreadPersistence = mbThreadPersistence;
-	}
-
-	/**
-	 * Returns the message boards thread finder.
-	 *
-	 * @return the message boards thread finder
-	 */
-	public MBThreadFinder getMBThreadFinder() {
-		return mbThreadFinder;
-	}
-
-	/**
-	 * Sets the message boards thread finder.
-	 *
-	 * @param mbThreadFinder the message boards thread finder
-	 */
-	public void setMBThreadFinder(MBThreadFinder mbThreadFinder) {
-		this.mbThreadFinder = mbThreadFinder;
-	}
-
 	public void afterPropertiesSet() {
 		persistedModelLocalServiceRegistry.register("com.liferay.portlet.messageboards.model.MBCategory",
 			mbCategoryLocalService);
@@ -1272,18 +1375,13 @@ public abstract class MBCategoryLocalServiceBaseImpl
 	}
 
 	/**
-	 * Performs a SQL query.
+	 * Performs an SQL query.
 	 *
 	 * @param sql the sql query
 	 */
-	protected void runSQL(String sql) {
+	protected void runSQL(String sql) throws SystemException {
 		try {
 			DataSource dataSource = mbCategoryPersistence.getDataSource();
-
-			DB db = DBFactoryUtil.getDB();
-
-			sql = db.buildSQL(sql);
-			sql = PortalUtil.transformSQL(sql);
 
 			SqlUpdate sqlUpdate = SqlUpdateFactoryUtil.getSqlUpdate(dataSource,
 					sql, new int[0]);
@@ -1295,6 +1393,12 @@ public abstract class MBCategoryLocalServiceBaseImpl
 		}
 	}
 
+	@BeanReference(type = com.liferay.portlet.messageboards.service.MBBanLocalService.class)
+	protected com.liferay.portlet.messageboards.service.MBBanLocalService mbBanLocalService;
+	@BeanReference(type = com.liferay.portlet.messageboards.service.MBBanService.class)
+	protected com.liferay.portlet.messageboards.service.MBBanService mbBanService;
+	@BeanReference(type = MBBanPersistence.class)
+	protected MBBanPersistence mbBanPersistence;
 	@BeanReference(type = com.liferay.portlet.messageboards.service.MBCategoryLocalService.class)
 	protected com.liferay.portlet.messageboards.service.MBCategoryLocalService mbCategoryLocalService;
 	@BeanReference(type = com.liferay.portlet.messageboards.service.MBCategoryService.class)
@@ -1303,6 +1407,38 @@ public abstract class MBCategoryLocalServiceBaseImpl
 	protected MBCategoryPersistence mbCategoryPersistence;
 	@BeanReference(type = MBCategoryFinder.class)
 	protected MBCategoryFinder mbCategoryFinder;
+	@BeanReference(type = com.liferay.portlet.messageboards.service.MBDiscussionLocalService.class)
+	protected com.liferay.portlet.messageboards.service.MBDiscussionLocalService mbDiscussionLocalService;
+	@BeanReference(type = MBDiscussionPersistence.class)
+	protected MBDiscussionPersistence mbDiscussionPersistence;
+	@BeanReference(type = com.liferay.portlet.messageboards.service.MBMailingListLocalService.class)
+	protected com.liferay.portlet.messageboards.service.MBMailingListLocalService mbMailingListLocalService;
+	@BeanReference(type = MBMailingListPersistence.class)
+	protected MBMailingListPersistence mbMailingListPersistence;
+	@BeanReference(type = com.liferay.portlet.messageboards.service.MBMessageLocalService.class)
+	protected com.liferay.portlet.messageboards.service.MBMessageLocalService mbMessageLocalService;
+	@BeanReference(type = com.liferay.portlet.messageboards.service.MBMessageService.class)
+	protected com.liferay.portlet.messageboards.service.MBMessageService mbMessageService;
+	@BeanReference(type = MBMessagePersistence.class)
+	protected MBMessagePersistence mbMessagePersistence;
+	@BeanReference(type = MBMessageFinder.class)
+	protected MBMessageFinder mbMessageFinder;
+	@BeanReference(type = com.liferay.portlet.messageboards.service.MBStatsUserLocalService.class)
+	protected com.liferay.portlet.messageboards.service.MBStatsUserLocalService mbStatsUserLocalService;
+	@BeanReference(type = MBStatsUserPersistence.class)
+	protected MBStatsUserPersistence mbStatsUserPersistence;
+	@BeanReference(type = com.liferay.portlet.messageboards.service.MBThreadLocalService.class)
+	protected com.liferay.portlet.messageboards.service.MBThreadLocalService mbThreadLocalService;
+	@BeanReference(type = com.liferay.portlet.messageboards.service.MBThreadService.class)
+	protected com.liferay.portlet.messageboards.service.MBThreadService mbThreadService;
+	@BeanReference(type = MBThreadPersistence.class)
+	protected MBThreadPersistence mbThreadPersistence;
+	@BeanReference(type = MBThreadFinder.class)
+	protected MBThreadFinder mbThreadFinder;
+	@BeanReference(type = com.liferay.portlet.messageboards.service.MBThreadFlagLocalService.class)
+	protected com.liferay.portlet.messageboards.service.MBThreadFlagLocalService mbThreadFlagLocalService;
+	@BeanReference(type = MBThreadFlagPersistence.class)
+	protected MBThreadFlagPersistence mbThreadFlagPersistence;
 	@BeanReference(type = com.liferay.counter.service.CounterLocalService.class)
 	protected com.liferay.counter.service.CounterLocalService counterLocalService;
 	@BeanReference(type = com.liferay.portal.service.GroupLocalService.class)
@@ -1361,26 +1497,6 @@ public abstract class MBCategoryLocalServiceBaseImpl
 	protected com.liferay.portlet.trash.service.TrashVersionLocalService trashVersionLocalService;
 	@BeanReference(type = TrashVersionPersistence.class)
 	protected TrashVersionPersistence trashVersionPersistence;
-	@BeanReference(type = com.liferay.portlet.messageboards.service.MBMailingListLocalService.class)
-	protected com.liferay.portlet.messageboards.service.MBMailingListLocalService mbMailingListLocalService;
-	@BeanReference(type = MBMailingListPersistence.class)
-	protected MBMailingListPersistence mbMailingListPersistence;
-	@BeanReference(type = com.liferay.portlet.messageboards.service.MBMessageLocalService.class)
-	protected com.liferay.portlet.messageboards.service.MBMessageLocalService mbMessageLocalService;
-	@BeanReference(type = com.liferay.portlet.messageboards.service.MBMessageService.class)
-	protected com.liferay.portlet.messageboards.service.MBMessageService mbMessageService;
-	@BeanReference(type = MBMessagePersistence.class)
-	protected MBMessagePersistence mbMessagePersistence;
-	@BeanReference(type = MBMessageFinder.class)
-	protected MBMessageFinder mbMessageFinder;
-	@BeanReference(type = com.liferay.portlet.messageboards.service.MBThreadLocalService.class)
-	protected com.liferay.portlet.messageboards.service.MBThreadLocalService mbThreadLocalService;
-	@BeanReference(type = com.liferay.portlet.messageboards.service.MBThreadService.class)
-	protected com.liferay.portlet.messageboards.service.MBThreadService mbThreadService;
-	@BeanReference(type = MBThreadPersistence.class)
-	protected MBThreadPersistence mbThreadPersistence;
-	@BeanReference(type = MBThreadFinder.class)
-	protected MBThreadFinder mbThreadFinder;
 	@BeanReference(type = PersistedModelLocalServiceRegistry.class)
 	protected PersistedModelLocalServiceRegistry persistedModelLocalServiceRegistry;
 	private String _beanIdentifier;

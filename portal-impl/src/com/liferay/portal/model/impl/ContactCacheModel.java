@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,13 +14,10 @@
 
 package com.liferay.portal.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.CacheModel;
 import com.liferay.portal.model.Contact;
-import com.liferay.portal.model.MVCCModel;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -36,26 +33,12 @@ import java.util.Date;
  * @see Contact
  * @generated
  */
-@ProviderType
-public class ContactCacheModel implements CacheModel<Contact>, Externalizable,
-	MVCCModel {
-	@Override
-	public long getMvccVersion() {
-		return mvccVersion;
-	}
-
-	@Override
-	public void setMvccVersion(long mvccVersion) {
-		this.mvccVersion = mvccVersion;
-	}
-
+public class ContactCacheModel implements CacheModel<Contact>, Externalizable {
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(69);
+		StringBundler sb = new StringBundler(67);
 
-		sb.append("{mvccVersion=");
-		sb.append(mvccVersion);
-		sb.append(", contactId=");
+		sb.append("{contactId=");
 		sb.append(contactId);
 		sb.append(", companyId=");
 		sb.append(companyId);
@@ -130,7 +113,6 @@ public class ContactCacheModel implements CacheModel<Contact>, Externalizable,
 	public Contact toEntityModel() {
 		ContactImpl contactImpl = new ContactImpl();
 
-		contactImpl.setMvccVersion(mvccVersion);
 		contactImpl.setContactId(contactId);
 		contactImpl.setCompanyId(companyId);
 		contactImpl.setUserId(userId);
@@ -312,7 +294,6 @@ public class ContactCacheModel implements CacheModel<Contact>, Externalizable,
 
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
-		mvccVersion = objectInput.readLong();
 		contactId = objectInput.readLong();
 		companyId = objectInput.readLong();
 		userId = objectInput.readLong();
@@ -351,7 +332,6 @@ public class ContactCacheModel implements CacheModel<Contact>, Externalizable,
 	@Override
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
-		objectOutput.writeLong(mvccVersion);
 		objectOutput.writeLong(contactId);
 		objectOutput.writeLong(companyId);
 		objectOutput.writeLong(userId);
@@ -509,7 +489,6 @@ public class ContactCacheModel implements CacheModel<Contact>, Externalizable,
 		}
 	}
 
-	public long mvccVersion;
 	public long contactId;
 	public long companyId;
 	public long userId;

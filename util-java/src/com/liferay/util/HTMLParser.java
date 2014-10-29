@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -58,37 +58,7 @@ public class HTMLParser {
 	private class HTMLCallback extends HTMLEditorKit.ParserCallback {
 
 		@Override
-		public void handleComment(char[] data, int pos) {
-		}
-
-		@Override
-		public void handleEndTag(HTML.Tag tag, int pos) {
-		}
-
-		@Override
-		public void handleError(String errorMsg, int pos) {
-		}
-
-		@Override
-		public void handleSimpleTag(
-			HTML.Tag tag, MutableAttributeSet attributes, int pos) {
-
-			if (tag.equals(HTML.Tag.A)) {
-				String href = (String)attributes.getAttribute(
-					HTML.Attribute.HREF);
-
-				if (href != null) {
-					_links.add(href);
-				}
-			}
-			else if (tag.equals(HTML.Tag.IMG)) {
-				String src = (String)attributes.getAttribute(
-					HTML.Attribute.SRC);
-
-				if (src != null) {
-					_images.add(src);
-				}
-			}
+		public void handleText(char[] data, int pos) {
 		}
 
 		@Override
@@ -114,7 +84,37 @@ public class HTMLParser {
 		}
 
 		@Override
-		public void handleText(char[] data, int pos) {
+		public void handleEndTag(HTML.Tag tag, int pos) {
+		}
+
+		@Override
+		public void handleSimpleTag(
+			HTML.Tag tag, MutableAttributeSet attributes, int pos) {
+
+			if (tag.equals(HTML.Tag.A)) {
+				String href = (String)attributes.getAttribute(
+					HTML.Attribute.HREF);
+
+				if (href != null) {
+					_links.add(href);
+				}
+			}
+			else if (tag.equals(HTML.Tag.IMG)) {
+				String src = (String)attributes.getAttribute(
+					HTML.Attribute.SRC);
+
+				if (src != null) {
+					_images.add(src);
+				}
+			}
+		}
+
+		@Override
+		public void handleComment(char[] data, int pos) {
+		}
+
+		@Override
+		public void handleError(String errorMsg, int pos) {
 		}
 
 	}

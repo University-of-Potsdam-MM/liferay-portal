@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -52,11 +52,10 @@ import javax.servlet.ServletContext;
 public class ThemeImpl extends PluginBaseImpl implements Theme {
 
 	public ThemeImpl() {
-		this(null);
 	}
 
 	public ThemeImpl(String themeId) {
-		this(themeId, null);
+		_themeId = themeId;
 	}
 
 	public ThemeImpl(String themeId, String name) {
@@ -372,7 +371,7 @@ public class ThemeImpl extends PluginBaseImpl implements Theme {
 
 	@Override
 	public boolean hasColorSchemes() {
-		if (!_colorSchemesMap.isEmpty()) {
+		if (_colorSchemesMap.size() > 0) {
 			return true;
 		}
 		else {
@@ -391,11 +390,6 @@ public class ThemeImpl extends PluginBaseImpl implements Theme {
 	}
 
 	@Override
-	public boolean isControlPanelTheme() {
-		return _controlPanelTheme;
-	}
-
-	@Override
 	public boolean isGroupAvailable(long groupId) {
 		return isAvailable(getThemeGroupLimit(), groupId);
 	}
@@ -403,11 +397,6 @@ public class ThemeImpl extends PluginBaseImpl implements Theme {
 	@Override
 	public boolean isLoadFromServletContext() {
 		return _loadFromServletContext;
-	}
-
-	@Override
-	public boolean isPageTheme() {
-		return _pageTheme;
 	}
 
 	@Override
@@ -455,11 +444,6 @@ public class ThemeImpl extends PluginBaseImpl implements Theme {
 	}
 
 	@Override
-	public void setControlPanelTheme(boolean controlPanelTheme) {
-		_controlPanelTheme = controlPanelTheme;
-	}
-
-	@Override
 	public void setCssPath(String cssPath) {
 		_cssPath = cssPath;
 	}
@@ -482,11 +466,6 @@ public class ThemeImpl extends PluginBaseImpl implements Theme {
 	@Override
 	public void setName(String name) {
 		_name = name;
-	}
-
-	@Override
-	public void setPageTheme(boolean pageTheme) {
-		_pageTheme = pageTheme;
 	}
 
 	@Override
@@ -590,7 +569,7 @@ public class ThemeImpl extends PluginBaseImpl implements Theme {
 			List<ThemeCompanyId> includes = limit.getIncludes();
 			List<ThemeCompanyId> excludes = limit.getExcludes();
 
-			if (!includes.isEmpty() && !excludes.isEmpty()) {
+			if ((includes.size() != 0) && (excludes.size() != 0)) {
 
 				// Since includes and excludes are specified, check to make sure
 				// the current company id is included and also not excluded
@@ -605,7 +584,7 @@ public class ThemeImpl extends PluginBaseImpl implements Theme {
 					available = !limit.isExcluded(id);
 				}
 			}
-			else if (includes.isEmpty() && !excludes.isEmpty()) {
+			else if ((includes.size() == 0) && (excludes.size() != 0)) {
 
 				// Since no includes are specified, check to make sure the
 				// current company id is not excluded
@@ -616,7 +595,7 @@ public class ThemeImpl extends PluginBaseImpl implements Theme {
 
 				available = !limit.isExcluded(id);
 			}
-			else if (!includes.isEmpty() && excludes.isEmpty()) {
+			else if ((includes.size() != 0) && (excludes.size() == 0)) {
 
 				// Since no excludes are specified, check to make sure the
 				// current company id is included
@@ -651,29 +630,27 @@ public class ThemeImpl extends PluginBaseImpl implements Theme {
 
 	private static Log _log = LogFactoryUtil.getLog(ThemeImpl.class);
 
-	private final Map<String, ColorScheme> _colorSchemesMap =
+	private Map<String, ColorScheme> _colorSchemesMap =
 		new HashMap<String, ColorScheme>();
-	private boolean _controlPanelTheme;
 	private String _cssPath = "${root-path}/css";
 	private String _imagesPath = "${root-path}/images";
 	private String _javaScriptPath = "${root-path}/js";
 	private boolean _loadFromServletContext;
 	private String _name;
-	private boolean _pageTheme;
-	private final Map<String, Boolean> _resourceExistsMap =
+	private Map<String, Boolean> _resourceExistsMap =
 		new ConcurrentHashMap<String, Boolean>();
-	private final Map<String, String> _resourcePathsMap =
+	private Map<String, String> _resourcePathsMap =
 		new ConcurrentHashMap<String, String>();
 	private String _rootPath = "/";
 	private String _servletContextName = StringPool.BLANK;
-	private final Map<String, SpriteImage> _spriteImagesMap =
+	private Map<String, SpriteImage> _spriteImagesMap =
 		new HashMap<String, SpriteImage>();
 	private String _templateExtension = "vm";
 	private String _templatesPath = "${root-path}/templates";
 	private ThemeCompanyLimit _themeCompanyLimit;
 	private ThemeGroupLimit _themeGroupLimit;
-	private final String _themeId;
-	private final Map<String, ThemeSetting> _themeSettingsMap =
+	private String _themeId;
+	private Map<String, ThemeSetting> _themeSettingsMap =
 		new LinkedHashMap<String, ThemeSetting>();
 	private long _timestamp;
 	private String _virtualPath = StringPool.BLANK;

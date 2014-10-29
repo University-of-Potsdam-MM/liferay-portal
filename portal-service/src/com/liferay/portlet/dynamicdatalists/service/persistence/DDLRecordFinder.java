@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -21,22 +21,27 @@ import aQute.bnd.annotation.ProviderType;
  */
 @ProviderType
 public interface DDLRecordFinder {
-	public int countByR_S(long recordSetId, int status);
+	public int countByR_S(long recordSetId, int status)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
-	public int countByC_S_S(long companyId, int status, int scope);
+	public int countByC_S_S(long companyId, int status, int scope)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	public java.util.List<com.liferay.portlet.dynamicdatalists.model.DDLRecord> findByR_S(
 		long recordSetId, int status, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.dynamicdatalists.model.DDLRecord> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	public java.util.List<com.liferay.portlet.dynamicdatalists.model.DDLRecord> findByC_S_S(
 		long companyId, int status, int scope, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.dynamicdatalists.model.DDLRecord> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException;
 
 	public java.lang.Long[] findByC_S_S_MinAndMax(long companyId, int status,
-		int scope);
+		int scope) throws com.liferay.portal.kernel.exception.SystemException;
 
 	public java.util.List<com.liferay.portlet.dynamicdatalists.model.DDLRecord> findByC_S_S_MinAndMax(
 		long companyId, int status, int scope, long minRecordId,
-		long maxRecordId);
+		long maxRecordId)
+		throws com.liferay.portal.kernel.exception.SystemException;
 }

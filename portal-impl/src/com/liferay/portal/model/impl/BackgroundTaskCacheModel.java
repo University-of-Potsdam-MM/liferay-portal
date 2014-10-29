@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,22 +14,17 @@
 
 package com.liferay.portal.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.BackgroundTask;
 import com.liferay.portal.model.CacheModel;
-import com.liferay.portal.model.MVCCModel;
 
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
-import java.io.Serializable;
 
 import java.util.Date;
-import java.util.Map;
 
 /**
  * The cache model class for representing BackgroundTask in entity cache.
@@ -38,26 +33,13 @@ import java.util.Map;
  * @see BackgroundTask
  * @generated
  */
-@ProviderType
 public class BackgroundTaskCacheModel implements CacheModel<BackgroundTask>,
-	Externalizable, MVCCModel {
-	@Override
-	public long getMvccVersion() {
-		return mvccVersion;
-	}
-
-	@Override
-	public void setMvccVersion(long mvccVersion) {
-		this.mvccVersion = mvccVersion;
-	}
-
+	Externalizable {
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(33);
+		StringBundler sb = new StringBundler(31);
 
-		sb.append("{mvccVersion=");
-		sb.append(mvccVersion);
-		sb.append(", backgroundTaskId=");
+		sb.append("{backgroundTaskId=");
 		sb.append(backgroundTaskId);
 		sb.append(", groupId=");
 		sb.append(groupId);
@@ -77,8 +59,8 @@ public class BackgroundTaskCacheModel implements CacheModel<BackgroundTask>,
 		sb.append(servletContextNames);
 		sb.append(", taskExecutorClassName=");
 		sb.append(taskExecutorClassName);
-		sb.append(", taskContextMap=");
-		sb.append(taskContextMap);
+		sb.append(", taskContext=");
+		sb.append(taskContext);
 		sb.append(", completed=");
 		sb.append(completed);
 		sb.append(", completionDate=");
@@ -96,7 +78,6 @@ public class BackgroundTaskCacheModel implements CacheModel<BackgroundTask>,
 	public BackgroundTask toEntityModel() {
 		BackgroundTaskImpl backgroundTaskImpl = new BackgroundTaskImpl();
 
-		backgroundTaskImpl.setMvccVersion(mvccVersion);
 		backgroundTaskImpl.setBackgroundTaskId(backgroundTaskId);
 		backgroundTaskImpl.setGroupId(groupId);
 		backgroundTaskImpl.setCompanyId(companyId);
@@ -144,7 +125,13 @@ public class BackgroundTaskCacheModel implements CacheModel<BackgroundTask>,
 			backgroundTaskImpl.setTaskExecutorClassName(taskExecutorClassName);
 		}
 
-		backgroundTaskImpl.setTaskContextMap(taskContextMap);
+		if (taskContext == null) {
+			backgroundTaskImpl.setTaskContext(StringPool.BLANK);
+		}
+		else {
+			backgroundTaskImpl.setTaskContext(taskContext);
+		}
+
 		backgroundTaskImpl.setCompleted(completed);
 
 		if (completionDate == Long.MIN_VALUE) {
@@ -169,9 +156,7 @@ public class BackgroundTaskCacheModel implements CacheModel<BackgroundTask>,
 	}
 
 	@Override
-	public void readExternal(ObjectInput objectInput)
-		throws ClassNotFoundException, IOException {
-		mvccVersion = objectInput.readLong();
+	public void readExternal(ObjectInput objectInput) throws IOException {
 		backgroundTaskId = objectInput.readLong();
 		groupId = objectInput.readLong();
 		companyId = objectInput.readLong();
@@ -182,7 +167,7 @@ public class BackgroundTaskCacheModel implements CacheModel<BackgroundTask>,
 		name = objectInput.readUTF();
 		servletContextNames = objectInput.readUTF();
 		taskExecutorClassName = objectInput.readUTF();
-		taskContextMap = (Map<String, Serializable>)objectInput.readObject();
+		taskContext = objectInput.readUTF();
 		completed = objectInput.readBoolean();
 		completionDate = objectInput.readLong();
 		status = objectInput.readInt();
@@ -192,7 +177,6 @@ public class BackgroundTaskCacheModel implements CacheModel<BackgroundTask>,
 	@Override
 	public void writeExternal(ObjectOutput objectOutput)
 		throws IOException {
-		objectOutput.writeLong(mvccVersion);
 		objectOutput.writeLong(backgroundTaskId);
 		objectOutput.writeLong(groupId);
 		objectOutput.writeLong(companyId);
@@ -229,7 +213,13 @@ public class BackgroundTaskCacheModel implements CacheModel<BackgroundTask>,
 			objectOutput.writeUTF(taskExecutorClassName);
 		}
 
-		objectOutput.writeObject(taskContextMap);
+		if (taskContext == null) {
+			objectOutput.writeUTF(StringPool.BLANK);
+		}
+		else {
+			objectOutput.writeUTF(taskContext);
+		}
+
 		objectOutput.writeBoolean(completed);
 		objectOutput.writeLong(completionDate);
 		objectOutput.writeInt(status);
@@ -242,7 +232,6 @@ public class BackgroundTaskCacheModel implements CacheModel<BackgroundTask>,
 		}
 	}
 
-	public long mvccVersion;
 	public long backgroundTaskId;
 	public long groupId;
 	public long companyId;
@@ -253,7 +242,7 @@ public class BackgroundTaskCacheModel implements CacheModel<BackgroundTask>,
 	public String name;
 	public String servletContextNames;
 	public String taskExecutorClassName;
-	public Map<String, Serializable> taskContextMap;
+	public String taskContext;
 	public boolean completed;
 	public long completionDate;
 	public int status;

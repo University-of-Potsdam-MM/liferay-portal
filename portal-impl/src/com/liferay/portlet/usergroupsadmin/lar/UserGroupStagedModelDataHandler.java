@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portlet.usergroupsadmin.lar;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.lar.BaseStagedModelDataHandler;
 import com.liferay.portal.kernel.lar.ExportImportPathUtil;
 import com.liferay.portal.kernel.lar.PortletDataContext;
@@ -36,24 +37,17 @@ public class UserGroupStagedModelDataHandler
 	@Override
 	public void deleteStagedModel(
 			String uuid, long groupId, String className, String extraData)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		Group group = GroupLocalServiceUtil.getGroup(groupId);
 
-		UserGroup userGroup = fetchStagedModelByUuidAndGroupId(
-			uuid, group.getCompanyId());
+		UserGroup userGroup =
+			UserGroupLocalServiceUtil.fetchUserGroupByUuidAndCompanyId(
+				uuid, group.getCompanyId());
 
 		if (userGroup != null) {
 			UserGroupLocalServiceUtil.deleteUserGroup(userGroup);
 		}
-	}
-
-	@Override
-	public UserGroup fetchStagedModelByUuidAndCompanyId(
-		String uuid, long companyId) {
-
-		return UserGroupLocalServiceUtil.fetchUserGroupByUuidAndCompanyId(
-			uuid, companyId);
 	}
 
 	@Override
@@ -89,8 +83,9 @@ public class UserGroupStagedModelDataHandler
 		ServiceContext serviceContext = portletDataContext.createServiceContext(
 			userGroup);
 
-		UserGroup existingUserGroup = fetchStagedModelByUuidAndGroupId(
-			userGroup.getUuid(), portletDataContext.getGroupId());
+		UserGroup existingUserGroup =
+			UserGroupLocalServiceUtil.fetchUserGroupByUuidAndCompanyId(
+				userGroup.getUuid(), portletDataContext.getCompanyId());
 
 		if (existingUserGroup == null) {
 			existingUserGroup = UserGroupLocalServiceUtil.fetchUserGroup(

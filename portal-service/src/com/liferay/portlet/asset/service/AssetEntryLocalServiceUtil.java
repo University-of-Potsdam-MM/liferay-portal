@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -40,60 +40,18 @@ public class AssetEntryLocalServiceUtil {
 	 *
 	 * Never modify this class directly. Add custom service methods to {@link com.liferay.portlet.asset.service.impl.AssetEntryLocalServiceImpl} and rerun ServiceBuilder to regenerate this class.
 	 */
-	public static void addAssetCategoryAssetEntries(long categoryId,
-		java.util.List<com.liferay.portlet.asset.model.AssetEntry> AssetEntries) {
-		getService().addAssetCategoryAssetEntries(categoryId, AssetEntries);
-	}
-
-	public static void addAssetCategoryAssetEntries(long categoryId,
-		long[] entryIds) {
-		getService().addAssetCategoryAssetEntries(categoryId, entryIds);
-	}
-
-	public static void addAssetCategoryAssetEntry(long categoryId,
-		com.liferay.portlet.asset.model.AssetEntry assetEntry) {
-		getService().addAssetCategoryAssetEntry(categoryId, assetEntry);
-	}
-
-	public static void addAssetCategoryAssetEntry(long categoryId, long entryId) {
-		getService().addAssetCategoryAssetEntry(categoryId, entryId);
-	}
 
 	/**
 	* Adds the asset entry to the database. Also notifies the appropriate model listeners.
 	*
 	* @param assetEntry the asset entry
 	* @return the asset entry that was added
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.asset.model.AssetEntry addAssetEntry(
-		com.liferay.portlet.asset.model.AssetEntry assetEntry) {
+		com.liferay.portlet.asset.model.AssetEntry assetEntry)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().addAssetEntry(assetEntry);
-	}
-
-	public static void addAssetTagAssetEntries(long tagId,
-		java.util.List<com.liferay.portlet.asset.model.AssetEntry> AssetEntries) {
-		getService().addAssetTagAssetEntries(tagId, AssetEntries);
-	}
-
-	public static void addAssetTagAssetEntries(long tagId, long[] entryIds) {
-		getService().addAssetTagAssetEntries(tagId, entryIds);
-	}
-
-	public static void addAssetTagAssetEntry(long tagId,
-		com.liferay.portlet.asset.model.AssetEntry assetEntry) {
-		getService().addAssetTagAssetEntry(tagId, assetEntry);
-	}
-
-	public static void addAssetTagAssetEntry(long tagId, long entryId) {
-		getService().addAssetTagAssetEntry(tagId, entryId);
-	}
-
-	public static void clearAssetCategoryAssetEntries(long categoryId) {
-		getService().clearAssetCategoryAssetEntries(categoryId);
-	}
-
-	public static void clearAssetTagAssetEntries(long tagId) {
-		getService().clearAssetTagAssetEntries(tagId);
 	}
 
 	/**
@@ -107,24 +65,19 @@ public class AssetEntryLocalServiceUtil {
 		return getService().createAssetEntry(entryId);
 	}
 
-	public static void deleteAssetCategoryAssetEntries(long categoryId,
-		java.util.List<com.liferay.portlet.asset.model.AssetEntry> AssetEntries) {
-		getService().deleteAssetCategoryAssetEntries(categoryId, AssetEntries);
-	}
-
-	public static void deleteAssetCategoryAssetEntries(long categoryId,
-		long[] entryIds) {
-		getService().deleteAssetCategoryAssetEntries(categoryId, entryIds);
-	}
-
-	public static void deleteAssetCategoryAssetEntry(long categoryId,
-		com.liferay.portlet.asset.model.AssetEntry assetEntry) {
-		getService().deleteAssetCategoryAssetEntry(categoryId, assetEntry);
-	}
-
-	public static void deleteAssetCategoryAssetEntry(long categoryId,
-		long entryId) {
-		getService().deleteAssetCategoryAssetEntry(categoryId, entryId);
+	/**
+	* Deletes the asset entry with the primary key from the database. Also notifies the appropriate model listeners.
+	*
+	* @param entryId the primary key of the asset entry
+	* @return the asset entry that was removed
+	* @throws PortalException if a asset entry with the primary key could not be found
+	* @throws SystemException if a system exception occurred
+	*/
+	public static com.liferay.portlet.asset.model.AssetEntry deleteAssetEntry(
+		long entryId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getService().deleteAssetEntry(entryId);
 	}
 
 	/**
@@ -132,71 +85,12 @@ public class AssetEntryLocalServiceUtil {
 	*
 	* @param assetEntry the asset entry
 	* @return the asset entry that was removed
+	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.portlet.asset.model.AssetEntry deleteAssetEntry(
-		com.liferay.portlet.asset.model.AssetEntry assetEntry) {
+		com.liferay.portlet.asset.model.AssetEntry assetEntry)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().deleteAssetEntry(assetEntry);
-	}
-
-	/**
-	* Deletes the asset entry with the primary key from the database. Also notifies the appropriate model listeners.
-	*
-	* @param entryId the primary key of the asset entry
-	* @return the asset entry that was removed
-	* @throws PortalException if a asset entry with the primary key could not be found
-	*/
-	public static com.liferay.portlet.asset.model.AssetEntry deleteAssetEntry(
-		long entryId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().deleteAssetEntry(entryId);
-	}
-
-	public static void deleteAssetTagAssetEntries(long tagId,
-		java.util.List<com.liferay.portlet.asset.model.AssetEntry> AssetEntries) {
-		getService().deleteAssetTagAssetEntries(tagId, AssetEntries);
-	}
-
-	public static void deleteAssetTagAssetEntries(long tagId, long[] entryIds) {
-		getService().deleteAssetTagAssetEntries(tagId, entryIds);
-	}
-
-	public static void deleteAssetTagAssetEntry(long tagId,
-		com.liferay.portlet.asset.model.AssetEntry assetEntry) {
-		getService().deleteAssetTagAssetEntry(tagId, assetEntry);
-	}
-
-	public static void deleteAssetTagAssetEntry(long tagId, long entryId) {
-		getService().deleteAssetTagAssetEntry(tagId, entryId);
-	}
-
-	public static void deleteEntry(java.lang.String className, long classPK)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		getService().deleteEntry(className, classPK);
-	}
-
-	public static void deleteEntry(
-		com.liferay.portlet.asset.model.AssetEntry entry)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		getService().deleteEntry(entry);
-	}
-
-	public static void deleteEntry(long entryId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		getService().deleteEntry(entryId);
-	}
-
-	public static void deleteGroupEntries(long groupId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		getService().deleteGroupEntries(groupId);
-	}
-
-	/**
-	* @throws PortalException
-	*/
-	public static com.liferay.portal.model.PersistedModel deletePersistedModel(
-		com.liferay.portal.model.PersistedModel persistedModel)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().deletePersistedModel(persistedModel);
 	}
 
 	public static com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery() {
@@ -208,9 +102,12 @@ public class AssetEntryLocalServiceUtil {
 	*
 	* @param dynamicQuery the dynamic query
 	* @return the matching rows
+	* @throws SystemException if a system exception occurred
 	*/
-	public static <T> java.util.List<T> dynamicQuery(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery) {
+	@SuppressWarnings("rawtypes")
+	public static java.util.List dynamicQuery(
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().dynamicQuery(dynamicQuery);
 	}
 
@@ -225,10 +122,12 @@ public class AssetEntryLocalServiceUtil {
 	* @param start the lower bound of the range of model instances
 	* @param end the upper bound of the range of model instances (not inclusive)
 	* @return the range of matching rows
+	* @throws SystemException if a system exception occurred
 	*/
-	public static <T> java.util.List<T> dynamicQuery(
+	@SuppressWarnings("rawtypes")
+	public static java.util.List dynamicQuery(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
-		int end) {
+		int end) throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().dynamicQuery(dynamicQuery, start, end);
 	}
 
@@ -244,11 +143,14 @@ public class AssetEntryLocalServiceUtil {
 	* @param end the upper bound of the range of model instances (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching rows
+	* @throws SystemException if a system exception occurred
 	*/
-	public static <T> java.util.List<T> dynamicQuery(
+	@SuppressWarnings("rawtypes")
+	public static java.util.List dynamicQuery(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery, int start,
 		int end,
-		com.liferay.portal.kernel.util.OrderByComparator<T> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService()
 				   .dynamicQuery(dynamicQuery, start, end, orderByComparator);
 	}
@@ -258,9 +160,11 @@ public class AssetEntryLocalServiceUtil {
 	*
 	* @param dynamicQuery the dynamic query
 	* @return the number of rows that match the dynamic query
+	* @throws SystemException if a system exception occurred
 	*/
 	public static long dynamicQueryCount(
-		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery) {
+		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().dynamicQueryCount(dynamicQuery);
 	}
 
@@ -270,73 +174,41 @@ public class AssetEntryLocalServiceUtil {
 	* @param dynamicQuery the dynamic query
 	* @param projection the projection to apply to the query
 	* @return the number of rows that match the dynamic query
+	* @throws SystemException if a system exception occurred
 	*/
 	public static long dynamicQueryCount(
 		com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery,
-		com.liferay.portal.kernel.dao.orm.Projection projection) {
+		com.liferay.portal.kernel.dao.orm.Projection projection)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().dynamicQueryCount(dynamicQuery, projection);
 	}
 
 	public static com.liferay.portlet.asset.model.AssetEntry fetchAssetEntry(
-		long entryId) {
+		long entryId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().fetchAssetEntry(entryId);
 	}
 
-	public static com.liferay.portlet.asset.model.AssetEntry fetchEntry(
-		java.lang.String className, long classPK) {
-		return getService().fetchEntry(className, classPK);
-	}
-
-	public static com.liferay.portlet.asset.model.AssetEntry fetchEntry(
-		long entryId) {
-		return getService().fetchEntry(entryId);
-	}
-
-	public static com.liferay.portlet.asset.model.AssetEntry fetchEntry(
-		long groupId, java.lang.String classUuid) {
-		return getService().fetchEntry(groupId, classUuid);
-	}
-
-	public static com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery getActionableDynamicQuery() {
-		return getService().getActionableDynamicQuery();
-	}
-
-	public static java.util.List<com.liferay.portlet.asset.model.AssetEntry> getAncestorEntries(
-		long entryId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().getAncestorEntries(entryId);
-	}
-
-	public static java.util.List<com.liferay.portlet.asset.model.AssetEntry> getAssetCategoryAssetEntries(
-		long categoryId) {
-		return getService().getAssetCategoryAssetEntries(categoryId);
-	}
-
-	public static java.util.List<com.liferay.portlet.asset.model.AssetEntry> getAssetCategoryAssetEntries(
-		long categoryId, int start, int end) {
-		return getService().getAssetCategoryAssetEntries(categoryId, start, end);
-	}
-
-	public static java.util.List<com.liferay.portlet.asset.model.AssetEntry> getAssetCategoryAssetEntries(
-		long categoryId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.asset.model.AssetEntry> orderByComparator) {
-		return getService()
-				   .getAssetCategoryAssetEntries(categoryId, start, end,
-			orderByComparator);
-	}
-
-	public static int getAssetCategoryAssetEntriesCount(long categoryId) {
-		return getService().getAssetCategoryAssetEntriesCount(categoryId);
-	}
-
 	/**
-	* Returns the categoryIds of the asset categories associated with the asset entry.
+	* Returns the asset entry with the primary key.
 	*
-	* @param entryId the entryId of the asset entry
-	* @return long[] the categoryIds of asset categories associated with the asset entry
+	* @param entryId the primary key of the asset entry
+	* @return the asset entry
+	* @throws PortalException if a asset entry with the primary key could not be found
+	* @throws SystemException if a system exception occurred
 	*/
-	public static long[] getAssetCategoryPrimaryKeys(long entryId) {
-		return getService().getAssetCategoryPrimaryKeys(entryId);
+	public static com.liferay.portlet.asset.model.AssetEntry getAssetEntry(
+		long entryId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getService().getAssetEntry(entryId);
+	}
+
+	public static com.liferay.portal.model.PersistedModel getPersistedModel(
+		java.io.Serializable primaryKeyObj)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getService().getPersistedModel(primaryKeyObj);
 	}
 
 	/**
@@ -349,9 +221,11 @@ public class AssetEntryLocalServiceUtil {
 	* @param start the lower bound of the range of asset entries
 	* @param end the upper bound of the range of asset entries (not inclusive)
 	* @return the range of asset entries
+	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.portlet.asset.model.AssetEntry> getAssetEntries(
-		int start, int end) {
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().getAssetEntries(start, end);
 	}
 
@@ -359,53 +233,303 @@ public class AssetEntryLocalServiceUtil {
 	* Returns the number of asset entries.
 	*
 	* @return the number of asset entries
+	* @throws SystemException if a system exception occurred
 	*/
-	public static int getAssetEntriesCount() {
+	public static int getAssetEntriesCount()
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().getAssetEntriesCount();
 	}
 
 	/**
-	* Returns the asset entry with the primary key.
+	* Updates the asset entry in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	*
-	* @param entryId the primary key of the asset entry
-	* @return the asset entry
-	* @throws PortalException if a asset entry with the primary key could not be found
+	* @param assetEntry the asset entry
+	* @return the asset entry that was updated
+	* @throws SystemException if a system exception occurred
 	*/
-	public static com.liferay.portlet.asset.model.AssetEntry getAssetEntry(
-		long entryId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().getAssetEntry(entryId);
+	public static com.liferay.portlet.asset.model.AssetEntry updateAssetEntry(
+		com.liferay.portlet.asset.model.AssetEntry assetEntry)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().updateAssetEntry(assetEntry);
 	}
 
+	/**
+	* @throws SystemException if a system exception occurred
+	*/
+	public static void addAssetCategoryAssetEntry(long categoryId, long entryId)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		getService().addAssetCategoryAssetEntry(categoryId, entryId);
+	}
+
+	/**
+	* @throws SystemException if a system exception occurred
+	*/
+	public static void addAssetCategoryAssetEntry(long categoryId,
+		com.liferay.portlet.asset.model.AssetEntry assetEntry)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		getService().addAssetCategoryAssetEntry(categoryId, assetEntry);
+	}
+
+	/**
+	* @throws SystemException if a system exception occurred
+	*/
+	public static void addAssetCategoryAssetEntries(long categoryId,
+		long[] entryIds)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		getService().addAssetCategoryAssetEntries(categoryId, entryIds);
+	}
+
+	/**
+	* @throws SystemException if a system exception occurred
+	*/
+	public static void addAssetCategoryAssetEntries(long categoryId,
+		java.util.List<com.liferay.portlet.asset.model.AssetEntry> AssetEntries)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		getService().addAssetCategoryAssetEntries(categoryId, AssetEntries);
+	}
+
+	/**
+	* @throws SystemException if a system exception occurred
+	*/
+	public static void clearAssetCategoryAssetEntries(long categoryId)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		getService().clearAssetCategoryAssetEntries(categoryId);
+	}
+
+	/**
+	* @throws SystemException if a system exception occurred
+	*/
+	public static void deleteAssetCategoryAssetEntry(long categoryId,
+		long entryId)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		getService().deleteAssetCategoryAssetEntry(categoryId, entryId);
+	}
+
+	/**
+	* @throws SystemException if a system exception occurred
+	*/
+	public static void deleteAssetCategoryAssetEntry(long categoryId,
+		com.liferay.portlet.asset.model.AssetEntry assetEntry)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		getService().deleteAssetCategoryAssetEntry(categoryId, assetEntry);
+	}
+
+	/**
+	* @throws SystemException if a system exception occurred
+	*/
+	public static void deleteAssetCategoryAssetEntries(long categoryId,
+		long[] entryIds)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		getService().deleteAssetCategoryAssetEntries(categoryId, entryIds);
+	}
+
+	/**
+	* @throws SystemException if a system exception occurred
+	*/
+	public static void deleteAssetCategoryAssetEntries(long categoryId,
+		java.util.List<com.liferay.portlet.asset.model.AssetEntry> AssetEntries)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		getService().deleteAssetCategoryAssetEntries(categoryId, AssetEntries);
+	}
+
+	/**
+	* @throws SystemException if a system exception occurred
+	*/
+	public static java.util.List<com.liferay.portlet.asset.model.AssetEntry> getAssetCategoryAssetEntries(
+		long categoryId)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().getAssetCategoryAssetEntries(categoryId);
+	}
+
+	/**
+	* @throws SystemException if a system exception occurred
+	*/
+	public static java.util.List<com.liferay.portlet.asset.model.AssetEntry> getAssetCategoryAssetEntries(
+		long categoryId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().getAssetCategoryAssetEntries(categoryId, start, end);
+	}
+
+	/**
+	* @throws SystemException if a system exception occurred
+	*/
+	public static java.util.List<com.liferay.portlet.asset.model.AssetEntry> getAssetCategoryAssetEntries(
+		long categoryId, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService()
+				   .getAssetCategoryAssetEntries(categoryId, start, end,
+			orderByComparator);
+	}
+
+	/**
+	* @throws SystemException if a system exception occurred
+	*/
+	public static int getAssetCategoryAssetEntriesCount(long categoryId)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().getAssetCategoryAssetEntriesCount(categoryId);
+	}
+
+	/**
+	* @throws SystemException if a system exception occurred
+	*/
+	public static boolean hasAssetCategoryAssetEntry(long categoryId,
+		long entryId)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().hasAssetCategoryAssetEntry(categoryId, entryId);
+	}
+
+	/**
+	* @throws SystemException if a system exception occurred
+	*/
+	public static boolean hasAssetCategoryAssetEntries(long categoryId)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().hasAssetCategoryAssetEntries(categoryId);
+	}
+
+	/**
+	* @throws SystemException if a system exception occurred
+	*/
+	public static void setAssetCategoryAssetEntries(long categoryId,
+		long[] entryIds)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		getService().setAssetCategoryAssetEntries(categoryId, entryIds);
+	}
+
+	/**
+	* @throws SystemException if a system exception occurred
+	*/
+	public static void addAssetTagAssetEntry(long tagId, long entryId)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		getService().addAssetTagAssetEntry(tagId, entryId);
+	}
+
+	/**
+	* @throws SystemException if a system exception occurred
+	*/
+	public static void addAssetTagAssetEntry(long tagId,
+		com.liferay.portlet.asset.model.AssetEntry assetEntry)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		getService().addAssetTagAssetEntry(tagId, assetEntry);
+	}
+
+	/**
+	* @throws SystemException if a system exception occurred
+	*/
+	public static void addAssetTagAssetEntries(long tagId, long[] entryIds)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		getService().addAssetTagAssetEntries(tagId, entryIds);
+	}
+
+	/**
+	* @throws SystemException if a system exception occurred
+	*/
+	public static void addAssetTagAssetEntries(long tagId,
+		java.util.List<com.liferay.portlet.asset.model.AssetEntry> AssetEntries)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		getService().addAssetTagAssetEntries(tagId, AssetEntries);
+	}
+
+	/**
+	* @throws SystemException if a system exception occurred
+	*/
+	public static void clearAssetTagAssetEntries(long tagId)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		getService().clearAssetTagAssetEntries(tagId);
+	}
+
+	/**
+	* @throws SystemException if a system exception occurred
+	*/
+	public static void deleteAssetTagAssetEntry(long tagId, long entryId)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		getService().deleteAssetTagAssetEntry(tagId, entryId);
+	}
+
+	/**
+	* @throws SystemException if a system exception occurred
+	*/
+	public static void deleteAssetTagAssetEntry(long tagId,
+		com.liferay.portlet.asset.model.AssetEntry assetEntry)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		getService().deleteAssetTagAssetEntry(tagId, assetEntry);
+	}
+
+	/**
+	* @throws SystemException if a system exception occurred
+	*/
+	public static void deleteAssetTagAssetEntries(long tagId, long[] entryIds)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		getService().deleteAssetTagAssetEntries(tagId, entryIds);
+	}
+
+	/**
+	* @throws SystemException if a system exception occurred
+	*/
+	public static void deleteAssetTagAssetEntries(long tagId,
+		java.util.List<com.liferay.portlet.asset.model.AssetEntry> AssetEntries)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		getService().deleteAssetTagAssetEntries(tagId, AssetEntries);
+	}
+
+	/**
+	* @throws SystemException if a system exception occurred
+	*/
 	public static java.util.List<com.liferay.portlet.asset.model.AssetEntry> getAssetTagAssetEntries(
-		long tagId) {
+		long tagId) throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().getAssetTagAssetEntries(tagId);
 	}
 
+	/**
+	* @throws SystemException if a system exception occurred
+	*/
 	public static java.util.List<com.liferay.portlet.asset.model.AssetEntry> getAssetTagAssetEntries(
-		long tagId, int start, int end) {
+		long tagId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().getAssetTagAssetEntries(tagId, start, end);
 	}
 
+	/**
+	* @throws SystemException if a system exception occurred
+	*/
 	public static java.util.List<com.liferay.portlet.asset.model.AssetEntry> getAssetTagAssetEntries(
 		long tagId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<com.liferay.portlet.asset.model.AssetEntry> orderByComparator) {
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService()
 				   .getAssetTagAssetEntries(tagId, start, end, orderByComparator);
 	}
 
-	public static int getAssetTagAssetEntriesCount(long tagId) {
+	/**
+	* @throws SystemException if a system exception occurred
+	*/
+	public static int getAssetTagAssetEntriesCount(long tagId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().getAssetTagAssetEntriesCount(tagId);
 	}
 
 	/**
-	* Returns the tagIds of the asset tags associated with the asset entry.
-	*
-	* @param entryId the entryId of the asset entry
-	* @return long[] the tagIds of asset tags associated with the asset entry
+	* @throws SystemException if a system exception occurred
 	*/
-	public static long[] getAssetTagPrimaryKeys(long entryId) {
-		return getService().getAssetTagPrimaryKeys(entryId);
+	public static boolean hasAssetTagAssetEntry(long tagId, long entryId)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().hasAssetTagAssetEntry(tagId, entryId);
+	}
+
+	/**
+	* @throws SystemException if a system exception occurred
+	*/
+	public static boolean hasAssetTagAssetEntries(long tagId)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().hasAssetTagAssetEntries(tagId);
+	}
+
+	/**
+	* @throws SystemException if a system exception occurred
+	*/
+	public static void setAssetTagAssetEntries(long tagId, long[] entryIds)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		getService().setAssetTagAssetEntries(tagId, entryIds);
 	}
 
 	/**
@@ -417,114 +541,155 @@ public class AssetEntryLocalServiceUtil {
 		return getService().getBeanIdentifier();
 	}
 
+	/**
+	* Sets the Spring bean ID for this bean.
+	*
+	* @param beanIdentifier the Spring bean ID for this bean
+	*/
+	public static void setBeanIdentifier(java.lang.String beanIdentifier) {
+		getService().setBeanIdentifier(beanIdentifier);
+	}
+
+	public static void deleteEntry(
+		com.liferay.portlet.asset.model.AssetEntry entry)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		getService().deleteEntry(entry);
+	}
+
+	public static void deleteEntry(long entryId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		getService().deleteEntry(entryId);
+	}
+
+	public static void deleteEntry(java.lang.String className, long classPK)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		getService().deleteEntry(className, classPK);
+	}
+
+	public static com.liferay.portlet.asset.model.AssetEntry fetchEntry(
+		long entryId)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().fetchEntry(entryId);
+	}
+
+	public static com.liferay.portlet.asset.model.AssetEntry fetchEntry(
+		long groupId, java.lang.String classUuid)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().fetchEntry(groupId, classUuid);
+	}
+
+	public static com.liferay.portlet.asset.model.AssetEntry fetchEntry(
+		java.lang.String className, long classPK)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().fetchEntry(className, classPK);
+	}
+
+	public static java.util.List<com.liferay.portlet.asset.model.AssetEntry> getAncestorEntries(
+		long entryId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getService().getAncestorEntries(entryId);
+	}
+
 	public static java.util.List<com.liferay.portlet.asset.model.AssetEntry> getChildEntries(
 		long entryId)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getService().getChildEntries(entryId);
 	}
 
 	public static java.util.List<com.liferay.portlet.asset.model.AssetEntry> getCompanyEntries(
-		long companyId, int start, int end) {
+		long companyId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().getCompanyEntries(companyId, start, end);
 	}
 
-	public static int getCompanyEntriesCount(long companyId) {
+	public static int getCompanyEntriesCount(long companyId)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().getCompanyEntriesCount(companyId);
 	}
 
 	public static java.util.List<com.liferay.portlet.asset.model.AssetEntry> getEntries(
-		com.liferay.portlet.asset.service.persistence.AssetEntryQuery entryQuery) {
+		com.liferay.portlet.asset.service.persistence.AssetEntryQuery entryQuery)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().getEntries(entryQuery);
 	}
 
 	public static int getEntriesCount(
-		com.liferay.portlet.asset.service.persistence.AssetEntryQuery entryQuery) {
+		com.liferay.portlet.asset.service.persistence.AssetEntryQuery entryQuery)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().getEntriesCount(entryQuery);
 	}
 
 	public static com.liferay.portlet.asset.model.AssetEntry getEntry(
-		java.lang.String className, long classPK)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().getEntry(className, classPK);
-	}
-
-	public static com.liferay.portlet.asset.model.AssetEntry getEntry(
 		long entryId)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getService().getEntry(entryId);
 	}
 
 	public static com.liferay.portlet.asset.model.AssetEntry getEntry(
 		long groupId, java.lang.String classUuid)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getService().getEntry(groupId, classUuid);
 	}
 
-	public static java.util.List<com.liferay.portlet.asset.model.AssetEntry> getGroupEntries(
-		long groupId) {
-		return getService().getGroupEntries(groupId);
+	public static com.liferay.portlet.asset.model.AssetEntry getEntry(
+		java.lang.String className, long classPK)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getService().getEntry(className, classPK);
 	}
 
 	public static com.liferay.portlet.asset.model.AssetEntry getNextEntry(
 		long entryId)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getService().getNextEntry(entryId);
 	}
 
 	public static com.liferay.portlet.asset.model.AssetEntry getParentEntry(
 		long entryId)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getService().getParentEntry(entryId);
-	}
-
-	public static com.liferay.portal.model.PersistedModel getPersistedModel(
-		java.io.Serializable primaryKeyObj)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().getPersistedModel(primaryKeyObj);
 	}
 
 	public static com.liferay.portlet.asset.model.AssetEntry getPreviousEntry(
 		long entryId)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getService().getPreviousEntry(entryId);
 	}
 
 	public static java.util.List<com.liferay.portlet.asset.model.AssetEntry> getTopViewedEntries(
-		java.lang.String className, boolean asc, int start, int end) {
+		java.lang.String className, boolean asc, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().getTopViewedEntries(className, asc, start, end);
 	}
 
 	public static java.util.List<com.liferay.portlet.asset.model.AssetEntry> getTopViewedEntries(
-		java.lang.String[] className, boolean asc, int start, int end) {
+		java.lang.String[] className, boolean asc, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService().getTopViewedEntries(className, asc, start, end);
-	}
-
-	public static boolean hasAssetCategoryAssetEntries(long categoryId) {
-		return getService().hasAssetCategoryAssetEntries(categoryId);
-	}
-
-	public static boolean hasAssetCategoryAssetEntry(long categoryId,
-		long entryId) {
-		return getService().hasAssetCategoryAssetEntry(categoryId, entryId);
-	}
-
-	public static boolean hasAssetTagAssetEntries(long tagId) {
-		return getService().hasAssetTagAssetEntries(tagId);
-	}
-
-	public static boolean hasAssetTagAssetEntry(long tagId, long entryId) {
-		return getService().hasAssetTagAssetEntry(tagId, entryId);
 	}
 
 	public static com.liferay.portlet.asset.model.AssetEntry incrementViewCounter(
 		long userId, java.lang.String className, long classPK)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getService().incrementViewCounter(userId, className, classPK);
 	}
 
-	public static void incrementViewCounter(long userId,
-		java.lang.String className, long classPK, int increment) {
-		getService().incrementViewCounter(userId, className, classPK, increment);
+	public static com.liferay.portlet.asset.model.AssetEntry incrementViewCounter(
+		long userId, java.lang.String className, long classPK, int increment)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService()
+				   .incrementViewCounter(userId, className, classPK, increment);
 	}
 
 	public static void reindex(
@@ -537,43 +702,10 @@ public class AssetEntryLocalServiceUtil {
 	* @deprecated As of 6.2.0, replaced by {@link #search(long, long[], long,
 	String, String, int, int, int)}
 	*/
-	@Deprecated
-	public static com.liferay.portal.kernel.search.Hits search(long companyId,
-		long[] groupIds, java.lang.String className, java.lang.String keywords,
-		int start, int end) {
-		return getService()
-				   .search(companyId, groupIds, className, keywords, start, end);
-	}
-
 	public static com.liferay.portal.kernel.search.Hits search(long companyId,
 		long[] groupIds, long userId, java.lang.String className,
-		long classTypeId, java.lang.String keywords, int status, int start,
-		int end) {
-		return getService()
-				   .search(companyId, groupIds, userId, className, classTypeId,
-			keywords, status, start, end);
-	}
-
-	public static com.liferay.portal.kernel.search.Hits search(long companyId,
-		long[] groupIds, long userId, java.lang.String className,
-		long classTypeId, java.lang.String userName, java.lang.String title,
-		java.lang.String description, java.lang.String assetCategoryIds,
-		java.lang.String assetTagNames, int status, boolean andSearch,
-		int start, int end) {
-		return getService()
-				   .search(companyId, groupIds, userId, className, classTypeId,
-			userName, title, description, assetCategoryIds, assetTagNames,
-			status, andSearch, start, end);
-	}
-
-	/**
-	* @deprecated As of 6.2.0, replaced by {@link #search(long, long[], long,
-	String, String, int, int, int)}
-	*/
-	@Deprecated
-	public static com.liferay.portal.kernel.search.Hits search(long companyId,
-		long[] groupIds, long userId, java.lang.String className,
-		java.lang.String keywords, int start, int end) {
+		java.lang.String keywords, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService()
 				   .search(companyId, groupIds, userId, className, keywords,
 			start, end);
@@ -581,7 +713,8 @@ public class AssetEntryLocalServiceUtil {
 
 	public static com.liferay.portal.kernel.search.Hits search(long companyId,
 		long[] groupIds, long userId, java.lang.String className,
-		java.lang.String keywords, int status, int start, int end) {
+		java.lang.String keywords, int status, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService()
 				   .search(companyId, groupIds, userId, className, keywords,
 			status, start, end);
@@ -592,12 +725,12 @@ public class AssetEntryLocalServiceUtil {
 	String, String, String, String, String, String, int, boolean,
 	int, int)}
 	*/
-	@Deprecated
 	public static com.liferay.portal.kernel.search.Hits search(long companyId,
 		long[] groupIds, long userId, java.lang.String className,
 		java.lang.String userName, java.lang.String title,
 		java.lang.String description, java.lang.String assetCategoryIds,
-		java.lang.String assetTagNames, boolean andSearch, int start, int end) {
+		java.lang.String assetTagNames, boolean andSearch, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService()
 				   .search(companyId, groupIds, userId, className, userName,
 			title, description, assetCategoryIds, assetTagNames, andSearch,
@@ -609,114 +742,24 @@ public class AssetEntryLocalServiceUtil {
 		java.lang.String userName, java.lang.String title,
 		java.lang.String description, java.lang.String assetCategoryIds,
 		java.lang.String assetTagNames, int status, boolean andSearch,
-		int start, int end) {
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService()
 				   .search(companyId, groupIds, userId, className, userName,
 			title, description, assetCategoryIds, assetTagNames, status,
 			andSearch, start, end);
 	}
 
-	public static void setAssetCategoryAssetEntries(long categoryId,
-		long[] entryIds) {
-		getService().setAssetCategoryAssetEntries(categoryId, entryIds);
-	}
-
-	public static void setAssetTagAssetEntries(long tagId, long[] entryIds) {
-		getService().setAssetTagAssetEntries(tagId, entryIds);
-	}
-
 	/**
-	* Sets the Spring bean ID for this bean.
-	*
-	* @param beanIdentifier the Spring bean ID for this bean
+	* @deprecated As of 6.2.0, replaced by {@link #search(long, long[], long,
+	String, String, int, int, int)}
 	*/
-	public static void setBeanIdentifier(java.lang.String beanIdentifier) {
-		getService().setBeanIdentifier(beanIdentifier);
-	}
-
-	/**
-	* Updates the asset entry in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
-	*
-	* @param assetEntry the asset entry
-	* @return the asset entry that was updated
-	*/
-	public static com.liferay.portlet.asset.model.AssetEntry updateAssetEntry(
-		com.liferay.portlet.asset.model.AssetEntry assetEntry) {
-		return getService().updateAssetEntry(assetEntry);
-	}
-
-	public static com.liferay.portlet.asset.model.AssetEntry updateEntry(
-		java.lang.String className, long classPK, java.util.Date publishDate,
-		java.util.Date expirationDate, boolean visible)
-		throws com.liferay.portal.kernel.exception.PortalException {
+	public static com.liferay.portal.kernel.search.Hits search(long companyId,
+		long[] groupIds, java.lang.String className, java.lang.String keywords,
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		return getService()
-				   .updateEntry(className, classPK, publishDate,
-			expirationDate, visible);
-	}
-
-	public static com.liferay.portlet.asset.model.AssetEntry updateEntry(
-		java.lang.String className, long classPK, java.util.Date publishDate,
-		boolean visible)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().updateEntry(className, classPK, publishDate, visible);
-	}
-
-	public static com.liferay.portlet.asset.model.AssetEntry updateEntry(
-		long userId, long groupId, java.lang.String className, long classPK,
-		long[] categoryIds, java.lang.String[] tagNames)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService()
-				   .updateEntry(userId, groupId, className, classPK,
-			categoryIds, tagNames);
-	}
-
-	/**
-	* @deprecated As of 6.2.0, replaced by {@link #updateEntry(long, long,
-	Date, Date, String, long, String, long, long[], String[],
-	boolean, Date, Date, Date, String, String, String, String,
-	String, String, int, int, Integer, boolean)}
-	*/
-	@Deprecated
-	public static com.liferay.portlet.asset.model.AssetEntry updateEntry(
-		long userId, long groupId, java.lang.String className, long classPK,
-		java.lang.String classUuid, long classTypeId, long[] categoryIds,
-		java.lang.String[] tagNames, boolean visible, java.util.Date startDate,
-		java.util.Date endDate, java.util.Date expirationDate,
-		java.lang.String mimeType, java.lang.String title,
-		java.lang.String description, java.lang.String summary,
-		java.lang.String url, java.lang.String layoutUuid, int height,
-		int width, java.lang.Integer priority, boolean sync)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService()
-				   .updateEntry(userId, groupId, className, classPK, classUuid,
-			classTypeId, categoryIds, tagNames, visible, startDate, endDate,
-			expirationDate, mimeType, title, description, summary, url,
-			layoutUuid, height, width, priority, sync);
-	}
-
-	/**
-	* @deprecated As of 6.2.0, replaced by {@link #updateEntry(long, long,
-	String, long, String, long, long[], String[], boolean, Date,
-	Date, Date, String, String, String, String, String, String,
-	int, int, Integer, boolean)}
-	*/
-	@Deprecated
-	public static com.liferay.portlet.asset.model.AssetEntry updateEntry(
-		long userId, long groupId, java.lang.String className, long classPK,
-		java.lang.String classUuid, long classTypeId, long[] categoryIds,
-		java.lang.String[] tagNames, boolean visible, java.util.Date startDate,
-		java.util.Date endDate, java.util.Date publishDate,
-		java.util.Date expirationDate, java.lang.String mimeType,
-		java.lang.String title, java.lang.String description,
-		java.lang.String summary, java.lang.String url,
-		java.lang.String layoutUuid, int height, int width,
-		java.lang.Integer priority, boolean sync)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService()
-				   .updateEntry(userId, groupId, className, classPK, classUuid,
-			classTypeId, categoryIds, tagNames, visible, startDate, endDate,
-			publishDate, expirationDate, mimeType, title, description, summary,
-			url, layoutUuid, height, width, priority, sync);
+				   .search(companyId, groupIds, className, keywords, start, end);
 	}
 
 	public static com.liferay.portlet.asset.model.AssetEntry updateEntry(
@@ -729,7 +772,8 @@ public class AssetEntryLocalServiceUtil {
 		java.lang.String description, java.lang.String summary,
 		java.lang.String url, java.lang.String layoutUuid, int height,
 		int width, java.lang.Integer priority, boolean sync)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		return getService()
 				   .updateEntry(userId, groupId, createDate, modifiedDate,
 			className, classPK, classUuid, classTypeId, categoryIds, tagNames,
@@ -737,28 +781,95 @@ public class AssetEntryLocalServiceUtil {
 			description, summary, url, layoutUuid, height, width, priority, sync);
 	}
 
-	public static com.liferay.portlet.asset.model.AssetEntry updateVisible(
-		java.lang.String className, long classPK, boolean visible)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().updateVisible(className, classPK, visible);
+	public static com.liferay.portlet.asset.model.AssetEntry updateEntry(
+		long userId, long groupId, java.lang.String className, long classPK,
+		long[] categoryIds, java.lang.String[] tagNames)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getService()
+				   .updateEntry(userId, groupId, className, classPK,
+			categoryIds, tagNames);
 	}
 
 	/**
-	* @deprecated As of 7.0.0, replaced by {@link #validate(long, String, long,
-	long[], String[])}
+	* @deprecated As of 6.2.0, replaced by {@link #updateEntry(long, long,
+	String, long, String, long, long[], String[], boolean, Date,
+	Date, Date, String, String, String, String, String, String,
+	int, int, Integer, boolean)}
 	*/
-	@Deprecated
-	public static void validate(long groupId, java.lang.String className,
-		long[] categoryIds, java.lang.String[] tagNames)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		getService().validate(groupId, className, categoryIds, tagNames);
+	public static com.liferay.portlet.asset.model.AssetEntry updateEntry(
+		long userId, long groupId, java.lang.String className, long classPK,
+		java.lang.String classUuid, long classTypeId, long[] categoryIds,
+		java.lang.String[] tagNames, boolean visible, java.util.Date startDate,
+		java.util.Date endDate, java.util.Date publishDate,
+		java.util.Date expirationDate, java.lang.String mimeType,
+		java.lang.String title, java.lang.String description,
+		java.lang.String summary, java.lang.String url,
+		java.lang.String layoutUuid, int height, int width,
+		java.lang.Integer priority, boolean sync)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getService()
+				   .updateEntry(userId, groupId, className, classPK, classUuid,
+			classTypeId, categoryIds, tagNames, visible, startDate, endDate,
+			publishDate, expirationDate, mimeType, title, description, summary,
+			url, layoutUuid, height, width, priority, sync);
+	}
+
+	/**
+	* @deprecated As of 6.2.0, replaced by {@link #updateEntry(long, long,
+	Date, Date, String, long, String, long, long[], String[],
+	boolean, Date, Date, Date, String, String, String, String,
+	String, String, int, int, Integer, boolean)}
+	*/
+	public static com.liferay.portlet.asset.model.AssetEntry updateEntry(
+		long userId, long groupId, java.lang.String className, long classPK,
+		java.lang.String classUuid, long classTypeId, long[] categoryIds,
+		java.lang.String[] tagNames, boolean visible, java.util.Date startDate,
+		java.util.Date endDate, java.util.Date expirationDate,
+		java.lang.String mimeType, java.lang.String title,
+		java.lang.String description, java.lang.String summary,
+		java.lang.String url, java.lang.String layoutUuid, int height,
+		int width, java.lang.Integer priority, boolean sync)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getService()
+				   .updateEntry(userId, groupId, className, classPK, classUuid,
+			classTypeId, categoryIds, tagNames, visible, startDate, endDate,
+			expirationDate, mimeType, title, description, summary, url,
+			layoutUuid, height, width, priority, sync);
+	}
+
+	public static com.liferay.portlet.asset.model.AssetEntry updateEntry(
+		java.lang.String className, long classPK, java.util.Date publishDate,
+		boolean visible)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getService().updateEntry(className, classPK, publishDate, visible);
+	}
+
+	public static com.liferay.portlet.asset.model.AssetEntry updateEntry(
+		java.lang.String className, long classPK, java.util.Date publishDate,
+		java.util.Date expirationDate, boolean visible)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getService()
+				   .updateEntry(className, classPK, publishDate,
+			expirationDate, visible);
+	}
+
+	public static com.liferay.portlet.asset.model.AssetEntry updateVisible(
+		java.lang.String className, long classPK, boolean visible)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getService().updateVisible(className, classPK, visible);
 	}
 
 	public static void validate(long groupId, java.lang.String className,
-		long classTypePK, long[] categoryIds, java.lang.String[] tagNames)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		getService()
-			.validate(groupId, className, classTypePK, categoryIds, tagNames);
+		long[] categoryIds, java.lang.String[] tagNames)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		getService().validate(groupId, className, categoryIds, tagNames);
 	}
 
 	public static AssetEntryLocalService getService() {
@@ -775,7 +886,6 @@ public class AssetEntryLocalServiceUtil {
 	/**
 	 * @deprecated As of 6.2.0
 	 */
-	@Deprecated
 	public void setService(AssetEntryLocalService service) {
 	}
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,6 +14,8 @@
 
 package com.liferay.portal.monitoring.jmx;
 
+import com.liferay.portal.kernel.exception.SystemException;
+
 import java.util.Set;
 
 /**
@@ -24,23 +26,28 @@ public interface ServiceManagerMBean {
 	public void addMonitoredClass(String className);
 
 	public void addMonitoredMethod(
-		String className, String methodName, String[] parameterTypes);
+			String className, String methodName, String[] parameterTypes)
+		throws SystemException;
 
 	public long getErrorCount(
-		String className, String methodName, String[] parameterTypes);
+			String className, String methodName, String[] parameterTypes)
+		throws SystemException;
 
 	public long getMaxTime(
-		String className, String methodName, String[] parameterTypes);
+			String className, String methodName, String[] parameterTypes)
+		throws SystemException;
 
 	public long getMinTime(
-		String className, String methodName, String[] parameterTypes);
+			String className, String methodName, String[] parameterTypes)
+		throws SystemException;
 
 	public Set<String> getMonitoredClasses();
 
 	public Set<MethodSignature> getMonitoredMethods();
 
 	public long getRequestCount(
-		String className, String methodName, String[] parameterTypes);
+			String className, String methodName, String[] parameterTypes)
+		throws SystemException;
 
 	public boolean isActive();
 

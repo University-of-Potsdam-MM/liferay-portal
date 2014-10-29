@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -71,7 +71,7 @@ else {
 long portletItemId = ParamUtil.getLong(request, "p_p_i_id");
 
 if (portletItemId > 0) {
-	PortletPreferencesServiceUtil.restoreArchivedPreferences(themeDisplay.getSiteGroupId(), layout, portlet.getPortletId(), portletItemId, portletPreferences);
+	PortletPreferencesServiceUtil.restoreArchivedPreferences(themeDisplay.getSiteGroupId(), layout, portlet.getRootPortletId(), portletItemId, portletPreferences);
 }
 
 PortletConfig portletConfig = PortletConfigFactoryUtil.create(portlet, application);
@@ -155,11 +155,10 @@ String responseContentType = renderRequestImpl.getResponseContentType();
 
 String currentURL = PortalUtil.getCurrentURL(request);
 
-String portletResource = StringPool.BLANK;
 Portlet portletResourcePortlet = null;
 
 if (portletId.equals(PortletKeys.PORTLET_CONFIGURATION)) {
-	portletResource = ParamUtil.getString(request, "portletResource");
+	String portletResource = ParamUtil.getString(request, "portletResource");
 
 	if (Validator.isNull(portletResource)) {
 		portletResource = ParamUtil.getString(renderRequestImpl, "portletResource");
@@ -199,20 +198,12 @@ if (!portletId.equals(PortletKeys.PORTLET_CONFIGURATION)) {
 
 		showConfigurationIcon = true;
 
-		boolean supportsConfigurationLAR = portlet.getConfigurationActionInstance() != null;
+		boolean supportsConfigurationLAR = Validator.isNotNull(portlet.getConfigurationActionClass());
 		boolean supportsDataLAR = !(portlet.getPortletDataHandlerInstance() instanceof DefaultConfigurationPortletDataHandler);
 
 		if (supportsConfigurationLAR || supportsDataLAR || !group.isControlPanel()) {
 			showExportImportIcon = true;
 		}
-
-		if (PropsValues.PORTLET_CSS_ENABLED) {
-			showPortletCssIcon = true;
-		}
-	}
-
-	if (layoutTypePortlet.isCustomizable() && !layoutTypePortlet.isColumnDisabled(columnId) && LayoutPermissionUtil.contains(permissionChecker, layout, ActionKeys.CUSTOMIZE)) {
-		showConfigurationIcon = true;
 
 		if (PropsValues.PORTLET_CSS_ENABLED) {
 			showPortletCssIcon = true;
@@ -348,7 +339,6 @@ portletDisplay.setModePrint(modePrint);
 portletDisplay.setModeView(portletMode.equals(PortletMode.VIEW));
 portletDisplay.setNamespace(PortalUtil.getPortletNamespace(portletId));
 portletDisplay.setPortletName(portletConfig.getPortletName());
-portletDisplay.setPortletResource(portletResource);
 portletDisplay.setResourcePK(portletPrimaryKey);
 portletDisplay.setRestoreCurrentView(portlet.isRestoreCurrentView());
 portletDisplay.setRootPortletId(rootPortletId);
@@ -411,7 +401,7 @@ urlConfiguration.setWindowState(LiferayWindowState.POP_UP);
 
 urlConfiguration.setEscapeXml(false);
 
-if (portlet.getConfigurationActionInstance() != null) {
+if (Validator.isNotNull(portlet.getConfigurationActionClass())) {
 	urlConfiguration.setParameter("struts_action", "/portlet_configuration/edit_configuration");
 }
 else if (PortletPermissionUtil.contains(permissionChecker, layout, portletDisplay.getId(), ActionKeys.PERMISSIONS)) {
@@ -684,7 +674,7 @@ if (group.isControlPanel()) {
 	portletDisplay.setShowMoveIcon(false);
 	portletDisplay.setShowPortletCssIcon(false);
 
-	if (!portlet.isPreferencesUniquePerLayout() && (portlet.getConfigurationActionInstance() != null)) {
+	if (!portlet.isPreferencesUniquePerLayout() && Validator.isNotNull(portlet.getConfigurationActionClass())) {
 		portletDisplay.setShowConfigurationIcon(true);
 	}
 }
@@ -781,11 +771,11 @@ Boolean renderPortletBoundary = GetterUtil.getBoolean(request.getAttribute(WebKe
 		Properties freeformStyleProps = PropertiesUtil.load(portletSetup.getValue("portlet-freeform-styles", StringPool.BLANK));
 
 		sb.append("style=\"left: ");
-		sb.append(GetterUtil.getString(HtmlUtil.escapeAttribute(freeformStyleProps.getProperty("left")), "0"));
+		sb.append(GetterUtil.getString(freeformStyleProps.getProperty("left"), "0"));
 		sb.append("; position: absolute; top: ");
-		sb.append(GetterUtil.getString(HtmlUtil.escapeAttribute(freeformStyleProps.getProperty("top")), "0"));
+		sb.append(GetterUtil.getString(freeformStyleProps.getProperty("top"), "0"));
 		sb.append("; width: ");
-		sb.append(GetterUtil.getString(HtmlUtil.escapeAttribute(freeformStyleProps.getProperty("width")), "400px"));
+		sb.append(GetterUtil.getString(freeformStyleProps.getProperty("width"), "400px"));
 		sb.append(";\"");
 
 		freeformStyles = sb.toString();
@@ -815,7 +805,7 @@ Boolean renderPortletBoundary = GetterUtil.getBoolean(request.getAttribute(WebKe
 		cssClasses += " portlet-borderless";
 	}
 
-	cssClasses = "portlet-boundary portlet-boundary" + HtmlUtil.escapeAttribute(PortalUtil.getPortletNamespace(rootPortletId)) + StringPool.SPACE + cssClasses + StringPool.SPACE + portlet.getCssClassWrapper() + StringPool.SPACE + HtmlUtil.escapeAttribute(customCSSClassName);
+	cssClasses = "portlet-boundary portlet-boundary" + HtmlUtil.escapeAttribute(PortalUtil.getPortletNamespace(rootPortletId)) + StringPool.SPACE + cssClasses + StringPool.SPACE + portlet.getCssClassWrapper() + StringPool.SPACE + customCSSClassName;
 
 	if (portletResourcePortlet != null) {
 		cssClasses += StringPool.SPACE + portletResourcePortlet.getCssClassWrapper();
@@ -823,7 +813,7 @@ Boolean renderPortletBoundary = GetterUtil.getBoolean(request.getAttribute(WebKe
 	%>
 
 	<div class="<%= cssClasses %>" id="p_p_id<%= HtmlUtil.escapeAttribute(renderResponseImpl.getNamespace()) %>" <%= freeformStyles %>>
-		<div id="p_p_id<%= HtmlUtil.escapeAttribute(renderResponseImpl.getNamespace()) %>-defaultScreen">
+		<span id="p_<%= HtmlUtil.escapeAttribute(portletId) %>"></span>
 </c:if>
 
 <c:choose>
@@ -976,7 +966,6 @@ else {
 				}
 			);
 		</aui:script>
-		</div>
 	</div>
 </c:if>
 
@@ -1051,7 +1040,7 @@ if (themeDisplay.isStatePopUp()) {
 							}
 						);
 
-						refreshWindow.location.href = '<%= HtmlUtil.escapeJS(closeRedirect) %>';
+						refreshWindow.location.href = '<%= closeRedirect %>';
 					}
 					else {
 						dialog.detach(hideDialogSignature);

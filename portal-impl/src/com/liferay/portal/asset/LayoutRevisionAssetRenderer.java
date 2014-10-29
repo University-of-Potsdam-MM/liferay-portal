@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -17,7 +17,6 @@ package com.liferay.portal.asset;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
-import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.model.Layout;
@@ -33,8 +32,6 @@ import com.liferay.portlet.asset.model.BaseAssetRenderer;
 
 import java.util.Locale;
 
-import javax.portlet.PortletRequest;
-import javax.portlet.PortletResponse;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 
@@ -74,11 +71,7 @@ public class LayoutRevisionAssetRenderer extends BaseAssetRenderer {
 	}
 
 	@Override
-	public String getSummary(
-		PortletRequest portletRequest, PortletResponse portletResponse) {
-
-		Locale locale = getLocale(portletRequest);
-
+	public String getSummary(Locale locale) {
 		StringBundler sb = new StringBundler(16);
 
 		sb.append("<strong>");
@@ -120,16 +113,15 @@ public class LayoutRevisionAssetRenderer extends BaseAssetRenderer {
 			Layout layout = LayoutLocalServiceUtil.getLayout(
 				_layoutRevision.getPlid());
 
-			String layoutURL = PortalUtil.getLayoutURL(layout, themeDisplay);
+			StringBundler sb = new StringBundler(5);
 
-			layoutURL = HttpUtil.addParameter(
-				layoutURL, "layoutSetBranchId",
-				_layoutRevision.getLayoutSetBranchId());
-			layoutURL = HttpUtil.addParameter(
-				layoutURL, "layoutRevisionId",
-				_layoutRevision.getLayoutRevisionId());
+			sb.append(PortalUtil.getLayoutFriendlyURL(layout, themeDisplay));
+			sb.append("?layoutSetBranchId=");
+			sb.append(_layoutRevision.getLayoutSetBranchId());
+			sb.append("&layoutRevisionId=");
+			sb.append(_layoutRevision.getLayoutRevisionId());
 
-			return layoutURL;
+			return sb.toString();
 		}
 		catch (Exception e) {
 			return StringPool.BLANK;

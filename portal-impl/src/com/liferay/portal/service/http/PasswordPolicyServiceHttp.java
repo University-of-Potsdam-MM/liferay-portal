@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -13,8 +13,6 @@
  */
 
 package com.liferay.portal.service.http;
-
-import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -51,7 +49,6 @@ import com.liferay.portal.service.PasswordPolicyServiceUtil;
  * @see com.liferay.portal.service.PasswordPolicyServiceUtil
  * @generated
  */
-@ProviderType
 public class PasswordPolicyServiceHttp {
 	public static com.liferay.portal.model.PasswordPolicy addPasswordPolicy(
 		HttpPrincipal httpPrincipal, java.lang.String name,
@@ -62,7 +59,8 @@ public class PasswordPolicyServiceHttp {
 		boolean history, int historyCount, boolean expireable, long maxAge,
 		long warningTime, int graceLimit, boolean lockout, int maxFailure,
 		long lockoutDuration, long resetFailureCount, long resetTicketMaxAge)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(PasswordPolicyServiceUtil.class,
 					"addPasswordPolicy", _addPasswordPolicyParameterTypes0);
@@ -83,6 +81,10 @@ public class PasswordPolicyServiceHttp {
 			catch (Exception e) {
 				if (e instanceof com.liferay.portal.kernel.exception.PortalException) {
 					throw (com.liferay.portal.kernel.exception.PortalException)e;
+				}
+
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
 				}
 
 				throw new com.liferay.portal.kernel.exception.SystemException(e);
@@ -108,7 +110,8 @@ public class PasswordPolicyServiceHttp {
 		boolean lockout, int maxFailure, long lockoutDuration,
 		long resetFailureCount, long resetTicketMaxAge,
 		com.liferay.portal.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(PasswordPolicyServiceUtil.class,
 					"addPasswordPolicy", _addPasswordPolicyParameterTypes1);
@@ -132,6 +135,10 @@ public class PasswordPolicyServiceHttp {
 					throw (com.liferay.portal.kernel.exception.PortalException)e;
 				}
 
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
+				}
+
 				throw new com.liferay.portal.kernel.exception.SystemException(e);
 			}
 
@@ -146,7 +153,8 @@ public class PasswordPolicyServiceHttp {
 
 	public static void deletePasswordPolicy(HttpPrincipal httpPrincipal,
 		long passwordPolicyId)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(PasswordPolicyServiceUtil.class,
 					"deletePasswordPolicy", _deletePasswordPolicyParameterTypes2);
@@ -160,6 +168,10 @@ public class PasswordPolicyServiceHttp {
 			catch (Exception e) {
 				if (e instanceof com.liferay.portal.kernel.exception.PortalException) {
 					throw (com.liferay.portal.kernel.exception.PortalException)e;
+				}
+
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
 				}
 
 				throw new com.liferay.portal.kernel.exception.SystemException(e);
@@ -182,7 +194,8 @@ public class PasswordPolicyServiceHttp {
 		boolean expireable, long maxAge, long warningTime, int graceLimit,
 		boolean lockout, int maxFailure, long lockoutDuration,
 		long resetFailureCount, long resetTicketMaxAge)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(PasswordPolicyServiceUtil.class,
 					"updatePasswordPolicy", _updatePasswordPolicyParameterTypes3);
@@ -204,6 +217,10 @@ public class PasswordPolicyServiceHttp {
 			catch (Exception e) {
 				if (e instanceof com.liferay.portal.kernel.exception.PortalException) {
 					throw (com.liferay.portal.kernel.exception.PortalException)e;
+				}
+
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
 				}
 
 				throw new com.liferay.portal.kernel.exception.SystemException(e);
@@ -229,7 +246,8 @@ public class PasswordPolicyServiceHttp {
 		int graceLimit, boolean lockout, int maxFailure, long lockoutDuration,
 		long resetFailureCount, long resetTicketMaxAge,
 		com.liferay.portal.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			MethodKey methodKey = new MethodKey(PasswordPolicyServiceUtil.class,
 					"updatePasswordPolicy", _updatePasswordPolicyParameterTypes4);
@@ -251,6 +269,10 @@ public class PasswordPolicyServiceHttp {
 			catch (Exception e) {
 				if (e instanceof com.liferay.portal.kernel.exception.PortalException) {
 					throw (com.liferay.portal.kernel.exception.PortalException)e;
+				}
+
+				if (e instanceof com.liferay.portal.kernel.exception.SystemException) {
+					throw (com.liferay.portal.kernel.exception.SystemException)e;
 				}
 
 				throw new com.liferay.portal.kernel.exception.SystemException(e);

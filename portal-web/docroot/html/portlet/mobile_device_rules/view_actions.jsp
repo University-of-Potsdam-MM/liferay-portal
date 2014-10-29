@@ -1,6 +1,6 @@
 <%--
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -18,7 +18,6 @@
 
 <%
 String redirect = ParamUtil.getString(request, "redirect");
-boolean showBackURL = ParamUtil.getBoolean(request, "showBackURL", true);
 
 long ruleGroupInstanceId = ParamUtil.getLong(request, "ruleGroupInstanceId");
 
@@ -36,8 +35,8 @@ portletURL.setParameter("ruleGroupInstanceId", String.valueOf(ruleGroupInstanceI
 <liferay-ui:header
 	backURL="<%= redirect %>"
 	localizeTitle="<%= false %>"
-	showBackURL="<%= showBackURL %>"
-	title='<%= LanguageUtil.format(request, "actions-for-x", ruleGroup.getName(locale), false) %>'
+	showBackURL="<%= !windowState.equals(LiferayWindowState.POP_UP) %>"
+	title='<%= LanguageUtil.format(pageContext, "actions-for-x", ruleGroup.getName(locale), false) %>'
 />
 
 <aui:form action="<%= portletURL.toString() %>" method="post" name="fm">
@@ -81,7 +80,7 @@ portletURL.setParameter("ruleGroupInstanceId", String.valueOf(ruleGroupInstanceI
 			</liferay-portlet:renderURL>
 
 			<aui:nav-bar>
-				<aui:nav cssClass="navbar-nav">
+				<aui:nav>
 					<aui:nav-item href="<%= addURL %>" iconCssClass="icon-plus" label="add-action" />
 				</aui:nav>
 			</aui:nav-bar>
@@ -105,12 +104,12 @@ portletURL.setParameter("ruleGroupInstanceId", String.valueOf(ruleGroupInstanceI
 		window,
 		'<portlet:namespace />deleteActions',
 		function() {
-			if (confirm('<%= UnicodeLanguageUtil.get(request, "are-you-sure-you-want-to-delete-this") %>')) {
-				document.<portlet:namespace />fm.method = 'post';
-				document.<portlet:namespace />fm.<portlet:namespace /><%= Constants.CMD %>.value = '<%= Constants.DELETE %>';
+			if (confirm('<%= UnicodeLanguageUtil.get(pageContext, "are-you-sure-you-want-to-delete-this") %>')) {
+				document.<portlet:namespace />fm.method = "post";
+				document.<portlet:namespace />fm.<portlet:namespace /><%= Constants.CMD %>.value = "<%= Constants.DELETE %>";
 				document.<portlet:namespace />fm.<portlet:namespace />actionIds.value = Liferay.Util.listCheckedExcept(document.<portlet:namespace />fm, '<portlet:namespace />allRowIds');
 
-				submitForm(document.<portlet:namespace />fm, '<portlet:actionURL><portlet:param name="struts_action" value="/mobile_device_rules/edit_action" /></portlet:actionURL>');
+				submitForm(document.<portlet:namespace />fm, "<portlet:actionURL><portlet:param name="struts_action" value="/mobile_device_rules/edit_action" /></portlet:actionURL>");
 			}
 		},
 		['liferay-util-list-fields']

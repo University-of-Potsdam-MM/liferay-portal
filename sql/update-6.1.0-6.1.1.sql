@@ -18,5 +18,3 @@ COMMIT_TRANSACTION;
 update LayoutSetBranch set logo = TRUE;
 update LayoutSetBranch set logoId = 0;
 update LayoutSetBranch set layoutSetPrototypeLinkEnabled = FALSE;
-
-update PluginSetting set pluginType = 'layouttpl' where pluginType = 'layout-template';

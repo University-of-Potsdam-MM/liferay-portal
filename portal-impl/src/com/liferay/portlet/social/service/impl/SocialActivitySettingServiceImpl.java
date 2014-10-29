@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,6 +15,7 @@
 package com.liferay.portlet.social.service.impl;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
@@ -39,7 +40,7 @@ public class SocialActivitySettingServiceImpl
 	@Override
 	public SocialActivityDefinition getActivityDefinition(
 			long groupId, String className, int activityType)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		SocialActivityPermissionUtil.check(
 			getPermissionChecker(), groupId, ActionKeys.VIEW);
@@ -51,7 +52,7 @@ public class SocialActivitySettingServiceImpl
 	@Override
 	public List<SocialActivityDefinition> getActivityDefinitions(
 			long groupId, String className)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		SocialActivityPermissionUtil.check(
 			getPermissionChecker(), groupId, ActionKeys.VIEW);
@@ -62,7 +63,7 @@ public class SocialActivitySettingServiceImpl
 
 	@Override
 	public List<SocialActivitySetting> getActivitySettings(long groupId)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		SocialActivityPermissionUtil.check(
 			getPermissionChecker(), groupId, ActionKeys.VIEW);
@@ -72,7 +73,7 @@ public class SocialActivitySettingServiceImpl
 
 	@Override
 	public JSONArray getJSONActivityDefinitions(long groupId, String className)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		SocialActivityPermissionUtil.check(
 			getPermissionChecker(), groupId, ActionKeys.VIEW);
@@ -126,7 +127,7 @@ public class SocialActivitySettingServiceImpl
 	@Override
 	public void updateActivitySetting(
 			long groupId, String className, boolean enabled)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		SocialActivityPermissionUtil.check(
 			getPermissionChecker(), groupId, ActionKeys.CONFIGURATION);
@@ -139,7 +140,7 @@ public class SocialActivitySettingServiceImpl
 	public void updateActivitySetting(
 			long groupId, String className, int activityType,
 			SocialActivityCounterDefinition activityCounterDefinition)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		SocialActivityPermissionUtil.check(
 			getPermissionChecker(), groupId, ActionKeys.CONFIGURATION);
@@ -152,7 +153,7 @@ public class SocialActivitySettingServiceImpl
 	public void updateActivitySettings(
 			long groupId, String className, int activityType,
 			List<SocialActivityCounterDefinition> activityCounterDefinitions)
-		throws PortalException {
+		throws PortalException, SystemException {
 
 		SocialActivityPermissionUtil.check(
 			getPermissionChecker(), groupId, ActionKeys.CONFIGURATION);

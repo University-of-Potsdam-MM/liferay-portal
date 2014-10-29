@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,11 +14,12 @@
 
 package com.liferay.portlet.documentlibrary.action;
 
-import com.liferay.portal.kernel.diff.DiffResult;
-import com.liferay.portal.kernel.diff.DiffUtil;
 import com.liferay.portal.kernel.io.unsync.UnsyncByteArrayInputStream;
+import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.FileVersion;
 import com.liferay.portal.kernel.servlet.SessionErrors;
+import com.liferay.portal.kernel.util.DiffResult;
+import com.liferay.portal.kernel.util.DiffUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.StringPool;
@@ -27,7 +28,6 @@ import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.struts.PortletAction;
 import com.liferay.portal.util.WebKeys;
 import com.liferay.portlet.documentlibrary.NoSuchFileEntryException;
-import com.liferay.portlet.documentlibrary.service.DLAppLocalServiceUtil;
 import com.liferay.portlet.documentlibrary.service.DLAppServiceUtil;
 import com.liferay.portlet.documentlibrary.util.DLUtil;
 import com.liferay.portlet.documentlibrary.util.DocumentConversionUtil;
@@ -81,13 +81,16 @@ public class CompareVersionsAction extends PortletAction {
 	protected void compareVersions(RenderRequest renderRequest)
 		throws Exception {
 
-		long sourceFileVersionId = ParamUtil.getLong(
-			renderRequest, "sourceFileVersionId");
-		long targetFileVersionId = ParamUtil.getLong(
-			renderRequest, "targetFileVersionId");
+		long fileEntryId = ParamUtil.getLong(renderRequest, "fileEntryId");
 
-		FileVersion sourceFileVersion = DLAppServiceUtil.getFileVersion(
-			sourceFileVersionId);
+		String sourceVersion = ParamUtil.getString(
+			renderRequest, "sourceVersion");
+		String targetVersion = ParamUtil.getString(
+			renderRequest, "targetVersion");
+
+		FileEntry fileEntry = DLAppServiceUtil.getFileEntry(fileEntryId);
+
+		FileVersion sourceFileVersion = fileEntry.getFileVersion(sourceVersion);
 
 		InputStream sourceIs = sourceFileVersion.getContentStream(false);
 
@@ -103,8 +106,7 @@ public class CompareVersionsAction extends PortletAction {
 				sourceContent.getBytes(StringPool.UTF8));
 		}
 
-		FileVersion targetFileVersion = DLAppLocalServiceUtil.getFileVersion(
-			targetFileVersionId);
+		FileVersion targetFileVersion = fileEntry.getFileVersion(targetVersion);
 
 		InputStream targetIs = targetFileVersion.getContentStream(false);
 
@@ -125,8 +127,7 @@ public class CompareVersionsAction extends PortletAction {
 					sourceExtension)) {
 
 				String sourceTempFileId = DLUtil.getTempFileId(
-					sourceFileVersion.getFileEntryId(),
-					sourceFileVersion.getVersion());
+					fileEntryId, sourceVersion);
 
 				sourceIs = new FileInputStream(
 					DocumentConversionUtil.convert(
@@ -137,8 +138,7 @@ public class CompareVersionsAction extends PortletAction {
 					targetExtension)) {
 
 				String targetTempFileId = DLUtil.getTempFileId(
-					targetFileVersion.getFileEntryId(),
-					targetFileVersion.getVersion());
+					fileEntryId, targetVersion);
 
 				targetIs = new FileInputStream(
 					DocumentConversionUtil.convert(
@@ -151,12 +151,10 @@ public class CompareVersionsAction extends PortletAction {
 
 		renderRequest.setAttribute(
 			WebKeys.SOURCE_NAME,
-			sourceFileVersion.getTitle() + StringPool.SPACE +
-				sourceFileVersion.getVersion());
+			sourceFileVersion.getTitle() + StringPool.SPACE + sourceVersion);
 		renderRequest.setAttribute(
 			WebKeys.TARGET_NAME,
-			targetFileVersion.getTitle() + StringPool.SPACE +
-				targetFileVersion.getVersion());
+			targetFileVersion.getTitle() + StringPool.SPACE + targetVersion);
 		renderRequest.setAttribute(WebKeys.DIFF_RESULTS, diffResults);
 	}
 

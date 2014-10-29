@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,8 +14,6 @@
 
 package com.liferay.portal.cluster;
 
-import com.liferay.portal.kernel.cache.Lifecycle;
-import com.liferay.portal.kernel.cache.ThreadLocalCacheManager;
 import com.liferay.portal.kernel.cluster.Address;
 import com.liferay.portal.kernel.cluster.ClusterException;
 import com.liferay.portal.kernel.cluster.ClusterInvokeThreadLocal;
@@ -25,7 +23,6 @@ import com.liferay.portal.kernel.cluster.ClusterRequest;
 import com.liferay.portal.kernel.cluster.FutureClusterResponses;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.util.CentralizedThreadLocal;
 import com.liferay.portal.kernel.util.MethodHandler;
 
 import java.util.ArrayList;
@@ -85,28 +82,19 @@ public class ClusterRequestReceiver extends BaseReceiver {
 			}
 		}
 
-		try {
-			if (obj instanceof ClusterRequest) {
-				ClusterRequest clusterRequest = (ClusterRequest)obj;
+		if (obj instanceof ClusterRequest) {
+			ClusterRequest clusterRequest = (ClusterRequest)obj;
 
-				processClusterRequest(clusterRequest, sourceAddress);
-			}
-			else if (obj instanceof ClusterNodeResponse) {
-				ClusterNodeResponse clusterNodeResponse =
-					(ClusterNodeResponse)obj;
-
-				processClusterResponse(clusterNodeResponse, sourceAddress);
-			}
-			else if (_log.isWarnEnabled()) {
-				_log.warn(
-					"Unable to process message content of type " +
-						obj.getClass());
-			}
+			processClusterRequest(clusterRequest, sourceAddress);
 		}
-		finally {
-			ThreadLocalCacheManager.clearAll(Lifecycle.REQUEST);
+		else if (obj instanceof ClusterNodeResponse) {
+			ClusterNodeResponse clusterNodeResponse = (ClusterNodeResponse)obj;
 
-			CentralizedThreadLocal.clearShortLivedThreadLocals();
+			processClusterResponse(clusterNodeResponse, sourceAddress);
+		}
+		else if (_log.isWarnEnabled()) {
+			_log.warn(
+				"Unable to process message content of type " + obj.getClass());
 		}
 	}
 
@@ -247,7 +235,7 @@ public class ClusterRequestReceiver extends BaseReceiver {
 			try {
 				ClusterInvokeThreadLocal.setEnabled(false);
 
-				returnValue = methodHandler.invoke();
+				returnValue = methodHandler.invoke(true);
 			}
 			catch (Exception e) {
 				exception = e;

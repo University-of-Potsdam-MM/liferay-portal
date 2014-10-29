@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -95,7 +95,9 @@ public class ServiceLoader {
 			url = URLUtil.normalizeURL(url);
 		}
 
-		try (InputStream inputStream = url.openStream()) {
+		InputStream inputStream = url.openStream();
+
+		try {
 			BufferedReader bufferedReader = new BufferedReader(
 				new InputStreamReader(inputStream, StringPool.UTF8));
 
@@ -130,6 +132,9 @@ public class ServiceLoader {
 
 				services.add(service);
 			}
+		}
+		finally {
+			inputStream.close();
 		}
 	}
 

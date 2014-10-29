@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -14,33 +14,24 @@
 
 package com.liferay.portal.kernel.cluster;
 
-import com.liferay.portal.kernel.concurrent.DefaultNoticeableFuture;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author Tina Tian
  */
-public class FutureClusterResponses
-	extends DefaultNoticeableFuture<ClusterNodeResponses> {
+public class FutureClusterResponses implements Future<ClusterNodeResponses> {
 
 	public FutureClusterResponses(List<Address> addresses) {
 		_clusterNodeResponses = new ClusterNodeResponses();
-
-		int size = addresses.size();
-
-		if (size == 0) {
-			set(_clusterNodeResponses);
-		}
-
-		_counter = new AtomicInteger(size);
+		_countDownLatch = new CountDownLatch(addresses.size());
 		_expectedReplyAddress = new HashSet<Address>(addresses);
 	}
 
@@ -49,9 +40,22 @@ public class FutureClusterResponses
 
 		_clusterNodeResponses.addClusterResponse(clusterNodeResponse);
 
-		if (_counter.decrementAndGet() == 0) {
-			set(_clusterNodeResponses);
+		_countDownLatch.countDown();
+	}
+
+	public void addExpectedReplyAddress(Address address) {
+		_expectedReplyAddress.add(address);
+	}
+
+	@Override
+	public boolean cancel(boolean mayInterruptIfRunning) {
+		if (_cancelled || isDone()) {
+			return false;
 		}
+
+		_cancelled = true;
+
+		return true;
 	}
 
 	public boolean expectsReply(Address address) {
@@ -60,23 +64,28 @@ public class FutureClusterResponses
 
 	@Override
 	public ClusterNodeResponses get() throws InterruptedException {
-		try {
-			return super.get();
+		if (_cancelled) {
+			throw new CancellationException();
 		}
-		catch (ExecutionException ee) {
-			throw new AssertionError(ee);
-		}
+
+		_countDownLatch.await();
+
+		return _clusterNodeResponses;
 	}
 
 	@Override
-	public ClusterNodeResponses get(long timeout, TimeUnit unit)
+	public ClusterNodeResponses get(long timeout, TimeUnit timeUnit)
 		throws InterruptedException, TimeoutException {
 
-		try {
-			return super.get(timeout, unit);
+		if (_cancelled) {
+			throw new CancellationException();
 		}
-		catch (ExecutionException ee) {
-			throw new AssertionError(ee);
+
+		if (_countDownLatch.await(timeout, timeUnit)) {
+			return _clusterNodeResponses;
+		}
+		else {
+			throw new TimeoutException();
 		}
 	}
 
@@ -84,8 +93,24 @@ public class FutureClusterResponses
 		return _clusterNodeResponses.getClusterResponses();
 	}
 
+	@Override
+	public boolean isCancelled() {
+		return _cancelled;
+	}
+
+	@Override
+	public boolean isDone() {
+		if ((_countDownLatch.getCount() == 0) || _cancelled) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	private boolean _cancelled;
 	private ClusterNodeResponses _clusterNodeResponses;
-	private AtomicInteger _counter;
+	private CountDownLatch _countDownLatch;
 	private Set<Address> _expectedReplyAddress;
 
 }

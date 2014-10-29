@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -35,18 +35,23 @@ public class TemplateVariableDefinition {
 		String accessor, String help, boolean repeatable,
 		TemplateVariableCodeHandler templateVariableCodeHandler) {
 
-		this(
-			label, clazz, dataType, name, accessor, help, repeatable,
-			templateVariableCodeHandler, null);
+		_label = label;
+		_clazz = clazz;
+		_dataType = dataType;
+		_name = name;
+		_accessor = accessor;
+		_help = help;
+		_repeatable = repeatable;
+		_templateVariableCodeHandler = templateVariableCodeHandler;
 	}
 
 	public TemplateVariableDefinition(
 		String label, Class<?> clazz, String name,
 		TemplateVariableDefinition itemTemplateVariableDefinition) {
 
-		this(
-			label, clazz, StringPool.BLANK, name, StringPool.BLANK,
-			label.concat("-help"), false, null, itemTemplateVariableDefinition);
+		this(label, clazz, name, StringPool.BLANK);
+
+		_itemTemplateVariableDefinition = itemTemplateVariableDefinition;
 	}
 
 	@Override
@@ -123,31 +128,14 @@ public class TemplateVariableDefinition {
 		return _repeatable;
 	}
 
-	protected TemplateVariableDefinition(
-		String label, Class<?> clazz, String dataType, String name,
-		String accessor, String help, boolean repeatable,
-		TemplateVariableCodeHandler templateVariableCodeHandler,
-		TemplateVariableDefinition itemTemplateVariableDefinition) {
-
-		_label = label;
-		_clazz = clazz;
-		_dataType = dataType;
-		_name = name;
-		_accessor = accessor;
-		_help = help;
-		_repeatable = repeatable;
-		_templateVariableCodeHandler = templateVariableCodeHandler;
-		_itemTemplateVariableDefinition = itemTemplateVariableDefinition;
-	}
-
-	private final String _accessor;
-	private final Class<?> _clazz;
-	private final String _dataType;
-	private final String _help;
-	private final TemplateVariableDefinition _itemTemplateVariableDefinition;
-	private final String _label;
-	private final String _name;
-	private final boolean _repeatable;
+	private String _accessor;
+	private Class<?> _clazz;
+	private String _dataType;
+	private String _help;
+	private TemplateVariableDefinition _itemTemplateVariableDefinition;
+	private String _label;
+	private String _name;
+	private boolean _repeatable;
 	private TemplateVariableCodeHandler _templateVariableCodeHandler;
 
 }

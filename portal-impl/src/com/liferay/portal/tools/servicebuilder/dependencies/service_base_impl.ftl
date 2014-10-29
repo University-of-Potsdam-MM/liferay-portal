@@ -1,34 +1,17 @@
 package ${packagePath}.service.base;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.bean.IdentifiableBean;
 import com.liferay.portal.kernel.bean.PortalBeanLocatorUtil;
 import ${beanLocatorUtil};
-import com.liferay.portal.kernel.dao.db.DB;
-import com.liferay.portal.kernel.dao.db.DBFactoryUtil;
 import com.liferay.portal.kernel.dao.jdbc.SqlUpdate;
 import com.liferay.portal.kernel.dao.jdbc.SqlUpdateFactoryUtil;
-import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
-import com.liferay.portal.kernel.dao.orm.DefaultActionableDynamicQuery;
-import com.liferay.portal.kernel.dao.orm.ExportActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.Projection;
-import com.liferay.portal.kernel.dao.orm.ProjectionFactoryUtil;
-import com.liferay.portal.kernel.dao.orm.Property;
-import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.lar.ExportImportHelperUtil;
-import com.liferay.portal.kernel.lar.ManifestSummary;
-import com.liferay.portal.kernel.lar.PortletDataContext;
-import com.liferay.portal.kernel.lar.StagedModelType;
-import com.liferay.portal.kernel.lar.StagedModelDataHandler;
-import com.liferay.portal.kernel.lar.StagedModelDataHandlerRegistryUtil;
-import com.liferay.portal.kernel.lar.StagedModelDataHandlerUtil;
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.search.Indexer;
@@ -40,7 +23,6 @@ import com.liferay.portal.model.PersistedModel;
 import com.liferay.portal.service.Base${sessionTypeName}ServiceImpl;
 import com.liferay.portal.service.PersistedModelLocalServiceRegistry;
 import com.liferay.portal.service.PersistedModelLocalServiceRegistryUtil;
-import com.liferay.portal.util.PortalUtil;
 
 import java.io.Serializable;
 
@@ -94,12 +76,6 @@ import ${packagePath}.service.${entity.name}${sessionTypeName}Service;
 </#if>
  * @generated
  */
-
-<#if classDeprecated>
-	@Deprecated
-</#if>
-
-	@ProviderType
 	public abstract class ${entity.name}LocalServiceBaseImpl extends BaseLocalServiceImpl implements ${entity.name}LocalService, IdentifiableBean {
 
 		/*
@@ -123,11 +99,6 @@ import ${packagePath}.service.${entity.name}${sessionTypeName}Service;
 </#if>
  * @generated
  */
-
-<#if classDeprecated>
-	@Deprecated
-</#if>
-
 	public abstract class ${entity.name}ServiceBaseImpl extends BaseServiceImpl implements ${entity.name}Service, IdentifiableBean {
 
 		/*
@@ -138,7 +109,7 @@ import ${packagePath}.service.${entity.name}${sessionTypeName}Service;
 </#if>
 
 	<#if (sessionTypeName == "Local") && entity.hasColumns()>
-		<#assign serviceBaseExceptions = serviceBuilder.getServiceBaseExceptions(methods, "add" + entity.name, [packagePath + ".model." + entity.name], [])>
+		<#assign serviceBaseExceptions = serviceBuilder.getServiceBaseExceptions(methods, "add" + entity.name, [packagePath + ".model." + entity.name], ["SystemException"])>
 
 		/**
 		 * Adds the ${entity.humanName} to the database. Also notifies the appropriate model listeners.
@@ -146,12 +117,16 @@ import ${packagePath}.service.${entity.name}${sessionTypeName}Service;
 		 * @param ${entity.varName} the ${entity.humanName}
 		 * @return the ${entity.humanName} that was added
 		<#list serviceBaseExceptions as exception>
+		<#if exception == "SystemException">
+		 * @throws SystemException if a system exception occurred
+		<#else>
 		 * @throws ${exception}
+		</#if>
 		</#list>
 		 */
 		@Indexable(type = IndexableType.REINDEX)
 		@Override
-		public ${entity.name} add${entity.name}(${entity.name} ${entity.varName}) <#if (serviceBaseExceptions?size gt 0)>throws ${stringUtil.merge(serviceBaseExceptions)} </#if>{
+		public ${entity.name} add${entity.name}(${entity.name} ${entity.varName}) throws ${stringUtil.merge(serviceBaseExceptions)} {
 			${entity.varName}.setNew(true);
 
 			return ${entity.varName}Persistence.update(${entity.varName});
@@ -168,7 +143,7 @@ import ${packagePath}.service.${entity.name}${sessionTypeName}Service;
 			return ${entity.varName}Persistence.create(${entity.PKVarName});
 		}
 
-		<#assign serviceBaseExceptions = serviceBuilder.getServiceBaseExceptions(methods, "delete" + entity.name, [entity.PKClassName], ["PortalException"])>
+		<#assign serviceBaseExceptions = serviceBuilder.getServiceBaseExceptions(methods, "delete" + entity.name, [entity.PKClassName], ["PortalException", "SystemException"])>
 
 		/**
 		 * Deletes the ${entity.humanName} with the primary key from the database. Also notifies the appropriate model listeners.
@@ -178,6 +153,8 @@ import ${packagePath}.service.${entity.name}${sessionTypeName}Service;
 		<#list serviceBaseExceptions as exception>
 		<#if exception == "PortalException">
 		 * @throws PortalException if a ${entity.humanName} with the primary key could not be found
+		<#elseif exception == "SystemException">
+		 * @throws SystemException if a system exception occurred
 		<#else>
 		 * @throws ${exception}
 		</#if>
@@ -185,11 +162,11 @@ import ${packagePath}.service.${entity.name}${sessionTypeName}Service;
 		 */
 		@Indexable(type = IndexableType.DELETE)
 		@Override
-		public ${entity.name} delete${entity.name}(${entity.PKClassName} ${entity.PKVarName}) <#if (serviceBaseExceptions?size gt 0)>throws ${stringUtil.merge(serviceBaseExceptions)} </#if>{
+		public ${entity.name} delete${entity.name}(${entity.PKClassName} ${entity.PKVarName}) throws ${stringUtil.merge(serviceBaseExceptions)} {
 			return ${entity.varName}Persistence.remove(${entity.PKVarName});
 		}
 
-		<#assign serviceBaseExceptions = serviceBuilder.getServiceBaseExceptions(methods, "delete" + entity.name, [packagePath + ".model." + entity.name], [])>
+		<#assign serviceBaseExceptions = serviceBuilder.getServiceBaseExceptions(methods, "delete" + entity.name, [packagePath + ".model." + entity.name], ["SystemException"])>
 
 		/**
 		 * Deletes the ${entity.humanName} from the database. Also notifies the appropriate model listeners.
@@ -197,12 +174,16 @@ import ${packagePath}.service.${entity.name}${sessionTypeName}Service;
 		 * @param ${entity.varName} the ${entity.humanName}
 		 * @return the ${entity.humanName} that was removed
 		<#list serviceBaseExceptions as exception>
+		<#if exception == "SystemException">
+		 * @throws SystemException if a system exception occurred
+		<#else>
 		 * @throws ${exception}
+		</#if>
 		</#list>
 		 */
 		@Indexable(type = IndexableType.DELETE)
 		@Override
-		public ${entity.name} delete${entity.name}(${entity.name} ${entity.varName}) <#if (serviceBaseExceptions?size gt 0)>throws ${stringUtil.merge(serviceBaseExceptions)} </#if>{
+		public ${entity.name} delete${entity.name}(${entity.name} ${entity.varName}) throws ${stringUtil.merge(serviceBaseExceptions)} {
 			return ${entity.varName}Persistence.remove(${entity.varName});
 		}
 
@@ -218,9 +199,11 @@ import ${packagePath}.service.${entity.name}${sessionTypeName}Service;
 		 *
 		 * @param dynamicQuery the dynamic query
 		 * @return the matching rows
+		 * @throws SystemException if a system exception occurred
 		 */
 		@Override
-		public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery) {
+		@SuppressWarnings("rawtypes")
+		public List dynamicQuery(DynamicQuery dynamicQuery) throws SystemException {
 			return ${entity.varName}Persistence.findWithDynamicQuery(dynamicQuery);
 		}
 
@@ -235,9 +218,11 @@ import ${packagePath}.service.${entity.name}${sessionTypeName}Service;
 		 * @param start the lower bound of the range of model instances
 		 * @param end the upper bound of the range of model instances (not inclusive)
 		 * @return the range of matching rows
+		 * @throws SystemException if a system exception occurred
 		 */
 		@Override
-		public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start, int end) {
+		@SuppressWarnings("rawtypes")
+		public List dynamicQuery(DynamicQuery dynamicQuery, int start, int end) throws SystemException {
 			return ${entity.varName}Persistence.findWithDynamicQuery(dynamicQuery, start, end);
 		}
 
@@ -253,9 +238,11 @@ import ${packagePath}.service.${entity.name}${sessionTypeName}Service;
 		 * @param end the upper bound of the range of model instances (not inclusive)
 		 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 		 * @return the ordered range of matching rows
+		 * @throws SystemException if a system exception occurred
 		 */
 		@Override
-		public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start, int end, OrderByComparator<T> orderByComparator) {
+		@SuppressWarnings("rawtypes")
+		public List dynamicQuery(DynamicQuery dynamicQuery, int start, int end, OrderByComparator orderByComparator) throws SystemException {
 			return ${entity.varName}Persistence.findWithDynamicQuery(dynamicQuery, start, end, orderByComparator);
 		}
 
@@ -264,9 +251,10 @@ import ${packagePath}.service.${entity.name}${sessionTypeName}Service;
 		 *
 		 * @param dynamicQuery the dynamic query
 		 * @return the number of rows that match the dynamic query
+		 * @throws SystemException if a system exception occurred
 		 */
 		@Override
-		public long dynamicQueryCount(DynamicQuery dynamicQuery) {
+		public long dynamicQueryCount(DynamicQuery dynamicQuery) throws SystemException {
 			return ${entity.varName}Persistence.countWithDynamicQuery(dynamicQuery);
 		}
 
@@ -276,20 +264,21 @@ import ${packagePath}.service.${entity.name}${sessionTypeName}Service;
 		 * @param dynamicQuery the dynamic query
 		 * @param projection the projection to apply to the query
 		 * @return the number of rows that match the dynamic query
+		 * @throws SystemException if a system exception occurred
 		 */
 		@Override
-		public long dynamicQueryCount(DynamicQuery dynamicQuery, Projection projection) {
+		public long dynamicQueryCount(DynamicQuery dynamicQuery, Projection projection) throws SystemException {
 			return ${entity.varName}Persistence.countWithDynamicQuery(dynamicQuery, projection);
 		}
 
-		<#assign serviceBaseExceptions = serviceBuilder.getServiceBaseExceptions(methods, "fetch" + entity.name, [entity.PKClassName], [])>
+		<#assign serviceBaseExceptions = serviceBuilder.getServiceBaseExceptions(methods, "fetch" + entity.name, [entity.PKClassName], ["SystemException"])>
 
 		@Override
-		public ${entity.name} fetch${entity.name}(${entity.PKClassName} ${entity.PKVarName}) <#if (serviceBaseExceptions?size gt 0)>throws ${stringUtil.merge(serviceBaseExceptions)} </#if>{
+		public ${entity.name} fetch${entity.name}(${entity.PKClassName} ${entity.PKVarName}) throws ${stringUtil.merge(serviceBaseExceptions)} {
 			return ${entity.varName}Persistence.fetchByPrimaryKey(${entity.PKVarName});
 		}
 
-		<#if entity.hasUuid() && entity.hasColumn("companyId") && (!entity.hasColumn("groupId") || (entity.name == "Group"))>
+		<#if entity.hasUuid() && entity.hasColumn("companyId")>
 			/**
 			 * Returns the ${entity.humanName} with the matching UUID and company.
 			 *
@@ -297,11 +286,15 @@ import ${packagePath}.service.${entity.name}${sessionTypeName}Service;
 			 * @param  companyId the primary key of the company
 			 * @return the matching ${entity.humanName}, or <code>null</code> if a matching ${entity.humanName} could not be found
 			<#list serviceBaseExceptions as exception>
+			<#if exception == "SystemException">
+			 * @throws SystemException if a system exception occurred
+			<#else>
 			 * @throws ${exception}
+			</#if>
 			</#list>
 			 */
 			@Override
-			public ${entity.name} fetch${entity.name}ByUuidAndCompanyId(String uuid, long companyId) <#if (serviceBaseExceptions?size gt 0)>throws ${stringUtil.merge(serviceBaseExceptions)} </#if>{
+			public ${entity.name} fetch${entity.name}ByUuidAndCompanyId(String uuid, long companyId) throws ${stringUtil.merge(serviceBaseExceptions)} {
 				return ${entity.varName}Persistence.fetchByUuid_C_First(uuid, companyId, null);
 			}
 		</#if>
@@ -316,11 +309,15 @@ import ${packagePath}.service.${entity.name}${sessionTypeName}Service;
 				 * @param privateLayout whether the ${entity.humanName} is private to the group
 				 * @return the matching ${entity.humanName}, or <code>null</code> if a matching ${entity.humanName} could not be found
 				<#list serviceBaseExceptions as exception>
+				<#if exception == "SystemException">
+		 		 * @throws SystemException if a system exception occurred
+				<#else>
 				 * @throws ${exception}
+				</#if>
 				</#list>
 				 */
 				@Override
-				public ${entity.name} fetch${entity.name}ByUuidAndGroupId(String uuid, long groupId, boolean privateLayout) <#if (serviceBaseExceptions?size gt 0)>throws ${stringUtil.merge(serviceBaseExceptions)} </#if>{
+				public ${entity.name} fetch${entity.name}ByUuidAndGroupId(String uuid, long groupId, boolean privateLayout) throws ${stringUtil.merge(serviceBaseExceptions)} {
 					return ${entity.varName}Persistence.fetchByUUID_G_P(uuid, groupId, privateLayout);
 				}
 			<#else>
@@ -331,17 +328,21 @@ import ${packagePath}.service.${entity.name}${sessionTypeName}Service;
 				 * @param groupId the primary key of the group
 				 * @return the matching ${entity.humanName}, or <code>null</code> if a matching ${entity.humanName} could not be found
 				<#list serviceBaseExceptions as exception>
+				<#if exception == "SystemException">
+				 * @throws SystemException if a system exception occurred
+				<#else>
 				 * @throws ${exception}
+				</#if>
 				</#list>
 				 */
 				@Override
-				public ${entity.name} fetch${entity.name}ByUuidAndGroupId(String uuid, long groupId) <#if (serviceBaseExceptions?size gt 0)>throws ${stringUtil.merge(serviceBaseExceptions)} </#if>{
+				public ${entity.name} fetch${entity.name}ByUuidAndGroupId(String uuid, long groupId) throws ${stringUtil.merge(serviceBaseExceptions)} {
 					return ${entity.varName}Persistence.fetchByUUID_G(uuid, groupId);
 				}
 			</#if>
 		</#if>
 
-		<#assign serviceBaseExceptions = serviceBuilder.getServiceBaseExceptions(methods, "get" + entity.name, [entity.PKClassName], ["PortalException"])>
+		<#assign serviceBaseExceptions = serviceBuilder.getServiceBaseExceptions(methods, "get" + entity.name, [entity.PKClassName], ["PortalException", "SystemException"])>
 
 		/**
 		 * Returns the ${entity.humanName} with the primary key.
@@ -351,194 +352,44 @@ import ${packagePath}.service.${entity.name}${sessionTypeName}Service;
 		<#list serviceBaseExceptions as exception>
 		<#if exception == "PortalException">
 		 * @throws PortalException if a ${entity.humanName} with the primary key could not be found
+		<#elseif exception == "SystemException">
+		 * @throws SystemException if a system exception occurred
 		<#else>
 		 * @throws ${exception}
 		</#if>
 		</#list>
 		 */
 		@Override
-		public ${entity.name} get${entity.name}(${entity.PKClassName} ${entity.PKVarName}) <#if (serviceBaseExceptions?size gt 0)>throws ${stringUtil.merge(serviceBaseExceptions)} </#if>{
+		public ${entity.name} get${entity.name}(${entity.PKClassName} ${entity.PKVarName}) throws ${stringUtil.merge(serviceBaseExceptions)} {
 			return ${entity.varName}Persistence.findByPrimaryKey(${entity.PKVarName});
 		}
 
-		<#if entity.hasActionableDynamicQuery()>
-			@Override
-			public ActionableDynamicQuery getActionableDynamicQuery() {
-				ActionableDynamicQuery actionableDynamicQuery = new DefaultActionableDynamicQuery();
-
-				actionableDynamicQuery.setBaseLocalService(${packagePath}.service.${entity.name}LocalServiceUtil.getService());
-				actionableDynamicQuery.setClass(${entity.name}.class);
-				actionableDynamicQuery.setClassLoader(getClassLoader());
-
-				<#if entity.hasPrimitivePK()>
-					actionableDynamicQuery.setPrimaryKeyPropertyName("${entity.PKVarName}");
-				<#else>
-					<#assign pkList = entity.getPKList()>
-
-					<#assign pkColumn = pkList?first>
-
-					actionableDynamicQuery.setPrimaryKeyPropertyName("primaryKey.${pkColumn.name}");
-
-					<#list entity.getPKList() as pkColumn>
-						<#if pkColumn.name == "groupId">
-							actionableDynamicQuery.setGroupIdPropertyName("primaryKey.groupId");
-						</#if>
-					</#list>
-				</#if>
-
-				return actionableDynamicQuery;
-			}
-
-			protected void initActionableDynamicQuery(ActionableDynamicQuery actionableDynamicQuery) {
-				actionableDynamicQuery.setBaseLocalService(${packagePath}.service.${entity.name}LocalServiceUtil.getService());
-				actionableDynamicQuery.setClass(${entity.name}.class);
-				actionableDynamicQuery.setClassLoader(getClassLoader());
-
-				<#if entity.hasPrimitivePK()>
-					actionableDynamicQuery.setPrimaryKeyPropertyName("${entity.PKVarName}");
-				<#else>
-					<#assign pkList = entity.getPKList()>
-
-					<#assign pkColumn = pkList?first>
-
-					actionableDynamicQuery.setPrimaryKeyPropertyName("primaryKey.${pkColumn.name}");
-
-					<#list entity.getPKList() as pkColumn>
-						<#if pkColumn.name == "groupId">
-							actionableDynamicQuery.setGroupIdPropertyName("primaryKey.groupId");
-						</#if>
-					</#list>
-				</#if>
-			}
-
-			<#if entity.isStagedModel()>
-				@Override
-				public ExportActionableDynamicQuery getExportActionableDynamicQuery(final PortletDataContext portletDataContext) {
-					final ExportActionableDynamicQuery exportActionableDynamicQuery = new ExportActionableDynamicQuery() {
-
-						@Override
-						public long performCount() throws PortalException {
-							ManifestSummary manifestSummary = portletDataContext.getManifestSummary();
-
-							StagedModelType stagedModelType = getStagedModelType();
-
-							long modelAdditionCount = super.performCount();
-
-							manifestSummary.addModelAdditionCount(stagedModelType.toString(), modelAdditionCount);
-
-							long modelDeletionCount = ExportImportHelperUtil.getModelDeletionCount(portletDataContext, stagedModelType);
-
-							manifestSummary.addModelDeletionCount(stagedModelType.toString(), modelDeletionCount);
-
-							return modelAdditionCount;
-						}
-
-						<#if entity.isResourcedModel()>
-							@Override
-							protected Projection getCountProjection() {
-								return ProjectionFactoryUtil.countDistinct("resourcePrimKey");
-							}
-						</#if>
-					};
-
-					initActionableDynamicQuery(exportActionableDynamicQuery);
-
-					exportActionableDynamicQuery.setAddCriteriaMethod(
-						new ActionableDynamicQuery.AddCriteriaMethod() {
-
-							@Override
-							public void addCriteria(DynamicQuery dynamicQuery) {
-								portletDataContext.addDateRangeCriteria(dynamicQuery, "modifiedDate");
-
-								<#if entity.isTypedModel()>
-									StagedModelType stagedModelType = exportActionableDynamicQuery.getStagedModelType();
-
-									if (stagedModelType.getReferrerClassNameId() >= 0) {
-										Property classNameIdProperty = PropertyFactoryUtil.forName("classNameId");
-
-										dynamicQuery.add(classNameIdProperty.eq(stagedModelType.getReferrerClassNameId()));
-									}
-								</#if>
-
-								<#if entity.isWorkflowEnabled()>
-									StagedModelDataHandler<?> stagedModelDataHandler = StagedModelDataHandlerRegistryUtil.getStagedModelDataHandler(${entity.name}.class.getName());
-
-									Property workflowStatusProperty = PropertyFactoryUtil.forName("status");
-
-									dynamicQuery.add(workflowStatusProperty.in(stagedModelDataHandler.getExportableStatuses()));
-								</#if>
-							}
-
-						});
-
-					exportActionableDynamicQuery.setCompanyId(portletDataContext.getCompanyId());
-
-					<#if entity.isStagedGroupedModel()>
-						exportActionableDynamicQuery.setGroupId(portletDataContext.getScopeGroupId());
-					</#if>
-
-					exportActionableDynamicQuery.setPerformActionMethod(
-						new ActionableDynamicQuery.PerformActionMethod() {
-
-							@Override
-							public void performAction(Object object) throws PortalException {
-								${entity.name} stagedModel = (${entity.name})object;
-
-								StagedModelDataHandlerUtil.exportStagedModel(portletDataContext, stagedModel);
-							}
-
-						});
-					exportActionableDynamicQuery.setStagedModelType(new StagedModelType(PortalUtil.getClassNameId(${entity.name}.class.getName())));
-
-					return exportActionableDynamicQuery;
-				}
-			</#if>
-		</#if>
-
-		/**
-		 * @throws PortalException
-		 */
 		@Override
-		public PersistedModel deletePersistedModel(PersistedModel persistedModel) throws PortalException {
-			return ${entity.varName}LocalService.delete${entity.name}((${entity.name})persistedModel);
-		}
-
-		@Override
-		public PersistedModel getPersistedModel(Serializable primaryKeyObj) throws PortalException {
+		public PersistedModel getPersistedModel(Serializable primaryKeyObj) throws PortalException, SystemException {
 			return ${entity.varName}Persistence.findByPrimaryKey(primaryKeyObj);
 		}
 
 		<#if entity.hasUuid() && entity.hasColumn("companyId")>
-			<#if entity.hasColumn("groupId") && (entity.name != "Group")>
-				@Override
-				public List<${entity.name}> get${entity.names}ByUuidAndCompanyId(String uuid, long companyId) {
-					return ${entity.varName}Persistence.findByUuid_C(uuid, companyId);
-				}
-
-				@Override
-				public List<${entity.name}> get${entity.names}ByUuidAndCompanyId(String uuid, long companyId, int start, int end, OrderByComparator<${entity.name}> orderByComparator) {
-					return ${entity.varName}Persistence.findByUuid_C(uuid, companyId, start, end, orderByComparator);
-				}
+			/**
+			 * Returns the ${entity.humanName} with the matching UUID and company.
+			 *
+			 * @param uuid the ${entity.humanName}'s UUID
+			 * @param  companyId the primary key of the company
+			 * @return the matching ${entity.humanName}
+			<#list serviceBaseExceptions as exception>
+			<#if exception == "PortalException">
+			 * @throws PortalException if a matching ${entity.humanName} could not be found
+			<#elseif exception == "SystemException">
+			 * @throws SystemException if a system exception occurred
 			<#else>
-				/**
-				 * Returns the ${entity.humanName} with the matching UUID and company.
-				 *
-				 * @param uuid the ${entity.humanName}'s UUID
-				 * @param  companyId the primary key of the company
-				 * @return the matching ${entity.humanName}
-				<#list serviceBaseExceptions as exception>
-				<#if exception == "PortalException">
-				 * @throws PortalException if a matching ${entity.humanName} could not be found
-				<#else>
-				 * @throws ${exception}
-				</#if>
-				</#list>
-				 */
-				@Override
-				public ${entity.name} get${entity.name}ByUuidAndCompanyId(String uuid, long companyId) <#if (serviceBaseExceptions?size gt 0)>throws ${stringUtil.merge(serviceBaseExceptions)} </#if>{
-					return ${entity.varName}Persistence.findByUuid_C_First(uuid, companyId, null);
-				}
+			 * @throws ${exception}
 			</#if>
+			</#list>
+			 */
+			@Override
+			public ${entity.name} get${entity.name}ByUuidAndCompanyId(String uuid, long companyId) throws ${stringUtil.merge(serviceBaseExceptions)} {
+				return ${entity.varName}Persistence.findByUuid_C_First(uuid, companyId, null);
+			}
 		</#if>
 
 		<#if entity.hasUuid() && entity.hasColumn("groupId") && (entity.name != "Group")>
@@ -553,13 +404,15 @@ import ${packagePath}.service.${entity.name}${sessionTypeName}Service;
 				<#list serviceBaseExceptions as exception>
 				<#if exception == "PortalException">
 				 * @throws PortalException if a matching ${entity.humanName} could not be found
+				<#elseif exception == "SystemException">
+				 * @throws SystemException if a system exception occurred
 				<#else>
 				 * @throws ${exception}
 				</#if>
 				</#list>
 				 */
 				@Override
-				public ${entity.name} get${entity.name}ByUuidAndGroupId(String uuid, long groupId, boolean privateLayout) <#if (serviceBaseExceptions?size gt 0)>throws ${stringUtil.merge(serviceBaseExceptions)} </#if>{
+				public ${entity.name} get${entity.name}ByUuidAndGroupId(String uuid, long groupId, boolean privateLayout) throws ${stringUtil.merge(serviceBaseExceptions)} {
 					return ${entity.varName}Persistence.findByUUID_G_P(uuid, groupId, privateLayout);
 				}
 			<#else>
@@ -572,13 +425,15 @@ import ${packagePath}.service.${entity.name}${sessionTypeName}Service;
 				<#list serviceBaseExceptions as exception>
 				<#if exception == "PortalException">
 				 * @throws PortalException if a matching ${entity.humanName} could not be found
+				<#elseif exception == "SystemException">
+				 * @throws SystemException if a system exception occurred
 				<#else>
 				 * @throws ${exception}
 				</#if>
 				</#list>
 				 */
 				@Override
-				public ${entity.name} get${entity.name}ByUuidAndGroupId(String uuid, long groupId) <#if (serviceBaseExceptions?size gt 0)>throws ${stringUtil.merge(serviceBaseExceptions)} </#if>{
+				public ${entity.name} get${entity.name}ByUuidAndGroupId(String uuid, long groupId) throws ${stringUtil.merge(serviceBaseExceptions)} {
 					return ${entity.varName}Persistence.findByUUID_G(uuid, groupId);
 				}
 			</#if>
@@ -594,9 +449,10 @@ import ${packagePath}.service.${entity.name}${sessionTypeName}Service;
 		 * @param start the lower bound of the range of ${entity.humanNames}
 		 * @param end the upper bound of the range of ${entity.humanNames} (not inclusive)
 		 * @return the range of ${entity.humanNames}
+		 * @throws SystemException if a system exception occurred
 		 */
 		@Override
-		public List<${entity.name}> get${entity.names}(int start, int end) {
+		public List<${entity.name}> get${entity.names}(int start, int end) throws SystemException {
 			return ${entity.varName}Persistence.findAll(start, end);
 		}
 
@@ -604,13 +460,14 @@ import ${packagePath}.service.${entity.name}${sessionTypeName}Service;
 		 * Returns the number of ${entity.humanNames}.
 		 *
 		 * @return the number of ${entity.humanNames}
+		 * @throws SystemException if a system exception occurred
 		 */
 		@Override
-		public int get${entity.names}Count() {
+		public int get${entity.names}Count() throws SystemException {
 			return ${entity.varName}Persistence.countAll();
 		}
 
-		<#assign serviceBaseExceptions = serviceBuilder.getServiceBaseExceptions(methods, "update" + entity.name, [packagePath + ".model." + entity.name], [])>
+		<#assign serviceBaseExceptions = serviceBuilder.getServiceBaseExceptions(methods, "update" + entity.name, [packagePath + ".model." + entity.name], ["SystemException"])>
 
 		/**
 		 * Updates the ${entity.humanName} in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
@@ -618,19 +475,23 @@ import ${packagePath}.service.${entity.name}${sessionTypeName}Service;
 		 * @param ${entity.varName} the ${entity.humanName}
 		 * @return the ${entity.humanName} that was updated
 		<#list serviceBaseExceptions as exception>
+		<#if exception == "SystemException">
+		 * @throws SystemException if a system exception occurred
+		<#else>
 		 * @throws ${exception}
+		</#if>
 		</#list>
 		 */
 		@Indexable(type = IndexableType.REINDEX)
 		@Override
-		public ${entity.name} update${entity.name}(${entity.name} ${entity.varName}) <#if (serviceBaseExceptions?size gt 0)>throws ${stringUtil.merge(serviceBaseExceptions)} </#if>{
+		public ${entity.name} update${entity.name}(${entity.name} ${entity.varName}) throws ${stringUtil.merge(serviceBaseExceptions)} {
 			return ${entity.varName}Persistence.update(${entity.varName});
 		}
 
 		<#list entity.blobList as column>
 			<#if column.lazy>
 				@Override
-				public ${entity.name}${column.methodName}BlobModel get${column.methodName}BlobModel(Serializable primaryKey) {
+				public ${entity.name}${column.methodName}BlobModel get${column.methodName}BlobModel(Serializable primaryKey) throws SystemException {
 					Session session = null;
 
 					try {
@@ -652,206 +513,259 @@ import ${packagePath}.service.${entity.name}${sessionTypeName}Service;
 			<#if column.isCollection() && column.isMappingManyToMany()>
 				<#assign tempEntity = serviceBuilder.getEntity(column.getEJBName())>
 
-				<#assign serviceBaseExceptions = serviceBuilder.getServiceBaseExceptions(methods, "add" + tempEntity.name + entity.name, [tempEntity.PKClassName, entity.PKClassName], [])>
+				<#assign serviceBaseExceptions = serviceBuilder.getServiceBaseExceptions(methods, "add" + tempEntity.name + entity.name, [tempEntity.PKClassName, entity.PKClassName], ["SystemException"])>
 
 				/**
 				<#list serviceBaseExceptions as exception>
+				<#if exception == "SystemException">
+				 * @throws SystemException if a system exception occurred
+				<#else>
 				 * @throws ${exception}
+				</#if>
 				</#list>
 				 */
 				@Override
-				public void add${tempEntity.name}${entity.name}(${tempEntity.PKClassName} ${tempEntity.PKVarName}, ${entity.PKClassName} ${entity.PKVarName}) <#if (serviceBaseExceptions?size gt 0)>throws ${stringUtil.merge(serviceBaseExceptions)} </#if>{
+				public void add${tempEntity.name}${entity.name}(${tempEntity.PKClassName} ${tempEntity.PKVarName}, ${entity.PKClassName} ${entity.PKVarName}) throws ${stringUtil.merge(serviceBaseExceptions)} {
 					${tempEntity.varName}Persistence.add${entity.name}(${tempEntity.PKVarName}, ${entity.PKVarName});
 				}
 
-				<#assign serviceBaseExceptions = serviceBuilder.getServiceBaseExceptions(methods, "add" + tempEntity.name + entity.name, [tempEntity.PKClassName, packagePath + ".model." + entity.name], [])>
+				<#assign serviceBaseExceptions = serviceBuilder.getServiceBaseExceptions(methods, "add" + tempEntity.name + entity.name, [tempEntity.PKClassName, packagePath + ".model." + entity.name], ["SystemException"])>
 
 				/**
 				<#list serviceBaseExceptions as exception>
+				<#if exception == "SystemException">
+				 * @throws SystemException if a system exception occurred
+				<#else>
 				 * @throws ${exception}
+				</#if>
 				</#list>
 				 */
 				@Override
-				public void add${tempEntity.name}${entity.name}(${tempEntity.PKClassName} ${tempEntity.PKVarName}, ${entity.name} ${entity.varName}) <#if (serviceBaseExceptions?size gt 0)>throws ${stringUtil.merge(serviceBaseExceptions)} </#if>{
+				public void add${tempEntity.name}${entity.name}(${tempEntity.PKClassName} ${tempEntity.PKVarName}, ${entity.name} ${entity.varName}) throws ${stringUtil.merge(serviceBaseExceptions)} {
 					${tempEntity.varName}Persistence.add${entity.name}(${tempEntity.PKVarName}, ${entity.varName});
 				}
 
-				<#assign serviceBaseExceptions = serviceBuilder.getServiceBaseExceptions(methods, "add" + tempEntity.name + entity.names, [tempEntity.PKClassName, entity.PKClassName + "[]"], [])>
+				<#assign serviceBaseExceptions = serviceBuilder.getServiceBaseExceptions(methods, "add" + tempEntity.name + entity.names, [tempEntity.PKClassName, entity.PKClassName + "[]"], ["SystemException"])>
 
 				/**
 				<#list serviceBaseExceptions as exception>
+				<#if exception == "SystemException">
+				 * @throws SystemException if a system exception occurred
+				<#else>
 				 * @throws ${exception}
+				</#if>
 				</#list>
 				 */
 				@Override
-				public void add${tempEntity.name}${entity.names}(${tempEntity.PKClassName} ${tempEntity.PKVarName}, ${entity.PKClassName}[] ${entity.PKVarNames}) <#if (serviceBaseExceptions?size gt 0)>throws ${stringUtil.merge(serviceBaseExceptions)} </#if>{
+				public void add${tempEntity.name}${entity.names}(${tempEntity.PKClassName} ${tempEntity.PKVarName}, ${entity.PKClassName}[] ${entity.PKVarNames}) throws ${stringUtil.merge(serviceBaseExceptions)} {
 					${tempEntity.varName}Persistence.add${entity.names}(${tempEntity.PKVarName}, ${entity.PKVarNames});
 				}
 
-				<#assign serviceBaseExceptions = serviceBuilder.getServiceBaseExceptions(methods, "add" + tempEntity.name + entity.names, [tempEntity.PKClassName, "java.util.List<" + entity.name + ">"], [])>
+				<#assign serviceBaseExceptions = serviceBuilder.getServiceBaseExceptions(methods, "add" + tempEntity.name + entity.names, [tempEntity.PKClassName, "java.util.List<" + entity.name + ">"], ["SystemException"])>
 
 				/**
 				<#list serviceBaseExceptions as exception>
+				<#if exception == "SystemException">
+				 * @throws SystemException if a system exception occurred
+				<#else>
 				 * @throws ${exception}
+				</#if>
 				</#list>
 				 */
 				@Override
-				public void add${tempEntity.name}${entity.names}(${tempEntity.PKClassName} ${tempEntity.PKVarName}, List<${entity.name}> ${entity.names}) <#if (serviceBaseExceptions?size gt 0)>throws ${stringUtil.merge(serviceBaseExceptions)} </#if>{
+				public void add${tempEntity.name}${entity.names}(${tempEntity.PKClassName} ${tempEntity.PKVarName}, List<${entity.name}> ${entity.names}) throws ${stringUtil.merge(serviceBaseExceptions)} {
 					${tempEntity.varName}Persistence.add${entity.names}(${tempEntity.PKVarName}, ${entity.names});
 				}
 
-				<#assign serviceBaseExceptions = serviceBuilder.getServiceBaseExceptions(methods, "clear" + tempEntity.name + entity.names, [tempEntity.PKClassName], [])>
+				<#assign serviceBaseExceptions = serviceBuilder.getServiceBaseExceptions(methods, "clear" + tempEntity.name + entity.names, [tempEntity.PKClassName], ["SystemException"])>
 
 				/**
 				<#list serviceBaseExceptions as exception>
+				<#if exception == "SystemException">
+				 * @throws SystemException if a system exception occurred
+				<#else>
 				 * @throws ${exception}
+				</#if>
 				</#list>
 				 */
 				@Override
-				public void clear${tempEntity.name}${entity.names}(${tempEntity.PKClassName} ${tempEntity.PKVarName}) <#if (serviceBaseExceptions?size gt 0)>throws ${stringUtil.merge(serviceBaseExceptions)} </#if>{
+				public void clear${tempEntity.name}${entity.names}(${tempEntity.PKClassName} ${tempEntity.PKVarName}) throws ${stringUtil.merge(serviceBaseExceptions)} {
 					${tempEntity.varName}Persistence.clear${entity.names}(${tempEntity.PKVarName});
 				}
 
-				<#assign serviceBaseExceptions = serviceBuilder.getServiceBaseExceptions(methods, "delete" + tempEntity.name + entity.name, [tempEntity.PKClassName, entity.PKClassName], [])>
+				<#assign serviceBaseExceptions = serviceBuilder.getServiceBaseExceptions(methods, "delete" + tempEntity.name + entity.name, [tempEntity.PKClassName, entity.PKClassName], ["SystemException"])>
 
 				/**
 				<#list serviceBaseExceptions as exception>
+				<#if exception == "SystemException">
+				 * @throws SystemException if a system exception occurred
+				<#else>
 				 * @throws ${exception}
+				</#if>
 				</#list>
 				 */
 				@Override
-				public void delete${tempEntity.name}${entity.name}(${tempEntity.PKClassName} ${tempEntity.PKVarName}, ${entity.PKClassName} ${entity.PKVarName}) <#if (serviceBaseExceptions?size gt 0)>throws ${stringUtil.merge(serviceBaseExceptions)} </#if>{
+				public void delete${tempEntity.name}${entity.name}(${tempEntity.PKClassName} ${tempEntity.PKVarName}, ${entity.PKClassName} ${entity.PKVarName}) throws ${stringUtil.merge(serviceBaseExceptions)} {
 					${tempEntity.varName}Persistence.remove${entity.name}(${tempEntity.PKVarName}, ${entity.PKVarName});
 				}
 
-				<#assign serviceBaseExceptions = serviceBuilder.getServiceBaseExceptions(methods, "delete" + tempEntity.name + entity.name, [tempEntity.PKClassName, packagePath + ".model." + entity.name], [])>
+				<#assign serviceBaseExceptions = serviceBuilder.getServiceBaseExceptions(methods, "delete" + tempEntity.name + entity.name, [tempEntity.PKClassName, packagePath + ".model." + entity.name], ["SystemException"])>
 
 				/**
 				<#list serviceBaseExceptions as exception>
+				<#if exception == "SystemException">
+				 * @throws SystemException if a system exception occurred
+				<#else>
 				 * @throws ${exception}
+				</#if>
 				</#list>
 				 */
 				@Override
-				public void delete${tempEntity.name}${entity.name}(${tempEntity.PKClassName} ${tempEntity.PKVarName}, ${entity.name} ${entity.varName}) <#if (serviceBaseExceptions?size gt 0)>throws ${stringUtil.merge(serviceBaseExceptions)} </#if>{
+				public void delete${tempEntity.name}${entity.name}(${tempEntity.PKClassName} ${tempEntity.PKVarName}, ${entity.name} ${entity.varName}) throws ${stringUtil.merge(serviceBaseExceptions)} {
 					${tempEntity.varName}Persistence.remove${entity.name}(${tempEntity.PKVarName}, ${entity.varName});
 				}
 
-				<#assign serviceBaseExceptions = serviceBuilder.getServiceBaseExceptions(methods, "delete" + tempEntity.name + entity.names, [tempEntity.PKClassName, entity.PKClassName + "[]"], [])>
+				<#assign serviceBaseExceptions = serviceBuilder.getServiceBaseExceptions(methods, "delete" + tempEntity.name + entity.names, [tempEntity.PKClassName, entity.PKClassName + "[]"], ["SystemException"])>
 
 				/**
 				<#list serviceBaseExceptions as exception>
+				<#if exception == "SystemException">
+				 * @throws SystemException if a system exception occurred
+				<#else>
 				 * @throws ${exception}
+				</#if>
 				</#list>
 				 */
 				@Override
-				public void delete${tempEntity.name}${entity.names}(${tempEntity.PKClassName} ${tempEntity.PKVarName}, ${entity.PKClassName}[] ${entity.PKVarNames}) <#if (serviceBaseExceptions?size gt 0)>throws ${stringUtil.merge(serviceBaseExceptions)} </#if>{
+				public void delete${tempEntity.name}${entity.names}(${tempEntity.PKClassName} ${tempEntity.PKVarName}, ${entity.PKClassName}[] ${entity.PKVarNames}) throws ${stringUtil.merge(serviceBaseExceptions)} {
 					${tempEntity.varName}Persistence.remove${entity.names}(${tempEntity.PKVarName}, ${entity.PKVarNames});
 				}
 
-				<#assign serviceBaseExceptions = serviceBuilder.getServiceBaseExceptions(methods, "delete" + tempEntity.name + entity.names, [tempEntity.PKClassName, "java.util.List<" + entity.name + ">"], [])>
+				<#assign serviceBaseExceptions = serviceBuilder.getServiceBaseExceptions(methods, "delete" + tempEntity.name + entity.names, [tempEntity.PKClassName, "java.util.List<" + entity.name + ">"], ["SystemException"])>
 
 				/**
 				<#list serviceBaseExceptions as exception>
+				<#if exception == "SystemException">
+				 * @throws SystemException if a system exception occurred
+				<#else>
 				 * @throws ${exception}
+				</#if>
 				</#list>
 				 */
 				@Override
-				public void delete${tempEntity.name}${entity.names}(${tempEntity.PKClassName} ${tempEntity.PKVarName}, List<${entity.name}> ${entity.names}) <#if (serviceBaseExceptions?size gt 0)>throws ${stringUtil.merge(serviceBaseExceptions)} </#if>{
+				public void delete${tempEntity.name}${entity.names}(${tempEntity.PKClassName} ${tempEntity.PKVarName}, List<${entity.name}> ${entity.names}) throws ${stringUtil.merge(serviceBaseExceptions)} {
 					${tempEntity.varName}Persistence.remove${entity.names}(${tempEntity.PKVarName}, ${entity.names});
 				}
 
-				/**
-				 * Returns the ${tempEntity.PKVarName}s of the ${tempEntity.humanNames} associated with the ${entity.humanName}.
-				 *
-				 * @param ${entity.PKVarName} the ${entity.PKVarName} of the ${entity.humanName}
-				 * @return long[] the ${tempEntity.PKVarName}s of ${tempEntity.humanNames} associated with the ${entity.humanName}
-				 */
-				@Override
-				public long[] get${tempEntity.name}PrimaryKeys(${entity.PKClassName} ${entity.PKVarName}) {
-					return ${entity.varName}Persistence.get${tempEntity.name}PrimaryKeys(${entity.PKVarName});
-				}
-
-				<#assign serviceBaseExceptions = serviceBuilder.getServiceBaseExceptions(methods, "get" + tempEntity.name + entity.names, [tempEntity.PKClassName], [])>
+				<#assign serviceBaseExceptions = serviceBuilder.getServiceBaseExceptions(methods, "get" + tempEntity.name + entity.names, [tempEntity.PKClassName], ["SystemException"])>
 
 				/**
 				<#list serviceBaseExceptions as exception>
+				<#if exception == "SystemException">
+				 * @throws SystemException if a system exception occurred
+				<#else>
 				 * @throws ${exception}
+				</#if>
 				</#list>
 				 */
 				@Override
-				public List<${entity.name}> get${tempEntity.name}${entity.names}(${tempEntity.PKClassName} ${tempEntity.PKVarName}) <#if (serviceBaseExceptions?size gt 0)>throws ${stringUtil.merge(serviceBaseExceptions)} </#if>{
+				public List<${entity.name}> get${tempEntity.name}${entity.names}(${tempEntity.PKClassName} ${tempEntity.PKVarName}) throws ${stringUtil.merge(serviceBaseExceptions)} {
 					return ${tempEntity.varName}Persistence.get${entity.names}(${tempEntity.PKVarName});
 				}
 
-				<#assign serviceBaseExceptions = serviceBuilder.getServiceBaseExceptions(methods, "get" + tempEntity.name + entity.names, [tempEntity.PKClassName, "int", "int"], [])>
+				<#assign serviceBaseExceptions = serviceBuilder.getServiceBaseExceptions(methods, "get" + tempEntity.name + entity.names, [tempEntity.PKClassName, "int", "int"], ["SystemException"])>
 
 				/**
 				<#list serviceBaseExceptions as exception>
+				<#if exception == "SystemException">
+				 * @throws SystemException if a system exception occurred
+				<#else>
 				 * @throws ${exception}
+				</#if>
 				</#list>
 				 */
 				@Override
-				public List<${entity.name}> get${tempEntity.name}${entity.names}(${tempEntity.PKClassName} ${tempEntity.PKVarName}, int start, int end) <#if (serviceBaseExceptions?size gt 0)>throws ${stringUtil.merge(serviceBaseExceptions)} </#if>{
+				public List<${entity.name}> get${tempEntity.name}${entity.names}(${tempEntity.PKClassName} ${tempEntity.PKVarName}, int start, int end) throws ${stringUtil.merge(serviceBaseExceptions)} {
 					return ${tempEntity.varName}Persistence.get${entity.names}(${tempEntity.PKVarName}, start, end);
 				}
 
-				<#assign serviceBaseExceptions = serviceBuilder.getServiceBaseExceptions(methods, "get" + tempEntity.name + entity.names, [tempEntity.PKClassName, "int", "int", "com.liferay.portal.kernel.util.OrderByComparator"], [])>
+				<#assign serviceBaseExceptions = serviceBuilder.getServiceBaseExceptions(methods, "get" + tempEntity.name + entity.names, [tempEntity.PKClassName, "int", "int", "com.liferay.portal.kernel.util.OrderByComparator"], ["SystemException"])>
 
 				/**
 				<#list serviceBaseExceptions as exception>
+				<#if exception == "SystemException">
+				 * @throws SystemException if a system exception occurred
+				<#else>
 				 * @throws ${exception}
+				</#if>
 				</#list>
 				 */
 				@Override
-				public List<${entity.name}> get${tempEntity.name}${entity.names}(${tempEntity.PKClassName} ${tempEntity.PKVarName}, int start, int end, OrderByComparator<${entity.name}> orderByComparator) <#if (serviceBaseExceptions?size gt 0)>throws ${stringUtil.merge(serviceBaseExceptions)} </#if>{
+				public List<${entity.name}> get${tempEntity.name}${entity.names}(${tempEntity.PKClassName} ${tempEntity.PKVarName}, int start, int end, OrderByComparator orderByComparator) throws ${stringUtil.merge(serviceBaseExceptions)} {
 					return ${tempEntity.varName}Persistence.get${entity.names}(${tempEntity.PKVarName}, start, end, orderByComparator);
 				}
 
-				<#assign serviceBaseExceptions = serviceBuilder.getServiceBaseExceptions(methods, "get" + tempEntity.name + entity.names + "Count", [tempEntity.PKClassName], [])>
+				<#assign serviceBaseExceptions = serviceBuilder.getServiceBaseExceptions(methods, "get" + tempEntity.name + entity.names + "Count", [tempEntity.PKClassName], ["SystemException"])>
 
 				/**
 				<#list serviceBaseExceptions as exception>
+				<#if exception == "SystemException">
+				 * @throws SystemException if a system exception occurred
+				<#else>
 				 * @throws ${exception}
+				</#if>
 				</#list>
 				 */
 				@Override
-				public int get${tempEntity.name}${entity.names}Count(${tempEntity.PKClassName} ${tempEntity.PKVarName}) <#if (serviceBaseExceptions?size gt 0)>throws ${stringUtil.merge(serviceBaseExceptions)} </#if>{
+				public int get${tempEntity.name}${entity.names}Count(${tempEntity.PKClassName} ${tempEntity.PKVarName}) throws ${stringUtil.merge(serviceBaseExceptions)} {
 					return ${tempEntity.varName}Persistence.get${entity.names}Size(${tempEntity.PKVarName});
 				}
 
-				<#assign serviceBaseExceptions = serviceBuilder.getServiceBaseExceptions(methods, "has" + tempEntity.name + entity.name, [tempEntity.PKClassName, entity.PKClassName], [])>
+				<#assign serviceBaseExceptions = serviceBuilder.getServiceBaseExceptions(methods, "has" + tempEntity.name + entity.name, [tempEntity.PKClassName, entity.PKClassName], ["SystemException"])>
 
 				/**
 				<#list serviceBaseExceptions as exception>
+				<#if exception == "SystemException">
+				 * @throws SystemException if a system exception occurred
+				<#else>
 				 * @throws ${exception}
+				</#if>
 				</#list>
 				 */
 				@Override
-				public boolean has${tempEntity.name}${entity.name}(${tempEntity.PKClassName} ${tempEntity.PKVarName}, ${entity.PKClassName} ${entity.PKVarName}) <#if (serviceBaseExceptions?size gt 0)>throws ${stringUtil.merge(serviceBaseExceptions)} </#if>{
+				public boolean has${tempEntity.name}${entity.name}(${tempEntity.PKClassName} ${tempEntity.PKVarName}, ${entity.PKClassName} ${entity.PKVarName}) throws ${stringUtil.merge(serviceBaseExceptions)} {
 					return ${tempEntity.varName}Persistence.contains${entity.name}(${tempEntity.PKVarName}, ${entity.PKVarName});
 				}
 
-				<#assign serviceBaseExceptions = serviceBuilder.getServiceBaseExceptions(methods, "has" + tempEntity.name + entity.names, [tempEntity.PKClassName], [])>
+				<#assign serviceBaseExceptions = serviceBuilder.getServiceBaseExceptions(methods, "has" + tempEntity.name + entity.names, [tempEntity.PKClassName], ["SystemException"])>
 
 				/**
 				<#list serviceBaseExceptions as exception>
+				<#if exception == "SystemException">
+				 * @throws SystemException if a system exception occurred
+				<#else>
 				 * @throws ${exception}
+				</#if>
 				</#list>
 				 */
 				@Override
-				public boolean has${tempEntity.name}${entity.names}(${tempEntity.PKClassName} ${tempEntity.PKVarName}) <#if (serviceBaseExceptions?size gt 0)>throws ${stringUtil.merge(serviceBaseExceptions)} </#if>{
+				public boolean has${tempEntity.name}${entity.names}(${tempEntity.PKClassName} ${tempEntity.PKVarName}) throws ${stringUtil.merge(serviceBaseExceptions)} {
 					return ${tempEntity.varName}Persistence.contains${entity.names}(${tempEntity.PKVarName});
 				}
 
-				<#assign serviceBaseExceptions = serviceBuilder.getServiceBaseExceptions(methods, "set" + tempEntity.name + entity.names, [tempEntity.PKClassName, entity.PKClassName + "[]"], [])>
+				<#assign serviceBaseExceptions = serviceBuilder.getServiceBaseExceptions(methods, "set" + tempEntity.name + entity.names, [tempEntity.PKClassName, entity.PKClassName + "[]"], ["SystemException"])>
 
 				/**
 				<#list serviceBaseExceptions as exception>
+				<#if exception == "SystemException">
+				 * @throws SystemException if a system exception occurred
+				<#else>
 				 * @throws ${exception}
+				</#if>
 				</#list>
 				 */
 				@Override
-				public void set${tempEntity.name}${entity.names}(${tempEntity.PKClassName} ${tempEntity.PKVarName}, ${entity.PKClassName}[] ${entity.PKVarNames}) <#if (serviceBaseExceptions?size gt 0)>throws ${stringUtil.merge(serviceBaseExceptions)} </#if>{
+				public void set${tempEntity.name}${entity.names}(${tempEntity.PKClassName} ${tempEntity.PKVarName}, ${entity.PKClassName}[] ${entity.PKVarNames}) throws ${stringUtil.merge(serviceBaseExceptions)} {
 					${tempEntity.varName}Persistence.set${entity.names}(${tempEntity.PKVarName}, ${entity.PKVarNames});
 				}
 			</#if>
@@ -1042,22 +956,17 @@ import ${packagePath}.service.${entity.name}${sessionTypeName}Service;
 	</#if>
 
 	/**
-	 * Performs a SQL query.
+	 * Performs an SQL query.
 	 *
 	 * @param sql the sql query
 	 */
-	protected void runSQL(String sql) {
+	protected void runSQL(String sql) throws SystemException {
 		try {
 			<#if entity.hasColumns()>
 				DataSource dataSource = ${entity.varName}Persistence.getDataSource();
 			<#else>
 				DataSource dataSource = InfrastructureUtil.getDataSource();
 			</#if>
-
-			DB db = DBFactoryUtil.getDB();
-
-			sql = db.buildSQL(sql);
-			sql = PortalUtil.transformSQL(sql);
 
 			SqlUpdate sqlUpdate = SqlUpdateFactoryUtil.getSqlUpdate(dataSource, sql, new int[0]);
 

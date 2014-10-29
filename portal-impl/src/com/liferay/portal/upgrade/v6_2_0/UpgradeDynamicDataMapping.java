@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -17,10 +17,8 @@ package com.liferay.portal.upgrade.v6_2_0;
 import com.liferay.portal.kernel.dao.jdbc.DataAccess;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.metadata.RawMetadataProcessor;
 import com.liferay.portal.kernel.upgrade.UpgradeProcess;
 import com.liferay.portal.kernel.util.ArrayUtil;
-import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.xml.Document;
@@ -154,8 +152,7 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 					structureKey = StringUtil.toUpperCase(structureKey.trim());
 				}
 
-				updateStructure(
-					structureId, structureKey, updateXSD(xsd, structureKey));
+				updateStructure(structureId, structureKey, updateXSD(xsd));
 			}
 		}
 		finally {
@@ -215,9 +212,7 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 					templateKey = StringUtil.toUpperCase(templateKey.trim());
 				}
 
-				updateTemplate(
-					templateId, templateKey,
-					updateXSD(script, StringPool.BLANK));
+				updateTemplate(templateId, templateKey, updateXSD(script));
 			}
 		}
 		finally {
@@ -225,9 +220,7 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 		}
 	}
 
-	protected String updateXSD(String xsd, String structureKey)
-		throws Exception {
-
+	protected String updateXSD(String xsd) throws Exception {
 		Document document = SAXReaderUtil.read(xsd);
 
 		Element rootElement = document.getRootElement();
@@ -236,39 +229,30 @@ public class UpgradeDynamicDataMapping extends UpgradeProcess {
 			"dynamic-element");
 
 		for (Element dynamicElementElement : dynamicElementElements) {
-			updateXSDDynamicElement(dynamicElementElement, structureKey);
+			updateXSDDynamicElement(dynamicElementElement);
 		}
 
 		return DDMXMLUtil.formatXML(document);
 	}
 
-	protected void updateXSDDynamicElement(
-		Element element, String structureKey) {
-
+	protected void updateXSDDynamicElement(Element element) {
 		Element metadataElement = element.element("meta-data");
 
 		updateMetadataElement(
 			metadataElement,
 			new String[] {
-				"multiple", "name", "readOnly", "repeatable", "required",
-				"showLabel", "type", "width",
+				"multiple", "readOnly", "repeatable", "required", "showLabel",
+				"width",
 			},
 			new String[] {
-				"acceptFiles", "displayChildLabelAsValue", "fieldCssClass",
-				"folder"
+				"acceptFiles", "displayChildLabelAsValue", "fieldCssClass"
 			});
-
-		if (StringUtil.equalsIgnoreCase(
-				structureKey, RawMetadataProcessor.TIKA_RAW_METADATA)) {
-
-			element.addAttribute("indexType", "text");
-		}
 
 		List<Element> dynamicElementElements = element.elements(
 			"dynamic-element");
 
 		for (Element dynamicElementElement : dynamicElementElements) {
-			updateXSDDynamicElement(dynamicElementElement, structureKey);
+			updateXSDDynamicElement(dynamicElementElement);
 		}
 	}
 
