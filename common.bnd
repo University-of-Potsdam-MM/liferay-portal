@@ -17,5 +17,4 @@ Liferay-Portal-Server-Info: ${release.info.server.info}
 Liferay-Portal-Version: ${release.info.version}
 
 -donotcopy: (\.touch)
--dsannotations: *
 -sources: false
