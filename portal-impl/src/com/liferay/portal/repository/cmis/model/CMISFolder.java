@@ -34,7 +34,6 @@ import com.liferay.portlet.documentlibrary.service.DLFolderLocalServiceUtil;
 import com.liferay.portlet.documentlibrary.service.permission.DLFolderPermission;
 
 import java.io.Serializable;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -244,8 +243,12 @@ public class CMISFolder extends CMISModel implements Folder {
 		else {
 			String path = _cmisFolder.getPath();
 
-			path = path.substring(0, path.lastIndexOf(CharPool.SLASH));
-
+			//path = path.substring(0, path.lastIndexOf(CharPool.SLASH));
+			// JULIAN: hacking the path
+			String tmp = path.substring(0, path.lastIndexOf("/"));
+			path = path.substring(0, tmp.lastIndexOf("/")+1);
+			
+			
 			if (path.length() == 0) {
 				path = StringPool.SLASH;
 			}
