@@ -14,6 +14,18 @@
 
 package com.liferay.portal.repository.cmis.model;
 
+import java.io.InputStream;
+import java.io.Serializable;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.chemistry.opencmis.client.api.Document;
+import org.apache.chemistry.opencmis.commons.data.ContentStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.lar.StagedModelType;
@@ -36,23 +48,13 @@ import com.liferay.portlet.documentlibrary.service.DLAppHelperLocalServiceUtil;
 import com.liferay.portlet.documentlibrary.util.DLUtil;
 import com.liferay.portlet.expando.model.ExpandoBridge;
 
-import java.io.InputStream;
-import java.io.Serializable;
-
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.chemistry.opencmis.client.api.Document;
-import org.apache.chemistry.opencmis.commons.data.ContentStream;
-import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
-
 /**
  * @author Alexander Chow
  */
 public class CMISFileVersion extends CMISModel implements FileVersion {
+	
+	private static final Logger log = LoggerFactory
+			.getLogger(CMISFileVersion.class.getName());
 
 	public CMISFileVersion(
 		CMISRepository cmisRepository, String uuid, long fileVersionId,
@@ -139,24 +141,28 @@ public class CMISFileVersion extends CMISModel implements FileVersion {
 
 	@Override
 	public FileEntry getFileEntry() throws PortalException, SystemException {
-		Document document = null;
+//		Document document = null;
+//
+//		try {
+//			List<Document> allVersions = _document.getAllVersions();
+//
+//			if (allVersions.isEmpty()) {
+//				document = _document;
+//			}
+//			else {
+//				document = allVersions.get(0);
+//			}
+//		}
+//		catch (CmisObjectNotFoundException confe) {
+//			throw new NoSuchFileEntryException(confe);
+//		}
 
-		try {
-			List<Document> allVersions = _document.getAllVersions();
-
-			if (allVersions.isEmpty()) {
-				document = _document;
-			}
-			else {
-				document = allVersions.get(0);
-			}
-		}
-		catch (CmisObjectNotFoundException confe) {
-			throw new NoSuchFileEntryException(confe);
-		}
-
+		
+		log.warn("changed code, so that no versions are looked up that don't exist [Julian-UP]");
+		
+		
 		return CMISRepositoryLocalServiceUtil.toFileEntry(
-			getRepositoryId(), document);
+			getRepositoryId(), _document);
 	}
 
 	@Override

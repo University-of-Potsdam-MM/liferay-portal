@@ -43,11 +43,16 @@ import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Alexander Chow
  */
 public class CMISFolder extends CMISModel implements Folder {
+	
+	private static final Logger log = LoggerFactory
+			.getLogger(CMISFolder.class.getName());
 
 	public CMISFolder(
 		CMISRepository cmisRepository, String uuid, long folderId,
@@ -245,6 +250,8 @@ public class CMISFolder extends CMISModel implements Folder {
 
 			//path = path.substring(0, path.lastIndexOf(CharPool.SLASH));
 			// JULIAN: hacking the path
+			
+			log.warn("changed computation of parent path to assume / in the end [Julian- UP]");
 			String tmp = path.substring(0, path.lastIndexOf("/"));
 			path = path.substring(0, tmp.lastIndexOf("/")+1);
 			

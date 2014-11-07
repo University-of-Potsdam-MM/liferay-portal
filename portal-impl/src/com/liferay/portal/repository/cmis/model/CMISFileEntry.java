@@ -234,6 +234,7 @@ public class CMISFileEntry extends CMISModel implements FileEntry {
 			}
 		}
 		catch (Exception e) {
+			System.out.println(e.getMessage());
 		}
 
 		try {
@@ -295,7 +296,7 @@ public class CMISFileEntry extends CMISModel implements FileEntry {
 			_latestFileVersion = CMISRepositoryLocalServiceUtil.toFileVersion(
 				getRepositoryId(), _document);
 		}
-
+				
 		return _latestFileVersion;
 	}
 
@@ -680,7 +681,7 @@ public class CMISFileEntry extends CMISModel implements FileEntry {
 //		}
 //		
 //		return _allVersions;
-		
+						
 		ArrayList<Document> list = new ArrayList<Document>();
 		list.add(_document);
 		return list;				

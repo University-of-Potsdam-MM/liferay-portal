@@ -2143,8 +2143,8 @@ public class CMISRepository extends BaseCmisRepository {
 		HttpSession httpSession = PortalSessionThreadLocal.getHttpSession();
 
 		if (httpSession == null) {
-			if (_log.isWarnEnabled()) {
-				_log.warn("Unable to get HTTP session");
+			if (_log.isWarnEnabled()) {				
+				_log.debug("Unable to get HTTP session in DEBUG");				
 			}
 
 			return;
