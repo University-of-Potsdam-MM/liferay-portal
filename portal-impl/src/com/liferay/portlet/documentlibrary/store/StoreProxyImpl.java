@@ -32,7 +32,7 @@ public class StoreProxyImpl implements Store {
 
 		Store store = StoreFactory.getInstance();
 		
-		System.out.println("hello me");
+		//System.out.println("hello me");
 
 		store.addDirectory(companyId, repositoryId, dirName);
 	}

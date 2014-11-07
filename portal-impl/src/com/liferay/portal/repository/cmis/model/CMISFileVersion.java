@@ -158,7 +158,7 @@ public class CMISFileVersion extends CMISModel implements FileVersion {
 //		}
 
 		
-		log.warn("changed code, so that no versions are looked up that don't exist [Julian-UP]");
+		//log.warn("changed code, so that no versions are looked up that don't exist [Julian-UP]");
 		
 		
 		return CMISRepositoryLocalServiceUtil.toFileEntry(
