@@ -240,16 +240,16 @@ public class CMISFolder extends CMISModel implements Folder {
 		}
 
 		if (_cmisFolder.isRootFolder()) {
-			Folder folder = DLAppLocalServiceUtil.getMountFolder(
-				getRepositoryId());
-
-			parentFolder = folder.getParentFolder();
+			parentFolder = returnRootFolder();
+			return parentFolder;
 		}
 		else {
 			String path = _cmisFolder.getPath();
 
 			//path = path.substring(0, path.lastIndexOf(CharPool.SLASH));
 			// JULIAN: hacking the path
+			
+			
 			
 			log.warn("changed computation of parent path to assume / in the end [Julian- UP]");
 			String tmp = path.substring(0, path.lastIndexOf("/"));
@@ -258,6 +258,12 @@ public class CMISFolder extends CMISModel implements Folder {
 			
 			if (path.length() == 0) {
 				path = StringPool.SLASH;
+			}
+			
+			log.warn("changed computation of parent path to assume only / to be root [Julian- UP]");
+			if (path.equals("/")) {
+				parentFolder = returnRootFolder();
+				return parentFolder;
 			}
 
 			Session session =
@@ -272,6 +278,15 @@ public class CMISFolder extends CMISModel implements Folder {
 
 		setParentFolder(parentFolder);
 
+		return parentFolder;
+	}
+
+	private Folder returnRootFolder() throws PortalException, SystemException {
+		Folder parentFolder;
+		Folder folder = DLAppLocalServiceUtil.getMountFolder(
+			getRepositoryId());
+
+		parentFolder = folder.getParentFolder();
 		return parentFolder;
 	}
 
