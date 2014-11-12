@@ -388,7 +388,7 @@ public class CMISRepository extends BaseCmisRepository {
 
 			deleteMappedFileEntry(document);
 
-			document.deleteAllVersions();
+			//document.deleteAllVersions();
 		}
 		catch (PortalException pe) {
 			throw pe;
@@ -1592,16 +1592,16 @@ public class CMISRepository extends BaseCmisRepository {
 			return;
 		}
 
-		List<Document> documentVersions = document.getAllVersions();
-
-		for (Document version : documentVersions) {
-			try {
-				RepositoryEntryUtil.removeByR_M(
-					getRepositoryId(), version.getId());
-			}
-			catch (NoSuchRepositoryEntryException nsree) {
-			}
-		}
+//		List<Document> documentVersions = document.getAllVersions();
+//
+//		for (Document version : documentVersions) {
+//			try {
+//				RepositoryEntryUtil.removeByR_M(
+//					getRepositoryId(), version.getId());
+//			}
+//			catch (NoSuchRepositoryEntryException nsree) {
+//			}
+//		}
 
 		try {
 			RepositoryEntryUtil.removeByR_M(
