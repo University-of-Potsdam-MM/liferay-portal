@@ -72,9 +72,7 @@ import com.liferay.portlet.documentlibrary.util.comparator.RepositoryModelNameCo
 import com.liferay.portlet.documentlibrary.util.comparator.RepositoryModelSizeComparator;
 
 import java.io.InputStream;
-
 import java.math.BigInteger;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -107,6 +105,8 @@ import org.apache.chemistry.opencmis.commons.exceptions.CmisPermissionDeniedExce
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.Base64;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
+
+import sun.util.logging.resources.logging;
 
 /**
  * CMIS does not provide vendor neutral support for workflow, metadata, tags,
@@ -386,8 +386,11 @@ public class CMISRepository extends BaseCmisRepository {
 
 			Document document = getDocument(session, fileEntryId);
 
-			deleteMappedFileEntry(document);
-
+			//deleteMappedFileEntry(document);
+		
+			_log.warn("[UP-Julian] 2- we changed this to actually delete the cmis object and not the object in the persistence layer only");
+			document.delete(false);
+			
 			//document.deleteAllVersions();
 		}
 		catch (PortalException pe) {
