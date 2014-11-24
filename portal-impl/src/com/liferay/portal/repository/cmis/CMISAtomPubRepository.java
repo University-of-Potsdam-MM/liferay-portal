@@ -22,7 +22,10 @@ import com.liferay.portal.kernel.repository.cmis.Session;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.model.Group;
 import com.liferay.portal.security.auth.PrincipalThreadLocal;
+import com.liferay.portal.service.GroupLocalServiceUtil;
+import com.liferay.util.servlet.SessionParameters;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -30,6 +33,7 @@ import java.util.Map;
 
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.enums.BindingType;
+import org.apache.ecs.xhtml.param;
 
 /**
  * @author Alexander Chow
@@ -40,6 +44,11 @@ public class CMISAtomPubRepository extends CMISRepositoryHandler {
 	public Session getSession() throws PortalException, SystemException {
 		Map<String, String> parameters = new HashMap<String, String>();
 
+		
+		
+		parameters.put(SessionParameter.COOKIES,"true");		
+		
+		
 		parameters.put(
 			SessionParameter.ATOMPUB_URL, getTypeSettingsValue(_ATOMPUB_URL));
 		parameters.put(
