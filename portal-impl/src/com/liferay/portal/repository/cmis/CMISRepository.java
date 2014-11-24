@@ -1890,11 +1890,11 @@ public class CMISRepository extends BaseCmisRepository {
 				if (value.equals("true")) {
 					try {						
 						Group group = GroupLocalServiceUtil.getGroup(this.getGroupId());
-						String groupName = group.getDescriptiveName();													
+						String groupName = "liferay_workspace_"+group.getDescriptiveName();													
 						String rootDefaultPath = "/"+groupName+"/";
 						if (PropsUtil.get("cmis.root.liferayPrefixEnabled").equals("true")) {
 							rootDefaultPath = "/"+PropsUtil.get("cmis.root.liferayPrefixName") + rootDefaultPath;
-						}						
+						}												
 						setACLsofUsersOfSite(session, rootDefaultPath);
 						
 						cmisObject = session.getObject(rootDefaultPath);
