@@ -32,7 +32,6 @@ import org.apache.chemistry.opencmis.client.api.FileableCmisObject;
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
 import org.apache.chemistry.opencmis.client.api.ObjectFactory;
 import org.apache.chemistry.opencmis.client.api.ObjectId;
-import org.apache.chemistry.opencmis.client.api.OperationContext;
 import org.apache.chemistry.opencmis.client.api.QueryResult;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.runtime.ObjectIdImpl;
@@ -47,7 +46,6 @@ import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.Action;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityQuery;
-import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisPermissionDeniedException;
@@ -215,25 +213,24 @@ public class CMISRepository extends BaseCmisRepository {
 	}
 
 	private void setACLsofUsersOfSite(
-			org.apache.chemistry.opencmis.client.api.Folder cmisFolder,
-			Session session) throws SystemException {
+			Session session, String rootId) throws SystemException {
 		// get users for the site, in order to set ACLS
 		List<User> users = UserLocalServiceUtil
 				.getGroupUsers(this.getGroupId());
 
+		List<Ace> addAces = new ArrayList<Ace>();				
 		for (User user : users) {
 			ObjectFactory of = session.getObjectFactory();
 			Ace ace1 = of.createAce(user.getScreenName(),
 					Collections.singletonList("cmis:write"));
-			List<Ace> addAces = new ArrayList<Ace>();
-			addAces.add(ace1);
-			cmisFolder.applyAcl(addAces, addAces, AclPropagation.OBJECTONLY);
-
+			addAces.add(ace1);			
 			// session.applyAcl(cmisFolder, addAces, addAces,
 			// AclPropagation.REPOSITORYDETERMINED);
 			// Acl acl= session.getAcl(cmisFolder, true);
 			// System.out.println(acl);
 		}
+		
+		session.applyAcl(new ObjectIdImpl(rootId), addAces, addAces, AclPropagation.REPOSITORYDETERMINED);	
 	}
 
 	@Override
@@ -1885,36 +1882,25 @@ public class CMISRepository extends BaseCmisRepository {
 
 		try {
 			String objectId = toFolderId(session, folderId);
-			OperationContext childrenOpCtx = session.getDefaultContext();
-			// OperationContext context= session.getDefaultContext();	
-			childrenOpCtx.setIncludeAcls(false);
-			childrenOpCtx.setIncludeAllowableActions(true);
-			childrenOpCtx.setIncludePolicies(false);
-			childrenOpCtx.setIncludeRelationships(IncludeRelationships.NONE);
-			childrenOpCtx.setRenditionFilterString("cmis:none");
-			childrenOpCtx.setIncludePathSegments(false);
-			childrenOpCtx.setOrderBy("cmis:name");
-			childrenOpCtx.setCacheEnabled(false);
-			childrenOpCtx.setMaxItemsPerPage(10);
 			
 			CmisObject cmisObject = null;
 			RepositoryInfo repositoryInfo = session.getRepositoryInfo();
 			if (objectId.equals(repositoryInfo.getRootFolderId())) {				
 				String value = PropsUtil.get("cmis.root.bysitename");
 				if (value.equals("true")) {
-					try {
+					try {						
 						Group group = GroupLocalServiceUtil.getGroup(this.getGroupId());
-						String groupName = group.getDescriptiveName();	
+						String groupName = group.getDescriptiveName();													
 						String rootDefaultPath = "/"+groupName+"/";
 						if (PropsUtil.get("cmis.root.liferayPrefixEnabled").equals("true")) {
 							rootDefaultPath = "/"+PropsUtil.get("cmis.root.liferayPrefixName") + rootDefaultPath;
-						}
+						}						
+						setACLsofUsersOfSite(session, rootDefaultPath);
+						
 						cmisObject = session.getObject(rootDefaultPath);
-					} catch (PortalException e) {
-						// TODO Auto-generated catch block
+					} catch (PortalException e) {						
 						e.printStackTrace();
-					} catch (SystemException e) {
-						// TODO Auto-generated catch block
+					} catch (SystemException e) {					
 						e.printStackTrace();
 					}								
 				} else {
