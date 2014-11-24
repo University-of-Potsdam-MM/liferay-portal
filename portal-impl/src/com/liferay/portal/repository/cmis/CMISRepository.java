@@ -36,10 +36,8 @@ import org.apache.chemistry.opencmis.client.api.OperationContext;
 import org.apache.chemistry.opencmis.client.api.QueryResult;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.runtime.ObjectIdImpl;
-import org.apache.chemistry.opencmis.client.runtime.OperationContextImpl;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.Ace;
-import org.apache.chemistry.opencmis.commons.data.Acl;
 import org.apache.chemistry.opencmis.commons.data.AllowableActions;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.data.PropertyData;
@@ -49,6 +47,7 @@ import org.apache.chemistry.opencmis.commons.enums.AclPropagation;
 import org.apache.chemistry.opencmis.commons.enums.Action;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.CapabilityQuery;
+import org.apache.chemistry.opencmis.commons.enums.IncludeRelationships;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisPermissionDeniedException;
@@ -82,6 +81,7 @@ import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.AutoResetThreadLocal;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
+import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -97,7 +97,6 @@ import com.liferay.portal.repository.cmis.model.CMISFileVersion;
 import com.liferay.portal.repository.cmis.model.CMISFolder;
 import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.security.auth.PrincipalThreadLocal;
-import com.liferay.portal.service.GroupLocalService;
 import com.liferay.portal.service.GroupLocalServiceUtil;
 import com.liferay.portal.service.RepositoryEntryLocalServiceUtil;
 import com.liferay.portal.service.ServiceContext;
@@ -135,17 +134,6 @@ public class CMISRepository extends BaseCmisRepository {
 
 	public CMISRepository(CMISRepositoryHandler cmisRepositoryHandler) {
 		_cmisRepositoryHandler = cmisRepositoryHandler;
-
-		try {
-			Group group = GroupLocalServiceUtil.getGroup(this.getGroupId());
-			String groupName = group.getDescriptiveName();
-		} catch (PortalException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SystemException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
 	@Override
@@ -1883,14 +1871,58 @@ public class CMISRepository extends BaseCmisRepository {
 		}
 	}
 
+	/**
+	 * TODO: implement extension data
+	 * 
+	 * @param session
+	 * @param folderId
+	 * @return
+	 * @throws PortalException
+	 * @throws SystemException
+	 */
 	protected Folder getFolder(Session session, long folderId)
 			throws PortalException, SystemException {
 
 		try {
 			String objectId = toFolderId(session, folderId);
-			// OperationContext context = new OperationContextImpl();
-			CmisObject cmisObject = session.getObject(objectId);
-
+			OperationContext childrenOpCtx = session.getDefaultContext();
+			// OperationContext context= session.getDefaultContext();	
+			childrenOpCtx.setIncludeAcls(false);
+			childrenOpCtx.setIncludeAllowableActions(true);
+			childrenOpCtx.setIncludePolicies(false);
+			childrenOpCtx.setIncludeRelationships(IncludeRelationships.NONE);
+			childrenOpCtx.setRenditionFilterString("cmis:none");
+			childrenOpCtx.setIncludePathSegments(false);
+			childrenOpCtx.setOrderBy("cmis:name");
+			childrenOpCtx.setCacheEnabled(false);
+			childrenOpCtx.setMaxItemsPerPage(10);
+			
+			CmisObject cmisObject = null;
+			RepositoryInfo repositoryInfo = session.getRepositoryInfo();
+			if (objectId.equals(repositoryInfo.getRootFolderId())) {				
+				String value = PropsUtil.get("cmis.root.bysitename");
+				if (value.equals("true")) {
+					try {
+						Group group = GroupLocalServiceUtil.getGroup(this.getGroupId());
+						String groupName = group.getDescriptiveName();	
+						String rootDefaultPath = "/"+groupName+"/";
+						if (PropsUtil.get("cmis.root.liferayPrefixEnabled").equals("true")) {
+							rootDefaultPath = "/"+PropsUtil.get("cmis.root.liferayPrefixName") + rootDefaultPath;
+						}
+						cmisObject = session.getObject(rootDefaultPath);
+					} catch (PortalException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (SystemException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}								
+				} else {
+					cmisObject = session.getRootFolder();
+				}
+			} else {
+				cmisObject = session.getObject(objectId);
+			}
 			return (Folder) toFolderOrFileEntry(cmisObject);
 		} catch (CmisObjectNotFoundException confe) {
 			throw new NoSuchFolderException("No CMIS folder with {folderId="
