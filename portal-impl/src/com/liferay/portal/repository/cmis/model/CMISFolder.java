@@ -43,15 +43,20 @@ import java.util.Map;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Alexander Chow
  */
 public class CMISFolder extends CMISModel implements Folder {
 
-	public CMISFolder(
-		CMISRepository cmisRepository, String uuid, long folderId,
-		org.apache.chemistry.opencmis.client.api.Folder cmisFolder) {
+	private static final Logger log = LoggerFactory.getLogger(CMISFolder.class
+			.getName());
+
+	public CMISFolder(CMISRepository cmisRepository, String uuid,
+			long folderId,
+			org.apache.chemistry.opencmis.client.api.Folder cmisFolder) {
 
 		_cmisRepository = cmisRepository;
 		_uuid = uuid;
@@ -61,8 +66,8 @@ public class CMISFolder extends CMISModel implements Folder {
 
 	@Override
 	public Object clone() {
-		CMISFolder cmisFolder = new CMISFolder(
-			_cmisRepository, _uuid, _folderId, _cmisFolder);
+		CMISFolder cmisFolder = new CMISFolder(_cmisRepository, _uuid,
+				_folderId, _cmisFolder);
 
 		cmisFolder.setCompanyId(getCompanyId());
 		cmisFolder.setFolderId(getFolderId());
@@ -70,8 +75,7 @@ public class CMISFolder extends CMISModel implements Folder {
 
 		try {
 			cmisFolder.setParentFolder(getParentFolder());
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 		}
 
 		cmisFolder.setPrimaryKey(getPrimaryKey());
@@ -80,36 +84,33 @@ public class CMISFolder extends CMISModel implements Folder {
 	}
 
 	@Override
-	public boolean containsPermission(
-			PermissionChecker permissionChecker, String actionId)
-		throws SystemException {
+	public boolean containsPermission(PermissionChecker permissionChecker,
+			String actionId) throws SystemException {
 
-		if (_cmisFolder.isRootFolder() &&
-			(actionId.equals(ActionKeys.DELETE) ||
-			 actionId.equals(ActionKeys.UPDATE))) {
+		if (_cmisFolder.isRootFolder()
+				&& (actionId.equals(ActionKeys.DELETE) || actionId
+						.equals(ActionKeys.UPDATE))) {
 
 			try {
-				Folder folder = DLAppLocalServiceUtil.getMountFolder(
-					getRepositoryId());
+				Folder folder = DLAppLocalServiceUtil
+						.getMountFolder(getRepositoryId());
 
-				DLFolder dlFolder = DLFolderLocalServiceUtil.getFolder(
-					folder.getFolderId());
+				DLFolder dlFolder = DLFolderLocalServiceUtil.getFolder(folder
+						.getFolderId());
 
-				return DLFolderPermission.contains(
-					permissionChecker, dlFolder, actionId);
-			}
-			catch (PortalException pe) {
+				return DLFolderPermission.contains(permissionChecker, dlFolder,
+						actionId);
+			} catch (PortalException pe) {
 				throw new SystemException(pe);
 			}
-		}
-		else {
+		} else {
 			return containsPermission(_cmisFolder, actionId);
 		}
 	}
 
 	@Override
-	public List<Long> getAncestorFolderIds()
-		throws PortalException, SystemException {
+	public List<Long> getAncestorFolderIds() throws PortalException,
+			SystemException {
 
 		List<Long> folderIds = new ArrayList<Long>();
 
@@ -155,8 +156,7 @@ public class CMISFolder extends CMISModel implements Folder {
 
 		if (calendar != null) {
 			return calendar.getTime();
-		}
-		else {
+		} else {
 			return new Date();
 		}
 	}
@@ -197,8 +197,7 @@ public class CMISFolder extends CMISModel implements Folder {
 
 		if (calendar != null) {
 			return calendar.getTime();
-		}
-		else {
+		} else {
 			return new Date();
 		}
 	}
@@ -207,12 +206,11 @@ public class CMISFolder extends CMISModel implements Folder {
 	public String getName() {
 		if (_cmisFolder.isRootFolder()) {
 			try {
-				Folder folder = DLAppLocalServiceUtil.getMountFolder(
-					getRepositoryId());
+				Folder folder = DLAppLocalServiceUtil
+						.getMountFolder(getRepositoryId());
 
 				return folder.getName();
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				_log.error(e, e);
 			}
 		}
@@ -230,41 +228,53 @@ public class CMISFolder extends CMISModel implements Folder {
 			if (parentFolder != null) {
 				return parentFolder;
 			}
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 		}
 
 		if (_cmisFolder.isRootFolder()) {
-			Folder folder = DLAppLocalServiceUtil.getMountFolder(
-				getRepositoryId());
-
-			parentFolder = folder.getParentFolder();
-		}
-		else {
+			parentFolder = returnRootFolder();
+			return parentFolder;
+		} else {
 			String path = _cmisFolder.getPath();
+						
+			if (path.endsWith("/")) {
+				log.trace("changed computation of parent path to assume / in the end of folders [Julian-UP]");
+				String tmp = path.substring(0, path.lastIndexOf("/"));
+				path = path.substring(0, tmp.lastIndexOf("/") + 1);
 
-			//path = path.substring(0, path.lastIndexOf(CharPool.SLASH));
-			// JULIAN: hacking the path
-			String tmp = path.substring(0, path.lastIndexOf("/"));
-			path = path.substring(0, tmp.lastIndexOf("/")+1);
-			
-			
-			if (path.length() == 0) {
-				path = StringPool.SLASH;
+				if (path.length() == 0) {
+					path = StringPool.SLASH;
+				}
+
+				log.trace("changed computation of parent path to assume / to be root folder path [Julian-UP]");
+				if (path.equals("/")) {
+					parentFolder = returnRootFolder();
+					return parentFolder;
+				}
+				
+			} else {
+				path = path.substring(0, path.lastIndexOf(CharPool.SLASH));
 			}
 
-			Session session =
-				(Session)CMISRepositoryLocalServiceUtil.getSession(
-					getRepositoryId());
+			Session session = (Session) CMISRepositoryLocalServiceUtil
+					.getSession(getRepositoryId());
 
 			CmisObject parentCmisFolder = session.getObjectByPath(path);
 
 			parentFolder = CMISRepositoryLocalServiceUtil.toFolder(
-				getRepositoryId(), parentCmisFolder);
+					getRepositoryId(), parentCmisFolder);
 		}
 
 		setParentFolder(parentFolder);
 
+		return parentFolder;
+	}
+
+	private Folder returnRootFolder() throws PortalException, SystemException {
+		Folder parentFolder;
+		Folder folder = DLAppLocalServiceUtil.getMountFolder(getRepositoryId());
+
+		parentFolder = folder.getParentFolder();
 		return parentFolder;
 	}
 
@@ -276,8 +286,7 @@ public class CMISFolder extends CMISModel implements Folder {
 			if (parentFolder != null) {
 				return parentFolder.getFolderId();
 			}
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			_log.error(e, e);
 		}
 
@@ -310,8 +319,7 @@ public class CMISFolder extends CMISModel implements Folder {
 
 		if (user == null) {
 			return 0;
-		}
-		else {
+		} else {
 			return user.getUserId();
 		}
 	}
@@ -322,8 +330,7 @@ public class CMISFolder extends CMISModel implements Folder {
 
 		if (user == null) {
 			return StringPool.BLANK;
-		}
-		else {
+		} else {
 			return user.getFullName();
 		}
 	}
@@ -334,8 +341,7 @@ public class CMISFolder extends CMISModel implements Folder {
 
 		try {
 			return user.getUserUuid();
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 		}
 
 		return StringPool.BLANK;
@@ -380,8 +386,7 @@ public class CMISFolder extends CMISModel implements Folder {
 	public boolean isRoot() {
 		if (getParentFolderId() == DLFolderConstants.DEFAULT_PARENT_FOLDER_ID) {
 			return true;
-		}
-		else {
+		} else {
 			return false;
 		}
 	}
@@ -444,7 +449,7 @@ public class CMISFolder extends CMISModel implements Folder {
 
 	@Override
 	public void setPrimaryKeyObj(Serializable primaryKeyObj) {
-		setPrimaryKey(((Long)primaryKeyObj).longValue());
+		setPrimaryKey(((Long) primaryKeyObj).longValue());
 	}
 
 	@Override
