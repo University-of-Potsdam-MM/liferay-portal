@@ -248,7 +248,7 @@ public class CMISFolder extends CMISModel implements Folder {
 
 			//path = path.substring(0, path.lastIndexOf(CharPool.SLASH));
 			// JULIAN: hacking the path									
-			log.warn("changed computation of parent path to assume / in the end [Julian- UP]");
+			log.trace("changed computation of parent path to assume / in the end [Julian- UP]");
 			String tmp = path.substring(0, path.lastIndexOf("/"));
 			path = path.substring(0, tmp.lastIndexOf("/")+1);
 			
@@ -257,7 +257,7 @@ public class CMISFolder extends CMISModel implements Folder {
 				path = StringPool.SLASH;
 			}
 			
-			log.warn("changed computation of parent path to assume only / to be root [Julian- UP]");
+			log.trace("changed computation of parent path to assume only / to be root [Julian- UP]");
 			if (path.equals("/")) {
 				parentFolder = returnRootFolder();
 				return parentFolder;
