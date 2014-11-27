@@ -27,6 +27,11 @@ String uploadProgressId = "dlFileEntryUploadProgress";
 
 FileEntry fileEntry = (FileEntry)request.getAttribute(WebKeys.DOCUMENT_LIBRARY_FILE_ENTRY);
 
+if(fileEntry == null){
+	response.sendError(404);
+	return;
+}
+
 long fileEntryId = fileEntry.getFileEntryId();
 
 long folderId = fileEntry.getFolderId();
