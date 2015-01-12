@@ -935,3 +935,4 @@ portal-web/docroot/html/js/editor/fckeditor/fckstyles.xml
 portal-web/docroot/html/js/editor/fckeditor/fcktemplates.xml
 portal-web/docroot/html/js/editor/fckeditor/fckutils.cfm
 portal-web/docroot/html/js/editor/fckeditor/license.txt
+/target/
